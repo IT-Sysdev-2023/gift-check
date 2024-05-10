@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TempReceivestore extends Model
 {
     use HasFactory;
+
+    protected $table= 'temp_receivestore';
+
+    protected $primaryKey= 'trec_barcode';
 }

@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class CashieringOption extends Model
 {
     use HasFactory;
+    // protected $primaryKey = 'access_no';
 }

@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Denomination extends Model
 {
     use HasFactory;
+
+    protected $table = 'denomination';
+    protected $primaryKey = 'denom_id';
 }

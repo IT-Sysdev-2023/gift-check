@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class StoregcSale extends Model
 {
     use HasFactory;
+    
+    protected $primaryKey = 'sgc_id';
 }

@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class GcVerificationReprintDetail extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'gcvrep_id';
 }

@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class BeamandgoBarcode extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'bngbar_id';
 }

@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class AllocationAdjustmentItem extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'addji_id';
 }

@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class StoreReceivedGc extends Model
 {
     use HasFactory;
+
+    protected $table= 'store_received_gc';
+
+    protected $primaryKey= 'strec_id';
 }

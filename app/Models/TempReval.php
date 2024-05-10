@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TempReval extends Model
 {
     use HasFactory;
+
+    protected $table= 'temp_reval';
+
+    protected $primaryKey= 'treval_id';
 }

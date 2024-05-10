@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class PromoGcReleaseToItem extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'prreltoi_id';
 }

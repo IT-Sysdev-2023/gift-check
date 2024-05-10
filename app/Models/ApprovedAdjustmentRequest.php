@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ApprovedAdjustmentRequest extends Model
 {
     use HasFactory;
+
+    protected $table = 'approved_adjustment_request';
+    protected $primaryKey = 'app_adjid';
 }

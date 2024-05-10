@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class BackupRecord extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'br_id';
 }

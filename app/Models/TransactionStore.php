@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionStore extends Model
 {
     use HasFactory;
+
+    protected $primaryKey ='trans_sid';
 }

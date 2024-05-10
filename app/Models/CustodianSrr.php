@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CustodianSrr extends Model
 {
     use HasFactory;
+
+    protected $table = 'custodian_srr';
+    protected $primaryKey = 'csrr_id';
 }

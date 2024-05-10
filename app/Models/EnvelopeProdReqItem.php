@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class EnvelopeProdReqItem extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'env_id';
 }

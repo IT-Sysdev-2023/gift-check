@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class EntryProduction extends Model
 {
     use HasFactory;
+
+    protected $table = 'entry_production';
+    protected $primaryKey = 'ep_no';
 }

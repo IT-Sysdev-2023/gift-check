@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class PromoGc extends Model
 {
     use HasFactory;
+
+    protected $table= 'promo_gc';
+
+    protected $primaryKey= 'prom_barcode';
 }

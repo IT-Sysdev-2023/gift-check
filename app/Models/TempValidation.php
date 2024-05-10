@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TempValidation extends Model
 {
     use HasFactory;
+
+    protected $table= 'temp_validation';
+
+    protected $primaryKey= 'tval_barcode';
 }

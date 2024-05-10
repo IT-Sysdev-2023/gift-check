@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class StoreRequestItem extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'sri_id';
 }

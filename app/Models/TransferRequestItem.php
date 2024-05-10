@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class TransferRequestItem extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'tr_itemsid';
 }

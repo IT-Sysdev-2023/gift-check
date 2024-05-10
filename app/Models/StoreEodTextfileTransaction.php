@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class StoreEodTextfileTransaction extends Model
 {
     use HasFactory;
+
+    protected $primaryKey ='seodtt_id';
 }

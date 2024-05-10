@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class TempSale extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'ts_id';
 }

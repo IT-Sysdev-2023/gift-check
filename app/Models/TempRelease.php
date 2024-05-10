@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class TempRelease extends Model
 {
     use HasFactory;
+    protected $table= 'temp_release';
+
+    protected $primaryKey= 'temp_rbarcode';
 }

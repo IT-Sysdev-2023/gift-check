@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class StoreVoidItem extends Model
 {
     use HasFactory;
+
+    protected $primaryKey= 'svi_id';
 }

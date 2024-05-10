@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ApprovedGcrequest extends Model
 {
     use HasFactory;
+
+    protected $table = 'approved_gcrequest';
+    protected $primaryKey = 'agcr_id';
 }

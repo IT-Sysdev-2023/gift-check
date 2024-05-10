@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionEndofday extends Model
 {
     use HasFactory;
+
+    protected $table= 'transaction_endofday';
+
+    protected $primaryKey= 'eod_id';
 }

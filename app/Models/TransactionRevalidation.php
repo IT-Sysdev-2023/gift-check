@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionRevalidation extends Model
 {
     use HasFactory;
+
+    protected $table= 'transaction_revalidation';
+
+    protected $primaryKey= 'reval_id';
 }

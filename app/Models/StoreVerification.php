@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class StoreVerification extends Model
 {
     use HasFactory;
+
+    protected $table= 'store_verification';
+
+    protected $primaryKey= 'vs_id';
 }

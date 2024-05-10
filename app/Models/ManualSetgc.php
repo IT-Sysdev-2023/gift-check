@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ManualSetgc extends Model
 {
     use HasFactory;
+
+    protected $table = 'manual_setgc';
+    protected $primaryKey = 'mgc_id';
 }

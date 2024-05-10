@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class CustomerDiscount extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'cdis_id';
 }

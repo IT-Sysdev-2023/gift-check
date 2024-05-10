@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TransferRequestServed extends Model
 {
     use HasFactory;
+
+    protected $table= 'transfer_request_served';
+
+    protected $primaryKey= 'tr_servedid';
 }

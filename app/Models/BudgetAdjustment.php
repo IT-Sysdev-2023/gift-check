@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class BudgetAdjustment extends Model
 {
     use HasFactory;
+
+    protected $table = 'budget_adjustment';
+    protected $primaryKey = 'bud_id';
 }

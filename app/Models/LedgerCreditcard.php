@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class LedgerCreditcard extends Model
 {
     use HasFactory;
+
+    protected $table= 'ledger_creditcard';
+
+    protected $primaryKey = 'ccled_id';
 }

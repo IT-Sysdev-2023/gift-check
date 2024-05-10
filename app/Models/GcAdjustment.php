@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class GcAdjustment extends Model
 {
     use HasFactory;
+
+    protected $table = 'gcadjustment';
+    protected $primaryKey = 'gc_adj_id';
 }

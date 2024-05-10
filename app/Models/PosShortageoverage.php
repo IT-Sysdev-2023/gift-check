@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class PosShortageoverage extends Model
 {
     use HasFactory;
+
+    protected $table= 'pos_shortageoverage';
+
+    protected $primaryKey= 'stover_id';
 }

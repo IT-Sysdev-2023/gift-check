@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionLinediscount extends Model
 {
     use HasFactory;
+
+    protected $table= 'transaction_linediscount';
+
+    protected $primaryKey= 'trlinedis_id';
 }

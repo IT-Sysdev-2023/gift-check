@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class GcAdjustmentItem extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'gc_adji_id';
 }

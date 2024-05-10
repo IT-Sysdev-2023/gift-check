@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class InstitutTransaction extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'institutr_id';
 }

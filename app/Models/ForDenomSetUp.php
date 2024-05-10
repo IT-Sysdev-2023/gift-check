@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ForDenomSetUp extends Model
 {
     use HasFactory;
+
+    protected $table = 'for_denom_set_up';
+    protected $primaryKey = 'fds_id';
 }

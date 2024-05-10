@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class UserPage extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'upages';
 }

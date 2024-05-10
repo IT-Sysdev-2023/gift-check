@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class ValidationCorp extends Model
 {
     use HasFactory;
+
+    protected $table = 'validation_corp';
+
+    protected $primaryKey = 'vc_id';
 }

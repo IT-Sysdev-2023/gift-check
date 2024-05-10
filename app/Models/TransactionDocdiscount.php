@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionDocdiscount extends Model
 {
     use HasFactory;
+
+    protected $table= 'transaction_docdiscount';
+
+    protected $primaryKey= 'trdocdisc_id';
 }

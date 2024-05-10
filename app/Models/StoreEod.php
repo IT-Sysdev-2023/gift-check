@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class StoreEod extends Model
 {
     use HasFactory;
+
+    protected $table= 'store_eod';
+
+    protected $primaryKey= 'steod_id';
 }

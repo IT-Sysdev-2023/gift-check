@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Gcbarcodegenerate extends Model
 {
     use HasFactory;
+
+    protected $table = 'gcbarcodegenerate';
+    protected $primaryKey = 'gbcg_id';
 }

@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class EndOfShiftPosDetail extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'eos_id';
 }

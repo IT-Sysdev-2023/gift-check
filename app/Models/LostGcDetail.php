@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class LostGcDetail extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'lostgcd_id';
 }

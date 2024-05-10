@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class GcReleaseDetail extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'gcrd_id';
 }

@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CustomerInternal extends Model
 {
     use HasFactory;
+
+    protected $table = 'customer_internal';
+    protected $primaryKey = 'ci_code';
 }

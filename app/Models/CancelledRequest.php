@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CancelledRequest extends Model
 {
     use HasFactory;
+
+    protected $table = 'cancelled_request';
+    protected $primaryKey = 'reqcan_id';
 }

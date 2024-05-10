@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionRefundDetail extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'trefundd_id';
 }

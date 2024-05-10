@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class LedgerSpgc extends Model
 {
     use HasFactory;
+
+    protected $table = 'ledger_spgc';
+    protected $primaryKey = 'spgcledger_id';
+
 }

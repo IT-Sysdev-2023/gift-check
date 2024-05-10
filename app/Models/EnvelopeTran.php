@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class EnvelopeTran extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'env_trans_id';
 }
