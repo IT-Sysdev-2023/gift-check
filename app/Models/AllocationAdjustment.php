@@ -11,4 +11,6 @@ class AllocationAdjustment extends Model
 
     protected $table = 'allocation_adjustment';
     protected $primaryKey = 'aadj_id';
+
+    
 }

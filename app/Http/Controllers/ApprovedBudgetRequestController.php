@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApprovedBudgetRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ApprovedBudgetRequestController extends Controller
@@ -12,7 +13,7 @@ class ApprovedBudgetRequestController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**
