@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -48,6 +49,10 @@ class User extends Authenticatable
         ];
     }
 
+    public function scopeUserTypeBudget(Builder $builder, $userType){
+        $builder->where('usertype', $userType)
+                ->whereHas('budgetRequest', function ($query) { $query->where('br_request_status', 0); } );
+    }
 
     public function userLog(): BelongsTo{
         return $this->belongsTo(Userlog::class, 'logs_userid', 'user_id');

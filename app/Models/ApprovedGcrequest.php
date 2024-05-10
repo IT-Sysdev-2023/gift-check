@@ -13,6 +13,10 @@ class ApprovedGcrequest extends Model
     protected $primaryKey = 'agcr_id';
 
     public function storeGcRequest(){
-        return $this->belongsTo(StoreGcrequest::class, 'sgc_id', 'agcr_request_id');
+        return $this->belongsTo(StoreGcrequest::class, 'agcr_request_id', 'sgc_id');
+    }
+    
+    public function user(){
+        return $this->belongsTo(User::class, 'agcr_preparedby', 'user_id');
     }
 }

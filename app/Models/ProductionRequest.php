@@ -12,4 +12,8 @@ class ProductionRequest extends Model
     protected $table= 'production_request';
 
     protected $primaryKey= 'pe_id';
+
+    public function user(){
+        return $this->belongsTo(User::class, 'pe_requested_by', 'user_id');
+    }
 }

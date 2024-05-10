@@ -12,4 +12,8 @@ class StoreGcrequest extends Model
     protected $table= 'store_gcrequest';
 
     protected $primaryKey= 'sgc_id';
+
+    public function stores(){
+        return $this->belongsTo(Store::class, 'sgc_store','store_id' );
+    }
 }

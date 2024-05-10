@@ -2,8 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AllocationAdjustment;
 use App\Models\ApprovedGcrequest;
+use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
+use App\Models\GcAdjustment;
+use App\Models\InstitutTransaction;
+use App\Models\ProductionRequest;
+use App\Models\PromoGcReleaseToDetail;
+use App\Models\SpecialExternalGcrequest;
 use App\Models\StoreGcrequest;
 use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -19,22 +26,17 @@ class Dashboard extends Controller
 
         // dd(request()->user()->usertype);
 
-        // $bud = BudgetAdjustment::count();
-        // $production = GcAdjustment::count();
-        // $allocate = AllocationAdjustment::count();
+        $bud = BudgetAdjustment::count();
+        $production = GcAdjustment::count();
+        $allocate = AllocationAdjustment::count();
 
 
         //BUDGET REQUEST
 
-        $dept = request()->user();
-        $data = $dept->load(['budgetRequest' => fn($query) => $query->where('br_request_status', 0)]);
-
         //Pending Request
-        $budPenReq = $data->budgetRequest->count();
-
+        $budPenReq = User::userTypeBudget(request()->user()->usertype)->count();
         //Approved Request
         $budAppReq = BudgetRequest::where('br_request_status', 1)->count();
-
         //Cancelled Request
         $budCanReq = BudgetRequest::where('br_request_status', 2)->count();
 
@@ -46,70 +48,59 @@ class Dashboard extends Controller
             $query->where('sgc_status', 0)
                 ->orWhere('sgc_status', 1);
         })->where('sgc_cancel', '')->count();
-
         //Release Gc
+        $storeAppReq = ApprovedGcrequest::has('storeGcRequest.stores')->has('user')->count();
+        //Cancelled Request
+        $storeCanReq= StoreGcrequest::where('sgc_status',0)->where('sgc_cancel','*')->count();
+
+
+        //PROMO GC RELEASED 
+
+        //Released GC
+        $promoGCREl = PromoGcReleaseToDetail::count();
+
+        //Institution GC Sales
+        $instr = InstitutTransaction::count();
+
+        //GC PRODUCTION REQUEST
         
-        $gcRes = ApprovedGcrequest::with('storeGcRequest')->get();
-        dd($gcRes);
+        //Pending Request
+        $proPenReq = ProductionRequest::whereHas('user', function ($query) {
+            $query->where('usertype', request()->user()->usertype);
+        }  )->where('pe_status', 0)->count();
 
+        //Approved Request
+        $proAppReq= ProductionRequest::where('pe_status', 1)->count();
+        //Cancelled Request
+        $proCanReq = ProductionRequest::where('pe_status', 2)->count();
 
+        //Special GC Request 
+        $segcpending = SpecialExternalGcrequest::where('spexgc_status','pending')->count();
+        //Approved GC
+        $segcapproved  = SpecialExternalGcrequest::where('spexgc_status','approved')->count();
+        //Reviewed GC For Releasing
+        $segcreviewed  = SpecialExternalGcrequest::where('spexgc_reviewed', 'reviewed')->where('spexgc_released', '')->where('spexgc_promo', '0')->count();
+        //Released GC
+        $segcapproved  = SpecialExternalGcrequest::where('spexgc_released','released')->count();
+        //Cancelled Request
+        $segccancelled  = SpecialExternalGcrequest::where('spexgc_status','cancelled')->count();
+
+        //Current Budget
+        // number_format( , 2) //to be continued
 
     }
 
-    // function GCReleasedAllStore($link)
+    // function currentBudget($link)
 	// {
-	// 	$rows = [];
-	// 	$query = $link->query(
-	// 	"SELECT
-	// 		`approved_gcrequest`.`agcr_id`,
-	// 		`stores`.`store_name`,
-	// 		`approved_gcrequest`.`agcr_approved_at`,
-	// 		`approved_gcrequest`.`agcr_approvedby`,
-	// 		`approved_gcrequest`.`agcr_preparedby`,
-	// 		`approved_gcrequest`.`agcr_rec`,
-	// 		`approved_gcrequest`.`agcr_request_relnum`,
-	// 		`agcr_request_relnum`,
-	// 		`users`.`firstname`,
-	// 		`users`.`lastname`,
-	// 		`store_gcrequest`.`sgc_date_request`
-	// 	FROM
-	// 		`approved_gcrequest`
-	// 	INNER JOIN
-	// 		`store_gcrequest`
-	// 	ON
-	// 		`approved_gcrequest`.`agcr_request_id` = `store_gcrequest`.`sgc_id`
-	// 	INNER JOIN
-	// 		`stores`
-	// 	ON
-	// 		`store_gcrequest`.`sgc_store` = `stores`.`store_id`
-	// 	INNER JOIN
-	// 		`users`
-	// 	ON
-	// 		`approved_gcrequest`.`agcr_preparedby` = `users`.`user_id`
-	// 	ORDER BY
-	// 		`approved_gcrequest`.`agcr_id`
-	// 	DESC
-	// 	");
+	// 	$query = "SELECT SUM(bdebit_amt),SUM(bcredit_amt) FROM ledger_budget WHERE bcus_guide != 'dti'";
 
-	// 	if($query)
-	// 	{
-	// 		while ($row = $query->fetch_object()) {
-	// 			$rows[] = $row;
-	// 		}
-	// 		return $rows;
-	// 	}
-	// 	else
-	// 	{
-	// 		return $rows[] = $link->error;
-	// 	}
+	// 	$query = $link->query($query) or die('unable to query');
+	// 	$budget_row		= $query->fetch_array();
+	// 	$debit 	= $budget_row['SUM(bdebit_amt)'];
+	// 	$credit = $budget_row['SUM(bcredit_amt)'];
+
+	// 	$budget = $debit - $credit;
+
+	// 	return $budget;
 	// }
-
-
-
-    //     function getField($field,$table,$field2,$var)
-// {
-//     $query = $link->query("SELECT $field FROM $table WHERE $field2='$var'");
-//     $row = $query->fetch_assoc();
-//     return $row[$field];
-// }
 }
