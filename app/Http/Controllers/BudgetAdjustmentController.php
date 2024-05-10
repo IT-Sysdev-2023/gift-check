@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AllocationAdjustment;
 use App\Models\BudgetAdjustment;
+use App\Models\BudgetRequest;
+use App\Models\GcAdjustment;
 use Illuminate\Http\Request;
 
 class BudgetAdjustmentController extends Controller
@@ -12,7 +15,16 @@ class BudgetAdjustmentController extends Controller
      */
     public function index()
     {
-        //
+        $bud = BudgetAdjustment::count();
+        $production = GcAdjustment::count();
+        $allocate = AllocationAdjustment::count();
+
+
+
+        dd($bud);
+    }
+
+    public function countAdj(){
     }
 
     /**

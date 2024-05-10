@@ -11,4 +11,8 @@ class ApprovedGcrequest extends Model
 
     protected $table = 'approved_gcrequest';
     protected $primaryKey = 'agcr_id';
+
+    public function storeGcRequest(){
+        return $this->belongsTo(StoreGcrequest::class, 'sgc_id', 'agcr_request_id');
+    }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BudgetAdjustmentController;
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +16,7 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/test', [Dashboard::class, 'index']);
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

@@ -52,4 +52,8 @@ class User extends Authenticatable
     public function userLog(): BelongsTo{
         return $this->belongsTo(Userlog::class, 'logs_userid', 'user_id');
     }
+
+    public function budgetRequest(){
+        return $this->hasMany(BudgetRequest::class, 'br_requested_by','user_id' );
+    }
 }
