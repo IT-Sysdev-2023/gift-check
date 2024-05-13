@@ -14,87 +14,17 @@ class SpecialExternalGcrequest extends Model
 
     protected $primaryKey= 'spexgc_id';
 
-    public function scopeCountSpexgcStatus(Builder $builder, mixed $request){
-        return $builder->where('spexgc_status', $request)->count();
+    public function scopeSpexgcStatus(Builder $builder, mixed $request){
+        return $builder->where('spexgc_status', $request);
     }
 
-    public function scopeCountSpexgcReleased(Builder $builder, mixed $request){
-        return $builder->where('spexgc_released', $request)->count();
+    public function scopeSpexgcReleased(Builder $builder, mixed $request){
+        return $builder->where('spexgc_released', $request);
     }
 
-     //REFERENCES
-    // public function aintUserType2(){
+    public function specialExternalCustomer(){
+        return $this->belongsTo(SpecialExternalCustomer::class,'spexgc_company', 'spcus_id');
+    }
 
-    //     //BUDGET Request
-
-    //     //Pending Request
-    //     $budPenReq = User::userTypeBudget(request()->user()->usertype)->count();
-    //     //Approved Request
-    //     $budAppReq = BudgetRequest::where('br_request_status', 1)->count();
-    //     //Cancelled Request
-    //     $budCanReq = BudgetRequest::where('br_request_status', 2)->count();
-
-    //     //STORE GC REQUEST
-
-    //     //Pending Request
-    //     $storePenReq = StoreGcrequest::where(function (Builder $query) {
-    //         $query->where('sgc_status', 0)
-    //             ->orWhere('sgc_status', 1);
-    //     })->where('sgc_cancel', '')->count();
-    //     //Release Gc
-    //     $storeAppReq = ApprovedGcrequest::has('storeGcRequest.stores')->has('user')->count();
-    //     //Cancelled Request
-    //     $storeCanReq= StoreGcrequest::where([['sgc_status',0], ['sgc_cancel','*']])->count();
-
-
-    //     //PROMO GC RELEASED 
-
-    //     //Released GC
-    //     $promoGCREl = PromoGcReleaseToDetail::count();
-
-    //     //Institution GC Sales
-    //     $instr = InstitutTransaction::count();
-
-    //     //GC PRODUCTION REQUEST
-
-    //     //Pending Request
-    //     $proPenReq = ProductionRequest::whereHas('user', function ($query) {
-    //         $query->where('usertype', request()->user()->usertype);
-    //     }  )->where('pe_status', 0)->count();
-
-    //     //Approved Request
-    //     $proAppReq= ProductionRequest::where('pe_status', 1)->count();
-    //     //Cancelled Request
-    //     $proCanReq = ProductionRequest::where('pe_status', 2)->count();
-
-    //     //SPECIAL GC Request 
-    //     $segcpending = SpecialExternalGcrequest::countSpexgcStatus('pending');
-    //     //Approved GC
-    //     $segcapproved  = SpecialExternalGcrequest::countSpexgcStatus('approved');
-    //     //Reviewed GC For Releasing
-    //     $segcreviewed  = SpecialExternalGcrequest::where([['spexgc_reviewed', 'reviewed'], ['spexgc_released', ''], ['spexgc_promo', '0']])->count();
-    //     //Released GC
-    //     $segcapproved  = SpecialExternalGcrequest::countSpexgcReleased('released');
-    //     //Cancelled Request
-    //     $segccancelled  = SpecialExternalGcrequest::countSpexgcStatus('cancelled');
-
-    //     //Current Budget
-    //     // $data = LedgerBudget::where('bcus_guide','<>', 'dti')->sum('bcredit_amt', 'bdebit_amt');
-
-
-    //     $dataR = LedgerBudget::select(DB::raw('SUM(bdebit_amt) as debit_amount'), DB::raw('SUM(bcredit_amt) as credit_amount'))->whereNot('bcus_guide','dti')->first();
-    //     $debit = (float) $dataR->debit_amount;
-    //     $credit = (float) $dataR->credit_amount;
-    //     $budget = $debit - $credit;  // number_format( $budget, 2)
-
-
-    //     //EOD
-    //     $eod = InstitutEod::count();
-
-    //     //SODEXO Unknown
-
-
-    //     $ProductionRequestNo = ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get();
-
-    // }
+     
 }

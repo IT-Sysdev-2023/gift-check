@@ -31,9 +31,9 @@ class Dashboard extends Controller
     public function index()
     {
         $userType = request()->user()->usertype === '2' && request()->user()->user_role === 2;
-        
-        if($userType){
-            $record = $this->dashboardClass->handleUserTypeTwo();
+
+        if($userType){ //only the the specialGcRequest() is displayed
+            // $record = $this->dashboardClass->handleUserTypeTwo();
         }else{
             $record = $this->dashboardClass->handleUserOtherTypes();
         }

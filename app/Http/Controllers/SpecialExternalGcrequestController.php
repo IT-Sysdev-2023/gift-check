@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SpecialExternalGcrequest;
+use App\Services\SpecialExternalGcRequestService;
 use Illuminate\Http\Request;
 
 class SpecialExternalGcrequestController extends Controller
@@ -10,11 +11,15 @@ class SpecialExternalGcrequestController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index() //for the <a href="#/special-external-request-approved/"> Approved GC
     {
-        //
-    }
+        $approvedGc = SpecialExternalGcRequestService::approvedGc(); 
+        
 
+        return $approvedGc;
+    }
+    
+    
     /**
      * Show the form for creating a new resource.
      */

@@ -12,4 +12,6 @@ class SpecialExternalCustomer extends Model
     protected $table= 'special_external_customer';
 
     protected $primaryKey= 'spcus_id';
+
+    
 }
