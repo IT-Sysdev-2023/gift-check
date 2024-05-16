@@ -1,4 +1,4 @@
-<script setup lang="ts">
+`1`<script setup lang="ts">
 defineProps<{
     value?: string;
 }>();
