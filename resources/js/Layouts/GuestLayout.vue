@@ -11,7 +11,6 @@ import { Link } from '@inertiajs/vue3';
                 <div class="flex ">
                     <div class="w-1/2 flex justify-center items-center " style="height: 500px;" id="bg-image">
                     </div>
-
                     <div class="flex flex-col w-1/2 ">
                         <div class="mx-2 flex h-full sm:justify-center items-center pt-6 sm:pt-0">
                             <div class="w-full sm:max-w-md mt-6 px-6 py-4 overflow-hidden">
