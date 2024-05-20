@@ -39,33 +39,33 @@ svg {
 svg text {
     animation: stroke 5s infinite alternate;
     stroke-width: 2;
-    stroke: #A0186B;
+    stroke: #FF0000;
     font-size: 100px;
 }
 
 @keyframes stroke {
     0% {
-        fill: rgba(149, 33, 204, 0);
-        stroke: rgba(160, 24, 107, 1);
+        fill: rgba(9, 0, 204, 0);
+        stroke: rgba(255, 0, 0, 1);
         stroke-dashoffset: 25%;
         stroke-dasharray: 0 50%;
         stroke-width: 2;
     }
 
     70% {
-        fill: rgba(149, 33, 204, 0);
-        stroke: rgba(160, 24, 107, 1);
+        fill: rgba(9, 0, 204, 0);
+        stroke: rgba(255, 0, 0, 1);
     }
 
     80% {
-        fill: rgba(149, 33, 204, 0);
-        stroke: rgba(160, 24, 107, 1);
+        fill: rgba(9, 0, 204, 0);
+        stroke: rgba(255, 0, 0, 1);
         stroke-width: 3;
     }
 
     100% {
-        fill: rgba(149, 33, 204, 1);
-        stroke: rgba(160, 24, 107, 0);
+        fill: rgba(9, 0, 204, 1);
+        stroke: rgba(255, 0, 0, 0);
         stroke-dashoffset: -25%;
         stroke-dasharray: 50% 0;
         stroke-width: 0;
