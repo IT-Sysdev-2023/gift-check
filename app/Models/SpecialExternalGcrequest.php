@@ -22,6 +22,15 @@ class SpecialExternalGcrequest extends Model
         return $builder->where('spexgc_released', $request);
     }
 
+    public function scopeSpexgcReviewed(Builder $builder, mixed $request){
+
+        return $builder->where('spexgc_reviewed', $request);
+    }
+
+    public function scopeSpexgcPromo(Builder $builder, mixed $request){
+        return $builder->where('spexgc_promo', $request);
+    }
+
     public function specialExternalCustomer(){
         return $this->belongsTo(SpecialExternalCustomer::class,'spexgc_company', 'spcus_id');
     }

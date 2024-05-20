@@ -22,9 +22,12 @@ class SpecialExternalGcRequestService
         return $record;
     }
 
-    // public static function reviewedGc(){
-    //     SpecialExternalGcrequest::
-    // } 
+    public static function reviewedGc()
+    {
+        SpecialExternalGcrequest::spexgcStatus('approved')->spexgcReviewed('reviewed')
+            ->spexgcReleased('')->spexgcPromo('0');
+
+    }
 
     // $table = 'special_external_gcrequest';
     // $select = "special_external_gcrequest.spexgc_num,
