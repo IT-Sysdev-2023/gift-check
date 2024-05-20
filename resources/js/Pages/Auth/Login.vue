@@ -12,7 +12,7 @@ defineProps<{
     status?: string;
 }>();
 
-const form = useForm({
+const form: any = useForm({
     username: '',
     password: '',
     remember: false,
