@@ -100,7 +100,7 @@ svg text {
             <div>
                 <InputLabel for="username" value="username" />
 
-                <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus
+                <TextInput id="username" type="text" class="mt-1 block w-full" v-model="form.username" required autofocus
                     autocomplete="username" />
 
                 <InputError class="mt-2" :message="form.errors.username" />
