@@ -13,7 +13,15 @@ class StoreGcrequest extends Model
 
     protected $primaryKey= 'sgc_id';
 
-    public function stores(){
+    public function store(){
         return $this->belongsTo(Store::class, 'sgc_store','store_id' );
+    }
+
+    public function cancelledStoreGcRequest(){
+        return $this->belongsTo(CancelledStoreGcrequest::class, 'sgc_id', 'csgr_gc_id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'sgc_requested_by', 'user_id');
     }
 }

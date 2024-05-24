@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -15,6 +17,7 @@ class User extends Authenticatable
 
 
     protected $primaryKey = 'user_id';
+    protected $appends = ['full_name'];
     /**
      * The attributes that are mass assignable.
      *
@@ -47,6 +50,17 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn(mixed $value, array $attributes) => Str::title("{$attributes['firstname']} {$attributes['lastname']}")
+        );
+    }
+
+    public function accessPage(){
+        return $this->belongsTo(AccessPage::class, 'usertype', 'access_no');
     }
 
     public function scopeUserTypeBudget(Builder $builder, $userType){

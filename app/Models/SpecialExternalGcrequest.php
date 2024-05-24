@@ -34,6 +34,13 @@ class SpecialExternalGcrequest extends Model
     public function specialExternalCustomer(){
         return $this->belongsTo(SpecialExternalCustomer::class,'spexgc_company', 'spcus_id');
     }
+    public function user(){
+        return $this->belongsTo(User::class, 'spexgc_reqby', 'user_id');
+    }
+
+    public function approvedRequest(){
+        return $this->belongsTo(ApprovedRequest::class, 'spexgc_id', 'reqap_trid');
+    }
 
      
 }
