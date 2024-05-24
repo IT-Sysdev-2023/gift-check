@@ -98,7 +98,7 @@ class GcProductionRequestService
     {
 
         $record = ProductionRequest::with('user')
-            ->join('approved_production_request', 'pe_id', 'ape_pro_request_id')
+            ->join('approved_production_request', 'production_request.pe_id', '=', 'approved_production_request.ape_pro_request_id')
             ->where('pe_status', 1)
             ->orderByDesc('pe_id')
             ->get();
@@ -152,58 +152,58 @@ class GcProductionRequestService
     public function cancelledRequest() // cancelled-production-request.php
     {
 
-        $record = CancelledProductionRequest::join('production_request', 'cpr_pro_id', 'pe_id')
-                        ->join('users as lreq', 'pe_requested_by', 'lreq.user_id')
-                        ->join('users as lcan', 'cpr_by', 'lcan.user_id')
-                        ->orderByDesc('cpr_id')
-                    ->get();
+        $record = CancelledProductionRequest::join('production_request', 'cancelled_production_request.cpr_pro_id', '=', 'production_request.pe_id')
+            ->join('users as lreq', 'cancelled_production_request.pe_requested_by', '=', 'lreq.user_id')
+            ->join('users as lcan', 'cancelled_production_request.cpr_by', '=','lcan.user_id')
+            ->orderByDesc('cpr_id')
+            ->get();
         return $record;
-    //     function getAllCancelledProductionRequest($link)
-	// {
-	// 	$rows = [];
-	// 	$query = $link->query(
-	// 		"SELECT 
-	// 			production_request.pe_id,
-	// 			production_request.pe_num,
-	// 			production_request.pe_date_request,
-	// 			production_request.pe_date_needed,
-	// 			lreq.firstname as lreqfname,
-	// 			lreq.lastname as lreqlname,
-	// 			cancelled_production_request.cpr_at,
-	// 			lcan.firstname as lcanfname,
-	// 			lcan.lastname as lcanlname
-	// 		FROM 
-	// 			cancelled_production_request
-	// 		INNER JOIN
-	// 			production_request
-	// 		ON
-	// 			production_request.pe_id = cancelled_production_request.cpr_pro_id
-	// 		INNER JOIN
-	// 			users as lreq
-	// 		ON
-	// 			lreq.user_id = production_request.pe_requested_by
-	// 		INNER JOIN
-	// 			users as lcan
-	// 		ON
-	// 			lcan.user_id = cancelled_production_request.cpr_by
-	// 		ORDER BY
-	// 			cancelled_production_request.cpr_id
-	// 		DESC
-	// 	");
+        //     function getAllCancelledProductionRequest($link)
+        // {
+        // 	$rows = [];
+        // 	$query = $link->query(
+        // 		"SELECT 
+        // 			production_request.pe_id,
+        // 			production_request.pe_num,
+        // 			production_request.pe_date_request,
+        // 			production_request.pe_date_needed,
+        // 			lreq.firstname as lreqfname,
+        // 			lreq.lastname as lreqlname,
+        // 			cancelled_production_request.cpr_at,
+        // 			lcan.firstname as lcanfname,
+        // 			lcan.lastname as lcanlname
+        // 		FROM 
+        // 			cancelled_production_request
+        // 		INNER JOIN
+        // 			production_request
+        // 		ON
+        // 			production_request.pe_id = cancelled_production_request.cpr_pro_id
+        // 		INNER JOIN
+        // 			users as lreq
+        // 		ON
+        // 			lreq.user_id = production_request.pe_requested_by
+        // 		INNER JOIN
+        // 			users as lcan
+        // 		ON
+        // 			lcan.user_id = cancelled_production_request.cpr_by
+        // 		ORDER BY
+        // 			cancelled_production_request.cpr_id
+        // 		DESC
+        // 	");
 
-	// 	if($query)
-	// 	{
-	// 		while ($row = $query->fetch_object()) 
-	// 		{
-	// 			$rows[] = $row;
-	// 		}
-	// 		return $rows;
-	// 	}
-	// 	else 
-	// 	{
-	// 		return $link->error;
-	// 	}
-	// }
+        // 	if($query)
+        // 	{
+        // 		while ($row = $query->fetch_object()) 
+        // 		{
+        // 			$rows[] = $row;
+        // 		}
+        // 		return $rows;
+        // 	}
+        // 	else 
+        // 	{
+        // 		return $link->error;
+        // 	}
+        // }
 
 
     }

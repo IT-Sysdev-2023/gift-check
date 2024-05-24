@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SpecialExternalGcrequestController;
 use App\Services\GcProductionRequestService;
+use App\Services\PromoInstitutionAdjustmentService;
 use App\Services\SpecialExternalGcRequestService;
 use App\Services\StoreGcRequestService;
 use Illuminate\Foundation\Application;
@@ -20,7 +21,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/test', [GcProductionRequestService::class, 'cancelledRequest']);
+Route::get('/test', [PromoInstitutionAdjustmentService::class, 'allocationAdjustments']);
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

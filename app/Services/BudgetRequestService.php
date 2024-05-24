@@ -84,45 +84,19 @@ class BudgetRequestService
     public static function approvedRequest(): Collection //approved-budget-request
     {
         $record = BudgetRequest::with('user')
-                    ->leftJoin('approved_budget_request', 'br_id', 'abr_budget_request_id')
+                    ->leftJoin('approved_budget_request', 'budget_request.br_id', '=', 'approved_budget_request.abr_budget_request_id')
                     ->where('br_request_status', '1')->get();
         return $record;
     }
 
 
-//     function getAllData($link,$table,$select,$where,$join,$limit)
-// {
-//     $rows = [];
-//     $query = $link->query(
-//         "SELECT
-//             ".$select."
-//         FROM 
-//             ".$table." 
-//         ".$join."
-//         WHERE
-//             ".$where."
-//         ".$limit."      
-//     ");
-//     if($query)
-//     {
-//         while ( $row = $query->fetch_object()) 
-//         {
-//             $rows[] = $row;
-//         }
-//         return $rows;
-//     }
-//     else 
-//     {
-//         return $link->error;
-//     }
-// }
 
     public static function cancelledRequest(): Collection //cancelled-budget-request.php
     {
 
         $record = BudgetRequest::with('user')
-            ->join('cancelled_budget_request', 'br_id', 'cdreq_req_id')
-            ->join('user as cancelled_user', 'cdreq_by', 'user_id')
+            ->join('cancelled_budget_request', 'budget_request.br_id', '=', 'cancelled_budget_request.cdreq_req_id')
+            ->join('user as cancelled_user', 'budget_request.cdreq_by', '=', 'cancelled_budget_request.user_id')
         ->where('br_request_status', '2')->get();
 
         return $record;

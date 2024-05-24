@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\AllocationAdjustment;
 use App\Models\InstitutTransaction;
+use App\Models\LedgerBudget;
 use App\Models\PromoGcReleaseToDetail;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -11,8 +13,8 @@ class PromoInstitutionAdjustmentService
 
     public function promoGcReleased() // #/promo-gc-released-list
     {
-        $record = PromoGcReleaseToDetail::join('users', 'prrelto_relby', 'user_id')
-            ->join('promo_gc_request', 'prrelto_trid', 'pgcreq_id')
+        $record = PromoGcReleaseToDetail::join('users', 'promo_gc_release_to_details.prrelto_relby', '=', 'users.user_id')
+            ->join('promo_gc_request', 'promo_gc_release_to_details.prrelto_trid', '=', 'promo_gc_request.pgcreq_id')
             ->orderByDesc('prrelto_id')
             ->get();
         return $record;
@@ -46,8 +48,8 @@ class PromoInstitutionAdjustmentService
 
     public function institutionGcSales(): Collection // #/institution-gc-sales
     {
-        $record = InstitutTransaction::leftJoin('institut_customer', 'institutr_cusid', 'ins_id')
-            // ->where("1")
+        $record = InstitutTransaction::
+            leftJoin('institut_customer', 'institut_transactions.institutr_cusid', '=', 'institut_customer.ins_id')
             ->get();
 
         return $record;
@@ -71,12 +73,83 @@ class PromoInstitutionAdjustmentService
     //ADJUSTMENTS
     public function budgetAdjustments() //view-budget-adj.php
     {
+        $record = LedgerBudget::with('user')
+            ->join('budget_adjustment', 'ledger_budget.bledger_trid', '=', 'budget_adjustment.bud_id')
+            ->where('bledger_type', 'BA')
+            ->get();
+        return $record;
+
+        //     function getAdjBudget($link)
+        // {
+        // 	$rows = [];
+        // 	$query = $link->query(
+        // 		"SELECT 
+        // 			budget_adjustment.bud_adj_type,
+        // 			budget_adjustment.bud_remark,
+        // 			ledger_budget.bledger_datetime,
+        // 			ledger_budget.bdebit_amt,
+        // 			ledger_budget.bcredit_amt,
+        // 			CONCAT(users.firstname,' ',users.lastname) as prepby
+        // 		FROM 
+        // 			ledger_budget
+        // 		INNER JOIN
+        // 			budget_adjustment
+        // 		ON
+        // 			budget_adjustment.bud_id = ledger_budget.bledger_trid
+        // 		INNER JOIN
+        // 			users
+        // 		ON
+        // 			users.user_id = budget_adjustment.bud_by
+        // 		WHERE 
+        // 			ledger_budget.bledger_type='BA'
+        // 	");
+
+        // 	if($query)
+        // 	{
+        // 		while ($row = $query->fetch_object()) {
+        // 			$rows[] = $row;
+        // 		}
+        // 		return $rows;
+        // 	}
+        // 	else
+        // 	{
+        // 		return $rows[] = $link->error;
+        // 	}
+        // }
+    }
+
+    public function allocationAdjustments() //view-allocation-adj.php
+    {
+        $record = AllocationAdjustment::with('user')
+            ->join('stores', 'allocation_adjustment.aadj_loc', '=', 'stores.store_id')
+            ->join('gc_type', 'allocation_adjustment.aadj_gctype', '=', 'stores.gc_type_id')
+            ->get();
+            
+        return $record;
+
+        // $table = allocation_adjustment
+        //     $select = 'allocation_adjustment.aadj_id,
+        //     allocation_adjustment.aadj_datetime,
+        //     allocation_adjustment.aadj_type,
+        //     stores.store_name,
+        //     gc_type.gctype,
+        //     users.firstname,
+        //     users.lastname,
+        //     allocation_adjustment.aadj_remark';
+        // $join = 'INNER JOIN
+        //         stores
+        //     ON
+        //         stores.store_id =  allocation_adjustment.aadj_loc
+        //     INNER JOIN
+        //         gc_type
+        //     ON
+        //         gc_type.gc_type_id = allocation_adjustment.aadj_gctype
+        //     INNER JOIN
+        //         users
+        //     ON
+        //         users.user_id = allocation_adjustment.aadj_by';
 
     }
 
-    public function allocationAdjustments(){
 
-    }
-
-    
 }
