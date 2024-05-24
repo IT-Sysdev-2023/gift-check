@@ -124,10 +124,16 @@ class StoreGcRequestService
 	// }
     }
 
-    public static function cancelledRequest(){
+    public static function cancelledRequest(): Collection
+    {
 
+        $record = StoreGcrequest::withWhereHas('cancelledStoreGcRequest')
+                                ->withWhereHas('store')
+                                ->with('user')
+                                ->where([['sgc_status', 0], ['sgc_cancel', '*']])
+                                ->get();
 
-
+        return $record;
     //     function getAllCancelledGCRequestStore($link)
 	// {
 	// 	$rows = [];

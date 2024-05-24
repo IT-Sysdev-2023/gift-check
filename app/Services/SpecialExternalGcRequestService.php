@@ -92,8 +92,9 @@ class SpecialExternalGcRequestService
     public static function cancelledGcRequest(): Collection //cancelled-gc-request.php
     {
         
-        $record = StoreGcrequest::with('user')->join('cancelled_store_gcrequest', 'sgc_id', 'csgr_gc_id')
-                    ->join('stores', 'sgc_store', 'store_id')
+        $record = StoreGcrequest::with('user')
+                    ->withWhereHas('cancelledStoreGcRequest')
+                    ->withWhereHas('store')
                     ->where([['sgc_status', 0], ['sgc_cancel', '*']])->get();
         return $record;
 
