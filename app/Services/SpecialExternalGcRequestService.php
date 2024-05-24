@@ -15,8 +15,7 @@ class SpecialExternalGcRequestService
 
     public static function approvedGc(): Collection //<a href="#/special-external-request-approved/">
     {
-        $record = SpecialExternalGcrequest::has('specialExternalCustomer')
-            ->with('specialExternalCustomer')
+        $record = SpecialExternalGcrequest::joinSpecialExternalCustomer()
             ->select('approved_request.*', 'special_external_gcrequest.*')
             ->leftJoin('approved_request', function (JoinClause $join) {
                 $join->on('special_external_gcrequest.spexgc_id', 'approved_request.reqap_trid')
@@ -29,7 +28,7 @@ class SpecialExternalGcRequestService
 
     public static function reviewedGc(): Collection //special-external-gc-reviewed
     {
-        $data = SpecialExternalGcrequest::with('user', 'specialExternalCustomer')
+        $data = SpecialExternalGcrequest::joinSpecialExternalCustomer()->with('user')
             ->withWhereHas(
                 'approvedRequest',
                 function ($query) {
@@ -79,7 +78,7 @@ class SpecialExternalGcRequestService
 
     public static function releasedGc(): Collection //released-special-external-request
     {
-        $record = SpecialExternalGcrequest::with('approvedRequest.user', 'user', 'specialExternalCustomer')
+        $record = SpecialExternalGcrequest::joinSpecialExternalCustomer()->with('approvedRequest.user', 'user')
             ->withWhereHas('approvedRequest', function ($query) {
                 $query->approvedType('special external releasing');
             })
