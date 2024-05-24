@@ -4,6 +4,7 @@ use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SpecialExternalGcrequestController;
+use App\Services\GcProductionRequestService;
 use App\Services\SpecialExternalGcRequestService;
 use App\Services\StoreGcRequestService;
 use Illuminate\Foundation\Application;
@@ -19,7 +20,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/test', [StoreGcRequestService::class, 'cancelledRequest']);
+Route::get('/test', [GcProductionRequestService::class, 'cancelledRequest']);
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

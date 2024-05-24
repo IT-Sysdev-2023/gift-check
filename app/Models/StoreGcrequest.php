@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class StoreGcrequest extends Model
@@ -13,6 +14,13 @@ class StoreGcrequest extends Model
 
     protected $primaryKey= 'sgc_id';
 
+    public function scopeCancelledGcRequest(Builder $query)
+    {
+        return $query->with('user')
+                    ->join('cancelled_store_gcrequest', 'sgc_id', 'csgr_gc_id')
+                    ->join('stores', 'sgc_store', 'store_id')
+                    ->where([['sgc_status', 0], ['sgc_cancel', '*']]);
+    }
     public function store(){
         return $this->belongsTo(Store::class, 'sgc_store','store_id' );
     }

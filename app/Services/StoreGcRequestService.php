@@ -11,7 +11,8 @@ class StoreGcRequestService
 
     public static function pendingRequest(): Collection //tran_release_gc.php
     {
-        $record = StoreGcrequest::withWhereHas('user')->withWhereHas('store')
+        $record = StoreGcrequest::with('user')
+			->join('stores', 'sgc_store' , 'store_id')
             ->where(function (Builder $query){
                 $query->where('sgc_status', 1)
                     ->orWhere('sgc_status', 0);
@@ -126,14 +127,7 @@ class StoreGcRequestService
 
     public static function cancelledRequest(): Collection
     {
-
-        $record = StoreGcrequest::withWhereHas('cancelledStoreGcRequest')
-                                ->withWhereHas('store')
-                                ->with('user')
-                                ->where([['sgc_status', 0], ['sgc_cancel', '*']])
-                                ->get();
-
-        return $record;
+        return StoreGcrequest::cancelledGcRequest()->get();
     //     function getAllCancelledGCRequestStore($link)
 	// {
 	// 	$rows = [];
