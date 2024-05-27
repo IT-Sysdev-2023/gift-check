@@ -65,11 +65,10 @@ class SpecialGcRequestService
         $record = SpecialExternalGcrequest::joinSpecialExternalCustomer()
             ->leftJoin('approved_request', function (JoinClause $join) {
                 $join->on('special_external_gcrequest.spexgc_id', 'approved_request.reqap_trid')
-                    ->select('reqap_approvedby', 'reqap_date', 'reqap_approvedtype')
                     ->where('approved_request.reqap_approvedtype', 'Special External GC Approved');
             })
             ->spexgcStatus('approved')
-            ->select('spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed', 'spcus_acctname', 'spcus_companyname')
+            ->select('reqap_approvedby', 'reqap_date', 'reqap_approvedtype','spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed', 'spcus_acctname', 'spcus_companyname')
             ->get();
 
         return $record;
@@ -114,7 +113,7 @@ class SpecialGcRequestService
             //     $join->on('special_external_gcrequest.spexgc_id', '=', 'approved_request.reqap_trid')
             //         ->where('approved_request.reqap_approvedtype', 'Special External GC Approved');
             // })
-            ->select('spcus_acctname', 'spcus_companyname', 'spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
+            ->select('spcus_acctname', 'spcus_companyname', 'spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq', 'spexgc_reqby')
             ->spexgcStatus('approved')
             ->spexgcReviewed('reviewed')
             ->spexgcReleased('')
@@ -163,8 +162,8 @@ class SpecialGcRequestService
     public function releasedGc() //released-special-external-request
     {
 
-        $record = SpecialExternalGcrequest::releasedGc()->get();
-        return $record;
+        $record = SpecialExternalGcrequest::releasedGc()->limit(10)->get();
+        return ($record);
 
         //     $table='special_external_gcrequest';
         // $select ="special_external_gcrequest.spexgc_id,
@@ -208,7 +207,7 @@ class SpecialGcRequestService
             'store:store_id,store_name',
             'user:user_id,firstname,lastname'
         ])
-            ->select('sgc_id', 'sgc_num', 'sgc_requested_by', 'sgc_date_request')
+            ->select('sgc_id', 'sgc_num', 'sgc_requested_by', 'sgc_date_request', 'sgc_store')
             ->where([['sgc_status', 0], ['sgc_cancel', '*']])
             ->get();
 

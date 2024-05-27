@@ -16,7 +16,18 @@ class StoreGcrequest extends Model
 
     public function scopeCancelledGcRequest(Builder $query)
     {
-        return $query->with('user')
+
+     //   `store_gcrequest`.`sgc_id`,
+	// 			`store_gcrequest`.`sgc_num`,
+	// 			`cancelled_store_gcrequest`.`csgr_by`,
+	// 			`cancelled_store_gcrequest`.`csgr_at`,
+	// 			`stores`.`store_name`,
+	// 			`store_gcrequest`.`sgc_requested_by`,
+	// 			`users`.`firstname`,
+	// 			`users`.`lastname`,
+	// 			`store_gcrequest`.`sgc_date_request`
+
+        return $query->with('user:user_id,firstname,lastname')
                     ->join('cancelled_store_gcrequest', 'sgc_id', 'csgr_gc_id')
                     ->join('stores', 'sgc_store', 'store_id')
                     ->where([['sgc_status', 0], ['sgc_cancel', '*']]);

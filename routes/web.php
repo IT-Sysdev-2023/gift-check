@@ -18,7 +18,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/test', [SpecialGcRequestService::class, 'releasedGc']);
+Route::get('/test', [SpecialGcRequestService::class, 'forPendingRequest']);
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

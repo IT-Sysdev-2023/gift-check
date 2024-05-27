@@ -71,7 +71,7 @@ class SpecialExternalGcrequest extends Model
             'approvedRequest.user:user_id,firstname,lastname'
         ])
             ->joinSpecialExternalCustomer()
-            ->select('spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed', 'spcus_acctname', 'spcus_companyname')
+            ->select('spexgc_reqby', 'spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed', 'spcus_acctname', 'spcus_companyname')
             ->spexgcReleased('released');
     }
 
