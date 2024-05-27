@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\SpecialExternalGcrequest;
+use App\Models\StoreGcrequest;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class SpecialGcRequestService
 {
@@ -13,7 +15,6 @@ class SpecialGcRequestService
         $request = self::forPendingRequest('0');
 
         $request2 = self::forPendingRequest('*');
-
 
         //     $table = 'special_external_gcrequest';
         // $select = " special_external_gcrequest.spexgc_num,
@@ -64,9 +65,11 @@ class SpecialGcRequestService
         $record = SpecialExternalGcrequest::joinSpecialExternalCustomer()
             ->leftJoin('approved_request', function (JoinClause $join) {
                 $join->on('special_external_gcrequest.spexgc_id', 'approved_request.reqap_trid')
+                    ->select('reqap_approvedby', 'reqap_date', 'reqap_approvedtype')
                     ->where('approved_request.reqap_approvedtype', 'Special External GC Approved');
             })
             ->spexgcStatus('approved')
+            ->select('spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed', 'spcus_acctname', 'spcus_companyname')
             ->get();
 
         return $record;
@@ -100,15 +103,23 @@ class SpecialGcRequestService
     {
 
         $record = SpecialExternalGcrequest::joinSpecialExternalCustomer()
-            ->join('approved_request', function (JoinClause $join) {
-                $join->on('special_external_gcrequest.spexgc_id', '=', 'approved_request.reqap_trid')
-                    ->where('approved_request.reqap_approvedtype', 'Special External GC Approved');
-            })
+            ->with([
+                'user:user_id,firstname,lastname',
+                'approvedRequest' => function (Builder $query) {
+                    $query->select('reqap_trid', 'reqap_approvedtype', 'reqap_approvedby')
+                        ->approvedType('Special External GC Approved');
+                }
+            ])
+            // ->join('approved_request', function (JoinClause $join) {
+            //     $join->on('special_external_gcrequest.spexgc_id', '=', 'approved_request.reqap_trid')
+            //         ->where('approved_request.reqap_approvedtype', 'Special External GC Approved');
+            // })
+            ->select('spcus_acctname', 'spcus_companyname', 'spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
             ->spexgcStatus('approved')
             ->spexgcReviewed('reviewed')
             ->spexgcReleased('')
             ->spexgcPromo('0')
-            ->with('user')
+            // ->with('user')
             ->orderBy('spexgc_id')
             ->get();
         return $record;
@@ -121,7 +132,6 @@ class SpecialGcRequestService
         //     CONCAT(users.firstname,' ',users.lastname) as prep,
         //     special_external_customer.spcus_acctname,
         //     special_external_customer.spcus_companyname,
-        //     special_external_gcrequest.spexgc_id,
         //     approved_request.reqap_approvedby";
         // $where = "special_external_gcrequest.spexgc_status='approved'
         //     AND
@@ -153,16 +163,12 @@ class SpecialGcRequestService
     public function releasedGc() //released-special-external-request
     {
 
-        $record = SpecialExternalGcrequest::joinSpecialExternalCustomer()->join('approved_request', function (JoinClause $join) {
-            $join->on('special_external_gcrequest.spexgc_id', '=', 'approved_request.reqap_trid')
-                ->where('approved_request.reqap_approvedtype', 'special external releasing');
-        })
-        ->with('user')
-        ->get();
-
+        $record = SpecialExternalGcrequest::releasedGc()->get();
+        return $record;
 
         //     $table='special_external_gcrequest';
         // $select ="special_external_gcrequest.spexgc_id,
+
         //     special_external_gcrequest.spexgc_num,
         //     CONCAT(req.firstname,' ',req.lastname) as reqby,
         //     special_external_gcrequest.spexgc_datereq,
@@ -170,7 +176,7 @@ class SpecialGcRequestService
         //     special_external_customer.spcus_acctname,
         //     special_external_customer.spcus_companyname,
         //     approved_request.reqap_date,
-        // 	CONCAT(rev.firstname,' ',rev.lastname) as revby";
+        // 	    CONCAT(rev.firstname,' ',rev.lastname) as revby";
         // $where = "special_external_gcrequest.spexgc_released='released'
         // 	AND
         // 		approved_request.reqap_approvedtype='special external releasing'";
@@ -197,9 +203,17 @@ class SpecialGcRequestService
     }
     public function cancelledRequest() //cancelled-gc-request.php
     {
+        $record = StoreGcrequest::with([
+            'cancelledStoreGcRequest:csgr_id,csgr_gc_id,csgr_by,csgr_at',
+            'store:store_id,store_name',
+            'user:user_id,firstname,lastname'
+        ])
+            ->select('sgc_id', 'sgc_num', 'sgc_requested_by', 'sgc_date_request')
+            ->where([['sgc_status', 0], ['sgc_cancel', '*']])
+            ->get();
 
 
-
+        return $record;
         // $rows = [];
 
         // $query = $link->query(
@@ -252,9 +266,10 @@ class SpecialGcRequestService
     private static function forPendingRequest(string $param)
     {
         return SpecialExternalGcrequest::joinSpecialExternalCustomer()
+            ->with('user:user_id,firstname,lastname')
+            ->select('spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq', 'spcus_acctname', 'spcus_companyname')
             ->spexgcStatus('pending')
             ->spexgcPromo($param)
-            ->with('user')
             ->orderBy('spexgc_id')
             ->get();
     }

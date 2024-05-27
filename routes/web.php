@@ -4,6 +4,7 @@ use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\ProfileController;
 use App\Services\PromoInstitutionAdjustmentService;
+use App\Services\SpecialGcRequestService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -17,7 +18,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/test', [PromoInstitutionAdjustmentService::class, 'allocationAdjustments']);
+Route::get('/test', [SpecialGcRequestService::class, 'releasedGc']);
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

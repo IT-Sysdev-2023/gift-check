@@ -11,54 +11,78 @@ class SpecialExternalGcrequest extends Model
 {
     use HasFactory;
 
-    protected $table= 'special_external_gcrequest';
+    protected $table = 'special_external_gcrequest';
 
-    protected $primaryKey= 'spexgc_id';
+    protected $primaryKey = 'spexgc_id';
 
-    public function scopeSpexgcStatus(Builder $builder, mixed $request){
+    public function scopeSpexgcStatus(Builder $builder, mixed $request)
+    {
         return $builder->where('spexgc_status', $request);
     }
 
-    public function scopeSpexgcReleased(Builder $builder, mixed $request){
+    public function scopeSpexgcReleased(Builder $builder, mixed $request)
+    {
         return $builder->where('spexgc_released', $request);
     }
 
-    public function scopeSpexgcReviewed(Builder $builder, mixed $request){
+    public function scopeSpexgcReviewed(Builder $builder, mixed $request)
+    {
 
         return $builder->where('spexgc_reviewed', $request);
     }
 
-    public function scopeSpexgcPromo(Builder $builder, mixed $request){
+    public function scopeSpexgcPromo(Builder $builder, mixed $request)
+    {
         return $builder->where('spexgc_promo', $request);
     }
 
-    public function scopeJoinSpecialExternalCustomer(Builder $builder){
+    public function scopeJoinSpecialExternalCustomer(Builder $builder)
+    {
         return $builder->join('special_external_customer', 'special_external_gcrequest.spexgc_company', '=', 'special_external_customer.spcus_id');
     }
 
     public function scopeJoinApprovedRequest(Builder $builder)
     {
-        return $builder->join('approved_request', 'special_external_gcrequest.spexgc_id' , '=','approved_request.reqap_trid');
+        return $builder->join('approved_request', 'special_external_gcrequest.spexgc_id', '=', 'approved_request.reqap_trid');
     }
 
-    public function specialExternalCustomer(){
-        return $this->belongsTo(SpecialExternalCustomer::class,'spexgc_company', 'spcus_id');
+    public function specialExternalCustomer()
+    {
+        return $this->belongsTo(SpecialExternalCustomer::class, 'spexgc_company', 'spcus_id');
     }
-    public function user(): BelongsTo{
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'spexgc_reqby', 'user_id');
     }
 
-    public function preparedBy(): BelongsTo{
+    public function preparedBy(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'reqap_preparedby', 'user_id');
+    }
+
+    public function scopeReleasedGc(Builder $builder)
+    {
+        return $this->with([
+            'user:user_id,firstname,lastname',
+            'approvedRequest' => function ($query) {
+                $query->select('reqap_trid', 'reqap_date', 'reqap_approvedtype', 'reqap_preparedby')
+                    ->approvedType('special external releasing');
+            },
+            'approvedRequest.user:user_id,firstname,lastname'
+        ])
+            ->joinSpecialExternalCustomer()
+            ->select('spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed', 'spcus_acctname', 'spcus_companyname')
+            ->spexgcReleased('released');
     }
 
     // public function requestBy(): BelongsTo{
     //     return $this->belongsTo(User::class, 'spexgc_reqby', 'user_id');
     // }
 
-    public function approvedRequest(){
+    public function approvedRequest()
+    {
         return $this->belongsTo(ApprovedRequest::class, 'spexgc_id', 'reqap_trid');
     }
 
-     
+
 }

@@ -78,12 +78,7 @@ class SpecialExternalGcRequestService
 
     public static function releasedGc(): Collection //released-special-external-request
     {
-        $record = SpecialExternalGcrequest::joinSpecialExternalCustomer()->with('approvedRequest.user', 'user')
-            ->withWhereHas('approvedRequest', function ($query) {
-                $query->approvedType('special external releasing');
-            })
-            ->spexgcReleased('released')->get();
-
+        $record = SpecialExternalGcrequest::releasedGc()->get();
         // return SpecialExternalGcRequestResource::collection($record);
         return $record;
     }
