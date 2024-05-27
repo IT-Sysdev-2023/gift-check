@@ -65,7 +65,7 @@ class SpecialExternalGcrequest extends Model
         return $this->with([
             'user:user_id,firstname,lastname',
             'approvedRequest' => function ($query) {
-                $query->select('reqap_trid', 'reqap_date', 'reqap_approvedtype', 'reqap_preparedby')
+                $query->selectColumn(['reqap_date', 'reqap_preparedby'])
                     ->approvedType('special external releasing');
             },
             'approvedRequest.user:user_id,firstname,lastname'

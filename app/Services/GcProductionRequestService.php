@@ -12,7 +12,8 @@ class GcProductionRequestService
     {
 
         $dept = request()->user()->usertype;
-        $pr = ProductionRequest::withWhereHas('user', fn($query) => $query->where('usertype', $dept))
+        $pr = ProductionRequest::withWhereHas('user', fn($query) => $query->select('user_id', 'firstname', 'lastname')->where('usertype', $dept))
+            ->select('pe_id', 'pe_file_docno', 'pe_date_needed', 'pe_remarks', 'pe_num', 'pe_date_request', 'pe_group')
             ->where('pe_status', 0)
             ->orderByDesc('pe_id')
             ->first();
@@ -97,8 +98,10 @@ class GcProductionRequestService
     protected function approvedRequest() //approved-production-request
     {
 
-        $record = ProductionRequest::with('user')
-            ->join('approved_production_request', 'production_request.pe_id', '=', 'approved_production_request.ape_pro_request_id')
+        $record = ProductionRequest::with(['user:user_id,firstname,lastname',
+                                    'approvedProductionRequest:ape_id,ape_pro_request_id,ape_approved_at,ape_approved_by'])
+            // ->join('approved_production_request', 'production_request.pe_id', '=', 'approved_production_request.ape_pro_request_id')
+            ->select('pe_id', 'pe_requested_by', 'pe_num', 'pe_date_request', 'pe_date_needed')
             ->where('pe_status', 1)
             ->orderByDesc('pe_id')
             ->get();
@@ -155,6 +158,7 @@ class GcProductionRequestService
         $record = CancelledProductionRequest::join('production_request', 'cancelled_production_request.cpr_pro_id', '=', 'production_request.pe_id')
             ->join('users as lreq', 'cancelled_production_request.pe_requested_by', '=', 'lreq.user_id')
             ->join('users as lcan', 'cancelled_production_request.cpr_by', '=','lcan.user_id')
+            ->select('pe_id','pe_num', 'pe_date_request', 'pe_date_needed', 'lreq.firstname as lreqfname', 'lreq.lastname as lreqlname', 'cpr_at', 'lcan.firstname as lcanfname', 'lcan.lastname as lcanlname')
             ->orderByDesc('cpr_id')
             ->get();
         return $record;

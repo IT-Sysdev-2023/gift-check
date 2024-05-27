@@ -105,8 +105,7 @@ class SpecialGcRequestService
             ->with([
                 'user:user_id,firstname,lastname',
                 'approvedRequest' => function (Builder $query) {
-                    $query->select('reqap_trid', 'reqap_approvedtype', 'reqap_approvedby')
-                        ->approvedType('Special External GC Approved');
+                    $query->selectColumn()->approvedType('Special External GC Approved');
                 }
             ])
             // ->join('approved_request', function (JoinClause $join) {

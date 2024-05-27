@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -14,7 +15,13 @@ class BudgetRequest extends Model
     protected $table = 'budget_request';
     protected $primaryKey = 'br_id';
 
-    public function user(){
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'br_requested_by', 'user_id' );
+    }
+
+    public function cancelledBudgetRequest(): BelongsTo
+    {
+        return $this->belongsTo(CancelledBudgetRequest::class, 'br_id', 'cdreq_req_id');
     }
 }

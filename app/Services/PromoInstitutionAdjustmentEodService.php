@@ -3,18 +3,22 @@
 namespace App\Services;
 
 use App\Models\AllocationAdjustment;
+use App\Models\InstitutEod;
 use App\Models\InstitutTransaction;
 use App\Models\LedgerBudget;
 use App\Models\PromoGcReleaseToDetail;
 use Illuminate\Database\Eloquent\Collection;
 
-class PromoInstitutionAdjustmentService
+class PromoInstitutionAdjustmentEodService
 {
 
     public function promoGcReleased() // #/promo-gc-released-list
     {
-        $record = PromoGcReleaseToDetail::join('users', 'promo_gc_release_to_details.prrelto_relby', '=', 'users.user_id')
-            ->join('promo_gc_request', 'promo_gc_release_to_details.prrelto_trid', '=', 'promo_gc_request.pgcreq_id')
+        $record = PromoGcReleaseToDetail::with(['user:user_id,firstname,lastname',
+                                            'promoGcRequest:pgcreq_id,pgcreq_reqnum'])
+        // ->join('users', 'promo_gc_release_to_details.prrelto_relby', '=', 'users.user_id')
+            // ->join('promo_gc_request', 'promo_gc_release_to_details.prrelto_trid', '=', 'promo_gc_request.pgcreq_id')
+            ->select('prrelto_id','prrelto_relnumber', 'prrelto_trid', 'prrelto_docs', 'prrelto_checkedby', 'prrelto_approvedby', 'prrelto_date', 'prrelto_recby', 'prrelto_status')
             ->orderByDesc('prrelto_id')
             ->get();
         return $record;
@@ -44,12 +48,14 @@ class PromoInstitutionAdjustmentService
         //         promo_gc_release_to_details.prrelto_id
         //     DESC';
         // $data = getAllData($link,$table,$select,$where,$join,$limit);
+
     }
 
     public function institutionGcSales(): Collection // #/institution-gc-sales
     {
         $record = InstitutTransaction::
             leftJoin('institut_customer', 'institut_transactions.institutr_cusid', '=', 'institut_customer.ins_id')
+            ->select('institutr_id', 'institutr_trnum', 'institutr_paymenttype', 'institutr_receivedby', 'institutr_date', 'ins_name')
             ->get();
 
         return $record;
@@ -73,8 +79,12 @@ class PromoInstitutionAdjustmentService
     //ADJUSTMENTS
     public function budgetAdjustments() //view-budget-adj.php
     {
-        $record = LedgerBudget::with('user')
-            ->join('budget_adjustment', 'ledger_budget.bledger_trid', '=', 'budget_adjustment.bud_id')
+        $record = LedgerBudget::with([
+            'budgetAdjustment.user:user_id,firstname,lastname',
+            'budgetAdjustment:bud_id,bud_by,bud_adj_type,bud_remark'
+        ])
+            // ->join('budget_adjustment', 'ledger_budget.bledger_trid', '=', 'budget_adjustment.bud_id')
+            ->select('bledger_datetime', 'bdebit_amt', 'bcredit_amt')
             ->where('bledger_type', 'BA')
             ->get();
         return $record;
@@ -120,11 +130,16 @@ class PromoInstitutionAdjustmentService
 
     public function allocationAdjustments() //view-allocation-adj.php
     {
-        $record = AllocationAdjustment::with('user')
-            ->join('stores', 'allocation_adjustment.aadj_loc', '=', 'stores.store_id')
-            ->join('gc_type', 'allocation_adjustment.aadj_gctype', '=', 'stores.gc_type_id')
+        $record = AllocationAdjustment::with([
+            'user:user_id,firstname,lastname',
+            'store:store_id,store_name',
+            'gcType:gc_type_id,gctype'
+        ])
+            ->select('aadj_id', 'aadj_datetime', 'aadj_type', 'aadj_remark', 'aadj_loc', 'aadj_gctype')
+            // ->join('stores', 'allocation_adjustment.aadj_loc', '=', 'stores.store_id')
+            // ->join('gc_type', 'allocation_adjustment.aadj_gctype', '=', 'gc_type.gc_type_id')
             ->get();
-            
+
         return $record;
 
         // $table = allocation_adjustment
@@ -148,6 +163,28 @@ class PromoInstitutionAdjustmentService
         //         users
         //     ON
         //         users.user_id = allocation_adjustment.aadj_by';
+
+    }
+
+    public function eodList() // #/eod-list/
+    {
+        $record = InstitutEod::with('user:user_id,firstname,lastname')
+            ->select('ieod_id', 'ieod_by', 'ieod_num', 'ieod_date')
+            ->orderByDesc('ieod_date')
+            ->get();
+        return $record;
+
+        // $where = "1";
+        // $select = "	institut_eod.ieod_id,
+        //     institut_eod.ieod_num,
+        //     institut_eod.ieod_date,
+        //     CONCAT(users.firstname,' ',users.lastname) as eodby";
+        // $join = "INNER JOIN
+        //         users
+        //     ON
+        //         users.user_id = institut_eod.ieod_by";
+        // $limit ='ORDER BY institut_eod.ieod_date DESC';
+        // $data = getAllData($link,'institut_eod',$select,$where,$join,$limit); 
 
     }
 

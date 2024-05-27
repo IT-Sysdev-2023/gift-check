@@ -16,6 +16,13 @@ class ApprovedRequest extends Model
     public function user(){
         return $this->belongsTo(User::class, 'reqap_preparedby', 'user_id');
     }
+
+    public function scopeSelectColumn(Builder $builder, ?array $column = [])
+    {
+        $default = ['reqap_approvedby','reqap_approvedtype', 'reqap_trid'];
+        $mergeColumns = array_merge($default, $column);
+        $builder->select($mergeColumns);
+    }
     public function scopeApprovedType(Builder $builder, $param)
     {
         $builder->where('reqap_approvedtype', $param);

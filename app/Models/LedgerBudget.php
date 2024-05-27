@@ -17,4 +17,8 @@ class LedgerBudget extends Model
     {
         return $this->belongsTo(User::class, 'bud_by', 'user_id');
     }
+
+    public function budgetAdjustment(): BelongsTo{
+        return $this->belongsTo(BudgetAdjustment::class, 'bledger_trid', 'bud_id');
+    }
 }

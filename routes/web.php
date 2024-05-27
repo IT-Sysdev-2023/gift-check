@@ -3,8 +3,12 @@
 use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\ProfileController;
-use App\Services\PromoInstitutionAdjustmentService;
+use App\Services\BudgetRequestService;
+use App\Services\GcProductionRequestService;
+use App\Services\PromoInstitutionAdjustmentEodService;
+use App\Services\SpecialExternalGcRequestService;
 use App\Services\SpecialGcRequestService;
+use App\Services\StoreGcRequestService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,7 +22,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/test', [SpecialGcRequestService::class, 'forPendingRequest']);
+Route::get('/test', [BudgetRequestService::class, 'approvedRequest']);
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

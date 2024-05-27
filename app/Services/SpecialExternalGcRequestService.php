@@ -6,7 +6,7 @@ use App\Http\Resources\SpecialExternalGcRequestResource;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\StoreGcrequest;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 
 class SpecialExternalGcRequestService
@@ -21,22 +21,56 @@ class SpecialExternalGcRequestService
                 $join->on('special_external_gcrequest.spexgc_id', 'approved_request.reqap_trid')
                     ->where('approved_request.reqap_approvedtype', 'Special External GC Approved');
             })
+            ->select('spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed', 'reqap_approvedby', 'reqap_date','spcus_acctname', 'spcus_companyname')
             ->spexgcStatus('approved')->get();
 
         return $record;
+
+    //     $table = 'special_external_gcrequest';
+    // $select = 'special_external_gcrequest.spexgc_id,
+    //     special_external_gcrequest.spexgc_num,
+    //     special_external_gcrequest.spexgc_datereq,
+    //     special_external_gcrequest.spexgc_dateneed,
+    //     approved_request.reqap_approvedby,
+    //     approved_request.reqap_date,
+    //     special_external_customer.spcus_acctname,
+    //     special_external_customer.spcus_companyname';
+    // $where = "special_external_gcrequest.spexgc_status='approved' AND
+    //         approved_request.reqap_approvedtype = 'Special External GC Approved'";
+
+    // $join = 'INNER JOIN
+    //         special_external_customer
+    //     ON
+    //         special_external_customer.spcus_id = special_external_gcrequest.spexgc_company
+    //     LEFT JOIN
+    //         approved_request
+    //     ON
+    //         approved_request.reqap_trid = special_external_gcrequest.spexgc_id';
+    // $limit ='';
+    // $data = getAllData($link,$table,$select,$where,$join,$limit);
     }
 
     public static function reviewedGc(): Collection //special-external-gc-reviewed
     {
-        $data = SpecialExternalGcrequest::joinSpecialExternalCustomer()->with('user')
-            ->withWhereHas(
-                'approvedRequest',
-                function ($query) {
-                    $query->approvedType('Special External GC Approved');
-                }
-            )
-            ->spexgcStatus('approved')->spexgcReviewed('reviewed')
-            ->spexgcReleased('')->spexgcPromo('0')->oldest('spexgc_id')->get();
+        $data = SpecialExternalGcrequest::joinSpecialExternalCustomer()
+            ->with(['user:user_id,firstname,lastname', 'approvedRequest' => function (Builder $builder){
+                $builder->selectColumn()->approvedType('Special External GC Approved');
+            }])
+            // ->withWhereHas(
+            //     'approvedRequest',
+            //     function ($query) {
+            //         $query->approvedType('Special External GC Approved');
+            //     }
+            // )
+            ->select('spexgc_id', 'spexgc_company', 'spexgc_reqby', 'spexgc_num','spexgc_dateneed', 'spexgc_datereq', 'spcus_acctname', 'spcus_companyname')
+            ->spexgcStatus('approved')
+            ->spexgcReviewed('reviewed')
+            ->spexgcReleased('')
+            ->spexgcPromo('0')
+            ->oldest('spexgc_id')
+            ->limit(10)
+            ->get();
+
         return $data;
 
         // $table = 'special_external_gcrequest';
@@ -47,7 +81,6 @@ class SpecialExternalGcRequestService
         //     CONCAT(users.firstname,' ',users.lastname) as prep,
         //     special_external_customer.spcus_acctname,
         //     special_external_customer.spcus_companyname,
-        //     special_external_gcrequest.spexgc_id,
         //     approved_request.reqap_approvedby";
         // $where = "special_external_gcrequest.spexgc_status='approved'
         //     AND

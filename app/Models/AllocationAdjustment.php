@@ -17,4 +17,16 @@ class AllocationAdjustment extends Model
     {
         return $this->belongsTo(User::class, 'aadj_by', 'user_id');
     }
+
+    // ->join('stores', 'allocation_adjustment.aadj_loc', '=', 'stores.store_id')
+            // ->join('gc_type', 'allocation_adjustment.aadj_gctype', '=', 'gc_type.gc_type_id')
+    public function store(): BelongsTo
+    {
+        return $this->belongsTo(Store::class, 'aadj_loc', 'store_id');
+    }
+
+    public function gcType(): BelongsTo
+    {
+        return $this->belongsTo(GcType::class, 'aadj_gctype', 'gc_type_id');
+    }
 }
