@@ -6,19 +6,21 @@ use App\Models\AllocationAdjustment;
 use App\Models\InstitutEod;
 use App\Models\InstitutTransaction;
 use App\Models\LedgerBudget;
+use App\Models\ProductionRequest;
 use App\Models\PromoGcReleaseToDetail;
 use Illuminate\Database\Eloquent\Collection;
 
-class PromoInstitutionAdjustmentEodService
+class DashboardDataServices
 {
-
     public function promoGcReleased() // #/promo-gc-released-list
     {
-        $record = PromoGcReleaseToDetail::with(['user:user_id,firstname,lastname',
-                                            'promoGcRequest:pgcreq_id,pgcreq_reqnum'])
-        // ->join('users', 'promo_gc_release_to_details.prrelto_relby', '=', 'users.user_id')
+        $record = PromoGcReleaseToDetail::with([
+            'user:user_id,firstname,lastname',
+            'promoGcRequest:pgcreq_id,pgcreq_reqnum'
+        ])
+            // ->join('users', 'promo_gc_release_to_details.prrelto_relby', '=', 'users.user_id')
             // ->join('promo_gc_request', 'promo_gc_release_to_details.prrelto_trid', '=', 'promo_gc_request.pgcreq_id')
-            ->select('prrelto_id','prrelto_relnumber', 'prrelto_trid', 'prrelto_docs', 'prrelto_checkedby', 'prrelto_approvedby', 'prrelto_date', 'prrelto_recby', 'prrelto_status')
+            ->select('prrelto_id', 'prrelto_relnumber', 'prrelto_trid', 'prrelto_docs', 'prrelto_checkedby', 'prrelto_approvedby', 'prrelto_date', 'prrelto_recby', 'prrelto_status')
             ->orderByDesc('prrelto_id')
             ->get();
         return $record;
@@ -53,8 +55,7 @@ class PromoInstitutionAdjustmentEodService
 
     public function institutionGcSales(): Collection // #/institution-gc-sales
     {
-        $record = InstitutTransaction::
-            leftJoin('institut_customer', 'institut_transactions.institutr_cusid', '=', 'institut_customer.ins_id')
+        $record = InstitutTransaction::leftJoin('institut_customer', 'institut_transactions.institutr_cusid', '=', 'institut_customer.ins_id')
             ->select('institutr_id', 'institutr_trnum', 'institutr_paymenttype', 'institutr_receivedby', 'institutr_date', 'ins_name')
             ->get();
 
@@ -188,5 +189,11 @@ class PromoInstitutionAdjustmentEodService
 
     }
 
-
+    public function productionRequest()
+    {
+        $record = ProductionRequest::select('pe_id', 'pe_num')
+            ->where([['pe_generate_code', '0'], ['pe_status', '1']])
+            ->get();
+        return $record;
+    }
 }

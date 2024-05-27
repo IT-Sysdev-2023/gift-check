@@ -161,6 +161,7 @@ class GcProductionRequestService
             ->select('pe_id','pe_num', 'pe_date_request', 'pe_date_needed', 'lreq.firstname as lreqfname', 'lreq.lastname as lreqlname', 'cpr_at', 'lcan.firstname as lcanfname', 'lcan.lastname as lcanlname')
             ->orderByDesc('cpr_id')
             ->get();
+            
         return $record;
         //     function getAllCancelledProductionRequest($link)
         // {
