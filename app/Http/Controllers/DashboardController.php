@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class Dashboard extends Controller
+class DashboardController extends Controller
 {
 
     public function __construct(protected DashboardClass $dashboardClass){
