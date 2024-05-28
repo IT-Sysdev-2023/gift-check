@@ -4,6 +4,7 @@ use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
+use App\Services\AdjustmentService;
 use App\Services\BudgetRequestService;
 use App\Services\GcProductionRequestService;
 use App\Services\PromoInstitutionAdjustmentEodService;
@@ -23,7 +24,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/test', [MasterfileController::class, 'customerSetup']);
+Route::get('/test', [AdjustmentService::class, 'allocationAdjustment']);
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

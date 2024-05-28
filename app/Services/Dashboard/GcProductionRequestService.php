@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Dashboard;
 
 use App\Models\CancelledProductionRequest;
 use App\Models\Denomination;
@@ -12,6 +12,7 @@ class GcProductionRequestService
     {
 
         $dept = request()->user()->usertype;
+        
         $pr = ProductionRequest::withWhereHas('user', fn($query) => $query->select('user_id', 'firstname', 'lastname')->where('usertype', $dept))
             ->select('pe_id', 'pe_file_docno', 'pe_date_needed', 'pe_remarks', 'pe_num', 'pe_date_request', 'pe_group')
             ->where('pe_status', 0)

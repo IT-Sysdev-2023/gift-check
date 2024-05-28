@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Dashboard;
 
 use App\Models\AllocationAdjustment;
 use App\Models\InstitutEod;

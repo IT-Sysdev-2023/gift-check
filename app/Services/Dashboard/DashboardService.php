@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Dashboard;
 
 use App\Models\AllocationAdjustment;
 use App\Models\ApprovedGcrequest;
@@ -117,9 +117,7 @@ class DashboardService
 
     protected function budget()
     {
-        $res = LedgerBudget::select(DB::raw('SUM(bdebit_amt) as debit'), DB::raw('SUM(bcredit_amt) as credit'))
-                            ->whereNot('bcus_guide', 'dti')->first();
-        return bcsub($res->debit, $res->credit, 2);
+        return LedgerBudget::currentBudget();
     }
 
     //REFERENCES

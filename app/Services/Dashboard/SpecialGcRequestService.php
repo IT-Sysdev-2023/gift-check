@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Dashboard;
 
 use App\Models\SpecialExternalGcrequest;
 use App\Models\StoreGcrequest;
