@@ -4,13 +4,7 @@ use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
-use App\Services\AdjustmentService;
-use App\Services\BudgetRequestService;
-use App\Services\GcProductionRequestService;
-use App\Services\PromoInstitutionAdjustmentEodService;
-use App\Services\SpecialExternalGcRequestService;
-use App\Services\SpecialGcRequestService;
-use App\Services\StoreGcRequestService;
+use App\Http\Controllers\RetailStore\MainController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,7 +18,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/test', [AdjustmentService::class, 'allocationAdjustment']);
+Route::get('/test', [MainController::class, 'viewSoldGc']);
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

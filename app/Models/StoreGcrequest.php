@@ -26,6 +26,22 @@ class StoreGcrequest extends Model
             // ->join('stores', 'store_gcrequest.sgc_store', 'stores.store_id')
             ->where([['sgc_status', 0], ['sgc_cancel', '*']]);
     }
+
+    public function scopePendingRequest(Builder $builder)
+    {
+        return $builder->with([
+            'user:user_id,firstname,lastname',
+            'store:store_id,store_name'
+        ])
+            ->select('sgc_id', 'sgc_num', 'sgc_date_needed', 'sgc_date_request', 'sgc_status', 'sgc_store', 'sgc_requested_by')
+            // ->join('stores', 'sgc_store', 'store_id')
+            ->where(function (Builder $query) {
+                $query->where('sgc_status', 1)
+                    ->orWhere('sgc_status', 0);
+            })
+            ->where('sgc_cancel', '')
+            ->orderByDesc('sgc_id');
+    }
     public function store()
     {
         return $this->belongsTo(Store::class, 'sgc_store', 'store_id');
