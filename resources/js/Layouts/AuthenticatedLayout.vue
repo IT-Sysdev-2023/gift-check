@@ -6,7 +6,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link } from "@inertiajs/vue3";
-
+import { UserType } from "@/userType";
 import {
     PieChartOutlined,
     DesktopOutlined,
@@ -15,6 +15,8 @@ import {
     FileOutlined,
 } from "@ant-design/icons-vue";
 
+
+const {userType, userRole} = UserType();
 const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(["1"]);
 const showingNavigationDropdown = ref(false);
@@ -38,7 +40,7 @@ const showingNavigationDropdown = ref(false);
                         <desktop-outlined />
                         <span>Option 2</span>
                     </a-menu-item> -->
-                    <a-sub-menu key="sub1">
+                    <a-sub-menu key="sub1" v-if="userType('2') && !userRole(2)">
                         <template #title>
                             <span>
                                 <user-outlined />
@@ -59,7 +61,7 @@ const showingNavigationDropdown = ref(false);
                         <a-menu-item key="6">Team 1</a-menu-item>
                         <a-menu-item key="8">Team 2</a-menu-item>
                     </a-sub-menu>
-                    <a-sub-menu key="sub3">
+                    <a-sub-menu key="sub3" v-if="userType('2') && !userRole(2)">
                         <template #title>
                             <span>
                                 <user-outlined />
@@ -87,7 +89,7 @@ const showingNavigationDropdown = ref(false);
                     >
                         <a-menu-item key="1">nav 1</a-menu-item>
                         <a-menu-item key="2">nav 2</a-menu-item>
-                        <a-menu-item key="3">nav 3</a-menu-item>
+                        <a-menu-item key="3"><Link :href="route('logout')" method="post">Logout</Link></a-menu-item>
                     </a-menu>
                 </a-layout-header>
                 <a-layout-content style="padding: 0 50px">
