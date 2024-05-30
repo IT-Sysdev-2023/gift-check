@@ -27,10 +27,6 @@ const showingNavigationDropdown = ref(false);
             <a-layout-sider v-model:collapsed="collapsed" collapsible width="250px">
                 <div class="logo" />
                 <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
-                    <a-menu-item key="menu-item-dashboard" style="margin-top: 10px;">
-                        <pie-chart-outlined />
-                        <span>Dashboard</span>
-                    </a-menu-item>
 
                     <a-card hoverable style="width: auto; margin: 20px;">
                         <template #cover>
@@ -43,6 +39,11 @@ const showingNavigationDropdown = ref(false);
                             <edit-outlined key="card-edit" />
                         </template>
                     </a-card>
+
+                    <a-menu-item key="menu-item-dashboard" style="margin-top: 10px;">
+                        <pie-chart-outlined />
+                        <span>Dashboard</span>
+                    </a-menu-item>
 
                     <a-sub-menu key="menu-sub-masterfile" v-if="userType('2') && !userRole(2)">
                         <template #title>

@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { UserType } from '@/userType';
+import Cards from '@/Pages/Dashboard/Cards.vue';
 
 const {userType, userRole} = UserType();
 </script>
@@ -18,8 +19,10 @@ const {userType, userRole} = UserType();
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">You're logged in!</div>
-                    <h1 v-if="userType('7') && !userRole(2)"> {{ $page.props.auth.user }}</h1>
+                    <div class="p-6 text-gray-900">
+                        <Cards/>
+                    </div>
+                    <!-- <h1 v-if="userType('7') && !userRole(2)"> {{ $page.props.auth.user }}</h1> -->
                 </div>
             </div>
         </div>
