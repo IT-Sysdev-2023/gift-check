@@ -39,7 +39,7 @@ import { Link } from '@inertiajs/vue3';
 
 <style>
 #bg-image {
-    background-image: url('http://172.16.161.48/gc/assets/images/gcicon.png');
+    background-image: url('/gcicon.png');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;

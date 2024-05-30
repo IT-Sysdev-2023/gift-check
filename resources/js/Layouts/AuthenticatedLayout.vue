@@ -32,7 +32,7 @@ const showingNavigationDropdown = ref(false);
             <a-layout-sider v-model:collapsed="collapsed" collapsible>
                 <div class="logo" />
                 <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
-                    <a-menu-item key="dashboard">
+                    <a-menu-item key="dashboard" style="margin-top: 10px;">
                         <pie-chart-outlined />
                         <span>Dashboard</span>
                     </a-menu-item>
@@ -42,6 +42,7 @@ const showingNavigationDropdown = ref(false);
                         <template #cover>
                             <img alt="example"
                                 src="http://172.16.161.34:8080/hrms/images/users/03836-2023=2024-01-25=Profile=14-30-53-PM.jpg" />
+                                <span class="font-mono font-bold text-center">Hello, HarTzy</span>
                         </template>
                         <template #actions>
                             <setting-outlined key="setting" />

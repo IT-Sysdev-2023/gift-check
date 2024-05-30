@@ -17,6 +17,9 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+Route::get('/login-demo', function () {
+    return Inertia::render('Login');
+});
 
 Route::get('/test', [MainController::class, 'viewSoldGc']);
 Route::get('/dashboard', function () {
