@@ -2,10 +2,9 @@
 
 use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SpecialExternalGcrequestController;
-use App\Services\SpecialExternalGcRequestService;
-use App\Services\StoreGcRequestService;
+use App\Http\Controllers\RetailStore\MainController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,7 +18,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/test', [StoreGcRequestService::class, 'cancelledRequest']);
+Route::get('/test', [MainController::class, 'viewSoldGc']);
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

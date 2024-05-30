@@ -11,4 +11,9 @@ class Denomination extends Model
 
     protected $table = 'denomination';
     protected $primaryKey = 'denom_id';
+
+    public static function denomation(){
+        return self::where([['denom_type', 'RSGC'], ['denom_status', 'active']])
+        ->orderBy('denomination')->get();
+    }
 }

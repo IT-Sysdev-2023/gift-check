@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LedgerCheck extends Model
 {
@@ -12,4 +13,8 @@ class LedgerCheck extends Model
     protected $table= 'ledger_check';
 
     protected $primaryKey = 'cledger_id';
+
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class, 'user_id', 'c_posted_by');
+    }
 }

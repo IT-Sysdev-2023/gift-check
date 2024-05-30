@@ -59,20 +59,24 @@ class User extends Authenticatable
         );
     }
 
-    public function accessPage(){
+    public function accessPage()
+    {
         return $this->belongsTo(AccessPage::class, 'usertype', 'access_no');
     }
 
-    public function scopeUserTypeBudget(Builder $builder, $userType){
+    public function scopeUserTypeBudget(Builder $builder, $userType)
+    {
         $builder->where('usertype', $userType)
                 ->whereHas('budgetRequest', function ($query) { $query->where('br_request_status', 0); } );
     }
 
-    public function userLog(): BelongsTo{
+    public function userLog(): BelongsTo
+    {
         return $this->belongsTo(Userlog::class, 'logs_userid', 'user_id');
     }
 
-    public function budgetRequest(){
+    public function budgetRequest()
+    {
         return $this->hasMany(BudgetRequest::class, 'br_requested_by','user_id' );
     }
 }
