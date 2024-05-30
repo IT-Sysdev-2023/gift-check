@@ -15,8 +15,10 @@ import {
     DollarOutlined,
     LineChartOutlined,
     InfoCircleOutlined,
-    SettingOutlined
+    SettingOutlined,
+    EditOutlined
 } from "@ant-design/icons-vue";
+
 
 const { userType, userRole } = UserType();
 const collapsed = ref<boolean>(false);
@@ -34,6 +36,19 @@ const showingNavigationDropdown = ref(false);
                         <pie-chart-outlined />
                         <span>Dashboard</span>
                     </a-menu-item>
+
+
+                    <a-card hoverable style="width: auto; margin: 20px;">
+                        <template #cover>
+                            <img alt="example"
+                                src="http://172.16.161.34:8080/hrms/images/users/03836-2023=2024-01-25=Profile=14-30-53-PM.jpg" />
+                        </template>
+                        <template #actions>
+                            <setting-outlined key="setting" />
+                            <edit-outlined key="edit" />
+                        </template>
+                    </a-card>
+
 
                     <a-sub-menu key="masterfile" v-if="userType('2') && !userRole(2)">
                         <template #title>
@@ -111,9 +126,9 @@ const showingNavigationDropdown = ref(false);
                         :style="{ lineHeight: '64px' }">
                         <a-menu-item key="nav-1">nav 1</a-menu-item>
                         <a-menu-item key="nav-2">nav 2</a-menu-item>
-                        <a-menu-item key="nav-3">
+                        <!-- <a-menu-item key="nav-3">
                             <Link :href="route('logout')" method="post">Logout</Link>
-                        </a-menu-item>
+                        </a-menu-item> -->
                     </a-menu>
                 </a-layout-header>
                 <a-layout-content style="padding: 0 50px">
