@@ -29,7 +29,7 @@ const showingNavigationDropdown = ref(false);
 <template>
     <div>
         <a-layout style="min-height: 100vh">
-            <a-layout-sider v-model:collapsed="collapsed" collapsible>
+            <a-layout-sider v-model:collapsed="collapsed" collapsible width="250px">
                 <div class="logo" />
                 <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
                     <a-menu-item key="dashboard" style="margin-top: 10px;">
@@ -38,7 +38,7 @@ const showingNavigationDropdown = ref(false);
                     </a-menu-item>
 
 
-                    <a-card hoverable style="width: auto; margin: 20px;">
+                    <a-card hoverable style="width: auto; margin: 20px;"  v-if="!collapsed">
                         <template #cover>
                             <img alt="example"
                                 src="http://172.16.161.34:8080/hrms/images/users/03836-2023=2024-01-25=Profile=14-30-53-PM.jpg" />
