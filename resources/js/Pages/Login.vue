@@ -1,3 +1,28 @@
+<script setup lang="ts">
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import InputError from '@/Components/InputError.vue';
+
+defineProps<{
+    canResetPassword?: boolean;
+    status?: string;
+}>();
+
+const form: any = useForm({
+    username: '',
+    password: '',
+    remember: false,
+});
+
+const submit = () => {
+    form.post(route('login'), {
+        onFinish: () => {
+            form.reset('password');
+        },
+    });
+};
+</script>
+
+<style></style>
 <template>
 
     <a-row :gutter="[16, 16]" style="background-image: url('/bg-circuit.png');">
@@ -13,33 +38,21 @@
                 <div class="container">
                     <div class="login-box">
                         <h2>Login</h2>
-                        <form action="#">
+                        <form action="#" @submit.prevent="submit">
                             <div class="input-box">
-                                <input name="username" type="text" required>
+                                <input name="username" v-model="form.username"  type="text" required>
                                 <label>Username</label>
+                                <InputError class="mt-2"  :message="form.errors.username" />
                             </div>
                             <div class="input-box">
-                                <input name="password" type="password" required>
+                                <input name="password" v-model="form.password"  type="password" required>
                                 <label>Password</label>
+                                <InputError class="mt-2" :message="form.errors.password" />
                             </div>
-                            <button type="submit" class="btn">Login</button>
+                            <button type="submit"  class="btn" >Login</button>
                         </form>
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    
-                    <span style="--i:0;"></span>
+                    <!-- <span style="--i:0;"></span> -->
                     <span style="--i:1;"></span>
                     <!-- <span style="--i:2;"></span> -->
                     <span style="--i:3;"></span>

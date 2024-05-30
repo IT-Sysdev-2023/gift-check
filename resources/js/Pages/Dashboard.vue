@@ -19,7 +19,6 @@ const {userType, userRole} = UserType();
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">You're logged in!</div>
-                    <img src="/gcicon.png" alt="">
                     <h1 v-if="userType('7') "> This is Hidden</h1>
                 </div>
             </div>

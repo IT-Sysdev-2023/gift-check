@@ -127,9 +127,9 @@ const showingNavigationDropdown = ref(false);
                         :style="{ lineHeight: '64px' }">
                         <a-menu-item key="nav-1">nav 1</a-menu-item>
                         <a-menu-item key="nav-2">nav 2</a-menu-item>
-                        <!-- <a-menu-item key="nav-3">
+                        <a-menu-item key="nav-3">
                             <Link :href="route('logout')" method="post">Logout</Link>
-                        </a-menu-item> -->
+                        </a-menu-item>
                     </a-menu>
                 </a-layout-header>
                 <a-layout-content style="padding: 0 50px">
