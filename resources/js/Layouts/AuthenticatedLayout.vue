@@ -64,7 +64,7 @@ const showingNavigationDropdown = ref(false);
                             </span>
                         </template>
                         <a-menu-item key="menu-item-budget-request">Budget Request</a-menu-item>
-                        <a-sub-menu key="menu-sub-adjustments-production" v-if="userType('2') && !userRole(2)">
+                        <a-sub-menu key="menu-sub-adjustments-production" >
                             <template #title>
                                 <span>
                                     <span>Production Request</span>
