@@ -1,0 +1,33 @@
+<script setup lang="ts">
+import {
+    FileOutlined,
+    SwapOutlined,
+    DollarOutlined,
+    LineChartOutlined,
+    BarcodeOutlined,
+    GroupOutlined
+} from "@ant-design/icons-vue";
+
+</script>
+
+<template>
+    <a-menu-item key="budgetLedger">
+        <GroupOutlined />
+        <span>Budget Ledger</span>
+    </a-menu-item>
+    <a-menu-item key="spgcLedger">
+        <GroupOutlined />
+        <span>SPGC Ledger(Promotional)</span>
+    </a-menu-item>
+    
+    <a-sub-menu key="reports">
+        <template #title>
+            <span>
+                <LineChartOutlined />
+                <span>Reports</span>
+            </span>
+        </template>
+        <a-menu-item key="verifiedGCReports">SPGC Approved</a-menu-item>
+        <a-menu-item key="beamAndGoGoReport">SPGC Released</a-menu-item>
+    </a-sub-menu>
+</template>
