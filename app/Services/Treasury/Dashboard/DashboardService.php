@@ -13,7 +13,8 @@ use App\Models\PromoGcReleaseToDetail;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\StoreGcrequest;
 use App\Models\User;
-use Illuminate\Database\Query\Builder;
+
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class DashboardService
@@ -49,7 +50,7 @@ class DashboardService
         })->where('sgc_cancel', '')->count();
 
         //Release Gc
-        $released = ApprovedGcrequest::has('storeGcRequest.stores')->has('user')->count();
+        $released = ApprovedGcrequest::has('storeGcRequest.store')->has('user')->count();
 
         //Cancelled Request
         $cancelled = StoreGcrequest::where([['sgc_status', 0], ['sgc_cancel', '*']])->count();
@@ -102,7 +103,7 @@ class DashboardService
         //Reviewed GC For Releasing
         $reviewed = SpecialExternalGcrequest::where([['spexgc_reviewed', 'reviewed'], ['spexgc_released', ''], ['spexgc_promo', '0']])->count();
         //Released GC
-        $released = SpecialExternalGcrequest::countSpexgcReleased('released');
+        $released = SpecialExternalGcrequest::spexgcReleased('released')->count();
         //Cancelled Request
         $cancelled = SpecialExternalGcrequest::spexgcStatus('cancelled')->count();
 
