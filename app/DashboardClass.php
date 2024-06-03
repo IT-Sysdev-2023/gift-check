@@ -14,7 +14,10 @@ class DashboardClass extends DashboardService
     /**
      * Create a new class instance.
      */
-    protected function treasuryDashboard()
+
+     public function __construct() {
+     }
+    public function treasuryDashboard()
     {
         return [
             'budgetRequest' => $this->budgetRequest(),
@@ -30,7 +33,7 @@ class DashboardClass extends DashboardService
         ];
     }
 
-    protected function retailDashboard(){
+    public function retailDashboard(){
         //
     }
 
