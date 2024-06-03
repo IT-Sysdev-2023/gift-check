@@ -31,41 +31,8 @@ class LedgerService
             ->orderBy('cledger_id')
             ->cursorPaginate()
             ->withQueryString();
+            
         return $record;
-        // $rows = [];
-        // $query = $link->query(
-        // 	"SELECT
-        // 		`ledger_check`.`cledger_no`,
-        // 		`ledger_check`.`cledger_datetime`,
-        // 		`ledger_check`.`cledger_type`,
-        // 		`ledger_check`.`cledger_desc`,
-        // 		`ledger_check`.`cdebit_amt`,
-        // 		`ledger_check`.`ccredit_amt`,
-        // 		`ledger_check`.`c_posted_by`,
-        // 		`users`.`firstname`,
-        // 		`users`.`lastname`
-        // 	FROM
-        // 		`ledger_check`
-        // 	INNER JOIN
-        // 		`users`
-        // 	ON
-        // 		`users`.`user_id` = `ledger_check`.`c_posted_by`
-        // 	ORDER BY
-        // 		`ledger_check`.`cledger_id`
-        // 	ASC
-        // ");
 
-        // if($query)
-        // {
-        // 	while ($row = $query->fetch_object())
-        // 	{
-        // 		$rows[] = $row;
-        // 	}
-        // 	return $rows;
-        // }
-        // else
-        // {
-        // 	return $link->error;
-        // }
     }
 }

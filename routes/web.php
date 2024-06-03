@@ -24,5 +24,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
+Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
 
 require __DIR__.'/auth.php';
