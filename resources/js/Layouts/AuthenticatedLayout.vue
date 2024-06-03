@@ -89,7 +89,7 @@ const showingNavigationDropdown = ref(false);
                         <a-breadcrumb-item>App</a-breadcrumb-item>
                     </a-breadcrumb>
                     <div :style="{
-                        background: '#fff',
+                      
                         padding: '24px',
 
                     }">
