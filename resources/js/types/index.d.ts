@@ -10,3 +10,15 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
         user: User;
     };
 };
+
+interface SharedProps extends PageProps {
+    auth: {
+        user: {
+            id: number,
+            name: string,
+            email: string
+        }
+    }
+}
+
+export type PageWithSharedProps = InertiaPage<SharedProps>
