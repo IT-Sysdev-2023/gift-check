@@ -19,13 +19,18 @@ class FinanceController extends Controller
         $data->transform(function ($item) {
 
             $item->bledger_datetime = Date::parse($item->bledger_datetime)->toFormattedDateString();
-            
+
             return $item;
         });
+
+        $remainingBudget = LedgerBudget::currentBudget();
+
+        // dd($remainingBudget);
 
         return Inertia::render('Finance/BudgetLedger', [
             'data' => $data,
             'columns' => ColumnHelper::$budget_ledger_columns,
+            'remainingBudget' => intval($remainingBudget),
         ]);
     }
 }
