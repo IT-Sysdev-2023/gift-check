@@ -1,21 +1,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import { Link, usePage } from "@inertiajs/vue3";
+import { usePage } from "@inertiajs/vue3";
 import { UserType } from "@/userType";
-import {
-    InfoCircleOutlined,
-    SettingOutlined,
-    EditOutlined,
-    HomeFilled,
-    LogoutOutlined
-
-} from "@ant-design/icons-vue";
-import RetailSidebar from "@/Components/RetailSidebar.vue";
-import TreasurySideBar from "@/Components/TreasurySideBar.vue";
-import AccountingSideBar from "@/Components/AccountingSideBar.vue";
-import FinanceSideBar from "@/Components/FinanceSideBar.vue";
-import CustodianSideBar from "@/Components/CustodianSideBar.vue";
-import MarketingSideBar from "@/Components/MarketingSideBar.vue";
 import {PageWithSharedProps} from "@/types/index"
 
 const page = usePage<PageWithSharedProps>().props;
