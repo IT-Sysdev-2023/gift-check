@@ -17,7 +17,7 @@ import { Link } from '@inertiajs/vue3';
     </a-menu-item>
     <a-menu-item key="spgcLedger">
         <GroupOutlined />
-        <span>SPGC Ledger(Promotional)</span>
+        <span> <Link :href="route('spgc.ledger')"> SPGC Ledger(Promotional)</Link></span>
     </a-menu-item>
 
     <a-sub-menu key="reports">

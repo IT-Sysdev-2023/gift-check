@@ -25,12 +25,18 @@ class FinanceController extends Controller
 
         $remainingBudget = LedgerBudget::currentBudget();
 
-        // dd($remainingBudget);
-
         return Inertia::render('Finance/BudgetLedger', [
             'data' => $data,
             'columns' => ColumnHelper::$budget_ledger_columns,
             'remainingBudget' => intval($remainingBudget),
+        ]);
+    }
+
+    public function spgcLedger()
+    {
+        // dd(1);
+        return Inertia::render('Finance/SpgcLedger', [
+            'columns' => ColumnHelper::$spgc_ledger_columns,
         ]);
     }
 }
