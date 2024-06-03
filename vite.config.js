@@ -22,10 +22,18 @@ export default defineConfig({
 
         Components({
             resolvers: [
-              AntDesignVueResolver({
-                importStyle: false, // css in js
-              }),
+                AntDesignVueResolver({  resolveIcons: true, importStyle: false }), 
+				(componentName) => {
+					if (['Head', 'Link'].includes(componentName)) {
+						return { name: componentName, from: '@inertiajs/vue3' }
+					}
+				}
             ],
+            dirs: [ 
+				'resources/js/Components',
+				'resources/js/Layouts',
+				'resources/js/Pages',
+			]
           }),
     ],
 });
