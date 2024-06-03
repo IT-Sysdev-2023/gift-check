@@ -27,11 +27,11 @@ import {
     </a-sub-menu>
     <a-menu-item key="releasedPromoGC">
         <RetweetOutlined />
-        <span>Released Promo GC</span>
+        <span><Link :href="route('release.promo.gc')">Released Promo GC</Link></span>
     </a-menu-item>
     <a-menu-item key="promoStatus">
         <BarChartOutlined />
-        <span>Promo Staus</span>
+        <span>Promo Status</span>
     </a-menu-item>
     <a-menu-item key="manageSupplier">
         <UsergroupAddOutlined />

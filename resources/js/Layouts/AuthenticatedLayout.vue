@@ -6,6 +6,8 @@ import {
     InfoCircleOutlined,
     SettingOutlined,
     EditOutlined,
+    HomeFilled,
+    LogoutOutlined
 
 } from "@ant-design/icons-vue";
 import RetailSidebar from "@/Components/RetailSidebar.vue";
@@ -69,12 +71,13 @@ const showingNavigationDropdown = ref(false);
                     <div class="logo" />
                     <a-menu v-model:selectedKeys="selectedKeys" class="w-full" theme="dark" mode="horizontal"
                         :style="{ lineHeight: '64px' }">
+                        <div class="flex justify-between w-full">
                         <a-menu-item key="dashboard" class="flex items-center">
-                            <span class="ml-2">Dashboard</span>
+                            <Link :href="route('dashboard')"><HomeFilled /></Link>
                         </a-menu-item>
-                        <div class="flex justify-end">
+                       
                             <a-menu-item key="nav-item-3">
-                                <Link :href="route('logout')" method="post">Logout</Link>
+                                 <Link :href="route('logout')" method="post" class="flex items-center"><LogoutOutlined/> &nbsp; Logout</Link>
                             </a-menu-item>
                         </div>
                     </a-menu>
