@@ -2,11 +2,10 @@
     <a-card>
         <div class="flex justify-between mb-5">
             <div>
-                <a-range-picker v-model:value="value1" />
+                <a-range-picker  />
             </div>
             <div>
-                <a-input-search class="mr-1"v-model:value="value" placeholder="Search here..." style="width: 300px"
-                    @search="onSearch" />
+                <a-input-search class="mr-1" placeholder="Search here..." style="width: 300px" />
                 <a-button type="primary">
                     <template #icon>
                         <FileExcelOutlined />
@@ -17,7 +16,7 @@
         </div>
         <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false">
         </a-table>
-        <div class="flex justify-end p-2 mt-2">
+        <!-- <div class="flex justify-end p-2 mt-2">
             <p class="font-semibold text-gray-700">
                 Remaining Budget:
             </p>
@@ -27,7 +26,7 @@
                     }}</a-tag>
             </span>
 
-        </div>
+        </div> -->
         <pagination class="mt-5" :datarecords="data" />
     </a-card>
 </template>
