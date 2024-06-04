@@ -52,6 +52,19 @@ class User extends Authenticatable
         ];
     }
 
+    public function firstname(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => Str::title($value),
+        );
+    }
+    public function lastname(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => Str::title($value),
+        );
+    }
+
     public function fullName(): Attribute
     {
         return Attribute::make(

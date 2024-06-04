@@ -15,7 +15,7 @@ Route::get('/', function () {
     return Inertia::render('Login'
        );
 });
-Route::get('/test', [DashboardController::class, 'test']);
+Route::get('/hash', [FinanceController::class, 'toHash']);
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
