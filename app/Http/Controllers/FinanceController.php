@@ -14,16 +14,27 @@ class FinanceController extends Controller
 {
     public function budgetLedger(Request $request)
     {
-        // dd($request->all());
-        $data = LedgerService::budgetLedger($request->date);
-
         $remainingBudget = LedgerBudget::currentBudget();
 
         return Inertia::render('Finance/BudgetLedger', [
-            'data' => $data,
+            'filters' => $request->all('search', 'date'),
             'columns' => ColumnHelper::$budget_ledger_columns,
-            'remainingBudget' => NumberHelper::currency((float) $remainingBudget),
-            'date' => $request->date
+            'remainingBudget' => $remainingBudget,
+            'dateRange' => $request->only('date'),
+            'data' => LedgerBudget::filter($request->only('search', 'date'))
+                ->select(
+                    [
+                        'bledger_id',
+                        'bledger_no',
+                        'bledger_trid',
+                        'bledger_datetime',
+                        'bledger_type',
+                        'bdebit_amt',
+                        'bcredit_amt'
+                    ]
+                )
+                ->paginate(10)
+                ->withQueryString()
         ]);
     }
 
