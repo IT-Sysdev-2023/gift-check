@@ -15,8 +15,8 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Login'
        );
-});
-Route::get('/hash', [FinanceController::class, 'toHash']);
+})->middleware('guest');
+// Route::get('/hash', [FinanceController::class, 'toHash']);
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

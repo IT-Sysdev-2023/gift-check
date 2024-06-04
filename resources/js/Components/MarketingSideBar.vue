@@ -32,6 +32,7 @@ import { Link } from '@inertiajs/vue3';
             <Link :href="route('promo.list')">Promo List</Link>
         </a-menu-item>
     </a-sub-menu>
+<<<<<<< HEAD
     <a-menu-item key="releasedPromoGC">
         <template #icon>
             <RetweetOutlined />
@@ -41,6 +42,12 @@ import { Link } from '@inertiajs/vue3';
         </span>
     </a-menu-item>
 
+=======
+    <!-- <a-menu-item key="releasedPromoGC">
+        <RetweetOutlined />
+        <span><Link :href="route('release.promo.gc')">Released Promo GC</Link></span>
+    </a-menu-item> -->
+>>>>>>> san
     <a-menu-item key="promoStatus">
         <BarChartOutlined />
         <span>

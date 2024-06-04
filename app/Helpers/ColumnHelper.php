@@ -7,27 +7,28 @@ class ColumnHelper
     public static $budget_ledger_columns = [
         [
             'title' => 'Legder No.',
-            'dataIndex' => 'bledger_no',
+            'dataIndex' => 'ledgerNo',
+            'key' => 'ledger'
 
         ],
         [
             'title' => 'Date.',
-            'dataIndex' => 'bledger_datetime',
+            'dataIndex' => 'date',
 
         ],
         [
             'title' => 'Transaction.',
-            'dataIndex' => 'transactionType',
+            'dataIndex' => 'transaction',
 
         ],
         [
             'title' => 'Debit.',
-            'dataIndex' => 'bdebit_amt',
+            'dataIndex' => 'debit',
 
         ],
         [
             'title' => 'Credit.',
-            'dataIndex' => 'bcredit_amt',
+            'dataIndex' => 'credit',
 
         ],
         [

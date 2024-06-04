@@ -64,6 +64,7 @@ declare module 'vue' {
     Colonade_colon: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/Colonade_colon.vue')['default']
     ColonadeMandaue: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ColonadeMandaue.vue')['default']
     ConfirmPassword: typeof import('./resources/js/Pages/Auth/ConfirmPassword.vue')['default']
+    copy: typeof import('./resources/js/Components/Pagination copy.vue')['default']
     CustodianSideBar: typeof import('./resources/js/Components/CustodianSideBar.vue')['default']
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     Dashboard: typeof import('./resources/js/Pages/Dashboard.vue')['default']

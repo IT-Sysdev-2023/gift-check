@@ -6,21 +6,27 @@ use App\Helpers\ColumnHelper;
 use App\Models\LedgerBudget;
 use App\Models\LedgerCheck;
 use App\Models\LedgerSpgc;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class LedgerService
 {
-    public static function budgetLedger($dateRange) //ledger_budget.php
+    public static function budgetLedger(Request $request) //ledger_budget.php
     {
-        return  LedgerBudget::select(
-            'bledger_id',
-            'bledger_no',
-            'bledger_trid',
-            'bledger_datetime',
-            'bledger_type',
-            'bdebit_amt',
-            'bcredit_amt'
-            )->paginate(10)->withQueryString();
+        return LedgerBudget::filter($request->only('search', 'date'))
+        ->select(
+            [
+                'bledger_id',
+                'bledger_no',
+                'bledger_trid',
+                'bledger_datetime',
+                'bledger_type',
+                'bdebit_amt',
+                'bcredit_amt'
+            ]
+        )
+        ->paginate(10)
+        ->withQueryString();
     }
     public static function gcLedger() // gccheckledger.php
     {
