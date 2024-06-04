@@ -25,10 +25,10 @@ import {
         <a-menu-item key="addNewPromo">Add New Promo</a-menu-item>
         <a-menu-item key="promoList">Promo List</a-menu-item>
     </a-sub-menu>
-    <a-menu-item key="releasedPromoGC">
+    <!-- <a-menu-item key="releasedPromoGC">
         <RetweetOutlined />
         <span><Link :href="route('release.promo.gc')">Released Promo GC</Link></span>
-    </a-menu-item>
+    </a-menu-item> -->
     <a-menu-item key="promoStatus">
         <BarChartOutlined />
         <span>Promo Status</span>

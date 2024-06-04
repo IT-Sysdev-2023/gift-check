@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
 use App\Helpers\NumberHelper;
+use App\Http\Resources\BudgetLedgerCollection;
+use App\Http\Resources\BudgetLedgerResource;
 use App\Models\ApprovedGcrequest;
 use App\Models\LedgerBudget;
 use App\Models\LedgerSpgc;
@@ -17,60 +19,49 @@ class FinanceController extends Controller
 {
     public function budgetLedger(Request $request)
     {
-        $data = LedgerService::budgetLedger($request->all());
+        $data = LedgerService::budgetLedger($request);
 
-        $data->transform(function ($item) {
-            $item->bledger_datetime = Date::parse($item->bledger_datetime)->toFormattedDateString();
-            if ($item->bledger_type == 'RFBR') {
-                $item->transactionType = 'Budget Entry';
-            } elseif ($item->bledger_type == 'RFGCP') {
-                $item->transactionType = 'GC';
-            } elseif ($item->bledger_type == 'RFGCSEGC') {
-                $item->transactionType = 'Special External GC Request';
-            } elseif ($item->bledger_type == 'RFGCPROM') {
-                $item->transactionType = 'Promo GC Request';
-            } elseif ($item->bledger_type == 'RFGCPROM') {
-                $item->transactionType = 'Promo GC Releasing';
-            } elseif ($item->bledger_type == 'GCSR') {
 
-                $data = ApprovedGcrequest::join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
-                    ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
-                    ->where('approved_gcrequest.agcr_id', $item->bledger_trid)
-                    ->select('stores.store_name')
-                    ->first();
+        // $data->transform(function ($item) {
+        //     $item->bledger_datetime = Date::parse($item->bledger_datetime)->toFormattedDateString();
 
-                $item->transactionType = 'GC Releasing - ' . $data->store_name;
-            } elseif ($item->bledger_type == 'RFGCSEGCREL') {
-                $item->transactionType = 'Special External GC Releasing';
-            } elseif ($item->bledger_type == 'RC') {
-                $item->transactionType = 'Requisition Cancelled';
-            } elseif ($item->bledger_type == 'GCRELINS') {
-                $item->transactionType = 'Institution GC Releasing';
-            }
-            return $item;
-        });
+        //     if ($item->bledger_type == 'RFBR') {
+        //         $item->transactionType = 'Budget Entry';
+        //     } elseif ($item->bledger_type == 'RFGCP') {
+        //         $item->transactionType = 'GC';
+        //     } elseif ($item->bledger_type == 'RFGCSEGC') {
+        //         $item->transactionType = 'Special External GC Request';
+        //     } elseif ($item->bledger_type == 'RFGCPROM') {
+        //         $item->transactionType = 'Promo GC Request';
+        //     } elseif ($item->bledger_type == 'RFGCPROM') {
+        //         $item->transactionType = 'Promo GC Releasing';
+        //     } elseif ($item->bledger_type == 'GCSR') {
 
-        $remainingBudget = LedgerBudget::currentBudget();
+        //         $data = ApprovedGcrequest::join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
+        //             ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
+        //             ->where('approved_gcrequest.agcr_id', $item->bledger_trid)
+        //             ->select('stores.store_name')
+        //             ->first();
+
+        //         $item->transactionType = 'GC Releasing - ' . $data->store_name;
+        //     } elseif ($item->bledger_type == 'RFGCSEGCREL') {
+        //         $item->transactionType = 'Special External GC Releasing';
+        //     } elseif ($item->bledger_type == 'RC') {
+        //         $item->transactionType = 'Requisition Cancelled';
+        //     } elseif ($item->bledger_type == 'GCRELINS') {
+        //         $item->transactionType = 'Institution GC Releasing';
+        //     }
+        //     return $item;
+        // });
+
+        // dd((new BudgetLedgerCollection($data))->toArray());
+
 
         return Inertia::render('Finance/BudgetLedger', [
             'filters' => $request->all('search', 'date'),
+            'remainingBudget' => LedgerBudget::currentBudget(),
+            'data' => BudgetLedgerResource::collection($data),
             'columns' => ColumnHelper::$budget_ledger_columns,
-            'remainingBudget' => $remainingBudget,
-            'dateRange' => $request->only('date'),
-            'data' => LedgerBudget::filter($request->only('search', 'date'))
-                ->select(
-                    [
-                        'bledger_id',
-                        'bledger_no',
-                        'bledger_trid',
-                        'bledger_datetime',
-                        'bledger_type',
-                        'bdebit_amt',
-                        'bcredit_amt'
-                    ]
-                )
-                ->paginate(10)
-                ->withQueryString()
         ]);
     }
 
