@@ -1,11 +1,4 @@
 <script setup lang="ts">
-import {
-    SwapOutlined,
-    UserOutlined,
-    StockOutlined,
-    DollarOutlined
-
-} from "@ant-design/icons-vue";
 
 </script>
 

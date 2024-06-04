@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Badge from '@/Components/Badge.vue';
 
 defineProps<{
     title: string;
@@ -15,10 +14,10 @@ defineProps<{
     <a-col :span="8">
         <a-card :title="title" class="mb-5">
             <a-space direction="vertical" style="width: 100%" v-if="useDefault">
-                <Badge :count="pending" title="Pending Request" color="orange" type="warning"/>
-                <Badge :count="approved" title="Approved Request"/>
+                <CardBadge :count="pending" title="Pending Request" color="orange" type="warning"/>
+                <CardBadge :count="approved" title="Approved Request"/>
                 <slot/>
-                <Badge :count="cancelled" title="Cancelled Request" color="volcano" type="error"/>
+                <CardBadge :count="cancelled" title="Cancelled Request" color="volcano" type="error"/>
             </a-space>
             
             <a-space direction="vertical" style="width: 100%" v-else>

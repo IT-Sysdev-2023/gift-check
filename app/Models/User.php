@@ -17,7 +17,7 @@ class User extends Authenticatable
 
 
     protected $primaryKey = 'user_id';
-    protected $appends = ['full_name'];
+    protected $appends = ['full_name', 'format_firstname'];
     /**
      * The attributes that are mass assignable.
      *
@@ -52,10 +52,30 @@ class User extends Authenticatable
         ];
     }
 
+    public function firstname(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => Str::title($value),
+        );
+    }
+    public function lastname(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => Str::title($value),
+        );
+    }
+
     public function fullName(): Attribute
     {
         return Attribute::make(
             get: fn(mixed $value, array $attributes) => Str::title("{$attributes['firstname']} {$attributes['lastname']}")
+        );
+    }
+    
+    public function formatFirstname(): Attribute
+    {
+        return Attribute::make(
+            get: fn(mixed $value, array $attributes) => ucwords($attributes['firstname'])
         );
     }
 
