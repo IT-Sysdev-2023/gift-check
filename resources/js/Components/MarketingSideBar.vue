@@ -44,12 +44,14 @@ import { Link } from '@inertiajs/vue3';
     <a-menu-item key="promoStatus">
         <BarChartOutlined />
         <span>
-            <Link  :href="route('promo.status')">Promo Status</Link>
+            <Link :href="route('promo.status')">Promo Status</Link>
         </span>
     </a-menu-item>
     <a-menu-item key="manageSupplier">
         <UsergroupAddOutlined />
-        <span>Manage Supplier</span>
+        <span>
+            <Link :href="route('manage.supplier')">Manage Supplier</Link>
+        </span>
     </a-menu-item>
     <a-sub-menu key="sales">
         <template #title>
@@ -58,8 +60,12 @@ import { Link } from '@inertiajs/vue3';
                 <span>Sales</span>
             </span>
         </template>
-        <a-menu-item key="treasurySales">Treasury Sales</a-menu-item>
-        <a-menu-item key="storeSales">Store Sales</a-menu-item>
+        <a-menu-item key="treasurySales">
+            <Link :href="route('sales.treasury.sales')"> Treasury Sales</Link>
+        </a-menu-item>
+        <a-menu-item key="storeSales">
+            <Link :href="route('sales.store.sales')"> Store Sales</Link>
+        </a-menu-item>
     </a-sub-menu>
     <a-sub-menu key="verifiedGcPerStore">
         <template #title>
@@ -68,18 +74,42 @@ import { Link } from '@inertiajs/vue3';
                 <span>Verified GC Per Store</span>
             </span>
         </template>
-        <a-menu-item key="amall">Alturas Mall</a-menu-item>
-        <a-menu-item key="atalibon">Alturas Talibon</a-menu-item>
-        <a-menu-item key="icm">Island City Mall</a-menu-item>
-        <a-menu-item key="pm">Plaza Marcela</a-menu-item>
-        <a-menu-item key="atubigon">Alturas Tubigon</a-menu-item>
-        <a-menu-item key="cc">Colonade Colon</a-menu-item>
-        <a-menu-item key="cm">Colonade Mandaue</a-menu-item>
-        <a-menu-item key="ac">Alta Citta</a-menu-item>
-        <a-menu-item key="fm">Farmers Market</a-menu-item>
-        <a-menu-item key="udc">Ubay Distribution Center</a-menu-item>
-        <a-menu-item key="screenville">Screenville</a-menu-item>
-        <a-menu-item key="asct">Asc Tech</a-menu-item>
+        <a-menu-item key="amall">
+            <Link :href="route('verified.gc.alturas.mall')">Alturas Mall</Link>
+        </a-menu-item>
+        <a-menu-item key="atalibon">
+            <Link :href="route('verified.gc.alturas.talibon')">Alturas Talibon</Link>
+        </a-menu-item>
+        <a-menu-item key="icm">
+            <Link :href="route('verified.gc.island.city.mall')">Island City Mall</Link>
+        </a-menu-item>
+        <a-menu-item key="pm">
+            <Link :href="route('verified.gc.plaza.marcela')">Plaza Marcela</Link>
+        </a-menu-item>
+        <a-menu-item key="atubigon">
+            <Link :href="route('verified.gc.alturas.tubigon')">Alturas Tubigon</Link>
+        </a-menu-item>
+        <a-menu-item key="cc">
+            <Link :href="route('verified.gc.colonade.colon')">Colonade Colon</Link>
+        </a-menu-item>
+        <a-menu-item key="cm">
+            <Link :href="route('verified.gc.colonade.mandaue')">Colonade Mandaue</Link>
+        </a-menu-item>
+        <a-menu-item key="ac">
+            <Link :href="route('verified.gc.alta.cita')">Alta Citta</Link>
+        </a-menu-item>
+        <a-menu-item key="fm">
+            <Link :href="route('verified.gc.farmers.market')">Farmers Market</Link>
+        </a-menu-item>
+        <a-menu-item key="udc">
+            <Link :href="route('verified.gc.udc')">Ubay Distribution Center</Link>
+        </a-menu-item>
+        <a-menu-item key="screenville">
+            <Link :href="route('verified.gc.screenville')">Screenville</Link>
+        </a-menu-item>
+        <a-menu-item key="asct">
+            <Link :href="route('verified.gc.asctech')">Asc Tech</Link>
+        </a-menu-item>
     </a-sub-menu>
 
 </template>
