@@ -7,13 +7,16 @@ import {
     UsergroupAddOutlined,
     DollarOutlined
 } from "@ant-design/icons-vue";
-
+import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>
     <a-menu-item key="barcodeChecker">
         <QrcodeOutlined />
-        <span>Promo GC Request</span>
+        <span>
+            <Link :href="route('promo.gc.request')">
+            </Link>Promo GC Request
+        </span>
     </a-menu-item>
     <a-sub-menu key="promo">
         <template #title>
@@ -22,16 +25,27 @@ import {
                 <span>Promo</span>
             </span>
         </template>
-        <a-menu-item key="addNewPromo">Add New Promo</a-menu-item>
-        <a-menu-item key="promoList">Promo List</a-menu-item>
+        <a-menu-item key="addnewpromo">
+            <Link :href="route('add.new.promo')">Add New Promo</Link>
+        </a-menu-item>
+        <a-menu-item key="promolist">
+            <Link :href="route('promo.list')">Promo List</Link>
+        </a-menu-item>
     </a-sub-menu>
     <a-menu-item key="releasedPromoGC">
-        <RetweetOutlined />
-        <span><Link :href="route('release.promo.gc')">Released Promo GC</Link></span>
+        <template #icon>
+            <RetweetOutlined />
+        </template>
+        <span>
+            <Link :href="route('released.promo.gc')">Released Promo GC</Link>
+        </span>
     </a-menu-item>
+
     <a-menu-item key="promoStatus">
         <BarChartOutlined />
-        <span>Promo Status</span>
+        <span>
+            <Link  :href="route('promo.status')">Promo Status</Link>
+        </span>
     </a-menu-item>
     <a-menu-item key="manageSupplier">
         <UsergroupAddOutlined />
