@@ -9,9 +9,9 @@ use Inertia\Inertia;
 
 class LedgerService
 {
-    public static function budgetLedger() //ledger_budget.php
+    public static function budgetLedger($dateRange) //ledger_budget.php
     {
-        return  LedgerBudget::select('bledger_id', 'bledger_no', 'bledger_trid', 'bledger_datetime', 'bledger_type', 'bdebit_amt', 'bcredit_amt')->paginate(10)->withQueryString();
+        return LedgerBudget::filter($dateRange)->select('bledger_id', 'bledger_no', 'bledger_trid', 'bledger_datetime', 'bledger_type', 'bdebit_amt', 'bcredit_amt')->paginate(10)->withQueryString();
     }
     public static function gcLedger() // gccheckledger.php
     {
@@ -31,7 +31,7 @@ class LedgerService
             ->orderBy('cledger_id')
             ->cursorPaginate()
             ->withQueryString();
-            
+
         return $record;
 
     }

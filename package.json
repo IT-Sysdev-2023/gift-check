@@ -11,8 +11,10 @@
         "@vitejs/plugin-vue": "^5.0.0",
         "autoprefixer": "^10.4.12",
         "axios": "^1.6.4",
+        "laravel-echo": "^1.16.1",
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.4.31",
+        "pusher-js": "8.4.0-rc2",
         "tailwindcss": "^3.2.1",
         "typescript": "^5.0.2",
         "unplugin-vue-components": "^0.27.0",
@@ -22,6 +24,7 @@
     },
     "dependencies": {
         "@ant-design/icons-vue": "^7.0.1",
-        "ant-design-vue": "4.x"
+        "ant-design-vue": "4.x",
+        "dayjs": "^1.11.11"
     }
 }

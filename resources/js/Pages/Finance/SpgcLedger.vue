@@ -23,7 +23,7 @@
             </p>
             &nbsp;
             <span>
-                <a-tag color="blue" style="font-size: 13px; letter-spacing: 1px;">₱ {{ remainingBudget.toLocaleString()
+                <a-tag color="blue" style="font-size: 13px; letter-spacing: 1px;">{{ remainingBudget
                     }}</a-tag>
             </span>
 
