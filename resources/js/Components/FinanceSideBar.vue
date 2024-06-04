@@ -1,25 +1,20 @@
 <script setup lang="ts">
-import {
-    FileOutlined,
-    SwapOutlined,
-    DollarOutlined,
-    LineChartOutlined,
-    BarcodeOutlined,
-    GroupOutlined
-} from "@ant-design/icons-vue";
-
 </script>
 
 <template>
+    <a-menu-item key="dashboard">
+        <GroupOutlined />
+        <span> <Link :href="route('budget.ledger')"> Dashboard</Link></span>
+    </a-menu-item>
     <a-menu-item key="budgetLedger">
         <GroupOutlined />
-        <span>Budget Ledger</span>
+        <span> <Link :href="route('budget.ledger')"> Budget Ledger</Link></span>
     </a-menu-item>
     <a-menu-item key="spgcLedger">
         <GroupOutlined />
-        <span>SPGC Ledger(Promotional)</span>
+        <span> <Link :href="route('spgc.ledger')"> SPGC Ledger(Promotional)</Link></span>
     </a-menu-item>
-    
+
     <a-sub-menu key="reports">
         <template #title>
             <span>
