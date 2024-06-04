@@ -22,6 +22,7 @@ class DashboardController extends Controller
         // } else {
             $record = $this->dashboardClass->treasuryDashboard();
         // }
+        // dd($record);
 
         return inertia('Dashboard', ['data' => $record]);
     }

@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use DateTimeInterface;
 
 class LedgerBudget extends Model
 {
@@ -14,6 +16,22 @@ class LedgerBudget extends Model
     protected $table = 'ledger_budget';
     protected $primaryKey = 'bledger_id';
 
+    protected function casts(): array
+    {
+        return [
+            'bledger_datetime' => 'date'
+        ];
+    }
+
+    public function scopeFilter($builder, $filter){
+        return $builder->when($filter ?? null, function($query, $filt){
+            $query->whereBetween('bledger_datetime',[$filt[0], $filt[1]]);
+        });
+    }
+    protected function serializeDate(DateTimeInterface $date): string
+    {
+        return $date->toFormattedDateString();
+    }
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'bud_by', 'user_id');

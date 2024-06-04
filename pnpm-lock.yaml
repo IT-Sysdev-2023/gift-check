@@ -4,56 +4,63 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-importers:
+dependencies:
+  '@ant-design/icons-vue':
+    specifier: ^7.0.1
+    version: 7.0.1(vue@3.4.27)
+  ant-design-vue:
+    specifier: 4.x
+    version: 4.2.1(vue@3.4.27)
+  dayjs:
+    specifier: ^1.11.11
+    version: 1.11.11
 
-  .:
-    dependencies:
-      '@ant-design/icons-vue':
-        specifier: ^7.0.1
-        version: 7.0.1(vue@3.4.27)
-      ant-design-vue:
-        specifier: 4.x
-        version: 4.2.1(vue@3.4.27)
-    devDependencies:
-      '@inertiajs/vue3':
-        specifier: ^1.0.0
-        version: 1.0.16(vue@3.4.27)
-      '@tailwindcss/forms':
-        specifier: ^0.5.3
-        version: 0.5.7(tailwindcss@3.4.3)
-      '@vitejs/plugin-vue':
-        specifier: ^5.0.0
-        version: 5.0.4(vite@5.2.11)(vue@3.4.27)
-      autoprefixer:
-        specifier: ^10.4.12
-        version: 10.4.19(postcss@8.4.38)
-      axios:
-        specifier: ^1.6.4
-        version: 1.6.8
-      laravel-vite-plugin:
-        specifier: ^1.0
-        version: 1.0.2(vite@5.2.11)
-      postcss:
-        specifier: ^8.4.31
-        version: 8.4.38
-      tailwindcss:
-        specifier: ^3.2.1
-        version: 3.4.3
-      typescript:
-        specifier: ^5.0.2
-        version: 5.4.5
-      unplugin-vue-components:
-        specifier: ^0.27.0
-        version: 0.27.0(vue@3.4.27)
-      vite:
-        specifier: ^5.0
-        version: 5.2.11
-      vue:
-        specifier: ^3.4.0
-        version: 3.4.27(typescript@5.4.5)
-      vue-tsc:
-        specifier: ^1.8.27
-        version: 1.8.27(typescript@5.4.5)
+devDependencies:
+  '@inertiajs/vue3':
+    specifier: ^1.0.0
+    version: 1.0.16(vue@3.4.27)
+  '@tailwindcss/forms':
+    specifier: ^0.5.3
+    version: 0.5.7(tailwindcss@3.4.3)
+  '@vitejs/plugin-vue':
+    specifier: ^5.0.0
+    version: 5.0.4(vite@5.2.11)(vue@3.4.27)
+  autoprefixer:
+    specifier: ^10.4.12
+    version: 10.4.19(postcss@8.4.38)
+  axios:
+    specifier: ^1.6.4
+    version: 1.6.8
+  laravel-echo:
+    specifier: ^1.16.1
+    version: 1.16.1
+  laravel-vite-plugin:
+    specifier: ^1.0
+    version: 1.0.2(vite@5.2.11)
+  postcss:
+    specifier: ^8.4.31
+    version: 8.4.38
+  pusher-js:
+    specifier: 8.4.0-rc2
+    version: 8.4.0-rc2
+  tailwindcss:
+    specifier: ^3.2.1
+    version: 3.4.3
+  typescript:
+    specifier: ^5.0.2
+    version: 5.4.5
+  unplugin-vue-components:
+    specifier: ^0.27.0
+    version: 0.27.0(vue@3.4.27)
+  vite:
+    specifier: ^5.0
+    version: 5.2.11
+  vue:
+    specifier: ^3.4.0
+    version: 3.4.27(typescript@5.4.5)
+  vue-tsc:
+    specifier: ^1.8.27
+    version: 1.8.27(typescript@5.4.5)
 
 packages:
 
@@ -766,7 +773,12 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  laravel-vite-plugin@1.0.2:
+  /laravel-echo@1.16.1:
+    resolution: {integrity: sha512-++Ylb6M3ariC9Rk5WE5gZjj6wcEV5kvLF8b+geJ5/rRIfdoOA+eG6b9qJPrarMD9rY28Apx+l3eelIrCc2skVg==}
+    engines: {node: '>=10'}
+    dev: true
+
+  /laravel-vite-plugin@1.0.2(vite@5.2.11):
     resolution: {integrity: sha512-Mcclml10khYzBVxDwJro8wnVDwD4i7XOSEMACQNnarvTnHjrjXLLL+B/Snif2wYAyElsOqagJZ7VAinb/2vF5g==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -963,7 +975,13 @@ packages:
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
-  qs@6.12.1:
+  /pusher-js@8.4.0-rc2:
+    resolution: {integrity: sha512-d87GjOEEl9QgO5BWmViSqW0LOzPvybvX6WA9zLUstNdB57jVJuR27zHkRnrav2a3+zAMlHbP2Og8wug+rG8T+g==}
+    dependencies:
+      tweetnacl: 1.0.3
+    dev: true
+
+  /qs@6.12.1:
     resolution: {integrity: sha512-zWmv4RSuB9r2mYQw3zxQuHWeU+42aKi1wWig/j4ele4ygELZ7PEO6MM7rim9oAQH2A5MWfsAVf/jPvTPgCbvUQ==}
     engines: {node: '>=0.6'}
 
@@ -2170,13 +2188,35 @@ snapshots:
     dependencies:
       is-number: 7.0.0
 
-  ts-interface-checker@0.1.13: {}
+  /ts-interface-checker@0.1.13:
+    resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
+    dev: true
 
-  typescript@5.4.5: {}
+  /tweetnacl@1.0.3:
+    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
+    dev: true
 
-  ufo@1.5.3: {}
+  /typescript@5.4.5:
+    resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
 
-  unplugin-vue-components@0.27.0(vue@3.4.27):
+  /ufo@1.5.3:
+    resolution: {integrity: sha512-Y7HYmWaFwPUmkoQCUIAYpKqkOf+SbVj/2fJJZ4RJMCfZp0rTGwRbzQD+HghfnhKOjL9E01okqz+ncJskGYfBNw==}
+    dev: true
+
+  /unplugin-vue-components@0.27.0(vue@3.4.27):
+    resolution: {integrity: sha512-77eTEy23sQ0UpzGWnZ9I2mY3cnmXwklz4ITcn3JfxjCoX643ghImkiZ4nFm58sxbdVcc4Fo/o4LIoFnlqEqsSg==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@babel/parser': ^7.15.8
+      '@nuxt/kit': ^3.2.2
+      vue: 2 || 3
+    peerDependenciesMeta:
+      '@babel/parser':
+        optional: true
+      '@nuxt/kit':
+        optional: true
     dependencies:
       '@antfu/utils': 0.7.8
       '@rollup/pluginutils': 5.1.0

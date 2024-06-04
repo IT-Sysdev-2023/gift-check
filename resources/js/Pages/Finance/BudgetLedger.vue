@@ -2,7 +2,8 @@
     <a-card>
         <div class="flex justify-between mb-5">
             <div>
-                <a-range-picker v-model:value="value1" />
+                <p>{{ date }}</p>
+                <a-range-picker v-model:value="dateRange" @change="handleChangeDateRange" />
             </div>
             <div>
                 <a-input-search class="mr-1"v-model:value="value" placeholder="Search here..." style="width: 300px"
@@ -23,7 +24,7 @@
             </p>
             &nbsp;
             <span>
-                <a-tag color="blue" style="font-size: 13px; letter-spacing: 1px;">₱ {{ remainingBudget.toLocaleString()
+                <a-tag color="blue" style="font-size: 13px; letter-spacing: 1px;">{{ remainingBudget
                     }}</a-tag>
             </span>
 
@@ -33,13 +34,27 @@
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-
+import dayjs from 'dayjs'
 export default {
     layout: AuthenticatedLayout,
     props: {
         data: Object,
         columns: Array,
-        remainingBudget: Number
+        remainingBudget: Number,
+        date: Array
+    },
+    data(){
+        return {
+            dateRange: [dayjs(this.date[0] ?? null), dayjs(this.date[1] ?? null)]
+        }
+    },
+    methods: {
+        handleChangeDateRange(_, dateRange){
+            this.$inertia.get(route('budget.ledger') , {date: dateRange},  {
+                preserveState: true,
+            })
+        }
     }
+
 }
 </script>

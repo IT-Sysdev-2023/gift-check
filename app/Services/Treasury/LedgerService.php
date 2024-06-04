@@ -10,7 +10,7 @@ use Inertia\Inertia;
 
 class LedgerService
 {
-    public static function budgetLedger() //ledger_budget.php
+    public static function budgetLedger($dateRange) //ledger_budget.php
     {
         return  LedgerBudget::select(
             'bledger_id',

@@ -2,6 +2,7 @@
 
 namespace App\Services\Treasury\Dashboard;
 
+use App\Helpers\NumberHelper;
 use App\Models\AllocationAdjustment;
 use App\Models\ApprovedGcrequest;
 use App\Models\BudgetAdjustment;
@@ -118,7 +119,7 @@ class DashboardService
 
     protected function budget()
     {
-        return LedgerBudget::currentBudget();
+        return NumberHelper::currency((float) LedgerBudget::currentBudget());
     }
 
     //REFERENCES

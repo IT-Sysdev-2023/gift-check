@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
+use App\Helpers\NumberHelper;
 use App\Models\ApprovedGcrequest;
 use App\Models\LedgerBudget;
 use App\Models\LedgerSpgc;
@@ -14,9 +15,9 @@ use Illuminate\Support\Facades\Hash;
 
 class FinanceController extends Controller
 {
-    public function budgetLedger()
+    public function budgetLedger(Request $request)
     {
-        $data = LedgerService::budgetLedger();
+        $data = LedgerService::budgetLedger($request->all());
 
         $data->transform(function ($item) {
             $item->bledger_datetime = Date::parse($item->bledger_datetime)->toFormattedDateString();
@@ -54,7 +55,8 @@ class FinanceController extends Controller
         return Inertia::render('Finance/BudgetLedger', [
             'data' => $data,
             'columns' => ColumnHelper::$budget_ledger_columns,
-            'remainingBudget' => intval($remainingBudget),
+            'remainingBudget' => NumberHelper::currency((float) $remainingBudget),
+            'date' => $request->date
         ]);
     }
 
