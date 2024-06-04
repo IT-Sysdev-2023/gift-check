@@ -5,13 +5,22 @@ namespace App\Services\Treasury;
 use App\Helpers\ColumnHelper;
 use App\Models\LedgerBudget;
 use App\Models\LedgerCheck;
+use App\Models\LedgerSpgc;
 use Inertia\Inertia;
 
 class LedgerService
 {
     public static function budgetLedger($dateRange) //ledger_budget.php
     {
-        return LedgerBudget::filter($dateRange)->select('bledger_id', 'bledger_no', 'bledger_trid', 'bledger_datetime', 'bledger_type', 'bdebit_amt', 'bcredit_amt')->paginate(10)->withQueryString();
+        return  LedgerBudget::select(
+            'bledger_id',
+            'bledger_no',
+            'bledger_trid',
+            'bledger_datetime',
+            'bledger_type',
+            'bdebit_amt',
+            'bcredit_amt'
+            )->paginate(10)->withQueryString();
     }
     public static function gcLedger() // gccheckledger.php
     {
@@ -34,5 +43,17 @@ class LedgerService
 
         return $record;
 
+    }
+    public static function spgcLedger()
+    {
+        return LedgerSpgc::select(
+            'spgcledger_id',
+            'spgcledger_no',
+            'spgcledger_trid',
+            'spgcledger_datetime',
+            'spgcledger_type',
+            'spgcledger_debit',
+            'spgcledger_credit'
+        )->paginate(10)->withQueryString();
     }
 }
