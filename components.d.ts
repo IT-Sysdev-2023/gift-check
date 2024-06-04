@@ -68,6 +68,7 @@ declare module 'vue' {
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
+    PaginationResource: typeof import('./resources/js/Components/PaginationResource.vue')['default']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
     Register: typeof import('./resources/js/Pages/Auth/Register.vue')['default']
     ResetPassword: typeof import('./resources/js/Pages/Auth/ResetPassword.vue')['default']
