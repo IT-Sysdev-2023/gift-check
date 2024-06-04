@@ -8,7 +8,7 @@ class ColumnHelper
         [
             'title' => 'Legder No.',
             'dataIndex' => 'bledger_no',
-         
+
         ],
         [
             'title' => 'Date.',
@@ -49,7 +49,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Transaction.',
-            'dataIndex' => 'bledger_type',
+            'dataIndex' => 'transactionType',
 
         ],
         [

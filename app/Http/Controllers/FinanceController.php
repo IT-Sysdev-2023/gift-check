@@ -10,6 +10,7 @@ use App\Services\Treasury\LedgerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Hash;
 
 class FinanceController extends Controller
 {
@@ -38,11 +39,11 @@ class FinanceController extends Controller
                     ->first();
 
                 $item->transactionType = 'GC Releasing - ' . $data->store_name;
-            }elseif ($item->bledger_type == 'RFGCSEGCREL'){
+            } elseif ($item->bledger_type == 'RFGCSEGCREL') {
                 $item->transactionType = 'Special External GC Releasing';
-            }elseif ($item->bledger_type == 'RC'){
+            } elseif ($item->bledger_type == 'RC') {
                 $item->transactionType = 'Requisition Cancelled';
-            }elseif ($item->bledger_type == 'GCRELINS'){
+            } elseif ($item->bledger_type == 'GCRELINS') {
                 $item->transactionType = 'Institution GC Releasing';
             }
             return $item;
@@ -60,13 +61,24 @@ class FinanceController extends Controller
     public function spgcLedger()
     {
         $data = LedgerService::spgcLedger();
-        // $data = LedgerSpgc::get();
 
-        // dd($data->toArray());
+        $data->transform(function ($item) {
+            if ($item->spgcledger_type == 'RFGCSEGC') {
+                $item->transactionType = 'Special External GC Request(PROMOTIONAL)';
+            } elseif ($item->spgcledger_type == 'RFGCSEGCREL') {
+                $item->transactionType = 'Special External GC Releasing(PROMOTIONAL)';
+            }
+            return $item;
+        });
 
         return Inertia::render('Finance/SpgcLedger', [
             'data' => $data,
             'columns' => ColumnHelper::$spgc_ledger_columns,
         ]);
+    }
+
+    public function toHash()
+    {
+        dd(Hash::make('123456'));
     }
 }
