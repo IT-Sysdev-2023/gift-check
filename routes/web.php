@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\RetailStore\MainController;
 use App\Http\Controllers\Treasury\DashboardController;
 use Illuminate\Foundation\Application;
@@ -15,7 +16,7 @@ Route::get('/', function () {
     return Inertia::render('Login'
        );
 });
-Route::get('/test', [DashboardController::class, 'test']);
+Route::get('/hash', [FinanceController::class, 'toHash']);
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 Route::get('promo-list', [MarketingController::class, 'promoList'])->name('promo.list');
 Route::get('addnewpromo', [MarketingController::class, 'addnewpromo'])->name('add.new.promo');
 Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('promo.gc.request');
@@ -43,4 +45,12 @@ Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc']) ->
 Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville']) -> name('verified.gc.screenville');
 Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech']) -> name('verified.gc.asctech');
 Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm']) -> name('verified.gc.island.city.mall');
+
+
+//sa finance ni san
+
+Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
+Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
+
+
 require __DIR__.'/auth.php';
