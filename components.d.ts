@@ -69,6 +69,7 @@ declare module 'vue' {
     InputError: typeof import('./resources/js/Components/InputError.vue')['default']
     InputLabel: typeof import('./resources/js/Components/InputLabel.vue')['default']
     IslandCityMall: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/IslandCityMall.vue')['default']
+    Ledger: typeof import('./resources/js/Pages/Ledger.vue')['default']
     LineChartOutlined: typeof import('@ant-design/icons-vue')['LineChartOutlined']
     Link: typeof import('@inertiajs/vue3')['Link']
     Login: typeof import('./resources/js/Pages/Login.vue')['default']
