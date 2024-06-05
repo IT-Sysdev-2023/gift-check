@@ -27,7 +27,7 @@
             :pagination="false"
         >
             <template #bodyCell="{ column, record }">
-                <template v-if="Object.keys(record).includes(column.dataIndex)">
+                <template v-if="column.dataIndex">
                     <span
                         v-html="
                             highlightText(record[column.dataIndex], form.search)
@@ -89,6 +89,7 @@ export default {
                 const formattedDate = this.form.date
                     ? this.form.date.map((date) => date.format("YYYY-MM-DD"))
                     : [];
+
                 this.$inertia.get(
                     route("budget.ledger"),
                     { ...pickBy(this.form), date: formattedDate },

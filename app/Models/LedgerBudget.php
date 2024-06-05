@@ -52,6 +52,11 @@ class LedgerBudget extends Model
         return $this->belongsTo(BudgetAdjustment::class, 'bledger_trid', 'bud_id');
     }
 
+    public function approvedGcRequest()
+    {
+        return $this->belongsTo(ApprovedGcrequest::class, 'bledger_trid', 'agcr_id');
+    }
+
     public static function currentBudget()
     {
         $query = self::select(DB::raw('SUM(bdebit_amt) as debit'), DB::raw('SUM(bcredit_amt) as credit'))
