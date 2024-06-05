@@ -6,7 +6,7 @@ use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FinanceController;
-use App\Http\Controllers\RetailStore\MainController;
+use App\Http\Controllers\Treasury\MainController;
 use App\Http\Controllers\Treasury\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -16,7 +16,7 @@ Route::get('/', function () {
     return Inertia::render('Login'
        );
 })->middleware('guest');
-// Route::get('/hash', [FinanceController::class, 'toHash']);
+
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -47,8 +47,18 @@ Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTe
 Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm']) -> name('verified.gc.island.city.mall');
 
 
-//sa finance ni san
+//Treasury
+Route::prefix('treasury')->group(function (){
+    Route::name('treasury.')->group(function () {
+        Route::get('/dashboard', [MainController::class, 'budgetLedger'])->name('dashboard');
+        Route::get('/budget-ledger', [MainController::class, 'budgetLedger'])->name('budget.ledger');
+        Route::get('gc-ledger', [MainController::class, 'gcLedger'])->name('gc.ledger');
+    });
 
+});
+
+
+//Finance
 Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
 Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
 

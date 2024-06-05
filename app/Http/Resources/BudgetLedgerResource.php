@@ -17,7 +17,7 @@ class BudgetLedgerResource extends JsonResource
     {
 
         return [
-            'ledgerNo' => $this->bledger_no,
+            'ledger_no' => $this->bledger_no,
             'date' => $this->bledger_datetime->toFormattedDateString(),
             'transaction' => $this->transactionType($this->bledger_type, $this->approvedGcRequest?->storeGcRequest?->store),
             'debit' => $this->bdebit_amt,

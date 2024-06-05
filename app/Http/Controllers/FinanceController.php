@@ -18,16 +18,14 @@ use Illuminate\Support\Facades\Hash;
 
 class FinanceController extends Controller
 {
+
+    public function __construct(public LedgerService $ledgerService)
+    {
+
+    }
     public function budgetLedger(Request $request)
     {
-        $data = LedgerService::budgetLedger($request);
-
-        return Inertia::render('Finance/BudgetLedger', [
-            'filters' => $request->all('search', 'date'),
-            'remainingBudget' => LedgerBudget::currentBudget(),
-            'data' => BudgetLedgerResource::collection($data),
-            'columns' => ColumnHelper::$ledger_columns,
-        ]);
+        return $this->ledgerService->budgetLedger($request);
     }
 
     public function spgcLedger()

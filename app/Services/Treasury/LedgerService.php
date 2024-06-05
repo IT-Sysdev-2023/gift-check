@@ -3,6 +3,8 @@
 namespace App\Services\Treasury;
 
 use App\Helpers\ColumnHelper;
+use App\Http\Resources\BudgetLedgerResource;
+use App\Http\Resources\GcLedgerResource;
 use App\Models\LedgerBudget;
 use App\Models\LedgerCheck;
 use App\Models\LedgerSpgc;
@@ -11,9 +13,12 @@ use Inertia\Inertia;
 
 class LedgerService
 {
-    public static function budgetLedger(Request $request) //ledger_budget.php
+
+    public function __construct() {
+    }
+    public function budgetLedger(Request $request) //ledger_budget.php
     {
-        return LedgerBudget::with('approvedGcRequest.storeGcRequest.store:store_id,store_name')->filter($request->only('search', 'date'))
+        $record =  LedgerBudget::with('approvedGcRequest.storeGcRequest.store:store_id,store_name')->filter($request->only('search', 'date'))
         ->select(
             [
                 'bledger_id',
@@ -27,8 +32,15 @@ class LedgerService
         )
         ->paginate(10)
         ->withQueryString();
+
+        return Inertia::render('Ledger', [
+            'filters' => $request->all('search', 'date'),
+            'remainingBudget' => LedgerBudget::currentBudget(),
+            'data' => BudgetLedgerResource::collection($record),
+            'columns' => ColumnHelper::$budget_ledger_columns,
+        ]);
     }
-    public static function gcLedger() // gccheckledger.php
+    public function gcLedger(Request $request) // gccheckledger.php
     {
 
         $record = LedgerCheck::with('user:user_id,firstname,lastname')
@@ -44,10 +56,15 @@ class LedgerService
                 'c_posted_by'
             )
             ->orderBy('cledger_id')
-            ->cursorPaginate()
+            ->paginate(10)
             ->withQueryString();
 
-        return $record;
+            return Inertia::render('Ledger', [
+                'filters' => $request->all('search', 'date'),
+                'remainingBudget' => LedgerBudget::currentBudget(),
+                'data' => GcLedgerResource::collection($record),
+                'columns' => ColumnHelper::$gc_ledger_columns,
+            ]);
 
     }
     public static function spgcLedger()
@@ -60,6 +77,6 @@ class LedgerService
             'spgcledger_type',
             'spgcledger_debit',
             'spgcledger_credit'
-        )->paginate(10)->withQueryString();
+        )->paginate()->withQueryString();
     }
 }
