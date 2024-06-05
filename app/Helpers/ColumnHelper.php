@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 class ColumnHelper
 {
-    public static $budget_ledger_columns = [
+    public static $ledger_columns = [
         [
             'title' => 'Legder No.',
             'dataIndex' => 'ledgerNo',
@@ -29,38 +29,6 @@ class ColumnHelper
         [
             'title' => 'Credit.',
             'dataIndex' => 'credit',
-
-        ],
-        [
-            'title' => 'Info.',
-            'key' => 'info',
-
-        ],
-    ];
-    public static $spgc_ledger_columns = [
-        [
-            'title' => 'Legder No.',
-            'dataIndex' => 'spgcledger_no',
-
-        ],
-        [
-            'title' => 'Date.',
-            'dataIndex' => 'spgcledger_datetime',
-
-        ],
-        [
-            'title' => 'Transaction.',
-            'dataIndex' => 'transactionType',
-
-        ],
-        [
-            'title' => 'Debit.',
-            'dataIndex' => 'spgcledger_debit',
-
-        ],
-        [
-            'title' => 'Credit.',
-            'dataIndex' => 'spgcledger_credit',
 
         ],
         [

@@ -13,7 +13,7 @@ class LedgerService
 {
     public static function budgetLedger(Request $request) //ledger_budget.php
     {
-        return LedgerBudget::filter($request->only('search', 'date'))
+        return LedgerBudget::with('approvedGcRequest.storeGcRequest.store:store_id,store_name')->filter($request->only('search', 'date'))
         ->select(
             [
                 'bledger_id',

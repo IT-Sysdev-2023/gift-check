@@ -6,6 +6,7 @@ use App\Helpers\ColumnHelper;
 use App\Helpers\NumberHelper;
 use App\Http\Resources\BudgetLedgerCollection;
 use App\Http\Resources\BudgetLedgerResource;
+use App\Http\Resources\SpgcLedgerResource;
 use App\Models\ApprovedGcrequest;
 use App\Models\LedgerBudget;
 use App\Models\LedgerSpgc;
@@ -21,47 +22,11 @@ class FinanceController extends Controller
     {
         $data = LedgerService::budgetLedger($request);
 
-
-        // $data->transform(function ($item) {
-        //     $item->bledger_datetime = Date::parse($item->bledger_datetime)->toFormattedDateString();
-
-        //     if ($item->bledger_type == 'RFBR') {
-        //         $item->transactionType = 'Budget Entry';
-        //     } elseif ($item->bledger_type == 'RFGCP') {
-        //         $item->transactionType = 'GC';
-        //     } elseif ($item->bledger_type == 'RFGCSEGC') {
-        //         $item->transactionType = 'Special External GC Request';
-        //     } elseif ($item->bledger_type == 'RFGCPROM') {
-        //         $item->transactionType = 'Promo GC Request';
-        //     } elseif ($item->bledger_type == 'RFGCPROM') {
-        //         $item->transactionType = 'Promo GC Releasing';
-        //     } elseif ($item->bledger_type == 'GCSR') {
-
-        //         $data = ApprovedGcrequest::join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
-        //             ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
-        //             ->where('approved_gcrequest.agcr_id', $item->bledger_trid)
-        //             ->select('stores.store_name')
-        //             ->first();
-
-        //         $item->transactionType = 'GC Releasing - ' . $data->store_name;
-        //     } elseif ($item->bledger_type == 'RFGCSEGCREL') {
-        //         $item->transactionType = 'Special External GC Releasing';
-        //     } elseif ($item->bledger_type == 'RC') {
-        //         $item->transactionType = 'Requisition Cancelled';
-        //     } elseif ($item->bledger_type == 'GCRELINS') {
-        //         $item->transactionType = 'Institution GC Releasing';
-        //     }
-        //     return $item;
-        // });
-
-        // dd((new BudgetLedgerCollection($data))->toArray());
-
-
         return Inertia::render('Finance/BudgetLedger', [
             'filters' => $request->all('search', 'date'),
             'remainingBudget' => LedgerBudget::currentBudget(),
             'data' => BudgetLedgerResource::collection($data),
-            'columns' => ColumnHelper::$budget_ledger_columns,
+            'columns' => ColumnHelper::$ledger_columns,
         ]);
     }
 
@@ -69,23 +34,9 @@ class FinanceController extends Controller
     {
         $data = LedgerService::spgcLedger();
 
-        $data->transform(function ($item) {
-            if ($item->spgcledger_type == 'RFGCSEGC') {
-                $item->transactionType = 'Special External GC Request(PROMOTIONAL)';
-            } elseif ($item->spgcledger_type == 'RFGCSEGCREL') {
-                $item->transactionType = 'Special External GC Releasing(PROMOTIONAL)';
-            }
-            return $item;
-        });
-
         return Inertia::render('Finance/SpgcLedger', [
-            'data' => $data,
-            'columns' => ColumnHelper::$spgc_ledger_columns,
+            'data' => SpgcLedgerResource::collection($data),
+            'columns' => ColumnHelper::$ledger_columns,
         ]);
-    }
-
-    public function toHash()
-    {
-        dd(Hash::make('123456'));
     }
 }
