@@ -57,13 +57,9 @@ declare module 'vue' {
     AUpload: typeof import('ant-design-vue/es')['Upload']
     AuthenticatedLayout: typeof import('./resources/js/Layouts/AuthenticatedLayout.vue')['default']
     Badge: typeof import('./resources/js/Components/Badge.vue')['default']
-<<<<<<< HEAD
-    Card: typeof import('./resources/js/Components/Card.vue')['default']
-=======
     BudgetLedger: typeof import('./resources/js/Pages/Finance/BudgetLedger.vue')['default']
     Card: typeof import('./resources/js/Components/Card.vue')['default']
     CardBadge: typeof import('./resources/js/Components/CardBadge.vue')['default']
->>>>>>> main
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']
     Colonade_colon: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/Colonade_colon.vue')['default']
     ColonadeMandaue: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ColonadeMandaue.vue')['default']
@@ -72,19 +68,6 @@ declare module 'vue' {
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     Dashboard: typeof import('./resources/js/Pages/Dashboard.vue')['default']
     DeleteUserForm: typeof import('./resources/js/Pages/Profile/Partials/DeleteUserForm.vue')['default']
-<<<<<<< HEAD
-    Dropdown: typeof import('./resources/js/Components/Dropdown.vue')['default']
-    DropdownLink: typeof import('./resources/js/Components/DropdownLink.vue')['default']
-    Edit: typeof import('./resources/js/Pages/Profile/Edit.vue')['default']
-    FarmersMarket: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/FarmersMarket.vue')['default']
-    FinanceSideBar: typeof import('./resources/js/Components/FinanceSideBar.vue')['default']
-    ForgotPassword: typeof import('./resources/js/Pages/Auth/ForgotPassword.vue')['default']
-    GuestLayout: typeof import('./resources/js/Layouts/GuestLayout.vue')['default']
-    InputError: typeof import('./resources/js/Components/InputError.vue')['default']
-    InputLabel: typeof import('./resources/js/Components/InputLabel.vue')['default']
-    IslandCityMall: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/IslandCityMall.vue')['default']
-    Login: typeof import('./resources/js/Pages/Login.vue')['default']
-=======
     DollarOutlined: typeof import('@ant-design/icons-vue')['DollarOutlined']
     Dropdown: typeof import('./resources/js/Components/Dropdown.vue')['default']
     DropdownLink: typeof import('./resources/js/Components/DropdownLink.vue')['default']
@@ -107,15 +90,11 @@ declare module 'vue' {
     Login: typeof import('./resources/js/Pages/Login.vue')['default']
     LoginX: typeof import('./resources/js/Pages/Auth/LoginX.vue')['default']
     LogoutOutlined: typeof import('@ant-design/icons-vue')['LogoutOutlined']
->>>>>>> main
     ManageSupplier: typeof import('./resources/js/Pages/Marketing/ManageSupplier.vue')['default']
     MarketingSideBar: typeof import('./resources/js/Components/MarketingSideBar.vue')['default']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
-<<<<<<< HEAD
-=======
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
->>>>>>> main
     PlazaMarcela: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/PlazaMarcela.vue')['default']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
     PromoGcRequest: typeof import('./resources/js/Pages/Marketing/PromoGcRequest.vue')['default']
@@ -130,22 +109,17 @@ declare module 'vue' {
     Sale_treasurySales: typeof import('./resources/js/Pages/Marketing/Sale_treasurySales.vue')['default']
     ScreenVille: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ScreenVille.vue')['default']
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
-<<<<<<< HEAD
-=======
     SettingOutlined: typeof import('@ant-design/icons-vue')['SettingOutlined']
     SpgcLedger: typeof import('./resources/js/Pages/Finance/SpgcLedger.vue')['default']
     StockOutlined: typeof import('@ant-design/icons-vue')['StockOutlined']
     SwapOutlined: typeof import('@ant-design/icons-vue')['SwapOutlined']
->>>>>>> main
     TextInput: typeof import('./resources/js/Components/TextInput.vue')['default']
     TreasurySideBar: typeof import('./resources/js/Components/TreasurySideBar.vue')['default']
     UbayDistributionCenter: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/UbayDistributionCenter.vue')['default']
     UpdatePasswordForm: typeof import('./resources/js/Pages/Profile/Partials/UpdatePasswordForm.vue')['default']
     UpdateProfileInformationForm: typeof import('./resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue')['default']
-<<<<<<< HEAD
-=======
+    UploadOutlined: typeof import('@ant-design/icons-vue')['UploadOutlined']
     UserOutlined: typeof import('@ant-design/icons-vue')['UserOutlined']
->>>>>>> main
     VerifyEmail: typeof import('./resources/js/Pages/Auth/VerifyEmail.vue')['default']
     Welcome: typeof import('./resources/js/Pages/Welcome.vue')['default']
   }

@@ -68,4 +68,39 @@ class ColumnHelper
 
         ],
     ];
+
+    public static  $ver_gc_alturas_mall_columns = [
+        [
+            'title' => 'Barcode #.',
+            'dataIndex' => 'vs_barcode',
+        ],
+        [
+            'title' => 'Denomination.',
+            'dataIndex' => 'vs_tf_denomination',
+        ],
+        [
+            'title' => 'Date Verified/Reverified.',
+            'dataIndex' => 'vs_date',
+            'key' => 'dateVerRev'
+        ],
+        [
+            'title' => 'Verified/Reverified By.',
+            'dataIndex' => 'verbyFirstname',
+            'key' => 'verby'
+        ],
+        [
+            'title' => 'Customer.',
+            'dataIndex' => 'customersLastname',
+            'key' => 'customer'
+        ],
+        [
+            'title' => 'Balance.',
+            'dataIndex' => 'vs_tf_balance',
+        ],
+        [
+            'title' => 'View.',
+            'key' => 'view',
+        ],
+        
+    ];
 }

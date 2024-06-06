@@ -1,67 +1,64 @@
 <template>
     <a-card>
         <a-card class="mb-2" title="ASC Tech - Verified GC"></a-card>
-        <a-table :dataSource="dataSource" size="small" bordered :columns="columns" />
+        <div class="flex justify-end">
+            <a-input-search class="mt-5 mb-5" 
+            v-model:value="search" placeholder="input search text here." style="width: 300px"
+                @search="onSearch" />
+        </div>
+        <a-table :dataSource="data.data" size="small" bordered :columns="columns" :pagination="false">
+            <template #bodyCell="{ column, record }">
+                <!-- {{ record.vs_tf_balance }} -->
+                <template v-if="column.key === 'dateVerRev'">
+                    {{ record.vs_date }}
+                    <div v-if="record.vs_reverifydate !== ''">
+                        {{ record.vs_reverifydate }}
+                    </div>
+                </template>
+                <template v-if="column.key === 'verby'">
+                    {{ record.verbyFirstname }}, {{ record.verbyLastname }}
+                    <div v-if="record.vs_reverifydate !== ''">
+                        {{ record.revbyFirstname }} {{ record.revbyLastname }}
+                    </div>
+                </template>
+                <template v-if="column.key === 'customer'">
+                    {{ record.customersFirstname }}, {{ record.customersLastname }}
+                </template>
+            </template>
+        </a-table>
+        <pagination class="mt-5" :datarecords="data" />
     </a-card>
-   
+
 </template>
 
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
+import debounce from "lodash/debounce";
+
 export default {
     layout: AuthenticatedLayout,
-    
-
+    props: {
+        data: Object,
+        columns: Array,
+    },
     data() {
         return {
-            dataSource: [
-                {
-                    key: '1',
-                    barcode: '1310000000015',
-                    dateVerified_Reverified: '2017-09-01',
-                    verified_ReverifiedBy: 'Jennelyn Socorin',
-                    customer: 'Jezza Marie Mangmang',
-                    balance: '0.00',
-                },
-                {
-                    key: '2',
-                    barcode: '1310000000015',
-                    dateVerified_Reverified: '2017-09-01',
-                    verified_ReverifiedBy: 'Jennelyn Socorin',
-                    customer: 'Jezza Marie Mangmang',
-                    balance: '0.00',
-                }
-            ],
-
-            columns: [
-                {
-                    title: 'Barcode #	',
-                    dataIndex: 'barcode',
-                    key: 'barcode',
-                },
-                {
-                    title: 'Date Verified/Reverified',
-                    dataIndex: 'dateVerified_Reverified',
-                    key: 'dateVerified_Reverified',
-                },
-                {
-                    title: 'Verified/Reverified By',
-                    dataIndex: 'verified_ReverifiedBy',
-                    key: 'verified_ReverifiedBy',
-                },
-                {
-                    title: 'Customer',
-                    dataIndex: 'customer',
-                    key: 'customer',
-                },
-                {
-                    title: 'Balance',
-                    dataIndex: 'balance',
-                    key: 'balance',
-                }
-            ],
-        };
+            search: ''
+        }
+    },
+    watch: {
+        search: {
+            deep: true,
+            handler: debounce(function () {
+                // console.log(this.search);
+                // const formattedDate = this.form.date ? this.form.date.map(date => date.format('YYYY-MM-DD')) : [];
+                this.$inertia.get(route("verified.gc.alturas.mall"), {
+                    search: this.search
+                }, {
+                    preserveState: true,
+                });
+            }, 600),
+        },
     },
 }
 </script>
-

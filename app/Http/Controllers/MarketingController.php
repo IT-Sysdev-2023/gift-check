@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ColumnHelper;
+use App\Helpers\GetVerifiedGc;
 use App\Models\StoreVerification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class MarketingController extends Controller
@@ -49,101 +52,104 @@ class MarketingController extends Controller
 
     public function verifiedGc_Amall()
     {
-        $data = StoreVerification::leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
-            ->leftJoin('users as revby', 'revby.user_id', '=', 'store_verification.vs_reverifyby')
-            ->leftJoin('users as verby', 'verby.user_id', '=', 'store_verification.vs_by')
-            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-            ->select(
-                'store_verification.vs_barcode',
-                'store_verification.vs_tf_denomination',
-                'customers.cus_lname as customersLastname',
-                'customers.cus_fname as customersFirstname',
-                'verby.firstname as verbyFirstname',
-                'verby.lastname as verbyLastname',
-                'revby.firstname as revbyFirstname',
-                'revby.lastname as revbyLastname',
-                'store_verification.vs_tf_used',
-                'store_verification.vs_tf_balance',
-                'store_verification.vs_date',
-                'store_verification.vs_time',
-                'store_verification.vs_reverifydate'
-            )
-            ->paginate(10)
-            ->withQueryString();
+
+        $data = GetVerifiedGc::getVerifiedGc(1);
         return Inertia::render('Marketing/VerifiedGCperStore/AlturasMall', [
             'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
     public function verifiedGc_A_talibon()
     {
-        return Inertia::render('Marketing/VerifiedGCperStore/AlturasTalibon');
+        $data = GetVerifiedGc::getVerifiedGc(2);
+
+        return Inertia::render('Marketing/VerifiedGCperStore/AlturasTalibon', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
     public function verifiedGc_A_tubigon()
     {
-        return Inertia::render('Marketing/VerifiedGCperStore/Alturastubigon');
+
+        $data = GetVerifiedGc::getVerifiedGc(0);
+
+        return Inertia::render('Marketing/VerifiedGCperStore/Alturastubigon', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
-
-
-
-
-
-
-
-
-
 
 
     public function verifiedGc_AltaCita()
     {
-
-        return Inertia::render('Marketing/VerifiedGCperStore/AltaCita');
+        $data = GetVerifiedGc::getVerifiedGc(8);
+        return Inertia::render('Marketing/VerifiedGCperStore/AltaCita', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function verifiedGc_AscTech()
     {
-        return Inertia::render('Marketing/VerifiedGCperStore/AscTech');
+        $data = GetVerifiedGc::getVerifiedGc(12);
+        return Inertia::render('Marketing/VerifiedGCperStore/AscTech', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
     public function verifiedGc_colonadeColon()
     {
-        return Inertia::render('Marketing/VerifiedGCperStore/Colonade_colon');
+        $data = GetVerifiedGc::getVerifiedGc(5);
+        return Inertia::render('Marketing/VerifiedGCperStore/Colonade_colon', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
     public function verifiedGc_colonadeMandaue()
-    {
-        return Inertia::render('Marketing/VerifiedGCperStore/ColonadeMandaue');
+    {$data = GetVerifiedGc::getVerifiedGc(6);
+        return Inertia::render('Marketing/VerifiedGCperStore/ColonadeMandaue', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
     public function verifiedGc_plazaMarcela()
     {
-
-        return Inertia::render('Marketing/VerifiedGCperStore/PlazaMarcela');
+        $data = GetVerifiedGc::getVerifiedGc(4);
+        return Inertia::render('Marketing/VerifiedGCperStore/PlazaMarcela', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
     public function verifiedGc_farmersMarket()
     {
-        return Inertia::render('Marketing/VerifiedGCperStore/FarmersMarket');
+        $data = GetVerifiedGc::getVerifiedGc(10);
+        return Inertia::render('Marketing/VerifiedGCperStore/FarmersMarket', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
     public function verifiedGc_udc()
     {
-        return Inertia::render('Marketing/VerifiedGCperStore/UbayDistributionCenter');
+        $data = GetVerifiedGc::getVerifiedGc(10);
+        return Inertia::render('Marketing/VerifiedGCperStore/UbayDistributionCenter', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
     public function verifiedGc_screenville()
     {
-        return Inertia::render('Marketing/VerifiedGCperStore/ScreenVille');
+        $data = GetVerifiedGc::getVerifiedGc(11);
+        return Inertia::render('Marketing/VerifiedGCperStore/ScreenVille', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
     public function verifiedGc_icm()
     {
-
-        return Inertia::render('Marketing/VerifiedGCperStore/IslandCityMall');
+        $data = GetVerifiedGc::getVerifiedGc(3);
+        return Inertia::render('Marketing/VerifiedGCperStore/IslandCityMall', [
+            'data' => $data,
+            'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
+        ]);
     }
 }
