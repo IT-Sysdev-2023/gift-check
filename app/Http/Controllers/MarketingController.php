@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
 use App\Helpers\GetVerifiedGc;
+use App\Models\Promo;
 use App\Models\StoreVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,12 +12,38 @@ use Inertia\Inertia;
 
 class MarketingController extends Controller
 {
-    //
+
     public function promoList()
     {
-
-        return Inertia::render('Marketing/PromoList');
+        $tag = auth()->user()->promo_tag;
+        $data = Promo::join('users', 'users.user_id', '=', 'promo.promo_valby')
+            ->where('promo.promo_tag', $tag)
+            ->select(
+                'promo.promo_id',
+                'promo.promo_name',
+                'promo.promo_date',
+                'promo.promo_datenotified',
+                'promo.promo_dateexpire',
+                'promo.promo_remarks',
+                DB::raw("CONCAT(users.firstname, ' ,', users.lastname) AS fullname"),
+                'users.promo_tag',
+                'promo.promo_group'
+            )
+            ->orderByDesc('promo.promo_id')
+            ->paginate(10)->withQueryString();
+            
+        $columns = array_map(
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Promo No', 'Promo Name', 'Date Notified', 'Expiration Date', 'Group', 'Created By', 'View'],
+            ['promo_id', 'promo_name', 'promo_datenotified', 'promo_dateexpire', 'promo_group', 'fullname', 'View']
+        );
+        return Inertia::render('Marketing/PromoList', [
+            'data' => $data,
+            'columns' => ColumnHelper::getColumns($columns),
+        ]);
     }
+
+
 
     public function addnewpromo()
     {
@@ -106,7 +133,8 @@ class MarketingController extends Controller
         ]);
     }
     public function verifiedGc_colonadeMandaue()
-    {$data = GetVerifiedGc::getVerifiedGc(6);
+    {
+        $data = GetVerifiedGc::getVerifiedGc(6);
         return Inertia::render('Marketing/VerifiedGCperStore/ColonadeMandaue', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,

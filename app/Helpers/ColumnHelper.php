@@ -103,4 +103,22 @@ class ColumnHelper
         ],
         
     ];
+
+    public static function getColumns($columns)
+    {
+        return array_map(function($item) {
+            return [
+                'title' => $item['title'] ?? '',
+                'dataIndex' => $item['dataIndex'] ?? '',
+                'key' => $item['dataIndex'] ?? '',
+            ];
+        }, $columns);
+    }
+
+    public static function arrayHelper($title, $column){
+            return [
+                'title' => $title,
+                'dataIndex' => $column
+            ];
+    }
 }
