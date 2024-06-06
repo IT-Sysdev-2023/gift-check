@@ -57,7 +57,7 @@ declare module 'vue' {
     AUpload: typeof import('ant-design-vue/es')['Upload']
     AuthenticatedLayout: typeof import('./resources/js/Layouts/AuthenticatedLayout.vue')['default']
     Badge: typeof import('./resources/js/Components/Badge.vue')['default']
-    BudgetLedger: typeof import('./resources/js/Pages/BudgetLedger.vue')['default']
+    BudgetLedger: typeof import('./resources/js/Pages/Finance/BudgetLedger.vue')['default']
     Card: typeof import('./resources/js/Components/Card.vue')['default']
     CardBadge: typeof import('./resources/js/Components/CardBadge.vue')['default']
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']

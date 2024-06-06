@@ -58,6 +58,7 @@ Route::prefix('treasury')->group(function (){
 });
 
 
+
 //Finance
 Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
 Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
