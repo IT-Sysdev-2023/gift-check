@@ -38,6 +38,7 @@ declare module 'vue' {
     Alturastubigon: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/Alturastubigon.vue')['default']
     AMenu: typeof import('ant-design-vue/es')['Menu']
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
+    AModal: typeof import('ant-design-vue/es')['Modal']
     ApplicationLogo: typeof import('./resources/js/Components/ApplicationLogo.vue')['default']
     ARadio: typeof import('ant-design-vue/es')['Radio']
     ARadioGroup: typeof import('ant-design-vue/es')['RadioGroup']
