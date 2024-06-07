@@ -32,7 +32,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
 
-    Route::get('finance-dashboard', [FinanceController::class, ])->name('finance.dashboard');
+    Route::get('finance-dashboard', [FinanceController::class,])->name('finance.dashboard');
 
     Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
 });
 
 //Marketing
-Route::prefix('marketing')->group(function(){
+Route::prefix('marketing')->group(function () {
     Route::name('treasury.')->group(function () {
     });
 });
@@ -83,7 +83,7 @@ Route::prefix('treasury')->group(function () {
 });
 
 //Finance
-Route::prefix('finance')->group(function (){
+Route::prefix('finance')->group(function () {
     Route::name('finance.')->group(function () {
         Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');

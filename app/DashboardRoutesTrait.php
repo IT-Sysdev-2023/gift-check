@@ -12,4 +12,15 @@ trait DashboardRoutesTrait
         '4' => 'custodian.dashboard',
         '6' => 'marketing.dashboard',
     ];
+
+    protected function redirectToDashboardDestination(string $usertype, int $user_role)
+    {
+
+        if ($this->roleDashboardRoutes[$usertype] && $usertype != $user_role) {
+            return route($this->roleDashboardRoutes[$usertype]);
+        } else {
+            return abort(404, 'Not Found');
+        }
+
+    }
 }
