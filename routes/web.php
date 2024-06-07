@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\BudgetAdjustmentController;
+use App\Http\Controllers\CustodianController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\RetailController;
 use App\Http\Controllers\Treasury\MainController;
 use App\Http\Controllers\Treasury\DashboardController;
 use App\Http\Controllers\Treasury\TreasuryController;
@@ -20,41 +23,34 @@ Route::get('/', function () {
     );
 })->middleware('guest');
 
-// Route::get('/dashboard', [TreasuryController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+//Dashboards
 Route::middleware(['auth'])->group(function () {
 
     Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard');
 
-    Route::get('retail-dashboard', function () {
-        dd(2);
-    })->name('retail.dashboard');
+    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard');
 
-    Route::get('accounting-dashboard', function () {
-        dd(3);
-    })->name('accounting.dashboard');
+    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
 
-    Route::get('finance-dashboard', function () {
-        dd(4);
-    })->name('finance.dashboard');
+    Route::get('finance-dashboard', [FinanceController::class, ])->name('finance.dashboard');
 
-    Route::get('custodian-dashboard', function () {
-        dd(5);
-    })->name('custodian.dashboard');
+    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
-    Route::get('marketing-dashboard', function () {
-        dd(6);
-    })->name('marketing.dashboard');
+    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
 });
 
+//Profile
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//Dashboards
-
-
+//Marketing
+Route::prefix('marketing')->group(function(){
+    Route::name('treasury.')->group(function () {
+    });
+});
 Route::get('promo-list', [MarketingController::class, 'promoList'])->name('promo.list');
 Route::get('addnewpromo', [MarketingController::class, 'addnewpromo'])->name('add.new.promo');
 Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('promo.gc.request');
@@ -86,11 +82,13 @@ Route::prefix('treasury')->group(function () {
 
 });
 
-
-
 //Finance
-Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
-Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
+Route::prefix('finance')->group(function (){
+    Route::name('finance.')->group(function () {
+        Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
+        Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
+    });
+});
 
 
 require __DIR__ . '/auth.php';

@@ -23,6 +23,10 @@ class FinanceController extends Controller
     {
 
     }
+
+    public function index(){
+
+    }
     public function budgetLedger(Request $request)
     {
         return $this->ledgerService->budgetLedger($request);
@@ -34,7 +38,7 @@ class FinanceController extends Controller
 
         return Inertia::render('Finance/SpgcLedger', [
             'data' => SpgcLedgerResource::collection($data),
-            'columns' => ColumnHelper::$ledger_columns,
+            'columns' => ColumnHelper::$budget_ledger_columns,
         ]);
     }
 }
