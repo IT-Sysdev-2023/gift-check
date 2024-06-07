@@ -1,4 +1,5 @@
 <template>
+        <Head title="Verified GC - Farmars Market" />
     <a-card>
         <a-card class="mb-2" title="Farmers Market - Verified GC"></a-card>
         <div class="flex justify-end">

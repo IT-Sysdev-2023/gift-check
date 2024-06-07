@@ -1,83 +1,61 @@
 <template>
+    <Head title="Promo GC Status" />
     <a-card>
-        <a-card class="mb-2" title="Promo List"></a-card>
-        <a-table :dataSource="dataSource" size="small" bordered :columns="columns" />
+        <a-card class="mb-2" title="Promo GC Status"></a-card>
+        <div class="flex justify-end">
+            <a-input-search class="mt-5 mb-5" v-model:value="search" placeholder="input search text here."
+                style="width: 300px" @search="onSearch" />
+        </div>
+
+        <a-table :dataSource="data.data" :columns="columns" :pagination="false" />
+
+        <pagination class="mt-5" :datarecords="data" />
     </a-card>
-   
+
 </template>
 
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
+import debounce from "lodash/debounce";
+import { PlusOutlined } from '@ant-design/icons-vue';
+
 export default {
     layout: AuthenticatedLayout,
-    
-
+    PlusOutlined,
+    props: {
+        data: Array,
+        columns: Array,
+    },
     data() {
         return {
-            dataSource: [
-                {
-                    key: '1',
-                    barcode: '1310000002556',
-                    denomination: '1,000.00',
-                    RetailGroup: '1',
-                    PromoName: 'Rewards Card Raffle Promo',
-                    customerName: 'Wea Gutierrez',
-                    cusAddress: 'Lot 3 Blk 37, P, Capitol Valley, Dao District, Tagbilaran City',
-                    status: 'Released',
-                    dateReleased: 'Apr 26 2019 03:36 PM',
-                    ReleasedBy: 'Roy Jaictin',
-                }
-            ],
-
-            columns: [
-                {
-                    title: 'GC Barcode',
-                    dataIndex: 'barcode',
-                    key: 'barcode',
-                },
-                {
-                    title: 'Denom',
-                    dataIndex: 'denomination',
-                    key: 'denomination',
-                },
-                {
-                    title: 'Retail Group',
-                    dataIndex: 'RetailGroup',
-                    key: 'RetailGroup',
-                },
-                {
-                    title: 'Promo Name',
-                    dataIndex: 'PromoName',
-                    key: 'PromoName',
-                },
-                {
-                    title: 'Customer Name',
-                    dataIndex: 'customerName',
-                    key: 'customerName',
-                },
-                {
-                    title: 'Customer Address',
-                    dataIndex: 'cusAddress',
-                    key: 'cusAddress',
-                },
-                {
-                    title: 'Status',
-                    dataIndex: 'status',
-                    key: 'status',
-                },
-                {
-                    title: 'Date Released',
-                    dataIndex: 'dateReleased',
-                    key: 'dateReleased',
-                },
-                {
-                    title: 'Released By',
-                    dataIndex: 'ReleasedBy',
-                    key: 'ReleasedBy',
-                }
-            ],
-        };
+            search: '',
+            open: false
+        }
+    },
+    methods: {
+        showModal() {
+            this.open = true;
+        },
+        handleOk() {
+            this.open = false;
+        },
+        handleCancel() {
+            this.open = false;
+        }
+    },
+    watch: {
+        search: {
+            deep: true,
+            handler: debounce(function () {
+                // console.log(this.search);
+                // const formattedDate = this.form.date ? this.form.date.map(date => date.format('YYYY-MM-DD')) : [];
+                this.$inertia.get(route("verified.gc.alturas.mall"), {
+                    search: this.search
+                }, {
+                    preserveState: true,
+                });
+            }, 600),
+        },
     },
 }
 </script>
-

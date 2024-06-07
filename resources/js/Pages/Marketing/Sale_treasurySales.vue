@@ -1,4 +1,5 @@
 <template>
+    <Head title="Treasury Sales" />
     <a-card>
         <a-card class="mb-2" title="Treasury Sales"></a-card>
         <a-table :dataSource="dataSource" size="small" bordered :columns="columns" />

@@ -1,4 +1,5 @@
 <template>
+    <Head title="Promo List" />
     <a-card>
         <a-card class="mb-2" title="Promo List"></a-card>
         <div class="flex justify-end">

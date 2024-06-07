@@ -1,4 +1,5 @@
-<template>
+<template> 
+<Head title="Verified GC - ASC Tech" />
     <a-card>
         <a-card class="mb-2" title="ASC Tech - Verified GC"></a-card>
         <div class="flex justify-end">
