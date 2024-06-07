@@ -12,4 +12,11 @@ class LedgerSpgc extends Model
     protected $table = 'ledger_spgc';
     protected $primaryKey = 'spgcledger_id';
 
+    protected function casts(): array
+    {
+        return [
+            'spgcledger_datetime' => 'date'
+        ];
+    }
+
 }
