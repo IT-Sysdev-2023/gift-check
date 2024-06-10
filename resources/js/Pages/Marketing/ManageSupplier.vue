@@ -1,4 +1,5 @@
 <template>
+    <Head title="Manage Supplier" />
     <a-card>
         <a-card class="mb-2" title="Manage Supplier"></a-card>
         <div class="flex justify-end">
