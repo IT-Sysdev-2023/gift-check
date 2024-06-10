@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\DashboardRoutesTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
@@ -13,6 +14,7 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
+    use DashboardRoutesTrait;
     /**
      * Display the login view.
      */
@@ -27,13 +29,22 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
+        
         $request->authenticate();
-
+        
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $usertype = Auth::user()->usertype;
+        $user_role = Auth::user()->user_role;
+
+        if ($this->roleDashboardRoutes[$usertype] && $usertype != $user_role) {
+            return redirect()->intended(route($this->roleDashboardRoutes[$usertype], absolute: false));
+
+        }else{
+            return abort(404, 'Usertype Not Found');
+        }
     }
 
     /**
