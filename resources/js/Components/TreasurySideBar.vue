@@ -20,6 +20,7 @@ const routeUrl = computed(() => {
         >
             <file-outlined />
             <span>
+                <span>{{ routeUrl }}</span>
                 <Link :href="route('treasury.budget.ledger')">
                     Dashboard</Link
                 ></span
