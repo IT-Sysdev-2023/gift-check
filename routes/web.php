@@ -28,15 +28,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard');
 
-    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard');
+    // Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard');
 
-    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
+    // Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
 
-    Route::get('finance-dashboard', [FinanceController::class,])->name('finance.dashboard');
+    // Route::get('finance-dashboard', [FinanceController::class,])->name('finance.dashboard');
 
-    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
+    // Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
-    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
+    // Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
 });
 
 //Profile
@@ -76,7 +76,7 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 //Treasury
 Route::prefix('treasury')->group(function () {
     Route::name('treasury.')->group(function () {
-        Route::get('/budget-ledger', [MainController::class, 'budgetLedger'])->name('budget.ledger');
+        Route::get('budget-ledger', [MainController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('gc-ledger', [MainController::class, 'gcLedger'])->name('gc.ledger');
     });
 

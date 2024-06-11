@@ -33,8 +33,6 @@ class AppServiceProvider extends ServiceProvider
             if ($this->roleDashboardRoutes[$usertype] && $usertype != $user_role) {
                 return route($this->roleDashboardRoutes[$usertype]);
             }
-
-            // $this->redirectToDashboardDestination($usertype, $user_role);
         });
     }
 }
