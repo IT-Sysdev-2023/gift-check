@@ -23,20 +23,24 @@ Route::get('/', function () {
     );
 })->middleware('guest');
 
+Route::get('/not-found', function () {
+    return 'Empty';
+})->name('not.found');
+
 //Dashboards
 Route::middleware(['auth'])->group(function () {
 
     Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard');
 
-    // Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard');
+    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard');
 
-    // Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
+    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
 
-    // Route::get('finance-dashboard', [FinanceController::class,])->name('finance.dashboard');
+    Route::get('finance-dashboard', [FinanceController::class, 'index'])->name('finance.dashboard');
 
-    // Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
+    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
-    // Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
+    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
 });
 
 //Profile
