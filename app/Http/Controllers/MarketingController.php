@@ -11,12 +11,12 @@ use App\Models\InstitutPayment;
 use App\Models\InstitutTransaction;
 use App\Models\InstitutTransactionsItem;
 use App\Models\Promo;
-<<<<<<< HEAD
+
 use App\Models\PromoGc;
-=======
+
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestItem;
->>>>>>> 0744ddf474722b54fa3e4e05ec3e89f2effe3429
+
 use App\Models\Supplier;
 use App\Models\StoreVerification;
 use App\Models\TransactionSale;
@@ -27,6 +27,10 @@ use Inertia\Inertia;
 
 class MarketingController extends Controller
 {
+    public function index(){
+        // dd(1);
+        return Inertia::render('Dashboard');
+    }
 
     public function promoList()
     {
@@ -148,7 +152,7 @@ class MarketingController extends Controller
             'insp_paymentnum',
             'institut_eodid'
         )
-<<<<<<< HEAD
+
             ->orderBy('insp_paymentnum', 'DESC')
             ->paginate(10)
             ->withQueryString();
@@ -262,94 +266,94 @@ class MarketingController extends Controller
             ['insp_id', 'insp_paymentcustomer', 'customer', 'date', 'time', 'totgccnt', 'totdenom', 'paymenttype', 'view']
         );
 
-        return Inertia::render('Marketing/Sale_treasurySales', [
-=======
-            ->orderByDesc('insp_paymentnum')
-            ->limit(10)
-            ->get();
+        // return Inertia::render('Marketing/Sale_treasurySales', []);
 
-        $data->transform(function ($p) {
-            $datetr = $totgccnt = $totdenom = $customer = $paymenttype = '';
+        //     // ->orderByDesc('insp_paymentnum')
+        //     // ->limit(10)
+        //     // ->get();
 
-            if ($p->insp_paymentcustomer == 'institution') {
-                $query = InstitutTransaction::join('institut_customer', 'institut_customer.ins_id', '=', 'institut_transactions.institutr_cusid')
-                    ->where('institut_transactions.institutr_id', $p->insp_trid)
-                    ->select('institut_transactions.institutr_id', 'institut_transactions.institutr_trnum', 'institut_transactions.institutr_paymenttype', 'institut_transactions.institutr_date', 'institut_customer.ins_name')
-                    ->first();
+        // $data->transform(function ($p) {
+        //     $datetr = $totgccnt = $totdenom = $customer = $paymenttype = '';
 
-                if ($query) {
-                    $paymenttype = $query->institutr_paymenttype;
-                    $customer = $query->ins_name;
-                    $datetr = $query->institutr_date;
+        //     if ($p->insp_paymentcustomer == 'institution') {
+        //         $query = InstitutTransaction::join('institut_customer', 'institut_customer.ins_id', '=', 'institut_transactions.institutr_cusid')
+        //             ->where('institut_transactions.institutr_id', $p->insp_trid)
+        //             ->select('institut_transactions.institutr_id', 'institut_transactions.institutr_trnum', 'institut_transactions.institutr_paymenttype', 'institut_transactions.institutr_date', 'institut_customer.ins_name')
+        //             ->first();
 
-                    $query_gcs = InstitutTransactionsItem::join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
-                        ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-                        ->where('instituttritems_trid', $p->insp_trid)
-                        ->select(DB::raw('IFNULL(COUNT(institut_transactions_items.instituttritems_barcode),0) as cnt'), DB::raw('IFNULL(SUM(denomination.denomination),0) as totamt'))
-                        ->first();
+        //         if ($query) {
+        //             $paymenttype = $query->institutr_paymenttype;
+        //             $customer = $query->ins_name;
+        //             $datetr = $query->institutr_date;
 
-                    if ($query_gcs) {
-                        $totgccnt = $query_gcs->cnt;
-                        $totdenom = $query_gcs->totamt;
-                    }
-                }
-            } elseif ($p->insp_paymentcustomer == 'stores') {
-                $query = ApprovedGcrequest::join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
-                    ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
-                    ->where('approved_gcrequest.agcr_id', $p->insp_trid)
-                    ->select('approved_gcrequest.agcr_request_id', 'approved_gcrequest.agcr_request_relnum', 'approved_gcrequest.agcr_approved_at', 'approved_gcrequest.agcr_paymenttype', 'stores.store_name')
-                    ->first();
+        //             $query_gcs = InstitutTransactionsItem::join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
+        //                 ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+        //                 ->where('instituttritems_trid', $p->insp_trid)
+        //                 ->select(DB::raw('IFNULL(COUNT(institut_transactions_items.instituttritems_barcode),0) as cnt'), DB::raw('IFNULL(SUM(denomination.denomination),0) as totamt'))
+        //                 ->first();
 
-                if ($query) {
-                    $customer = $query->store_name;
-                    $datetr = $query->agcr_approved_at;
-                    $paymenttype = $query->agcr_paymenttype;
+        //             if ($query_gcs) {
+        //                 $totgccnt = $query_gcs->cnt;
+        //                 $totdenom = $query_gcs->totamt;
+        //             }
+        //         }
+        //     } elseif ($p->insp_paymentcustomer == 'stores') {
+        //         $query = ApprovedGcrequest::join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
+        //             ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
+        //             ->where('approved_gcrequest.agcr_id', $p->insp_trid)
+        //             ->select('approved_gcrequest.agcr_request_id', 'approved_gcrequest.agcr_request_relnum', 'approved_gcrequest.agcr_approved_at', 'approved_gcrequest.agcr_paymenttype', 'stores.store_name')
+        //             ->first();
 
-                    $query_gcs = GcRelease::join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
-                        ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-                        ->where('rel_num', $query->agcr_request_relnum)
-                        ->select(DB::raw('IFNULL(COUNT(gc_release.re_barcode_no),0) as cnt'), DB::raw('IFNULL(SUM(denomination.denomination),0) as totamt'))
-                        ->first();
+        //         if ($query) {
+        //             $customer = $query->store_name;
+        //             $datetr = $query->agcr_approved_at;
+        //             $paymenttype = $query->agcr_paymenttype;
 
-                    if ($query_gcs) {
-                        $totgccnt = $query_gcs->cnt;
-                        $totdenom = $query_gcs->totamt;
-                    }
-                }
-            } elseif ($p->insp_paymentcustomer == 'special external') {
-                $query = SpecialExternalGcrequest::join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
-                    ->where('special_external_gcrequest.spexgc_id', $p->insp_trid)
-                    ->select('special_external_gcrequest.spexgc_id', 'special_external_gcrequest.spexgc_datereq', 'special_external_customer.spcus_companyname', 'special_external_gcrequest.spexgc_paymentype', 'special_external_gcrequest.spexgc_addemp')
-                    ->first();
+        //             $query_gcs = GcRelease::join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
+        //                 ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+        //                 ->where('rel_num', $query->agcr_request_relnum)
+        //                 ->select(DB::raw('IFNULL(COUNT(gc_release.re_barcode_no),0) as cnt'), DB::raw('IFNULL(SUM(denomination.denomination),0) as totamt'))
+        //                 ->first();
 
-                if ($query) {
-                    if ($query->spexgc_addemp == 'pending') {
-                        return null; // Skip this record
-                    }
+        //             if ($query_gcs) {
+        //                 $totgccnt = $query_gcs->cnt;
+        //                 $totdenom = $query_gcs->totamt;
+        //             }
+        //         }
+        //     } elseif ($p->insp_paymentcustomer == 'special external') {
+        //         $query = SpecialExternalGcrequest::join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+        //             ->where('special_external_gcrequest.spexgc_id', $p->insp_trid)
+        //             ->select('special_external_gcrequest.spexgc_id', 'special_external_gcrequest.spexgc_datereq', 'special_external_customer.spcus_companyname', 'special_external_gcrequest.spexgc_paymentype', 'special_external_gcrequest.spexgc_addemp')
+        //             ->first();
 
-                    $customer = $query->spcus_companyname;
-                    $datetr = $query->spexgc_datereq;
-                    $paymenttype = $query->spexgc_paymentype == '1' ? 'cash' : 'check';
+        //         if ($query) {
+        //             if ($query->spexgc_addemp == 'pending') {
+        //                 return null; // Skip this record
+        //             }
 
-                    $query_gcs = SpecialExternalGcrequestItem::where('specit_trid', $p->insp_trid)
-                        ->select(DB::raw('IFNULL(SUM(special_external_gcrequest_items.specit_qty),0) as cnt'), DB::raw('IFNULL(SUM(special_external_gcrequest_items.specit_denoms * special_external_gcrequest_items.specit_qty),0) as totamt'))
-                        ->first();
+        //             $customer = $query->spcus_companyname;
+        //             $datetr = $query->spexgc_datereq;
+        //             $paymenttype = $query->spexgc_paymentype == '1' ? 'cash' : 'check';
 
-                    if ($query_gcs) {
-                        $totgccnt = $query_gcs->cnt;
-                        $totdenom = $query_gcs->totamt;
-                    }
-                }
-            }
+        //             $query_gcs = SpecialExternalGcrequestItem::where('specit_trid', $p->insp_trid)
+        //                 ->select(DB::raw('IFNULL(SUM(special_external_gcrequest_items.specit_qty),0) as cnt'), DB::raw('IFNULL(SUM(special_external_gcrequest_items.specit_denoms * special_external_gcrequest_items.specit_qty),0) as totamt'))
+        //                 ->first();
 
-            $p->customer = $customer;
-            $p->datetr = $datetr;
-            $p->totgccnt = $totgccnt;
-            $p->totdenom = $totdenom;
-            $p->paymenttype = $paymenttype;
+        //             if ($query_gcs) {
+        //                 $totgccnt = $query_gcs->cnt;
+        //                 $totdenom = $query_gcs->totamt;
+        //             }
+        //         }
+        //     }
 
-            return $p;
-        });
+        //     $p->customer = $customer;
+        //     $p->datetr = $datetr;
+        //     $p->totgccnt = $totgccnt;
+        //     $p->totdenom = $totdenom;
+        //     $p->paymenttype = $paymenttype;
+
+        //     return $p;
+        // });
 
         dd($data->toArray());
         $columns = array_map(
@@ -360,7 +364,6 @@ class MarketingController extends Controller
 
         
         return Inertia::render('Marketing/Sale_treasurySales',[
->>>>>>> 0744ddf474722b54fa3e4e05ec3e89f2effe3429
             'data' => $data,
             'columns' => ColumnHelper::getColumns($columns),
         ]);
