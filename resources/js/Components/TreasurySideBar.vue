@@ -22,10 +22,10 @@ const handleClick = (e: any) => {
         mode="inline"
         @click="handleClick"
     >
-        <a-menu-item key="dashboard">
+        <a-menu-item key="treasury.dashboard">
             <file-outlined />
             <span>
-                <Link :href="route('treasury.budget.ledger')">
+                <Link :href="route('treasury.dashboard')">
                     Dashboard</Link
                 ></span
             >
