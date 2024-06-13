@@ -70,7 +70,7 @@ class ColumnHelper
         ],
     ];
 
-    public static  $ver_gc_alturas_mall_columns = [
+    public static $ver_gc_alturas_mall_columns = [
         [
             'title' => 'Barcode #.',
             'dataIndex' => 'vs_barcode',
@@ -105,9 +105,42 @@ class ColumnHelper
 
     ];
 
+    public static $approved_buget_request = [
+        [
+            'title' => 'BR No.',
+            'dataIndex' => 'br_no',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'date_requested',
+
+        ],
+        [
+            'title' => 'Prepaired By',
+            'dataIndex' => 'prepared_by',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => 'date_approved',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'approved_by',
+
+        ],
+        [
+            'title' => 'Actions',
+            'dataIndex' => 'action'
+
+        ],
+    ];
+
     public static function getColumns($columns)
     {
-        return array_map(function($item) {
+        return array_map(function ($item) {
             return [
                 'title' => $item['title'] ?? '',
                 'dataIndex' => $item['dataIndex'] ?? '',
@@ -116,10 +149,11 @@ class ColumnHelper
         }, $columns);
     }
 
-    public static function arrayHelper($title, $column){
-            return [
-                'title' => $title,
-                'dataIndex' => $column
-            ];
+    public static function arrayHelper($title, $column)
+    {
+        return [
+            'title' => $title,
+            'dataIndex' => $column
+        ];
     }
 }
