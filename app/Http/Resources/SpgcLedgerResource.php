@@ -16,12 +16,12 @@ class SpgcLedgerResource extends JsonResource
     {
 
         return [
-            'ledgerNo' => $this->spgcledger_no,
+            'ledger_no' => $this->spgcledger_no,
             'date' => $this->spgcledger_datetime->toFormattedDateString(),
-            'transaction' => $this->transactionType($this->spgcledger_datetime),
+            'transaction' => $this->transactionType($this->spgcledger_type),
             'debit' => $this->spgcledger_debit,
             'credit' => $this->spgcledger_credit,
-            
+
         ];
     }
 

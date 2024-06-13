@@ -102,7 +102,7 @@ class ColumnHelper
             'title' => 'View.',
             'key' => 'view',
         ],
-        
+
     ];
 
     public static function getColumns($columns)

@@ -10,7 +10,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\RetailController;
 use App\Http\Controllers\Treasury\MainController;
-use App\Http\Controllers\Treasury\DashboardController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Middleware\UserTypeRoute;
 use Illuminate\Foundation\Application;
@@ -75,6 +74,7 @@ Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc'])->n
 Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville'])->name('verified.gc.screenville');
 Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech'])->name('verified.gc.asctech');
 Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('verified.gc.island.city.mall');
+Route::get('verified-gc-icm', [MarketingController::class, 'kent'])->name('verified.gc.island.city.mall');
 
 
 //Treasury

@@ -18,7 +18,8 @@ class LedgerService
     }
     public function budgetLedger(Request $request) //ledger_budget.php
     {
-        $record =  LedgerBudget::with('approvedGcRequest.storeGcRequest.store:store_id,store_name')->filter($request->only('search', 'date'))
+        $record =  LedgerBudget::with('approvedGcRequest.storeGcRequest.store:store_id,store_name')
+        ->filter($request->only('search', 'date'))
         ->select(
             [
                 'bledger_id',
@@ -67,7 +68,7 @@ class LedgerService
             ]);
 
     }
-    public static function spgcLedger()
+    public static function spgcLedger($filters)
     {
         return LedgerSpgc::select(
             'spgcledger_id',
@@ -77,6 +78,7 @@ class LedgerService
             'spgcledger_type',
             'spgcledger_debit',
             'spgcledger_credit'
-        )->paginate()->withQueryString();
+        )->filter($filters)
+        ->paginate(10)->withQueryString();
     }
 }

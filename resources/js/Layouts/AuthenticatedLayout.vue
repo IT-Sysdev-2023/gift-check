@@ -4,7 +4,7 @@ import { usePage } from "@inertiajs/vue3";
 import { UserType } from "@/userType";
 import { PageWithSharedProps } from "@/types/index";
 import { computed } from "vue";
-import { useRoute } from "../../../vendor/tightenco/ziggy/src/js";
+// import { useRoute } from "../../../vendor/tightenco/ziggy/src/js";
 
 const page = usePage<PageWithSharedProps>().props;
 const { userType, userRole } = UserType();
@@ -12,9 +12,9 @@ const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(["1"]);
 const showingNavigationDropdown = ref(false);
 
-const route = useRoute();
+// const route = useRoute();
 
-const url = route().current();
+// const url = route().current();
 
 const dashboardRoute = computed(() => {
     const webRoute = route().current(); //get current route in page

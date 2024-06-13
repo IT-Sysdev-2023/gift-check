@@ -91,7 +91,7 @@ export default {
                     : [];
 
                 this.$inertia.get(
-                    route("budget.ledger"),
+                    route("finance.budget.ledger"),
                     { ...pickBy(this.form), date: formattedDate },
                     {
                         preserveState: true,
