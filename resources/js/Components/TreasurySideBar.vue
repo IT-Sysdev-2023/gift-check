@@ -6,21 +6,26 @@ import {
     DollarOutlined,
     LineChartOutlined,
 } from "@ant-design/icons-vue";
-import { computed } from 'vue'
+import { ref } from "vue";
 
-const routeUrl = computed(() => {
-    return [route().current()];
-})
+const highlightRoute = ref([route().current()]);
+
+const handleClick = (e: any) => {
+    highlightRoute.value = [e.key];
+};
 </script>
 
 <template>
-    <a-menu v-model:selectedKeys="routeUrl" theme="dark" mode="inline">
-        <a-menu-item
-            key="dashboard"
-        >
+    <a-menu
+        v-model:selectedKeys="highlightRoute"
+        theme="dark"
+        mode="inline"
+        @click="handleClick"
+    >
+        <a-menu-item key="treasury.dashboard">
             <file-outlined />
             <span>
-                <Link :href="route('treasury.budget.ledger')">
+                <Link :href="route('treasury.dashboard')">
                     Dashboard</Link
                 ></span
             >
@@ -97,9 +102,7 @@ const routeUrl = computed(() => {
             <a-menu-item key="menu-item-allocation">Allocation</a-menu-item>
         </a-sub-menu>
 
-        <a-menu-item
-            key="treasury.budget.ledger"
-        >
+        <a-menu-item key="treasury.budget.ledger">
             <file-outlined />
             <span>
                 <Link :href="route('treasury.budget.ledger')">
@@ -108,11 +111,13 @@ const routeUrl = computed(() => {
             >
         </a-menu-item>
 
-        <a-menu-item
-            key="treasury.gc.ledger"
-        >
+        <a-menu-item key="treasury.gc.ledger">
             <file-outlined />
-            <span><Link :href="route('treasury.gc.ledger')"> GC Ledger</Link></span>
+            <span
+                ><Link :href="route('treasury.gc.ledger')">
+                    GC Ledger</Link
+                ></span
+            >
         </a-menu-item>
 
         <a-sub-menu key="menu-sub-reports">
@@ -126,18 +131,3 @@ const routeUrl = computed(() => {
         </a-sub-menu>
     </a-menu>
 </template>
-
-<!-- <script setup>
-
-export default {
-  methods: {
-    isUrl(...urls) {
-      let currentUrl = this.$page.url.substr(1)
-      if (urls[0] === '') {
-        return currentUrl === ''
-      }
-      return urls.filter((url) => currentUrl.startsWith(url)).length
-    },
-  },
-}
-</script> -->

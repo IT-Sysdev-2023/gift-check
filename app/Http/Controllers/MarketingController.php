@@ -13,6 +13,10 @@ use Inertia\Inertia;
 class MarketingController extends Controller
 {
 
+    public function index()
+    {
+        return Inertia::render(('Marketing/Dashboard'));
+    }
     public function promoList()
     {
         $tag = auth()->user()->promo_tag;
@@ -31,9 +35,9 @@ class MarketingController extends Controller
             )
             ->orderByDesc('promo.promo_id')
             ->paginate(10)->withQueryString();
-            
+
         $columns = array_map(
-            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Promo No', 'Promo Name', 'Date Notified', 'Expiration Date', 'Group', 'Created By', 'View'],
             ['promo_id', 'promo_name', 'promo_datenotified', 'promo_dateexpire', 'promo_group', 'fullname', 'View']
         );

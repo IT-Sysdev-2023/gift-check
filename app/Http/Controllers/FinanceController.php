@@ -24,8 +24,9 @@ class FinanceController extends Controller
 
     }
 
-    public function index(){
-
+    public function index()
+    {
+        return 'FinanceController';
     }
     public function budgetLedger(Request $request)
     {
