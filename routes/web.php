@@ -45,6 +45,9 @@ Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc']) ->
 Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville']) -> name('verified.gc.screenville');
 Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech']) -> name('verified.gc.asctech');
 Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm']) -> name('verified.gc.island.city.mall');
+Route::get('get-view-promo-details', [MarketingController::class, 'getPromoDetails']) -> name('get.view.details');
+Route::get('get-view-barcode-details', [MarketingController::class, 'getBarcodeDetails']) -> name('get.sub.barcode.details');
+
 
 
 //Treasury

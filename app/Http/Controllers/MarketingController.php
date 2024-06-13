@@ -7,6 +7,7 @@ use App\Helpers\GetVerifiedGc;
 use App\Models\Gc;
 use App\Models\InstitutPayment;
 use App\Models\Promo;
+use App\Models\PromoGc;
 use App\Models\Supplier;
 use App\Models\StoreVerification;
 use App\Models\TransactionSale;
@@ -30,6 +31,7 @@ class MarketingController extends Controller
                 'promo.promo_datenotified',
                 'promo.promo_dateexpire',
                 'promo.promo_remarks',
+                'promo.promo_drawdate',
                 DB::raw("CONCAT(UCASE(SUBSTRING(users.firstname, 1, 1)), SUBSTRING(users.firstname, 2), ' ', UCASE(SUBSTRING(users.lastname, 1, 1)), SUBSTRING(users.lastname, 2)) AS fullname"),
                 'users.promo_tag',
                 'promo.promo_group'
@@ -138,103 +140,124 @@ class MarketingController extends Controller
             'institut_eodid'
         )
             ->orderBy('insp_paymentnum', 'DESC')
-            ->limit(10)
-            ->get()
-            ->transform(function ($payment) {
-                $customer = '';
-                $datetr = '';
-                $totgccnt = 0;
-                $totdenom = 0;
-                $paymenttype = '';
+            ->paginate(10)
+            ->withQueryString();
+        $data->transform(function ($item) {
+            $customer = '';
+            $datetr = '';
+            $date = '';
+            $time = '';
+            $totgccnt = 0;
+            $totdenom = 0;
+            $paymenttype = '';
 
-                switch ($payment->insp_paymentcustomer) {
-                    case 'institution':
-                        $transaction = DB::table('institut_transactions')
-                            ->join('institut_customer', 'institut_customer.ins_id', '=', 'institut_transactions.institutr_cusid')
-                            ->where('institutr_id', $payment->insp_trid)
+            switch ($item->insp_paymentcustomer) {
+                case 'institution':
+                    $transaction = DB::table('institut_transactions')
+                        ->join('institut_customer', 'institut_customer.ins_id', '=', 'institut_transactions.institutr_cusid')
+                        ->where('institutr_id', $item->insp_trid)
+                        ->first();
+
+                    if ($transaction) {
+                        $paymenttype = $transaction->institutr_paymenttype;
+                        $customer = $transaction->ins_name;
+                        $datetr = $transaction->institutr_date;
+
+                        $gcs = DB::table('institut_transactions_items')
+                            ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
+                            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+                            ->select(DB::raw('IFNULL(COUNT(institut_transactions_items.instituttritems_barcode), 0) as cnt'), DB::raw('IFNULL(SUM(denomination.denomination), 0) as totamt'))
+                            ->where('instituttritems_trid', $item->insp_trid)
                             ->first();
 
-                        if ($transaction) {
-                            $paymenttype = $transaction->institutr_paymenttype;
-                            $customer = $transaction->ins_name;
-                            $datetr = $transaction->institutr_date;
-
-                            $gcs = DB::table('institut_transactions_items')
-                                ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
-                                ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-                                ->select(DB::raw('IFNULL(COUNT(institut_transactions_items.instituttritems_barcode), 0) as cnt'), DB::raw('IFNULL(SUM(denomination.denomination), 0) as totamt'))
-                                ->where('instituttritems_trid', $payment->insp_trid)
-                                ->first();
-
-                            if ($gcs) {
-                                $totgccnt = $gcs->cnt;
-                                $totdenom = $gcs->totamt;
-                            }
+                        if ($gcs) {
+                            $totgccnt = $gcs->cnt;
+                            $totdenom = $gcs->totamt;
                         }
-                        break;
+                    }
+                    break;
 
-                    case 'stores':
-                        $transaction = DB::table('approved_gcrequest')
-                            ->join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
-                            ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
-                            ->where('approved_gcrequest.agcr_id', $payment->insp_trid)
+                case 'stores':
+                    $transaction = DB::table('approved_gcrequest')
+                        ->join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
+                        ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
+                        ->where('approved_gcrequest.agcr_id', $item->insp_trid)
+                        ->first();
+
+                    if ($transaction) {
+                        $customer = $transaction->store_name;
+                        $datetr = $transaction->agcr_approved_at;
+                        $paymenttype = $transaction->agcr_paymenttype;
+
+                        $gcs = DB::table('gc_release')
+                            ->join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
+                            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+                            ->select(DB::raw('IFNULL(COUNT(gc_release.re_barcode_no), 0) as cnt'), DB::raw('IFNULL(SUM(denomination.denomination), 0) as totamt'))
+                            ->where('rel_num', $transaction->agcr_request_relnum)
                             ->first();
 
-                        if ($transaction) {
-                            $customer = $transaction->store_name;
-                            $datetr = $transaction->agcr_approved_at;
-                            $paymenttype = $transaction->agcr_paymenttype;
-
-                            $gcs = DB::table('gc_release')
-                                ->join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
-                                ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-                                ->select(DB::raw('IFNULL(COUNT(gc_release.re_barcode_no), 0) as cnt'), DB::raw('IFNULL(SUM(denomination.denomination), 0) as totamt'))
-                                ->where('rel_num', $transaction->agcr_request_relnum)
-                                ->first();
-
-                            if ($gcs) {
-                                $totgccnt = $gcs->cnt;
-                                $totdenom = $gcs->totamt;
-                            }
+                        if ($gcs) {
+                            $totgccnt = $gcs->cnt;
+                            $totdenom = $gcs->totamt;
                         }
-                        break;
+                    }
+                    break;
 
-                    case 'special external':
-                        $transaction = DB::table('special_external_gcrequest')
-                            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
-                            ->where('spexgc_id', $payment->insp_trid)
+                case 'special external':
+                    $transaction = DB::table('special_external_gcrequest')
+                        ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+                        ->where('spexgc_id', $item->insp_trid)
+                        ->first();
+
+                    if ($transaction && $transaction->spexgc_addemp != 'pending') {
+                        $customer = $transaction->spcus_companyname;
+                        $datetr = $transaction->spexgc_datereq;
+                        $paymenttype = $transaction->spexgc_paymentype == '1' ? 'cash' : 'check';
+
+                        $gcs = DB::table('special_external_gcrequest_items')
+                            ->select(DB::raw('IFNULL(SUM(specit_qty), 0) as cnt'), DB::raw('IFNULL(SUM(specit_denoms * specit_qty), 0) as totamt'))
+                            ->where('specit_trid', $item->insp_trid)
                             ->first();
 
-                        if ($transaction && $transaction->spexgc_addemp != 'pending') {
-                            $customer = $transaction->spcus_companyname;
-                            $datetr = $transaction->spexgc_datereq;
-                            $paymenttype = $transaction->spexgc_paymentype == '1' ? 'cash' : 'check';
-
-                            $gcs = DB::table('special_external_gcrequest_items')
-                                ->select(DB::raw('IFNULL(SUM(specit_qty), 0) as cnt'), DB::raw('IFNULL(SUM(specit_denoms * specit_qty), 0) as totamt'))
-                                ->where('specit_trid', $payment->insp_trid)
-                                ->first();
-
-                            if ($gcs) {
-                                $totgccnt = $gcs->cnt;
-                                $totdenom = $gcs->totamt;
-                            }
+                        if ($gcs) {
+                            $totgccnt = $gcs->cnt;
+                            $totdenom = $gcs->totamt;
                         }
-                        break;
-                }
+                    }
+                    break;
+            }
 
-                $payment->customer = $customer;
-                $payment->datetr = $datetr;
-                $payment->totgccnt = $totgccnt;
-                $payment->totdenom = $totdenom;
-                $payment->paymenttype = $paymenttype;
 
-                return $payment;
-            });
+            if ($datetr) {
+                $datetime = explode(' ', $datetr);
+                $date = $datetime[0] ?? '';
+                $time = $datetime[1] ?? '';
+            }
 
-        dd($data->toArray());
-        return Inertia::render('Marketing/Sale_treasurySales');
+            $item->date = $date;
+            $item->time = $time;
+            $item->customer = $customer;
+            $item->totgccnt = $totgccnt;
+            $item->totdenom = $totdenom;
+            $item->paymenttype = $paymenttype;
+
+            return $item;
+        });
+
+
+
+        $columns = array_map(
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Transaction #', 'GC Type', 'Customer', 'Date', 'Time', 'GC pc(s)', 'Total Denom', 'Payment Type', 'View'],
+            ['insp_id', 'insp_paymentcustomer', 'customer', 'date', 'time', 'totgccnt', 'totdenom', 'paymenttype', 'view']
+        );
+
+        return Inertia::render('Marketing/Sale_treasurySales', [
+            'data' => $data,
+            'columns' => ColumnHelper::getColumns($columns),
+        ]);
     }
+
 
     public function storeSales()
     {
@@ -398,5 +421,52 @@ class MarketingController extends Controller
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
+    }
+    public function getPromoDetails()
+    {
+        $data = PromoGc::join('denomination', 'denomination.denom_id', '=', 'promo_gc.prom_denom')
+            ->join('gc_type', 'gc_type.gc_type_id', '=', 'promo_gc.prom_gctype')
+            ->leftJoin('store_verification', 'store_verification.vs_barcode', '=', 'promo_gc.prom_barcode')
+            ->select('promo_gc.prom_barcode', 'denomination.denomination', 'gc_type.gctype', 'store_verification.vs_barcode')
+            ->where('promo_gc.prom_promoid', request()->id)
+            ->where('promo_gc.prom_barcode', 'LIKE', '%' . request()->search .'%')
+            ->get();
+
+        $transformedData = $data->map(function ($item) {
+            $item->gctype = ucfirst($item->gctype);
+            return $item;
+        });
+
+        return response()->json($transformedData);
+    }
+
+
+    public function getBarcodeDetails()
+    {
+        $data = StoreVerification::join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->join('users', 'users.user_id', '=', 'store_verification.vs_by')
+            ->select(
+                'store_verification.vs_date',
+                'store_verification.vs_barcode',
+                'store_verification.vs_time',
+                'store_verification.vs_tf_denomination',
+                'store_verification.vs_tf_balance',
+                'store_verification.vs_tf_purchasecredit',
+                'stores.store_name',
+                'customers.cus_fname',
+                'customers.cus_lname',
+                'customers.cus_mname',
+                'customers.cus_namext',
+                'customers.cus_mobile',
+                'customers.cus_address',
+                'users.firstname',
+                'users.lastname'
+            )
+            ->where('store_verification.vs_barcode', request()->id)
+            ->get();
+
+
+        return response()->json($data);
     }
 }

@@ -14,12 +14,6 @@ class GetVerifiedGc
             ->leftJoin('users as verby', 'verby.user_id', '=', 'store_verification.vs_by')
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->where('store_verification.vs_store', $id)
-            ->whereAny([
-                'store_verification.vs_barcode',
-                'store_verification.vs_tf_denomination',
-                'store_verification.vs_date',
-                'store_verification.vs_tf_balance',
-            ], 'LIKE', '%' . request()->search . '%')
             ->select(
                 'store_verification.vs_barcode',
                 'store_verification.vs_tf_denomination',
