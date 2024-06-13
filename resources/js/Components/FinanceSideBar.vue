@@ -14,15 +14,8 @@
         <GroupOutlined />
         <span> <Link :href="route('finance.spgc.ledger')"> SPGC Ledger(Promotional)</Link></span>
     </a-menu-item>
-
-    <a-sub-menu key="reports">
-        <template #title>
-            <span>
-                <LineChartOutlined />
-                <span>Reports</span>
-            </span>
-        </template>
-        <!-- <a-menu-item key="verifiedGCReports"><Link :href="(route('spgc.approved.reports'))"></Link>SPGC Approved</a-menu-item> -->
-        <a-menu-item key="beamAndGoGoReport">SPGC Released</a-menu-item>
-    </a-sub-menu>
+    <a-menu-item key="reports">
+        <GroupOutlined />
+        <span> <Link :href="route('finance.approved.released.reports')"> Reports</Link></span>
+    </a-menu-item>
 </template>

@@ -49,4 +49,9 @@ class FinanceController extends Controller
             ])
         ]);
     }
+
+    public function approvedAndReleasedSpgc()
+    {
+        return Inertia::render('Finance/ApprovedAndReleaseSpgc');
+    }
 }
