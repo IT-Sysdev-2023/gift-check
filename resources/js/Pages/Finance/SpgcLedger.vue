@@ -27,7 +27,7 @@
             </span>
 
         </div> -->
-        <pagination class="mt-5" :datarecords="data" />
+        <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
 </template>
 <script>

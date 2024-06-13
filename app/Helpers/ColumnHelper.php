@@ -7,27 +7,28 @@ class ColumnHelper
     public static $budget_ledger_columns = [
         [
             'title' => 'Legder No.',
-            'dataIndex' => 'bledger_no',
+            'dataIndex' => 'ledger_no',
+            'key' => 'ledger'
 
         ],
         [
-            'title' => 'Date.',
-            'dataIndex' => 'bledger_datetime',
+            'title' => 'Date',
+            'dataIndex' => 'date',
 
         ],
         [
-            'title' => 'Transaction.',
-            'dataIndex' => 'transactionType',
+            'title' => 'Transaction',
+            'dataIndex' => 'transaction',
 
         ],
         [
-            'title' => 'Debit.',
-            'dataIndex' => 'bdebit_amt',
+            'title' => 'Debit',
+            'dataIndex' => 'debit',
 
         ],
         [
-            'title' => 'Credit.',
-            'dataIndex' => 'bcredit_amt',
+            'title' => 'Credit',
+            'dataIndex' => 'credit',
 
         ],
         [
@@ -36,36 +37,89 @@ class ColumnHelper
 
         ],
     ];
-    public static $spgc_ledger_columns = [
+    public static $gc_ledger_columns = [
         [
             'title' => 'Legder No.',
-            'dataIndex' => 'spgcledger_no',
+            'dataIndex' => 'ledger_no',
 
         ],
         [
-            'title' => 'Date.',
-            'dataIndex' => 'spgcledger_datetime',
+            'title' => 'Date',
+            'dataIndex' => 'date',
 
         ],
         [
-            'title' => 'Transaction.',
-            'dataIndex' => 'transactionType',
+            'title' => 'Transaction',
+            'dataIndex' => 'transaction',
 
         ],
         [
-            'title' => 'Debit.',
-            'dataIndex' => 'spgcledger_debit',
+            'title' => 'Debit',
+            'dataIndex' => 'debit',
 
         ],
         [
-            'title' => 'Credit.',
-            'dataIndex' => 'spgcledger_credit',
+            'title' => 'Credit',
+            'dataIndex' => 'credit',
 
         ],
         [
-            'title' => 'Info.',
-            'key' => 'info',
+            'title' => 'Posted By.',
+            'dataIndex' => 'posted_by'
 
         ],
     ];
+
+    public static  $ver_gc_alturas_mall_columns = [
+        [
+            'title' => 'Barcode #.',
+            'dataIndex' => 'vs_barcode',
+        ],
+        [
+            'title' => 'Denomination.',
+            'dataIndex' => 'vs_tf_denomination',
+        ],
+        [
+            'title' => 'Date Verified/Reverified.',
+            'dataIndex' => 'vs_date',
+            'key' => 'dateVerRev'
+        ],
+        [
+            'title' => 'Verified/Reverified By.',
+            'dataIndex' => 'verbyFirstname',
+            'key' => 'verby'
+        ],
+        [
+            'title' => 'Customer.',
+            'dataIndex' => 'customersLastname',
+            'key' => 'customer'
+        ],
+        [
+            'title' => 'Balance.',
+            'dataIndex' => 'vs_tf_balance',
+        ],
+        [
+            'title' => 'View.',
+            'key' => 'view',
+        ],
+        
+    ];
+
+    public static function getColumns($columns)
+    {
+        return array_map(function($item) {
+            return [
+                'title' => $item['title'] ?? '',
+                'dataIndex' => $item['dataIndex'] ?? '',
+                'key' => $item['dataIndex'] ?? '',
+            ];
+        }, $columns);
+    }
+
+    public static function arrayHelper($title, $column){
+            return [
+                'title' => $title,
+                'dataIndex' => $column
+            ];
+    }
 }
