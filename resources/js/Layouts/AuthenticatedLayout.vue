@@ -2,13 +2,25 @@
 import { ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { UserType } from "@/userType";
-import {PageWithSharedProps} from "@/types/index"
+import {PageWithSharedProps} from "@/types/index";
+import { computed } from "vue";
+import { useRoute } from "../../../vendor/tightenco/ziggy/src/js";
 
 const page = usePage<PageWithSharedProps>().props;
 const { userType, userRole } = UserType();
 const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(["1"]);
 const showingNavigationDropdown = ref(false);
+
+const route = useRoute();
+
+const url = route().current();
+
+const dashboardRoute = computed(() => {
+    const webRoute = route().current(); //get current route in page
+    const res = webRoute?.split('.')[0]; // split the routes for e.g if the current route is "treasury.ledger", this will get the treasury
+    return res + '.dashboard'; //this would result 'treasury.dashboard'
+});
 </script>
 
 <template>
@@ -62,9 +74,8 @@ const showingNavigationDropdown = ref(false);
                         :style="{ lineHeight: '64px' }">
                         <div class="flex justify-between w-full">
                         <a-menu-item key="dashboard" class="flex items-center">
-                            <Link :href="route('dashboard')"><HomeFilled /></Link>
+                            <Link :href="route(dashboardRoute)"><HomeFilled /></Link>
                         </a-menu-item>
-
                             <a-menu-item key="nav-item-3">
                                  <Link :href="route('logout')" method="post" as="button" class="flex items-center"><LogoutOutlined/> &nbsp; Logout</Link>
                             </a-menu-item>

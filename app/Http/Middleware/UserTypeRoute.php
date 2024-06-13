@@ -8,6 +8,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserTypeRoute
 {
+      protected $roleDashboardRoutes = [
+        '2' => 'treasury.dashboard',
+        '7' => 'retail.dashboard',
+        '9' => 'accounting.dashboard',
+        '3' => 'finance.dashboard',
+        '4' => 'custodian.dashboard',
+        '6' => 'marketing.dashboard',
+    ];
     /**
      * Handle an incoming request.
      *
@@ -15,23 +23,11 @@ class UserTypeRoute
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->usertype === '2' && $request->user_role !== 2) {
-            dd(1);
-            //Treasury
-            // return redirect('home');
-        } elseif ($request->usertype === '7' && $request->user_role !== 7) {
-            dd(2);
-            //Retail
-        } elseif ($request->usertype === '9' && $request->user_role !== 9){
-            //Accounting
-        } elseif ($request->usertype === '3' && $request->user_role !== 3){
-            //Finance
-        }  elseif ($request->usertype === '4' && $request->user_role !== 4){
-            //Custodian
-        } elseif ($request->usertype === '6' && $request->user_role !== 6){
-            //Marketing
-        }else{
-            abort(500, 'Internal Server Error');
+        $usertype = $request->usertype;
+        $user_role = $request->user_role;
+
+        if ($this->roleDashboardRoutes[$usertype] && $usertype != $user_role) {
+            return redirect()->route($this->roleDashboardRoutes[$usertype]);
         }
 
         return $next($request);
