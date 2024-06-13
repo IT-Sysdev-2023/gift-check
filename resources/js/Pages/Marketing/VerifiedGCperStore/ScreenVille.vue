@@ -1,4 +1,5 @@
 <template>
+    <Head title="Verified GC - Screenville" />
     <a-card>
         <a-card class="mb-2" title="Screenville - Verified GC"></a-card>
         <div class="flex justify-end">

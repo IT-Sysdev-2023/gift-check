@@ -1,4 +1,5 @@
 <template>
+    <Head title="Verified GC - Alturas Tubigon" />
     <a-card>
         <a-card class="mb-2" title="Alturas Tubigon - Verified GC"></a-card>
         <div class="flex justify-end">
