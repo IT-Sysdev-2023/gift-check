@@ -79,8 +79,13 @@ class FinanceController extends Controller
         ]);
     }
 
-    public function toHash()
+    // public function toHash()
+    // {
+    //     dd(Hash::make('123456'));
+    // }
+
+    public function reportSpgcApproved()
     {
-        dd(Hash::make('123456'));
+        return Inertia::render('Finance/Reports /SpgcApproved');
     }
 }

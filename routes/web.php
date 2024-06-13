@@ -25,5 +25,6 @@ Route::middleware('auth')->group(function () {
 });
 Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
 Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
+Route::get('spgc-approved-reports', [FinanceController::class, 'reportSpgcApproved'])->name('spgc.approved.reports');
 
 require __DIR__.'/auth.php';

@@ -77,11 +77,7 @@ const showingNavigationDropdown = ref(false);
                         <a-breadcrumb-item>List</a-breadcrumb-item>
                         <a-breadcrumb-item>App</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <div :style="{
-
-                        padding: '24px',
-
-                    }">
+                    <div>
                         <!-- Page Content -->
                         <main>
                             <slot />

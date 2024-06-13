@@ -4,63 +4,65 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-dependencies:
-  '@ant-design/icons-vue':
-    specifier: ^7.0.1
-    version: 7.0.1(vue@3.4.27)
-  ant-design-vue:
-    specifier: 4.x
-    version: 4.2.1(vue@3.4.27)
-  dayjs:
-    specifier: ^1.11.11
-    version: 1.11.11
+importers:
 
-devDependencies:
-  '@inertiajs/vue3':
-    specifier: ^1.0.0
-    version: 1.0.16(vue@3.4.27)
-  '@tailwindcss/forms':
-    specifier: ^0.5.3
-    version: 0.5.7(tailwindcss@3.4.3)
-  '@vitejs/plugin-vue':
-    specifier: ^5.0.0
-    version: 5.0.4(vite@5.2.11)(vue@3.4.27)
-  autoprefixer:
-    specifier: ^10.4.12
-    version: 10.4.19(postcss@8.4.38)
-  axios:
-    specifier: ^1.6.4
-    version: 1.6.8
-  laravel-echo:
-    specifier: ^1.16.1
-    version: 1.16.1
-  laravel-vite-plugin:
-    specifier: ^1.0
-    version: 1.0.2(vite@5.2.11)
-  postcss:
-    specifier: ^8.4.31
-    version: 8.4.38
-  pusher-js:
-    specifier: 8.4.0-rc2
-    version: 8.4.0-rc2
-  tailwindcss:
-    specifier: ^3.2.1
-    version: 3.4.3
-  typescript:
-    specifier: ^5.0.2
-    version: 5.4.5
-  unplugin-vue-components:
-    specifier: ^0.27.0
-    version: 0.27.0(vue@3.4.27)
-  vite:
-    specifier: ^5.0
-    version: 5.2.11
-  vue:
-    specifier: ^3.4.0
-    version: 3.4.27(typescript@5.4.5)
-  vue-tsc:
-    specifier: ^1.8.27
-    version: 1.8.27(typescript@5.4.5)
+  .:
+    dependencies:
+      '@ant-design/icons-vue':
+        specifier: ^7.0.1
+        version: 7.0.1(vue@3.4.27(typescript@5.4.5))
+      ant-design-vue:
+        specifier: 4.x
+        version: 4.2.1(vue@3.4.27(typescript@5.4.5))
+      dayjs:
+        specifier: ^1.11.11
+        version: 1.11.11
+    devDependencies:
+      '@inertiajs/vue3':
+        specifier: ^1.0.0
+        version: 1.0.16(vue@3.4.27(typescript@5.4.5))
+      '@tailwindcss/forms':
+        specifier: ^0.5.3
+        version: 0.5.7(tailwindcss@3.4.3)
+      '@vitejs/plugin-vue':
+        specifier: ^5.0.0
+        version: 5.0.4(vite@5.2.11)(vue@3.4.27(typescript@5.4.5))
+      autoprefixer:
+        specifier: ^10.4.12
+        version: 10.4.19(postcss@8.4.38)
+      axios:
+        specifier: ^1.6.4
+        version: 1.6.8
+      laravel-echo:
+        specifier: ^1.16.1
+        version: 1.16.1
+      laravel-vite-plugin:
+        specifier: ^1.0
+        version: 1.0.2(vite@5.2.11)
+      postcss:
+        specifier: ^8.4.31
+        version: 8.4.38
+      pusher-js:
+        specifier: 8.4.0-rc2
+        version: 8.4.0-rc2
+      tailwindcss:
+        specifier: ^3.2.1
+        version: 3.4.3
+      typescript:
+        specifier: ^5.0.2
+        version: 5.4.5
+      unplugin-vue-components:
+        specifier: ^0.27.0
+        version: 0.27.0(@babel/parser@7.24.5)(rollup@4.17.2)(vue@3.4.27(typescript@5.4.5))
+      vite:
+        specifier: ^5.0
+        version: 5.2.11
+      vue:
+        specifier: ^3.4.0
+        version: 3.4.27(typescript@5.4.5)
+      vue-tsc:
+        specifier: ^1.8.27
+        version: 1.8.27(typescript@5.4.5)
 
 packages:
 
@@ -773,12 +775,11 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  /laravel-echo@1.16.1:
+  laravel-echo@1.16.1:
     resolution: {integrity: sha512-++Ylb6M3ariC9Rk5WE5gZjj6wcEV5kvLF8b+geJ5/rRIfdoOA+eG6b9qJPrarMD9rY28Apx+l3eelIrCc2skVg==}
     engines: {node: '>=10'}
-    dev: true
 
-  /laravel-vite-plugin@1.0.2(vite@5.2.11):
+  laravel-vite-plugin@1.0.2:
     resolution: {integrity: sha512-Mcclml10khYzBVxDwJro8wnVDwD4i7XOSEMACQNnarvTnHjrjXLLL+B/Snif2wYAyElsOqagJZ7VAinb/2vF5g==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -975,13 +976,10 @@ packages:
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
-  /pusher-js@8.4.0-rc2:
+  pusher-js@8.4.0-rc2:
     resolution: {integrity: sha512-d87GjOEEl9QgO5BWmViSqW0LOzPvybvX6WA9zLUstNdB57jVJuR27zHkRnrav2a3+zAMlHbP2Og8wug+rG8T+g==}
-    dependencies:
-      tweetnacl: 1.0.3
-    dev: true
 
-  /qs@6.12.1:
+  qs@6.12.1:
     resolution: {integrity: sha512-zWmv4RSuB9r2mYQw3zxQuHWeU+42aKi1wWig/j4ele4ygELZ7PEO6MM7rim9oAQH2A5MWfsAVf/jPvTPgCbvUQ==}
     engines: {node: '>=0.6'}
 
@@ -1106,6 +1104,9 @@ packages:
 
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
+
+  tweetnacl@1.0.3:
+    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
 
   typescript@5.4.5:
     resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
@@ -1233,7 +1234,7 @@ snapshots:
 
   '@ant-design/icons-svg@4.4.2': {}
 
-  '@ant-design/icons-vue@7.0.1(vue@3.4.27)':
+  '@ant-design/icons-vue@7.0.1(vue@3.4.27(typescript@5.4.5))':
     dependencies:
       '@ant-design/colors': 6.0.0
       '@ant-design/icons-svg': 4.4.2
@@ -1343,7 +1344,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@inertiajs/vue3@1.0.16(vue@3.4.27)':
+  '@inertiajs/vue3@1.0.16(vue@3.4.27(typescript@5.4.5))':
     dependencies:
       '@inertiajs/core': 1.0.16
       lodash.clonedeep: 4.5.0
@@ -1393,11 +1394,13 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@rollup/pluginutils@5.1.0':
+  '@rollup/pluginutils@5.1.0(rollup@4.17.2)':
     dependencies:
       '@types/estree': 1.0.5
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    optionalDependencies:
+      rollup: 4.17.2
 
   '@rollup/rollup-android-arm-eabi@4.17.2':
     optional: true
@@ -1459,7 +1462,7 @@ snapshots:
 
   '@types/estree@1.0.5': {}
 
-  '@vitejs/plugin-vue@5.0.4(vite@5.2.11)(vue@3.4.27)':
+  '@vitejs/plugin-vue@5.0.4(vite@5.2.11)(vue@3.4.27(typescript@5.4.5))':
     dependencies:
       vite: 5.2.11
       vue: 3.4.27(typescript@5.4.5)
@@ -1517,8 +1520,9 @@ snapshots:
       minimatch: 9.0.4
       muggle-string: 0.3.1
       path-browserify: 1.0.1
-      typescript: 5.4.5
       vue-template-compiler: 2.7.16
+    optionalDependencies:
+      typescript: 5.4.5
 
   '@vue/reactivity@3.4.27':
     dependencies:
@@ -1535,7 +1539,7 @@ snapshots:
       '@vue/shared': 3.4.27
       csstype: 3.1.3
 
-  '@vue/server-renderer@3.4.27(vue@3.4.27)':
+  '@vue/server-renderer@3.4.27(vue@3.4.27(typescript@5.4.5))':
     dependencies:
       '@vue/compiler-ssr': 3.4.27
       '@vue/shared': 3.4.27
@@ -1555,10 +1559,10 @@ snapshots:
 
   ansi-styles@6.2.1: {}
 
-  ant-design-vue@4.2.1(vue@3.4.27):
+  ant-design-vue@4.2.1(vue@3.4.27(typescript@5.4.5)):
     dependencies:
       '@ant-design/colors': 6.0.0
-      '@ant-design/icons-vue': 7.0.1(vue@3.4.27)
+      '@ant-design/icons-vue': 7.0.1(vue@3.4.27(typescript@5.4.5))
       '@babel/runtime': 7.24.5
       '@ctrl/tinycolor': 3.6.1
       '@emotion/hash': 0.9.1
@@ -1578,7 +1582,7 @@ snapshots:
       stylis: 4.3.2
       throttle-debounce: 5.0.0
       vue: 3.4.27(typescript@5.4.5)
-      vue-types: 3.0.2(vue@3.4.27)
+      vue-types: 3.0.2(vue@3.4.27(typescript@5.4.5))
       warning: 4.0.3
 
   any-promise@1.3.0: {}
@@ -1869,6 +1873,8 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
+  laravel-echo@1.16.1: {}
+
   laravel-vite-plugin@1.0.2(vite@5.2.11):
     dependencies:
       picocolors: 1.0.0
@@ -2002,8 +2008,9 @@ snapshots:
   postcss-load-config@4.0.2(postcss@8.4.38):
     dependencies:
       lilconfig: 3.1.1
-      postcss: 8.4.38
       yaml: 2.4.2
+    optionalDependencies:
+      postcss: 8.4.38
 
   postcss-nested@6.0.1(postcss@8.4.38):
     dependencies:
@@ -2024,6 +2031,10 @@ snapshots:
       source-map-js: 1.2.0
 
   proxy-from-env@1.1.0: {}
+
+  pusher-js@8.4.0-rc2:
+    dependencies:
+      tweetnacl: 1.0.3
 
   qs@6.12.1:
     dependencies:
@@ -2188,38 +2199,18 @@ snapshots:
     dependencies:
       is-number: 7.0.0
 
-  /ts-interface-checker@0.1.13:
-    resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
-    dev: true
+  ts-interface-checker@0.1.13: {}
 
-  /tweetnacl@1.0.3:
-    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
-    dev: true
+  tweetnacl@1.0.3: {}
 
-  /typescript@5.4.5:
-    resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
-    engines: {node: '>=14.17'}
-    hasBin: true
+  typescript@5.4.5: {}
 
-  /ufo@1.5.3:
-    resolution: {integrity: sha512-Y7HYmWaFwPUmkoQCUIAYpKqkOf+SbVj/2fJJZ4RJMCfZp0rTGwRbzQD+HghfnhKOjL9E01okqz+ncJskGYfBNw==}
-    dev: true
+  ufo@1.5.3: {}
 
-  /unplugin-vue-components@0.27.0(vue@3.4.27):
-    resolution: {integrity: sha512-77eTEy23sQ0UpzGWnZ9I2mY3cnmXwklz4ITcn3JfxjCoX643ghImkiZ4nFm58sxbdVcc4Fo/o4LIoFnlqEqsSg==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      '@babel/parser': ^7.15.8
-      '@nuxt/kit': ^3.2.2
-      vue: 2 || 3
-    peerDependenciesMeta:
-      '@babel/parser':
-        optional: true
-      '@nuxt/kit':
-        optional: true
+  unplugin-vue-components@0.27.0(@babel/parser@7.24.5)(rollup@4.17.2)(vue@3.4.27(typescript@5.4.5)):
     dependencies:
       '@antfu/utils': 0.7.8
-      '@rollup/pluginutils': 5.1.0
+      '@rollup/pluginutils': 5.1.0(rollup@4.17.2)
       chokidar: 3.6.0
       debug: 4.3.4
       fast-glob: 3.3.2
@@ -2229,6 +2220,8 @@ snapshots:
       resolve: 1.22.8
       unplugin: 1.10.1
       vue: 3.4.27(typescript@5.4.5)
+    optionalDependencies:
+      '@babel/parser': 7.24.5
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -2273,7 +2266,7 @@ snapshots:
       semver: 7.6.2
       typescript: 5.4.5
 
-  vue-types@3.0.2(vue@3.4.27):
+  vue-types@3.0.2(vue@3.4.27(typescript@5.4.5)):
     dependencies:
       is-plain-object: 3.0.1
       vue: 3.4.27(typescript@5.4.5)
@@ -2283,8 +2276,9 @@ snapshots:
       '@vue/compiler-dom': 3.4.27
       '@vue/compiler-sfc': 3.4.27
       '@vue/runtime-dom': 3.4.27
-      '@vue/server-renderer': 3.4.27(vue@3.4.27)
+      '@vue/server-renderer': 3.4.27(vue@3.4.27(typescript@5.4.5))
       '@vue/shared': 3.4.27
+    optionalDependencies:
       typescript: 5.4.5
 
   warning@4.0.3:

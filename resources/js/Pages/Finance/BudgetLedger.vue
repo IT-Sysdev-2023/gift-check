@@ -45,7 +45,7 @@ export default {
     },
     data(){
         return {
-            dateRange: [dayjs(this.date[0] ?? null), dayjs(this.date[1] ?? null)]
+            dateRange: this.dateRange ? [dayjs(this.date[0] ?? null), dayjs(this.date[1] ?? null)] : null,
         }
     },
     methods: {
