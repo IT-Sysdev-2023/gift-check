@@ -1,4 +1,5 @@
 <template>
+     <Head title="Verified GC -Alta Citta" />
     <a-card>
         <a-card class="mb-2" title="Alta Citta - Verified GC"></a-card>
         <div class="flex justify-end">

@@ -13,8 +13,9 @@ export default {
 </script>
 
 <template>
+    <Head title="Released Promo GC" />
     <a-card style="width: 24rem;">
-        <a-card class="mb-2" title=" Released Promo GC"></a-card>
+        <a-card class="mb-2" title="Released Promo GC"></a-card>
         <a-form>
             <a-form-item label="Date Released:" name="dateReleased">
                 <a-date-picker v-model:value="dateReleased" disabled/>
