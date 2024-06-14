@@ -71,7 +71,7 @@ class ColumnHelper
         ],
     ];
 
-    public static  $ver_gc_alturas_mall_columns = [
+    public static $ver_gc_alturas_mall_columns = [
         [
             'title' => 'Barcode #.',
             'dataIndex' => 'vs_barcode',

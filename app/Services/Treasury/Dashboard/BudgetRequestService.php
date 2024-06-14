@@ -87,27 +87,6 @@ class BudgetRequestService
 // 	}
 	}
 
-	public static function approvedRequest(): Collection //approved-budget-request
-	{
-		$record = BudgetRequest::leftJoin('approved_budget_request', 'budget_request.br_id', '=', 'approved_budget_request.abr_budget_request_id')
-			->select('br_request', 'br_no', 'br_id', 'abr_approved_by')
-			->where('br_request_status', '1')->get();
-		return $record;
-
-		// $table = 'budget_request';
-		// $select = "budget_request.br_request,
-		//     budget_request.br_no,
-		//     budget_request.br_id,
-		//     approved_budget_request.abr_approved_by";
-		// $where = 'br_request_status=1';
-		// $join = 'LEFT JOIN
-		//         approved_budget_request
-		//     ON
-		//         approved_budget_request.abr_budget_request_id = budget_request.br_id';
-		// $limit = '';
-		// $data = getAllData($link,$table,$select,$where,$join,$limit);
-	}
-
 
 
 	public static function cancelledRequest(): Collection //cancelled-budget-request.php

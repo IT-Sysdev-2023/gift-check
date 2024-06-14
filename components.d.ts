@@ -57,6 +57,7 @@ declare module 'vue' {
     ATag: typeof import('ant-design-vue/es')['Tag']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
+    ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
     AUpload: typeof import('ant-design-vue/es')['Upload']
     AuthenticatedLayout: typeof import('./resources/js/Layouts/AuthenticatedLayout.vue')['default']
     Badge: typeof import('./resources/js/Components/Badge.vue')['default']

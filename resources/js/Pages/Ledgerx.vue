@@ -1,4 +1,11 @@
 <template>
+    <Head :title="title" />
+    <a-breadcrumb>
+        <a-breadcrumb-item>
+            <Link :href="route('treasury.dashboard')">Home</Link>
+        </a-breadcrumb-item>
+        <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
+    </a-breadcrumb>
     <a-card>
         <div class="flex justify-between mb-5">
             <div>
@@ -26,6 +33,9 @@
             size="small"
             :pagination="false"
         >
+            <template #title>
+                <a-typography-title :level="4">{{ title }}</a-typography-title>
+            </template>
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex">
                     <span
@@ -37,7 +47,7 @@
                 </template>
             </template>
         </a-table>
-        <div class="flex justify-end p-2 mt-2">
+        <div class="flex justify-end p-2 mt-2" v-if="remainingBudget">
             <p class="font-semibold text-gray-700">Remaining Budget:</p>
             &nbsp;
             <span>
@@ -66,6 +76,7 @@ export default {
         return { highlightText };
     },
     props: {
+        title: String,
         data: Object,
         columns: Array,
         remainingBudget: String,
@@ -91,7 +102,7 @@ export default {
                     : [];
 
                 this.$inertia.get(
-                    route("finance.budget.ledger"),
+                    route(route().current()),
                     { ...pickBy(this.form), date: formattedDate },
                     {
                         preserveState: true,
