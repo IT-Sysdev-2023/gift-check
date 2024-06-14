@@ -117,6 +117,11 @@ class ColumnHelper
 
         ],
         [
+            'title' => 'Budget Requested',
+            'dataIndex' => 'budget_requested',
+
+        ],
+        [
             'title' => 'Prepaired By',
             'dataIndex' => 'prepared_by',
 
