@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Date;
+
+class BudgetRequestResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'br_id' => $this->br_id,
+            'br_request' => $this->br_request,
+            'br_requested_at' => Date::parse($this->br_requested_at)->toFormattedDateString(),
+            'br_no' => $this->br_no,
+            'br_file_docno' => $this->br_file_docno,
+            'br_remarks' => $this->br_remarks,
+            'br_requested_needed' => Date::parse($this->br_requested_needed)->toFormattedDateString(),
+            'prepared_by' => $this->user,
+            'abr' => new ApprovedBudgetRequestResource($this->whenLoaded('approvedBudgetRequest'))
+        ];
+
+        //     budget_request.br_request,
+        //     budget_request.br_requested_at,
+        //     budget_request.br_no,
+        //     budget_request.br_file_docno,
+        //     budget_request.br_remarks,
+        //     budget_request.br_requested_needed,
+    }
+}

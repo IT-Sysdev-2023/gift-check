@@ -1,8 +1,21 @@
+<script setup>
+import { highlighten } from "@/Mixin/highlighten";
+import Description from "./Description.vue";
+import { ref } from "vue";
+
+const { highlightText } = highlighten();
+
+// const currentTab = ref("Description");
+
+// const tabs = {
+//     Description,
+// };
+</script>
 <template>
     <Head :title="title" />
-    <a-breadcrumb>
+    <a-breadcrumb style="margin: 15px 0">
         <a-breadcrumb-item>
-            <Link :href="route('treasury.dashboard')">Home</Link>
+            <Link :href="route(dashboardRoute)">Home</Link>
         </a-breadcrumb-item>
         <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
     </a-breadcrumb>
@@ -45,8 +58,27 @@
                     >
                     </span>
                 </template>
+
+                <template v-if="column.dataIndex === 'action'">
+                    <a-button
+                        type="primary"
+                        size="small"
+                        @click="viewRecord(record.id)"
+                    >
+                        <template #icon>
+                            <FileSearchOutlined />
+                        </template>
+                        View
+                    </a-button>
+                </template>
             </template>
         </a-table>
+        <a-modal v-model:open="showModal" width="1000px">
+            <!-- <component :is="tabs[currentTab]" /> -->
+
+            <Description :data="descriptionRecord"/>
+        </a-modal>
+
         <div class="flex justify-end p-2 mt-2" v-if="remainingBudget">
             <p class="font-semibold text-gray-700">Remaining Budget:</p>
             &nbsp;
@@ -67,15 +99,11 @@ import dayjs from "dayjs";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
-import { highlighten } from "@/Mixin/highlighten";
 
 export default {
     layout: AuthenticatedLayout,
-    setup() {
-        const { highlightText } = highlighten();
-        return { highlightText };
-    },
     props: {
+        desc: String,
         title: String,
         data: Object,
         columns: Array,
@@ -84,6 +112,8 @@ export default {
     },
     data() {
         return {
+            descriptionRecord: [],
+            showModal: false,
             form: {
                 search: this.filters.search,
                 date: this.filters.date
@@ -91,6 +121,24 @@ export default {
                     : [],
             },
         };
+    },
+    computed: {
+        dashboardRoute() {
+            const webRoute = route().current();
+            const res = webRoute?.split(".")[0];
+            return res + ".dashboard";
+        },
+    },
+    methods: {
+        async viewRecord($id) {
+            const {data} = await axios.get(
+                route("treasury.view.approved.budget.ledger", $id)
+            );
+            console.log(data)
+            this.descriptionRecord = data;
+
+            this.showModal = true;
+        },
     },
 
     watch: {
