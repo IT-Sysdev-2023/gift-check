@@ -7,7 +7,7 @@
                 style="width: 300px" @search="onSearch" />
         </div>
 
-        <a-table :dataSource="data.data" :columns="columns" :pagination="false" />
+        <a-table :dataSource="data.data" :columns="columns" size="small" :pagination="false" />
 
         <pagination class="mt-5" :datarecords="data" />
     </a-card>
@@ -47,9 +47,7 @@ export default {
         search: {
             deep: true,
             handler: debounce(function () {
-                // console.log(this.search);
-                // const formattedDate = this.form.date ? this.form.date.map(date => date.format('YYYY-MM-DD')) : [];
-                this.$inertia.get(route("verified.gc.alturas.mall"), {
+                this.$inertia.get(route("sales.treasury.sales"), {
                     search: this.search
                 }, {
                     preserveState: true,

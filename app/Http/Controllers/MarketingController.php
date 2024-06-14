@@ -144,8 +144,9 @@ class MarketingController extends Controller
             'columns' => ColumnHelper::getColumns($columns),
         ]);
     }
-    public function treasurySales()
+    public function treasurySales(Request $request)
     {
+        $search = $request->search;
         $data = InstitutPayment::select(
             'insp_id',
             'insp_trid',
@@ -157,7 +158,18 @@ class MarketingController extends Controller
             'insp_paymentnum',
             'institut_eodid'
         )
-
+            ->whereAny(
+                ['insp_id',
+                'insp_trid',
+                'insp_paymentcustomer',
+                'institut_bankname',
+                'institut_bankaccountnum',
+                'institut_checknumber',
+                'institut_amountrec',
+                'insp_paymentnum',
+                'institut_eodid'],
+                'LIKE','%' . $search . '%'
+            )
             ->orderBy('insp_paymentnum', 'DESC')
             ->paginate(10)
             ->withQueryString();
