@@ -17,11 +17,12 @@ defineProps<{
                     title="Pending Request"
                     color="orange"
                     type="warning"
+                    @event="$emit('pendingEvent')"
                 />
                 <CardBadge
                     :count="approved"
                     title="Approved Request"
-                    @click="$emit('someEvent')"
+                    @event="$emit('approvedEvent')"
                 />
                 <slot />
                 <CardBadge
@@ -29,6 +30,7 @@ defineProps<{
                     title="Cancelled Request"
                     color="volcano"
                     type="error"
+                    @event="$emit('cancelledEvent')"
                 />
             </a-space>
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { UserType } from "@/userType";
+import { router } from "@inertiajs/vue3";
 
 const { userType, userRole } = UserType();
 
@@ -36,6 +37,14 @@ defineProps<{
         budget: number;
     };
 }>();
+
+const budgetRequestCancelled = () => {};
+
+const budgetRequestPending = () => {};
+
+const budgetRequestApproved = () => {
+    router.get(route("treasury.approved.budget.ledger"));
+};
 </script>
 
 <template>
@@ -52,7 +61,14 @@ defineProps<{
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
-                        <a-row style="background-color: white; padding:30px; margin-bottom: 30px" justify="center" >
+                        <a-row
+                            style="
+                                background-color: white;
+                                padding: 30px;
+                                margin-bottom: 30px;
+                            "
+                            justify="center"
+                        >
                             <a-col :span="12">
                                 <a-statistic
                                     title="Current Budget"
@@ -75,6 +91,9 @@ defineProps<{
                                 :pending="data?.budgetRequest.pending"
                                 :approved="data?.budgetRequest.approved"
                                 :cancelled="data?.budgetRequest.cancelled"
+                                @pending-event="budgetRequestPending"
+                                @approved-event="budgetRequestApproved"
+                                @cancelled-event="budgetRequestCancelled"
                             />
                             <Card
                                 use-default
