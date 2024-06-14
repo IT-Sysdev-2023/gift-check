@@ -55,7 +55,8 @@ Route::prefix('marketing')->group(function () {
     Route::name('treasury.')->group(function () {
     });
 });
-Route::get('promo-list', [MarketingController::class, 'promoList'])->name('promo.list');
+
+Route::get('promo-list', [MarketingController::class, 'promoList'])->name('marketing.promo.list');
 Route::get('addnewpromo', [MarketingController::class, 'addnewpromo'])->name('add.new.promo');
 Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('promo.gc.request');
 Route::get('released-promo-gc', [MarketingController::class, 'releasedpromogc'])->name('released.promo.gc');

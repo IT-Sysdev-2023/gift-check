@@ -32,7 +32,7 @@ class MarketingController extends Controller
     {
         return Inertia::render(('Marketing/Dashboard'));
     }
-    public function promoList()
+    public function promoList(Request $request)
     {
         $tag = auth()->user()->promo_tag;
         $data = Promo::join('users', 'users.user_id', '=', 'promo.promo_valby')
@@ -49,11 +49,16 @@ class MarketingController extends Controller
                 'users.promo_tag',
                 'promo.promo_group'
             )
+            ->whereAny([
+                'promo.promo_name',
+                'promo.promo_id',
+                'promo.promo_group'
+            ], 'LIKE', '%' . $request->search . '%')
             ->orderByDesc('promo.promo_id')
             ->paginate(10)->withQueryString();
 
         $columns = array_map(
-            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Promo No', 'Promo Name', 'Date Notified', 'Expiration Date', 'Group', 'Created By', 'View'],
             ['promo_id', 'promo_name', 'promo_datenotified', 'promo_dateexpire', 'promo_group', 'fullname', 'View']
         );
@@ -266,104 +271,7 @@ class MarketingController extends Controller
             ['insp_id', 'insp_paymentcustomer', 'customer', 'date', 'time', 'totgccnt', 'totdenom', 'paymenttype', 'view']
         );
 
-        // return Inertia::render('Marketing/Sale_treasurySales', []);
-
-        //     // ->orderByDesc('insp_paymentnum')
-        //     // ->limit(10)
-        //     // ->get();
-
-        // $data->transform(function ($p) {
-        //     $datetr = $totgccnt = $totdenom = $customer = $paymenttype = '';
-
-        //     if ($p->insp_paymentcustomer == 'institution') {
-        //         $query = InstitutTransaction::join('institut_customer', 'institut_customer.ins_id', '=', 'institut_transactions.institutr_cusid')
-        //             ->where('institut_transactions.institutr_id', $p->insp_trid)
-        //             ->select('institut_transactions.institutr_id', 'institut_transactions.institutr_trnum', 'institut_transactions.institutr_paymenttype', 'institut_transactions.institutr_date', 'institut_customer.ins_name')
-        //             ->first();
-
-        //         if ($query) {
-        //             $paymenttype = $query->institutr_paymenttype;
-        //             $customer = $query->ins_name;
-        //             $datetr = $query->institutr_date;
-
-        //             $query_gcs = InstitutTransactionsItem::join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
-        //                 ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-        //                 ->where('instituttritems_trid', $p->insp_trid)
-        //                 ->select(DB::raw('IFNULL(COUNT(institut_transactions_items.instituttritems_barcode),0) as cnt'), DB::raw('IFNULL(SUM(denomination.denomination),0) as totamt'))
-        //                 ->first();
-
-        //             if ($query_gcs) {
-        //                 $totgccnt = $query_gcs->cnt;
-        //                 $totdenom = $query_gcs->totamt;
-        //             }
-        //         }
-        //     } elseif ($p->insp_paymentcustomer == 'stores') {
-        //         $query = ApprovedGcrequest::join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
-        //             ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
-        //             ->where('approved_gcrequest.agcr_id', $p->insp_trid)
-        //             ->select('approved_gcrequest.agcr_request_id', 'approved_gcrequest.agcr_request_relnum', 'approved_gcrequest.agcr_approved_at', 'approved_gcrequest.agcr_paymenttype', 'stores.store_name')
-        //             ->first();
-
-        //         if ($query) {
-        //             $customer = $query->store_name;
-        //             $datetr = $query->agcr_approved_at;
-        //             $paymenttype = $query->agcr_paymenttype;
-
-        //             $query_gcs = GcRelease::join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
-        //                 ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-        //                 ->where('rel_num', $query->agcr_request_relnum)
-        //                 ->select(DB::raw('IFNULL(COUNT(gc_release.re_barcode_no),0) as cnt'), DB::raw('IFNULL(SUM(denomination.denomination),0) as totamt'))
-        //                 ->first();
-
-        //             if ($query_gcs) {
-        //                 $totgccnt = $query_gcs->cnt;
-        //                 $totdenom = $query_gcs->totamt;
-        //             }
-        //         }
-        //     } elseif ($p->insp_paymentcustomer == 'special external') {
-        //         $query = SpecialExternalGcrequest::join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
-        //             ->where('special_external_gcrequest.spexgc_id', $p->insp_trid)
-        //             ->select('special_external_gcrequest.spexgc_id', 'special_external_gcrequest.spexgc_datereq', 'special_external_customer.spcus_companyname', 'special_external_gcrequest.spexgc_paymentype', 'special_external_gcrequest.spexgc_addemp')
-        //             ->first();
-
-        //         if ($query) {
-        //             if ($query->spexgc_addemp == 'pending') {
-        //                 return null; // Skip this record
-        //             }
-
-        //             $customer = $query->spcus_companyname;
-        //             $datetr = $query->spexgc_datereq;
-        //             $paymenttype = $query->spexgc_paymentype == '1' ? 'cash' : 'check';
-
-        //             $query_gcs = SpecialExternalGcrequestItem::where('specit_trid', $p->insp_trid)
-        //                 ->select(DB::raw('IFNULL(SUM(special_external_gcrequest_items.specit_qty),0) as cnt'), DB::raw('IFNULL(SUM(special_external_gcrequest_items.specit_denoms * special_external_gcrequest_items.specit_qty),0) as totamt'))
-        //                 ->first();
-
-        //             if ($query_gcs) {
-        //                 $totgccnt = $query_gcs->cnt;
-        //                 $totdenom = $query_gcs->totamt;
-        //             }
-        //         }
-        //     }
-
-        //     $p->customer = $customer;
-        //     $p->datetr = $datetr;
-        //     $p->totgccnt = $totgccnt;
-        //     $p->totdenom = $totdenom;
-        //     $p->paymenttype = $paymenttype;
-
-        //     return $p;
-        // });
-
-        dd($data->toArray());
-        $columns = array_map(
-            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
-            ['Transaction #', 'GC Type', 'Customer', 'Date', 'Time', 'GC pc(s)','Total Denom','Payment Type','View'],
-            ['insp_id', 'gcs_accountname', 'gcs_contactperson', 'gcs_contactnumber', 'gcs_address', 'View']
-        );
-
-        
-        return Inertia::render('Marketing/Sale_treasurySales',[
+        return Inertia::render('Marketing/Sale_treasurySales', [
             'data' => $data,
             'columns' => ColumnHelper::getColumns($columns),
         ]);
@@ -430,28 +338,29 @@ class MarketingController extends Controller
     }
 
 
-    public function verifiedGc_Amall()
+    public function verifiedGc_Amall(Request $request)
     {
-
-        $data = GetVerifiedGc::getVerifiedGc(1);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(1, $search);
         return Inertia::render('Marketing/VerifiedGCperStore/AlturasMall', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function verifiedGc_A_talibon()
+    public function verifiedGc_A_talibon(Request $request)
     {
-        $data = GetVerifiedGc::getVerifiedGc(2);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(2, $search);
 
         return Inertia::render('Marketing/VerifiedGCperStore/AlturasTalibon', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function verifiedGc_A_tubigon()
+    public function verifiedGc_A_tubigon(Request $request)
     {
-
-        $data = GetVerifiedGc::getVerifiedGc(0);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(0, $search);
 
         return Inertia::render('Marketing/VerifiedGCperStore/Alturastubigon', [
             'data' => $data,
@@ -460,95 +369,103 @@ class MarketingController extends Controller
     }
 
 
-    public function verifiedGc_AltaCita()
+    public function verifiedGc_AltaCita(Request $request)
     {
-        $data = GetVerifiedGc::getVerifiedGc(8);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(8, $search);
         return Inertia::render('Marketing/VerifiedGCperStore/AltaCita', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
 
-    public function verifiedGc_AscTech()
+    public function verifiedGc_AscTech(Request $request)
     {
-        $data = GetVerifiedGc::getVerifiedGc(12);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(12, $search);
         return Inertia::render('Marketing/VerifiedGCperStore/AscTech', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function verifiedGc_colonadeColon()
+    public function verifiedGc_colonadeColon(Request $request)
     {
-        $data = GetVerifiedGc::getVerifiedGc(5);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(5, $search);
         return Inertia::render('Marketing/VerifiedGCperStore/Colonade_colon', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function verifiedGc_colonadeMandaue()
+    public function verifiedGc_colonadeMandaue(Request $request)
     {
-        $data = GetVerifiedGc::getVerifiedGc(6);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(6, $search);
         return Inertia::render('Marketing/VerifiedGCperStore/ColonadeMandaue', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function verifiedGc_plazaMarcela()
+    public function verifiedGc_plazaMarcela(Request $request)
     {
-        $data = GetVerifiedGc::getVerifiedGc(4);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(4, $search);
         return Inertia::render('Marketing/VerifiedGCperStore/PlazaMarcela', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function verifiedGc_farmersMarket()
+    public function verifiedGc_farmersMarket(Request $request)
     {
-        $data = GetVerifiedGc::getVerifiedGc(10);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(10, $search);
         return Inertia::render('Marketing/VerifiedGCperStore/FarmersMarket', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function verifiedGc_udc()
+    public function verifiedGc_udc(Request $request)
     {
-        $data = GetVerifiedGc::getVerifiedGc(10);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(10, $search);
         return Inertia::render('Marketing/VerifiedGCperStore/UbayDistributionCenter', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function verifiedGc_screenville()
+    public function verifiedGc_screenville(Request $request)
     {
-        $data = GetVerifiedGc::getVerifiedGc(11);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(11, $search);
         return Inertia::render('Marketing/VerifiedGCperStore/ScreenVille', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function verifiedGc_icm()
+    public function verifiedGc_icm(Request $request)
     {
-        $data = GetVerifiedGc::getVerifiedGc(3);
+        $search = $request->search;
+        $data = GetVerifiedGc::getVerifiedGc(3, $search);
         return Inertia::render('Marketing/VerifiedGCperStore/IslandCityMall', [
             'data' => $data,
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function getPromoDetails()
+    public function getPromoDetails(Request $request)
     {
         $data = PromoGc::join('denomination', 'denomination.denom_id', '=', 'promo_gc.prom_denom')
             ->join('gc_type', 'gc_type.gc_type_id', '=', 'promo_gc.prom_gctype')
             ->leftJoin('store_verification', 'store_verification.vs_barcode', '=', 'promo_gc.prom_barcode')
             ->select('promo_gc.prom_barcode', 'denomination.denomination', 'gc_type.gctype', 'store_verification.vs_barcode')
             ->where('promo_gc.prom_promoid', request()->id)
-            ->where('promo_gc.prom_barcode', 'LIKE', '%' . request()->search .'%')
+            ->where('promo_gc.prom_barcode', 'LIKE', '%' . request()->search . '%')
             ->get();
-
         $transformedData = $data->map(function ($item) {
             $item->gctype = ucfirst($item->gctype);
             return $item;
         });
 
-        return response()->json($transformedData);
+        return response()->json(['data' => $transformedData]);
     }
 
 

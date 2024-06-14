@@ -1,10 +1,9 @@
 <template>
-
     <Head title="Promo List" />
     <a-card>
         <a-card class="mb-2" title="Promo List"></a-card>
         <div class="flex justify-end">
-            <a-input-search class="mt-5 mb-5" v-model:value="search" placeholder="input search text here."
+            <a-input-search class="mt-5 mb-5" v-model:value="form.search" placeholder="input search text here."
                 style="width: 300px" @search="onSearch" />
         </div>
         <a-table :dataSource="data.data" size="small" bordered :columns="columns" :pagination="false">
@@ -19,7 +18,6 @@
             </template>
         </a-table>
         <pagination class="mt-5" :datarecords="data" />
-
     </a-card>
     <a-modal v-model:open="openViewModal" width="80%" style="top: 65px" title="Promo Details" :footer="false">
         <a-row :gutter="[16, 16]">
@@ -173,12 +171,11 @@
                 </a-list-item>
             </a-list>
         </a-modal>
-
     </a-modal>
 </template>
 
 <script>
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import debounce from "lodash/debounce";
 import axios from 'axios';
 
@@ -191,6 +188,9 @@ export default {
     data() {
         return {
             search: '',
+            form: {
+                search: ''
+            },
             openViewModal: false,
             openSubviewModal: false,
             selectedData: [],
@@ -201,24 +201,21 @@ export default {
                 {
                     title: 'GC Barcode#',
                     dataIndex: 'prom_barcode',
-
                 },
                 {
                     title: 'Denomination.',
                     dataIndex: 'denomination',
-
                 },
                 {
                     title: 'GC Type',
                     dataIndex: 'gctype',
-
                 },
                 {
                     title: 'View Info',
                     dataIndex: 'subviewinfo',
                 },
             ]
-        }
+        };
     },
     methods: {
         viewDetails(data) {
@@ -229,10 +226,8 @@ export default {
                 }
             }).then(response => {
                 this.openViewModal = true;
-                this.selectedViewDetails = response.data;
-
+                this.selectedViewDetails = response.data.data;
             });
-
         },
         viewSubDetails(data) {
             axios.get(route('get.sub.barcode.details'), {
@@ -248,20 +243,29 @@ export default {
             return str.replace(/\b\w/g, char => char.toUpperCase());
         }
     },
-
-
     watch: {
         search: {
             deep: true,
             handler: debounce(function () {
                 axios.get(route("get.view.details"), {
-                    params: { search: this.search }
+                    params: {
+                        search: this.search,
+                        id: this.selectedData.promo_id,
+                    }
                 }).then(response => {
-                    this.selectedViewDetails = response.data;
-                    // console
+                    this.selectedViewDetails = response.data.data;
                 });
             }, 600),
         },
+        'form.search': {
+            handler: debounce(function () {
+                this.$inertia.get(route("marketing.promo.list"), {
+                    search: this.form.search
+                }, {
+                    preserveState: true,
+                });
+            }, 600),
+        }
     },
-}
+};
 </script>
