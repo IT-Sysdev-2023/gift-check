@@ -44,6 +44,7 @@ export default {
 </script>
 
 <template>
+    <Head title="Promo GC Request Form" />
     <a-form>
         <a-card title="Promo GC Request Form"></a-card>
         <a-row :gutter="[16, 16]">

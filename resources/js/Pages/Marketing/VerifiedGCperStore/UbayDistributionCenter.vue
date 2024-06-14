@@ -1,4 +1,5 @@
-<template>
+<template> 
+<Head title="Verified GC - Ubay Distribution Center" />
     <a-card>
         <a-card class="mb-2" title="Ubay Distribution Center - Verified GC"></a-card>
         <div class="flex justify-end">

@@ -1,4 +1,5 @@
 <template>
+     <Head title="Verified GC - Alturas Mall" />
     <a-card>
         <a-card class="mb-2" title="Alturas Mall - Verified GC"></a-card>
         <div class="flex justify-end">
@@ -50,8 +51,6 @@ export default {
         search: {
             deep: true,
             handler: debounce(function () {
-                // console.log(this.search);
-                // const formattedDate = this.form.date ? this.form.date.map(date => date.format('YYYY-MM-DD')) : [];
                 this.$inertia.get(route("verified.gc.alturas.mall"), {
                     search: this.search
                 }, {

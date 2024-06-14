@@ -1,4 +1,5 @@
 <template>
+    <Head title="Verified GC - Colonade Colon" />
     <a-card>
         <a-card class="mb-2" title="Colonade Colon - Verified GC"></a-card>
         <div class="flex justify-end">

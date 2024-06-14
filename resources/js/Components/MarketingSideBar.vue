@@ -28,7 +28,7 @@ import { Link } from "@inertiajs/vue3";
             <Link :href="route('add.new.promo')">Add New Promo</Link>
         </a-menu-item>
         <a-menu-item key="promolist">
-            <Link :href="route('promo.list')">Promo List</Link>
+            <Link :href="route('marketing.promo.list')">Promo List</Link>
         </a-menu-item>
     </a-sub-menu>
 
@@ -40,6 +40,12 @@ import { Link } from "@inertiajs/vue3";
             <Link :href="route('released.promo.gc')">Released Promo GC</Link>
         </span>
     </a-menu-item>
+
+
+    <!-- <a-menu-item key="releasedPromoGC">
+        <RetweetOutlined />
+        <span><Link :href="route('release.promo.gc')">Released Promo GC</Link></span>
+    </a-menu-item> -->
 
     <a-menu-item key="promoStatus">
         <BarChartOutlined />

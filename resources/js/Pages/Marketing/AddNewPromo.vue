@@ -13,6 +13,7 @@ export default {
 </script>
 
 <template>
+  <Head title="Add New Promo" />
   <a-card title="Add New Promo"></a-card>
   <a-row :gutter="[16, 16]">
     <a-col :span="12">
