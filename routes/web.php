@@ -10,7 +10,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\RetailController;
 use App\Http\Controllers\Treasury\MainController;
-use App\Http\Controllers\Treasury\DashboardController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Middleware\UserTypeRoute;
 use Illuminate\Foundation\Application;
@@ -95,14 +94,23 @@ Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc'])->n
 Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville'])->name('verified.gc.screenville');
 Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech'])->name('verified.gc.asctech');
 Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('verified.gc.island.city.mall');
+Route::get('verified-gc-icm', [MarketingController::class, 'kent'])->name('verified.gc.island.city.mall');
 
 
 
 //Treasury
 Route::prefix('treasury')->group(function () {
     Route::name('treasury.')->group(function () {
-        Route::get('budget-ledger', [MainController::class, 'budgetLedger'])->name('budget.ledger');
-        Route::get('gc-ledger', [MainController::class, 'gcLedger'])->name('gc.ledger');
+        Route::prefix('budget-ledger')->group(function () {
+
+            Route::get('approved', [TreasuryController::class, 'budgetLedgerApproved'])->name('approved.budget.ledger');
+        });
+
+        Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
+        Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
+        Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
+
+
     });
 
 });
@@ -112,6 +120,7 @@ Route::prefix('finance')->group(function () {
     Route::name('finance.')->group(function () {
         Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
+        Route::get('approved-released-reports', [FinanceController::class, 'approvedAndReleasedSpgc'])->name('approved.released.reports');
     });
 });
 

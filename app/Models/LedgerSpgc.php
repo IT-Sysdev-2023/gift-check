@@ -19,4 +19,19 @@ class LedgerSpgc extends Model
         ];
     }
 
+
+    public function scopeFilter($builder, $filter)
+    {
+        return $builder->when($filter['date'] ?? null, function ($query, $date) {
+            $query->whereBetween('spgcledger_datetime', [$date[0], $date[1]]);
+        })
+            ->when($filter['search'] ?? null, function ($query, $search) {
+                $query->whereAny([
+                    'spgcledger_no',
+                    'spgcledger_type',
+                    'spgcledger_credit',
+                    'spgcledger_trid',
+                ], 'LIKE', '%' . $search . '%');
+            });
+    }
 }

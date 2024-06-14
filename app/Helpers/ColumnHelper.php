@@ -37,6 +37,7 @@ class ColumnHelper
 
         ],
     ];
+
     public static $gc_ledger_columns = [
         [
             'title' => 'Legder No.',
@@ -70,7 +71,7 @@ class ColumnHelper
         ],
     ];
 
-    public static  $ver_gc_alturas_mall_columns = [
+    public static $ver_gc_alturas_mall_columns = [
         [
             'title' => 'Barcode #.',
             'dataIndex' => 'vs_barcode',
@@ -102,12 +103,74 @@ class ColumnHelper
             'title' => 'View.',
             'key' => 'view',
         ],
-        
+
+    ];
+
+    public static $bar_table_columns = [
+        [
+            'title' => 'No.',
+            'dataIndex' => 'spexgc_num',
+        ],
+        [
+            'title' => 'Date Request.',
+            'dataIndex' => 'datereq',
+        ],
+        [
+            'title' => 'Date Released.',
+            'dataIndex' => 'daterel',
+        ],
+        [
+            'title' => 'Barcode #.',
+            'dataIndex' => 'spexgcemp_barcode',
+        ],
+        [
+            'title' => 'Customer.',
+            'dataIndex' => 'full_name',
+        ],
+        [
+            'title' => 'Denomination.',
+            'dataIndex' => 'spexgcemp_denom',
+        ],
+    ];
+    public static $cus_table_columns = [
+        [
+            'title' => 'No.',
+            'dataIndex' => 'spexgc_num',
+        ],
+        [
+            'title' => 'Date Request.',
+            'dataIndex' => 'datereq',
+        ],
+        [
+            'title' => 'Date Released.',
+            'dataIndex' => 'daterel',
+        ],
+        [
+            'title' => 'Trby.',
+            'dataIndex' => 'trby',
+        ],
+        [
+            'title' => 'Account Name.',
+            'dataIndex' => 'spcus_acctname',
+        ],
+        [
+            'title' => 'Company.',
+            'dataIndex' => 'spcus_companyname',
+        ],
+        [
+            'title' => 'Total.',
+            'dataIndex' => 'totcnt',
+        ],
+        [
+            'title' => 'Total Denomination.',
+            'dataIndex' => 'totdenom',
+        ],
+
     ];
 
     public static function getColumns($columns)
     {
-        return array_map(function($item) {
+        return array_map(function ($item) {
             return [
                 'title' => $item['title'] ?? '',
                 'dataIndex' => $item['dataIndex'] ?? '',
@@ -116,10 +179,11 @@ class ColumnHelper
         }, $columns);
     }
 
-    public static function arrayHelper($title, $column){
-            return [
-                'title' => $title,
-                'dataIndex' => $column
-            ];
+    public static function arrayHelper($title, $column)
+    {
+        return [
+            'title' => $title,
+            'dataIndex' => $column
+        ];
     }
 }
