@@ -95,6 +95,8 @@ declare module 'vue' {
     LogoutOutlined: typeof import('@ant-design/icons-vue')['LogoutOutlined']
     ManageSupplier: typeof import('./resources/js/Pages/Marketing/ManageSupplier.vue')['default']
     MarketingSideBar: typeof import('./resources/js/Components/MarketingSideBar.vue')['default']
+    MenuFoldOutlined: typeof import('@ant-design/icons-vue')['MenuFoldOutlined']
+    MenuUnfoldOutlined: typeof import('@ant-design/icons-vue')['MenuUnfoldOutlined']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
