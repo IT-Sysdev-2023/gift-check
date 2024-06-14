@@ -36,13 +36,12 @@ class BudgetRequest extends Model
     {
         return $this->belongsTo(User::class, 'br_requested_by', 'user_id');
     }
-
     public function cancelledBudgetRequest(): BelongsTo
     {
         return $this->belongsTo(CancelledBudgetRequest::class, 'br_id', 'cdreq_req_id');
     }
     public function approvedBudgetRequest()
     {
-        return $this->hasOne(ApprovedGcrequest::class, 'br_id', 'abr_budget_request_id');
+        return $this->belongsTo(ApprovedBudgetRequest::class, 'br_id', 'abr_budget_request_id');
     }
 }

@@ -18,4 +18,9 @@ class ApprovedBudgetRequest extends Model
             'abr_approved_at' => 'date'
         ];
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'abr_prepared_by', 'user_id');
+    }
 }
