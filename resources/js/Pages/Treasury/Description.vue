@@ -8,7 +8,7 @@
             data.br_requested_at
         }}</a-descriptions-item>
         <a-descriptions-item label="Time Requested">{{
-            data.br_requested_at
+            data.br_requested_at_time
         }}</a-descriptions-item>
         <a-descriptions-item label="Date Needed">{{
             data.br_requested_needed

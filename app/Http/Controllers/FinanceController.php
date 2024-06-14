@@ -30,7 +30,7 @@ class FinanceController extends Controller
 
     public function spgcLedger(Request $request)
     {
-        $data = LedgerService::spgcLedger($request->all());
+        $data = LedgerService::spgcLedger($request);
 
         $operators = SpgcService::operatorsFn();
 
@@ -47,8 +47,8 @@ class FinanceController extends Controller
 
     public function approvedAndReleasedSpgc(Request $request)
     {
-        $dataCus = ApprovedReleasedReportService::approvedReleasedQueryCus($request->all());
-        $dataBar = ApprovedReleasedReportService::approvedReleasedQueryBar($request->all());
+        $dataCus = ApprovedReleasedReportService::approvedReleasedQueryCus($request);
+        $dataBar = ApprovedReleasedReportService::approvedReleasedQueryBar($request);
 
         return inertia('Finance/ApprovedAndReleaseSpgc', [
             'columns' => [

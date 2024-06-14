@@ -4,11 +4,12 @@ namespace App\Services\Finance;
 
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class ApprovedReleasedReportService
 {
 
-    public static function approvedReleasedQueryCus($requestQuery)
+    public static function approvedReleasedQueryCus(Request $requestQuery)
     {
         return  SpecialExternalGcrequestEmpAssign::joinDataAndGetOnTables()
             ->selectFilter()
@@ -17,7 +18,7 @@ class ApprovedReleasedReportService
             ->whereBetween('approved_request.reqap_date', [empty($requestQuery['dateRange']) ? [null, null] : $requestQuery['dateRange']])
             ->paginate(10)->withQueryString();
     }
-    public static function approvedReleasedQueryBar($requestQuery)
+    public static function approvedReleasedQueryBar(Request $requestQuery)
     {
         return SpecialExternalGcrequestEmpAssign::joinDataBarTables()
             ->selectBarFilter()
