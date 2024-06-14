@@ -9,7 +9,7 @@
                     </span>
                 </template>
 
-                <ApprovedTab/>
+                <ApprovedTab :datarecords="data" :datacolumns="columns"/>
 
             </a-tab-pane>
             <a-tab-pane key="2">
@@ -30,6 +30,10 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import ApprovedTab from "@/Pages/Finance/Reports/ApprovedTab.vue"
 export default {
     layout: AuthenticatedLayout,
+    props: {
+       data: Object,
+       columns: Array,
+    },
     data() {
         return {
             activeKey: '1',

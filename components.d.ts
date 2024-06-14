@@ -101,6 +101,8 @@ declare module 'vue' {
     LogoutOutlined: typeof import('@ant-design/icons-vue')['LogoutOutlined']
     ManageSupplier: typeof import('./resources/js/Pages/Marketing/ManageSupplier.vue')['default']
     MarketingSideBar: typeof import('./resources/js/Components/MarketingSideBar.vue')['default']
+    MenuFoldOutlined: typeof import('@ant-design/icons-vue')['MenuFoldOutlined']
+    MenuUnfoldOutlined: typeof import('@ant-design/icons-vue')['MenuUnfoldOutlined']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
@@ -135,6 +137,7 @@ declare module 'vue' {
     UpdateProfileInformationForm: typeof import('./resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue')['default']
     UploadOutlined: typeof import('@ant-design/icons-vue')['UploadOutlined']
     UserOutlined: typeof import('@ant-design/icons-vue')['UserOutlined']
+    UsersOutlined: typeof import('@ant-design/icons-vue')['UsersOutlined']
     VerifyEmail: typeof import('./resources/js/Pages/Auth/VerifyEmail.vue')['default']
     Welcome: typeof import('./resources/js/Pages/Welcome.vue')['default']
   }
