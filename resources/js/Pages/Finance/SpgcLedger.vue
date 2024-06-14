@@ -75,8 +75,7 @@ export default {
             handler: throttle(function () {
                 const formattedDate = this.form.date ? this.form.date.map((date) => date.format("YYYY-MM-DD")) : [];
 
-                this.$inertia.get(
-                    route("finance.spgc.ledger"),
+                this.$inertia.get(route("finance.spgc.ledger"),
                     { ...pickBy(this.form), date: formattedDate },
                     {
                         preserveState: true,

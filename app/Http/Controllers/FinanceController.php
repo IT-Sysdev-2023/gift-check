@@ -3,19 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
-use App\Helpers\NumberHelper;
-use App\Http\Resources\BudgetLedgerCollection;
-use App\Http\Resources\BudgetLedgerResource;
 use App\Http\Resources\SpgcLedgerResource;
-use App\Models\ApprovedGcrequest;
-use App\Models\LedgerBudget;
-use App\Models\LedgerSpgc;
+use App\Services\Finance\ApprovedReleasedReportService;
 use App\Services\Finance\SpgcService;
 use App\Services\Treasury\LedgerService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+use function PHPUnit\Framework\isNull;
 
 class FinanceController extends Controller
 {
@@ -26,7 +21,7 @@ class FinanceController extends Controller
 
     public function index()
     {
-        return Inertia::render('Finance/FinanceDashboard');
+        return inertia('Finance/FinanceDashboard');
     }
     public function budgetLedger(Request $request)
     {
@@ -39,7 +34,7 @@ class FinanceController extends Controller
 
         $operators = SpgcService::operatorsFn();
 
-        return Inertia::render('Finance/SpgcLedger', [
+        return inertia('Finance/SpgcLedger', [
             'data' => SpgcLedgerResource::collection($data),
             'columns' => ColumnHelper::$budget_ledger_columns,
             'operators' => $operators,
@@ -47,6 +42,23 @@ class FinanceController extends Controller
                 'search',
                 'date'
             ])
+        ]);
+    }
+
+    public function approvedAndReleasedSpgc(Request $request)
+    {
+        $dataCus = ApprovedReleasedReportService::approvedReleasedQueryCus($request->all());
+        $dataBar = ApprovedReleasedReportService::approvedReleasedQueryBar($request->all());
+
+        return inertia('Finance/ApprovedAndReleaseSpgc', [
+            'columns' => [
+                'columnsCus' => ColumnHelper::$cus_table_columns,
+                'columnsBar' => ColumnHelper::$bar_table_columns,
+            ],
+            'data' => [
+                'dataCus' => $dataCus,
+                'dataBar' => $dataBar 
+            ]
         ]);
     }
 }

@@ -37,6 +37,7 @@ class ColumnHelper
 
         ],
     ];
+
     public static $gc_ledger_columns = [
         [
             'title' => 'Legder No.',
@@ -105,42 +106,66 @@ class ColumnHelper
 
     ];
 
-    public static $approved_buget_request = [
+    public static $bar_table_columns = [
         [
-            'title' => 'BR No.',
-            'dataIndex' => 'br_no',
-
+            'title' => 'No.',
+            'dataIndex' => 'spexgc_num',
         ],
         [
-            'title' => 'Date Requested',
-            'dataIndex' => 'date_requested',
-
+            'title' => 'Date Request.',
+            'dataIndex' => 'datereq',
         ],
         [
-            'title' => 'Budget Requested',
-            'dataIndex' => 'budget_requested',
-
+            'title' => 'Date Released.',
+            'dataIndex' => 'daterel',
         ],
         [
-            'title' => 'Prepaired By',
-            'dataIndex' => 'prepared_by',
-
+            'title' => 'Barcode #.',
+            'dataIndex' => 'spexgcemp_barcode',
         ],
         [
-            'title' => 'Date Approved',
-            'dataIndex' => 'date_approved',
-
+            'title' => 'Customer.',
+            'dataIndex' => 'full_name',
         ],
         [
-            'title' => 'Approved By',
-            'dataIndex' => 'approved_by',
-
+            'title' => 'Denomination.',
+            'dataIndex' => 'spexgcemp_denom',
+        ],
+    ];
+    public static $cus_table_columns = [
+        [
+            'title' => 'No.',
+            'dataIndex' => 'spexgc_num',
         ],
         [
-            'title' => 'Actions',
-            'dataIndex' => 'action'
-
+            'title' => 'Date Request.',
+            'dataIndex' => 'datereq',
         ],
+        [
+            'title' => 'Date Released.',
+            'dataIndex' => 'daterel',
+        ],
+        [
+            'title' => 'Trby.',
+            'dataIndex' => 'trby',
+        ],
+        [
+            'title' => 'Account Name.',
+            'dataIndex' => 'spcus_acctname',
+        ],
+        [
+            'title' => 'Company.',
+            'dataIndex' => 'spcus_companyname',
+        ],
+        [
+            'title' => 'Total.',
+            'dataIndex' => 'totcnt',
+        ],
+        [
+            'title' => 'Total Denomination.',
+            'dataIndex' => 'totdenom',
+        ],
+
     ];
 
     public static function getColumns($columns)
