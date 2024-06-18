@@ -34,6 +34,7 @@ class LedgerService
                 'bcredit_amt'
             ]
         )
+        ->orderByDesc('bledger_no')
         ->paginate(10)
         ->withQueryString();
 

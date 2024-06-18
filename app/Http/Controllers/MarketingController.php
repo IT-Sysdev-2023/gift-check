@@ -84,8 +84,10 @@ class MarketingController extends Controller
     {
         return Inertia::render('Marketing/ReleasedPromoGc');
     }
-    public function promoStatus()
-    {
+    public function promoStatus(Request $request)
+    {   
+       
+
         $tag = auth()->user()->promo_tag;
 
         $query = Gc::join('denomination', 'gc.denom_id', '=', 'denomination.denom_id')
@@ -99,6 +101,7 @@ class MarketingController extends Controller
             ->where('gc.gc_ispromo', '*')
             ->where('gc.gc_validated', '*')
             ->where('promo_gc_request.pgcreq_tagged', $tag)
+            ->whereAny(['barcode_no'],'LIKE' , '%'.$request->search.'%')
             ->select(
                 'barcode_no',
                 'promo_gc_request.pgcreq_group',
