@@ -63,7 +63,7 @@ class FinanceController extends Controller
             ])
         ]);
     }
-    public function approvedSpgdcPdfFunction(Request $request)
+    public function approvedSpgdcPdfExcelFunction(Request $request)
     {
         if($request->ext  == 'pdf') {
 
@@ -73,6 +73,7 @@ class FinanceController extends Controller
             return $this->ledgerService->approvedSpgcPdfWriteResult($request->dateRange, $dataCus, $dataBar);
 
         }elseif($request->ext  == 'excel'){
+            
             $dataCus = ApprovedReleasedReportService::approvedReleasedGenerate($request->all());
             $dataBar = ApprovedReleasedReportService::approvedReleasedBarGenerate($request->all());
 

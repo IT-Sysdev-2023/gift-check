@@ -2,6 +2,7 @@
 
 namespace App\Services\Treasury;
 
+use App\Helpers\Excel\ExcelWriter;
 use App\Helpers\ColumnHelper;
 use App\Http\Resources\BudgetLedgerApprovedResource;
 use App\Http\Resources\BudgetLedgerResource;
@@ -16,9 +17,16 @@ use Inertia\Inertia;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Services\Treasury\Dashboard\excel\ExtendsExcelService;
 
 class LedgerService
 {
+    protected $record;
+    protected $border;
+    protected $generateUserHeader;
+    protected $borderFBN;
+    protected $singleBorderWithBgColor;
 
     public function __construct()
     {
@@ -108,7 +116,7 @@ class LedgerService
 
         $output = $dompdf->output();
 
-        $filename = 'Generated Pdf From '. Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString() . '.pdf';
+        $filename = 'Generated Pdf From ' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString() . '.pdf';
         $filePathName = storage_path('app/' . $filename);
 
         if (!file_exists(dirname($filePathName))) {
@@ -166,7 +174,7 @@ class LedgerService
         $html .= '<p style="font-size: 12px;">' . 'ALTURAS GROUP OF COMPANIES' . '</p>';
         $html .= '<p style="font-size: 11px;">' . 'Head Office - Finance Department' . '</p>';
         $html .= '<p style="font-size: 11px;">' . 'Special External GC Report-Approvalt' . '</p>';
-        $html .= '<p style="font-size: 11px;">' . Date::parse($dateRange[0])->toFormattedDateString() . ' To '. Date::parse($dateRange[1])->toFormattedDateString() . '</p>';
+        $html .= '<p style="font-size: 11px;">' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString() . '</p>';
         $html .= '</div>';
         $html .= '<br><br>';
 
@@ -222,6 +230,14 @@ class LedgerService
     }
     public function approvedSpgcExcelWriteResult($dateRange, $dataCus, $dataBar)
     {
-        // dd(1);
+
+        $save = (new ExtendsExcelService())
+            ->excelWorkSheetPerBarcode($dataBar)
+            ->excelWorkSheetPerCustomer()
+            ->save();
+
+        return Inertia::render('Finance/Results/ApprovedSpgcExcelResult', [
+            'filePath' => $save,
+        ]);
     }
 }
