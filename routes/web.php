@@ -62,8 +62,8 @@ Route::get('released-promo-gc', [MarketingController::class, 'releasedpromogc'])
 Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
 Route::get('manage-supplier', [MarketingController::class, 'manageSupplier'])->name('manage.supplier');
 
-Route::get('sales/treasury-sales', [MarketingController::class, 'treasurySales']) ->name('marketing.sales.treasury.sales');
-Route::get('sales/store-sales', [MarketingController::class, 'storeSales']) -> name('sales.store.sales');
+Route::get('sales-treasury-sales', [MarketingController::class, 'treasurySales']) ->name('marketing.sales.treasury.sales');
+Route::get('sales-store-sales', [MarketingController::class, 'storeSales']) -> name('sales.store.sales');
 Route::get('verified-gc-alturas-mall', [MarketingController::class, 'verifiedGc_Amall']) -> name('verified.gc.alturas.mall');
 Route::get('verified-gc-alturas-talibon', [MarketingController::class, 'verifiedGc_A_talibon']) -> name('verified.gc.alturas.talibon');
 Route::get('verified-gc-alturas-tubigon', [MarketingController::class, 'verifiedGc_A_tubigon']) -> name('verified.gc.alturas.tubigon');
@@ -77,7 +77,10 @@ Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_s
 Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech']) -> name('verified.gc.asctech');
 Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm']) -> name('verified.gc.island.city.mall');
 Route::get('get-view-promo-details', [MarketingController::class, 'getPromoDetails']) -> name('get.view.details');
+Route::get('get-store-sales-details', [MarketingController::class, 'getStoreSaleDetails']) -> name('get.store.sale.details');
+Route::get('get-transaction-pos-detail', [MarketingController::class, 'getTransactionPOSdetail']) -> name('get.transaction.pos.detail');
 Route::get('get-view-barcode-details', [MarketingController::class, 'getBarcodeDetails']) -> name('get.sub.barcode.details');
+
 
 
 Route::get('sales/treasury-sales', [MarketingController::class, 'treasurySales'])->name('sales.treasury.sales');
