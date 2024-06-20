@@ -7,13 +7,22 @@
             <div style="border: 1px solid #D8D9DA; display: flex; align-items: center; padding-left: 10px; border-radius: 5px;"
                 class="mr-1">
                 <a-radio-group v-model:value="form.extension">
-                    <a-radio :value="'pdf'">Generate to PDF</a-radio>
-                    <a-radio :value="'excel'">Generate to Excel</a-radio>
+                    <a-radio :value="'pdf'">
+                        <a-typography-text :delete="form.extension === 'pdf'" :mark="form.extension === 'pdf'">Generate
+                            to PDF</a-typography-text>
+                    </a-radio>
+                    <a-radio :value="'excel'">
+                        <a-typography-text :delete="form.extension === 'excel'"
+                            :mark="form.extension === 'excel'">Generate to Excel</a-typography-text>
+                    </a-radio>
                 </a-radio-group>
             </div>
+            <!-- {{ form.extension }} -->
             <div>
-                <a-button type="primary" @click="generateApprovedReleasedReports">
-                    Generate Spgc Approved Pdf
+                <a-button type="primary" @click="generateApprovedReleasedReports" :disabled="form.extension == null || (datarecords.dataCus.total <= 0 && datarecords.dataCus.total <= 0)
+                    ">
+                    {{ isGenerating ? "Generating " + (form.extension === 'pdf' ? 'PDF' : 'Excel') + " in progress..":
+                        "Generate Spgc Approved " + (form.extension == null ? '' :form.extension === 'pdf' ? 'PDF' : 'Excel')}}
                 </a-button>
             </div>
         </div>
@@ -52,10 +61,12 @@ export default {
             },
             value: null,
             activeKey: '1',
+            isGenerating: false,
         }
     },
     methods: {
         generateApprovedReleasedReports() {
+            this.isGenerating = true;
             this.$inertia.get(route('finance.approved.spgc.pdf.result'), {
                 dateRange: this.filters.dateRange ? this.filters.dateRange.map((date) => dayjs(date).format('YYYY-MM-DD')) : [],
                 ext: this.form.extension,
