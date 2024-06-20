@@ -1,6 +1,7 @@
 <template>
     <a-card>
         <a-tabs v-model:activeKey="activeKey">
+            
             <a-tab-pane key="1">
                 <template #tab>
                     <span>
@@ -9,7 +10,7 @@
                     </span>
                 </template>
 
-                <ApprovedTab :datarecords="data" :datacolumns="columns"/>
+                <ApprovedTab :datarecords="data" :datacolumns="columns" :filters="filters"/>
 
             </a-tab-pane>
             <a-tab-pane key="2">
@@ -33,6 +34,7 @@ export default {
     props: {
        data: Object,
        columns: Array,
+       filters: Object
     },
     data() {
         return {

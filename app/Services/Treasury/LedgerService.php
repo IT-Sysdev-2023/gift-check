@@ -13,6 +13,9 @@ use App\Models\LedgerCheck;
 use App\Models\LedgerSpgc;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Dompdf\Dompdf;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Storage;
 
 class LedgerService
 {
@@ -23,20 +26,20 @@ class LedgerService
     public function budgetLedger(Request $request) //ledger_budget.php
     {
         $record =  LedgerBudget::with('approvedGcRequest.storeGcRequest.store:store_id,store_name')
-        ->filter($request->only('search', 'date'))
-        ->select(
-            [
-                'bledger_id',
-                'bledger_no',
-                'bledger_trid',
-                'bledger_datetime',
-                'bledger_type',
-                'bdebit_amt',
-                'bcredit_amt'
-            ]
-        )
-        ->paginate(10)
-        ->withQueryString();
+            ->filter($request->only('search', 'date'))
+            ->select(
+                [
+                    'bledger_id',
+                    'bledger_no',
+                    'bledger_trid',
+                    'bledger_datetime',
+                    'bledger_type',
+                    'bdebit_amt',
+                    'bcredit_amt'
+                ]
+            )
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Treasury/Table', [
             'filters' => $request->all('search', 'date'),
@@ -45,73 +48,13 @@ class LedgerService
             'columns' => ColumnHelper::$budget_ledger_columns,
         ]);
     }
-    public function budgetLedgerApproved(Request $request)
-    {
-        $record = BudgetRequest::join('users', 'users.user_id', 'budget_request.br_requested_by')
-            ->leftJoin('approved_budget_request', 'budget_request.br_id', 'approved_budget_request.abr_budget_request_id')
-            ->select('users.lastname', 'users.firstname', 'br_request', 'br_no', 'br_id', 'br_requested_at', 'abr_approved_by', 'abr_approved_at')
-            ->filter($request->only('search', 'date'))
-            ->where('br_request_status', '1')
-            ->orderByDesc('br_requested_at')
-            ->paginate()
-            ->withQueryString();
-
-        return inertia(
-            'Treasury/Table',
-            [
-                'desc' => 'Description',
-                'filters' => $request->all('search', 'date'),
-                'title' => 'Approved Budget Request',
-                'data' => BudgetLedgerApprovedResource::collection($record),
-                'columns' => ColumnHelper::$approved_buget_request,
-            ]
-
-        );
-    }
 
     public function viewBudgetLedgerApproved(BudgetRequest $budgetRequest)
     {
         $record = $budgetRequest->load(['user:user_id,firstname,lastname', 'approvedBudgetRequest.user:user_id,firstname,lastname']);
         $data = new BudgetRequestResource($record);
         return response()->json($data);
-        
     }
-
-
-    // $table = 'budget_request';
-    // $select = "budget_request.br_id,
-    //     budget_request.br_request,
-    //     budget_request.br_requested_at,
-    //     budget_request.br_no,
-    //     budget_request.br_file_docno,
-    //     budget_request.br_remarks,
-    //     budget_request.br_requested_needed,
-    //     CONCAT(brequest.firstname,' ',brequest.lastname) as breq,
-    //     CONCAT(prepby.firstname,' ',prepby.lastname) as preq,
-    //     approved_budget_request.abr_approved_by,
-    //     approved_budget_request.abr_approved_at,
-    //     approved_budget_request.abr_file_doc_no,
-    //     approved_budget_request.abr_checked_by,	    
-    //     approved_budget_request.approved_budget_remark";
-
-    // $where = "budget_request.br_request_status = '1'
-    // 	AND
-    // 		budget_request.br_id='".$id."'";
-    // $join = 'INNER JOIN
-    // 		users as brequest
-    // 	ON
-    // 		brequest.user_id = budget_request.br_requested_by
-    // 	LEFT JOIN
-    // 		approved_budget_request
-    // 	ON
-    // 		approved_budget_request.abr_budget_request_id  = budget_request.br_id
-    // 	LEFT JOIN
-    // 		users as prepby
-    // 	ON
-    // 		prepby.user_id = approved_budget_request.abr_prepared_by';
-    // $limit = '';
-
-    // $data = getSelectedData($link,$table,$select,$where,$join,$limit);
 
     public function gcLedger(Request $request) // gccheckledger.php
     {
@@ -138,7 +81,6 @@ class LedgerService
             'data' => GcLedgerResource::collection($record),
             'columns' => ColumnHelper::$gc_ledger_columns,
         ]);
-
     }
     public static function spgcLedger($filters)
     {
@@ -151,6 +93,135 @@ class LedgerService
             'spgcledger_debit',
             'spgcledger_credit'
         )->filter($filters)
-        ->paginate(10)->withQueryString();
+            ->paginate(10)->withQueryString();
+    }
+    public static function approvedSpgcPdfWriteResult($dateRange, $dataCus, $dataBar)
+    {
+        $html = self::htmlStructure($dateRange, $dataCus, $dataBar);
+
+        $dompdf = new Dompdf();
+
+        $dompdf->loadHtml($html);
+
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $output = $dompdf->output();
+
+        $filename = 'Generated Pdf From '. Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString() . '.pdf';
+        $filePathName = storage_path('app/' . $filename);
+
+        if (!file_exists(dirname($filePathName))) {
+            mkdir(dirname($filePathName), 0755, true);
+        }
+        Storage::put($filename, $output);
+
+        $filePath = route('download', ['filename' => $filename]);
+
+        return Inertia::render('Finance/Results/ApprovedSpgcPdfResult', [
+            'filePath' => $filePath
+        ]);
+    }
+
+
+    public static function htmlStructure($dateRange, $dataCus, $dataBar)
+    {
+
+        $headersBar = ['No.', 'Date Requested', 'Barcode', 'Denom', 'Customer', 'Approval#', 'Date Approved'];
+
+        $dataCollectionBar = [];
+
+        $no = 1;
+
+        $dataBar->each(function ($item) use (&$dataCollectionBar, &$no) {
+            $dataCollectionBar[] = [
+                $no++,
+                $item->datereq,
+                $item->spexgcemp_barcode,
+                $item->spexgcemp_denom,
+                $item->full_name,
+                $item->spexgc_num,
+                $item->daterel,
+            ];
+        });
+
+
+        $headersCus = ['No.', 'Date Requested', 'Company', 'Approval#', 'Total Amount'];
+
+        $dataCollectionCus[] = [];
+
+        $dataCus->each(function ($item) use (&$dataCollectionCus, &$no) {
+            $dataCollectionCus[] = [
+                $no++,
+                $item->datereq,
+                $item->spcus_companyname,
+                $item->spexgc_num,
+                $item->totdenom,
+            ];
+        });
+
+        $html = '<html><body style="font-family: Calibri, Arial, Helvetica, sans-serif;">';
+
+        $html .= '<div style="text-align: center;">';
+        $html .= '<p style="font-size: 12px;">' . 'ALTURAS GROUP OF COMPANIES' . '</p>';
+        $html .= '<p style="font-size: 11px;">' . 'Head Office - Finance Department' . '</p>';
+        $html .= '<p style="font-size: 11px;">' . 'Special External GC Report-Approvalt' . '</p>';
+        $html .= '<p style="font-size: 11px;">' . Date::parse($dateRange[0])->toFormattedDateString() . ' To '. Date::parse($dateRange[1])->toFormattedDateString() . '</p>';
+        $html .= '</div>';
+        $html .= '<br><br>';
+
+        $html .= '<table border="1" cellspacing="0" cellpadding="1" style="width:100%; border-collapse:collapse;">';
+
+        $html .= '<thead><tr>';
+        $html .= '<th colspan="' . count($headersCus) . '" style="text-align: center; font-size: 13px;">Table Per Customers</th>';
+        $html .= '</tr></thead>';
+        $html .= '<thead><tr>';
+        foreach ($headersCus as $header) {
+            $html .= '<th style="font-size: 12px;">' . htmlspecialchars($header) . '</th>';
+        }
+        $html .= '</tr></thead>';
+        $html .= '<tbody>';
+        foreach ($dataCollectionCus as $row) {
+            $html .= '<tr>';
+            foreach ($row as $cell) {
+                $html .= '<td style="text-align: center; font-size: 10px;">' . htmlspecialchars($cell) . '</td>';
+            }
+            $html .= '</tr>';
+        }
+        $html .= '</tbody>';
+        $html .= '</table>';
+
+        $html .= '<br><br>';
+
+        $html .= '<table border="1" cellspacing="0" cellpadding="1" style="width:100%; border-collapse:collapse;">';
+        $html .= '<thead><tr>';
+        $html .= '<th colspan="' . count($headersBar) . '" style="text-align: center; font-size: 13px;">Table Per Barcode</th>';
+        $html .= '</tr></thead>';
+        $html .= '<thead><tr>';
+        foreach ($headersBar as $header) {
+
+            $html .= '<th style="font-size: 12px;">' . htmlspecialchars($header) . '</th>';
+        }
+        $html .= '</tr></thead>';
+        $html .= '<tbody>';
+        foreach ($dataCollectionBar as $row) {
+            $html .= '<tr>';
+            foreach ($row as $cell) {
+                $html .= '<td style="width:100%; border-collapse:collapse; margin: 0 auto; text-align: center; font-size: 10px;">' . htmlspecialchars($cell) . '</td>';
+            }
+            $html .= '</tr>';
+        }
+        $html .= '</tbody>';
+        $html .= '</table>';
+
+
+
+        $html .= '</body></html>';
+
+        return $html;
+    }
+    public function approvedSpgcExcelWriteResult($dateRange, $dataCus, $dataBar)
+    {
+        // dd(1);
     }
 }

@@ -1,5 +1,23 @@
 <template>
-    <a-range-picker style="width: 400px;" v-model:value="form.dateRange" />
+    <div class="flex justify-between">
+        <div>
+            <a-range-picker style="width: 400px;" v-model:value="form.dateRange" />
+        </div>
+        <div class="flex justify-between">
+            <div style="border: 1px solid #D8D9DA; display: flex; align-items: center; padding-left: 10px; border-radius: 5px;"
+                class="mr-1">
+                <a-radio-group v-model:value="form.extension">
+                    <a-radio :value="'pdf'">Generate to PDF</a-radio>
+                    <a-radio :value="'excel'">Generate to Excel</a-radio>
+                </a-radio-group>
+            </div>
+            <div>
+                <a-button type="primary" @click="generateApprovedReleasedReports">
+                    Generate Spgc Approved Pdf
+                </a-button>
+            </div>
+        </div>
+    </div>
     <a-tabs v-model:activeKey="activeKey" class="mt-3" type="card">
         <a-tab-pane key="1" tab="Data Customers">
             <a-table class="mt-5" size="small" :data-source="datarecords.dataCus.data" :columns="datacolumns.columnsCus"
@@ -11,7 +29,6 @@
             <a-table class="mt-5" size="small" :data-source="datarecords.dataBar.data" :columns="datacolumns.columnsBar"
                 :pagination="false">
             </a-table>
-            <!-- {{ datarecords.dataBar.total }} -->
             <Pagination :datarecords="datarecords?.dataBar" class="mt-5" />
         </a-tab-pane>
     </a-tabs>
@@ -20,17 +37,31 @@
 <script>
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
+import dayjs from "dayjs";
 export default {
     props: {
         datarecords: Object,
         datacolumns: Object,
+        filters: Object,
     },
     data() {
         return {
             form: {
-                dateRange: []
+                dateRange: this.filters.dateRange ? this.filters.dateRange.map((date) => dayjs(date)) : [],
+                extension: null,
             },
-            activeKey: '1'
+            value: null,
+            activeKey: '1',
+        }
+    },
+    methods: {
+        generateApprovedReleasedReports() {
+            this.$inertia.get(route('finance.approved.spgc.pdf.result'), {
+                dateRange: this.filters.dateRange ? this.filters.dateRange.map((date) => dayjs(date).format('YYYY-MM-DD')) : [],
+                ext: this.form.extension,
+            }, {
+                preserveState: true,
+            });
         }
     },
     watch: {

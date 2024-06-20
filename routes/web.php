@@ -121,7 +121,13 @@ Route::prefix('finance')->group(function () {
         Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
         Route::get('approved-released-reports', [FinanceController::class, 'approvedAndReleasedSpgc'])->name('approved.released.reports');
+        Route::get('generate-approved-spgc-reports', [FinanceController::class, 'approvedSpgdcPdfFunction'])->name('approved.spgc.pdf.result');
     });
+
+    Route::get('/download/{filename}', function ($filename) {
+        $filePath = storage_path('app/' . $filename);
+        return response()->download($filePath);
+    })->name('download');
 });
 
 

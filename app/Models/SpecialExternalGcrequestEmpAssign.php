@@ -59,6 +59,7 @@ class SpecialExternalGcrequestEmpAssign extends Model
             'special_external_gcrequest_emp_assign.spexgcemp_mname',
             'special_external_gcrequest_emp_assign.spexgcemp_extname',
             'special_external_gcrequest_emp_assign.spexgcemp_barcode',
+            'special_external_gcrequest_emp_assign.voucher',
             'special_external_gcrequest.spexgc_num',
             DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') as datereq"),
             DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') as daterel"),

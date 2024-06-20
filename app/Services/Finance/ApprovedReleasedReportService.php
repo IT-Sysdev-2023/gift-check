@@ -20,11 +20,30 @@ class ApprovedReleasedReportService
     public static function approvedReleasedQueryBar($requestQuery)
     {
         return SpecialExternalGcrequestEmpAssign::joinDataBarTables()
-            ->selectBarFilter()
-            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
-            ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode')
-            ->whereBetween('approved_request.reqap_date', [empty($requestQuery['dateRange']) ? [null, null] : $requestQuery['dateRange']])
-            ->paginate(10)
-            ->withQueryString();
+        ->selectBarFilter()
+        ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+        ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode')
+        ->whereBetween('approved_request.reqap_date', [empty($requestQuery['dateRange']) ? [null, null] : $requestQuery['dateRange']])
+        ->paginate(10)
+        ->withQueryString();
     }
+    public static function approvedReleasedGenerate($requestQuery)
+    {
+        return  SpecialExternalGcrequestEmpAssign::joinDataAndGetOnTables()
+        ->selectFilter()
+        ->OrderByFilter()
+        ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+        ->whereBetween('approved_request.reqap_date', [empty($requestQuery['dateRange']) ? [null, null] : $requestQuery['dateRange']])
+        ->get();
+    }
+    public static function approvedReleasedBarGenerate($requestQuery)
+    {
+        return SpecialExternalGcrequestEmpAssign::joinDataBarTables()
+        ->selectBarFilter()
+        ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+        ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode')
+        ->whereBetween('approved_request.reqap_date', [empty($requestQuery['dateRange']) ? [null, null] : $requestQuery['dateRange']])
+        ->get();
+    }
+
 }
