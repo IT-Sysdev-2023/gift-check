@@ -19,7 +19,7 @@
         </a-table>
         <pagination class="mt-5" :datarecords="data" />
     </a-card>
-    <a-modal v-model:open="openViewModal" width="80%" style="top: 65px" title="Promo Details" :footer="false">
+    <a-modal :footer="false">
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <a-list>

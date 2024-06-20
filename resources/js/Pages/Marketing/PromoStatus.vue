@@ -47,9 +47,7 @@ export default {
         search: {
             deep: true,
             handler: debounce(function () {
-                // console.log(this.search);
-                // const formattedDate = this.form.date ? this.form.date.map(date => date.format('YYYY-MM-DD')) : [];
-                this.$inertia.get(route("verified.gc.alturas.mall"), {
+                this.$inertia.get(route("promo.status"), {
                     search: this.search
                 }, {
                     preserveState: true,
