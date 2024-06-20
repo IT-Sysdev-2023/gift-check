@@ -11,6 +11,8 @@ use App\Models\InstitutPayment;
 use App\Models\InstitutTransaction;
 use App\Models\InstitutTransactionsItem;
 use App\Models\Promo;
+use App\Models\Store;
+use App\Models\StoreEodTextfileTransaction;
 
 use App\Models\PromoGc;
 
@@ -84,8 +86,10 @@ class MarketingController extends Controller
     {
         return Inertia::render('Marketing/ReleasedPromoGc');
     }
-    public function promoStatus()
+    public function promoStatus(Request $request)
     {
+
+
         $tag = auth()->user()->promo_tag;
 
         $query = Gc::join('denomination', 'gc.denom_id', '=', 'denomination.denom_id')
@@ -99,6 +103,7 @@ class MarketingController extends Controller
             ->where('gc.gc_ispromo', '*')
             ->where('gc.gc_validated', '*')
             ->where('promo_gc_request.pgcreq_tagged', $tag)
+            ->whereAny(['barcode_no'], 'LIKE', '%' . $request->search . '%')
             ->select(
                 'barcode_no',
                 'promo_gc_request.pgcreq_group',
@@ -159,16 +164,19 @@ class MarketingController extends Controller
             'institut_eodid'
         )
             ->whereAny(
-                ['insp_id',
-                'insp_trid',
-                'insp_paymentcustomer',
-                'institut_bankname',
-                'institut_bankaccountnum',
-                'institut_checknumber',
-                'institut_amountrec',
-                'insp_paymentnum',
-                'institut_eodid'],
-                'LIKE','%' . $search . '%'
+                [
+                    'insp_id',
+                    'insp_trid',
+                    'insp_paymentcustomer',
+                    'institut_bankname',
+                    'institut_bankaccountnum',
+                    'institut_checknumber',
+                    'institut_amountrec',
+                    'insp_paymentnum',
+                    'institut_eodid'
+                ],
+                'LIKE',
+                '%' . $search . '%'
             )
             ->orderBy('insp_paymentnum', 'DESC')
             ->paginate(10)
@@ -302,6 +310,7 @@ class MarketingController extends Controller
                 'trans_type'
             )
             ->whereIn('transaction_stores.trans_type', [1, 2, 3])
+            ->orderByDesc('trans_number')
             ->paginate(10)
             ->withQueryString();
 
@@ -341,7 +350,7 @@ class MarketingController extends Controller
         $columns = array_map(
             fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Transaction #', 'Store', 'Date', 'Time', 'GC pc(s)', 'Total Denom', 'Payment Type', 'View'],
-            ['trans_number', 'store_name', 'trans_date', 'trans_time', 'gcPc', 'totalDenom', 'trans_type', 'view']
+            ['trans_number', 'store_name', 'trans_date', 'trans_time', 'gcPc', 'totalDenom', 'trans_type', 'View']
         );
         return Inertia::render('Marketing/Sale_storeSales', [
             'data' => $data,
@@ -508,5 +517,77 @@ class MarketingController extends Controller
 
 
         return response()->json($data);
+    }
+
+    public function getStoreSaleDetails(Request $request)
+    {
+        $trid = $request->id;
+
+        $dataTransactionStore = TransactionStore::join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
+            ->select('transaction_stores.trans_sid', 'transaction_stores.trans_number', 'stores.store_name')
+            ->where('transaction_stores.trans_sid', $trid)->get();
+
+        $dataTransactionSales = TransactionSale::join('denomination', 'denomination.denom_id', '=', 'transaction_sales.sales_denomination')
+            ->leftJoin('store_verification', 'store_verification.vs_barcode', '=', 'transaction_sales.sales_barcode')
+            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->leftJoin('users', 'store_verification.vs_by', '=', 'users.user_id')
+            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->where('transaction_sales.sales_transaction_id', $trid)
+            ->select([
+                'transaction_sales.sales_barcode',
+                'denomination.denomination',
+                'stores.store_name',
+                DB::raw("CONCAT(users.firstname, ' ', users.lastname) as verby"),
+                DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_lname) as customer"),
+                'store_verification.vs_date',
+                'store_verification.vs_tf_used',
+                'store_verification.vs_reverifydate',
+                'store_verification.vs_reverifyby',
+                'store_verification.vs_tf_balance'
+            ])
+            ->get();
+
+
+        $columns = array_map(
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Barcode #', 'Denomination', 'Store Verified', 'Verified By', 'Date Verified', 'Customer', 'Balance', 'View'],
+            ['sales_barcode', 'denomination', 'store_name', 'verby', 'vs_date', 'customer', 'vs_tf_balance', 'View']
+        );
+
+        return response()->json([
+            'dataTransStore' => $dataTransactionStore,
+            'dataTransSales' =>  $dataTransactionSales,
+            'selectedDataColumns' => $columns
+        ]);
+    }
+
+    public function getTransactionPOSdetail(Request $request)
+    {
+        $data = StoreEodTextfileTransaction::where('seodtt_barcode', $request->id)
+            ->select([
+                'seodtt_line',
+                'seodtt_creditlimit',
+                'seodtt_credpuramt',
+                'seodtt_addonamt',
+                'seodtt_balance',
+                'seodtt_transno',
+                'seodtt_timetrnx',
+                'seodtt_bu',
+                'seodtt_terminalno',
+                'seodtt_ackslipno',
+                'seodtt_crditpurchaseamt'
+            ])
+            ->get();
+        $columns = array_map(
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Textfile Line', 'Credit Limit', 'Cred. Pur. Amt + Add-on', 'Add-on Amt', 'Remaining Balance', 'Transaction #', 'Time of Cred Tranx', 'Bus. Unit','Terminal #','Ackslip #'],
+            ['seodtt_line', 'seodtt_creditlimit', 'seodtt_credpuramt', 'seodtt_addonamt', 'seodtt_balance', 'seodtt_transno', 'seodtt_timetrnx', 'seodtt_bu','seodtt_terminalno','seodtt_ackslipno']
+        );
+
+        return response()->json([
+            'title'  => $request->id,
+            'barcodeDetails' => $data,
+            'selectedBarcodeColumns' =>ColumnHelper::getColumns($columns)
+        ]);
     }
 }

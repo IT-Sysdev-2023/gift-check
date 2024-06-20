@@ -26,20 +26,21 @@ class LedgerService
     public function budgetLedger(Request $request) //ledger_budget.php
     {
         $record =  LedgerBudget::with('approvedGcRequest.storeGcRequest.store:store_id,store_name')
-            ->filter($request->only('search', 'date'))
-            ->select(
-                [
-                    'bledger_id',
-                    'bledger_no',
-                    'bledger_trid',
-                    'bledger_datetime',
-                    'bledger_type',
-                    'bdebit_amt',
-                    'bcredit_amt'
-                ]
-            )
-            ->paginate(10)
-            ->withQueryString();
+        ->filter($request->only('search', 'date'))
+        ->select(
+            [
+                'bledger_id',
+                'bledger_no',
+                'bledger_trid',
+                'bledger_datetime',
+                'bledger_type',
+                'bdebit_amt',
+                'bcredit_amt'
+            ]
+        )
+        ->orderByDesc('bledger_no')
+        ->paginate(10)
+        ->withQueryString();
 
         return Inertia::render('Treasury/Table', [
             'filters' => $request->all('search', 'date'),
