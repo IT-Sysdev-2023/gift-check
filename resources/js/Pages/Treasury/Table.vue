@@ -76,7 +76,7 @@ const { highlightText } = highlighten();
         <a-modal v-model:open="showModal" width="1000px">
             <!-- <component :is="tabs[currentTab]" /> -->
 
-            <Description :data="descriptionRecord"/>
+            <Description :data="descriptionRecord" />
         </a-modal>
 
         <div class="flex justify-end p-2 mt-2" v-if="remainingBudget">
@@ -131,13 +131,14 @@ export default {
     },
     methods: {
         async viewRecord($id) {
-            const {data} = await axios.get(
-                route("treasury.view.approved.budget.ledger", $id)
-            );
-            console.log(data)
-            this.descriptionRecord = data;
-
-            this.showModal = true;
+            try {
+                const { data } = await axios.get(
+                    route("treasury.view.approved.budget.ledger", $id)
+                );
+                this.descriptionRecord = data;
+            } finally {
+                this.showModal = true;
+            }
         },
     },
 

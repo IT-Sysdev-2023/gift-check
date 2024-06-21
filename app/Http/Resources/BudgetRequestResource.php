@@ -19,6 +19,7 @@ class BudgetRequestResource extends JsonResource
             'br_id' => $this->br_id,
             'br_request' => $this->br_request,
             'br_requested_at' => Date::parse($this->br_requested_at)->toFormattedDateString(),
+            'br_requested_at_time' => Date::parse($this->br_requested_at)->format('g:i A'),
             'br_no' => $this->br_no,
             'br_file_docno' => $this->br_file_docno,
             'br_remarks' => $this->br_remarks,
@@ -26,12 +27,5 @@ class BudgetRequestResource extends JsonResource
             'prepared_by' => $this->user,
             'abr' => new ApprovedBudgetRequestResource($this->whenLoaded('approvedBudgetRequest'))
         ];
-
-        //     budget_request.br_request,
-        //     budget_request.br_requested_at,
-        //     budget_request.br_no,
-        //     budget_request.br_file_docno,
-        //     budget_request.br_remarks,
-        //     budget_request.br_requested_needed,
     }
 }
