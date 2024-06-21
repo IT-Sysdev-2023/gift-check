@@ -45,6 +45,7 @@ class FinanceController extends Controller
 
     public function approvedAndReleasedSpgc(Request $request)
     {
+        // dd($request->approvedType);
         $dataCus = ApprovedReleasedReportService::approvedReleasedQueryCus($request);
         $dataBar = ApprovedReleasedReportService::approvedReleasedQueryBar($request);
 
@@ -59,7 +60,8 @@ class FinanceController extends Controller
             ],
             'filters' => $request->only([
                 'dateRange',
-                'search'
+                'search',
+                'key'
             ])
         ]);
     }
@@ -78,7 +80,10 @@ class FinanceController extends Controller
             $dataBar = ApprovedReleasedReportService::approvedReleasedBarGenerate($request->all());
 
             return $this->ledgerService->approvedSpgcExcelWriteResult($request->dateRange, $dataCus, $dataBar);
-
         }
+    }
+    public function releasedSpgcPdfExcelFunction(Request $request)
+    {
+
     }
 }

@@ -108,16 +108,12 @@ class ColumnHelper
 
     public static $bar_table_columns = [
         [
-            'title' => 'No.',
+            'title' => 'Approval',
             'dataIndex' => 'spexgc_num',
         ],
         [
             'title' => 'Date Request.',
             'dataIndex' => 'datereq',
-        ],
-        [
-            'title' => 'Date Released.',
-            'dataIndex' => 'daterel',
         ],
         [
             'title' => 'Barcode #.',
@@ -131,10 +127,14 @@ class ColumnHelper
             'title' => 'Denomination.',
             'dataIndex' => 'spexgcemp_denom',
         ],
+        [
+            'title' => 'Date Approved.',
+            'dataIndex' => 'daterel',
+        ],
     ];
     public static $cus_table_columns = [
         [
-            'title' => 'No.',
+            'title' => 'Approval.',
             'dataIndex' => 'spexgc_num',
         ],
         [
@@ -146,23 +146,11 @@ class ColumnHelper
             'dataIndex' => 'daterel',
         ],
         [
-            'title' => 'Trby.',
-            'dataIndex' => 'trby',
-        ],
-        [
             'title' => 'Account Name.',
             'dataIndex' => 'spcus_acctname',
         ],
         [
-            'title' => 'Company.',
-            'dataIndex' => 'spcus_companyname',
-        ],
-        [
-            'title' => 'Total.',
-            'dataIndex' => 'totcnt',
-        ],
-        [
-            'title' => 'Total Denomination.',
+            'title' => 'Total Denom.',
             'dataIndex' => 'totdenom',
         ],
 

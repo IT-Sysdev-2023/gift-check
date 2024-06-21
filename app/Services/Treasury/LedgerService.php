@@ -4,6 +4,7 @@ namespace App\Services\Treasury;
 
 use App\Helpers\Excel\ExcelWriter;
 use App\Helpers\ColumnHelper;
+use App\Helpers\NumberHelper;
 use App\Http\Resources\BudgetLedgerApprovedResource;
 use App\Http\Resources\BudgetLedgerResource;
 use App\Http\Resources\BudgetRequestResource;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Services\Treasury\Dashboard\excel\ExtendsExcelService;
+use Faker\Core\Number;
 
 class LedgerService
 {
@@ -34,21 +36,21 @@ class LedgerService
     public function budgetLedger(Request $request) //ledger_budget.php
     {
         $record =  LedgerBudget::with('approvedGcRequest.storeGcRequest.store:store_id,store_name')
-        ->filter($request->only('search', 'date'))
-        ->select(
-            [
-                'bledger_id',
-                'bledger_no',
-                'bledger_trid',
-                'bledger_datetime',
-                'bledger_type',
-                'bdebit_amt',
-                'bcredit_amt'
-            ]
-        )
-        ->orderByDesc('bledger_no')
-        ->paginate(10)
-        ->withQueryString();
+            ->filter($request->only('search', 'date'))
+            ->select(
+                [
+                    'bledger_id',
+                    'bledger_no',
+                    'bledger_trid',
+                    'bledger_datetime',
+                    'bledger_type',
+                    'bdebit_amt',
+                    'bcredit_amt'
+                ]
+            )
+            ->orderByDesc('bledger_no')
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Treasury/Table', [
             'filters' => $request->all('search', 'date'),
@@ -106,6 +108,7 @@ class LedgerService
     }
     public static function approvedSpgcPdfWriteResult($dateRange, $dataCus, $dataBar)
     {
+
         $html = self::htmlStructure($dateRange, $dataCus, $dataBar);
 
         $dompdf = new Dompdf();
@@ -141,16 +144,20 @@ class LedgerService
         $dataCollectionBar = [];
 
         $no = 1;
+        $totalDenom = 0;
 
-        $dataBar->each(function ($item) use (&$dataCollectionBar, &$no) {
+        $dataBar->each(function ($item) use (&$dataCollectionBar, &$no, &$totalDenom) {
+
+            $totalDenom += (float)$item->spexgcemp_denom;
+
             $dataCollectionBar[] = [
                 $no++,
-                $item->datereq,
+                Date::parse($item->datereq)->toFormattedDateString(),
                 $item->spexgcemp_barcode,
                 $item->spexgcemp_denom,
                 $item->full_name,
                 $item->spexgc_num,
-                $item->daterel,
+                Date::parse($item->daterel)->toFormattedDateString(),
             ];
         });
 
@@ -162,7 +169,7 @@ class LedgerService
         $dataCus->each(function ($item) use (&$dataCollectionCus, &$no) {
             $dataCollectionCus[] = [
                 $no++,
-                $item->datereq,
+                Date::parse($item->datereq)->toFormattedDateString(),
                 $item->spcus_companyname,
                 $item->spexgc_num,
                 $item->totdenom,
@@ -223,6 +230,13 @@ class LedgerService
         $html .= '</tbody>';
         $html .= '</table>';
 
+        $html .= '<br><br>';
+        $html .= '<div style="text-align: center;">';
+        $html .= '<p style="font-size: 12px; "> ' . 'Total Count: ' . count($dataBar) . '</p>';
+        $html .= '<p style="font-size: 11px; color: blue; text-decoration: underline">' . 'Total Amount: ' . NumberHelper::format($totalDenom) . '</p>';
+        $html .= '</div>';
+        $html .= '<br><br>';
+
 
 
         $html .= '</body></html>';
@@ -231,14 +245,14 @@ class LedgerService
     }
     public function approvedSpgcExcelWriteResult($dateRange, $dataCus, $dataBar)
     {
-
         $save = (new ExtendsExcelService())
-            ->excelWorkSheetPerBarcode($dataBar)
-            ->excelWorkSheetPerCustomer()
-            ->save();
+            ->excelWorkSheetPerBarcode($dataBar, $dateRange)
+            ->excelWorkSheetPerCustomer($dataCus, $dateRange)
+            ->save($dateRange);
 
         return Inertia::render('Finance/Results/ApprovedSpgcExcelResult', [
             'filePath' => $save,
         ]);
     }
 }
+

@@ -14,7 +14,7 @@ class ApprovedReleasedReportService
         return  SpecialExternalGcrequestEmpAssign::joinDataAndGetOnTables()
             ->selectFilter()
             ->OrderByFilter()
-            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->where('approved_request.reqap_approvedtype', empty($requestQuery['approvedType'])  ? null : $requestQuery['approvedType'])
             ->whereBetween('approved_request.reqap_date', [empty($requestQuery['dateRange']) ? [null, null] : $requestQuery['dateRange']])
             ->paginate(10)->withQueryString();
     }
@@ -22,7 +22,7 @@ class ApprovedReleasedReportService
     {
         return SpecialExternalGcrequestEmpAssign::joinDataBarTables()
         ->selectBarFilter()
-        ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+        ->where('approved_request.reqap_approvedtype',empty($requestQuery['approvedType'])  ? null : $requestQuery['approvedType'])
         ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode')
         ->whereBetween('approved_request.reqap_date', [empty($requestQuery['dateRange']) ? [null, null] : $requestQuery['dateRange']])
         ->paginate(10)

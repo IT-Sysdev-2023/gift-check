@@ -23,7 +23,7 @@ class SpecialExternalGcrequestEmpAssign extends Model
             DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') as daterel"),
             DB::raw("CONCAT(reqby.firstname, ' ', reqby.lastname) as trby"),
             'special_external_customer.spcus_acctname',
-            'special_external_customer.spcus_companyname'
+            'special_external_customer.spcus_companyname',
         );
     }
     public static function scopeOrderByFilter($builder)
