@@ -97,7 +97,7 @@ Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc'])->n
 Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville'])->name('verified.gc.screenville');
 Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech'])->name('verified.gc.asctech');
 Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('verified.gc.island.city.mall');
-Route::get('verified-gc-icm', [MarketingController::class, 'kent'])->name('verified.gc.island.city.mall');
+Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('verified.gc.island.city.mall');
 
 
 
@@ -125,6 +125,7 @@ Route::prefix('finance')->group(function () {
         Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
         Route::get('approved-released-reports', [FinanceController::class, 'approvedAndReleasedSpgc'])->name('approved.released.reports');
         Route::get('generate-approved-spgc-reports', [FinanceController::class, 'approvedSpgdcPdfExcelFunction'])->name('approved.spgc.pdf.result');
+        Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.result');
     });
 
     Route::get('/download/{filename}', function ($filename) {

@@ -125,6 +125,7 @@ declare module 'vue' {
     ReconciliationOutlined: typeof import('@ant-design/icons-vue')['ReconciliationOutlined']
     Register: typeof import('./resources/js/Pages/Auth/Register.vue')['default']
     ReleasedPromoGc: typeof import('./resources/js/Pages/Marketing/ReleasedPromoGc.vue')['default']
+    ReleasedTab: typeof import('./resources/js/Pages/Finance/Reports/ReleasedTab.vue')['default']
     ResetPassword: typeof import('./resources/js/Pages/Auth/ResetPassword.vue')['default']
     ResponsiveNavLink: typeof import('./resources/js/Components/ResponsiveNavLink.vue')['default']
     RetailSidebar: typeof import('./resources/js/Components/RetailSidebar.vue')['default']
