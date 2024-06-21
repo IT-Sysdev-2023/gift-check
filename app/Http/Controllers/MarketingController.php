@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
 use App\Helpers\GetVerifiedGc;
+use App\Http\Resources\PromoResource;
 use App\Models\ApprovedGcrequest;
 use App\Models\Gc;
 use App\Models\GcRelease;
@@ -37,20 +38,8 @@ class MarketingController extends Controller
     public function promoList(Request $request)
     {
         $tag = auth()->user()->promo_tag;
-        $data = Promo::join('users', 'users.user_id', '=', 'promo.promo_valby')
+        $data = Promo::with('user:user_id,firstname,lastname,promo_tag')
             ->where('promo.promo_tag', $tag)
-            ->select(
-                'promo.promo_id',
-                'promo.promo_name',
-                'promo.promo_date',
-                'promo.promo_datenotified',
-                'promo.promo_dateexpire',
-                'promo.promo_remarks',
-                'promo.promo_drawdate',
-                DB::raw("CONCAT(UCASE(SUBSTRING(users.firstname, 1, 1)), SUBSTRING(users.firstname, 2), ' ', UCASE(SUBSTRING(users.lastname, 1, 1)), SUBSTRING(users.lastname, 2)) AS fullname"),
-                'users.promo_tag',
-                'promo.promo_group'
-            )
             ->whereAny([
                 'promo.promo_name',
                 'promo.promo_id',
@@ -59,13 +48,14 @@ class MarketingController extends Controller
             ->orderByDesc('promo.promo_id')
             ->paginate(10)->withQueryString();
 
+        //Table Columns
         $columns = array_map(
-            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Promo No', 'Promo Name', 'Date Notified', 'Expiration Date', 'Group', 'Created By', 'View'],
             ['promo_id', 'promo_name', 'promo_datenotified', 'promo_dateexpire', 'promo_group', 'fullname', 'View']
         );
         return Inertia::render('Marketing/PromoList', [
-            'data' => $data,
+            'data' => PromoResource::collection($data),
             'columns' => ColumnHelper::getColumns($columns),
         ]);
     }
@@ -124,7 +114,7 @@ class MarketingController extends Controller
         });
 
         $columns = array_map(
-            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['GC Barcode #', 'Denomination', 'Retail Group', 'Promo Name', 'Customer Name', 'Customer Address', 'Status', 'Date Released', 'Released By'],
             ['barcode_no', 'denomination', 'pgcreq_group', 'promo_name', 'prgcrel_claimant', 'prgcrel_address', 'status', 'relat', 'releasedby'],
         );
@@ -140,7 +130,7 @@ class MarketingController extends Controller
         $data = Supplier::paginate(10)->withQueryString();
 
         $columns = array_map(
-            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Company Name', 'Account Name', 'Contact Person', 'Company Number', 'Address', 'View'],
             ['gcs_companyname', 'gcs_accountname', 'gcs_contactperson', 'gcs_contactnumber', 'gcs_address', 'View']
         );
@@ -286,7 +276,7 @@ class MarketingController extends Controller
 
 
         $columns = array_map(
-            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Transaction #', 'GC Type', 'Customer', 'Date', 'Time', 'GC pc(s)', 'Total Denom', 'Payment Type', 'View'],
             ['insp_id', 'insp_paymentcustomer', 'customer', 'date', 'time', 'totgccnt', 'totdenom', 'paymenttype', 'view']
         );
@@ -348,7 +338,7 @@ class MarketingController extends Controller
         });
 
         $columns = array_map(
-            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Transaction #', 'Store', 'Date', 'Time', 'GC pc(s)', 'Total Denom', 'Payment Type', 'View'],
             ['trans_number', 'store_name', 'trans_date', 'trans_time', 'gcPc', 'totalDenom', 'trans_type', 'View']
         );
@@ -549,14 +539,14 @@ class MarketingController extends Controller
 
 
         $columns = array_map(
-            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Barcode #', 'Denomination', 'Store Verified', 'Verified By', 'Date Verified', 'Customer', 'Balance', 'View'],
             ['sales_barcode', 'denomination', 'store_name', 'verby', 'vs_date', 'customer', 'vs_tf_balance', 'View']
         );
 
         return response()->json([
             'dataTransStore' => $dataTransactionStore,
-            'dataTransSales' =>  $dataTransactionSales,
+            'dataTransSales' => $dataTransactionSales,
             'selectedDataColumns' => $columns
         ]);
     }
@@ -579,15 +569,15 @@ class MarketingController extends Controller
             ])
             ->get();
         $columns = array_map(
-            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
-            ['Textfile Line', 'Credit Limit', 'Cred. Pur. Amt + Add-on', 'Add-on Amt', 'Remaining Balance', 'Transaction #', 'Time of Cred Tranx', 'Bus. Unit','Terminal #','Ackslip #'],
-            ['seodtt_line', 'seodtt_creditlimit', 'seodtt_credpuramt', 'seodtt_addonamt', 'seodtt_balance', 'seodtt_transno', 'seodtt_timetrnx', 'seodtt_bu','seodtt_terminalno','seodtt_ackslipno']
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Textfile Line', 'Credit Limit', 'Cred. Pur. Amt + Add-on', 'Add-on Amt', 'Remaining Balance', 'Transaction #', 'Time of Cred Tranx', 'Bus. Unit', 'Terminal #', 'Ackslip #'],
+            ['seodtt_line', 'seodtt_creditlimit', 'seodtt_credpuramt', 'seodtt_addonamt', 'seodtt_balance', 'seodtt_transno', 'seodtt_timetrnx', 'seodtt_bu', 'seodtt_terminalno', 'seodtt_ackslipno']
         );
 
         return response()->json([
-            'title'  => $request->id,
+            'title' => $request->id,
             'barcodeDetails' => $data,
-            'selectedBarcodeColumns' =>ColumnHelper::getColumns($columns)
+            'selectedBarcodeColumns' => ColumnHelper::getColumns($columns)
         ]);
     }
 }
