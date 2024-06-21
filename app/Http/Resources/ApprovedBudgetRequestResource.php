@@ -15,7 +15,6 @@ class ApprovedBudgetRequestResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        // dd($this->collection);
         return [
             'id' => $this->id,
             'approved_by' => $this->abr_approved_by,
