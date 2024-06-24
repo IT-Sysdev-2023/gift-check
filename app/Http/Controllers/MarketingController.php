@@ -38,15 +38,10 @@ class MarketingController extends Controller
     public function promoList(Request $request)
     {
         $tag = auth()->user()->promo_tag;
-        $data = Promo::with('user:user_id,firstname,lastname,promo_tag')
+        $data = Promo::with('user:user_id,firstname,lastname,promo_tag')->filter($request->only('search'))
             ->where('promo.promo_tag', $tag)
-            ->whereAny([
-                'promo.promo_name',
-                'promo.promo_id',
-                'promo.promo_group'
-            ], 'LIKE', '%' . $request->search . '%')
             ->orderByDesc('promo.promo_id')
-            ->paginate(10)->withQueryString();
+            ->paginate(10)->withQueryString(); 
 
         //Table Columns
         $columns = array_map(
@@ -90,9 +85,7 @@ class MarketingController extends Controller
             ->leftJoin('promo', 'promo_id', '=', 'prom_promoid')
             ->leftJoin('promogc_released', 'prgcrel_barcode', '=', 'barcode_no')
             ->leftJoin('users', 'user_id', '=', 'prgcrel_by')
-            ->where('gc.gc_ispromo', '*')
-            ->where('gc.gc_validated', '*')
-            ->where('promo_gc_request.pgcreq_tagged', $tag)
+            ->where([['gc.gc_ispromo', '*'], ['gc.gc_validated', '*'], ['promo_gc_request.pgcreq_tagged', $tag]])
             ->whereAny(['barcode_no'], 'LIKE', '%' . $request->search . '%')
             ->select(
                 'barcode_no',

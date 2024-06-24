@@ -24,9 +24,6 @@ class PromoResource extends JsonResource
             'promo_drawdate' => $this->promo_drawdate,
             'promo_group' => $this->promo_group,
             'user' => $this->whenLoaded('user')
-            //     // DB::raw("CONCAT(UCASE(SUBSTRING(users.firstname, 1, 1)), SUBSTRING(users.firstname, 2), ' ', UCASE(SUBSTRING(users.lastname, 1, 1)), SUBSTRING(users.lastname, 2)) AS fullname"),
-            //     // 'users.promo_tag',
-            //     'promo.promo_group'
         ];
     }
 }
