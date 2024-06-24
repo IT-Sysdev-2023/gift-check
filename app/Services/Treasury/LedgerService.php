@@ -60,14 +60,14 @@ class LedgerService
         ]);
     }
 
-    public function viewBudgetLedgerApproved(BudgetRequest $budgetRequest)
+    public function viewBudgetRequestApproved(BudgetRequest $budgetRequest)
     {
         $record = $budgetRequest->load(['user:user_id,firstname,lastname', 'approvedBudgetRequest.user:user_id,firstname,lastname']);
         $data = new BudgetRequestResource($record);
         return response()->json($data);
     }
 
-    public function budgetLedgerApproved(Request $request)
+    public function budgetRequestApproved(Request $request)
     {
         $record = BudgetRequest::join('users', 'users.user_id', 'budget_request.br_requested_by')
             ->leftJoin('approved_budget_request', 'budget_request.br_id', 'approved_budget_request.abr_budget_request_id')

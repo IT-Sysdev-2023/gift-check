@@ -108,6 +108,7 @@ declare module 'vue' {
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
     PaginationResource: typeof import('./resources/js/Components/PaginationResource.vue')['default']
+    PendingRequest: typeof import('./resources/js/Pages/Treasury/BudgetRequest/PendingRequest.vue')['default']
     PlazaMarcela: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/PlazaMarcela.vue')['default']
     PlusOutlined: typeof import('@ant-design/icons-vue')['PlusOutlined']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
