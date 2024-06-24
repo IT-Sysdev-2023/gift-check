@@ -27,14 +27,14 @@ class TreasuryController extends Controller
         return $this->ledgerService->budgetLedger($request);
     }
 
-    public function budgetLedgerApproved(Request $request)
+    public function budgetRequestApproved(Request $request)
     {
-        return $this->ledgerService->budgetLedgerApproved($request);
+        return $this->ledgerService->budgetRequestApproved($request);
     }
 
-    public function viewBudgetLedgerApproved(BudgetRequest $id)
+    public function viewBudgetRequestApproved(BudgetRequest $id)
     {
-        return $this->ledgerService->viewBudgetLedgerApproved($id);
+        return $this->ledgerService->viewBudgetRequestApproved($id);
     }
 
     public function gcLedger(Request $request)

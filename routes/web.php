@@ -104,12 +104,13 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 //Treasury
 Route::prefix('treasury')->group(function () {
     Route::name('treasury.')->group(function () {
-        Route::prefix('budget-ledger')->group(function () {
-            Route::get('approved', [TreasuryController::class, 'budgetLedgerApproved'])->name('approved.budget.ledger');
-            Route::get('view-approved-record/${id}',  [TreasuryController::class, 'viewBudgetLedgerApproved'])->name('view.approved.budget.ledger');
+        Route::prefix('budget-request')->group(function () {
+            Route::get('approved', [TreasuryController::class, 'budgetRequestApproved'])->name('approved.budget.ledger');
+            Route::get('view-approved-record/${id}',  [TreasuryController::class, 'viewBudgetRequestApproved'])->name('view.approved.budget.ledger');
+            Route::get('pending-request',  [TreasuryController::class, 'pendingRequest'])->name('pending.request');
         });
 
-        Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
+
         Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
 

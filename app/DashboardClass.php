@@ -36,5 +36,12 @@ class DashboardClass extends DashboardService
     public function retailDashboard(){
         //
     }
+    public function financeDashboard(){
+        //
+    }
+    public function marketingDashboard(){
+        //
+    }
+
 
 }

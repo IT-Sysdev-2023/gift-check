@@ -59,11 +59,34 @@ class LedgerService extends ExcelWriter
         ]);
     }
 
-    public function viewBudgetLedgerApproved(BudgetRequest $budgetRequest)
+    public function viewBudgetRequestApproved(BudgetRequest $budgetRequest)
     {
         $record = $budgetRequest->load(['user:user_id,firstname,lastname', 'approvedBudgetRequest.user:user_id,firstname,lastname']);
         $data = new BudgetRequestResource($record);
         return response()->json($data);
+    }
+
+    public function budgetRequestApproved(Request $request)
+    {
+        $record = BudgetRequest::join('users', 'users.user_id', 'budget_request.br_requested_by')
+            ->leftJoin('approved_budget_request', 'budget_request.br_id', 'approved_budget_request.abr_budget_request_id')
+            ->select('users.lastname', 'users.firstname', 'br_request', 'br_no', 'br_id', 'br_requested_at', 'abr_approved_by', 'abr_approved_at')
+            ->filter($request->only('search', 'date'))
+            ->where('br_request_status', '1')
+            ->orderByDesc('br_requested_at')
+            ->paginate()
+            ->withQueryString();
+
+        return inertia(
+            'Treasury/Table',
+            [
+                'filters' => $request->all('search', 'date'),
+                'title' => 'Approved Budget Request',
+                'data' => BudgetLedgerApprovedResource::collection($record),
+                'columns' => ColumnHelper::$approved_buget_request,
+            ]
+
+        );
     }
 
     public function gcLedger(Request $request) // gccheckledger.php
