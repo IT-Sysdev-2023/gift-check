@@ -43,6 +43,7 @@ declare module 'vue' {
     ApprovedSpgcExcelResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcExcelResult.vue')['default']
     ApprovedSpgcPdfResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcPdfResult.vue')['default']
     ApprovedTab: typeof import('./resources/js/Pages/Finance/Reports/ApprovedTab.vue')['default']
+    AProgress: typeof import('ant-design-vue/es')['Progress']
     ARadio: typeof import('ant-design-vue/es')['Radio']
     ARadioGroup: typeof import('ant-design-vue/es')['RadioGroup']
     ARangePicker: typeof import('ant-design-vue/es')['RangePicker']

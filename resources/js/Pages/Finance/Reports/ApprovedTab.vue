@@ -1,5 +1,10 @@
 <template>
+    <a-typography-text keyboard>
+        {{ progressBar.message }} | {{ progressBar.currentRow }} to {{ progressBar.totalRows }}
+    </a-typography-text>
+    <a-progress :percent="progressBar.percentage" :steps="73" />
     <div class="flex justify-between">
+
         <div>
             <a-range-picker style="width: 400px;" v-model:value="formApproved.dateRange" />
         </div>
@@ -8,7 +13,8 @@
                 class="mr-1">
                 <a-radio-group v-model:value="formApproved.extension">
                     <a-radio :value="'pdf'">
-                        <a-typography-text :delete="formApproved.extension === 'pdf'" :mark="formApproved.extension === 'pdf'">Generate
+                        <a-typography-text :delete="formApproved.extension === 'pdf'"
+                            :mark="formApproved.extension === 'pdf'">Generate
                             to PDF</a-typography-text>
                     </a-radio>
                     <a-radio :value="'excel'">
@@ -20,8 +26,13 @@
             <div>
                 <a-button type="primary" @click="generateApprovedReleasedReports" :disabled="formApproved.extension == null || (datarecordsApproved.dataCus.total <= 0 && datarecordsApproved.dataCus.total <= 0)
                     ">
-                    {{ isGenerating ? "Generating " + (formApproved.extension === 'pdf' ? 'PDF' : 'Excel') + " in progress..":
-                        "Generate Spgc Approved " + (formApproved.extension == null ? '' :formApproved.extension === 'pdf' ? 'PDF' : 'Excel')}}
+                    {{
+                        isGenerating ? "Generating " +
+                            (formApproved.extension === 'pdf' ? 'PDF' : 'Excel') + " inprogress.." :
+                            "Generate Spgc Approved " +
+                            (formApproved.extension == null ? '' : formApproved.extension === 'pdf'
+                                ?
+                                'PDF' : 'Excel') }}
                 </a-button>
             </div>
         </div>
@@ -29,15 +40,15 @@
     <a-tabs v-model:activeKey="activeKey" tabPosition="left" class="mt-10" type="card">
         <a-tab-pane key="1" tab="Approved Per Customers">
             <p class="text-center underline"> Approved Reports Per Customers Table</p>
-            <a-table class="mt-5" size="small" :data-source="datarecordsApproved.dataCus.data" :columns="datacolumnsApproved.columnsCus"
-                :pagination="false">
+            <a-table class="mt-5" size="small" :data-source="datarecordsApproved.dataCus.data"
+                :columns="datacolumnsApproved.columnsCus" :pagination="false">
             </a-table>
             <Pagination :datarecords="datarecordsApproved?.dataCus" class="mt-5" />
         </a-tab-pane>
         <a-tab-pane key="2" tab="Approved Per Barcodes">
             <p class="text-center underline">Approved Reports Per Barcodes Table</p>
-            <a-table class="mt-5" size="small" :data-source="datarecordsApproved.dataBar.data" :columns="datacolumnsApproved.columnsBar"
-                :pagination="false">
+            <a-table class="mt-5" size="small" :data-source="datarecordsApproved.dataBar.data"
+                :columns="datacolumnsApproved.columnsBar" :pagination="false">
             </a-table>
             <Pagination :datarecords="datarecordsApproved?.dataBar" class="mt-5" />
         </a-tab-pane>
@@ -65,6 +76,12 @@ export default {
             value: null,
             activeKey: '1',
             isGenerating: false,
+            progressBar: {
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+                currentRow: 0,
+            },
         }
     },
     methods: {
@@ -88,6 +105,13 @@ export default {
                 })
             })
         }
+    },
+    mounted() {
+        this.$ws.private(`generating-app-release-reports.${this.$page.props.auth.user.user_id}`)
+            .listen(".generate-app-rel", (e) => {
+                this.progressBar = e;
+                console.log(e);
+            });
     }
 }
 </script>

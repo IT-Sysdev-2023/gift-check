@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
 use App\Http\Resources\SpgcLedgerResource;
+use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
 use App\Services\Finance\SpgcService;
 use App\Services\Treasury\LedgerService;
@@ -13,7 +14,7 @@ use function PHPUnit\Framework\isNull;
 class FinanceController extends Controller
 {
 
-    public function __construct(public LedgerService $ledgerService)
+    public function __construct(public LedgerService $ledgerService, public ApprovedReleasedPdfExcelService $appRelPdfExcelService)
     {
     }
 
@@ -60,7 +61,7 @@ class FinanceController extends Controller
             ],
             'filters' => $request->only([
                 'dateRange',
-                'search', 
+                'search',
                 'key'
             ])
         ]);
@@ -72,14 +73,14 @@ class FinanceController extends Controller
             $dataCus = ApprovedReleasedReportService::approvedReleasedGenerate($request->all());
             $dataBar = ApprovedReleasedReportService::approvedReleasedBarGenerate($request->all());
 
-            return $this->ledgerService->approvedSpgcPdfWriteResult($request->dateRange, $dataCus, $dataBar);
+            return $this->appRelPdfExcelService->approvedSpgcPdfWriteResult($request->dateRange, $dataCus, $dataBar);
 
         }elseif($request->ext  == 'excel'){
 
             $dataCus = ApprovedReleasedReportService::approvedReleasedGenerate($request->all());
             $dataBar = ApprovedReleasedReportService::approvedReleasedBarGenerate($request->all());
 
-            return $this->ledgerService->approvedSpgcExcelWriteResult($request->dateRange, $dataCus, $dataBar);
+            return $this->appRelPdfExcelService->approvedSpgcExcelWriteResult($request->dateRange, $dataCus, $dataBar);
         }
     }
     public function releasedSpgcPdfExcelFunction(Request $request)
