@@ -23,7 +23,8 @@
                 <a-button type="primary" @click="generateApprovedReleasedReports" :disabled="formReleased
                     .extension == null || (datarecordsReleased.dataCus.total <= 0 && datarecordsReleased.dataCus.total <= 0)
                     ">
-                    generate
+                    {{ isGenerating ? "Generating " + (formReleased.extension === 'pdf' ? 'PDF' : 'Excel') + " in progress..":
+                        "Generate Spgc Releasing " + (formReleased.extension == null ? '' :formReleased.extension === 'pdf' ? 'PDF' : 'Excel')}}
                 </a-button>
             </div>
         </div>
@@ -64,6 +65,18 @@ export default {
                 key: this.filtersReleased.key,
             },
             activeKey: '1',
+            isGenerating: false,
+        }
+    },
+    methods: {
+        generateApprovedReleasedReports() {
+            this.isGenerating = true;
+            this.$inertia.get(route('finance.approved.spgc.pdf.result'), {
+                dateRange: this.filtersApproved.dateRange ? this.filtersApproved.dateRange.map((date) => dayjs(date).format('YYYY-MM-DD')) : [],
+                ext: this.formReleased.extension,
+            }, {
+                preserveState: true,
+            });
         }
     },
     watch: {

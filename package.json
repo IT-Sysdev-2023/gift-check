@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "@ant-design/icons-vue": "^7.0.1",
+        "@inertiajs/core": "^1.2.0",
         "ant-design-vue": "~4.2.3",
         "dayjs": "^1.11.11",
         "lodash": "^4.17.21"

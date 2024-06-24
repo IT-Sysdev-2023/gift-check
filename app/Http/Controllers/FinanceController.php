@@ -60,7 +60,7 @@ class FinanceController extends Controller
             ],
             'filters' => $request->only([
                 'dateRange',
-                'search',
+                'search', 
                 'key'
             ])
         ]);
