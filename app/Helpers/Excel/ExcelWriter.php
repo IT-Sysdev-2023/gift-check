@@ -20,7 +20,7 @@ class ExcelWriter
 
     }
 
-    function executionTime() : void {
+   public static function executionTime() {
         ini_set('max_execution_time', 3600);
         ini_set('memory_limit', '-1');
         set_time_limit(3600);

@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Services\Treasury\Dashboard\excel;
+namespace App\Services\Finance\excel;
 
 use App\Helpers\Excel\ExcelWriter;
-use App\Models\BudgetRequest;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
