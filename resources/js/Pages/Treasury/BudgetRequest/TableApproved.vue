@@ -103,6 +103,7 @@ const { highlightText } = highlighten();
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import throttle from "lodash/throttle";
+import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
 
@@ -151,7 +152,7 @@ export default {
     watch: {
         form: {
             deep: true,
-            handler: throttle(function () {
+            handler: debounce(function () {
                 const formattedDate = this.form.date
                     ? this.form.date.map((date) => date.format("YYYY-MM-DD"))
                     : [];
@@ -163,7 +164,7 @@ export default {
                         preserveState: true,
                     }
                 );
-            }, 150),
+            }, 600),
         },
     },
 };

@@ -25,11 +25,19 @@ class BudgetRequest extends Model
                 'br_request',
                 'br_no',
                 'br_requested_at',
-                'abr_approved_by',
-                'abr_approved_at',
-                'users.lastname',
-                'users.firstname',
-            ], 'LIKE', '%' . $search . '%');
+            ], 'LIKE', '%' . $search . '%')
+            ->orWhereHas('approvedBudgetRequest', function (Builder $query) use ($search) {
+                $query->whereAny([
+                    'abr_approved_by',
+                    'abr_approved_at'
+                ], 'LIKE', '%' . $search . '%');
+            })
+            ->orWhereHas('user', function (Builder $query) use ($search) {
+                $query->whereAny([
+                    'firstname',
+                    'lastname'
+                ], 'LIKE', '%' . $search . '%');
+            });
         });
     }
     public function user(): BelongsTo
