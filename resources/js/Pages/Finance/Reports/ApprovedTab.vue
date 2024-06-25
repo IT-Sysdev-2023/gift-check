@@ -1,10 +1,8 @@
 <template>
-    <a-typography-text keyboard>
-        {{ progressBar.message }} | {{ progressBar.currentRow }} to {{ progressBar.totalRows }}
-    </a-typography-text>
-    <a-progress :percent="progressBar.percentage" :steps="73" />
-    <div class="flex justify-between">
 
+    <ProgressBar v-if="isGenerating" :progressBar="progressBar"/>
+
+    <div class="flex justify-between">
         <div>
             <a-range-picker style="width: 400px;" v-model:value="formApproved.dateRange" />
         </div>
@@ -13,13 +11,13 @@
                 class="mr-1">
                 <a-radio-group v-model:value="formApproved.extension">
                     <a-radio :value="'pdf'">
-                        <a-typography-text :delete="formApproved.extension === 'pdf'"
-                            :mark="formApproved.extension === 'pdf'">Generate
+                        <a-typography-text
+                            :keyboard="formApproved.extension === 'pdf'">Generate
                             to PDF</a-typography-text>
                     </a-radio>
                     <a-radio :value="'excel'">
-                        <a-typography-text :delete="formApproved.extension === 'excel'"
-                            :mark="formApproved.extension === 'excel'">Generate to Excel</a-typography-text>
+                        <a-typography-text 
+                            :keyboard="formApproved.extension === 'excel'">Generate to Excel</a-typography-text>
                     </a-radio>
                 </a-radio-group>
             </div>
@@ -59,6 +57,7 @@
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
 import dayjs from "dayjs";
+import ProgressBar from '@/Components/ProgressBar.vue';
 export default {
     props: {
         datarecordsApproved: Object,
@@ -73,6 +72,7 @@ export default {
                 approvedType: 'Special External GC Approved',
                 key: this.filtersApproved.key,
             },
+            isGenerating: false,
             value: null,
             activeKey: '1',
             isGenerating: false,
