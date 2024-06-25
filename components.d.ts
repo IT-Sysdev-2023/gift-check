@@ -114,6 +114,7 @@ declare module 'vue' {
     PlusOutlined: typeof import('@ant-design/icons-vue')['PlusOutlined']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
     ProfileOutlined: typeof import('@ant-design/icons-vue')['ProfileOutlined']
+    ProgressBar: typeof import('./resources/js/Components/ProgressBar.vue')['default']
     PromoGcRequest: typeof import('./resources/js/Pages/Marketing/PromoGcRequest.vue')['default']
     PromoList: typeof import('./resources/js/Pages/Marketing/PromoList.vue')['default']
     PromoStatus: typeof import('./resources/js/Pages/Marketing/PromoStatus.vue')['default']
