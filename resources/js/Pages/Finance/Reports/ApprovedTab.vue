@@ -1,6 +1,10 @@
 <template>
 
-    <ProgressBar v-if="isGenerating" :progressBar="progressBar"/>
+    <ProgressBar v-if="isGenerating" :progressBar="progressBar" />
+
+    <ProgressHeader v-if="isGeneratingHeader" :progressBarHeader="progressBarHeader" />
+
+    <ProgressBarInner v-if="isGeneratingInner" :progressBarInner="progressBarInner" />
 
     <div class="flex justify-between">
         <div>
@@ -11,13 +15,12 @@
                 class="mr-1">
                 <a-radio-group v-model:value="formApproved.extension">
                     <a-radio :value="'pdf'">
-                        <a-typography-text
-                            :keyboard="formApproved.extension === 'pdf'">Generate
+                        <a-typography-text :keyboard="formApproved.extension === 'pdf'">Generate
                             to PDF</a-typography-text>
                     </a-radio>
                     <a-radio :value="'excel'">
-                        <a-typography-text 
-                            :keyboard="formApproved.extension === 'excel'">Generate to Excel</a-typography-text>
+                        <a-typography-text :keyboard="formApproved.extension === 'excel'">Generate to
+                            Excel</a-typography-text>
                     </a-radio>
                 </a-radio-group>
             </div>
@@ -57,7 +60,9 @@
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
 import dayjs from "dayjs";
-import ProgressBar from '@/Components/ProgressBar.vue';
+import ProgressBar from '@/Components/Finance/ProgressBar.vue';
+import ProgressBarInner from '@/Components/Finance/ProgressBarInner.vue';
+import ProgressHeader from '@/Components/Finance/ProgressHeader.vue';
 export default {
     props: {
         datarecordsApproved: Object,
@@ -76,7 +81,21 @@ export default {
             value: null,
             activeKey: '1',
             isGenerating: false,
+            isGeneratingInner: false,
+            isGeneratingHeader: false,
             progressBar: {
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+                currentRow: 0,
+            },
+            progressBarInner: {
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+                currentRow: 0,
+            },
+            progressBarHeader: {
                 percentage: 0,
                 message: "",
                 totalRows: 0,
@@ -86,7 +105,6 @@ export default {
     },
     methods: {
         generateApprovedReleasedReports() {
-            this.isGenerating = true;
             this.$inertia.get(route('finance.approved.spgc.pdf.result'), {
                 dateRange: this.filtersApproved.dateRange ? this.filtersApproved.dateRange.map((date) => dayjs(date).format('YYYY-MM-DD')) : [],
                 ext: this.formApproved.extension,
@@ -110,7 +128,17 @@ export default {
         this.$ws.private(`generating-app-release-reports.${this.$page.props.auth.user.user_id}`)
             .listen(".generate-app-rel", (e) => {
                 this.progressBar = e;
-                console.log(e);
+                this.isGenerating = true;
+            });
+        this.$ws.private(`generating-app-release-reports-inner.${this.$page.props.auth.user.user_id}`)
+            .listen(".generate-app-rel-inner", (e) => {
+                this.progressBarInner = e;
+                this.isGeneratingInner = true;
+            });
+        this.$ws.private(`generating-app-release-reports-header.${this.$page.props.auth.user.user_id}`)
+            .listen(".generate-app-rel-header", (e) => {
+                this.progressBarHeader = e;
+                this.isGeneratingHeader = true;
             });
     }
 }

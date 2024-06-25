@@ -2,7 +2,9 @@
 
 namespace App\Services\Finance;
 
-use App\Events\ApprovedReleasedEvents;
+use App\Events\ApprovedReleasedEvents\ApprovedReleasedEach;
+use App\Events\ApprovedReleasedEvents\ApprovedReleasedHeader;
+use App\Events\ApprovedReleasedEvents\ApprovedReleasedInnerLoopEvents;
 use App\Helpers\Excel\ExcelWriter;
 use App\Helpers\NumberHelper;
 use App\Services\Finance\excel\ExtendsExcelService;
@@ -60,75 +62,13 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
         $no = 1;
         $totalDenom = 0;
 
+        $progressCount = 1;
 
-        $headersCus = ['No.', 'Date Requested', 'Company', 'Approval#', 'Total Amount'];
+        $dataBar->each(function ($item) use (&$dataCollectionBar, &$no, &$totalDenom, $dataBar, &$progressCount) {
 
-        $dataCollectionCus[] = [];
-
-        $html = '<html><body style="font-family: Calibri, Arial, Helvetica, sans-serif;">';
-
-        $html .= '<div style="text-align: center;">';
-        $html .= '<p style="font-size: 12px;">' . 'ALTURAS GROUP OF COMPANIES' . '</p>';
-        $html .= '<p style="font-size: 11px;">' . 'Head Office - Finance Department' . '</p>';
-        $html .= '<p style="font-size: 11px;">' . 'Special External GC Report-Approvalt' . '</p>';
-        $html .= '<p style="font-size: 11px;">' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString() . '</p>';
-        $html .= '</div>';
-        $html .= '<br><br>';
-
-        $html .= '<table border="1" cellspacing="0" cellpadding="1" style="width:100%; border-collapse:collapse;">';
-
-        $html .= '<thead><tr>';
-        $html .= '<th colspan="' . count($headersCus) . '" style="text-align: center; font-size: 13px;">Table Per Customers</th>';
-        $html .= '</tr></thead>';
-        $html .= '<thead><tr>';
-        foreach ($headersCus as $header) {
-            $html .= '<th style="font-size: 12px;">' . htmlspecialchars($header) . '</th>';
-        }
-        $html .= '</tr></thead>';
-        $html .= '<tbody>';
-
-        $html = '';
-        $progressCount = 0;
-
-        $dataCus->each(function ($item) use (&$dataCollectionCus, &$no, &$progressCount, $dataCus, &$html) {
-
-            $dataCollectionCus = [
-                $no++,
-                Date::parse($item->datereq)->toFormattedDateString(),
-                $item->spcus_companyname,
-                $item->spexgc_num,
-                $item->totdenom,
-            ];
-
-            $html .= '<tr>';
-            foreach ($dataCollectionCus as $cell) {
-                $html .= '<td style="text-align: center; font-size: 10px;">' . htmlspecialchars($cell) . '</td>';
-            }
-            $html .= '</tr>';
-            ApprovedReleasedEvents::dispatch('Generating Excel of Approved Reports Per Cus. ', ++$progressCount, $dataCus->count(), Auth::user());
-        });
-        $html .= '</tbody>';
-        $html .= '</table>';
-        $html .= '<br><br>';
-
-        $html .= '<table border="1" cellspacing="0" cellpadding="1" style="width:100%; border-collapse:collapse;">';
-        $html .= '<thead><tr>';
-        $html .= '<th colspan="' . count($headersBar) . '" style="text-align: center; font-size: 13px;">Table Per Barcode</th>';
-
-        $html .= '</tr></thead>';
-        $html .= '<thead><tr>';
-        foreach ($headersBar as $header) {
-            $html .= '<th style="font-size: 12px;">' . htmlspecialchars($header) . '</th>';
-        }
-        $html .= '</tr></thead>';
-        $html .= '<tbody>';
-        $html = '';
-
-        $progressCount = 0;
-
-        $dataBar->each(function ($item) use (&$dataCollectionBar, &$no, &$totalDenom,  &$progressCount, $dataBar, &$html) {
             $totalDenom += (float)$item->spexgcemp_denom;
-            $dataCollectionBar = [
+
+            $dataCollectionBar[] = [
                 $no++,
                 Date::parse($item->datereq)->toFormattedDateString(),
                 $item->spexgcemp_barcode,
@@ -137,16 +77,91 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
                 $item->spexgc_num,
                 Date::parse($item->daterel)->toFormattedDateString(),
             ];
+
+            ApprovedReleasedEach::dispatch('Generating Excel of Approved Reports Per Barcode. ', $progressCount++, $dataBar->count(), Auth::user());
+        });
+
+
+        $headersCus = ['No.', 'Date Requested', 'Company', 'Approval#', 'Total Amount'];
+        $dataCollectionCus = [];
+        $progressCount = 1;
+
+        $dataCus->each(function ($item) use (&$dataCollectionCus, &$no, &$progressCount, $dataCus) {
+            $dataCollectionCus[] = [
+                $no++,
+                Date::parse($item->datereq)->toFormattedDateString(),
+                $item->spcus_companyname,
+                $item->spexgc_num,
+                $item->totdenom,
+            ];
+            ApprovedReleasedEach::dispatch('Generating Excel of Approved Reports Per Customer. ', $progressCount++, $dataCus->count(), Auth::user());
+        });
+        $html = '<html><body style="font-family: Calibri, Arial, Helvetica, sans-serif;">';
+        $html .= '<div style="text-align: center;">';
+        $html .= '<p style="font-size: 12px;">' . 'ALTURAS GROUP OF COMPANIES' . '</p>';
+        $html .= '<p style="font-size: 11px;">' . 'Head Office - Finance Department' . '</p>';
+        $html .= '<p style="font-size: 11px;">' . 'Special External GC Report-Approvalt' . '</p>';
+        $html .= '<p style="font-size: 11px;">' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString() . '</p>';
+        $html .= '</div>';
+        $html .= '<br><br>';
+        $html .= '<table border="1" cellspacing="0" cellpadding="1" style="width:100%; border-collapse:collapse;">';
+        $html .= '<thead><tr>';
+        $html .= '<th colspan="' . count($headersCus) . '" style="text-align: center; font-size: 13px;">Table Per Customers</th>';
+        $html .= '</tr></thead>';
+        $html .= '<thead><tr>';
+
+        $progressCount = 1;
+        $headerCusCount = count($headersCus);
+        foreach ($headersCus as $header) {
+            $html .= '<th style="font-size: 12px;">' . htmlspecialchars($header) . '</th>';
+            ApprovedReleasedHeader::dispatch('Writing Header Pdf reports per customer... ', $progressCount++, $headerCusCount , Auth::user());
+        }
+        $html .= '</tr></thead>';
+        $html .= '<tbody>';
+
+        $progressCount = 1;
+
+        foreach ($dataCollectionCus as $row) {
             $html .= '<tr>';
-            foreach ($dataCollectionBar as $cell) {
+            foreach ($row as $cell) {
                 $html .= '<td style="text-align: center; font-size: 10px;">' . htmlspecialchars($cell) . '</td>';
             }
             $html .= '</tr>';
-            ApprovedReleasedEvents::dispatch('Generating Excel of Approved Reports Per Barcode. ', ++$progressCount, $dataBar->count(), Auth::user());
-        });
-
+            ApprovedReleasedInnerLoopEvents::dispatch('Writing table pdf reports per customer... ', ++$progressCount, $dataCus->count(), Auth::user());
+        }
         $html .= '</tbody>';
         $html .= '</table>';
+        $html .= '<br><br>';
+        $html .= '<table border="1" cellspacing="0" cellpadding="1" style="width:100%; border-collapse:collapse;">';
+        $html .= '<thead><tr>';
+        $html .= '<th colspan="' . count($headersBar) . '" style="text-align: center; font-size: 13px;">Table Per Barcode</th>';
+        $html .= '</tr></thead>';
+        $html .= '<thead><tr>';
+
+        $progressCount = 1;
+
+        $headerBarCount = count($headersBar);
+
+        foreach ($headersBar as $header) {
+            $html .= '<th style="font-size: 12px;">' . htmlspecialchars($header) . '</th>';
+            ApprovedReleasedHeader::dispatch('Writing header Pdf reports per barcode... ', $progressCount++, $headerBarCount, Auth::user());
+        }
+        $html .= '</tr></thead>';
+        $html .= '<tbody>';
+
+        $progressCount = 1;
+
+        foreach ($dataCollectionBar as $row) {
+            $html .= '<tr>';
+            foreach ($row as $cell) {
+                $html .= '<td style="width:100%; border-collapse:collapse; margin: 0 auto; text-align: center; font-size: 10px;">' . htmlspecialchars($cell) . '</td>';
+            }
+            $html .= '</tr>';
+            ApprovedReleasedInnerLoopEvents::dispatch('Writing table pdf per barcode... ', ++$progressCount, $dataBar->count(), Auth::user());
+        }
+        $html .= '</tbody>';
+        $html .= '</table>';
+
         $html .= '<br><br>';
         $html .= '<div style="text-align: center;">';
         $html .= '<p style="font-size: 12px; "> ' . 'Total Count: ' . count($dataBar) . '</p>';
@@ -154,7 +169,6 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
         $html .= '</div>';
         $html .= '<br><br>';
         $html .= '</body></html>';
-
         return $html;
     }
 
