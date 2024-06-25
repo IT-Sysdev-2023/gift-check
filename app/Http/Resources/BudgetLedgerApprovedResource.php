@@ -26,12 +26,5 @@ class BudgetLedgerApprovedResource extends JsonResource
             'approved_by' => $this->abr_approved_by,
            
         ];
-
-           //     budget_request.br_request,
-    //     budget_request.br_requested_at,
-    //     budget_request.br_no,
-    //     budget_request.br_file_docno,
-    //     budget_request.br_remarks,
-    //     budget_request.br_requested_needed,
     }
 }
