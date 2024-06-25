@@ -26,89 +26,35 @@ const submit = () => {
 <template>
 
     <a-row :gutter="[16, 16]" style="background-image: url('/bg-circuit.png');">
-        <a-col :span="12" >
-        <div class="flex justify-center items-center" style="height: 90vh;">
-            <img src="/gcicon.png" alt="logoimage">
-        </div>
+        <a-col :span="12">
+            <div class="flex justify-center items-center" style="height: 90vh; margin-top: 30px;">
+                <img src="/gcicon.png" alt="logoimage">
+            </div>
         </a-col>
         <a-col :span="12">
-
             <body>
-
-                <div class="container">
+                <div class="container" >
                     <div class="login-box">
                         <h2>Login</h2>
                         <form action="#" @submit.prevent="submit">
                             <div class="input-box">
-                                <input name="username" v-model="form.username"  type="text" required>
+                                <input name="username" v-model="form.username" type="text" required>
                                 <label>Username</label>
-                                <InputError class="mt-2"  :message="form.errors.username" />
+                                <InputError class="mt-2" :message="form.errors.username" />
                             </div>
                             <div class="input-box">
-                                <input name="password" v-model="form.password"  type="password" required>
+                                <input name="password" v-model="form.password" type="password" required>
                                 <label>Password</label>
                                 <InputError class="mt-2" :message="form.errors.password" />
                             </div>
-                            <button type="submit"  class="btn" >Login</button>
+                            <button type="submit" class="btn">Login</button>
                         </form>
                     </div>
-                    <!-- <span style="--i:0;"></span> -->
-                    <span style="--i:1;"></span>
-                    <!-- <span style="--i:2;"></span> -->
-                    <span style="--i:3;"></span>
-                    <!-- <span style="--i:4;"></span> -->
-                    <span style="--i:5;"></span>
-                    <!-- <span style="--i:6;"></span> -->
-                    <span style="--i:7;"></span>
-                    <!-- <span style="--i:8;"></span> -->
-                    <span style="--i:9;"></span>
-                    <!-- <span style="--i:10;"></span> -->
-                    <span style="--i:11;"></span>
-                    <!-- <span style="--i:12;"></span> -->
-                    <span style="--i:13;"></span>
-                    <!-- <span style="--i:14;"></span> -->
-                    <span style="--i:15;"></span>
-                    <!-- <span style="--i:16;"></span> -->
-                    <span style="--i:17;"></span>
-                    <!-- <span style="--i:18;"></span> -->
-                    <span style="--i:19;"></span>
-                    <!-- <span style="--i:20;"></span> -->
-                    <span style="--i:21;"></span>
-                    <!-- <span style="--i:22;"></span> -->
-                    <span style="--i:23;"></span>
-                    <!-- <span style="--i:24;"></span> -->
-                    <span style="--i:25;"></span>
-                    <!-- <span style="--i:26;"></span> -->
-                    <span style="--i:27;"></span>
-                    <!-- <span style="--i:28;"></span> -->
-                    <span style="--i:29;"></span>
-                    <!-- <span style="--i:30;"></span> -->
-                    <span style="--i:31;"></span>
-                    <!-- <span style="--i:32;"></span> -->
-                    <span style="--i:33;"></span>
-                    <!-- <span style="--i:34;"></span> -->
-                    <span style="--i:35;"></span>
-                    <!-- <span style="--i:36;"></span> -->
-                    <span style="--i:37;"></span>
-                    <!-- <span style="--i:38;"></span> -->
-                    <span style="--i:39;"></span>
-                    <!-- <span style="--i:40;"></span> -->
-                    <span style="--i:41;"></span>
-                    <!-- <span style="--i:42;"></span> -->
-                    <span style="--i:43;"></span>
-                    <!-- <span style="--i:44;"></span> -->
-                    <span style="--i:45;"></span>
-                    <!-- <span style="--i:46;"></span> -->
-                    <span style="--i:47;"></span>
-                    <!-- <span style="--i:48;"></span> -->
-                    <span style="--i:49;"></span>
+
                 </div>
             </body>
         </a-col>
     </a-row>
-
-
-
 </template>
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
@@ -129,11 +75,13 @@ body {
 
 .container {
     position: relative;
-    width: 256px;
-    height: 256px;
+    width: 400px;
+    height: 400px;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow:  0px 0px 5px 2px floralwhite;
+    border-radius: 10px;
 }
 
 .container span {

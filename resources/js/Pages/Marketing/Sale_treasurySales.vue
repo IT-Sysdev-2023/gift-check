@@ -1,4 +1,5 @@
 <template>
+
     <Head title="Store Sales" />
     <a-card>
         <a-card class="mb-2" title="Treasury Sales"></a-card>
@@ -7,7 +8,21 @@
                 style="width: 300px" @search="onSearch" />
         </div>
 
-        <a-table :dataSource="data.data" :columns="columns" size="small" :pagination="false" />
+        <a-table :dataSource="data.data" :columns="columns" size="small" :pagination="false">
+            <template #bodyCell="{ column, record }">
+                <template v-if="column.dataIndex == 'View'">
+                    <a-button @click="viewDetails(record)">
+                        <template #icon>
+                            <EyeOutlined />
+                        </template>
+                    </a-button>
+                </template>
+            </template>
+        </a-table>
+
+        <a-modal v-model:open="open" width="80%" style="top: 65px" :title="title" :confirm-loading="confirmLoading"  @ok="handleOk">
+            <p>{{ selectedData }}</p>
+        </a-modal>
 
         <pagination class="mt-5" :datarecords="data" />
     </a-card>
@@ -29,7 +44,8 @@ export default {
     data() {
         return {
             search: '',
-            open: false
+            open: false,
+            selectedData: [],
         }
     },
     methods: {
@@ -41,7 +57,18 @@ export default {
         },
         handleCancel() {
             this.open = false;
+        },
+        viewDetails(data) {
+            axios.get(route('view.treasury.sales'), {
+                params: {
+                    id: data.insp_trid,
+                }
+            }).then(response => {
+                this.open = true;
+                this.selectedData=response.data;
+            })
         }
+
     },
     watch: {
         search: {

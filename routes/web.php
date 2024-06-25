@@ -61,7 +61,6 @@ Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->
 Route::get('released-promo-gc', [MarketingController::class, 'releasedpromogc'])->name('released.promo.gc');
 Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
 Route::get('manage-supplier', [MarketingController::class, 'manageSupplier'])->name('manage.supplier');
-
 Route::get('sales-treasury-sales', [MarketingController::class, 'treasurySales']) ->name('marketing.sales.treasury.sales');
 Route::get('sales-store-sales', [MarketingController::class, 'storeSales']) -> name('sales.store.sales');
 Route::get('verified-gc-alturas-mall', [MarketingController::class, 'verifiedGc_Amall']) -> name('verified.gc.alturas.mall');
@@ -80,6 +79,7 @@ Route::get('get-view-promo-details', [MarketingController::class, 'getPromoDetai
 Route::get('get-store-sales-details', [MarketingController::class, 'getStoreSaleDetails']) -> name('get.store.sale.details');
 Route::get('get-transaction-pos-detail', [MarketingController::class, 'getTransactionPOSdetail']) -> name('get.transaction.pos.detail');
 Route::get('get-view-barcode-details', [MarketingController::class, 'getBarcodeDetails']) -> name('get.sub.barcode.details');
+Route::get('view-treasury-sales', [MarketingController::class, 'viewTreasurySales']) -> name('view.treasury.sales');
 
 
 
