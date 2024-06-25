@@ -7,6 +7,7 @@ use App\Helpers\GetVerifiedGc;
 use App\Models\ApprovedGcrequest;
 use App\Models\Gc;
 use App\Models\GcRelease;
+use App\Models\InstitutCustomer;
 use App\Models\InstitutPayment;
 use App\Models\InstitutTransaction;
 use App\Models\InstitutTransactionsItem;
@@ -288,7 +289,7 @@ class MarketingController extends Controller
         $columns = array_map(
             fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Transaction #', 'GC Type', 'Customer', 'Date', 'Time', 'GC pc(s)', 'Total Denom', 'Payment Type', 'View'],
-            ['insp_id', 'insp_paymentcustomer', 'customer', 'date', 'time', 'totgccnt', 'totdenom', 'paymenttype', 'view']
+            ['insp_id', 'insp_paymentcustomer', 'customer', 'date', 'time', 'totgccnt', 'totdenom', 'paymenttype', 'View']
         );
 
         return Inertia::render('Marketing/Sale_treasurySales', [
@@ -297,9 +298,20 @@ class MarketingController extends Controller
         ]);
     }
 
-
-    public function storeSales()
+    public function viewTreasurySales(Request $request)
     {
+        $trId = $request->id;
+
+
+        return response()->json([
+            'data' => $trId
+        ]);
+    }
+
+
+    public function storeSales(Request $request)
+    {
+        $search = $request->search;
         $data = TransactionStore::join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
             ->join('store_staff', 'store_staff.ss_id', '=', 'transaction_stores.trans_cashier')
             ->select(
@@ -310,6 +322,7 @@ class MarketingController extends Controller
                 'trans_type'
             )
             ->whereIn('transaction_stores.trans_type', [1, 2, 3])
+            ->whereAny(['trans_number',], 'LIKE', '%' . $search . '%')
             ->orderByDesc('trans_number')
             ->paginate(10)
             ->withQueryString();
@@ -557,7 +570,7 @@ class MarketingController extends Controller
         return response()->json([
             'dataTransStore' => $dataTransactionStore,
             'dataTransSales' =>  $dataTransactionSales,
-            'selectedDataColumns' => $columns
+            'selectedDataColumns' => ColumnHelper::getColumns($columns)
         ]);
     }
 
@@ -580,14 +593,14 @@ class MarketingController extends Controller
             ->get();
         $columns = array_map(
             fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
-            ['Textfile Line', 'Credit Limit', 'Cred. Pur. Amt + Add-on', 'Add-on Amt', 'Remaining Balance', 'Transaction #', 'Time of Cred Tranx', 'Bus. Unit','Terminal #','Ackslip #'],
-            ['seodtt_line', 'seodtt_creditlimit', 'seodtt_credpuramt', 'seodtt_addonamt', 'seodtt_balance', 'seodtt_transno', 'seodtt_timetrnx', 'seodtt_bu','seodtt_terminalno','seodtt_ackslipno']
+            ['Textfile Line', 'Credit Limit', 'Cred. Pur. Amt + Add-on', 'Add-on Amt', 'Remaining Balance', 'Transaction #', 'Time of Cred Tranx', 'Bus. Unit', 'Terminal #', 'Ackslip #'],
+            ['seodtt_line', 'seodtt_creditlimit', 'seodtt_credpuramt', 'seodtt_addonamt', 'seodtt_balance', 'seodtt_transno', 'seodtt_timetrnx', 'seodtt_bu', 'seodtt_terminalno', 'seodtt_ackslipno']
         );
 
         return response()->json([
             'title'  => $request->id,
             'barcodeDetails' => $data,
-            'selectedBarcodeColumns' =>ColumnHelper::getColumns($columns)
+            'selectedBarcodeColumns' => ColumnHelper::getColumns($columns)
         ]);
     }
 }
