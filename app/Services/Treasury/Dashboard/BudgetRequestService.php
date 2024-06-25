@@ -56,12 +56,12 @@ class BudgetRequestService
 			->paginate()
 			->withQueryString();
 		return inertia(
-			'Treasury/Table',
+			'Treasury/BudgetRequest/TableApproved',
 			[
 				'filters' => $request->all('search', 'date'),
 				'title' => 'Approved Budget Request',
 				'data' => BudgetRequestResource::collection($record),
-				'columns' => ColumnHelper::approved_buget_request(),
+				'columns' => ColumnHelper::$approved_buget_request,
 			]
 
 		);

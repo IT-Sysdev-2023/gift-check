@@ -131,6 +131,7 @@ declare module 'vue' {
     StockOutlined: typeof import('@ant-design/icons-vue')['StockOutlined']
     SwapOutlined: typeof import('@ant-design/icons-vue')['SwapOutlined']
     Table: typeof import('./resources/js/Pages/Treasury/Table.vue')['default']
+    TableApproved: typeof import('./resources/js/Pages/Treasury/BudgetRequest/TableApproved.vue')['default']
     TextInput: typeof import('./resources/js/Components/TextInput.vue')['default']
     TreasurySideBar: typeof import('./resources/js/Components/TreasurySideBar.vue')['default']
     UbayDistributionCenter: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/UbayDistributionCenter.vue')['default']
