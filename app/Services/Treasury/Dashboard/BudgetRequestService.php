@@ -12,20 +12,32 @@ use Illuminate\Http\Request;
 class BudgetRequestService
 {
 
-	public static function pendingRequest(): Collection //pending_budget_request
+	public function pendingRequest() //pending_budget_request
 	{
-
 		$dept = request()->user()->usertype;
-		// $type = $dept == 2 ? 1 : $dept == 6 ? 2 : $dept;
-		$type = 2;
+
+		$type = match($dept) {
+			'2' => 1,
+			'6' => 2,
+			default => $dept
+		};
+		
 		$record = BudgetRequest::with(['user:user_id,firstname,lastname,usertype', 'user.accessPage:access_no,title'])
 			->select('br_request', 'br_no', 'br_requested_by', 'br_remarks', 'br_file_docno', 'br_id', 'br_requested_at', 'br_requested_needed', 'br_group', 'br_preapprovedby')
 			->where([['br_request_status', '0'], ['br_type', $type]])
 			->orderBy('br_id')
 			->first();
 
-		dd($record);
-		return $record;
+			return inertia(
+				'Treasury/BudgetRequest/PendingRequest',
+				[
+					// 'filters' => $request->all('search', 'date'),
+					'title' => 'Update Budget Entry Form',
+					'data' => $record,
+					// 'columns' => ColumnHelper::$approved_buget_request,
+				]
+	
+			);
 	}
 
 

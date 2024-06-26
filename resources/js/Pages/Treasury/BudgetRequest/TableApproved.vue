@@ -1,15 +1,9 @@
 <script setup>
 import { highlighten } from "@/Mixin/highlighten";
 import Description from "./../Description.vue";
-import { ref } from "vue";
 
 const { highlightText } = highlighten();
 
-// const currentTab = ref("Description");
-
-// const tabs = {
-//     Description,
-// };
 </script>
 <template>
     <Head :title="title" />
@@ -81,28 +75,15 @@ const { highlightText } = highlighten();
         </a-table>
         <a-modal v-model:open="showModal" width="1000px">
             <!-- <component :is="tabs[currentTab]" /> -->
-
             <Description :data="descriptionRecord" />
         </a-modal>
 
-        <div class="flex justify-end p-2 mt-2" v-if="remainingBudget">
-            <p class="font-semibold text-gray-700">Remaining Budget:</p>
-            &nbsp;
-            <span>
-                <a-tag
-                    color="blue"
-                    style="font-size: 13px; letter-spacing: 1px"
-                    >{{ remainingBudget }}</a-tag
-                >
-            </span>
-        </div>
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
-import throttle from "lodash/throttle";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
@@ -140,7 +121,7 @@ export default {
         async viewRecord($id) {
             try {
                 const { data } = await axios.get(
-                    route("treasury.view.approved.budget.ledger", $id)
+                    route("treasury.budget.request.view.approved", $id)
                 );
                 this.descriptionRecord = data;
             } finally {

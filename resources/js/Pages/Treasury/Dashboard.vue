@@ -40,10 +40,12 @@ defineProps<{
 
 const budgetRequestCancelled = () => {};
 
-const budgetRequestPending = () => {};
+const budgetRequestPending = () => {
+    router.get(route("treasury.budget.request.pending"));
+};
 
 const budgetRequestApproved = () => {
-    router.get(route("treasury.approved.budget.ledger"));
+    router.get(route("treasury.budget.request.approved"));
 };
 </script>
 
