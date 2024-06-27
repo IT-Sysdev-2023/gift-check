@@ -117,8 +117,11 @@
                                 </a-tag>
                             </a-space>
                         </a-form-item>
-                        <a-form-item label="Upload Scan Copy">
+                        <a-form-item label="Upload Scan Copy"  :validate-status="formState.errors.file ? 'error' : ''"
+                        :help="formState.errors.file">
+                            
                             <a-upload-dragger
+                                accept="image/png, image/jpeg"
                                 v-model:file-list="fileList"
                                 @change="handleChange"
                                 name="file"
@@ -133,9 +136,7 @@
                                     Click or drag image to this area to upload
                                 </p>
                                 <p class="ant-upload-hint">
-                                    Support for a single or bulk upload.
-                                    Strictly prohibit from uploading company
-                                    data or other band files
+                                    png, jpg, jpeg images only are allowed 
                                 </p>
                             </a-upload-dragger>
                         </a-form-item>

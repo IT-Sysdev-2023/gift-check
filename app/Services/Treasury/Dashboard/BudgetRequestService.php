@@ -2,7 +2,8 @@
 
 namespace App\Services\Treasury\Dashboard;
 
-use App\Http\Resources\BudgetLedgerApprovedResource;
+use App\Models\LedgerBudget;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\BudgetRequestResource;
 use App\Models\BudgetRequest;
 use App\Services\Treasury\ColumnHelper;
@@ -32,6 +33,7 @@ class BudgetRequestService
 				'Treasury/BudgetRequest/PendingRequest',
 				[
 					// 'filters' => $request->all('search', 'date'),
+					'currentBudget' => LedgerBudget::currentBudget(),
 					'title' => 'Update Budget Entry Form',
 					'data' => $record,
 					// 'columns' => ColumnHelper::$approved_buget_request,
@@ -84,5 +86,21 @@ class BudgetRequestService
 		$record = $budgetRequest->load(['user:user_id,firstname,lastname', 'approvedBudgetRequest.user:user_id,firstname,lastname']);
 		$data = new BudgetRequestResource($record);
 		return response()->json($data);
+	}
+
+	public function submitBudgetEntry(Request $request){
+		// dd("{$request->user()->user_id}-" . now()->toDateTimeString() . ".jpg");
+		$request->validate([
+			'file' => 'image|mimes:jpeg,png,jpg|max:5048'
+		]);
+
+		$disk = Storage::disk('public');
+		
+		if(!is_null($request->file)){
+			$disk->putFileAs('BudgetRequestScanCopy', $request->file, "{$request->user()->user_id}-" . now()->format('Y-m-d-His') . ".jpg");
+		}
+
+		dd($disk);
+		
 	}
 }
