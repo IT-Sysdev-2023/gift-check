@@ -1,7 +1,8 @@
 export interface User {
-    id: number;
+    user_id: number;
     name: string;
     email: string;
+    full_name:string;
     email_verified_at: string;
 }
 
@@ -16,7 +17,8 @@ interface SharedProps extends PageProps {
         user: {
             id: number,
             name: string,
-            email: string
+            email: string,
+            full_name: string,
         }
     }
 }

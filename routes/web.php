@@ -110,6 +110,7 @@ Route::prefix('treasury')->group(function () {
             Route::get('view-approved-record/${id}',  [BudgetRequestService::class, 'viewBudgetRequestApproved'])->name('view.approved');
             
             Route::get('pending-request',  [BudgetRequestService::class, 'pendingRequest'])->name('pending');
+            Route::post('submit-budget-entry',  [BudgetRequestService::class, 'submitBudgetEntry'])->name('budget.entry');
         });
 
 

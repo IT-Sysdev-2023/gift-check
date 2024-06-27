@@ -21,32 +21,6 @@ class AdjustmentService
             'current_budget' => LedgerBudget::currentBudget(),
             'prepared_by' => request()->user()->firstname
         ];
-
-        // getRequestNo($link,'budgetadjustment','adj_no')
-
-        // function getRequestNo($link,$table,$field){
-        //     $query = $link->query(
-        //         "SELECT 
-        //             $field 
-        //         FROM 
-        //             $table 
-        //         ORDER by 
-        //             $field 
-        //         DESC
-        //     ");
-
-        //     $n = $query->num_rows;
-        //     if($n>0){
-        //         $row = $query->fetch_assoc();
-        //         $row = $row[$field];
-        //         $row++;
-        //         $row = sprintf("%04d", $row);
-        //         return $row;
-
-        //     } else {
-        //         return '0001';
-        //     }
-        // }
     }
 
     public static function allocationAdjustment()
@@ -57,8 +31,5 @@ class AdjustmentService
             ->get();
 
         $denom = Denomination::denomation();
-
-        //         $query_store = $link->query("SELECT `store_id`,`store_name` FROM `stores`");
-//          $query_gc_type = $link->query("SELECT `gc_type_id`,`gctype`,`gc_status` FROM `gc_type` WHERE `gc_status`='1'"); 
     }
 }

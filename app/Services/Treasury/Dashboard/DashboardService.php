@@ -119,7 +119,7 @@ class DashboardService
 
     protected function budget()
     {
-        return NumberHelper::currency((float) LedgerBudget::currentBudget());
+        return LedgerBudget::currentBudget();
     }
 
     //REFERENCES
