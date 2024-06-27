@@ -35,7 +35,7 @@
             <a-table class="mt-5" size="small" :pagination="false" :data-source="datarecordsReleased.dataCus.data"
                 :columns="datacolumnsReleased.columnsCus">
             </a-table>
-            <Pagination :datarecords="datarecordsReleased?.dataBar" class="mt-5" />
+            <Pagination :datarecords="datarecordsReleased?.dataCus" class="mt-5" />
         </a-tab-pane>
         <a-tab-pane key="2" tab="Released Per Barcodes">
             <p class="text-center underline">Released Report Per Barcodes Table</p>
@@ -71,8 +71,8 @@ export default {
     methods: {
         generateApprovedReleasedReports() {
             this.isGenerating = true;
-            this.$inertia.get(route('finance.approved.spgc.pdf.result'), {
-                dateRange: this.filtersApproved.dateRange ? this.filtersApproved.dateRange.map((date) => dayjs(date).format('YYYY-MM-DD')) : [],
+            this.$inertia.get(route('finance.released.spgc.pdf.excel'), {
+                dateRange: this.filtersReleased.dateRange ? this.filtersReleased.dateRange.map((date) => dayjs(date).format('YYYY-MM-DD')) : [],
                 ext: this.formReleased.extension,
             }, {
                 preserveState: true,

@@ -125,8 +125,8 @@ Route::prefix('finance')->group(function () {
         Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
         Route::get('approved-released-reports', [FinanceController::class, 'approvedAndReleasedSpgc'])->name('approved.released.reports');
-        Route::get('generate-approved-spgc-reports', [FinanceController::class, 'approvedSpgdcPdfExcelFunction'])->name('approved.spgc.pdf.result');
-        Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.result');
+        Route::get('generate-approved-spgc-reports', [FinanceController::class, 'approvedSpgdcPdfExcelFunction'])->name('approved.spgc.pdf.excel');
+        Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.excel');
     });
 
     Route::get('/download/{filename}', function ($filename) {

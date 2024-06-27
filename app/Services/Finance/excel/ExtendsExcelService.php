@@ -2,7 +2,9 @@
 
 namespace App\Services\Finance\excel;
 
+use App\Events\ApprovedReleasedEvents\ApprovedReleasedEach;
 use App\Helpers\Excel\ExcelWriter;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Illuminate\Support\Facades\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -70,8 +72,9 @@ class ExtendsExcelService extends ExcelWriter
         }
         $excelRow++;
         $numCount = 1;
+        $progressCount = 1;
 
-        $dataBarcode->each(function ($item) use (&$excelRow, &$numCount) {
+        $dataBarcode->each(function ($item) use (&$excelRow, &$numCount, &$progressCount, $dataBarcode) {
             $dataBarcodeCollection[] = [
                 $numCount++,
                 Date::parse($item->datereq)->toFormattedDateString(),
@@ -89,6 +92,7 @@ class ExtendsExcelService extends ExcelWriter
                 $this->getActiveSheetExcel()->getStyle($col . $excelRow)->applyFromArray($this->borderFBN);
                 $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             }
+            ApprovedReleasedEach::dispatch('Generating Excel of Approved Reports Per Barcode. ', $progressCount++, $dataBarcode->count(), Auth::user());
             $excelRow++;
         });
 
@@ -133,7 +137,9 @@ class ExtendsExcelService extends ExcelWriter
         $excelRow++;
         $numCount = 1;
 
-        $dataCustomer->each(function ($item) use (&$excelRow, &$numCount) {
+        $progressCount = 1;
+
+        $dataCustomer->each(function ($item) use (&$excelRow, &$numCount, &$progressCount, $dataCustomer) {
 
             $dataCustomerCollection[] = [
                 $numCount++,
@@ -148,6 +154,7 @@ class ExtendsExcelService extends ExcelWriter
                 $this->getActiveSheetExcel()->getStyle($col . $excelRow)->applyFromArray($this->borderFBN);
                 $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             }
+            ApprovedReleasedEach::dispatch('Generating Excel of Approved Reports Per Customer. ', $progressCount++, $dataCustomer->count(), Auth::user());
             $excelRow++;
         });
 
