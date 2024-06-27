@@ -4,7 +4,7 @@
     <a-card>
         <a-card class="mb-2" title="Store Sales"></a-card>
         <div class="flex justify-end">
-            <a-input-search class="mt-5 mb-5" v-model:value="search" placeholder="input search text here."
+            <a-input-search class="mt-5 mb-5" v-model:value="search" placeholder="Input transaction # here."
                 style="width: 300px" @search="onSearch" />
         </div>
 

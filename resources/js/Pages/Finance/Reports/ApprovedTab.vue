@@ -110,7 +110,7 @@ export default {
         this.$ws.private(`generating-app-release-reports.${this.$page.props.auth.user.user_id}`)
             .listen(".generate-app-rel", (e) => {
                 this.progressBar = e;
-                console.log(e);
+                console.log();
             });
     }
 }

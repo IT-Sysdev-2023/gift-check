@@ -80,6 +80,7 @@ Route::get('get-store-sales-details', [MarketingController::class, 'getStoreSale
 Route::get('get-transaction-pos-detail', [MarketingController::class, 'getTransactionPOSdetail']) -> name('get.transaction.pos.detail');
 Route::get('get-view-barcode-details', [MarketingController::class, 'getBarcodeDetails']) -> name('get.sub.barcode.details');
 Route::get('view-treasury-sales', [MarketingController::class, 'viewTreasurySales']) -> name('view.treasury.sales');
+Route::post('submit-promo-gc-request', [MarketingController::class, 'submitPromoGcRequest']) -> name('submit-promo-gc-request');
 
 
 

@@ -10,4 +10,6 @@ class PromoGcRequestItem extends Model
     use HasFactory;
 
     protected $primaryKey = 'pgcreqi_id';
+    public $timestamps = false;
+    protected $guarded = [];
 }
