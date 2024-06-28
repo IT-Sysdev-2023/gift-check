@@ -2,10 +2,6 @@
 
     <ProgressBar v-if="isGenerating" :progressBar="progressBar" />
 
-    <!-- <ProgressHeader v-if="isGeneratingHeader  && formApproved.extension == 'pdf'" :progressBarHeader="progressBarHeader" />
-
-    <ProgressBarInner v-if="isGeneratingInner  && formApproved.extension == 'pdf'" :progressBarInner="progressBarInner" /> -->
-
     <div class="flex justify-between">
         <div>
             <a-range-picker style="width: 400px;" v-model:value="formApproved.dateRange" />
@@ -110,6 +106,7 @@ export default {
             this.$inertia.get(route('finance.approved.spgc.pdf.excel'), {
                 dateRange: this.filtersApproved.dateRange ? this.filtersApproved.dateRange.map((date) => dayjs(date).format('YYYY-MM-DD')) : [],
                 ext: this.formApproved.extension,
+                approvedType: this.formApproved.approvedType
             }, {
                 preserveState: true,
             });

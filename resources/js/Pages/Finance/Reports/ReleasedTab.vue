@@ -1,4 +1,7 @@
 <template>
+
+    <ProgressBar v-if="isGenerating" :progressBar="progressBar" />
+
     <div class="flex justify-between">
         <div>
             <a-range-picker style="width: 400px;" v-model:value="formReleased.dateRange" />
@@ -23,8 +26,10 @@
                 <a-button type="primary" @click="generateApprovedReleasedReports" :disabled="formReleased
                     .extension == null || (datarecordsReleased.dataCus.total <= 0 && datarecordsReleased.dataCus.total <= 0)
                     ">
-                    {{ isGenerating ? "Generating " + (formReleased.extension === 'pdf' ? 'PDF' : 'Excel') + " in progress..":
-                        "Generate Spgc Releasing " + (formReleased.extension == null ? '' :formReleased.extension === 'pdf' ? 'PDF' : 'Excel')}}
+                    {{
+                        isGenerating ? "Generating " + (formReleased.extension === 'pdf' ? 'PDF' : 'Excel') + "inprogress..":
+                        "Generate Spgc Releasing " + (formReleased.extension == null ? '' : formReleased.extension === 'pdf'
+                        ? 'PDF' : 'Excel')}}
                 </a-button>
             </div>
         </div>
@@ -66,6 +71,12 @@ export default {
             },
             activeKey: '1',
             isGenerating: false,
+            progressBar: {
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+                currentRow: 0,
+            },
         }
     },
     methods: {
@@ -74,6 +85,7 @@ export default {
             this.$inertia.get(route('finance.released.spgc.pdf.excel'), {
                 dateRange: this.filtersReleased.dateRange ? this.filtersReleased.dateRange.map((date) => dayjs(date).format('YYYY-MM-DD')) : [],
                 ext: this.formReleased.extension,
+                approvedType: this.formReleased.approvedType
             }, {
                 preserveState: true,
             });
@@ -89,6 +101,13 @@ export default {
                 })
             })
         }
+    },
+    mounted() {
+        this.$ws.private(`generating-app-release-reports.${this.$page.props.auth.user.user_id}`)
+            .listen(".generate-app-rel", (e) => {
+                this.progressBar = e;
+                this.isGenerating = true;
+            });
     }
 }
 </script>

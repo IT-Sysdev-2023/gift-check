@@ -51,6 +51,8 @@ class FinanceController extends Controller
         $dataCus = ApprovedReleasedReportService::approvedReleasedQueryCus($request);
         $dataBar = ApprovedReleasedReportService::approvedReleasedQueryBar($request);
 
+
+
         return inertia('Finance/ApprovedAndReleaseSpgc', [
             'columns' => [
                 'columnsCus' => ColumnHelper::$cus_table_columns,
@@ -72,11 +74,11 @@ class FinanceController extends Controller
         if ($request->ext  == 'pdf') {
             $dataCus = ApprovedReleasedReportService::approvedReleasedGenerate($request->all());
             $dataBar = ApprovedReleasedReportService::approvedReleasedBarGenerate($request->all());
-            return $this->appRelPdfExcelService->approvedSpgcPdfWriteResult($request->dateRange, $dataCus, $dataBar);
+            return $this->appRelPdfExcelService->approvedReleasedSpgcPdfWriteResult($request->dateRange, $dataCus, $dataBar, $request->approvedType);
         } elseif ($request->ext  == 'excel') {
             $dataCus = ApprovedReleasedReportService::approvedReleasedGenerate($request->all());
             $dataBar = ApprovedReleasedReportService::approvedReleasedBarGenerate($request->all());
-            return $this->appRelPdfExcelService->approvedSpgcExcelWriteResult($request->dateRange, $dataCus, $dataBar);
+            return $this->appRelPdfExcelService->approvedReleasedSpgcExcelWriteResult($request->dateRange, $dataCus, $dataBar, $request->approvedType);
         }
     }
     public function releasedSpgcPdfExcelFunction(Request $request)
@@ -84,11 +86,11 @@ class FinanceController extends Controller
         if ($request->ext  == 'pdf') {
             $dataCus = ApprovedReleasedReportService::approvedReleasedGenerate($request->all());
             $dataBar = ApprovedReleasedReportService::approvedReleasedBarGenerate($request->all());
-            return $this->appRelPdfExcelService->releasedSpgcPdfWriteResult($request->dateRange, $dataCus, $dataBar);
+            return $this->appRelPdfExcelService->approvedReleasedSpgcPdfWriteResult($request->dateRange, $dataCus, $dataBar, $request->approvedType);
         } elseif ($request->ext  == 'excel') {
             $dataCus = ApprovedReleasedReportService::approvedReleasedGenerate($request->all());
             $dataBar = ApprovedReleasedReportService::approvedReleasedBarGenerate($request->all());
-            return $this->appRelPdfExcelService->releasedSpgcExcelWriteResult($request->dateRange, $dataCus, $dataBar);
+            return $this->appRelPdfExcelService->approvedReleasedSpgcExcelWriteResult($request->dateRange, $dataCus, $dataBar, $request->approvedType);
         }
     }
 }

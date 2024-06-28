@@ -24,11 +24,11 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
     public function __construct()
     {
     }
-    public  function approvedSpgcPdfWriteResult($dateRange, $dataCus, $dataBar)
+    public  function approvedReleasedSpgcPdfWriteResult($dateRange, $dataCus, $dataBar, $approvedType)
     {
         self::executionTime();
 
-        $html = $this->htmlStructure($dateRange, $dataCus, $dataBar);
+        $html = $this->htmlStructure($dateRange, $dataCus, $dataBar, $approvedType);
 
 
         $options = new Options();
@@ -59,9 +59,10 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
     }
 
 
-    public function htmlStructure($dateRange, $dataCus, $dataBar)
+    public function htmlStructure($dateRange, $dataCus, $dataBar, $approvedType)
     {
 
+        $approvedType == 'special external releasing' ? $headerGeneral = "Released" : "Approved";
 
         $no = 1;
         $totalDenom = 0;
@@ -86,23 +87,20 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
                 <th>No</th>
                 <th>Date Requested</th>
                 <th>Company</th>
-                <th>Approval#</th>
-                <th>Amount</th>
+                <th>' . ($approvedType === 'special external releasing' ? 'Released No.' : 'Approved No') . '</th>
+                <th>Total Amount</th>
             </tr>
-
         </thead>
 
         <tbody>';
-        $dataCus->each(function ($item) use (&$no, &$html, &$progressCount, $cuscount){
+        $dataCus->each(function ($item) use (&$no, &$html, &$progressCount, $cuscount, $headerGeneral) {
             $dataCollectionCus[] = [
                 $no++,
                 Date::parse($item->datereq)->toFormattedDateString(),
-                $item->spcus_companyname,
+                $item->spcus_acctname,
                 $item->spexgc_num,
                 $item->totdenom,
             ];
-
-            // dd($dataCollectionCus[0][0]);
 
             $html .= '<tr style="font-size: 9px;">
                 <td>' . $dataCollectionCus[0][0] . '</td>
@@ -112,7 +110,7 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
                 <td>' . $dataCollectionCus[0][4] . '</td>
               </tr>';
 
-            ApprovedReleasedEach::dispatch('Generating Pdf of Approved Reports Per Customer', $progressCount++, $cuscount, Auth::user());
+            ApprovedReleasedEach::dispatch('Generating Pdf of ' . $headerGeneral . ' Reports Per Customer', $progressCount++, $cuscount, Auth::user());
         });
 
 
@@ -132,16 +130,23 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
                 <th>Barcode</th>
                 <th>Denomination</th>
                 <th>Customer</th>
-                <th>Approval#</th>
-                <th>Date Approved</th>
+                <th>' . ($approvedType === 'special external releasing' ? 'Released No.' : 'Approved No') . '</th>
+                <th>' . ($approvedType === 'special external releasing' ? 'Released Date.' : 'Approved Date') . '</th>
             </tr>
 
         </thead>
 
         <tbody>';
 
-        $dataBar->each(function ($item) use ($barcount, &$no, &$html, &$progressCount, &$totalDenom){
-
+        $dataBar->each(function ($item) use (
+            $barcount,
+            &$no,
+            &$html,
+            &$progressCount,
+            &$totalDenom,
+            &$approvedType,
+            $headerGeneral,
+        ) {
             $totalDenom += (float)$item->spexgcemp_denom;
 
             $dataCollectionBar[] = [
@@ -151,10 +156,10 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
                 $item->spexgcemp_denom,
                 $item->full_name,
                 $item->spexgc_num,
-                Date::parse($item->daterel)->toFormattedDateString(),
+                $item->dateRelApp = $approvedType == 'special external releasing'  ? Date::parse($item->daterel)->toFormattedDateString() : Date::parse($item->daterel)->toFormattedDateString(),
             ];
 
-             $html .= '<tr style="font-size: 9px;">
+            $html .= '<tr style="font-size: 9px;">
                 <td>' . $dataCollectionBar[0][0] . '</td>
                 <td>' . $dataCollectionBar[0][1] . '</td>
                 <td  style="text-align: center;">' . $dataCollectionBar[0][2] . '</td>
@@ -165,7 +170,7 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
               </tr>';
 
 
-            ApprovedReleasedEach::dispatch('Generating Pdf of Approved Reports Per Barcode. ', $progressCount++, $barcount, Auth::user());
+            ApprovedReleasedEach::dispatch('Generating Pdf of ' . $headerGeneral . ' Reports Per Barcode. ', $progressCount++, $barcount, Auth::user());
         });
 
         $html .= '</tbody></table>';
@@ -182,22 +187,16 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
         return $html;
     }
 
-    public function approvedSpgcExcelWriteResult($dateRange, $dataCus, $dataBar)
+    public function approvedReleasedSpgcExcelWriteResult($dateRange, $dataCus, $dataBar, $approvedType)
     {
         $save = (new ExtendsExcelService())
-            ->excelWorkSheetPerBarcode($dataBar, $dateRange)
-            ->excelWorkSheetPerCustomer($dataCus, $dateRange)
+            ->approvedType($approvedType)
+            ->excelWorkSheetPerBarcode($dataBar, $dateRange, $approvedType)
+            ->excelWorkSheetPerCustomer($dataCus, $dateRange, $approvedType)
             ->save($dateRange);
 
         return Inertia::render('Finance/Results/ApprovedSpgcExcelResult', [
             'filePath' => $save,
         ]);
-    }
-
-    public function releasedSpgcPdfWriteResult()
-    {
-    }
-    public function releasedSpgcExcelWriteResult()
-    {
     }
 }
