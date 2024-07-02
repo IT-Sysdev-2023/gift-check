@@ -6,6 +6,7 @@ use App\Events\ApprovedReleasedEvents\ApprovedReleasedEach;
 use App\Helpers\Excel\ExcelWriter;
 use App\Helpers\NumberHelper;
 use Illuminate\Support\Facades\Auth;
+
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Illuminate\Support\Facades\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -38,8 +39,6 @@ class ExtendsExcelService extends ExcelWriter
 
     public function excelWorkSheetPerBarcode($dataBarcode, $dateRange)
     {
-
-        // dd($this->headerGeneral);
         $this->approvedType === 'special external releasing' ?  $headerNo  = 'Released No.' : 'Approved No';
         $this->approvedType === 'special external releasing' ?  $headerDate  = 'Released Date.' : 'Approved Date';
         $this->approvedType === 'special external releasing' ?  $headerGeneral  = 'Released' : 'Approved';

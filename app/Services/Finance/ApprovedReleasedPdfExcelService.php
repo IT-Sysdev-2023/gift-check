@@ -61,8 +61,14 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
 
     public function htmlStructure($dateRange, $dataCus, $dataBar, $approvedType)
     {
+        $headerGeneral = '';
 
-        $approvedType == 'special external releasing' ? $headerGeneral = "Released" : "Approved";
+       if( $approvedType == 'special external releasing') {
+        $headerGeneral = 'Released';
+       }else{
+        $headerGeneral = 'Approved';
+       }
+
 
         $no = 1;
         $totalDenom = 0;
@@ -74,7 +80,7 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
         $html .= '<div style="text-align: center;">';
         $html .= '<p style="font-size: 12px;">' . 'ALTURAS GROUP OF COMPANIES' . '</p>';
         $html .= '<p style="font-size: 11px;">' . 'Head Office - Finance Department' . '</p>';
-        $html .= '<p style="font-size: 11px;">' . 'Special External GC Report-Approvalt' . '</p>';
+        $html .= '<p style="font-size: 11px;">' . 'Special External GC Report - '. $headerGeneral . '</p>';
         $html .= '<p style="font-size: 11px;">' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString() . '</p>';
         $html .= '</div>';
         $html .= '<br><br>';

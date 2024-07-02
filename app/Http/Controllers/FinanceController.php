@@ -79,6 +79,7 @@ class FinanceController extends Controller
             $dataCus = ApprovedReleasedReportService::approvedReleasedGenerate($request->all());
             $dataBar = ApprovedReleasedReportService::approvedReleasedBarGenerate($request->all());
             return $this->appRelPdfExcelService->approvedReleasedSpgcExcelWriteResult($request->dateRange, $dataCus, $dataBar, $request->approvedType);
+            
         }
     }
     public function releasedSpgcPdfExcelFunction(Request $request)

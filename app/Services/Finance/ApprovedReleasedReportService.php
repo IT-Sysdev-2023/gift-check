@@ -39,6 +39,10 @@ class ApprovedReleasedReportService
     }
     public static function approvedReleasedBarGenerate($requestQuery)
     {
+        // DB::table('itsing')->join('louei', 'loeui.id', '=', 'itsing.id')
+
+        // ->get();
+
         return SpecialExternalGcrequestEmpAssign::joinDataBarTables()
         ->selectBarFilter()
         ->where('approved_request.reqap_approvedtype', empty($requestQuery['approvedType'])  ? null : $requestQuery['approvedType'])
@@ -46,5 +50,7 @@ class ApprovedReleasedReportService
         ->whereBetween('approved_request.reqap_date', [empty($requestQuery['dateRange']) ? [null, null] : $requestQuery['dateRange']])
         ->get();
     }
+
+
 
 }
