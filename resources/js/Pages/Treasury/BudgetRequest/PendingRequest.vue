@@ -55,7 +55,10 @@
                         </a-row>
 
                         <a-form-item label="Budget" name="budget">
-                            <a-input v-model:value="formState.budget" type="number"/>
+                            <a-input
+                                v-model:value="formState.budget"
+                                type="number"
+                            />
                         </a-form-item>
 
                         <a-form-item label="Remarks:" name="remarks">
@@ -117,9 +120,13 @@
                                 </a-tag>
                             </a-space>
                         </a-form-item>
-                        <a-form-item label="Upload Scan Copy"  :validate-status="formState.errors.file ? 'error' : ''"
-                        :help="formState.errors.file">
-                            
+                        <a-form-item
+                            label="Upload Scan Copy"
+                            :validate-status="
+                                formState.errors.file ? 'error' : ''
+                            "
+                            :help="formState.errors.file"
+                        >
                             <a-upload-dragger
                                 accept="image/png, image/jpeg"
                                 v-model:file-list="fileList"
@@ -136,7 +143,7 @@
                                     Click or drag image to this area to upload
                                 </p>
                                 <p class="ant-upload-hint">
-                                    png, jpg, jpeg images only are allowed 
+                                    png, jpg, jpeg images only are allowed
                                 </p>
                             </a-upload-dragger>
                         </a-form-item>
@@ -173,11 +180,12 @@ import { ref } from "vue";
 import type {
     UploadChangeParam,
     UploadProps,
-    UploadFile,
+    UploadFile, 
 } from "ant-design-vue";
 import { usePage, useForm } from "@inertiajs/vue3";
 import dayjs, { Dayjs } from "dayjs";
 import { PageProps } from "@/types/index";
+import { notification } from 'ant-design-vue';
 
 interface FormState {
     brno: string;
@@ -186,6 +194,7 @@ interface FormState {
     updatedBy: string;
     remarks: string;
     budget: string;
+    group: number;
     dateNeeded: Dayjs;
     file: UploadFile | null;
 }
@@ -194,6 +203,7 @@ const props = defineProps<{
     title: string;
     currentBudget: string;
     data: {
+        br_id: number;
         br_no: string;
         br_requested_at: Dayjs;
         br_requested_needed: Dayjs;
@@ -201,7 +211,9 @@ const props = defineProps<{
         br_remarks: string;
         br_file_docno: string;
         br_requested_by: string;
+        br_group: number;
         user: {
+            user_id: number;
             full_name: string;
         };
     };
@@ -219,6 +231,7 @@ const formState = useForm<FormState>({
     updatedBy: page.auth.user.full_name,
     createdBy: props.data.user.full_name,
     remarks: props.data.br_remarks,
+    group: props.data.br_group,
     file: null,
 });
 
@@ -226,11 +239,37 @@ const handleChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };
 const onFinish = (values: any) => {
-    formState.transform((data) => ({
-        ...data,
-        document: props.data.br_file_docno
-    }))
-    .post(route('treasury.budget.request.budget.entry'));
+    formState
+        .transform((data) => ({
+            ...data,
+            updatedById: props.data.user.user_id,
+            dateRequested: dayjs(data.dateRequested).format(
+                "YYYY-MM-DD HH:mm:ss"
+            ),
+            dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
+            document: props.data.br_file_docno,
+        }))
+        .post(route("treasury.budget.request.budget.entry", props.data.br_id), { preserveScroll: true,
+            onSuccess: (pages: {
+                props: { flash?: { success: string, error: string }; [key: string]: unknown };
+            }) => {
+                if(pages.props.flash.success){
+                    openNotificationWithIcon('success', 'Success Mate', pages.props.flash.success)
+                }
+
+                if(pages.props.flash.error){
+                    openNotificationWithIcon('success', 'Failed Mate', pages.props.flash.error)
+                }
+            }
+        });
+};
+
+const openNotificationWithIcon = (type: string, title: string, description: string) => {
+  notification[type]({
+    message: title,
+    description:
+      description,
+  });
 };
 
 const onFinishFailed = (errorInfo: any) => {

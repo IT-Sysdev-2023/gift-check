@@ -15,7 +15,9 @@ class BudgetRequest extends Model
 
     protected $table = 'budget_request';
     protected $primaryKey = 'br_id';
-
+    protected $guarded = [];
+    public $timestamps = false;
+    
     public function scopeFilter(Builder $builder, $filter)
     {
         return $builder->when($filter['date'] ?? null, function ($query, $date) {

@@ -88,19 +88,41 @@ class BudgetRequestService
 		return response()->json($data);
 	}
 
-	public function submitBudgetEntry(Request $request){
-		// dd("{$request->user()->user_id}-" . now()->toDateTimeString() . ".jpg");
+	public function submitBudgetEntry(BudgetRequest $id,Request $request){
 		$request->validate([
-			'file' => 'image|mimes:jpeg,png,jpg|max:5048'
+			'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048'
 		]);
 
 		$disk = Storage::disk('public');
+		$folderName = "BudgetRequestScanCopy/";
+		$filename = $request->document;
 		
-		if(!is_null($request->file)){
-			$disk->putFileAs('BudgetRequestScanCopy', $request->file, "{$request->user()->user_id}-" . now()->format('Y-m-d-His') . ".jpg");
-		}
+		if($request->hasFile('file')){
+			
+			if(!is_null($request->document)){
+				//delete old image
+				$disk->delete($folderName.$request->document);
+			}
 
-		dd($disk);
+			//insert new image
+			$filename = "{$request->user()->user_id}-" . now()->format('Y-m-d-His') . ".jpg";
+			$disk->putFileAs($folderName, $request->file, $filename);
+		}
+		$res = $id->update([
+			'br_requested_by' => $request->updatedById,
+			'br_request' => $request->budget,
+			'br_remarks' => $request->remarks,
+			'br_requested_needed' => $request->dateNeeded,
+			'br_file_docno' => $filename,
+			'br_group' => $request->group ?? 0,
+		]);
+
+		if($res){
+			session()->flash('success', 'Update Successfully');
+		}else{
+			session()->flash('error', 'Update Failed');
+		}
+		return redirect()->back();
 		
 	}
 }
