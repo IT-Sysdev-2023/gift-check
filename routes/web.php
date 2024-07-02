@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\CustodianController;
 use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
@@ -118,6 +119,12 @@ Route::prefix('treasury')->group(function () {
     });
 
 });
+Route::prefix('documents')->group(function () {
+    Route::name('start.')->group(function (){
+        Route::get('budget-ledger', [DocumentController::class, 'startGeneratingBudgetLedger'])->name('budget.ledger');
+    });
+});
+
 
 //Finance
 Route::prefix('finance')->group(function () {

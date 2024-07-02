@@ -19,6 +19,7 @@
                         Spgc Released Reports
                     </span>
                 </template>
+                <!-- ehehehehe -->
                 <ReleasedTab :datarecordsReleased="data" :datacolumnsReleased="columns" :filtersReleased="filters" />
             </a-tab-pane>
         </a-tabs>
