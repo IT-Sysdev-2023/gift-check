@@ -11,7 +11,7 @@
         <a-table :dataSource="data.data" size="small" bordered :columns="columns" :pagination="false">
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex == 'View'">
-                 
+
                     <a-button @click="viewDetails(record)">
                         <template #icon>
                             <EyeOutlined />
@@ -28,7 +28,7 @@
         <a-table :data-source="selectedData" :columns="selectedDataColumns">
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex == 'View'">
-                    <a-button @click="viewBarcodeDetails(record)" v-if="record.vs_tf_used !== null">
+                    <a-button @click="viewBarcodeDetails(record)" v-if="record.vs_tf_used == '*'">
                         <template #icon>
                             <EyeOutlined />
                         </template>
@@ -37,7 +37,7 @@
             </template>
         </a-table>
     </a-modal>
-    <a-modal v-model:open="selectedBarcodeModal" width="80%" style="top: 65px" :title="selectedBarcodeTitle"
+    <a-modal v-model:open="selectedBarcodeModal" width="100%" style="top: 65px" :title="selectedBarcodeTitle"
         :confirm-loading="confirmLoading" @ok="handleOkselectedBarcode" @cancel="handleCancelSelectedBarcode">
         <a-table :data-source="selectedBarcodeDetails" :columns="selectedBarcodeColumns">
             <template #bodyCell="{ column, record }"></template>
@@ -120,7 +120,7 @@ export default {
         search: {
             deep: true,
             handler: debounce(function () {
-                this.$inertia.get(route("verified.gc.alturas.mall"), {
+                this.$inertia.get(route("sales.store.sales"), {
                     search: this.search
                 }, {
                     preserveState: true,

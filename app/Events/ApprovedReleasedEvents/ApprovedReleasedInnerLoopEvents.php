@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\ApprovedReleasedEvents;
 
 use App\Helpers\NumberHelper;
 use Illuminate\Broadcasting\Channel;
@@ -13,7 +13,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
 
-class ApprovedReleasedEvents implements ShouldBroadcastNow
+class ApprovedReleasedInnerLoopEvents implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -36,13 +36,13 @@ class ApprovedReleasedEvents implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('generating-app-release-reports.' . $this->user->user_id),
+            new PrivateChannel('generating-app-release-reports-inner.' . $this->user->user_id),
         ];
     }
 
     public function broadcastAs()
     {
-        return 'generate-app-rel';
+        return 'generate-app-rel-inner';
     }
 
     public function broadcastWith()
