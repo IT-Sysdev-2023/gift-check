@@ -28,7 +28,6 @@ class DocumentController extends Controller
                 ]
             )
             ->orderBy('bledger_no', 'ASC')->limit(100)->get();
-            dd($request->date);
 
         $save = (new DocumentBudgetLedgerService)
             ->record($record)
