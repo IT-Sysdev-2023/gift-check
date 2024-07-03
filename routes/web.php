@@ -111,6 +111,7 @@ Route::prefix('treasury')->group(function () {
             
             Route::get('pending-request',  [BudgetRequestService::class, 'pendingRequest'])->name('pending');
             Route::post('submit-budget-entry/{id}',  [BudgetRequestService::class, 'submitBudgetEntry'])->name('budget.entry');
+            Route::get('download-document/{file}', [BudgetRequestService::class, 'downloadDocument'])->name('download.document');
         });
 
 

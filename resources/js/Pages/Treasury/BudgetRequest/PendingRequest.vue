@@ -166,7 +166,7 @@
                         style="margin-right: 50px"
                     >
                         <template #prefix>
-                            <arrow-up-outlined />
+                            <FireOutlined twoToneColor='#3f8600' />
                         </template>
                     </a-statistic>
                 </a-card>
@@ -225,9 +225,8 @@ const formState = useForm<FormState>({
 const handleChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };
-
+const {notification, onLoading} = onProgress();
 const onFinish = (values: any) => {
-    const {notification, onLoading} = onProgress();
     onLoading();
 
     formState
@@ -243,7 +242,7 @@ const onFinish = (values: any) => {
         .post(route("treasury.budget.request.budget.entry", props.data.br_id), {
             preserveScroll: true,
             onSuccess: (pages: { props: FlashProps }) => {
-               notification(pages);
+               notification(pages.props.flash);
             },
         });
 };
@@ -253,6 +252,7 @@ const onFinishFailed = (errorInfo: any) => {
 };
 
 const download = (file: string) => {
-    console.log(file);
+    const url = route('treasury.budget.request.download.document', { file: file });
+    location.href = url;
 };
 </script>
