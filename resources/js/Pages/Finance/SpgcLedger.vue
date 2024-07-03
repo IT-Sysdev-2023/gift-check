@@ -44,7 +44,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
 import dayjs from "dayjs";
-import { highlighten } from "@/Mixin/highlighten";
+import { highlighten } from "@/Mixin/UiUtilities";
 
 export default {
     layout: AuthenticatedLayout,

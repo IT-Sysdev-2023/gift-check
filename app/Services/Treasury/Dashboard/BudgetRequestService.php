@@ -2,27 +2,44 @@
 
 namespace App\Services\Treasury\Dashboard;
 
-use App\Http\Resources\BudgetLedgerApprovedResource;
+use App\Models\LedgerBudget;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\BudgetRequestResource;
 use App\Models\BudgetRequest;
+use App\Services\Treasury\ColumnHelper;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class BudgetRequestService
 {
 
-	public static function pendingRequest(): Collection //pending_budget_request
+	public function pendingRequest() //pending_budget_request
 	{
-
 		$dept = request()->user()->usertype;
-		$type = $dept == 2 ? 1 : $dept == 6 ? 2 : $dept;
-		// $type = 2;
+
+		$type = match($dept) {
+			'2' => 1,
+			'6' => 2,
+			default => $dept
+		};
+		
 		$record = BudgetRequest::with(['user:user_id,firstname,lastname,usertype', 'user.accessPage:access_no,title'])
 			->select('br_request', 'br_no', 'br_requested_by', 'br_remarks', 'br_file_docno', 'br_id', 'br_requested_at', 'br_requested_needed', 'br_group', 'br_preapprovedby')
 			->where([['br_request_status', '0'], ['br_type', $type]])
 			->orderBy('br_id')
 			->first();
 
-		return $record;
+			return inertia(
+				'Treasury/BudgetRequest/PendingRequest',
+				[
+					// 'filters' => $request->all('search', 'date'),
+					'currentBudget' => LedgerBudget::currentBudget(),
+					'title' => 'Update Budget Entry Form',
+					'data' => $record,
+					// 'columns' => ColumnHelper::$approved_buget_request,
+				]
+	
+			);
 	}
 
 
@@ -43,25 +60,71 @@ class BudgetRequestService
 	}
 
 	public function budgetRequestApproved(Request $request)
-    {
-        $record = BudgetRequest::join('users', 'users.user_id', 'budget_request.br_requested_by')
-            ->leftJoin('approved_budget_request', 'budget_request.br_id', 'approved_budget_request.abr_budget_request_id')
-            ->select('users.lastname', 'users.firstname', 'br_request', 'br_no', 'br_id', 'br_requested_at', 'abr_approved_by', 'abr_approved_at')
-            ->filter($request->only('search', 'date'))
-            ->where('br_request_status', '1')
-            ->orderByDesc('br_requested_at')
-            ->paginate()
-            ->withQueryString();
+	{
+		$record = BudgetRequest::with(['user', 'approvedBudgetRequest'])
+			// ->leftJoin('approved_budget_request', 'budget_request.br_id', 'approved_budget_request.abr_budget_request_id')
+			// ->select('users.lastname', 'users.firstname', 'br_request', 'br_no', 'br_id', 'br_requested_at', 'abr_approved_by', 'abr_approved_at')
+			->filter($request->only('search', 'date'))
+			->where('br_request_status', '1')
+			->orderByDesc('br_requested_at')
+			->paginate()
+			->withQueryString();
+		return inertia(
+			'Treasury/BudgetRequest/TableApproved',
+			[
+				'filters' => $request->all('search', 'date'),
+				'title' => 'Approved Budget Request',
+				'data' => BudgetRequestResource::collection($record),
+				'columns' => ColumnHelper::$approved_buget_request,
+			]
 
-        return inertia(
-            'Treasury/Table',
-            [
-                'filters' => $request->all('search', 'date'),
-                'title' => 'Approved Budget Request',
-                'data' => BudgetLedgerApprovedResource::collection($record),
-                'columns' => ColumnHelper::$approved_buget_request,
-            ]
+		);
+	}
 
-        );
-    }
+	public function viewBudgetRequestApproved(BudgetRequest $budgetRequest)
+	{
+		$record = $budgetRequest->load(['user:user_id,firstname,lastname', 'approvedBudgetRequest.user:user_id,firstname,lastname']);
+		$data = new BudgetRequestResource($record);
+		return response()->json($data);
+	}
+
+	public function submitBudgetEntry(BudgetRequest $id,Request $request){
+
+		// dd($request->all());
+		$request->validate([
+			'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048'
+		]);
+
+		$disk = Storage::disk('public');
+		$folderName = "BudgetRequestScanCopy/";
+		$filename = $request->document;
+		
+		if($request->hasFile('file')){
+			
+			if(!is_null($request->document)){
+				//delete old image
+				$disk->delete($folderName.$request->document);
+			}
+
+			//insert new image
+			$filename = "{$request->user()->user_id}-" . now()->format('Y-m-d-His') . ".jpg";
+			$disk->putFileAs($folderName, $request->file, $filename);
+		}
+		$res = $id->update([
+			'br_requested_by' => $request->updatedById,
+			'br_request' => $request->budget,
+			'br_remarks' => $request->remarks,
+			'br_requested_needed' => $request->dateNeeded,
+			'br_file_docno' => $filename,
+			'br_group' => $request->group ?? 0,
+		]);
+
+		if(!$res){
+			session()->flash('success', 'Update Successfully');
+		}else{
+			session()->flash('error', 'Update Failed');
+		}
+		return redirect()->back();
+		
+	}
 }

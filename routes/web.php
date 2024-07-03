@@ -12,6 +12,7 @@ use App\Http\Controllers\RetailController;
 use App\Http\Controllers\Treasury\MainController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Middleware\UserTypeRoute;
+use App\Services\Treasury\Dashboard\BudgetRequestService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -104,10 +105,12 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 //Treasury
 Route::prefix('treasury')->group(function () {
     Route::name('treasury.')->group(function () {
-        Route::prefix('budget-request')->group(function () {
-            Route::get('approved', [TreasuryController::class, 'budgetRequestApproved'])->name('approved.budget.ledger');
-            Route::get('view-approved-record/${id}',  [TreasuryController::class, 'viewBudgetRequestApproved'])->name('view.approved.budget.ledger');
-            Route::get('pending-request',  [TreasuryController::class, 'pendingRequest'])->name('pending.request');
+        Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
+            Route::get('approved', [BudgetRequestService::class, 'budgetRequestApproved'])->name('approved');
+            Route::get('view-approved-record/${id}',  [BudgetRequestService::class, 'viewBudgetRequestApproved'])->name('view.approved');
+            
+            Route::get('pending-request',  [BudgetRequestService::class, 'pendingRequest'])->name('pending');
+            Route::post('submit-budget-entry/{id}',  [BudgetRequestService::class, 'submitBudgetEntry'])->name('budget.entry');
         });
 
 

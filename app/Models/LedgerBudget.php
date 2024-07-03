@@ -63,6 +63,6 @@ class LedgerBudget extends Model
             ->whereNot('bcus_guide', 'dti')->first();
 
         $budget = bcsub($query->debit, $query->credit, 2);
-        return  $budget;
+        return NumberHelper::currency((float) $budget);
     }
 }

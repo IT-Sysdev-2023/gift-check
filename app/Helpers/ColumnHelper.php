@@ -156,44 +156,6 @@ class ColumnHelper
 
     ];
 
-    public static $approved_buget_request = [
-        [
-            'title' => 'BR No.',
-            'dataIndex' => 'br_no',
-
-        ],
-        [
-            'title' => 'Date Requested',
-            'dataIndex' => 'date_requested',
-
-        ],
-        [
-            'title' => 'Budget Requested',
-            'dataIndex' => 'budget_requested',
-
-        ],
-        [
-            'title' => 'Prepaired By',
-            'dataIndex' => 'prepared_by',
-
-        ],
-        [
-            'title' => 'Date Approved',
-            'dataIndex' => 'date_approved',
-
-        ],
-        [
-            'title' => 'Approved By',
-            'dataIndex' => 'approved_by',
-
-        ],
-        [
-            'title' => 'Actions',
-            'dataIndex' => 'action'
-
-        ],
-    ];
-
     public static function getColumns($columns)
     {
         return array_map(function ($item) {
