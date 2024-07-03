@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\LedgerBudget;
+use App\Services\Documents\DocumentBudgetLedgerService;
 use App\Services\Documents\DocumentService;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DocumentController extends Controller
 {
@@ -24,10 +27,16 @@ class DocumentController extends Controller
                     'bcredit_amt'
                 ]
             )
-            ->orderByDesc('bledger_no')->get();
+            ->orderBy('bledger_no', 'ASC')->limit(100)->get();
+            dd($request->date);
 
-        return (new DocumentService)
+        $save = (new DocumentBudgetLedgerService)
             ->record($record)
-            ->writeResult();
+            ->writeResult($request->date)
+            ->save($request->date);
+
+        return Inertia::render('Documents/BudgetLedger', [
+            'filePath' => $save,
+        ]);
     }
 }

@@ -142,7 +142,10 @@ export default {
         },
 
         start(){
-            this.$inertia.get(route('start.budget.ledger'));
+            this.$inertia.get(route('start.budget.ledger'),{
+                date: this.filters.date ? [dayjs(this.filters.date[0]).format('YYYY-MM-DD'), dayjs(this.filters.date[1]).format('YYYY-MM-DD')]
+                : []
+            });
         }
     },
 
