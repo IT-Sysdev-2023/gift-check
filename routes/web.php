@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\CustodianController;
 use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
@@ -121,6 +122,12 @@ Route::prefix('treasury')->group(function () {
     });
 
 });
+Route::prefix('documents')->group(function () {
+    Route::name('start.')->group(function (){
+        Route::get('budget-ledger', [DocumentController::class, 'startGeneratingBudgetLedger'])->name('budget.ledger');
+    });
+});
+
 
 //Finance
 Route::prefix('finance')->group(function () {
@@ -128,8 +135,8 @@ Route::prefix('finance')->group(function () {
         Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
         Route::get('approved-released-reports', [FinanceController::class, 'approvedAndReleasedSpgc'])->name('approved.released.reports');
-        Route::get('generate-approved-spgc-reports', [FinanceController::class, 'approvedSpgdcPdfExcelFunction'])->name('approved.spgc.pdf.result');
-        Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.result');
+        Route::get('generate-approved-spgc-reports', [FinanceController::class, 'approvedSpgdcPdfExcelFunction'])->name('approved.spgc.pdf.excel');
+        Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.excel');
     });
 
     Route::get('/download/{filename}', function ($filename) {

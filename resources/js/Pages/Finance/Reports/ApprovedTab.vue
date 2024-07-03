@@ -2,10 +2,6 @@
 
     <ProgressBar v-if="isGenerating" :progressBar="progressBar" />
 
-    <ProgressHeader v-if="isGeneratingHeader" :progressBarHeader="progressBarHeader" />
-
-    <ProgressBarInner v-if="isGeneratingInner" :progressBarInner="progressBarInner" />
-
     <div class="flex justify-between">
         <div>
             <a-range-picker style="width: 400px;" v-model:value="formApproved.dateRange" />
@@ -38,6 +34,7 @@
             </div>
         </div>
     </div>
+
     <a-tabs v-model:activeKey="activeKey" tabPosition="left" class="mt-10" type="card">
         <a-tab-pane key="1" tab="Approved Per Customers">
             <p class="text-center underline"> Approved Reports Per Customers Table</p>
@@ -54,6 +51,7 @@
             <Pagination :datarecords="datarecordsApproved?.dataBar" class="mt-5" />
         </a-tab-pane>
     </a-tabs>
+
 </template>
 
 <script>
@@ -105,9 +103,10 @@ export default {
     },
     methods: {
         generateApprovedReleasedReports() {
-            this.$inertia.get(route('finance.approved.spgc.pdf.result'), {
+            this.$inertia.get(route('finance.approved.spgc.pdf.excel'), {
                 dateRange: this.filtersApproved.dateRange ? this.filtersApproved.dateRange.map((date) => dayjs(date).format('YYYY-MM-DD')) : [],
                 ext: this.formApproved.extension,
+                approvedType: this.formApproved.approvedType
             }, {
                 preserveState: true,
             });

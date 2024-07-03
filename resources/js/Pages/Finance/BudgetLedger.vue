@@ -12,7 +12,7 @@
                     <template #icon>
                         <FileExcelOutlined />
                     </template>
-                    Export to Excel
+                    Generate Excel Report
                 </a-button>
             </div>
         </div>
