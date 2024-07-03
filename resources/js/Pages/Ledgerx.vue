@@ -67,7 +67,7 @@ import dayjs from "dayjs";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
-import { highlighten } from "@/Mixin/highlighten";
+import { highlighten } from "@/Mixin/UiUtilities";
 
 export default {
     layout: AuthenticatedLayout,

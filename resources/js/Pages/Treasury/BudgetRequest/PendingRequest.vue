@@ -180,24 +180,11 @@ import { ref } from "vue";
 import type {
     UploadChangeParam,
     UploadProps,
-    UploadFile, 
 } from "ant-design-vue";
 import { usePage, useForm } from "@inertiajs/vue3";
 import dayjs, { Dayjs } from "dayjs";
-import { PageProps } from "@/types/index";
-import { notification } from 'ant-design-vue';
-
-interface FormState {
-    brno: string;
-    dateRequested: Dayjs;
-    createdBy: string;
-    updatedBy: string;
-    remarks: string;
-    budget: string;
-    group: number;
-    dateNeeded: Dayjs;
-    file: UploadFile | null;
-}
+import { PageProps, FormState, FlashProps } from "@/types/index";
+import { onProgress } from "@/Mixin/UiUtilities";
 
 const props = defineProps<{
     title: string;
@@ -238,38 +225,27 @@ const formState = useForm<FormState>({
 const handleChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };
+
 const onFinish = (values: any) => {
+    const {notification, onLoading} = onProgress();
+    onLoading();
+
     formState
         .transform((data) => ({
             ...data,
             updatedById: props.data.user.user_id,
-            dateRequested: dayjs(data.dateRequested).format(
+            dateRequested: data.dateRequested.format(
                 "YYYY-MM-DD HH:mm:ss"
             ),
-            dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
+            dateNeeded: data.dateNeeded.format("YYYY-MM-DD"),
             document: props.data.br_file_docno,
         }))
-        .post(route("treasury.budget.request.budget.entry", props.data.br_id), { preserveScroll: true,
-            onSuccess: (pages: {
-                props: { flash?: { success: string, error: string }; [key: string]: unknown };
-            }) => {
-                if(pages.props.flash.success){
-                    openNotificationWithIcon('success', 'Success Mate', pages.props.flash.success)
-                }
-
-                if(pages.props.flash.error){
-                    openNotificationWithIcon('success', 'Failed Mate', pages.props.flash.error)
-                }
-            }
+        .post(route("treasury.budget.request.budget.entry", props.data.br_id), {
+            preserveScroll: true,
+            onSuccess: (pages: { props: FlashProps }) => {
+               notification(pages);
+            },
         });
-};
-
-const openNotificationWithIcon = (type: string, title: string, description: string) => {
-  notification[type]({
-    message: title,
-    description:
-      description,
-  });
 };
 
 const onFinishFailed = (errorInfo: any) => {

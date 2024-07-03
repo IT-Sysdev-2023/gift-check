@@ -2,11 +2,13 @@ export interface User {
     user_id: number;
     name: string;
     email: string;
-    full_name:string;
+    full_name: string;
     email_verified_at: string;
 }
 
-export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+export type PageProps<
+    T extends Record<string, unknown> = Record<string, unknown>
+> = T & {
     auth: {
         user: User;
     };
@@ -15,12 +17,29 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
 interface SharedProps extends PageProps {
     auth: {
         user: {
-            id: number,
-            name: string,
-            email: string,
-            full_name: string,
-        }
-    }
+            id: number;
+            name: string;
+            email: string;
+            full_name: string;
+        };
+    };
 }
 
-export type PageWithSharedProps = InertiaPage<SharedProps>
+export interface FormState {
+    brno: string;
+    dateRequested: Dayjs;
+    createdBy: string;
+    updatedBy: string;
+    remarks: string;
+    budget: string;
+    group: number;
+    dateNeeded: Dayjs;
+    file: UploadFile | null;
+}
+
+export interface FlashProps {
+    flash?: { success: string; error: string };
+    [key: string]: unknown;
+}
+
+export type PageWithSharedProps = InertiaPage<SharedProps>;

@@ -1,5 +1,5 @@
 <script setup>
-import { highlighten } from "@/Mixin/highlighten";
+import { highlighten } from "@/Mixin/UiUtilities";
 import Description from "./Description.vue";
 import { ref } from "vue";
 

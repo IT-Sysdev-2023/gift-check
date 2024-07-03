@@ -89,6 +89,8 @@ class BudgetRequestService
 	}
 
 	public function submitBudgetEntry(BudgetRequest $id,Request $request){
+
+		// dd($request->all());
 		$request->validate([
 			'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048'
 		]);
@@ -117,7 +119,7 @@ class BudgetRequestService
 			'br_group' => $request->group ?? 0,
 		]);
 
-		if($res){
+		if(!$res){
 			session()->flash('success', 'Update Successfully');
 		}else{
 			session()->flash('error', 'Update Failed');
