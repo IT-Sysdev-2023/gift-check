@@ -21,7 +21,7 @@ class ColumnHelper
 
         ],
         [
-            'title' => 'Prepaired By',
+            'title' => 'Prepared By',
             'dataIndex' => ['prepared_by', 'full_name'],
             'key' => 'prepared_by',
 
@@ -41,6 +41,42 @@ class ColumnHelper
         [
             'title' => 'Actions',
             'dataIndex' => 'action'
+
+        ],
+    ];
+
+    public static $cancelled_buget_request = [
+        [
+            'title' => 'BR No.',
+            'dataIndex' => 'br_no',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'br_requested_at',
+
+        ],
+        [
+            'title' => 'Budget Requested',
+            'dataIndex' => 'br_request',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'dataIndex' => ['prepared_by', 'full_name'],
+            'key' => 'prepared_by',
+
+        ],
+        [
+            'title' => 'Date Cancelled',
+            'dataIndex' => ['cancelled_request', 'cdreq_at'],
+            'key' => 'date_cancelled'
+
+        ],
+        [
+            'title' => 'Cancelled By',
+            'dataIndex' => ['cancelled_by', 'approved_by'],
+            'key' => 'approved_by',
 
         ],
     ];

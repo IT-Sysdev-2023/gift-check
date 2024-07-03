@@ -107,12 +107,15 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 Route::prefix('treasury')->group(function () {
     Route::name('treasury.')->group(function () {
         Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
-            Route::get('approved', [BudgetRequestService::class, 'budgetRequestApproved'])->name('approved');
-            Route::get('view-approved-record/${id}',  [BudgetRequestService::class, 'viewBudgetRequestApproved'])->name('view.approved');
+            Route::get('approved', [BudgetRequestService::class, 'approvedRequest'])->name('approved');
+            Route::get('view-approved-record/${id}',  [BudgetRequestService::class, 'viewApprovedRequest'])->name('view.approved');
             
             Route::get('pending-request',  [BudgetRequestService::class, 'pendingRequest'])->name('pending');
             Route::post('submit-budget-entry/{id}',  [BudgetRequestService::class, 'submitBudgetEntry'])->name('budget.entry');
             Route::get('download-document/{file}', [BudgetRequestService::class, 'downloadDocument'])->name('download.document');
+
+            Route::get('cancelled-request',  [BudgetRequestService::class, 'cancelledRequest'])->name('cancelled');
+
         });
 
 

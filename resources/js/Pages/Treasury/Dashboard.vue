@@ -38,7 +38,9 @@ defineProps<{
     };
 }>();
 
-const budgetRequestCancelled = () => {};
+const budgetRequestCancelled = () => {
+    router.get(route("treasury.budget.request.cancelled"));
+};
 
 const budgetRequestPending = () => {
     router.get(route("treasury.budget.request.pending"));
