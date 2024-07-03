@@ -97,6 +97,8 @@ declare module 'vue' {
     FileSearchOutlined: typeof import('@ant-design/icons-vue')['FileSearchOutlined']
     FinanceDashboard: typeof import('./resources/js/Pages/Finance/FinanceDashboard.vue')['default']
     FinanceSideBar: typeof import('./resources/js/Components/FinanceSideBar.vue')['default']
+    FireOutlined: typeof import('@ant-design/icons-vue')['FireOutlined']
+    FireTwoTone: typeof import('@ant-design/icons-vue')['FireTwoTone']
     ForgotPassword: typeof import('./resources/js/Pages/Auth/ForgotPassword.vue')['default']
     GroupOutlined: typeof import('@ant-design/icons-vue')['GroupOutlined']
     GuestLayout: typeof import('./resources/js/Layouts/GuestLayout.vue')['default']
