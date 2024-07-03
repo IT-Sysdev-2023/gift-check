@@ -76,7 +76,11 @@ const budgetRequestApproved = () => {
                                     title="Current Budget"
                                     :value="data?.budget"
                                     style="margin-right: 50px"
-                                />
+                                >
+                                    <template #prefix>
+                                        <FireOutlined />
+                                    </template>
+                                </a-statistic>
                             </a-col>
                             <a-col :span="12">
                                 <a-statistic

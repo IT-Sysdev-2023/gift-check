@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
 class BudgetRequestService
 {
 
+	private static $folderName = "BudgetRequestScanCopy/";
+	private $disk;
+
+	public function __construct() {
+		$this->disk = Storage::disk('public');
+	}
 	public function pendingRequest() //pending_budget_request
 	{
 		$dept = request()->user()->usertype;
@@ -81,50 +87,58 @@ class BudgetRequestService
 		);
 	}
 
-	public function viewBudgetRequestApproved(BudgetRequest $budgetRequest)
+	public function viewBudgetRequestApproved(BudgetRequest $id)
 	{
-		$record = $budgetRequest->load(['user:user_id,firstname,lastname', 'approvedBudgetRequest.user:user_id,firstname,lastname']);
+		$record = $id->load(['user:user_id,firstname,lastname', 'approvedBudgetRequest.user:user_id,firstname,lastname']);
 		$data = new BudgetRequestResource($record);
 		return response()->json($data);
 	}
 
 	public function submitBudgetEntry(BudgetRequest $id,Request $request){
-
-		// dd($request->all());
 		$request->validate([
 			'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048'
 		]);
-
-		$disk = Storage::disk('public');
-		$folderName = "BudgetRequestScanCopy/";
 		$filename = $request->document;
 
-		if($request->hasFile('file')){
-
-			if(!is_null($request->document)){
-				//delete old image
-				$disk->delete($folderName.$request->document);
+		if($id->br_request_status == 0){
+			
+			if($request->hasFile('file')){
+			
+				if(!is_null($request->document)){
+					//delete old image
+					$this->disk->delete(self::$folderName.$request->document);
+				}
+				//insert new image
+				$filename = "{$request->user()->user_id}-" . now()->format('Y-m-d-His') . ".jpg";
+				$this->disk->putFileAs(self::$folderName, $request->file, $filename);
 			}
-
-			//insert new image
-			$filename = "{$request->user()->user_id}-" . now()->format('Y-m-d-His') . ".jpg";
-			$disk->putFileAs($folderName, $request->file, $filename);
-		}
-		$res = $id->update([
-			'br_requested_by' => $request->updatedById,
-			'br_request' => $request->budget,
-			'br_remarks' => $request->remarks,
-			'br_requested_needed' => $request->dateNeeded,
-			'br_file_docno' => $filename,
-			'br_group' => $request->group ?? 0,
-		]);
-
-		if(!$res){
-			session()->flash('success', 'Update Successfully');
+			$res = $id->update([
+				'br_requested_by' => $request->updatedById,
+				'br_request' => $request->budget,
+				'br_remarks' => $request->remarks,
+				'br_requested_needed' => $request->dateNeeded,
+				'br_file_docno' => $filename,
+				'br_group' => $request->group ?? 0,
+			]);
+	
+			if($res){
+				session()->flash('success', 'Update Successfully');
+			}else{
+				session()->flash('error', 'Something went wrong while updating..');
+			}
 		}else{
-			session()->flash('error', 'Update Failed');
+			session()->flash('error', 'Budget request already approved/cancelled.');
 		}
 		return redirect()->back();
 
+	}
+
+	public function downloadDocument($file)
+	{
+		if($this->disk->exists(self::$folderName.$file)){
+			return $this->disk->download(self::$folderName.$file);
+		}else{
+			return redirect()->back()->with('error', 'File Not Found');
+		}
 	}
 }
