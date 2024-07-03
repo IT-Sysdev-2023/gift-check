@@ -63,7 +63,7 @@ const { highlightText } = highlighten();
                     <a-button
                         type="primary"
                         size="small"
-                        @click="viewRecord(record.id)"
+                        @click="viewRecord(record.br_id)"
                     >
                         <template #icon>
                             <FileSearchOutlined />
@@ -118,10 +118,10 @@ export default {
         },
     },
     methods: {
-        async viewRecord($id) {
+        async viewRecord(id) {
             try {
                 const { data } = await axios.get(
-                    route("treasury.budget.request.view.approved", $id)
+                    route("treasury.budget.request.view.approved", id)
                 );
                 this.descriptionRecord = data;
             } finally {
