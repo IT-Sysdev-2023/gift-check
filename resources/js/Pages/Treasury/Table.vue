@@ -31,11 +31,11 @@ const { highlightText } = highlighten();
                     placeholder="Search here..."
                     style="width: 300px"
                 />
-                <a-button type="primary">
+                <a-button type="primary" @click="start">
                     <template #icon>
                         <FileExcelOutlined />
                     </template>
-                    Export to Excel
+                    Generate To Excel
                 </a-button>
             </div>
         </div>
@@ -140,6 +140,13 @@ export default {
                 this.showModal = true;
             }
         },
+
+        start(){
+            this.$inertia.get(route('start.budget.ledger'),{
+                date: this.filters.date ? [dayjs(this.filters.date[0]).format('YYYY-MM-DD'), dayjs(this.filters.date[1]).format('YYYY-MM-DD')]
+                : []
+            });
+        }
     },
 
     watch: {

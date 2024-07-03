@@ -2,7 +2,11 @@
 
 namespace App\Services\Finance\excel;
 
+use App\Events\ApprovedReleasedEvents\ApprovedReleasedEach;
 use App\Helpers\Excel\ExcelWriter;
+use App\Helpers\NumberHelper;
+use Illuminate\Support\Facades\Auth;
+
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Illuminate\Support\Facades\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -14,11 +18,30 @@ class ExtendsExcelService extends ExcelWriter
     protected $perCustomerHeader;
     protected $border;
     protected $borderFBN;
+    protected $headerBarCode;
+
+    protected $approvedType;
 
     public function __construct()
     {
         parent::__construct();
 
+        $this->border =  $this->initializedBorder();
+        $this->borderFBN =  $this->initializedBorderFontBoldNone();
+    }
+
+    public function approvedType($approvedType)
+    {
+        $this->approvedType = $approvedType;
+
+        return $this;
+    }
+
+    public function excelWorkSheetPerBarcode($dataBarcode, $dateRange)
+    {
+        $this->approvedType === 'special external releasing' ?  $headerNo  = 'Released No.' : 'Approved No';
+        $this->approvedType === 'special external releasing' ?  $headerDate  = 'Released Date.' : 'Approved Date';
+        $this->approvedType === 'special external releasing' ?  $headerGeneral  = 'Released' : 'Approved';
 
         $this->perBarcodeHeader = [
             "No.",
@@ -27,23 +50,10 @@ class ExtendsExcelService extends ExcelWriter
             "Barcode",
             "Denomination",
             "Customer",
-            "Apporval#",
-            "Date Approved",
-        ];
-        $this->perCustomerHeader = [
-            "No.",
-            "Date.",
-            "Company.",
-            "Approval",
-            "Total Denom",
+            $headerNo,
+            $headerDate,
         ];
 
-        $this->border =  $this->initializedBorder();
-        $this->borderFBN =  $this->initializedBorderFontBoldNone();
-    }
-
-    public function excelWorkSheetPerBarcode($dataBarcode, $dateRange)
-    {
         $spreadsheet = $this->spreadsheet;
 
         $this->headerExcelBarCus($dateRange);
@@ -70,14 +80,15 @@ class ExtendsExcelService extends ExcelWriter
         }
         $excelRow++;
         $numCount = 1;
+        $progressCount = 1;
 
-        $dataBarcode->each(function ($item) use (&$excelRow, &$numCount) {
+        $dataBarcode->each(function ($item) use (&$excelRow, &$numCount, &$progressCount, $dataBarcode, $headerGeneral) {
             $dataBarcodeCollection[] = [
                 $numCount++,
                 Date::parse($item->datereq)->toFormattedDateString(),
                 $item->voucher,
                 $item->spexgcemp_barcode,
-                $item->spexgcemp_denom,
+                NumberHelper::currency($item->spexgcemp_denom),
                 $item->full_name,
                 $item->spexgc_num,
                 Date::parse($item->daterel)->toFormattedDateString(),
@@ -89,6 +100,7 @@ class ExtendsExcelService extends ExcelWriter
                 $this->getActiveSheetExcel()->getStyle($col . $excelRow)->applyFromArray($this->borderFBN);
                 $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             }
+            ApprovedReleasedEach::dispatch('Generating Excel of ' . $headerGeneral .' Reports Per Barcode. ', $progressCount++, $dataBarcode->count(), Auth::user());
             $excelRow++;
         });
 
@@ -103,6 +115,17 @@ class ExtendsExcelService extends ExcelWriter
 
     public function excelWorkSheetPerCustomer($dataCustomer, $dateRange)
     {
+
+        $this->approvedType === 'special external releasing' ?  $headerNo  = 'Released No.' : 'Approved No.';
+        $this->approvedType === 'special external releasing' ?  $headerGeneral  = 'Released' : 'Approved';
+
+        $this->perCustomerHeader = [
+            "No.",
+            "Date.",
+            "Company.",
+            $headerNo,
+            "Total Denom",
+        ];
 
         $spreadsheet = $this->spreadsheet;
         $newSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'Data Per Customer');
@@ -133,14 +156,16 @@ class ExtendsExcelService extends ExcelWriter
         $excelRow++;
         $numCount = 1;
 
-        $dataCustomer->each(function ($item) use (&$excelRow, &$numCount) {
+        $progressCount = 1;
+
+        $dataCustomer->each(function ($item) use (&$excelRow, &$numCount, &$progressCount, $dataCustomer, $headerGeneral) {
 
             $dataCustomerCollection[] = [
                 $numCount++,
                 Date::parse($item->datereq)->toFormattedDateString(),
                 $item->spcus_acctname,
                 $item->spexgc_num,
-                $item->totdenom,
+                NumberHelper::currency($item->totdenom),
             ];
             $this->spreadsheet->getActiveSheet()->fromArray($dataCustomerCollection, null, "A$excelRow");
             foreach (range('A', 'E') as $col) {
@@ -148,6 +173,7 @@ class ExtendsExcelService extends ExcelWriter
                 $this->getActiveSheetExcel()->getStyle($col . $excelRow)->applyFromArray($this->borderFBN);
                 $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             }
+            ApprovedReleasedEach::dispatch('Generating Excel of ' . $headerGeneral .' Reports Per Customer. ', $progressCount++, $dataCustomer->count(), Auth::user());
             $excelRow++;
         });
 
@@ -165,7 +191,7 @@ class ExtendsExcelService extends ExcelWriter
         $spreadsheet = $this->spreadsheet;
         $fileHeader = 'Generated Excel From ' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[0])->toFormattedDateString();
 
-        $filename =  $fileHeader. '.xlsx';
+        $filename =  $fileHeader . '.xlsx';
         $filePathName = storage_path('app/' . $filename);
 
         if (!file_exists(dirname($filePathName))) {
@@ -181,6 +207,9 @@ class ExtendsExcelService extends ExcelWriter
 
     public function headerExcelBarCus($dateRange)
     {
+
+        $this->approvedType === 'special external releasing' ? $headerType  = 'RELEASING' : 'APPROVAL';
+
         $headerRow = 2;
         $this->getActiveSheetExcel()->setCellValue('A' . $headerRow, 'ALTURAS GROUP OF COMPANIES');
         $this->getActiveSheetExcel()->mergeCells('A' . $headerRow . ':E' . $headerRow);
@@ -198,7 +227,7 @@ class ExtendsExcelService extends ExcelWriter
         $this->getActiveSheetExcel()->getStyle('A' . $headerRow . ':H' . $headerRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $headerRow++;
 
-        $this->getActiveSheetExcel()->setCellValue('A' . $headerRow, 'SPECIAL EXTERNAL GC REPORT- APPROVAL');
+        $this->getActiveSheetExcel()->setCellValue('A' . $headerRow, 'SPECIAL EXTERNAL GC REPORT - ' . $headerType);
         $this->getActiveSheetExcel()->mergeCells('A' . $headerRow . ':E' . $headerRow);
         $style = $this->getActiveSheetExcel()->getStyle('A' . $headerRow . ':H' . $headerRow);
         $font = $style->getFont();

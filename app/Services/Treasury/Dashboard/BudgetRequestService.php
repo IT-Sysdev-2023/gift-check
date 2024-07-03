@@ -22,7 +22,7 @@ class BudgetRequestService
 			'6' => 2,
 			default => $dept
 		};
-		
+
 		$record = BudgetRequest::with(['user:user_id,firstname,lastname,usertype', 'user.accessPage:access_no,title'])
 			->select('br_request', 'br_no', 'br_requested_by', 'br_remarks', 'br_file_docno', 'br_id', 'br_requested_at', 'br_requested_needed', 'br_group', 'br_preapprovedby')
 			->where([['br_request_status', '0'], ['br_type', $type]])
@@ -38,7 +38,7 @@ class BudgetRequestService
 					'data' => $record,
 					// 'columns' => ColumnHelper::$approved_buget_request,
 				]
-	
+
 			);
 	}
 
@@ -98,9 +98,9 @@ class BudgetRequestService
 		$disk = Storage::disk('public');
 		$folderName = "BudgetRequestScanCopy/";
 		$filename = $request->document;
-		
+
 		if($request->hasFile('file')){
-			
+
 			if(!is_null($request->document)){
 				//delete old image
 				$disk->delete($folderName.$request->document);
@@ -125,6 +125,6 @@ class BudgetRequestService
 			session()->flash('error', 'Update Failed');
 		}
 		return redirect()->back();
-		
+
 	}
 }
