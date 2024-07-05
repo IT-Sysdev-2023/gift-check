@@ -2,7 +2,9 @@
 
 namespace App\Services\Documents;
 
+use App\Events\DocumentEvents;
 use App\Helpers\Excel\ExcelWriter;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -141,11 +143,13 @@ class DocumentBudgetLedgerService extends ExcelWriter
         $excelRow++;
         $no = 1;
 
-        $this->record->each(function ($item) use (&$no, &$excelRow) {
+        $count = count($this->record);
+
+        $this->record->each(function ($item) use (&$no, &$excelRow, $count) {
             $dataCollection[] = [
                 $no++,
                 ltrim($item->bledger_no, '0'),
-                $item->bledger_datetime,
+                Date::parse($item->bledger_datetime)->toDateString(),
                 $item->bledger_trid,
                 $item->bledger_type,
                 $item->bdebit_amt,
@@ -168,6 +172,8 @@ class DocumentBudgetLedgerService extends ExcelWriter
 
                 $this->getActiveSheetExcel()->getStyle($cell)->getFont()->getColor()->setARGB('000000');
             }
+
+            DocumentEvents::dispatch("Generating Excel in progress.. " , $no, $count , Auth::user());
 
             $excelRow++;
         });
@@ -196,7 +202,7 @@ class DocumentBudgetLedgerService extends ExcelWriter
 
         if (!empty($date)) {
             $fileHeader = 'Generated Excel From ' . Date::parse($date[0])->toFormattedDateString() . ' To ' . Date::parse($date[0])->toFormattedDateString();
-        } else {
+        } else {  
             $fileHeader = 'Generated All Report as of ' . today()->toFormattedDateString();
         }
 

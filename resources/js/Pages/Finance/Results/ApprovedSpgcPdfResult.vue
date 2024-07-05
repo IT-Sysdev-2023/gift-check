@@ -8,7 +8,7 @@
                 </template> Return Back
             </a-button>
         </template>
-        <a-card>
+        <a-card class="mb-5">
             <a-button @click="downloadFunction">
                 <template #icon>
                     <CloudDownloadOutlined />
@@ -16,17 +16,26 @@
                 Click here to Download...
             </a-button>
         </a-card>
+        <a-card>
+            <iframe :src="pdfUrl" width="100%" height="1500px"></iframe>
+        </a-card>
     </a-result>
 </template>
 <script>
 export default {
     props: {
-        filePath: Object
+        filePath: Object,
+        stream: Object,
+    },
+    data() {
+        return {
+            pdfUrl: `data:application/pdf;base64,${this.stream}`,
+        }
     },
     methods: {
         downloadFunction() {
             window.location.href = this.filePath;
         }
-    }
+    },
 }
 </script>

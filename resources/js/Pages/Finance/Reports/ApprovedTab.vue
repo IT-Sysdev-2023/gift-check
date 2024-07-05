@@ -87,18 +87,7 @@ export default {
                 totalRows: 0,
                 currentRow: 0,
             },
-            progressBarInner: {
-                percentage: 0,
-                message: "",
-                totalRows: 0,
-                currentRow: 0,
-            },
-            progressBarHeader: {
-                percentage: 0,
-                message: "",
-                totalRows: 0,
-                currentRow: 0,
-            },
+
         }
     },
     methods: {
@@ -128,16 +117,6 @@ export default {
             .listen(".generate-app-rel", (e) => {
                 this.progressBar = e;
                 this.isGenerating = true;
-            });
-        this.$ws.private(`generating-app-release-reports-inner.${this.$page.props.auth.user.user_id}`)
-            .listen(".generate-app-rel-inner", (e) => {
-                this.progressBarInner = e;
-                this.isGeneratingInner = true;
-            });
-        this.$ws.private(`generating-app-release-reports-header.${this.$page.props.auth.user.user_id}`)
-            .listen(".generate-app-rel-header", (e) => {
-                this.progressBarHeader = e;
-                this.isGeneratingHeader = true;
             });
     }
 }

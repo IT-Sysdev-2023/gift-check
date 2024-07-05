@@ -43,6 +43,8 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
 
         $output = $dompdf->output();
 
+        $stream = base64_encode($output);
+
         $filename = 'Generated Pdf From ' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString() . '.pdf';
         $filePathName = storage_path('app/' . $filename);
 
@@ -54,7 +56,8 @@ class ApprovedReleasedPdfExcelService extends ExcelWriter
         $filePath = route('download', ['filename' => $filename]);
 
         return Inertia::render('Finance/Results/ApprovedSpgcPdfResult', [
-            'filePath' => $filePath
+            'filePath' => $filePath,
+            'stream' => $stream,
         ]);
     }
 
