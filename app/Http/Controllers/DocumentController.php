@@ -28,14 +28,15 @@ class DocumentController extends Controller
                 ]
             )
             ->orderBy('bledger_no', 'ASC')->get();
-            
+
 
         $save = (new DocumentBudgetLedgerService)
             ->record($record)
-            ->writeResult($request->date)
-            ->save($request->date);
+            ->date($request->date)
+            ->writeResult()
+            ->save();
 
-        return Inertia::render('Documents/BudgetLedger', [
+        return Inertia::render('Documents/BudgetLedgerResult', [
             'filePath' => $save,
         ]);
     }

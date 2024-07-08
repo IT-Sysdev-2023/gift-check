@@ -6,9 +6,11 @@ use App\Helpers\ColumnHelper;
 use App\Http\Resources\SpgcLedgerResource;
 use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
+use App\Services\Finance\SpgcLedgerExcelService;
 use App\Services\Finance\SpgcService;
 use App\Services\Treasury\LedgerService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 use function PHPUnit\Framework\isNull;
 
@@ -95,8 +97,16 @@ class FinanceController extends Controller
         }
     }
 
-    public function generateSpgcPromotionalExcel()
+    public function generateSpgcPromotionalExcel(Request $request)
     {
-        dd(1);
+        // dd($request->date);
+        $record = LedgerService::spgcLedgerToExcel($request);
+
+        $save = (new SpgcLedgerExcelService())->record($record)->date($request->date)->writeResult()->save();
+
+        return Inertia::render('Finance/Results/SpgcLedgerResult', [
+            'filePath' => $save,
+        ]);
+
     }
 }

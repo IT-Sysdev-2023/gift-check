@@ -1,21 +1,31 @@
 <?php
 
-namespace App\Services\Documents;
+namespace App\Services\Finance;
 
-use App\Events\DocumentEvents;
+use App\Events\ApprovedReleasedEvents\ApprovedReleasedEach;
+use App\Events\ApprovedReleasedEvents\ApprovedReleasedHeader;
+use App\Events\ApprovedReleasedEvents\ApprovedReleasedInnerLoopEvents;
+use App\Events\SpgcLedgerExcelEvents;
 use App\Helpers\Excel\ExcelWriter;
+use App\Helpers\NumberHelper;
+use App\Services\Finance\excel\ExtendsExcelService;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class DocumentBudgetLedgerService extends ExcelWriter
+class SpgcLedgerExcelService extends ExcelWriter
 {
-    protected $border;
-    protected $date;
-    protected $borderFBN;
+
     protected $record;
+    protected $date;
     protected $header;
+    protected $border;
+    protected $borderFBN;
     protected $legendHeader;
     protected $legendColors;
 
@@ -33,43 +43,24 @@ class DocumentBudgetLedgerService extends ExcelWriter
             "Credit.",
         ];
         $this->legendHeader = [
-            "RFBR  - BUDGET ENTRY",
-            "RFGCP - GC PRODUCTION",
-            "GCRELINS - INSTITUTION GC RELEASING",
-            "STORESALES  - REGULAR GC",
             "RFGCSEGC -  SPECIAL GC REQUEST",
             "RFGCSEGCREL -  SPECIAL GC RELEASE",
-            "RFGCPROM -  PROMO GC REQUEST",
-            "PROMOGCRELEASING -  PROMO GC RELEASING",
-            "BEAMANDGO -  BEAM AND GO GC",
         ];
-
         $this->legendColors = [
-            '5B8FB9',
+            'CAF4FF',
             '15F5BA',
-            'E8C5E5',
-            'D6EFD8',
-            'FCDC94',
-            'FBF3D5',
-            'E8EFCF',
-            '9575DE',
-            'FFCCD2',
         ];
-
 
         $this->border =  $this->initializedBorder();
         $this->borderFBN =  $this->initializedBorderFontBoldNone();
     }
-
     public function record($record)
     {
-
         $this->record = $record;
 
         return $this;
     }
-    public function date($date)
-    {
+    public function date($date) {
         $this->date = $date;
         return $this;
     }
@@ -101,13 +92,25 @@ class DocumentBudgetLedgerService extends ExcelWriter
         }
     }
 
-    public function titleHeader($date)
+
+
+    private function transactionType(string $type)
     {
-        // dd($date);
+        $transaction = [
+            "RFGCSEGC" => 'CAF4FF',
+            "RFGCSEGCREL" => '15F5BA',
+        ];
+
+        return $transaction[$type] ?? '362222';
+    }
+
+    public function titleHeader()
+    {
+
         if(!empty($this->date)){
-            $title = "Budget Legder From " . Date::parse($this->date[0])->toFormattedDateString() . " To " . Date::parse($this->date[1])->toFormattedDateString();
+            $title = "Spgc Legder From " . Date::parse($this->date[0])->toFormattedDateString() . " To " . Date::parse($this->date[1])->toFormattedDateString();
         }else{
-            $title = "All Budget Legder as of " . today()->toFormattedDateString();
+            $title = "All Spgc Legder as of " . today()->toFormattedDateString();
 
         }
 
@@ -121,15 +124,16 @@ class DocumentBudgetLedgerService extends ExcelWriter
         $headerRow++;
     }
 
-    public function writeResult()
+
+    public function  writeResult()
     {
         $excelRow = 5;
 
         $this->getActiveSheetExcel()->fromArray($this->header, null, 'A' . $excelRow);
 
-        $this->titleHeader($this->date);
-
         $this->legendHeader();
+
+        $this->titleHeader($this->date);
 
         foreach (range('A', 'G') as $col) {
             $cell = $col . $excelRow;
@@ -149,14 +153,15 @@ class DocumentBudgetLedgerService extends ExcelWriter
         $count = count($this->record);
 
         $this->record->each(function ($item) use (&$no, &$excelRow, $count) {
+
             $dataCollection[] = [
                 $no++,
-                ltrim($item->bledger_no, '0'),
-                Date::parse($item->bledger_datetime)->toDateString(),
-                $item->bledger_trid,
-                $item->bledger_type,
-                $item->bdebit_amt,
-                $item->bcredit_amt,
+                ltrim($item->spgcledger_no, '0'),
+                Date::parse($item->spgcledger_datetime)->toDateString(),
+                $item->spgcledger_trid,
+                $item->spgcledger_type,
+                $item->spgcledger_debit,
+                $item->spgcledger_credit,
             ];
 
             $this->spreadsheet->getActiveSheet()->fromArray($dataCollection, null, "A$excelRow");
@@ -167,7 +172,7 @@ class DocumentBudgetLedgerService extends ExcelWriter
                 $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
 
-                $color =  $this->transactionType($item->bledger_type);
+                $color =  $this->transactionType($item->spgcledger_type);
 
                 $this->getActiveSheetExcel()->getStyle($cell)->getFill()
                     ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
@@ -176,37 +181,23 @@ class DocumentBudgetLedgerService extends ExcelWriter
                 $this->getActiveSheetExcel()->getStyle($cell)->getFont()->getColor()->setARGB('000000');
             }
 
-            DocumentEvents::dispatch("Generating Excel in progress.. " , $no, $count , Auth::user());
+            SpgcLedgerExcelEvents::dispatch("Generating Excel in progress.. ", $no, $count, Auth::user());
 
             $excelRow++;
         });
 
         return $this;
     }
-    private function transactionType(string $type)
-    {
-        $transaction = [
-            "RFBR" => '5B8FB9',
-            "RFGCP" => '15F5BA',
-            "GCRELINS" => 'E8C5E5',
-            "STORESALES" => 'D6EFD8',
-            "RFGCSEGC" => 'FCDC94',
-            "RFGCSEGCREL" => 'FBF3D5',
-            "RFGCPROM" => 'E8EFCF',
-            "PROMOGCRELEASING" => '9575DE',
-            "BEAMANDGO" => 'FFCCD2',
-        ];
 
-        return $transaction[$type] ?? '362222';
-    }
     public function save()
     {
+
         $spreadsheet = $this->spreadsheet;
 
         if (!empty($this->date)) {
-            $fileHeader = 'Generated Excel Budget Ledger From ' . Date::parse($this->date[0])->toFormattedDateString() . ' To ' . Date::parse($this->date[0])->toFormattedDateString();
+            $fileHeader = 'Generated Spgc Legder Excel From ' . Date::parse($this->date[0])->toFormattedDateString() . ' To ' . Date::parse($this->date[0])->toFormattedDateString();
         } else {
-            $fileHeader = 'Generated All Budget Ledger Report as of ' . today()->toFormattedDateString();
+            $fileHeader = 'Generated All Spgc Ledger Report as of ' . today()->toFormattedDateString();
         }
 
         $filename =  $fileHeader . '.xlsx';

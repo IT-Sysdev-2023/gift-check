@@ -31,11 +31,11 @@ const { highlightText } = highlighten();
             <div>
                 <a-input-search class="mr-1" v-model:value="form.search" placeholder="Search here..."
                     style="width: 300px" />
-                <a-button type="primary" @click="start">
+                <a-button type="primary" @click="start" :loading="isGenerating">
                     <template #icon>
                         <FileExcelOutlined />
                     </template>
-                    Generate To Excel
+                    {{ isGenerating ? 'Generating Excel on Progress...' :'Generate Budget Legder Excel' }}
                 </a-button>
             </div>
         </div>

@@ -1,5 +1,6 @@
 <template>
     <a-card>
+        <ProgressBar :progressBar="progressBar" v-if="isGenerating"/>
         <div class="flex justify-between mb-5">
             <div>
                 <a-range-picker v-model:value="form.date" />
@@ -7,7 +8,7 @@
             <div>
                 <a-input-search v-model:value="form.search" class="mr-1" placeholder="Search here..."
                     style="width: 300px" />
-                <a-button type="primary" @click="start">
+                <a-button type="primary" @click="start" :disabled="data.data.length <= 0">
                     <template #icon>
                         <FileExcelOutlined />
                     </template>
@@ -45,6 +46,7 @@ import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
 import dayjs from "dayjs";
 import { highlighten } from "@/Mixin/UiUtilities";
+import ProgressBar from "@/Components/Finance/ProgressBar.vue";
 
 export default {
     layout: AuthenticatedLayout,
@@ -55,7 +57,14 @@ export default {
                 date: this.filters.date
                     ? [dayjs(this.filters.date[0]), dayjs(this.filters.date[1])]
                     : [],
-            }
+            },
+            isGenerating: false,
+            progressBar: {
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+                currentRow: 0,
+            },
         }
     },
 
@@ -70,8 +79,11 @@ export default {
         filters: Object
     },
     methods: {
-        start(){
-            this.$inertia.get(route('finance.spgc.ledger.start'));
+        start() {
+            this.$inertia.get(route('finance.spgc.ledger.start'), {
+                date: this.filters.date ? [dayjs(this.filters.date[0]).format('YYYY-MM-DD'), dayjs(this.filters.date[1]).format('YYYY-MM-DD')]
+                    : []
+            });
         }
     },
     watch: {
@@ -88,6 +100,13 @@ export default {
                 );
             }, 150),
         },
+    },
+    mounted() {
+        this.$ws.private(`spgc-ledger-excel.${this.$page.props.auth.user.user_id}`)
+            .listen(".generate-excel-spgc-ledger", (e) => {
+                this.progressBar = e;
+                this.isGenerating = true;
+            });
     }
 }
 </script>

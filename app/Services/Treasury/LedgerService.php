@@ -59,7 +59,7 @@ class LedgerService extends ExcelWriter
         ]);
     }
 
-    
+
 
     public function gcLedger(Request $request) // gccheckledger.php
     {
@@ -101,4 +101,16 @@ class LedgerService extends ExcelWriter
             ->paginate(10)->withQueryString();
     }
 
+    public static function spgcLedgerToExcel($filters)
+    {
+        return LedgerSpgc::select(
+            'spgcledger_id',
+            'spgcledger_no',
+            'spgcledger_trid',
+            'spgcledger_datetime',
+            'spgcledger_type',
+            'spgcledger_debit',
+            'spgcledger_credit'
+        )->filter($filters)->get();
+    }
 }
