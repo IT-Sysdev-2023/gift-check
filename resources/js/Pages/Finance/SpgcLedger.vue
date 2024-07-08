@@ -7,11 +7,11 @@
             <div>
                 <a-input-search v-model:value="form.search" class="mr-1" placeholder="Search here..."
                     style="width: 300px" />
-                <a-button type="primary">
+                <a-button type="primary" @click="start">
                     <template #icon>
                         <FileExcelOutlined />
                     </template>
-                    Export to Excel
+                    Export to Excel Reports
                 </a-button>
             </div>
         </div>
@@ -68,6 +68,11 @@ export default {
         columns: Array,
         operators: Number,
         filters: Object
+    },
+    methods: {
+        start(){
+            this.$inertia.get(route('finance.spgc.ledger.start'));
+        }
     },
     watch: {
         form: {

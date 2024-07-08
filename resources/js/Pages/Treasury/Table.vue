@@ -67,10 +67,11 @@ const { highlightText } = highlighten();
         </a-modal>
 
         <div class="flex justify-end p-2 mt-2" v-if="remainingBudget">
-            <p class="font-semibold text-gray-700">Remaining Budget:</p>
+            <p >Remaining Budget:</p>
             &nbsp;
             <span>
-                <a-tag color="blue" style="font-size: 13px; letter-spacing: 1px">{{ remainingBudget }}</a-tag>
+                <a-typography-text keyboard  style="font-size: 13px; letter-spacing: 1px; color: blue;">{{ remainingBudget }}</a-typography-text>
+                <!-- <a-tag color="blue" style="font-size: 13px; letter-spacing: 1px">{{ remainingBudget }}</a-tag> -->
             </span>
         </div>
         <pagination-resource class="mt-5" :datarecords="data" />

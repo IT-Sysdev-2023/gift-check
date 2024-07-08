@@ -27,7 +27,8 @@ class DocumentController extends Controller
                     'bcredit_amt'
                 ]
             )
-            ->orderBy('bledger_no', 'ASC')->limit(100)->get();
+            ->orderBy('bledger_no', 'ASC')->get();
+            
 
         $save = (new DocumentBudgetLedgerService)
             ->record($record)

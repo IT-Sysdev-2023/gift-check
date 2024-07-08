@@ -13,10 +13,11 @@
                 <template #icon>
                     <CloudDownloadOutlined />
                 </template>
-                Click here to Download...
+                Click here to Download the Result below...
             </a-button>
         </a-card>
         <a-card>
+            
             <iframe :src="pdfUrl" width="100%" height="1500px"></iframe>
         </a-card>
     </a-result>
