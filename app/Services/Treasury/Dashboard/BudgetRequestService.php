@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\BudgetRequestResource;
 use App\Models\BudgetRequest;
 use App\Services\Treasury\ColumnHelper;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class BudgetRequestService
@@ -145,5 +144,12 @@ class BudgetRequestService
 		}
 	}
 
-	
+	public function viewCancelledRequest(BudgetRequest $id){
+
+		$record = $id->load(['cancelled_budget_request', 'user', 'cancelled_budget_request.user']);
+		//Untested
+		//Gamiti nig Api resource 
+		return response()->json($record);
+		
+	}
 }

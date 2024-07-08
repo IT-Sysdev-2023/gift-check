@@ -1,11 +1,16 @@
 <script setup lang="ts">
-defineProps<{
+export interface Props{
     title: string;
+    card2?: string;
     useDefault?: boolean;
     pending?: number;
     approved?: number;
     cancelled?: number;
-}>();
+};
+
+withDefaults(defineProps<Props>(), {
+    card2: 'Approved Request'
+})
 </script>
 
 <template>
@@ -21,7 +26,7 @@ defineProps<{
                 />
                 <CardBadge
                     :count="approved"
-                    title="Approved Request"
+                    :title="card2"
                     @event="$emit('approvedEvent')"
                 />
                 <slot />

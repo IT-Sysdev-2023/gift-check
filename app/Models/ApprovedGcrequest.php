@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use DateTimeInterface;
 
 class ApprovedGcrequest extends Model
 {
@@ -11,6 +12,19 @@ class ApprovedGcrequest extends Model
 
     protected $table = 'approved_gcrequest';
     protected $primaryKey = 'agcr_id';
+
+    protected function casts(): array
+    {
+        return [
+            'agcr_approved_at' => 'date'
+        ];
+    }
+    
+
+    protected function serializeDate(DateTimeInterface $date): string
+    {
+        return $date->toDayDateTimeString();
+    }
 
     public function storeGcRequest(){
         return $this->belongsTo(StoreGcrequest::class, 'agcr_request_id', 'sgc_id');

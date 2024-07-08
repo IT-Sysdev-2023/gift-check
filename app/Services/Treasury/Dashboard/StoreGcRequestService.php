@@ -2,68 +2,39 @@
 
 namespace App\Services\Treasury\Dashboard;
 
+use App\Http\Resources\ApprovedGcRequestResource;
+use App\Http\Resources\StoreGcRequestResource;
 use App\Models\ApprovedGcrequest;
+use App\Models\GcRelease;
 use App\Models\StoreGcrequest;
+use App\Services\Treasury\ColumnHelper;
+use App\Services\Treasury\Pdf\GcReleasedReport;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Response;
 
 class StoreGcRequestService
 {
 
-	public static function pendingRequest(): Collection //tran_release_gc.php
+	public function pendingRequest(Request $request) //tran_release_gc.php
 	{
-		$record = StoreGcrequest::pendingRequest()->get();
+		$record = StoreGcrequest::pendingRequest()->paginate()->withQueryString();
 
-		return $record;
-		//     function gcstorerequestList($link)
-		// {
-		// 	$rows = [];
-		//     $query = $link->query(
-		//         "SELECT
-		// 		    `store_gcrequest`.`sgc_id`,
-		// 		    `store_gcrequest`.`sgc_num`,
-		// 		    `store_gcrequest`.`sgc_date_needed`,
-		// 		    `store_gcrequest`.`sgc_date_request`,
-		// 		    `store_gcrequest`.`sgc_status`,
-		// 		    `stores`.`store_name`,
-		// 			`users`.`firstname`,
-		// 			`users`.`lastname`
-		// 		FROM 
-		// 			`store_gcrequest`
-		// 		INNER JOIN
-		// 			`stores`
-		// 		ON
-		// 			`store_gcrequest`.`sgc_store` = `stores`.`store_id`
-		// 		INNER JOIN
-		// 			`users`
-		// 		ON
-		// 			`users`.`user_id` = `store_gcrequest`.`sgc_requested_by`
-		// 		WHERE
-		// 			`store_gcrequest`.`sgc_status` = 1
-		// 		OR
-		// 			`store_gcrequest`.`sgc_status` = 0
-		// 		AND
-		// 			`store_gcrequest`.`sgc_cancel`=''
-		// 		ORDER BY
-		// 			`store_gcrequest`.`sgc_id`
-		// 		DESC
-		//     ");
+		return inertia(
+			'Treasury/StoreGcRequest/TableStoreGc',
+			[
+				'filters' => $request->all('search', 'date'),
+				'title' => 'Pending Request',
+				'data' => StoreGcRequestResource::collection($record),
+				'columns' => ColumnHelper::$pendingStoreGcRequest,
+			]
 
-		//     if($query)
-		//     {
-		// 	    while ($row = $query->fetch_object()) {
-		// 	    	$rows[] = $row;
-		// 	    }
-		// 	    return $rows;
-		//     }
-		//     else 
-		//     {
-		//     	return $rows[] = $link->error;
-		//     }
-		// }
+		);
 	}
 
-	public static function releasedGc(): Collection //approved-gc-request.php
+	public function releasedGc(Request $request) //approved-gc-request.php
 	{
 		$record = ApprovedGcrequest::with([
 			'user:user_id,firstname,lastname',
@@ -72,57 +43,20 @@ class StoreGcRequestService
 		])
 			->select('agcr_id', 'agcr_approved_at', 'agcr_approvedby', 'agcr_preparedby', 'agcr_rec', 'agcr_request_relnum', 'agcr_request_id')
 			// ->withWhereHas('storeGcRequest.store')
-			->orderByDesc('agcr_id')->get();
+			->orderByDesc('agcr_id')
+			// ->limit(10)->get();
+			->paginate()->withQueryString();
 
-		return ($record);
+		return inertia(
+			'Treasury/StoreGcRequest/TableStoreGc',
+			[
+				'filters' => $request->all('search', 'date'),
+				'title' => 'Released Gc',
+				'data' => ApprovedGcRequestResource::collection($record),
+				'columns' => ColumnHelper::$releasedStoreGcRequest,
+			]
 
-		//     function GCReleasedAllStore($link)
-		// {
-		// 	$rows = [];
-		// 	$query = $link->query(
-		// 	"SELECT
-		// 		`approved_gcrequest`.`agcr_id`,
-		// 		`stores`.`store_name`,
-		// 		`approved_gcrequest`.`agcr_approved_at`,
-		// 		`approved_gcrequest`.`agcr_approvedby`,
-		// 		`approved_gcrequest`.`agcr_preparedby`,
-		// 		`approved_gcrequest`.`agcr_rec`,
-		// 		`approved_gcrequest`.`agcr_request_relnum`,
-		// 		`agcr_request_relnum`,
-		// 		`users`.`firstname`,
-		// 		`users`.`lastname`,
-		// 		`store_gcrequest`.`sgc_date_request`
-		// 	FROM
-		// 		`approved_gcrequest`
-		// 	INNER JOIN
-		// 		`store_gcrequest`
-		// 	ON
-		// 		`approved_gcrequest`.`agcr_request_id` = `store_gcrequest`.`sgc_id`
-		// 	INNER JOIN
-		// 		`stores`
-		// 	ON
-		// 		`store_gcrequest`.`sgc_store` = `stores`.`store_id`
-		// 	INNER JOIN
-		// 		`users`
-		// 	ON
-		// 		`approved_gcrequest`.`agcr_preparedby` = `users`.`user_id`
-		// 	ORDER BY
-		// 		`approved_gcrequest`.`agcr_id`
-		// 	DESC
-		// 	");
-
-		// 	if($query)
-		// 	{
-		// 		while ($row = $query->fetch_object()) {
-		// 			$rows[] = $row;
-		// 		}
-		// 		return $rows;
-		// 	}
-		// 	else
-		// 	{
-		// 		return $rows[] = $link->error;
-		// 	}
-		// }
+		);
 	}
 
 	public static function cancelledRequest(): Collection
@@ -180,4 +114,74 @@ class StoreGcRequestService
 
 		// }
 	}
+
+	public function reprint($id)
+	{
+
+		$record = GcRelease::where('rel_num', $id)->exists();
+		if (!$record) {
+			return response()->json(['error' => 'Pdf Not available'], 404);
+		}
+		$data = [
+			[
+				'quantity' => 1,
+				'description' => '1 Year Subscription',
+				'price' => '129.00'
+			]
+		];
+
+		$d = GcRelease::selectRaw('IFNULL(SUM(denomination.denomination), 0.00) as total, IFNULL(COUNT(gc_release.re_barcode_no), 0) as cnt')
+			->joinGcDenomination()
+			->where('gc_release.rel_num', $id)
+			->first();
+
+		$result_header_data = ApprovedGcrequest::where('agcr_id', $id)->with(['storeGcRequest.store:store_id,store_name', 'user:user_id,firstname,lastname'])->first();
+		$header_data = new ApprovedGcRequestResource($result_header_data);
+		$gcgroup = GcRelease::select('denomination.denomination', 'gc_release.re_barcode_no', 'gc_release.rel_id', 'denomination.denom_id')
+			->joinGcDenomination()
+			->where('rel_num', $id)
+			->first();
+
+		// $data = (new GcReleasedReport())
+		// 		->releasedDate()
+
+		dd($header_data->agcr_approved_at);
+		// dd(response()->json(new ApprovedGcRequestResource($header_data)));
+
+		$pdf = Pdf::loadView('pdf.storegc', ['data' => $data]);
+		$pdf->setPaper('A3');
+
+		$pdfContent = $pdf->output();
+
+		return response($pdfContent, 200)
+			->header('Content-Type', 'application/pdf');
+		// ->header('Content-Disposition', 'inline; filename="sample.pdf"');
+	}
+
+
+	// $rows = [];
+	// $query = $link->query(
+	// 	"SELECT 
+	// 		`denomination`.`denomination`,
+	// 		`gc_release`.`re_barcode_no`,
+	// 		`gc_release`.`rel_id`,
+	// 		`denomination`.`denom_id`
+	// 	FROM 
+	// 		`gc_release`
+	// 	INNER JOIN
+	// 		`gc`
+	// 	ON
+	// 		`gc`.`barcode_no` = `gc_release`.`re_barcode_no`
+	// 	INNER JOIN
+	// 		`denomination`
+	// 	ON
+	// 		`denomination`.`denom_id` = `gc`.`denom_id`
+	// 	WHERE 
+	// 		`gc_release`.`rel_num`='$id'
+	// 	GROUP BY
+	// 		`denomination`.`denomination`
+	// 	ORDER BY
+	// 		`denomination`.`denom_id`
+	// ");
+
 }

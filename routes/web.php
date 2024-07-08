@@ -14,6 +14,7 @@ use App\Http\Controllers\Treasury\MainController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Middleware\UserTypeRoute;
 use App\Services\Treasury\Dashboard\BudgetRequestService;
+use App\Services\Treasury\Dashboard\StoreGcRequestService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -115,7 +116,14 @@ Route::prefix('treasury')->group(function () {
             Route::get('download-document/{file}', [BudgetRequestService::class, 'downloadDocument'])->name('download.document');
 
             Route::get('cancelled-request',  [BudgetRequestService::class, 'cancelledRequest'])->name('cancelled');
+            Route::get('view-cancelled-request/{$id}',  [BudgetRequestService::class, 'viewCancelledRequest'])->name('view.cancelled');
 
+        });
+        Route::prefix('store-gc')->name('store.gc.')->group(function () { 
+            Route::get('pending-request',  [StoreGcRequestService::class, 'pendingRequest'])->name('pending');
+            Route::get('released-gc',  [StoreGcRequestService::class, 'releasedGc'])->name('released');
+
+            Route::get('reprint/{id}', [StoreGcRequestService::class, 'reprint'])->name('reprint');
         });
 
 

@@ -38,17 +38,20 @@ defineProps<{
     };
 }>();
 
-const budgetRequestCancelled = () => {
-    router.get(route("treasury.budget.request.cancelled"));
+
+const routeTo = (type: string, status: string) => {
+    router.get(route(`treasury.${type}.${status}`));
 };
 
-const budgetRequestPending = () => {
-    router.get(route("treasury.budget.request.pending"));
-};
+// Budget request handlers
+const budgetRequestPending = () => routeTo("budget.request", "pending");
+const budgetRequestApproved = () => routeTo("budget.request", "approved");
+const budgetRequestCancelled = () => routeTo("budget.request", "cancelled");
 
-const budgetRequestApproved = () => {
-    router.get(route("treasury.budget.request.approved"));
-};
+// Store GC request handlers
+const storeGcPending = () => routeTo("store.gc", "pending");
+const storeGcReleased = () => routeTo("store.gc", "released");
+const storeGcCancelled = () => routeTo("store.gc", "cancelled");
 </script>
 
 <template>
@@ -106,9 +109,13 @@ const budgetRequestApproved = () => {
                             <Card
                                 use-default
                                 title="Store Gc Request"
+                                card2="Released Gc"
                                 :pending="data?.storeGcRequest.pending"
                                 :approved="data?.storeGcRequest.released"
                                 :cancelled="data?.storeGcRequest.cancelled"
+                                @pending-event="storeGcPending"
+                                @approved-event="storeGcReleased"
+                                @cancelled-event="storeGcCancelled"
                             />
                             <Card
                                 use-default
