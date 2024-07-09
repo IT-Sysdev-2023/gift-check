@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
+    
+    Route::get('admin-dashboard', [MarketingController::class, 'index'])->name('admin.dashboard');
 });
 
 //Profile
