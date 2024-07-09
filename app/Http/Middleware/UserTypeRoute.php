@@ -15,6 +15,7 @@ class UserTypeRoute
         '3' => 'finance.dashboard',
         '4' => 'custodian.dashboard',
         '6' => 'marketing.dashboard',
+        '1' => 'admin.dashboard',
     ];
     /**
      * Handle an incoming request.
@@ -26,7 +27,7 @@ class UserTypeRoute
         $usertype = $request->usertype;
         $user_role = $request->user_role;
 
-        if ($this->roleDashboardRoutes[$usertype] && $usertype != $user_role) {
+        if ($this->roleDashboardRoutes[$usertype] ) { //&& $usertype != $user_role
             return redirect()->route($this->roleDashboardRoutes[$usertype]);
         }
 

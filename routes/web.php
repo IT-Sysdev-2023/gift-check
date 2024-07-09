@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountingController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\CustodianController;
 use App\Http\Controllers\Dashboard;
@@ -44,7 +45,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
     
-    Route::get('admin-dashboard', [MarketingController::class, 'index'])->name('admin.dashboard');
+    Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 });
 
 //Profile

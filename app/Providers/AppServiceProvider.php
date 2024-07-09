@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
             $usertype = $currentGuard->user()->usertype;
             $user_role = $currentGuard->user()->user_role;
 
-            if ($this->roleDashboardRoutes[$usertype] && $usertype != $user_role) {
+            if ($this->roleDashboardRoutes[$usertype]) { //&& $usertype != $user_role
                 return route($this->roleDashboardRoutes[$usertype]);
             }
         });

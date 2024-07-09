@@ -11,5 +11,6 @@ trait DashboardRoutesTrait
         '3' => 'finance.dashboard',
         '4' => 'custodian.dashboard',
         '6' => 'marketing.dashboard',
+        '1' => 'admin.dashboard',
     ];
 }
