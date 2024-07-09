@@ -140,6 +140,7 @@ declare module 'vue' {
     RetailSidebar: typeof import('./resources/js/Components/RetailSidebar.vue')['default']
     Sale_storeSales: typeof import('./resources/js/Pages/Marketing/Sale_storeSales.vue')['default']
     Sale_treasurySales: typeof import('./resources/js/Pages/Marketing/Sale_treasurySales.vue')['default']
+    ScanGcStatuses: typeof import('./resources/js/Pages/Admin/ScanGcStatuses.vue')['default']
     ScreenVille: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ScreenVille.vue')['default']
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
     SpgcLedger: typeof import('./resources/js/Pages/Finance/SpgcLedger.vue')['default']
