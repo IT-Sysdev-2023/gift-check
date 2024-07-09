@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\BudgetRequestResource;
 use App\Models\BudgetRequest;
 use App\Services\Treasury\ColumnHelper;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class BudgetRequestService
@@ -38,19 +37,14 @@ class BudgetRequestService
 			return inertia(
 				'Treasury/BudgetRequest/PendingRequest',
 				[
-					// 'filters' => $request->all('search', 'date'),
 					'currentBudget' => LedgerBudget::currentBudget(),
 					'title' => 'Update Budget Entry Form',
 					'data' => $record,
-					// 'columns' => ColumnHelper::$approved_buget_request,
 				]
 
 			);
 	}
-
-
-
-	public static function cancelledRequest(): Collection //cancelled-budget-request.php
+	public static function cancelledRequest(Request $request) //cancelled-budget-request.php
 	{
 
 		$record = BudgetRequest::with([
@@ -58,14 +52,23 @@ class BudgetRequestService
 			'cancelledBudgetRequest.user:user_id,firstname,lastname',
 			'cancelledBudgetRequest:cdreq_id,cdreq_req_id,cdreq_at, cdreq_by'
 		])
-			->select('br_id', 'br_requested_by', 'br_request_status', 'br_no', 'br_requested_at', 'br_request')
+			// ->select('br_id', 'br_requested_by', 'br_request_status', 'br_no', 'br_requested_at', 'br_request')
 			->where('br_request_status', '2')
-			->get();
+			->paginate()
+			->withQueryString();
 
-		return $record;
+			return inertia(
+				'Treasury/BudgetRequest/TableApproved',
+				[
+					'filters' => $request->all('search', 'date'),
+					'title' => 'Cancelled Budget Request',
+					'data' => BudgetRequestResource::collection($record),
+					'columns' => ColumnHelper::$cancelled_buget_request,
+				]
+	
+			);
 	}
-
-	public function budgetRequestApproved(Request $request)
+	public function approvedRequest(Request $request)
 	{
 		$record = BudgetRequest::with(['user', 'approvedBudgetRequest'])
 			// ->leftJoin('approved_budget_request', 'budget_request.br_id', 'approved_budget_request.abr_budget_request_id')
@@ -86,14 +89,12 @@ class BudgetRequestService
 
 		);
 	}
-
-	public function viewBudgetRequestApproved(BudgetRequest $id)
+	public function viewApprovedRequest(BudgetRequest $id)
 	{
 		$record = $id->load(['user:user_id,firstname,lastname', 'approvedBudgetRequest.user:user_id,firstname,lastname']);
 		$data = new BudgetRequestResource($record);
 		return response()->json($data);
 	}
-
 	public function submitBudgetEntry(BudgetRequest $id,Request $request){
 		$request->validate([
 			'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048'
@@ -132,13 +133,23 @@ class BudgetRequestService
 		return redirect()->back();
 
 	}
-
 	public function downloadDocument($file)
 	{
-		if($this->disk->exists(self::$folderName.$file)){
+		if($this->disk->exists(self::$folderName.$file))
+		{
 			return $this->disk->download(self::$folderName.$file);
-		}else{
+		}
+		else{
 			return redirect()->back()->with('error', 'File Not Found');
 		}
+	}
+
+	public function viewCancelledRequest(BudgetRequest $id){
+
+		$record = $id->load(['cancelled_budget_request', 'user', 'cancelled_budget_request.user']);
+		//Untested
+		//Gamiti nig Api resource 
+		return response()->json($record);
+		
 	}
 }

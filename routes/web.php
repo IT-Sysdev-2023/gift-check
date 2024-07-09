@@ -14,6 +14,7 @@ use App\Http\Controllers\Treasury\MainController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Middleware\UserTypeRoute;
 use App\Services\Treasury\Dashboard\BudgetRequestService;
+use App\Services\Treasury\Dashboard\StoreGcRequestService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -42,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
+    
+    Route::get('admin-dashboard', [MarketingController::class, 'index'])->name('admin.dashboard');
 });
 
 //Profile
@@ -107,12 +110,22 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 Route::prefix('treasury')->group(function () {
     Route::name('treasury.')->group(function () {
         Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
-            Route::get('approved', [BudgetRequestService::class, 'budgetRequestApproved'])->name('approved');
-            Route::get('view-approved-record/${id}',  [BudgetRequestService::class, 'viewBudgetRequestApproved'])->name('view.approved');
-
+            Route::get('approved', [BudgetRequestService::class, 'approvedRequest'])->name('approved');
+            Route::get('view-approved-record/${id}',  [BudgetRequestService::class, 'viewApprovedRequest'])->name('view.approved');
+            
             Route::get('pending-request',  [BudgetRequestService::class, 'pendingRequest'])->name('pending');
             Route::post('submit-budget-entry/{id}',  [BudgetRequestService::class, 'submitBudgetEntry'])->name('budget.entry');
             Route::get('download-document/{file}', [BudgetRequestService::class, 'downloadDocument'])->name('download.document');
+
+            Route::get('cancelled-request',  [BudgetRequestService::class, 'cancelledRequest'])->name('cancelled');
+            Route::get('view-cancelled-request/{$id}',  [BudgetRequestService::class, 'viewCancelledRequest'])->name('view.cancelled');
+
+        });
+        Route::prefix('store-gc')->name('store.gc.')->group(function () { 
+            Route::get('pending-request',  [StoreGcRequestService::class, 'pendingRequest'])->name('pending');
+            Route::get('released-gc',  [StoreGcRequestService::class, 'releasedGc'])->name('released');
+
+            Route::get('reprint/{id}', [StoreGcRequestService::class, 'reprint'])->name('reprint');
         });
 
 

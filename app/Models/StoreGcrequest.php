@@ -33,8 +33,7 @@ class StoreGcrequest extends Model
             'user:user_id,firstname,lastname',
             'store:store_id,store_name'
         ])
-            ->select('sgc_id', 'sgc_num', 'sgc_date_needed', 'sgc_date_request', 'sgc_status', 'sgc_store', 'sgc_requested_by')
-            // ->join('stores', 'sgc_store', 'store_id')
+            // ->select('sgc_id', 'sgc_num', 'sgc_date_needed', 'sgc_date_request', 'sgc_status', 'sgc_store', 'sgc_requested_by')
             ->where(function (Builder $query) {
                 $query->where('sgc_status', 1)
                     ->orWhere('sgc_status', 0);

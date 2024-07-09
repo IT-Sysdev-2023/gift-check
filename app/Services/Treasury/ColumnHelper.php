@@ -21,7 +21,7 @@ class ColumnHelper
 
         ],
         [
-            'title' => 'Prepaired By',
+            'title' => 'Prepared By',
             'dataIndex' => ['prepared_by', 'full_name'],
             'key' => 'prepared_by',
 
@@ -41,6 +41,118 @@ class ColumnHelper
         [
             'title' => 'Actions',
             'dataIndex' => 'action'
+
+        ],
+    ];
+
+    public static $cancelled_buget_request = [
+        [
+            'title' => 'BR No.',
+            'dataIndex' => 'br_no',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'br_requested_at',
+
+        ],
+        [
+            'title' => 'Budget Requested',
+            'dataIndex' => 'br_request',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'dataIndex' => ['prepared_by', 'full_name'],
+            'key' => 'prepared_by',
+
+        ],
+        [
+            'title' => 'Date Cancelled',
+            'dataIndex' => ['cancelled_request', 'cdreq_at'],
+            'key' => 'date_cancelled'
+
+        ],
+        [
+            'title' => 'Cancelled By',
+            'dataIndex' => ['cancelled_by', 'approved_by'],
+            'key' => 'approved_by',
+
+        ],
+    ];
+
+    public static $pendingStoreGcRequest = [
+        [
+            'title' => 'Gc Request No.',
+            'dataIndex' => 'sgc_num',
+
+        ],
+        [
+            'title' => 'Requested By',
+            // 'dataIndex' => ['store', 'store_name'],
+            // 'key' => 'requested_by',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'sgc_date_needed',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'dataIndex' => ['user', 'full_name'],
+            'key' => 'prepared_by',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'sgc_date_request',
+
+        ],
+        [
+            'title' => 'Request Status',
+            'dataIndex' => 'sgc_status',
+
+        ],
+    ];
+
+    public static $releasedStoreGcRequest = [
+        [
+            'title' => 'Released No.',
+            'dataIndex' => 'agcr_request_relnum',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => ['storeGcRequest','sgc_date_request'],
+            'key' => 'date_requested',
+
+        ],
+        [
+            'title' => 'Retail Store',
+            'dataIndex' =>  ['storeGcRequest','store', 'store_name'],
+            'key' => 'retail_store'
+
+        ],
+        [
+            'title' => 'Released By',
+            'dataIndex' => ['user', 'full_name'],
+            'key' => 'prepared_by',
+
+        ],
+        [
+            'title' => 'Date Released',
+            'dataIndex' => 'agcr_approved_at',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'agcr_approvedby',
+
+        ],
+        [
+            'title' => 'Reprint',
+            'dataIndex' => 'reprint',
 
         ],
     ];

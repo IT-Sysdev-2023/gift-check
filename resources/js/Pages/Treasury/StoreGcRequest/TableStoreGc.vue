@@ -3,7 +3,6 @@ import { highlighten } from "@/Mixin/UiUtilities";
 import Description from "./../Description.vue";
 
 const { highlightText } = highlighten();
-
 </script>
 <template>
     <Head :title="title" />
@@ -55,28 +54,24 @@ const { highlightText } = highlighten();
                 <template v-if="column.key">
                     <span>
                         <!-- for the dynamic implementation of object properties, just add a key in column-->
-                        {{ record[column.dataIndex[0]][column.dataIndex[1]] }}
+                        {{ getValue(record, column.dataIndex) }}
                     </span>
                 </template>
 
-                <template v-if="column.dataIndex === 'action'">
+                <template v-if="column.dataIndex === 'reprint'">
                     <a-button
                         type="primary"
                         size="small"
-                        @click="viewRecord(record.br_id)"
+                        @click="viewRecord(record.agcr_id)"
                     >
                         <template #icon>
                             <FileSearchOutlined />
                         </template>
-                        View
+                        Reprint
                     </a-button>
                 </template>
             </template>
         </a-table>
-        <a-modal v-model:open="showModal" width="1000px">
-            <!-- <component :is="tabs[currentTab]" /> -->
-            <Description :data="descriptionRecord" />
-        </a-modal>
 
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
@@ -86,6 +81,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
+import { router } from "@inertiajs/vue3";
 import _ from "lodash";
 
 export default {
@@ -100,8 +96,6 @@ export default {
     },
     data() {
         return {
-            descriptionRecord: [],
-            showModal: false,
             form: {
                 search: this.filters.search,
                 date: this.filters.date
@@ -118,15 +112,29 @@ export default {
         },
     },
     methods: {
-        async viewRecord(id) {
-            try {
-                const { data } = await axios.get(
-                    route("treasury.budget.request.view.approved", id)
-                );
-                this.descriptionRecord = data;
-            } finally {
-                this.showModal = true;
-            }
+        getValue(record, dataIndex) {
+            return dataIndex.reduce((acc, index) => acc[index], record);
+        },
+        viewRecord(id) {
+            const url = route("treasury.store.gc.reprint", { id: id });
+            
+            axios
+                .get(url, { responseType: "blob" })
+                .then((response) => {
+                    const file = new Blob([response.data], {
+                        type: "application/pdf",
+                    });
+                    const fileURL = URL.createObjectURL(file);
+                    window.open(fileURL, "_blank");
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 404) {
+                        alert("Pdf Not available");
+                    } else {
+                        console.error(error);
+                        alert("An error occurred while generating the PDF.");
+                    }
+                });
         },
     },
 

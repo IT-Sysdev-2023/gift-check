@@ -25,7 +25,9 @@ class BudgetRequestResource extends JsonResource
             'br_remarks' => $this->br_remarks,
             'br_requested_needed' => Date::parse($this->br_requested_needed)->toFormattedDateString(),
             'prepared_by' => $this->user,
-            'abr' => new ApprovedBudgetRequestResource($this->whenLoaded('approvedBudgetRequest'))
+            'abr' => new ApprovedBudgetRequestResource($this->whenLoaded('approvedBudgetRequest')),
+            'cancelled_request' => $this->whenLoaded('cancelledBudgetRequest'),
+            'cancelled_by' => $this->whenLoaded('cancelledBudgetRequest.user')
         ];
     }
 }
