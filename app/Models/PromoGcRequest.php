@@ -12,4 +12,9 @@ class PromoGcRequest extends Model
     protected $table= 'promo_gc_request';
 
     protected $primaryKey= 'pgcreq_id';
+
+    public $timestamps = false;
+
+
+    protected $guarded = [];
 }

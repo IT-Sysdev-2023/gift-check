@@ -57,13 +57,19 @@ Route::middleware('auth')->group(function () {
 
 //Marketing
 Route::prefix('marketing')->group(function () {
-    Route::name('treasury.')->group(function () {
+    Route::name('promo.gc.')->group(function () {
+        Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
+        Route::post('', [MarketingController::class, 'submitPromoGcRequest']) -> name('submit');
     });
+    Route::name('addnewpromo.')->group(function (){
+        Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
+        Route::post('validate-gc', [MarketingController::class, 'validateGc'])->name('validate');
+    });
+    
 });
 
+
 Route::get('promo-list', [MarketingController::class, 'promoList'])->name('marketing.promo.list');
-Route::get('addnewpromo', [MarketingController::class, 'addnewpromo'])->name('add.new.promo');
-Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('promo.gc.request');
 Route::get('released-promo-gc', [MarketingController::class, 'releasedpromogc'])->name('released.promo.gc');
 Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
 Route::get('manage-supplier', [MarketingController::class, 'manageSupplier'])->name('manage.supplier');
@@ -86,6 +92,7 @@ Route::get('get-store-sales-details', [MarketingController::class, 'getStoreSale
 Route::get('get-transaction-pos-detail', [MarketingController::class, 'getTransactionPOSdetail']) -> name('get.transaction.pos.detail');
 Route::get('get-view-barcode-details', [MarketingController::class, 'getBarcodeDetails']) -> name('get.sub.barcode.details');
 Route::get('view-treasury-sales', [MarketingController::class, 'viewTreasurySales']) -> name('view.treasury.sales');
+
 
 
 

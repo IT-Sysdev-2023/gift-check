@@ -21,7 +21,11 @@ declare module 'vue' {
     AddNewPromo: typeof import('./resources/js/Pages/Marketing/AddNewPromo.vue')['default']
     ADescriptions: typeof import('ant-design-vue/es')['Descriptions']
     ADescriptionsItem: typeof import('ant-design-vue/es')['DescriptionsItem']
+<<<<<<< HEAD
     AdminDashboard: typeof import('./resources/js/Pages/Admin/AdminDashboard.vue')['default']
+=======
+    AFlex: typeof import('ant-design-vue/es')['Flex']
+>>>>>>> bibong-branch
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']
@@ -67,8 +71,12 @@ declare module 'vue' {
     ATabs: typeof import('ant-design-vue/es')['Tabs']
     ATag: typeof import('ant-design-vue/es')['Tag']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
+<<<<<<< HEAD
     ATimeline: typeof import('ant-design-vue/es')['Timeline']
     ATimelineItem: typeof import('ant-design-vue/es')['TimelineItem']
+=======
+    ATooltip: typeof import('ant-design-vue/es')['Tooltip']
+>>>>>>> bibong-branch
     ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
     AUpload: typeof import('ant-design-vue/es')['Upload']
@@ -149,6 +157,7 @@ declare module 'vue' {
     ScanGcStatuses: typeof import('./resources/js/Pages/Admin/ScanGcStatuses.vue')['default']
     ScreenVille: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ScreenVille.vue')['default']
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
+    SettingOutlined: typeof import('@ant-design/icons-vue')['SettingOutlined']
     SpgcLedger: typeof import('./resources/js/Pages/Finance/SpgcLedger.vue')['default']
     SpgcLedgerResult: typeof import('./resources/js/Pages/Finance/Results/SpgcLedgerResult.vue')['default']
     StockOutlined: typeof import('@ant-design/icons-vue')['StockOutlined']

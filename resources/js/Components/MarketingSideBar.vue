@@ -25,7 +25,7 @@ import { Link } from "@inertiajs/vue3";
             </span>
         </template>
         <a-menu-item key="addnewpromo">
-            <Link :href="route('add.new.promo')">Add New Promo</Link>
+            <Link :href="route('addnewpromo.add')">Add New Promo</Link>
         </a-menu-item>
         <a-menu-item key="promolist">
             <Link :href="route('marketing.promo.list')">Promo List</Link>

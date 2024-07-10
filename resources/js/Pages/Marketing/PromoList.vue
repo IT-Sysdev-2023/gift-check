@@ -33,7 +33,7 @@
         </a-table>
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
-    <a-modal :footer="false" v-model:open="openViewModal">
+    <a-modal :footer="false" v-model:open="openViewModal" style="width: 80%;">
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <a-list>
