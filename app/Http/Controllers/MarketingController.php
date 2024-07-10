@@ -16,8 +16,11 @@ use App\Models\Promo;
 use App\Models\Store;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\User;
+use App\Models\Denomination;
+use App\Models\TempPromo;
 
 use App\Models\PromoGc;
+use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\SpecialExternalGcrequest;
@@ -64,7 +67,26 @@ class MarketingController extends Controller
 
     public function addnewpromo()
     {
-        return Inertia::render('Marketing/AddNewPromo');
+        $num = Promo::select('promo_num')->orderByDesc('promo_id')->first();
+        $promoNum = (int)$num->promo_num + 1;
+        $formattedPromoNum = sprintf('%03d', $promoNum);
+
+        $getDenomination = Denomination::where('denom_type', 'RSGC')->where('denom_status', 'active')->get();
+
+
+
+        $columns = array_map(
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Denomination', 'Scanned GC'],
+            ['denomination', 'denom_id']
+        );
+
+        return Inertia::render('Marketing/AddNewPromo', [
+            'PromoNum' => $formattedPromoNum,
+            'data' =>  $getDenomination,
+            'columns' => ColumnHelper::getColumns($columns),
+            'promoId' => $promoNum
+        ]);
     }
 
     public function promogcrequest()
@@ -123,6 +145,10 @@ class MarketingController extends Controller
             $item->status = is_null($item->promo_name) ? 'Available' : (!is_null($item->promo_name) && is_null($item->relat) ? 'Pending' : 'Released');
             return $item;
         });
+        
+
+
+      
 
         $columns = array_map(
             fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
@@ -607,7 +633,7 @@ class MarketingController extends Controller
 
     public function submitPromoGcRequest(Request $request)
     {
-        
+
         $promoTag = auth()->user()->promo_tag;
 
         DB::transaction(function () use ($promoTag, $request) {
@@ -616,13 +642,12 @@ class MarketingController extends Controller
                 foreach ($request->file('fileList') as $file) {
 
                     if ($file) {
-    
+
                         $fileName = $file['originFileObj']->getClientOriginalName();
-            
-                        $file['originFileObj']->move(public_path() . '/uploads/' , $fileName );
+
+                        $file['originFileObj']->move(public_path() . '/uploads/', $fileName);
                     }
                 }
-
             }
 
             $promoGC =  PromoGcRequest::create([
@@ -653,5 +678,70 @@ class MarketingController extends Controller
                 ]);
             }
         });
+    }
+
+    public function validateGc(Request $request)
+    {
+        $barcode = $request->barcode;
+        $group = $request->group;
+        $tag = auth()->user()->promo_tag;
+        $promoid = $request->promoNo;
+        $gctype = 1;
+        $response = ['stat' => 0];
+
+        if (!Gc::where('barcode_no', $barcode)->exists()) {
+            $response['msg'] = 'GC Barcode #' . $barcode . ' not found.';
+        } elseif (PromoGc::where('prom_barcode', $barcode)->exists()) {
+            $response['msg'] = 'GC Barcode #' . $barcode . ' already validated for promo.';
+        } elseif (TempPromo::where('tp_barcode', $barcode)->exists()) {
+            $response['msg'] = 'GC Barcode #' . $barcode . ' already scanned for promo validation.';
+        } else {
+            $denom = Gc::where('barcode_no', $barcode)->value('denom_id');
+
+            $promo = PromoGcReleaseToItem::select(
+                'promo_gc_release_to_items.prreltoi_barcode',
+                'gc.gc_validated',
+                'gc.gc_ispromo',
+                'gc.denom_id',
+                'promo_gc_request.pgcreq_group',
+                'promo_gc_request.pgcreq_tagged'
+            )
+                ->leftJoin('gc', 'gc.barcode_no', '=', 'promo_gc_release_to_items.prreltoi_barcode')
+                ->leftJoin('promo_gc_release_to_details', 'promo_gc_release_to_details.prrelto_id', '=', 'promo_gc_release_to_items.prreltoi_relid')
+                ->leftJoin('promo_gc_request', 'promo_gc_request.pgcreq_id', '=', 'promo_gc_release_to_details.prrelto_trid')
+                ->where('promo_gc_release_to_items.prreltoi_barcode', $barcode)
+                ->first();
+          
+            if (!$promo) {
+                $response['msg'] = 'GC Barcode #' . $barcode . ' not found.';
+            } elseif (empty($promo->gc_validated) || empty($promo->gc_ispromo)) {
+                $response['msg'] = 'GC Barcode #' . $barcode . ' is not for Promo.';
+            } elseif ($promo->pgcreq_group != $group) {
+                $response['msg'] = 'GC Barcode #' . $barcode . ' does not belong to Group ' . $group . '.';
+            } elseif ($promo->pgcreq_tagged != $tag) {
+                $response['msg'] = 'GC Barcode #' . $barcode . ' not found.';
+            } else { 
+                dd(1);
+                $inserted = TempPromo::insert([
+                    'tp_barcode' => $barcode,
+                    'tp_den' => $denom,
+                    'tp_promoid' => $promoid,
+                    'tp_by' => auth()->user()->id,
+                    'tp_gctype' => $gctype,
+                ]);
+
+                if ($inserted) {
+                    $response['stat'] = 1;
+                    $response['msg'] = 'GC Barcode #' . $barcode . ' successfully validated for Group ' . $group . ' promo.';
+                    $response['den'] = $denom;
+                } else {
+                    $response['msg'] = 'Failed to insert data for GC Barcode #' . $barcode . '.';
+                }
+            }
+        }
+
+
+
+        return response()->json($response);
     }
 }

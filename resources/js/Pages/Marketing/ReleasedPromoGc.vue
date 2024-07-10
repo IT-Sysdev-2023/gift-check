@@ -26,6 +26,9 @@ export default {
             <a-form-item label="Address:" name="address">
                 <a-input v-model:value="promoNo" />
             </a-form-item>
+            <a-form-item label="Barcode:" name="address">
+                <a-input v-model:value="Address" showCount/>
+            </a-form-item>
             <a-form-item label="Released By:" name="promoNo">
                 <a-input v-model:value="$page.props.auth.user.full_name" disabled />
             </a-form-item>

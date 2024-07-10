@@ -29,19 +29,26 @@ const dashboardRoute = computed(() => {
         <a-layout style="min-height: 100vh">
             <a-layout-sider v-model:collapsed="collapsed" collapsible width="250px">
                 <div class="logo" />
-                <a-menu  v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
+                <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
                     <a-card class="mb-3" v-if="!collapsed" hoverable style="width: auto;  ; background: transparent;
                      border-left: none;
                       border-right: none;
                       border-top: none; border-radius: 0 0 0 0px;">
                         <div class="flex justify-center">
-                            <img style="height: 80px; width: 80px; border-radius: 50%;"
+                            <div v-if="page.auth.user.user_id == 322">
+                                <img style="height: 80px; width: 80px; border-radius: 50%;"
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLsEmpgxjnQXNp0NsTfy8ERd9sgJEnoOQe0Q&s"
+                                    alt="usersimage">
+                            </div>
+                            <div v-else>
+                                <img style="height: 80px; width: 80px; border-radius: 50%;"
                                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAC6KNkddUOBRwcduSy-iFTDhK8dXXGyJmqQ&s"
                                 alt="usersimage">
+                            </div>
                         </div>
 
                         <p class="text-white font-bold text-center mt-4">
-                            Hello, {{ page.auth.user.format_firstname }}
+                            Hello, {{ page.auth.user.full_name }}
                         </p>
                     </a-card>
                     <div v-else>
