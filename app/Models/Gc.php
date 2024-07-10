@@ -15,4 +15,8 @@ class Gc extends Model
     public function denomination(){
         return $this->belongsTo(Denomination::class, 'denom_id', 'denom_id');
     }
+
+    public function barcode(){
+        return $this->belongsTo(BarcodeChecker::class, 'barcode_no', 'bcheck_barcode');
+    }
 }
