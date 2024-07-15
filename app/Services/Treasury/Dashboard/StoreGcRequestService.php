@@ -127,8 +127,13 @@ class StoreGcRequestService
 			->where('gc_release.rel_num', $id)
 			->first();
 
-		$header = ApprovedGcrequest::where('agcr_request_relnum', $id)->with(['storeGcRequest:sgc_id,sgc_store', 'storeGcRequest.store:store_id,store_name', 'user:user_id,firstname,lastname'])->first();
-		$header_data = new ApprovedGcRequestResource($header);
+		$header_data = new ApprovedGcRequestResource(ApprovedGcrequest::where('agcr_request_relnum', $id)
+			->with([
+				'storeGcRequest:sgc_id,sgc_store',
+				'storeGcRequest.store:store_id,store_name',
+				'user:user_id,firstname,lastname'
+			])
+			->first());
 
 		$gcgroup = GcRelease::select('denomination.denomination', 'gc_release.re_barcode_no', 'gc_release.rel_id', 'denomination.denom_id')
 			->joinGcDenomination()
@@ -170,24 +175,29 @@ class StoreGcRequestService
 
 			//Data/ Barcodes
 			'barcode' => $gcgroup->groupBy('denomination')->map(fn($d) => $d->sortBy('denom_id')),
-			
-			//Subfooter
-			'releasing_type' => self::releasingType($header_data->agcr_stat),
-			'total_number_of_gc' => NumberHelper::format($total_gc->cnt),
-			'total_gc_amount' => $total_gc->total,
-			'payment_type' => Str::upper($header_data->agcr_paymenttype),
 
-			'amount_receive' => $amountReceive ?? null,
-			'bank_name' => $bankName ?? null,
-			'bank_account' => $bankAccount ?? null,
-			'check' => $check ?? null,
-			'check_amount' => $checkAmmount ?? null,
-			'customer' => $customer ?? null,
+			//Subfooter
+			'summary' => [
+				'releasing_type' => self::releasingType($header_data->agcr_stat),
+				'total_number_of_gc' => NumberHelper::format($total_gc->cnt),
+				'total_gc_amount' => NumberHelper::format($total_gc->total),
+				'payment_type' => Str::upper($header_data->agcr_paymenttype),
+
+				'amount_receive' => $amountReceive ?? null,
+				'bank_name' => $bankName ?? null,
+				'bank_account_#' => $bankAccount ?? null,
+				'check_#' => $check ?? null,
+				'check_amount' => $checkAmmount ?? null,
+				'customer' => $customer ?? null,
+			],
 
 			//Signatures
-			'received_by' => $header_data->agcr_recby,
-			'released_by' => Str::upper($header_data->user->fullname),
-			'checked_by' => Str::upper($header_data->agcr_checkedby),
+			'signatures' => [
+				'received_by' => $header_data->agcr_recby,
+				'released_by' => Str::upper($header_data->user->fullname),
+				'checked_by' => Str::upper($header_data->agcr_checkedby),
+			],
+
 		];
 
 		$pdf = Pdf::loadView('pdf.storegc', ['data' => $data]);
@@ -198,7 +208,8 @@ class StoreGcRequestService
 		return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
 	}
 
-	public static function releasingType(int $rt){
+	public static function releasingType(int $rt)
+	{
 		$types = [ //Not Tested
 			0 => 'None',
 			1 => 'Partial',

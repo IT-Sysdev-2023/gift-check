@@ -1,88 +1,12 @@
+@php
+use Illuminate\Support\Str;
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $data['company']['report']}}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        .report {
-            text-align: center;
-        }
-
-        .details, .gc-codes, .summary, .signatures {
-            width: 100%;
-            margin: 20px 0;
-        }
-
-        .details {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-        }
-
-        .gc-codes td {
-            padding: 5px;
-            text-align: center;
-        }
-
-        .gc-codes {
-            margin-bottom: 10px;
-        }
-
-        .signatures {
-            width: 100%;
-            margin-top: 50px;
-        }
-
-        .signature-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 30px;
-        }
-
-        .signature-table td {
-            width: 33%;
-            text-align: center;
-            vertical-align: top;
-            padding-top: 30px;
-        }
-
-        .signature-line {
-            border-top: 1px solid #000;
-            width: 80%;
-            margin: 10px auto 0;
-        }
-
-        h4 {
-            padding-bottom: 20px;
-        }
-
-        h2, h3, h4 {
-            margin: 5px 0;
-        }
-
-        .denomination p {
-            border: 0.5px solid #000;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .summary p {
-            text-align: left;
-        }
-
-        .denomination .result {
-            text-align: right;
-        }
-        .signature-label{
-            text-align: left;
-            padding-bottom: 15px
-        }
-    </style>
 </head>
 <body>
     <div class="report">
@@ -121,49 +45,103 @@
         </div>
 
         <div class="summary">
-            <p><strong>Releasing Type:</strong> {{ $data['releasing_type'] }}</p>
-            <p><strong>Total No. of GC:</strong> {{ $data['total_number_of_gc']}} pcs</p>
-            <p><strong>Total GC Amount:</strong> {{ $data['total_gc_amount']}}</p>
-            <p><strong>Payment Type:</strong> {{ $data['payment_type']}}</p>
-            @if($data['amount_receive'])
-            <p><strong>Amount Received:</strong> {{$data['amount_receive']}}</p>
-            @endif
-            @if($data['bank_name'])
-            <p><strong>Bank Name:</strong> {{$data['bank_name']}}</p>
-            @endif
-            @if($data['bank_account'])
-            <p><strong>Bank Account #:</strong> {{$data['bank_account']}}</p>
-            @endif
-            @if($data['check'])
-            <p><strong>Check #:</strong> {{$data['check']}}</p>
-            @endif
-            @if($data['check_amount'])
-            <p><strong>Check Amount:</strong> {{$data['check_amount']}}</p>
-            @endif
-            @if($data['customer'])
-            <p><strong>Customer:</strong> {{$data['customer']}}</p>
-            @endif
+            @foreach($data['summary'] as $title => $items)
+                @if($items)
+                <p><strong>{{Str::headline($title)}}:</strong> {{ $items}}</p>
+                @endif
+            @endforeach
         </div>
 
         <table class="signature-table">
             <tr>
+                @foreach($data['signatures'] as $title => $name)
                 <td>
-                    <p class="signature-label">Received by:</p>
-                    <p><strong>{{ $data['received_by']}}</strong></p>
+                    <p class="signature-label">{{ Str::headline($title) }}:</p>
+                    <p><strong>{{ $name }}</strong></p>
                     <div class="signature-line">(Signature over Printed name)</div>
                 </td>
-                <td>
-                    <p class="signature-label">Released by:</p>
-                    <p><strong>{{ $data['released_by']}}</strong></p>
-                    <div class="signature-line">(Signature over Printed name)</div>
-                </td>
-                <td>
-                    <p class="signature-label">Checked by:</p>
-                    <p><strong>{{ $data['checked_by']}}</strong></p>
-                    <div class="signature-line">(Signature over Printed name)</div>
-                </td>
+                @endforeach
             </tr>
         </table>
     </div>
 </body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .report {
+        text-align: center;
+    }
+
+    .details, .gc-codes, .summary, .signatures {
+        width: 100%;
+        margin: 20px 0;
+    }
+
+    .details {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+    }
+
+    .gc-codes td {
+        padding: 5px;
+        text-align: center;
+    }
+
+    .gc-codes {
+        margin-bottom: 10px;
+    }
+
+    .signatures {
+        width: 100%;
+        margin-top: 50px;
+    }
+
+    .signature-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+    }
+
+    .signature-table td {
+        width: 33%;
+        text-align: center;
+        vertical-align: top;
+        padding-top: 30px;
+    }
+
+    .signature-line {
+        border-top: 1px solid #000;
+        width: 80%;
+        margin: 10px auto 0;
+    }
+
+    h4 {
+        padding-bottom: 20px;
+    }
+
+    h2, h3, h4 {
+        margin: 5px 0;
+    }
+
+    .denomination p {
+        border: 0.5px solid #000;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .summary p {
+        text-align: left;
+    }
+
+    .denomination .result {
+        text-align: right;
+    }
+    .signature-label{
+        text-align: left;
+        padding-bottom: 15px
+    }
+</style>
 </html>
