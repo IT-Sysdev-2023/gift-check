@@ -19,10 +19,10 @@ class BudgetLedgerApprovedResource extends JsonResource
         return [
             'id' => $this->br_id,
             'br_no' => $this->br_no,
-            'date_requested' => Date::parse($this->br_requested_at)->toFormattedDateString(),
+            'date_requested' => $this->br_requested_at,
             'budget_requested' => NumberHelper::currency($this->br_request),
             'prepared_by' => ucfirst($this->firstname) . ' ' . ucfirst($this->lastname),
-            'date_approved' => Date::parse($this->abr_approved_at)->toFormattedDateString(),
+            'date_approved' => $this->abr_approved_at,
             'approved_by' => $this->abr_approved_by,
            
         ];

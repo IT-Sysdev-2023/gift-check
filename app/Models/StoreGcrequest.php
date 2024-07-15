@@ -14,11 +14,18 @@ class StoreGcrequest extends Model
 
     protected $primaryKey = 'sgc_id';
 
+    protected function casts(): array
+    {
+        return [
+            'sgc_date_request' => 'datetime'
+        ];
+    }
+
     public function scopeCancelledGcRequest(Builder $query)
     {
         return $query->with([
             'user:user_id,firstname,lastname',
-            'cancelledStoreGcRequest:csgr_id,csgr_gc_id,csgr_by,csgr_at',
+            'cancelledStoreGcRequest.user:user_id,firstname,lastname',
             'store:store_id,store_name'
         ])
             ->select('sgc_id', 'sgc_num', 'sgc_requested_by', 'sgc_date_request', 'sgc_store')

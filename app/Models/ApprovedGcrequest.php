@@ -21,10 +21,10 @@ class ApprovedGcrequest extends Model
     }
     
 
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->toDayDateTimeString();
-    }
+    // protected function serializeDate(DateTimeInterface $date): string
+    // {
+    //     return $date->toDayDateTimeString();
+    // }
 
     public function storeGcRequest(){
         return $this->belongsTo(StoreGcrequest::class, 'agcr_request_id', 'sgc_id');

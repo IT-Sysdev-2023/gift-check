@@ -156,4 +156,45 @@ class ColumnHelper
 
         ],
     ];
+
+    public static $cancelledStoreGcRequest = [
+        [
+            'title' => 'Req No.',
+            'dataIndex' => 'sgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'sgc_date_request',
+        ],
+        [
+            'title' => 'Retail Store',
+            'dataIndex' =>  ['store', 'store_name'],
+            'key' => 'retail_store'
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'dataIndex' => ['user', 'full_name'],
+            'key' => 'prepared_by',
+
+        ],
+        [
+            'title' => 'Date Cancelled',
+            'dataIndex' => ['cancelledStoreGcRequest', 'csgr_at'],
+            'key' => 'date_cancelled'
+
+        ],
+        [
+            'title' => 'Cancelled By',
+            'dataIndex' => ['cancelledStoreGcRequest', 'user', 'full_name'],
+            'key' => 'cancelled_by'
+
+        ],
+        [
+            'title' => 'Actions',
+            'dataIndex' => 'action',
+
+        ],
+    ];
 }

@@ -60,9 +60,22 @@ class StoreGcRequestService
 		);
 	}
 
-	public static function cancelledRequest(): Collection
+	public function cancelledRequest(Request $request)
 	{
-		return StoreGcrequest::cancelledGcRequest()->get();
+		$record = StoreGcrequest::cancelledGcRequest()->paginate(10)->withQueryString();
+
+
+		// dd(StoreGcRequestResource::collection($record)->toArray(request()));
+		return inertia(
+			'Treasury/StoreGcRequest/TableStoreGc',
+			[
+				'filters' => $request->all('search', 'date'),
+				'title' => 'Pending Request',
+				'data' => StoreGcRequestResource::collection($record),
+				'columns' => ColumnHelper::$cancelledStoreGcRequest,
+			]
+
+		);
 		//     function getAllCancelledGCRequestStore($link)
 		// {
 		// 	$rows = [];
@@ -171,7 +184,7 @@ class StoreGcRequestService
 			//SubHeader
 			'gc_rel_no' => $id,
 			'store' => $header_data->storeGcRequest?->store?->store_name,
-			'date_released' => Date::parse($header_data->agcr_approved_at)->toFormattedDateString(),
+			'date_released' => $header_data->agcr_approved_at->toFormattedDateString(),
 
 			//Data/ Barcodes
 			'barcode' => $gcgroup->groupBy('denomination')->map(fn($d) => $d->sortBy('denom_id')),
@@ -215,9 +228,7 @@ class StoreGcRequestService
 			1 => 'Partial',
 			2 => 'Whole',
 			3 => 'Final'
-
 		];
-
 		return $types[$rt] ?? null;
 	}
 }

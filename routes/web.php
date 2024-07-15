@@ -138,6 +138,7 @@ Route::prefix('treasury')->group(function () {
         Route::prefix('store-gc')->name('store.gc.')->group(function () {
             Route::get('pending-request', [StoreGcRequestService::class, 'pendingRequest'])->name('pending');
             Route::get('released-gc', [StoreGcRequestService::class, 'releasedGc'])->name('released');
+            Route::get('cancelled-request', [StoreGcRequestService::class, 'cancelledRequest'])->name('cancelled');
 
             Route::get('reprint/{id}', [StoreGcRequestService::class, 'reprint'])->name('reprint');
         });
