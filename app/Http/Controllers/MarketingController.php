@@ -41,7 +41,7 @@ class MarketingController extends Controller
 
     public function index()
     {
-        return Inertia::render(('Marketing/Dashboard'));
+        return Inertia::render(('Marketing/MarketingDashboard'));
     }
     public function promoList(Request $request)
     {

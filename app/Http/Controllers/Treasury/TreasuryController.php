@@ -20,7 +20,7 @@ class TreasuryController extends Controller
     public function index()
     {
         $record = $this->dashboardClass->treasuryDashboard();
-        return inertia('Treasury/Dashboard', ['data' => $record]);
+        return inertia('Treasury/TreasuryDashboard', ['data' => $record]);
     }
     public function budgetLedger(Request $request)
     {
