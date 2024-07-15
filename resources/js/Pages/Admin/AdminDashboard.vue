@@ -1,32 +1,24 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { useForm } from "@inertiajs/vue3";
+import { InertiaForm, useForm } from "@inertiajs/vue3";
 import { h } from "vue";
-import {
-    UserOutlined,
-    SolutionOutlined,
-    LoadingOutlined,
-    SmileOutlined,
-} from "@ant-design/icons-vue";
 
 const props = defineProps<{
     data: any;
-    latestStatus: number
+    latestStatus: number;
 }>();
 
 const items = props.data;
 
-interface FormState {
+const form: InertiaForm<{
     barcode: number;
-}
-
-const form: FormState = useForm({
+}> = useForm({
     barcode: null,
 });
+
 const viewStatus = async () => {
     form.get(route("admin.dashboard"));
 };
-
 </script>
 
 <template>
@@ -76,9 +68,8 @@ const viewStatus = async () => {
                 </a-col>
             </a-row>
             <a-card class="mt-10" v-if="isFetching">
-                <a-steps  :current="items.length-1" :items="items"></a-steps>
+                <a-steps :current="items.length - 1" :items="items"></a-steps>
             </a-card>
-
         </div>
     </AuthenticatedLayout>
 </template>
