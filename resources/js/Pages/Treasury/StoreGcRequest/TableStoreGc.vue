@@ -62,7 +62,7 @@ const { highlightText } = highlighten();
                     <a-button
                         type="primary"
                         size="small"
-                        @click="viewRecord(record.agcr_id)"
+                        @click="viewRecord(record.agcr_request_relnum)"
                     >
                         <template #icon>
                             <FileSearchOutlined />

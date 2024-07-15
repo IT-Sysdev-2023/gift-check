@@ -16,13 +16,24 @@ class ApprovedGcRequestResource extends JsonResource
     {
         return [
             'agcr_id' => $this->agcr_id,
+            'agcr_stat' => $this->agcr_stat,
+            'agcr_paymenttype' => $this->agcr_paymenttype,
+            'agcr_recby' => $this->agcr_recby,
             'agcr_approved_at' => $this->agcr_approved_at,
             'agcr_approvedby' => $this->agcr_approvedby,
             'agcr_preparedby' => $this->agcr_preparedby,
             'agcr_rec' => $this->agcr_rec,
             'agcr_request_relnum' => $this->agcr_request_relnum,
             'storeGcRequest' => $this->whenLoaded('storeGcRequest'),
-            'user' => $this->whenLoaded('user')
+            // , function ($s) {
+            //     return [
+            //         'sgc_id' => $s->sgc_id,
+            //         'sgc_store' => $s->sgc_store,
+            //         'sgc_date_request' => $s->sgc_date_request
+            //     ];
+            // }
+            'user' => $this->whenLoaded('user'),
+            'store_name' => $this->whenLoaded('storeGcRequest', fn ($q) => optional($this->storeGcRequest->store)->store_name), 
            
         ];
     }

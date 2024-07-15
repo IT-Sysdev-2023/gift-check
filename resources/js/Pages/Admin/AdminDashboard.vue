@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { InertiaForm, useForm } from "@inertiajs/vue3";
-import { h } from "vue";
 
 const props = defineProps<{
     data: any;
