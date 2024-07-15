@@ -78,7 +78,7 @@ const viewStatus = async () => {
             <a-card class="mt-10" v-if="isFetching">
                 <a-steps  :current="items.length-1" :items="items"></a-steps>
             </a-card>
-            
+
         </div>
     </AuthenticatedLayout>
 </template>
