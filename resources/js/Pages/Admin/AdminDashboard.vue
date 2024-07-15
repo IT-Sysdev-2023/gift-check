@@ -6,7 +6,7 @@ import {
     SolutionOutlined,
     LoadingOutlined,
     SmileOutlined,
-} from '@ant-design/icons-vue';
+} from '@ant-design/icons-vue'; 
 const items = [
     {
         title: 'Login',
