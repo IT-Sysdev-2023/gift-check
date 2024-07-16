@@ -21,6 +21,7 @@ class AdminController extends Controller
 
         $regular = new Gc();
         $special = new SpecialExternalGcrequestEmpAssign();
+        $promo = new PromoGcReleaseToItem();
         $barcodeNotFound = false;
         $empty = false;
         $steps = [];
@@ -38,6 +39,9 @@ class AdminController extends Controller
             $steps = self::specialStatus($special, $request);
             $success = true;
         }elseif(PromoGcReleaseToItem::where('prreltoi_barcode', $request->barcode)->exists()){
+            $transType = 'Promo Gift Check';
+            $steps = self::promoStatus($promo, $request);
+            $success = true;
 
         }elseif(empty($request->barcode)){
             $empty = true;
@@ -50,7 +54,7 @@ class AdminController extends Controller
             'latestStatus' => 0,
             'transType' => $transType,
             'statusBarcode' => $barcodeNotFound,
-            'empty' => $empty,
+            'empty' => $empty, 
             'success' => $success,
             'barcode' => $request->barcode,
             'fetch' => $request->fetch
@@ -286,5 +290,9 @@ class AdminController extends Controller
 
 
         return $steps;
+    }
+    public static function promoStatus($promo, $request)
+    {
+
     }
 }
