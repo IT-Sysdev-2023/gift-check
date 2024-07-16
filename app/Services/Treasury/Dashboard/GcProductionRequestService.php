@@ -19,139 +19,20 @@ class GcProductionRequestService
             ->orderByDesc('pe_id')
             ->first();
         $denoms = Denomination::denomation();
-
-
-        // function getPendingProductionRequestByDept($link,$dept)
-        // {
-        //     $query = $link->query(
-        //         "SELECT
-        //             `production_request`.`pe_id`,
-        //             `users`.`firstname`,
-        //             `users`.`lastname`,
-        //             `production_request`.`pe_file_docno`,
-        //             `production_request`.`pe_date_needed`,
-        //             `production_request`.`pe_remarks`,
-        //             `production_request`.`pe_num`,
-        //             `production_request`.`pe_date_request`,
-        //             `production_request`.`pe_group`
-
-        //         FROM 
-        //             `production_request`
-        //         INNER JOIN
-        //             `users`
-        //         ON
-        //             `users`.`user_id` = `production_request`.`pe_requested_by`
-        //         WHERE 
-        //             `production_request`.`pe_status`='0'
-        //         AND
-        //             `users`.`usertype`='$dept'
-        //         ORDER BY 
-        //             `pe_id`
-        //         DESC
-        //         LIMIT 1
-        //     ");
-
-        //     if($query)
-        //     {
-        //         $row = $query->fetch_object();
-        //         return $row;
-        //     }
-        //     else 
-        //     {
-        //         return $link->error;
-        //     }
-        // }
-
-        //     function getAllDenomination($link)
-        // {
-        // 	$rows = [];
-        // 	$query = $link->query(
-        // 		"SELECT
-        // 			*
-        // 		FROM 
-        // 			denomination
-        // 		WHERE 
-        // 			denom_type='RSGC'
-        // 		and
-        // 			denom_status='active'
-        // 		ORDER BY 
-        // 			denomination
-        // 		ASC
-        // 	");
-
-        // 	if($query)
-        // 	{
-        // 		while ($row = $query->fetch_object()) 
-        // 		{
-        // 			$rows[] = $row;
-        // 		}
-        // 		return $rows;
-        // 	}
-        // 	else
-        // 	{
-        // 		echo $link->error;
-        // 		return $rows[] = $link->error;
-        // 	}
-        // }
     }
 
-    protected function approvedRequest() //approved-production-request
+    public function approvedRequest() //approved-production-request
     {
 
-        $record = ProductionRequest::with([
+        return ProductionRequest::with([
             'user:user_id,firstname,lastname',
             'approvedProductionRequest:ape_id,ape_pro_request_id,ape_approved_at,ape_approved_by'
         ])
-            // ->join('approved_production_request', 'production_request.pe_id', '=', 'approved_production_request.ape_pro_request_id')
             ->select('pe_id', 'pe_requested_by', 'pe_num', 'pe_date_request', 'pe_date_needed')
             ->where('pe_status', 1)
             ->orderByDesc('pe_id')
-            ->get();
-
-        return $record;
-
-        // function approvedProductionRequest($link)
-        // {
-        //     $rows = [];
-        //     $query = $link->query(
-        //         "SELECT 
-        // 		`production_request`.`pe_id`,
-        // 		`production_request`.`pe_num`,
-        // 		`production_request`.`pe_date_request`,
-        // 		`production_request`.`pe_date_needed`,
-        // 		`approved_production_request`.`ape_approved_at`,
-        // 		`approved_production_request`.`ape_approved_by`,
-        // 		`userequest`.`firstname`,
-        // 		`userequest`.`lastname`
-        // 	FROM 
-        // 		`production_request`
-        // 	INNER JOIN 
-        // 		`approved_production_request`
-        // 	ON 
-        // 		`production_request`.`pe_id` = `approved_production_request`.`ape_pro_request_id`
-        // 	INNER JOIN
-        // 		`users` as `userequest`
-        // 	ON
-        // 		`userequest`.`user_id` = `production_request`.`pe_requested_by`
-        // 	WHERE 
-        // 		`pe_status`='1'
-        // 	ORDER BY 
-        // 		`production_request`.`pe_id`
-        // 	DESC
-        // "
-        //     );
-
-        //     if ($query) {
-        //         while ($row = $query->fetch_object()) {
-        //             $rows[] = $row;
-        //         }
-        //         return $rows;
-        //     } else {
-        //         $row = $link->error;
-        //     }
-
-        // }
-
+            ->paginate(10)
+            ->withQueryString();
     }
 
     public function cancelledRequest() // cancelled-production-request.php

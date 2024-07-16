@@ -145,6 +145,10 @@ Route::prefix('treasury')->group(function () {
 
         });
 
+        Route::prefix('gc-production-request')->name('production.request.')->group(function () {
+            Route::get('approved-request', [TreasuryController::class, 'approvedProductionRequest'])->name('approved');
+        });
+
 
         Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');

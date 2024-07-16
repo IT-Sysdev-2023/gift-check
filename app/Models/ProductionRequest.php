@@ -14,6 +14,14 @@ class ProductionRequest extends Model
 
     protected $primaryKey= 'pe_id';
 
+    protected function casts(): array
+    {
+        return [
+            'pe_date_request' => 'datetime',
+            'pe_date_needed' => 'date'
+        ];
+    }
+
     public function user(){
         return $this->belongsTo(User::class, 'pe_requested_by', 'user_id');
     }

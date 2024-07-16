@@ -197,4 +197,44 @@ class ColumnHelper
 
         ],
     ];
+
+    public static $approvedProductionRequest = [
+        [
+            'title' => 'PR No.',
+            'dataIndex' => 'pe_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'pe_date_request',
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' =>  'pe_date_needed',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => ['user', 'full_name'],
+            'key' => 'requested_by',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => ['approvedProductionRequest', 'ape_approved_at'],
+            'key' => 'date_approved'
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => ['approvedProductionRequest', 'ape_approved_by'],
+            'key' => 'approved_by'
+
+        ],
+        [
+            'title' => 'Actions',
+            'dataIndex' => 'action',
+
+        ],
+    ];
 }

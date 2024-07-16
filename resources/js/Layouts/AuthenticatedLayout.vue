@@ -101,9 +101,8 @@ const dashboardRoute = computed(() => {
                     </a-layout-header>
                     <a-layout-content
                         :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }">
-                        <a-watermark content="Jessan Palban property" style="height: 100%;">
-                            <slot />
-                        </a-watermark>
+                                                  <slot />
+                     
                     </a-layout-content>
                 </a-layout>
             </a-layout>

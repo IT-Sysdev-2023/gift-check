@@ -52,7 +52,7 @@ const { highlightText } = highlighten();
                     </span>
                 </template>
 
-                <template v-if="column.dataIndex === 'reprint'">
+                <!-- <template v-if="column.dataIndex === 'reprint'">
                     <a-button
                         type="primary"
                         size="small"
@@ -63,7 +63,7 @@ const { highlightText } = highlighten();
                         </template>
                         Reprint
                     </a-button>
-                </template>
+                </template> -->
                 <template v-if="column.dataIndex === 'action'">
                     <a-button
                         type="primary"

@@ -2,8 +2,6 @@
 
     <Head title="Dashboard" />
 
-
-    <div />
     <div>
         <a-row :gutter="[16, 16]">
             <a-col :span="10">

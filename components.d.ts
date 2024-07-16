@@ -164,6 +164,7 @@ declare module 'vue' {
     SwapOutlined: typeof import('@ant-design/icons-vue')['SwapOutlined']
     Table: typeof import('./resources/js/Pages/Treasury/Table.vue')['default']
     TableApproved: typeof import('./resources/js/Pages/Treasury/BudgetRequest/TableApproved.vue')['default']
+    TableProduction: typeof import('./resources/js/Pages/Treasury/ProductionRequest/TableProduction.vue')['default']
     TableStoreGc: typeof import('./resources/js/Pages/Treasury/StoreGcRequest/TableStoreGc.vue')['default']
     TextInput: typeof import('./resources/js/Components/TextInput.vue')['default']
     TreasuryDashboard: typeof import('./resources/js/Pages/Treasury/TreasuryDashboard.vue')['default']

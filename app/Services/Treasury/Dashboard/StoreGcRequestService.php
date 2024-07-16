@@ -10,15 +10,10 @@ use App\Models\GcRelease;
 use App\Models\InstitutPayment;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
-use App\Services\Treasury\ColumnHelper;
-use App\Services\Treasury\Pdf\GcReleasedReport;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Date;
 
 class StoreGcRequestService
 {

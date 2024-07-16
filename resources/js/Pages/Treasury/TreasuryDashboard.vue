@@ -52,6 +52,9 @@ const budgetRequestCancelled = () => routeTo("budget.request", "cancelled");
 const storeGcPending = () => routeTo("store.gc", "pending");
 const storeGcReleased = () => routeTo("store.gc", "released");
 const storeGcCancelled = () => routeTo("store.gc", "cancelled");
+
+// GC Production request handlers
+const approvedProductionRequest = () => routeTo("production.request", "approved");
 </script>
 
 <template>
@@ -123,6 +126,7 @@ const storeGcCancelled = () => routeTo("store.gc", "cancelled");
                                 :pending="data?.gcProductionRequest.pending"
                                 :approved="data?.gcProductionRequest.approved"
                                 :cancelled="data?.gcProductionRequest.cancelled"
+                                 @approved-event="approvedProductionRequest"
                             />
                             <Card
                                 use-default
@@ -178,7 +182,6 @@ const storeGcCancelled = () => routeTo("store.gc", "cancelled");
                             </Card>
                         </a-row>
                     </div>
-                    <!-- <h1 v-if="userType('7') && !userRole(2)"> {{ $page.props.auth.user }}</h1> -->
                 </div>
             </div>
         </div>
