@@ -76,6 +76,7 @@ declare module 'vue' {
     AUpload: typeof import('ant-design-vue/es')['Upload']
     AUploadDragger: typeof import('ant-design-vue/es')['UploadDragger']
     AuthenticatedLayout: typeof import('./resources/js/Layouts/AuthenticatedLayout.vue')['default']
+    AWatermark: typeof import('ant-design-vue/es')['Watermark']
     BarcodeOutlined: typeof import('@ant-design/icons-vue')['BarcodeOutlined']
     BudgetLedger: typeof import('./resources/js/Pages/Finance/BudgetLedger.vue')['default']
     BudgetLedgerResult: typeof import('./resources/js/Pages/Documents/BudgetLedgerResult.vue')['default']
