@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use PhpParser\Node\Expr\Cast\Bool_;
 
 class AdminController extends Controller
 {
@@ -19,29 +20,36 @@ class AdminController extends Controller
     {
 
         $regular = new Gc();
-        $barcodeNotFound = '';
+        $barcodeNotFound = false;
+        $empty = false;
         $steps = [];
         $transType = '';
+        $success = false;
 
         if ($regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()) {
             //result regular gc
             $transType = 'Reqular Gift Check';
             $steps = self::regularGc($regular, $request);
+            $success = true;
         } elseif(SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', $request->barcode)->exists()) {
             //result specaial gc
             $transType = 'Special Gift Check';
             $steps = self::specialStatus($request);
         }elseif(PromoGcReleaseToItem::where('prreltoi_barcode', $request->barcode)->exists()){
 
+        }elseif(empty($request->barcode)){
+            $empty = true;
         }else{
-            $barcodeNotFound = 'Barcode Not Found';
+            $barcodeNotFound = true;
         }
 
         return Inertia::render('Admin/AdminDashboard', [
             'data' => $steps,
             'latestStatus' => 0,
             'transType' => $transType,
-            'statusBarcode' => $barcodeNotFound
+            'statusBarcode' => $barcodeNotFound,
+            'empty' => $empty,
+            'success' => $success,
         ]);
     }
     public function scanGcStatusIndex()
