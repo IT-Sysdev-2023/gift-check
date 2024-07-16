@@ -52,14 +52,16 @@ export default {
         empty: String,
         statusbar: Boolean,
         success: Boolean,
+        barcode: Number,
+        fetch: Boolean
     },
 
     data() {
         return {
-            isFetching: false,
+            isFetching: this.fetch,
             isLoading: false,
             form: {
-                barcode: null,
+                barcode: this.barcode,
             },
 
         }
@@ -71,6 +73,8 @@ export default {
 
             this.$inertia.get(route("admin.dashboard"), {
                 barcode,
+                fetch: true,
+
             }, {
                 onSuccess: () => {
                     this.isFetching = true;

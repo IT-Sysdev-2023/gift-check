@@ -20,6 +20,7 @@ class AdminController extends Controller
     {
 
         $regular = new Gc();
+        $special = new SpecialExternalGcrequestEmpAssign();
         $barcodeNotFound = false;
         $empty = false;
         $steps = [];
@@ -31,10 +32,11 @@ class AdminController extends Controller
             $transType = 'Reqular Gift Check';
             $steps = self::regularGc($regular, $request);
             $success = true;
-        } elseif(SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', $request->barcode)->exists()) {
+        } elseif($special->where('spexgcemp_barcode', $request->barcode)->exists()) {
             //result specaial gc
             $transType = 'Special Gift Check';
-            $steps = self::specialStatus($request);
+            $steps = self::specialStatus($special, $request);
+            $success = true;
         }elseif(PromoGcReleaseToItem::where('prreltoi_barcode', $request->barcode)->exists()){
 
         }elseif(empty($request->barcode)){
@@ -50,6 +52,8 @@ class AdminController extends Controller
             'statusBarcode' => $barcodeNotFound,
             'empty' => $empty,
             'success' => $success,
+            'barcode' => $request->barcode,
+            'fetch' => $request->fetch
         ]);
     }
     public function scanGcStatusIndex()
@@ -103,8 +107,8 @@ class AdminController extends Controller
                 'description' => 'Not Scanned By IAD'
             ]);
         }
-
-        if ($step3->where('gc_validated', '*')->exists()) {
+        // dd($step3->where('barcode_no', $request->barcode)->where('gc_validated', '*')->exists());
+        if ($step3->where('barcode_no', $request->barcode)->where('gc_validated', '*')->exists()) {
             $steps->push((object) [
                 'title' => 'Validated',
                 'description' => 'Validated By IAD'
@@ -116,8 +120,8 @@ class AdminController extends Controller
                 'description' => 'Not Validated By IAD'
             ]);
         }
-
-        if ($step3->where('gc_allocated', '*')->exists()) {
+        // $step3->where('gc_allocated', '*')
+        if ($step3->where('barcode_no', $request->barcode)->where('gc_allocated', '*')->exists()) {
             $steps->push((object) [
                 'title' => 'Allocated',
                 'description' => 'Allocated By Treasury'
@@ -151,7 +155,7 @@ class AdminController extends Controller
             ]);
         } else {
             $steps->push((object) [
-                'status' => 'waiting',
+                'status' => 'error',
                 'title' => 'Sold',
                 'description' => 'Not yet sold',
 
@@ -159,9 +163,9 @@ class AdminController extends Controller
         }
         $q2 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'gc.barcode_no')->where('vs_barcode', $request->barcode);
 
-        $vs_date = $q2->first()->vs_date;
-        $rev_date = $q2->first()->vs_reverifydate;
-        $vs_pay = $q2->first()->vs_payto;
+        $vs_date = $q2->first()->vs_date ?? null;
+        $rev_date = $q2->first()->vs_reverifydate ?? null;
+        $vs_pay = $q2->first()->vs_payto ?? null;
 
         if ($step3->whereHas('reverified', fn (Builder $query) => $query->where('vs_barcode', $request->barcode))->exists()) {
 
@@ -171,14 +175,14 @@ class AdminController extends Controller
             ]);
         } else {
             $steps->push((object) [
-                'status' => 'waiting',
+                'status' => 'error',
                 'title' => 'Verification',
                 'description' => 'Not yet Verified By CFS',
 
             ]);
         }
 
-        if ($q2->where('vs_reverifydate', null)->exists()) {
+        if ($q2->where('barcode_no', $request->barcode)->where('vs_reverifydate', null)->exists()) {
         } else {
             $steps->push((object) [
                 'title' => 'Reverification',
@@ -194,7 +198,7 @@ class AdminController extends Controller
             ]);
         } else {
             $steps->push((object) [
-                'status' => 'wait',
+                'status' => 'error',
                 'title' => 'Redeemption',
                 'description' => 'Not yet Redeem',
             ]);
@@ -203,7 +207,7 @@ class AdminController extends Controller
         return $steps;
     }
 
-    public static function specialStatus($request)
+    public static function specialStatus($special, $request)
     {
         //Treasury & Marketing
         $steps = collect([
@@ -224,10 +228,7 @@ class AdminController extends Controller
             ]
         ]);
 
-        $special =  SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', $request->barcode);
-
-
-        if ($special->where('spexgcemp_review', '*')->exists()) {
+        if ($special->where('spexgcemp_barcode', $request->barcode)->where('spexgcemp_review', '*')->exists()) {
             $steps->push((object) [
                 'title' => 'IAD',
                 'description' => 'Scanned by IAD'
@@ -239,6 +240,51 @@ class AdminController extends Controller
                 'description' => 'Not Scanned by IAD'
             ]);
         }
+        $data = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')->where('vs_barcode', $request->barcode);;
+
+        // dd($data->first()->vs_date);
+        if ($special->whereHas('reverified', fn (Builder $query) => $query->where('vs_barcode', $request->barcode))->exists()) {
+            $steps->push((object) [
+                'title' => 'Verification',
+                'description' => 'Verified By CFS ' . ' at ' . Date::parse($data->first()->vs_date)->toFormattedDateString(),
+            ]);
+        } else {
+            $steps->push((object) [
+                'status' => 'error',
+                'title' => 'Verification',
+                'description' => 'Not yet Verified By CFS',
+
+            ]);
+        }
+
+        $rev_date = $data->first()->vs_reverifydate ?? null;
+
+        if ($data->where('vs_barcode', $request->barcode)->whereNotNull('vs_reverifydate')->exists()) {
+            $steps->push((object) [
+                'title' => 'Reverification',
+                'description' => 'Reverified By CFS at ' . Date::parse($rev_date)->toFormattedDateString(),
+            ]);
+        } else {
+
+        }
+        $data2 = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')->where('vs_barcode', $request->barcode);;
+
+        if ($data2->where('vs_barcode', $request->barcode)->where('vs_tf_used', '*')->exists()){
+
+            $steps->push((object) [
+                'status' => 'finish',
+                'title' => 'Redeemption',
+                'description' => 'Redeemed by Customer at ' . $data2->first()->vs_payto,
+            ]);
+        } else {
+            $steps->push((object) [
+                'status' => 'error',
+                'title' => 'Redeemption',
+                'description' => 'Not yet Redeem',
+            ]);
+        }
+
+
         return $steps;
     }
 }
