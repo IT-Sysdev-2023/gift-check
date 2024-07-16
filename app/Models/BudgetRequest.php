@@ -17,6 +17,13 @@ class BudgetRequest extends Model
     protected $primaryKey = 'br_id';
     protected $guarded = [];
     public $timestamps = false;
+
+    protected function casts():array{
+        return [
+            'br_requested_at' => 'datetime',
+            'br_requested_needed' => 'datetime',
+        ];
+    }
     
     public function scopeFilter(Builder $builder, $filter)
     {

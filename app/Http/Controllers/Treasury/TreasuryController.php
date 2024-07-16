@@ -3,20 +3,28 @@
 namespace App\Http\Controllers\Treasury;
 
 use App\DashboardClass;
-use App\Helpers\ColumnHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BudgetLedgerApprovedResource;
+use App\Http\Resources\ApprovedGcRequestResource;
+use App\Http\Resources\BudgetRequestResource;
+use App\Http\Resources\StoreGcRequestResource;
 use App\Models\BudgetRequest;
+use App\Models\LedgerBudget;
+use App\Models\StoreGcrequest;
+use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Dashboard\BudgetRequestService;
+use App\Services\Treasury\Dashboard\StoreGcRequestService;
 use App\Services\Treasury\LedgerService;
 use Illuminate\Http\Request;
 
 class TreasuryController extends Controller
 {
-    public function __construct(public DashboardClass $dashboardClass, public LedgerService $ledgerService)
-    {
+    public function __construct(
+        public DashboardClass $dashboardClass,
+        public LedgerService $ledgerService,
+        public BudgetRequestService $budgetRequestService,
+        public StoreGcRequestService $storeGcRequestService
+    ) {
     }
-
     public function index()
     {
         $record = $this->dashboardClass->treasuryDashboard();
@@ -31,4 +39,117 @@ class TreasuryController extends Controller
     {
         return $this->ledgerService->gcLedger($request);
     }
+
+    //BUDGET REQUEST
+    public function approvedRequest(Request $request)
+    {
+        $record = $this->budgetRequestService->approvedRequest($request);
+        return inertia(
+            'Treasury/BudgetRequest/TableApproved',
+            [
+                'filters' => $request->all('search', 'date'),
+                'title' => 'Approved Budget Request',
+                'data' => BudgetRequestResource::collection($record),
+                'columns' => ColumnHelper::$approved_buget_request,
+            ]
+
+        );
+    }
+    public function viewApprovedRequest(BudgetRequest $id)
+    {
+        $data = $this->budgetRequestService->viewApprovedRequest($id);
+        return response()->json($data);
+    }
+    public function pendingRequest()
+    {
+        $record = $this->budgetRequestService->pendingRequest();
+        return inertia(
+            'Treasury/BudgetRequest/PendingRequest',
+            [
+                'currentBudget' => LedgerBudget::currentBudget(),
+                'title' => 'Update Budget Entry Form',
+                'data' => $record,
+            ]
+
+        );
+    }
+    public function submitBudgetEntry(BudgetRequest $id, Request $request)
+    {
+        return $this->budgetRequestService->submitBudgetEntry($id, $request);
+    }
+    public function downloadDocument($file)
+    {
+        return $this->budgetRequestService->downloadDocument($file);
+    }
+    public function cancelledRequest(Request $request)
+    {
+        $record = $this->budgetRequestService->cancelledRequest($request);
+
+        return inertia(
+            'Treasury/BudgetRequest/TableApproved',
+            [
+                'filters' => $request->all('search', 'date'),
+                'title' => 'Cancelled Budget Request',
+                'data' => BudgetRequestResource::collection($record),
+                'columns' => ColumnHelper::$cancelled_buget_request,
+            ]
+
+        );
+    }
+    public function viewCancelledRequest(BudgetRequest $id)
+    {
+        return $this->budgetRequestService->viewCancelledRequest($id);
+    }
+
+    //STORE GC
+    public function pendingRequestStoreGc(Request $request)
+    {
+        $record = $this->storeGcRequestService->pendingRequest($request);
+
+        return inertia(
+            'Treasury/StoreGcRequest/TableStoreGc',
+            [
+                'filters' => $request->all('search', 'date'),
+                'title' => 'Pending Request',
+                'data' => StoreGcRequestResource::collection($record),
+                'columns' => ColumnHelper::$pendingStoreGcRequest,
+            ]
+
+        );
+    }
+    public function releasedGc(Request $request)
+	{
+		$record = $this->storeGcRequestService->releasedGc($request);
+
+		return inertia(
+			'Treasury/StoreGcRequest/TableStoreGc',
+			[
+				'filters' => $request->all('search', 'date'),
+				'title' => 'Released Gc',
+				'data' => ApprovedGcRequestResource::collection($record),
+				'columns' => ColumnHelper::$releasedStoreGcRequest,
+			]
+
+		);
+	}
+    public function cancelledRequestStoreGc(Request $request)
+	{
+		$record = $this->storeGcRequestService->cancelledRequest($request);
+		return inertia(
+			'Treasury/StoreGcRequest/TableStoreGc',
+			[
+				'filters' => $request->all('search', 'date'),
+				'title' => 'Pending Request',
+				'data' => StoreGcRequestResource::collection($record),
+				'columns' => ColumnHelper::$cancelledStoreGcRequest,
+			]
+
+		);
+	}
+    public function reprint($id)
+	{
+		$pdfContent = $this->storeGcRequestService->reprint($id);
+
+		return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
+	}
 }

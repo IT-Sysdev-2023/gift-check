@@ -11,4 +11,15 @@ class CancelledStoreGcrequest extends Model
 
     protected $table = 'cancelled_store_gcrequest';
     protected $primaryKey = 'csgr_id';
+
+    protected function casts(): array
+    {
+        return [
+            'csgr_at' => 'datetime',
+        ];
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'csgr_by', 'user_id');
+    }
 }
