@@ -80,4 +80,7 @@ class SpecialExternalGcrequestEmpAssign extends Model
             ], 'LIKE', '%' . $search . '%');
         });
     }
+    public function reverified(){
+        return $this->belongsTo(StoreVerification::class, 'spexgcemp_barcode', 'vs_barcode');
+    }
 }

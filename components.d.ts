@@ -156,6 +156,7 @@ declare module 'vue' {
     ScreenVille: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ScreenVille.vue')['default']
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
     SettingOutlined: typeof import('@ant-design/icons-vue')['SettingOutlined']
+    SmileTwoTone: typeof import('@ant-design/icons-vue')['SmileTwoTone']
     SpgcLedger: typeof import('./resources/js/Pages/Finance/SpgcLedger.vue')['default']
     SpgcLedgerResult: typeof import('./resources/js/Pages/Finance/Results/SpgcLedgerResult.vue')['default']
     StockOutlined: typeof import('@ant-design/icons-vue')['StockOutlined']
