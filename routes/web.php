@@ -124,23 +124,23 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 Route::prefix('treasury')->group(function () {
     Route::name('treasury.')->group(function () {
         Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
-            Route::get('approved', [BudgetRequestService::class, 'approvedRequest'])->name('approved');
-            Route::get('view-approved-record/${id}', [BudgetRequestService::class, 'viewApprovedRequest'])->name('view.approved');
+            Route::get('approved', [TreasuryController::class, 'approvedRequest'])->name('approved');
+            Route::get('view-approved-record/${id}', [TreasuryController::class, 'viewApprovedRequest'])->name('view.approved');
 
-            Route::get('pending-request', [BudgetRequestService::class, 'pendingRequest'])->name('pending');
-            Route::post('submit-budget-entry/{id}', [BudgetRequestService::class, 'submitBudgetEntry'])->name('budget.entry');
-            Route::get('download-document/{file}', [BudgetRequestService::class, 'downloadDocument'])->name('download.document');
+            Route::get('pending-request', [TreasuryController::class, 'pendingRequest'])->name('pending');
+            Route::post('submit-budget-entry/{id}', [TreasuryController::class, 'submitBudgetEntry'])->name('budget.entry');
+            Route::get('download-document/{file}', [TreasuryController::class, 'downloadDocument'])->name('download.document');
 
-            Route::get('cancelled-request', [BudgetRequestService::class, 'cancelledRequest'])->name('cancelled');
-            Route::get('view-cancelled-request/{$id}', [BudgetRequestService::class, 'viewCancelledRequest'])->name('view.cancelled');
+            Route::get('cancelled-request', [TreasuryController::class, 'cancelledRequest'])->name('cancelled');
+            Route::get('view-cancelled-request/{$id}', [TreasuryController::class, 'viewCancelledRequest'])->name('view.cancelled');
 
         });
         Route::prefix('store-gc')->name('store.gc.')->group(function () {
-            Route::get('pending-request', [StoreGcRequestService::class, 'pendingRequest'])->name('pending');
-            Route::get('released-gc', [StoreGcRequestService::class, 'releasedGc'])->name('released');
-            Route::get('cancelled-request', [StoreGcRequestService::class, 'cancelledRequest'])->name('cancelled');
+            Route::get('pending-request', [TreasuryController::class, 'pendingRequestStoreGc'])->name('pending');
+            Route::get('released-gc', [TreasuryController::class, 'releasedGc'])->name('released');
+            Route::get('cancelled-request', [TreasuryController::class, 'cancelledRequestStoreGc'])->name('cancelled');
 
-            Route::get('reprint/{id}', [StoreGcRequestService::class, 'reprint'])->name('reprint');
+            Route::get('reprint/{id}', [TreasuryController::class, 'reprint'])->name('reprint');
         });
 
 
