@@ -1,6 +1,9 @@
 <template>
 
     <Head title="Dashboard" />
+
+
+    <div />
     <div>
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
@@ -49,6 +52,7 @@
             </a-col>
         </a-row>
     </div>
+
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
@@ -96,8 +100,6 @@ export default {
             });
         },
     },
-    mounted() {
-        this.img = 'https://imgs.search.brave.com/xRGd3JKeTdLQkc3n65uDRLGEtZeLF7rKaefCpmKGG30/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXZlLmNv/bS93cC93cDUyMDMx/NDcuanBn'
-    }
+
 }
 </script>

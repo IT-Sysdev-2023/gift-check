@@ -37,13 +37,11 @@ const dashboardRoute = computed(() => {
                         <div class="flex justify-center">
                             <div v-if="page.auth.user.user_id == 322">
                                 <img style="height: 80px; width: 80px; border-radius: 50%;"
-                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLsEmpgxjnQXNp0NsTfy8ERd9sgJEnoOQe0Q&s"
-                                    alt="usersimage">
+                                    src="../../../public/images/zenitsu.jpg" alt="usersimage">
                             </div>
                             <div v-else>
                                 <img style="height: 80px; width: 80px; border-radius: 50%;"
-                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAC6KNkddUOBRwcduSy-iFTDhK8dXXGyJmqQ&s"
-                                alt="usersimage">
+                                    src="../../../public/images/zenitsu.jpg" alt="usersimage">
                             </div>
                         </div>
 
@@ -103,7 +101,9 @@ const dashboardRoute = computed(() => {
                     </a-layout-header>
                     <a-layout-content
                         :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }">
-                        <slot />
+                        <a-watermark content="Jessan Palban property" style="height: 100%;">
+                            <slot />
+                        </a-watermark>
                     </a-layout-content>
                 </a-layout>
             </a-layout>
