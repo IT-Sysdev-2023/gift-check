@@ -10,11 +10,13 @@ use App\Http\Resources\StoreGcRequestResource;
 use App\Models\BudgetRequest;
 use App\Models\LedgerBudget;
 use App\Models\StoreGcrequest;
+use App\Models\StoreRequestItem;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Dashboard\BudgetRequestService;
 use App\Services\Treasury\Dashboard\StoreGcRequestService;
 use App\Services\Treasury\LedgerService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TreasuryController extends Controller
 {
@@ -118,38 +120,44 @@ class TreasuryController extends Controller
         );
     }
     public function releasedGc(Request $request)
-	{
-		$record = $this->storeGcRequestService->releasedGc($request);
+    {
+        $record = $this->storeGcRequestService->releasedGc($request);
 
-		return inertia(
-			'Treasury/StoreGcRequest/TableStoreGc',
-			[
-				'filters' => $request->all('search', 'date'),
-				'title' => 'Released Gc',
-				'data' => ApprovedGcRequestResource::collection($record),
-				'columns' => ColumnHelper::$releasedStoreGcRequest,
-			]
+        return inertia(
+            'Treasury/StoreGcRequest/TableStoreGc',
+            [
+                'filters' => $request->all('search', 'date'),
+                'title' => 'Released Gc',
+                'data' => ApprovedGcRequestResource::collection($record),
+                'columns' => ColumnHelper::$releasedStoreGcRequest,
+            ]
 
-		);
-	}
+        );
+    }
     public function cancelledRequestStoreGc(Request $request)
-	{
-		$record = $this->storeGcRequestService->cancelledRequest($request);
-		return inertia(
-			'Treasury/StoreGcRequest/TableStoreGc',
-			[
-				'filters' => $request->all('search', 'date'),
-				'title' => 'Pending Request',
-				'data' => StoreGcRequestResource::collection($record),
-				'columns' => ColumnHelper::$cancelledStoreGcRequest,
-			]
+    {
+        $record = $this->storeGcRequestService->cancelledRequest($request);
+        return inertia(
+            'Treasury/StoreGcRequest/TableStoreGc',
+            [
+                'filters' => $request->all('search', 'date'),
+                'title' => 'Pending Request',
+                'data' => StoreGcRequestResource::collection($record),
+                'columns' => ColumnHelper::$cancelledStoreGcRequest,
+            ]
 
-		);
-	}
+        );
+    }
     public function reprint($id)
-	{
-		$pdfContent = $this->storeGcRequestService->reprint($id);
+    {
+        $pdfContent = $this->storeGcRequestService->reprint($id);
 
-		return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
-	}
+        return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
+    }
+    public function viewCancelledGc($id)
+    {
+        $record = $this->storeGcRequestService->viewCancelledGc($id);
+
+        return response()->json($record);
+    }
 }

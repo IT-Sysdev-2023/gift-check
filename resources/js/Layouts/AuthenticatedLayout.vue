@@ -95,7 +95,7 @@ const dashboardRoute = computed(() => {
                             <HomeOutlined />
                             Home
                             </Link>
-                            <Link class="text-white mr-5" :href="route('logout')" method="post">
+                            <Link class="text-white mr-5" :href="route('logout')" method="post" as="button">
                             <LogoutOutlined />
                             Logout
                             </Link>

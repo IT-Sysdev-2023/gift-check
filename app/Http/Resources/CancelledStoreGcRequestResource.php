@@ -19,7 +19,7 @@ class CancelledStoreGcRequestResource extends JsonResource
             'csgr_id' => $this->csgr_id,
             'csgr_gc_id' => $this->csgr_gc_id,
             'csgr_by' => $this->csgr_by,
-            'csgr_at' => $this->csgr_at->toFormattedDayDateString(),
+            'csgr_at' => $this->csgr_at->toFormattedDateString(),
             'user' => $this->whenLoaded('user')
         ];
     }

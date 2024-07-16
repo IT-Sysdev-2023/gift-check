@@ -141,6 +141,8 @@ Route::prefix('treasury')->group(function () {
             Route::get('cancelled-request', [TreasuryController::class, 'cancelledRequestStoreGc'])->name('cancelled');
 
             Route::get('reprint/{id}', [TreasuryController::class, 'reprint'])->name('reprint');
+            Route::get('view-cancelled-gc/{id}', [TreasuryController::class, 'viewCancelledGc'])->name('cancelled.gc');
+
         });
 
 

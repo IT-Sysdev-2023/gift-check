@@ -18,8 +18,9 @@ class StoreGcRequestResource extends JsonResource
         return [
             'sgc_id' => $this->sgc_id,
             'sgc_num' => $this->sgc_num,
-            'sgc_date_needed' => $this->sgc_date_needed,
-            'sgc_date_request' => $this->sgc_date_request->toFormattedDayDateString(),
+            'sgc_date_needed' => $this->sgc_date_needed?->toFormattedDateString(),
+            'sgc_remarks' => $this->sgc_remarks,
+            'sgc_date_request' => $this->sgc_date_request->toFormattedDateString(),
             'sgc_status' => $this->sgc_status == '1' ? 'Partial' : 'Closed',
             'store' => $this->whenLoaded('store'),
             'user' => $this->whenLoaded('user'),

@@ -9,6 +9,7 @@ use App\Models\ApprovedGcrequest;
 use App\Models\GcRelease;
 use App\Models\InstitutPayment;
 use App\Models\StoreGcrequest;
+use App\Models\StoreRequestItem;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Pdf\GcReleasedReport;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Date;
 
 class StoreGcRequestService
@@ -114,6 +116,24 @@ class StoreGcRequestService
 		$pdf->setPaper('A3');
 
 		return $pdf->output();
+	}
+	public function viewCancelledGc($id)
+	{
+		$details = StoreGcrequest::joinCancelledGcStore()->select('sgc_id', 'sgc_num', 'sgc_requested_by', 'sgc_date_request', 'sgc_store', 'sgc_date_needed', 'sgc_remarks', 'sgc_file_docno')->where('sgc_id', $id)->first();
+
+		$denomination = StoreRequestItem::join('denomination', 'denomination.denom_id', '=', 'store_request_items.sri_items_denomination')
+			->select(DB::raw('store_request_items.sri_items_quantity * denomination.denomination as total'), 'store_request_items.sri_items_quantity', 'denomination.denomination')
+			->where('store_request_items.sri_items_requestid', $id)
+			->get();
+		return [
+			'details' => new StoreGcRequestResource($details),
+			'total' => NumberHelper::currency($denomination->sum('total')),
+			'denomination' => $denomination->map(function ($i) {
+				$i->total = NumberHelper::currency($i->total);
+				$i->denomination = NumberHelper::currency($i->denomination);
+				return $i;
+			}),
+		];
 	}
 
 	private static function getPaymentInfo($header_data, $id)

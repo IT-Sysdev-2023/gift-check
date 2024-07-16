@@ -17,21 +17,23 @@ class StoreGcrequest extends Model
     protected function casts(): array
     {
         return [
-            'sgc_date_request' => 'datetime'
+            'sgc_date_request' => 'datetime',
+            'sgc_date_needed' => 'date',
         ];
+    }
+
+    public function scopeJoinCancelledGcStore(Builder $builder)
+    {
+        return $builder->with([
+            'user:user_id,firstname,lastname',
+            'cancelledStoreGcRequest.user:user_id,firstname,lastname',
+            'store:store_id,store_name'
+        ]);
     }
 
     public function scopeCancelledGcRequest(Builder $query)
     {
-        return $query->with([
-            'user:user_id,firstname,lastname',
-            'cancelledStoreGcRequest.user:user_id,firstname,lastname',
-            'store:store_id,store_name'
-        ])
-            ->select('sgc_id', 'sgc_num', 'sgc_requested_by', 'sgc_date_request', 'sgc_store')
-            // ->join('cancelled_store_gcrequest', 'store_gcrequest.sgc_id', '=', 'cancelled_store_gcrequest.csgr_gc_id')
-            // ->join('stores', 'store_gcrequest.sgc_store', 'stores.store_id')
-            ->where([['sgc_status', 0], ['sgc_cancel', '*']]);
+        return $query->joinCancelledGcStore()->select('sgc_id', 'sgc_num', 'sgc_requested_by', 'sgc_date_request', 'sgc_store')->where([['sgc_status', 0], ['sgc_cancel', '*']]);
     }
 
     public function scopePendingRequest(Builder $builder)
