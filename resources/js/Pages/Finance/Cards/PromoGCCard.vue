@@ -58,7 +58,6 @@
                 View
             </a-button>
         </div>
-
     </a-card>
 </template>
 <style scoped>

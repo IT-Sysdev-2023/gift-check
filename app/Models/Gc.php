@@ -28,4 +28,7 @@ class Gc extends Model
     public function reverified(){
         return $this->belongsTo(StoreVerification::class, 'barcode_no', 'vs_barcode');
     }
+    public function barcodePromo(){
+        return $this->belongsTo(PromoGcReleaseToItem::class, 'barcode_no', 'prreltoi_barcode');
+    }
 }

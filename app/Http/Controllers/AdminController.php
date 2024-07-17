@@ -28,24 +28,23 @@ class AdminController extends Controller
         $transType = '';
         $success = false;
 
-        if ($regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()) {
+        if ($regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists() && !$regular->whereHas('barcodePromo', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()) {
             //result regular gc
             $transType = 'Reqular Gift Check';
             $steps = self::regularGc($regular, $request);
             $success = true;
-        } elseif($special->where('spexgcemp_barcode', $request->barcode)->exists()) {
+        } elseif ($special->where('spexgcemp_barcode', $request->barcode)->exists()) {
             //result specaial gc
             $transType = 'Special Gift Check';
             $steps = self::specialStatus($special, $request);
             $success = true;
-        }elseif(PromoGcReleaseToItem::where('prreltoi_barcode', $request->barcode)->exists()){
+        } elseif (PromoGcReleaseToItem::where('prreltoi_barcode', $request->barcode)->exists()) {
             $transType = 'Promo Gift Check';
             $steps = self::promoStatus($promo, $request);
             $success = true;
-
-        }elseif(empty($request->barcode)){
+        } elseif (empty($request->barcode)) {
             $empty = true;
-        }else{
+        } else {
             $barcodeNotFound = true;
         }
 
@@ -54,7 +53,7 @@ class AdminController extends Controller
             'latestStatus' => 0,
             'transType' => $transType,
             'statusBarcode' => $barcodeNotFound,
-            'empty' => $empty, 
+            'empty' => $empty,
             'success' => $success,
             'barcode' => $request->barcode,
             'fetch' => $request->fetch
@@ -120,7 +119,7 @@ class AdminController extends Controller
         } else {
             $steps->push((object) [
                 'status' => 'error',
-                'title' => 'Not Validated',
+                'title' => 'Validated',
                 'description' => 'Not Validated By IAD'
             ]);
         }
@@ -145,7 +144,7 @@ class AdminController extends Controller
         } else {
             $steps->push((object) [
                 'status' => 'error',
-                'title' => 'Not Transfered',
+                'title' => 'Transfered',
                 'description' => 'Not yet Transfered By Treasury To CFS'
             ]);
         }
@@ -186,13 +185,22 @@ class AdminController extends Controller
             ]);
         }
 
-        if ($q2->where('barcode_no', $request->barcode)->where('vs_reverifydate', null)->exists()) {
-        } else {
+        $isRevDateExists = $q2->where('barcode_no', $request->barcode)->where('vs_reverifydate', $rev_date)->exists();
+        $isRevDateNull = $q2->where('barcode_no', $request->barcode)->where('vs_reverifydate', null)->exists();
+
+        if ($isRevDateNull) {
+            //no result here..
+        } elseif ($isRevDateExists) {
+
             $steps->push((object) [
                 'title' => 'Reverification',
                 'description' => 'Reverified By CFS at ' . Date::parse($rev_date)->toFormattedDateString(),
             ]);
+            
+        } else {
+            //no result here..
         }
+
         $q3 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'gc.barcode_no')->where('vs_barcode', $request->barcode);
         if ($q3->where('vs_tf_used', '*')->exists()) {
             $steps->push((object) [
@@ -269,11 +277,10 @@ class AdminController extends Controller
                 'description' => 'Reverified By CFS at ' . Date::parse($rev_date)->toFormattedDateString(),
             ]);
         } else {
-
         }
         $data2 = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')->where('vs_barcode', $request->barcode);;
 
-        if ($data2->where('vs_barcode', $request->barcode)->where('vs_tf_used', '*')->exists()){
+        if ($data2->where('vs_barcode', $request->barcode)->where('vs_tf_used', '*')->exists()) {
 
             $steps->push((object) [
                 'status' => 'finish',
@@ -293,6 +300,47 @@ class AdminController extends Controller
     }
     public static function promoStatus($promo, $request)
     {
+        // dd(1);
+        $steps = collect([
+            [
+                'title' => 'Treasury',
+                'status' => 'finish',
+                'description' => 'Request Submitted'
+            ],
+            [
+                'title' => 'Marketing',
+                'status' => 'finish',
+                'description' => 'Request Approved'
+            ]
+        ]);
 
+        if ($promo->exists()) {
+            $steps->push((object) [
+                'title' => 'FAD',
+                'description' => 'Scanned By FAD'
+            ]);
+        } else {
+            $steps->push((object) [
+                'status' => 'error',
+                'title' => 'FAD',
+                'description' => 'Not Scanned By FAD'
+            ]);
+        }
+
+
+        if ($promo->whereHas('iadBarcode', fn (Builder $query) => $query->where('cssitem_barcode', $request->barcode))->exists()) {
+            $steps->push((object) [
+                'title' => 'IAD',
+                'description' => 'Scanned By IAD'
+            ]);
+        } else {
+            $steps->push((object) [
+                'status' => 'error',
+                'title' => 'IAD',
+                'description' => 'Not Scanned By IAD'
+            ]);
+        }
+
+        return $steps;
     }
 }

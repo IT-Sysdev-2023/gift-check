@@ -5,7 +5,9 @@
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
                 <a-card>
-                    <a-alert message="Please Scan Barcode..." type="info" show-icon />
+                    <a-alert :message="isLoading ? 'Scanning Barcode....': 'Scan Barcode here'" type="info" show-icon >
+
+                    </a-alert>
                     <a-input @change="removeSpaces" placeholder="Enter Barcode No" size="large"
                         @keyup.enter="viewStatus1" v-model:value="form.barcode" />
                 </a-card>
