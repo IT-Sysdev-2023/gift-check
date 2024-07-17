@@ -18,4 +18,8 @@ class ApprovedProductionRequest extends Model
             'ape_approved_at' => 'datetime'
         ];
     }
+
+    public function user(){
+        return $this->hasOne(User::class, 'user_id', 'ape_preparedby');
+    }
 }

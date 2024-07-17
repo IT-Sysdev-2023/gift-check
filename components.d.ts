@@ -112,6 +112,7 @@ declare module 'vue' {
     FireOutlined: typeof import('@ant-design/icons-vue')['FireOutlined']
     FireTwoTone: typeof import('@ant-design/icons-vue')['FireTwoTone']
     ForgotPassword: typeof import('./resources/js/Pages/Auth/ForgotPassword.vue')['default']
+    FormItem: typeof import('./resources/js/Components/FormItem.vue')['default']
     GroupOutlined: typeof import('@ant-design/icons-vue')['GroupOutlined']
     GuestLayout: typeof import('./resources/js/Layouts/GuestLayout.vue')['default']
     Head: typeof import('@inertiajs/vue3')['Head']

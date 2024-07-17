@@ -68,7 +68,7 @@ const { highlightText } = highlighten();
                     <a-button
                         type="primary"
                         size="small"
-                        @click="viewHandler(record.sgc_id)"
+                        @click="viewHandler(record.pe_id)"
                     >
                         <template #icon>
                             <FileSearchOutlined />
@@ -83,118 +83,164 @@ const { highlightText } = highlighten();
 
         <a-modal
             v-model:open="openModal"
-            width="1050px"
+            width="1500px"
             :footer="false"
             centered
         >
             <a-row :gutter="[16, 0]" class="mt-8">
-                <a-col :span="10">
-                    <a-card title="Cancelled GC Request Details">
-                        <a-form
-                            layout="horizontal"
-                            style="max-width: 600px; padding-top: 10px"
-                        >
-                            <a-form-item label="Request No.:">
-                                <a-input
-                                    :value="cancelledRecord.details.sgc_num"
-                                    readonly
-                                />
-                            </a-form-item>
-                            <a-form-item label="Date Requested:">
-                                <a-input
-                                    :value="
-                                        cancelledRecord.details.sgc_date_request
-                                    "
-                                    readonly
-                                />
-                            </a-form-item>
-                            <a-form-item label="Retail Store:">
-                                <a-input
-                                    :value="
-                                        cancelledRecord.details.store.store_name
-                                    "
-                                    readonly
-                                />
-                            </a-form-item>
-                            <a-form-item label="Date Needed:">
-                                <a-input
-                                    :value="
-                                        cancelledRecord.details.sgc_date_needed
-                                    "
-                                    readonly
-                                />
-                            </a-form-item>
-                            <a-form-item label="Request Remarks:">
-                                <a-textarea
-                                    :value="cancelledRecord.details.sgc_remarks"
-                                    readonly
-                                />
-                            </a-form-item>
-                            <a-form-item
-                                label="Document:"
-                                v-if="cancelledRecord.details.sgc_file_docno"
+                <a-col :span="12">
+                    <a-card
+                        title="Approved Production Details"
+                        style="width: 700px; text-align: center"
+                    >
+                        <a-form layout="horizontal" style="min-width: 600px">
+                            <a-row :gutter="[16, 0]">
+                                <a-col :span="12"
+                                    ><FormItem
+                                        label="PR No.:"
+                                        :value="record.productionRequest.pe_num"
+                                    />
+                                    <FormItem
+                                        label="Date Requested:"
+                                        :value="
+                                            record.productionRequest
+                                                .pe_date_request
+                                        "
+                                    />
+                                    <FormItem
+                                        label="Time Requested:"
+                                        :value="
+                                            record.productionRequest
+                                                .pe_date_request_time
+                                        "
+                                    />
+                                    <FormItem
+                                        label="Date Needed:"
+                                        :value="
+                                            record.productionRequest
+                                                .pe_date_needed
+                                        "
+                                    />
+                                    <FormItem
+                                        v-if="
+                                            record.productionRequest.pe_type ==
+                                            2
+                                        "
+                                        label="Promo Group:"
+                                        :value="
+                                            record.productionRequest.pe_group
+                                        "
+                                    />
+                                    <FormItem
+                                        label="Request Remarks:"
+                                        :value="
+                                            record.productionRequest.pe_remarks
+                                        "
+                                    />
+                                    <FormItem
+                                        v-if="
+                                            record.productionRequest
+                                                .pe_file_docno
+                                        "
+                                        label="Request Document:"
+                                        :value="
+                                            record.productionRequest
+                                                .pe_file_docno
+                                        "
+                                    />
+                                    <FormItem
+                                        label="Request Prepared by:"
+                                        :value="
+                                            record.productionRequest.user
+                                                .full_name
+                                        "
+                                    />
+                                </a-col>
+                                <a-col :span="12">
+                                    <FormItem
+                                        label="Date Approved:"
+                                        :value="
+                                            record.productionRequest
+                                                .approvedProductionRequest
+                                                .ape_approved_at
+                                        "
+                                    />
+                                    <FormItem
+                                        label="Approved Remarks:"
+                                        :value="
+                                            record.productionRequest
+                                                .approvedProductionRequest
+                                                .ape_remarks
+                                        "
+                                    />
+                                    <FormItem
+                                        v-if="
+                                            record.productionRequest
+                                                ?.pe_file_docno
+                                        "
+                                        label="Approved Document:"
+                                        :value="
+                                            record.productionRequest
+                                                .pe_file_docno
+                                        "
+                                    />
+                                    <FormItem
+                                        label="Approved by:"
+                                        :value="
+                                            record.productionRequest
+                                                .approvedProductionRequest
+                                                .ape_approved_by
+                                        "
+                                    />
+                                    <FormItem
+                                        label="Checked by:"
+                                        :value="
+                                            record.productionRequest
+                                                .approvedProductionRequest
+                                                .ape_checked_by
+                                        "
+                                    />
+                                    <FormItem
+                                        label="Prepared by:"
+                                        :value="
+                                            record.productionRequest
+                                                .approvedProductionRequest.user
+                                                .full_name
+                                        "
+                                    />
+                                </a-col>
+                            </a-row>
+                            <a-button type="primary">
+                                <template #icon>
+                                    <DownloadOutlined />
+                                </template>
+                                Reprint this Request</a-button
                             >
-                                <a-input
-                                    :value="
-                                        cancelledRecord.details.sgc_file_docno
-                                    "
-                                    readonly
-                                />
-                            </a-form-item>
-                            <a-form-item label="Request Prepared by:">
-                                <a-input
-                                    :value="
-                                        cancelledRecord.details.user.full_name
-                                    "
-                                    readonly
-                                />
-                            </a-form-item>
-                            <a-form-item label="Date Cancelled:">
-                                <a-input
-                                    :value="
-                                        cancelledRecord.details
-                                            .cancelledStoreGcRequest.csgr_at
-                                    "
-                                    readonly
-                                />
-                            </a-form-item>
-                            <a-form-item label="Cancelled by:">
-                                <a-input
-                                    :value="
-                                        cancelledRecord.details
-                                            .cancelledStoreGcRequest.user
-                                            .full_name
-                                    "
-                                    readonly
-                                />
-                            </a-form-item>
+                            <FormItem
+                                class="mt-8"
+                                v-if="
+                                    !record.productionRequest.pe_generate_code
+                                "
+                                label="Total Gc:"
+                                :value="record.totalProductionRequest"
+                            />
                         </a-form>
                     </a-card>
                 </a-col>
-                <a-col :span="14">
+                <a-col :span="12">
                     <a-card>
                         <a-table
                             bordered
-                            :dataSource="cancelledRecord.denomination"
+                            :dataSource="record.items"
                             :pagination="false"
                             size="small"
-                            :columns="[
-                                {
-                                    title: 'Denomination',
-                                    dataIndex: 'denomination',
-                                },
-                                {
-                                    title: 'Quantity',
-                                    dataIndex: 'sri_items_quantity',
-                                    width: '100px',
-                                },
-                                {
-                                    title: 'Total',
-                                    dataIndex: 'total',
-                                    width: '100px',
-                                },
-                            ]"
+                            :columns="approvedRequestColumns"
                         >
+                            <template #bodyCell="{ column, record }">
+                                <template v-if="column.key === 'unit'">
+                                    pc(s)
+                                </template>
+                            </template>
                         </a-table>
 
                         <a-form-item
@@ -202,7 +248,7 @@ const { highlightText } = highlighten();
                             style="text-align: end; margin-top: 15px"
                         >
                             <a-input
-                                :value="cancelledRecord.total"
+                                :value="record.total"
                                 style="width: 100px; text-align: end"
                                 readonly
                             />
@@ -240,10 +286,40 @@ export default {
                     ? [dayjs(this.filters.date[0]), dayjs(this.filters.date[1])]
                     : [],
             },
-            cancelledRecord: {},
+            record: {},
         };
     },
     computed: {
+        approvedRequestColumns() {
+            return [
+                {
+                    title: "Denomination",
+                    dataIndex: "denomination",
+                },
+                {
+                    title: "Quantity",
+                    dataIndex: "pe_items_quantity",
+                    width: "100px",
+                },
+                {
+                    title: "Unit",
+                    key: "unit",
+                },
+                {
+                    title: "Barcode No. Start",
+                    dataIndex: "barcode_start",
+                },
+                {
+                    title: "Barcode No. End",
+                    dataIndex: "barcode_end",
+                },
+                {
+                    title: "Total",
+                    dataIndex: "totalRow",
+                    width: "100px",
+                },
+            ];
+        },
         dashboardRoute() {
             const webRoute = route().current();
             const res = webRoute?.split(".")[0];
@@ -279,9 +355,10 @@ export default {
             this.onLoading = true;
             try {
                 const { data } = await axios.get(
-                    route("treasury.store.gc.cancelled.gc", id)
+                    route("treasury.production.request.view.approved", id)
                 );
-                this.cancelledRecord = data;
+                this.record = data;
+                console.log(data);
                 this.openModal = true;
             } finally {
                 this.onLoading = false;

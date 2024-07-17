@@ -5,6 +5,7 @@ namespace App\Services\Treasury\Dashboard;
 use App\Models\CancelledProductionRequest;
 use App\Models\Denomination;
 use App\Models\ProductionRequest;
+use Illuminate\Http\Request;
 
 class GcProductionRequestService
 {
@@ -21,7 +22,7 @@ class GcProductionRequestService
         $denoms = Denomination::denomation();
     }
 
-    public function approvedRequest() //approved-production-request
+    public function approvedRequest(Request $request) 
     {
 
         return ProductionRequest::with([
@@ -29,6 +30,7 @@ class GcProductionRequestService
             'approvedProductionRequest:ape_id,ape_pro_request_id,ape_approved_at,ape_approved_by'
         ])
             ->select('pe_id', 'pe_requested_by', 'pe_num', 'pe_date_request', 'pe_date_needed')
+            ->filter($request->all('search', 'date'))
             ->where('pe_status', 1)
             ->orderByDesc('pe_id')
             ->paginate(10)

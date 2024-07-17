@@ -147,6 +147,7 @@ Route::prefix('treasury')->group(function () {
 
         Route::prefix('gc-production-request')->name('production.request.')->group(function () {
             Route::get('approved-request', [TreasuryController::class, 'approvedProductionRequest'])->name('approved');
+            Route::get('view-approved-request/{id}', [TreasuryController::class, 'viewApprovedProduction'])->name('view.approved');
         });
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Treasury;
 
 use App\DashboardClass;
+use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovedGcRequestResource;
 use App\Http\Resources\BudgetRequestResource;
@@ -11,6 +12,7 @@ use App\Http\Resources\StoreGcRequestResource;
 use App\Models\BudgetRequest;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
+use App\Models\ProductionRequestItem;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
 use App\Services\Treasury\ColumnHelper;
@@ -164,19 +166,63 @@ class TreasuryController extends Controller
     }
 
     //GC PRODUCTION REQUEST
-    public function approvedProductionRequest(Request $request){
+    public function approvedProductionRequest(Request $request)
+    {
 
-        $record = $this->gcProductionRequestService->approvedRequest();
+        $record = $this->gcProductionRequestService->approvedRequest($request);
 
         return inertia(
             'Treasury/ProductionRequest/TableProduction',
             [
-                'filters' => $request->all('search', 'date'),
+                'filters' => $request->only('search', 'date'),
                 'title' => 'Approved GC Production Request',
                 'data' => ProductionRequestResource::collection($record),
                 'columns' => ColumnHelper::$approvedProductionRequest,
             ]
 
         );
+    }
+
+    public function viewApprovedProduction($id)
+    {
+        $pr = ProductionRequest::find($id)
+            ->load(
+                'user:user_id,firstname,lastname',
+                'approvedProductionRequest.user:user_id,firstname,lastname'
+            );
+        $ap = new ProductionRequestResource($pr);
+
+        $totalprodReq = ProductionRequestItem::selectRaw('SUM(production_request_items.pe_items_quantity * denomination) as total')->join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+            ->where('pe_items_request_id', $id)
+            ->get();
+
+        $items = ProductionRequestItem::selectRaw(
+            "pe_items_quantity * denomination AS totalRow,
+            denomination.denomination,
+            (SELECT barcode_no FROM gc WHERE gc.denom_id = production_request_items.pe_items_denomination AND gc.pe_entry_gc = $id LIMIT 1) AS barcode_start,
+            (SELECT barcode_no FROM gc WHERE gc.denom_id = production_request_items.pe_items_denomination AND gc.pe_entry_gc = $id ORDER BY barcode_no DESC LIMIT 1 ) AS barcode_end,
+            production_request_items.pe_items_quantity,
+            production_request_items.pe_items_denomination"
+        )
+            ->join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+            ->where('pe_items_request_id', $id)
+            ->get();
+
+        $proreq = ProductionRequestItem::join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+            ->select('denomination.denomination', 'production_request_items.pe_items_quantity')
+            ->where('production_request_items.pe_items_request_id', $id)
+            ->get();
+
+        $data = [
+            'total' => NumberHelper::currency($items->sum('totalRow')),
+            'productionRequest' => $ap,
+            'totalProductionRequest' => $totalprodReq,
+            'items' => $items->map(function ($i) {
+                $i->denomination = NumberHelper::currency($i->denomination);
+                $i->totalRow = NumberHelper::currency($i->totalRow);
+                return $i;
+            }),
+        ];
+        return response()->json($data);
     }
 }
