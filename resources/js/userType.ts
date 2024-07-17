@@ -5,9 +5,10 @@ import { PageProps as InertiaPageProps } from '@inertiajs/core';
 export interface User {
   usertype: string,
   user_role: number,
-  id: number, 
-  name: string, 
-  email: string, 
+  user_id: number,
+  full_name: string,
+  name: string,
+  email: string,
   email_verified_at: string
 }
 

@@ -8,7 +8,7 @@
                     <a-alert :message="isLoading ? 'Scanning Barcode....': 'Scan Barcode here'" type="info" show-icon >
 
                     </a-alert>
-                    <a-input @change="removeSpaces" placeholder="Enter Barcode No" size="large"
+                    <a-input showCount @change="removeSpaces" placeholder="Enter Barcode No" size="large"
                         @keyup.enter="viewStatus1" v-model:value="form.barcode" />
                 </a-card>
                 <div v-if="isFetching">

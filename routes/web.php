@@ -26,9 +26,12 @@ Route::get('/', function () {
     );
 })->middleware('guest');
 
+
 Route::get('/not-found', function () {
     return 'Empty';
 })->name('not.found');
+
+Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
 //Dashboards
 Route::middleware(['auth'])->group(function () {
