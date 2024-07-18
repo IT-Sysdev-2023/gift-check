@@ -135,7 +135,7 @@ export default {
             const formattedDateNeed = this.form.dateneeded ? dayjs(this.form.dateneeded).format("YYYY-MM-DD") : [];
             const filename = this.form.fileList.map((file) => file.name);
 
-            this.$inertia.post(route('promo.gc.submit'),
+            this.$inertia.post(route('marketing.promo.gc.submit'),
                 {
                     ...pickBy(this.form),
                     dateR: formattedDateReq,

@@ -63,14 +63,17 @@ Route::middleware('auth')->group(function () {
 
 //Marketing
 Route::prefix('marketing')->group(function () {
-    Route::name('promo.gc.')->group(function () {
-        Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
-        Route::post('', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
+    Route::name('marketing.')->group(function (){
+        Route::name('promo.gc.')->group(function () {
+            Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
+            Route::post('', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
+        });
+        Route::name('addnewpromo.')->group(function () {
+            Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
+            Route::post('validate-gc', [MarketingController::class, 'validateGc'])->name('validate');
+        });
     });
-    Route::name('addnewpromo.')->group(function () {
-        Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
-        Route::post('validate-gc', [MarketingController::class, 'validateGc'])->name('validate');
-    });
+    
 
 });
 

@@ -229,30 +229,54 @@ const { highlightText } = highlighten();
                 </a-col>
                 <a-col :span="12">
                     <a-card>
-                        <a-table
-                            bordered
-                            :dataSource="record.items"
-                            :pagination="false"
-                            size="small"
-                            :columns="approvedRequestColumns"
-                        >
-                            <template #bodyCell="{ column, record }">
-                                <template v-if="column.key === 'unit'">
-                                    pc(s)
-                                </template>
-                            </template>
-                        </a-table>
-
-                        <a-form-item
-                            label="Total:"
-                            style="text-align: end; margin-top: 15px"
-                        >
-                            <a-input
-                                :value="record.total"
-                                style="width: 100px; text-align: end"
-                                readonly
-                            />
-                        </a-form-item>
+                        <a-tabs v-model:activeKey="activeKey" type="card">
+                            <a-tab-pane key="1" tab="Denomination">
+                                <a-table
+                                    bordered
+                                    :dataSource="record.items"
+                                    :pagination="false"
+                                    size="small"
+                                    :columns="approvedRequestColumns"
+                                >
+                                    <template #bodyCell="{ column, record }">
+                                        <template v-if="column.key === 'unit'">
+                                            pc(s)
+                                        </template>
+                                    </template>
+                                </a-table>
+                                <a-form-item
+                                    label="Total:"
+                                    style="text-align: end; margin-top: 15px"
+                                >
+                                    <a-input
+                                        :value="record.total"
+                                        style="width: 100px; text-align: end"
+                                        readonly
+                                    />
+                                </a-form-item>
+                            </a-tab-pane>
+                            <a-tab-pane key="2" tab="Barcode Generated">
+                                <a-tabs v-model:activeKey="activeKeyTab">
+                                    <a-tab-pane key="1" tab="GC For Validation">
+                                        <a-table
+                                            bordered
+                                            :pagination="false"
+                                            size="small"
+                                            columns=""
+                                        >
+                                        </a-table>
+                                    </a-tab-pane>
+                                    <a-tab-pane key="2" tab="Validated GC"
+                                        >Validated GC</a-tab-pane
+                                    >
+                                </a-tabs>
+                            </a-tab-pane>
+                            <a-tab-pane key="3" tab="Validated GC">
+                                <p>Content of Tab Pane 3</p>
+                                <p>Content of Tab Pane 3</p>
+                                <p>Content of Tab Pane 3</p>
+                            </a-tab-pane>
+                        </a-tabs>
                     </a-card>
                 </a-col>
             </a-row>
@@ -280,6 +304,8 @@ export default {
         return {
             openModal: false,
             onLoading: false,
+            activeKey: "1",
+            activeKeyTab: "1",
             form: {
                 search: this.filters.search,
                 date: this.filters.date

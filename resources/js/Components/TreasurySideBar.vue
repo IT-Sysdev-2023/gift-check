@@ -1,11 +1,4 @@
 <script setup lang="ts">
-import {
-    FileTextOutlined,
-    FileOutlined,
-    SwapOutlined,
-    DollarOutlined,
-    LineChartOutlined,
-} from "@ant-design/icons-vue";
 import { ref } from "vue";
 
 const highlightRoute = ref([route().current()]);
