@@ -68,9 +68,10 @@ Route::prefix('marketing')->group(function () {
             Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
             Route::post('', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
         });
-        Route::name('addnewpromo.')->group(function () {
+        Route::name('addPromo.')->group(function () {
             Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
             Route::post('validate-gc', [MarketingController::class, 'validateGc'])->name('validate');
+            Route::get('promo-list', [MarketingController::class, 'promoList'])->name('list');
         });
     });
     
@@ -78,7 +79,6 @@ Route::prefix('marketing')->group(function () {
 });
 
 
-Route::get('promo-list', [MarketingController::class, 'promoList'])->name('marketing.promo.list');
 Route::get('released-promo-gc', [MarketingController::class, 'releasedpromogc'])->name('released.promo.gc');
 Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
 Route::get('manage-supplier', [MarketingController::class, 'manageSupplier'])->name('manage.supplier');

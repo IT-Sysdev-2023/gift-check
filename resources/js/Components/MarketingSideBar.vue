@@ -3,37 +3,38 @@ import { Link } from "@inertiajs/vue3";
 import { ref } from "vue";
 
 const highlightRoute = ref([route().current()]);
-
 const handleClick = (e: any) => {
     highlightRoute.value = [e.key];
 };
+const currentActiveMenu = [route().current().split(".")[1]];
 </script>
 
 <template>
     <a-menu
-        v-model:selectedKeys="highlightRoute"
+        :openKeys="currentActiveMenu"
+        :selectedKeys="highlightRoute"
         theme="dark"
         mode="inline"
         @click="handleClick"
     >
-        <a-menu-item key="barcodeChecker">
+        <a-menu-item key="marketing.promo.gc.request">
             <QrcodeOutlined />
             <span>
                 <Link :href="route('marketing.promo.gc.request')"> </Link>Promo GC Request
             </span>
         </a-menu-item>
-        <a-sub-menu key="promo">
+        <a-sub-menu key="addPromo">
             <template #title>
                 <span>
                     <FundProjectionScreenOutlined />
                     <span>Promo</span>
                 </span>
             </template>
-            <a-menu-item key="addnewpromo">
-                <Link :href="route('marketing.addnewpromo.add')">Add New Promo</Link>
+            <a-menu-item key="marketing.addPromo.add">
+                <Link :href="route('marketing.addPromo.add')">Add New Promo</Link>
             </a-menu-item>
-            <a-menu-item key="promolist">
-                <Link :href="route('marketing.promo.list')">Promo List</Link>
+            <a-menu-item key="marketing.addPromo.list">
+                <Link :href="route('marketing.addPromo.list')">Promo List</Link>
             </a-menu-item>
         </a-sub-menu>
 
