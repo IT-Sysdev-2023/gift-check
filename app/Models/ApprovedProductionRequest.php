@@ -11,4 +11,15 @@ class ApprovedProductionRequest extends Model
 
     protected $table = 'approved_production_request';
     protected $primaryKey = 'ape_id';
+
+    protected function casts() : array
+    {
+        return [
+            'ape_approved_at' => 'datetime'
+        ];
+    }
+
+    public function user(){
+        return $this->hasOne(User::class, 'user_id', 'ape_preparedby');
+    }
 }

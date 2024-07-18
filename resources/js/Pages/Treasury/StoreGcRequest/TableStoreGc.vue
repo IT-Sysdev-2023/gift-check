@@ -1,6 +1,5 @@
 <script setup>
 import { highlighten } from "@/Mixin/UiUtilities";
-import Description from "./../Description.vue";
 
 const { highlightText } = highlighten();
 </script>
@@ -187,7 +186,7 @@ const { highlightText } = highlighten();
                                 {
                                     title: 'Quantity',
                                     dataIndex: 'sri_items_quantity',
-                                     width:'100px'
+                                    width: '100px',
                                 },
                                 {
                                     title: 'Total',

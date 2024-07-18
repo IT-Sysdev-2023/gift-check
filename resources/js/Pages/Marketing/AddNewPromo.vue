@@ -183,7 +183,7 @@ export default {
       this.digitCount = (input.match(/\d/g) || []).length;
     },
     validateGc() {
-      axios.post(route('addnewpromo.validate'), {
+      axios.post(route('marketing.addPromo.validate'), {
           promoNo: this.promoId,
           dateCreated: this.form.dateCreated,
           promoGroup: this.form.promoGroup,

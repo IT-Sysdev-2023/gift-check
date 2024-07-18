@@ -66,19 +66,22 @@ Route::middleware('auth')->group(function () {
 
 //Marketing
 Route::prefix('marketing')->group(function () {
-    Route::name('promo.gc.')->group(function () {
-        Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
-        Route::post('', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
+    Route::name('marketing.')->group(function (){
+        Route::name('promo.gc.')->group(function () {
+            Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
+            Route::post('', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
+        });
+        Route::name('addPromo.')->group(function () {
+            Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
+            Route::post('validate-gc', [MarketingController::class, 'validateGc'])->name('validate');
+            Route::get('promo-list', [MarketingController::class, 'promoList'])->name('list');
+        });
     });
-    Route::name('addnewpromo.')->group(function () {
-        Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
-        Route::post('validate-gc', [MarketingController::class, 'validateGc'])->name('validate');
-    });
+    
 
 });
 
 
-Route::get('promo-list', [MarketingController::class, 'promoList'])->name('marketing.promo.list');
 Route::get('released-promo-gc', [MarketingController::class, 'releasedpromogc'])->name('released.promo.gc');
 Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
 Route::get('manage-supplier', [MarketingController::class, 'manageSupplier'])->name('manage.supplier');
@@ -146,6 +149,11 @@ Route::prefix('treasury')->group(function () {
             Route::get('reprint/{id}', [TreasuryController::class, 'reprint'])->name('reprint');
             Route::get('view-cancelled-gc/{id}', [TreasuryController::class, 'viewCancelledGc'])->name('cancelled.gc');
 
+        });
+
+        Route::prefix('gc-production-request')->name('production.request.')->group(function () {
+            Route::get('approved-request', [TreasuryController::class, 'approvedProductionRequest'])->name('approved');
+            Route::get('view-approved-request/{id}', [TreasuryController::class, 'viewApprovedProduction'])->name('view.approved');
         });
 
 

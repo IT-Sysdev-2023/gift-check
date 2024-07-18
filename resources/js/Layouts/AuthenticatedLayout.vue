@@ -4,8 +4,6 @@ import { usePage } from "@inertiajs/vue3";
 import { UserType } from "@/userType";
 import { PageWithSharedProps } from "@/types/index";
 import { computed } from "vue";
-import { HomeOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons-vue";
-// import { useRoute } from "../../../vendor/tightenco/ziggy/src/js";
 
 const page = usePage<PageWithSharedProps>().props;
 const { userType, userRole } = UserType();
