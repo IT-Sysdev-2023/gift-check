@@ -10,9 +10,11 @@ use App\Http\Resources\BudgetRequestResource;
 use App\Http\Resources\ProductionRequestResource;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\BudgetRequest;
+use App\Models\Gc;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
+use App\Models\RequisitionEntry;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
 use App\Services\Treasury\ColumnHelper;
@@ -185,20 +187,16 @@ class TreasuryController extends Controller
 
     public function viewApprovedProduction($id)
     {
-        $pr = ProductionRequest::find($id)
+        $productionRequest = ProductionRequest::find($id)
             ->load(
                 'user:user_id,firstname,lastname',
                 'approvedProductionRequest.user:user_id,firstname,lastname'
             );
-        $ap = new ProductionRequestResource($pr);
-
-        $totalprodReq = ProductionRequestItem::selectRaw('SUM(production_request_items.pe_items_quantity * denomination) as total')->join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
-            ->where('pe_items_request_id', $id)
-            ->get();
 
         $items = ProductionRequestItem::selectRaw(
             "pe_items_quantity * denomination AS totalRow,
             denomination.denomination,
+            (SUM(production_request_items.pe_items_quantity * denomination.denomination)) as total,
             (SELECT barcode_no FROM gc WHERE gc.denom_id = production_request_items.pe_items_denomination AND gc.pe_entry_gc = $id LIMIT 1) AS barcode_start,
             (SELECT barcode_no FROM gc WHERE gc.denom_id = production_request_items.pe_items_denomination AND gc.pe_entry_gc = $id ORDER BY barcode_no DESC LIMIT 1 ) AS barcode_end,
             production_request_items.pe_items_quantity,
@@ -206,23 +204,56 @@ class TreasuryController extends Controller
         )
             ->join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
             ->where('pe_items_request_id', $id)
+            ->groupBy('denomination.denomination', 'production_request_items.pe_items_quantity', 'production_request_items.pe_items_denomination')
             ->get();
 
-        $proreq = ProductionRequestItem::join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
-            ->select('denomination.denomination', 'production_request_items.pe_items_quantity')
-            ->where('production_request_items.pe_items_request_id', $id)
-            ->get();
+        $sum = NumberHelper::currency($items->sum('totalRow'));
+
+        $format = $items->map(function ($i) {
+            $i->denomination = NumberHelper::currency($i->denomination);
+            $i->totalRow = NumberHelper::currency($i->totalRow);
+            return $i;
+        });
 
         $data = [
-            'total' => NumberHelper::currency($items->sum('totalRow')),
-            'productionRequest' => $ap,
-            'totalProductionRequest' => $totalprodReq,
-            'items' => $items->map(function ($i) {
-                $i->denomination = NumberHelper::currency($i->denomination);
-                $i->totalRow = NumberHelper::currency($i->totalRow);
-                return $i;
-            }),
+            'total' => $sum,
+            'productionRequest' => new ProductionRequestResource($productionRequest),
+            'items' => $format
         ];
         return response()->json($data);
+    }
+    public function viewBarcodeGenerate($id)
+    {
+        $gc = Gc::with('denomination')->where([['pe_entry_gc', $id], ['gc_validated', '']])->get();
+        $gcv = Gc::select('barcode_no', 'denom_id')
+            ->with([
+                'denomination:denom_id,denomination',
+                'custodianSrrItems.custodiaSsr:csrr_id,csrr_datetime'
+            ])
+            ->where([['pe_entry_gc', $id], ['gc_validated', '*']])
+            ->get();
+
+        return response()->json(['gcForValidation' => $gc, 'gcValidated' => $gcv]);
+    }
+    public function viewRequisition($id)
+    {
+        $record = RequisitionEntry::select(
+            'repuis_pro_id',
+            'requis_supplierid',
+            'requis_req_by',
+            'requis_erno',
+            'requis_req',
+            'requis_loc',
+            'requis_dept',
+            'requis_rem',
+            'requis_checked',
+            'requis_approved'
+        )->with([
+                    'user:user_id,firstname,lastname',
+                    'productionRequest:pe_id,pe_date_needed',
+                    'supplier:gcs_id,gcs_companyname,gcs_contactperson,gcs_contactnumber,gcs_address'
+                ])
+            ->where('repuis_pro_id', $id)->first();
+        return response()->json($record);
     }
 }

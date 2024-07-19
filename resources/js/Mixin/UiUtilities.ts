@@ -1,4 +1,5 @@
 import { message } from 'ant-design-vue';
+import { ref } from "vue";
 
 export function highlighten() {
     const highlightText = (text: string, searchQuery: any) => {
@@ -37,3 +38,6 @@ export function onProgress(){
 
     return {notification, onLoading};
 }
+
+export const onLoading = ref(false);
+// export const onTableLoading = ref(false);
