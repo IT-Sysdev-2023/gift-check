@@ -68,7 +68,6 @@ class MarketingController extends Controller
 
     public function addnewpromo()
     {
-        dd(1);
         $promoNum = promo::count() + 1;
 
         //         $getDenomination = Denomination::with('getDenom')->where('denom_type', 'RSGC')->where('denom_status', 'active')->get();
