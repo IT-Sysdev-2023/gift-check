@@ -27,4 +27,11 @@ class ApprovedRequest extends Model
     {
         $builder->where('reqap_approvedtype', $param);
     }
+
+    public function userPrepBy()
+    {
+        return $this->hasOne(User::class, 'user_id', 'reqap_preparedby');
+    }
+
+
 }
