@@ -24,7 +24,7 @@ class PromoGcRequest extends Model
         return $this->hasOne(User::class, 'user_id', 'pgcreq_reqby');
     }
 
-    public function scopeSelectPromoApproved($builder)
+    public function scopeSelectPromoRequest($builder)
     {
         $builder->selectRaw(
             "promo_gc_request.pgcreq_reqnum,
@@ -43,12 +43,19 @@ class PromoGcRequest extends Model
             ) AS approved_by"
         );
     }
-    public function scopeWhereFilter($query)
+    public function scopeWhereFilterForApproved($query)
     {
         return $query->where('pgcreq_group', '!=', '')
             ->where('pgcreq_group_status', 'approved')
             ->where('pgcreq_status', 'approved');
     }
+    public function scopeWhereFilterForPending($query)
+    {
+        return $query->where('pgcreq_group', '!=', '')
+            ->where('pgcreq_group_status', 'approved')
+            ->where('pgcreq_status', 'pending');
+    }
+
     public function scopeSearchFilter($query, $filter)
     {
         return $query->whereAny([

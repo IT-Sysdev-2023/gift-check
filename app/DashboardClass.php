@@ -6,7 +6,9 @@ use App\Models\InstitutEod;
 use App\Models\InstitutTransaction;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcReleaseToDetail;
+use App\Models\PromoGcRequest;
 use App\Models\SpecialExternalGcrequest;
+use App\Services\Finance\FinanceDashboardService;
 use App\Services\Treasury\Dashboard\DashboardService;
 
 class DashboardClass extends DashboardService
@@ -15,8 +17,9 @@ class DashboardClass extends DashboardService
      * Create a new class instance.
      */
 
-     public function __construct() {
-     }
+    public function __construct()
+    {
+    }
     public function treasuryDashboard()
     {
         return [
@@ -33,15 +36,25 @@ class DashboardClass extends DashboardService
         ];
     }
 
-    public function retailDashboard(){
+    public function retailDashboard()
+    {
         //
     }
-    public function financeDashboard(){
+    public function financeDashboard()
+    {
+        return[
+            'appPromoCount' =>  PromoGcRequest::with('userReqby')
+                ->whereFilterForApproved()
+                ->selectPromoRequest()
+                ->count(),
+            'penPomoCount' =>  PromoGcRequest::with('userReqby')
+                ->whereFilterForPending()
+                ->selectPromoRequest()
+                ->count(),
+        ];
+    }
+    public function marketingDashboard()
+    {
         //
     }
-    public function marketingDashboard(){
-        //
-    }
-
-
 }
