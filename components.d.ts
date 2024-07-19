@@ -179,6 +179,7 @@ declare module 'vue' {
     TableApproved: typeof import('./resources/js/Pages/Treasury/BudgetRequest/TableApproved.vue')['default']
     TableProduction: typeof import('./resources/js/Pages/Treasury/ProductionRequest/TableProduction.vue')['default']
     TableStoreGc: typeof import('./resources/js/Pages/Treasury/StoreGcRequest/TableStoreGc.vue')['default']
+    TagFilled: typeof import('@ant-design/icons-vue')['TagFilled']
     TextInput: typeof import('./resources/js/Components/TextInput.vue')['default']
     TreasuryDashboard: typeof import('./resources/js/Pages/Treasury/TreasuryDashboard.vue')['default']
     TreasurySideBar: typeof import('./resources/js/Components/TreasurySideBar.vue')['default']
