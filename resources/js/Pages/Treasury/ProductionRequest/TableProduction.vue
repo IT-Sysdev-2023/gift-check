@@ -51,19 +51,6 @@ const { highlightText } = highlighten();
                         {{ getValue(record, column.dataIndex) }}
                     </span>
                 </template>
-
-                <!-- <template v-if="column.dataIndex === 'reprint'">
-                    <a-button
-                        type="primary"
-                        size="small"
-                        @click="reprint(record.agcr_request_relnum)"
-                    >
-                        <template #icon>
-                            <FileSearchOutlined />
-                        </template>
-                        Reprint
-                    </a-button>
-                </template> -->
                 <template v-if="column.dataIndex === 'action'">
                     <a-button
                         type="primary"
@@ -222,14 +209,18 @@ const { highlightText } = highlighten();
                                     !record.productionRequest.pe_generate_code
                                 "
                                 label="Total Gc:"
-                                :value="record.totalProductionRequest"
+                                :value="record.items.total"
                             />
                         </a-form>
                     </a-card>
                 </a-col>
                 <a-col :span="12">
                     <a-card>
-                        <a-tabs v-model:activeKey="activeKey" type="card">
+                        <a-tabs
+                            v-model:activeKey="activeKey"
+                            type="card"
+                            @change="onTabChange"
+                        >
                             <a-tab-pane key="1" tab="Denomination">
                                 <a-table
                                     bordered
@@ -237,12 +228,33 @@ const { highlightText } = highlighten();
                                     :pagination="false"
                                     size="small"
                                     :columns="approvedRequestColumns"
+                                    v-if="
+                                        record.productionRequest
+                                            .pe_generate_code
+                                    "
                                 >
                                     <template #bodyCell="{ column, record }">
                                         <template v-if="column.key === 'unit'">
                                             pc(s)
                                         </template>
                                     </template>
+                                </a-table>
+
+                                <a-table
+                                    v-else
+                                    bordered
+                                    :dataSource="
+                                        record.totalProductionRequest
+                                            .denomination
+                                    "
+                                    :pagination="false"
+                                    size="small"
+                                    :columns="approvedRequestColumnsElse"
+                                    v-if="
+                                        record.productionRequest
+                                            .pe_generate_code
+                                    "
+                                >
                                 </a-table>
                                 <a-form-item
                                     label="Total:"
@@ -255,26 +267,166 @@ const { highlightText } = highlighten();
                                     />
                                 </a-form-item>
                             </a-tab-pane>
-                            <a-tab-pane key="2" tab="Barcode Generated">
+                            <a-tab-pane
+                                key="2"
+                                tab="Barcode Generated"
+                                v-if="record.productionRequest.pe_generate_code"
+                            >
                                 <a-tabs v-model:activeKey="activeKeyTab">
                                     <a-tab-pane key="1" tab="GC For Validation">
                                         <a-table
                                             bordered
+                                            :loading="onLoading"
                                             :pagination="false"
                                             size="small"
-                                            columns=""
+                                            :columns="[{}]"
                                         >
                                         </a-table>
                                     </a-tab-pane>
-                                    <a-tab-pane key="2" tab="Validated GC"
-                                        >Validated GC</a-tab-pane
-                                    >
+                                    <a-tab-pane key="2" tab="Validated GC">
+                                        <a-table
+                                            bordered
+                                            :loading="onLoading"
+                                            :dataSource="
+                                                barcodeGenerated.gcValidated
+                                            "
+                                            :pagination="false"
+                                            size="small"
+                                            :columns="[
+                                                {
+                                                    title: 'GC Barcode',
+                                                    dataIndex: 'barcode_no',
+                                                },
+                                                {
+                                                    title: 'Denomination',
+                                                    key: 'denomination',
+                                                },
+                                                {
+                                                    title: 'Date Validated',
+                                                    key: 'date_validated',
+                                                },
+                                            ]"
+                                        >
+                                            <template
+                                                #bodyCell="{ column, record }"
+                                            >
+                                                <template
+                                                    v-if="
+                                                        column.key ==
+                                                        'date_validated'
+                                                    "
+                                                >
+                                                    {{
+                                                        record
+                                                            .custodian_srr_items
+                                                            ?.custodia_ssr
+                                                            ?.csrr_datetime
+                                                    }}
+                                                </template>
+                                                <template
+                                                    v-if="
+                                                        column.key ==
+                                                        'denomination'
+                                                    "
+                                                >
+                                                    {{
+                                                        record.denomination
+                                                            ?.denomination
+                                                    }}
+                                                </template>
+                                            </template>
+                                        </a-table>
+                                    </a-tab-pane>
                                 </a-tabs>
                             </a-tab-pane>
-                            <a-tab-pane key="3" tab="Validated GC">
-                                <p>Content of Tab Pane 3</p>
-                                <p>Content of Tab Pane 3</p>
-                                <p>Content of Tab Pane 3</p>
+                            <a-tab-pane
+                                key="3"
+                                tab="Requisition Created"
+                                v-if="record.productionRequest.pe_requisition"
+                            >
+                                <a-card :loading="onLoading">
+                                    <a-row :gutter="[16, 0]">
+                                        <a-col :span="12"
+                                            ><FormItem
+                                                label="Request No.:"
+                                                :value="requisition.requis_erno"
+                                            />
+                                            <FormItem
+                                                label="Date Requested:"
+                                                :value="requisition.requis_req"
+                                            />
+                                            <FormItem
+                                                label="Date Needed:"
+                                                :value="
+                                                    requisition
+                                                        .production_request
+                                                        ?.pe_date_needed
+                                                "
+                                            />
+                                            <FormItem
+                                                label="Location:"
+                                                :value="requisition.requis_loc"
+                                            />
+                                            <FormItem
+                                                label="Department:"
+                                                :value="requisition.requis_dept"
+                                            />
+                                            <FormItem
+                                                label="Remarks:"
+                                                :value="requisition.requis_rem"
+                                            />
+                                            <FormItem
+                                                label="Checked By:"
+                                                :value="
+                                                    requisition.requis_checked
+                                                "
+                                            />
+                                            <FormItem
+                                                label="Approved By:"
+                                                :value="
+                                                    requisition.requis_approved
+                                                "
+                                            />
+                                            <FormItem
+                                                label="Prepared By:"
+                                                :value="
+                                                    requisition.user?.full_name
+                                                "
+                                            />
+                                        </a-col>
+                                        <a-col :span="12">
+                                            <span>Supplier Information</span>
+                                            <FormItem
+                                                label="Company Name:"
+                                                :value="
+                                                    requisition.supplier
+                                                        ?.gcs_companyname
+                                                "
+                                            />
+                                            <FormItem
+                                                label="Contact Person:"
+                                                :value="
+                                                    requisition.supplier
+                                                        ?.gcs_contactperson
+                                                "
+                                            />
+                                            <FormItem
+                                                label="Contact No:"
+                                                :value="
+                                                    requisition.supplier
+                                                        ?.gcs_contactnumber
+                                                "
+                                            />
+                                            <FormItem
+                                                label="Company Address:"
+                                                :value="
+                                                    requisition.supplier
+                                                        ?.gcs_address
+                                                "
+                                            />
+                                        </a-col>
+                                    </a-row>
+                                </a-card>
                             </a-tab-pane>
                         </a-tabs>
                     </a-card>
@@ -289,6 +441,8 @@ import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
+import axios from "axios";
+import { onLoading } from "@/Mixin/UiUtilities";
 
 export default {
     layout: AuthenticatedLayout,
@@ -303,7 +457,6 @@ export default {
     data() {
         return {
             openModal: false,
-            onLoading: false,
             activeKey: "1",
             activeKeyTab: "1",
             form: {
@@ -313,9 +466,25 @@ export default {
                     : [],
             },
             record: {},
+            requisition: {},
+            onLoading: false,
+            barcodeGenerated: {},
         };
     },
     computed: {
+        approvedRequestColumnsElse() {
+            return [
+                {
+                    title: "Denomination",
+                    dataIndex: "denomination",
+                },
+                {
+                    title: "Quantity",
+                    dataIndex: "pe_items_quantity",
+                    width: "100px",
+                },
+            ];
+        },
         approvedRequestColumns() {
             return [
                 {
@@ -377,17 +546,47 @@ export default {
                     }
                 });
         },
+        async onTabChange(e) {
+            //Barcode Generated
+            if (e === "2") {
+                onLoading.value = true;
+                try {
+                    const { data } = await axios.get(
+                        route(
+                            "treasury.production.request.view.barcode",
+                            this.record.productionRequest.pe_id
+                        )
+                    );
+                    this.barcodeGenerated = data;
+                } finally {
+                    onLoading.value = false;
+                }
+                //Requisition Tab
+            } else if (e === "3") {
+                onLoading.value = true;
+                try {
+                    const { data } = await axios.get(
+                        route(
+                            "treasury.production.request.requisition",
+                            this.record.productionRequest.pe_id
+                        )
+                    );
+                    this.requisition = data;
+                } finally {
+                    onLoading.value = false;
+                }
+            }
+        },
         async viewHandler(id) {
-            this.onLoading = true;
+            onLoading.value = true;
             try {
                 const { data } = await axios.get(
                     route("treasury.production.request.view.approved", id)
                 );
                 this.record = data;
-                console.log(data);
                 this.openModal = true;
             } finally {
-                this.onLoading = false;
+                onLoading.value = false;
             }
         },
     },

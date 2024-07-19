@@ -31,4 +31,7 @@ class Gc extends Model
     public function barcodePromo(){
         return $this->belongsTo(PromoGcReleaseToItem::class, 'barcode_no', 'prreltoi_barcode');
     }
+    public function custodianSrrItems(){
+        return $this->hasOne(CustodianSrrItem::class, 'cssitem_barcode', 'barcode_no');
+    }
 }
