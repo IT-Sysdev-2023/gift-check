@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Http\Resources\SpgcLedgerResource;
 use App\Services\Finance\ApprovedPromoGCRequestService;
 use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
 use App\Services\Finance\FinanceDashboardService;
+use App\Services\Finance\PendingPromoGcRequestService;
 use App\Services\Finance\SpgcLedgerExcelService;
 use App\Services\Finance\SpgcService;
 use App\Services\Treasury\LedgerService;
@@ -19,13 +21,17 @@ use function PHPUnit\Framework\isNull;
 class FinanceController extends Controller
 {
 
-    public function __construct(public LedgerService $ledgerService, public ApprovedReleasedPdfExcelService $appRelPdfExcelService)
+    public function __construct(public LedgerService $ledgerService,
+    public ApprovedReleasedPdfExcelService $appRelPdfExcelService,
+    public DashboardClass $dashboardClass)
     {
     }
 
     public function index()
     {
-        return (new FinanceDashboardService())->dashboard();
+        return inertia('Finance/FinanceDashboard', [
+            'count' => $this->dashboardClass->financeDashboard(),
+        ]);
     }
     public function budgetLedger(Request $request)
     {
@@ -110,6 +116,10 @@ class FinanceController extends Controller
             'filePath' => $save,
         ]);
 
+    }
+    public function pendingPromoRequest(Request $request)
+    {
+        return (new PendingPromoGcRequestService())->pendingPromoGCRequestIndex($request);
     }
 
     public function approvedPromoRequest(Request $request)

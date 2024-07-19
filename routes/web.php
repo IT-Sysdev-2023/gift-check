@@ -72,12 +72,14 @@ Route::prefix('marketing')->group(function () {
             Route::post('', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
         });
         Route::name('addPromo.')->group(function () {
-            Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
+            Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add.promo');
             Route::post('validate-gc', [MarketingController::class, 'validateGc'])->name('validate');
             Route::get('promo-list', [MarketingController::class, 'promoList'])->name('list');
+            // Route::post('gc-promo-validation', [MarketingController::class, 'gcpromovalidation'])->name('gcpromovalidation');
+            // Route::post('truncategcpromovalidation', [MarketingController::class, 'truncate'])->name('truncategcpromovalidation');
         });
     });
-    
+
 
 });
 
@@ -182,6 +184,7 @@ Route::prefix('finance')->group(function () {
         Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
         Route::get('app-promo-request', [FinanceController::class, 'approvedPromoRequest'])->name('app.promo.request');
+        Route::get('pen-promo-request', [FinanceController::class, 'pendingPromoRequest'])->name('pen.promo.request');
         Route::get('approved-released-reports', [FinanceController::class, 'approvedAndReleasedSpgc'])->name('approved.released.reports');
         Route::get('generate-approved-spgc-reports', [FinanceController::class, 'approvedSpgdcPdfExcelFunction'])->name('approved.spgc.pdf.excel');
         Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.excel');

@@ -48,9 +48,10 @@
         <a-card title="" :bordered="false">
           <div>
             <a-table :dataSource="data" :columns="columns" :pagination="false">
+
               <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'denom_id'">
-                  <a-input readonly :value="form.scannedGCValue" style="width: 100px;"></a-input>
+                    <a-input readonly :value="record.countDen" style="width: 100px;"></a-input>
                 </template>
               </template>
             </a-table>
@@ -81,7 +82,7 @@
   </a-row>
 
   <a-modal v-model:open="open" width="50%" style="top: 65px" :title="title = 'GC Promo Validation '"
-    :confirm-loading="confirmLoading" >
+    :confirm-loading="confirmLoading">
     <a-flex justify="space-between" align="middle" style="margin-top: 40px;">
       <a-form-item label="Promo No:" name="promoNo">
         <a-input style="width: 50px;" v-model:value="form.promoNo" readonly />
@@ -96,8 +97,7 @@
         <a-input style="width: auto;" v-model:value="form.prepByName" readonly />
       </a-form-item>
     </a-flex>
-    <a-input v-model:value="form.barcode" @input="updateDigitCount" type="number"
-      style="height: 100px; font-size: 90px; "  />
+    <a-input v-model:value="form.barcode" @input="updateDigitCount" style="height: 100px; font-size: 90px; " />
     <a-form-item class="mt-2" label="Input count:" name="promoGroup">
       <a-input style="width: 50px;" :value="digitCount" readonly />
     </a-form-item>
@@ -130,7 +130,8 @@ export default {
     PromoNum: String,
     data: Object,
     columns: Array,
-    promoId: Array
+    promoId: Array,
+    countItems: Array,
   },
 
   data() {
@@ -156,6 +157,7 @@ export default {
     };
   },
 
+
   watch: {
     'form.dateNotify'(newVal) {
       if (newVal) {
@@ -166,7 +168,10 @@ export default {
     }
   },
 
+  // mounted:
 
+
+ 
   methods: {
     addGcModal(data) {
       console.log(data);
@@ -183,17 +188,28 @@ export default {
       this.digitCount = (input.match(/\d/g) || []).length;
     },
     validateGc() {
-      axios.post(route('marketing.addPromo.validate'), {
-          promoNo: this.promoId,
-          dateCreated: this.form.dateCreated,
-          promoGroup: this.form.promoGroup,
-          prepBy: this.form.prepby,
-          barcode: this.form.barcode,
+      axios.post(route('marketing.addPromo.gcpromovalidation'), {
+        barcode: this.form.barcode,
+        promoId: this.promoId,
+        promoGroup: this.form.promoGroup,
+        gctype: 1,
       }).then(response => {
-        console.log(response);
+        notification[response.data.type]({
+          message: response.data.msg,
+          description: response.data.description,
+        });
+
+
       })
     },
-    
+
+
   },
+
+  beforeUnmount() {
+    axios.post(route('addnewpromo.truncategcpromovalidation'));
+  },
+
+
 };
 </script>
