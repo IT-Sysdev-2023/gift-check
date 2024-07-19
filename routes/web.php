@@ -168,6 +168,7 @@ Route::prefix('finance')->group(function () {
     Route::name('finance.')->group(function () {
         Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
+        Route::get('app-promo-request', [FinanceController::class, 'approvedPromoRequest'])->name('app.promo.request');
         Route::get('approved-released-reports', [FinanceController::class, 'approvedAndReleasedSpgc'])->name('approved.released.reports');
         Route::get('generate-approved-spgc-reports', [FinanceController::class, 'approvedSpgdcPdfExcelFunction'])->name('approved.spgc.pdf.excel');
         Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.excel');

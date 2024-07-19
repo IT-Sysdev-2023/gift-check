@@ -17,4 +17,32 @@ class PromoGcRequest extends Model
 
 
     protected $guarded = [];
+
+
+    public function userReqby()
+    {
+        return $this->hasOne(User::class,'user_id', 'pgcreq_reqby');
+    }
+
+    public function scopeSelectPromoApproved($builder)
+    {
+        $builder->selectRaw(
+            "promo_gc_request.pgcreq_reqnum,
+            promo_gc_request.pgcreq_reqby,
+            promo_gc_request.pgcreq_datereq,
+            promo_gc_request.pgcreq_id,
+            promo_gc_request.pgcreq_dateneeded,
+            promo_gc_request.pgcreq_total,
+            (
+                SELECT CONCAT(users.firstname, ' ', users.lastname)
+                FROM approved_request
+                INNER JOIN users ON users.user_id = approved_request.reqap_preparedby
+                WHERE approved_request.reqap_trid = promo_gc_request.pgcreq_id
+                AND approved_request.reqap_approvedtype='promo gc preapproved'
+                LIMIT 1
+            ) AS approved_by"
+        );
+
+    }
+
 }

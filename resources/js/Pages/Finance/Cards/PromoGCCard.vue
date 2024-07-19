@@ -13,10 +13,10 @@
             </div>
 
             <div class="message-text-container">
-                <p class="message-text text-white">Pendings</p>
-                <p class="sub-text text-white">All Pending Request</p>
+                <p class="message-text text-white" >Pendings</p>
+                <p class="sub-text text-white" >All Pending Request</p>
             </div>
-            <a-button>
+            <a-button >
                 View
             </a-button>
         </div>
@@ -35,7 +35,7 @@
                 <p class="message-text text-white">Approved</p>
                 <p class="sub-text text-white">All Approved Request</p>
             </div>
-            <a-button>
+            <a-button @click="() => $inertia.get(route('finance.app.promo.request'))">
                 View
             </a-button>
         </div>
