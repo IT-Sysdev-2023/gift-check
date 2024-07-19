@@ -1,5 +1,5 @@
 <template>
-    <PromoRequestTable :record="data" :columns="columns" :title="'Approved Promo Request Table'"/>
+    <PromoRequestTable :record="data" :columns="columns" :title="'Pending Promo Request Table'"/>
 </template>
 <script>
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
@@ -12,3 +12,4 @@ export default {
 
 };
 </script>
+

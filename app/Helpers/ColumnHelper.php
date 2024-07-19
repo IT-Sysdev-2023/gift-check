@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Helpers;
+use Illuminate\Support\Collection;
 
 class ColumnHelper
 {
@@ -156,32 +157,43 @@ class ColumnHelper
 
     ];
 
-    public static  $app_request_columns = [
-        [
-            'title' => 'RFPROM #.',
-            'dataIndex' => 'req_no',
-        ],
-        [
-            'title' => 'Date Requested.',
-            'dataIndex' => 'date_req',
-        ],
-        [
-            'title' => 'Date Needed.',
-            'dataIndex' => 'date_needed',
-        ],
-        [
-            'title' => 'Total Gc.',
-            'dataIndex' => 'total',
-        ],
-        [
-            'title' => 'Recommended By.',
-            'dataIndex' => 'approved_by',
-        ],
-        [
-            'title' => 'Requested By.',
-            'dataIndex' => 'user',
-        ],
-    ];
+    public static function app_pend_request_columns($isPending = false)
+    {
+
+      return Collection::make([
+            [
+                'title' => 'RFPROM #.',
+                'dataIndex' => 'req_no',
+            ],
+            [
+                'title' => 'Date Requested.',
+                'dataIndex' => 'date_req',
+            ],
+            [
+                'title' => 'Date Needed.',
+                'dataIndex' => 'date_needed',
+            ],
+            [
+                'title' => 'Total Gc.',
+                'dataIndex' => 'total',
+            ],
+            [
+                'title' => 'Recommended By.',
+                'dataIndex' => 'approved_by',
+            ],
+            [
+                'title' => 'Requested By.',
+                'dataIndex' => 'user',
+            ],
+            $isPending ? [
+                'title' => 'Action.',
+                'dataIndex' => 'open',
+                'align' => 'center'
+            ] : null,
+        ])->reject(fn($value) => $value === null)->values();
+    }
+
+
 
 
     public static function getColumns($columns)

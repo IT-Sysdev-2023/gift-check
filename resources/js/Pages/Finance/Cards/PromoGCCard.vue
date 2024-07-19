@@ -16,7 +16,7 @@
                 <p class="message-text text-white">Pendings</p>
                 <p class="sub-text text-white">All Pending Request</p>
             </div>
-            <a-badge count="5">
+            <a-badge :count="count?.penPomoCount" @click="() => $inertia.get(route('finance.pen.promo.request'))">
                 <a-button>
                     <template #icon>
                         <FolderFilled />
@@ -41,7 +41,7 @@
                 <p class="message-text text-white">Approved</p>
                 <p class="sub-text text-white">All Approved Request</p>
             </div>
-            <a-badge count="5" :number-style="{ backgroundColor: '#52c41a' }">
+            <a-badge :count="count?.appPromoCount" :number-style="{ backgroundColor: '#52c41a' }">
                 <a-button @click="() => $inertia.get(route('finance.app.promo.request'))">
                     <template #icon>
                         <FolderFilled />
