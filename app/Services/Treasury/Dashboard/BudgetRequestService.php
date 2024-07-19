@@ -41,7 +41,6 @@ class BudgetRequestService extends UploadFileHandler
 			'cancelledBudgetRequest.user:user_id,firstname,lastname',
 			'cancelledBudgetRequest:cdreq_id,cdreq_req_id,cdreq_at, cdreq_by'
 		])
-			// ->select('br_id', 'br_requested_by', 'br_request_status', 'br_no', 'br_requested_at', 'br_request')
 			->where('br_request_status', '2')
 			->paginate()
 			->withQueryString();	
@@ -49,8 +48,6 @@ class BudgetRequestService extends UploadFileHandler
 	public function approvedRequest(Request $request)
 	{
 		return BudgetRequest::with(['user', 'approvedBudgetRequest'])
-			// ->leftJoin('approved_budget_request', 'budget_request.br_id', 'approved_budget_request.abr_budget_request_id')
-			// ->select('users.lastname', 'users.firstname', 'br_request', 'br_no', 'br_id', 'br_requested_at', 'abr_approved_by', 'abr_approved_at')
 			->filter($request->only('search', 'date'))
 			->where('br_request_status', '1')
 			->orderByDesc('br_requested_at')
@@ -82,14 +79,13 @@ class BudgetRequestService extends UploadFileHandler
 	{
 		return $this->download($file);
 	}
-
 	public function viewCancelledRequest(BudgetRequest $id)
 	{
 
-		$record = $id->load(['cancelled_budget_request', 'user', 'cancelled_budget_request.user']);
+		return $id->load(['cancelled_budget_request', 'user', 'cancelled_budget_request.user']);
 		//Untested
 		//Gamiti nig Api resource 
-		return response()->json($record);
+		
 
 	}
 }

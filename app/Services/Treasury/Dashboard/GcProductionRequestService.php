@@ -2,9 +2,13 @@
 
 namespace App\Services\Treasury\Dashboard;
 
+use App\Helpers\NumberHelper;
 use App\Models\CancelledProductionRequest;
 use App\Models\Denomination;
+use App\Models\Gc;
 use App\Models\ProductionRequest;
+use App\Models\ProductionRequestItem;
+use App\Models\RequisitionEntry;
 use Illuminate\Http\Request;
 
 class GcProductionRequestService
@@ -22,7 +26,7 @@ class GcProductionRequestService
         $denoms = Denomination::denomation();
     }
 
-    public function approvedRequest(Request $request) 
+    public function approvedRequest(Request $request)
     {
 
         return ProductionRequest::with([
@@ -48,53 +52,78 @@ class GcProductionRequestService
             ->get();
 
         return $record;
-        //     function getAllCancelledProductionRequest($link)
-        // {
-        // 	$rows = [];
-        // 	$query = $link->query(
-        // 		"SELECT 
-        // 			production_request.pe_id,
-        // 			production_request.pe_num,
-        // 			production_request.pe_date_request,
-        // 			production_request.pe_date_needed,
-        // 			lreq.firstname as lreqfname,
-        // 			lreq.lastname as lreqlname,
-        // 			cancelled_production_request.cpr_at,
-        // 			lcan.firstname as lcanfname,
-        // 			lcan.lastname as lcanlname
-        // 		FROM 
-        // 			cancelled_production_request
-        // 		INNER JOIN
-        // 			production_request
-        // 		ON
-        // 			production_request.pe_id = cancelled_production_request.cpr_pro_id
-        // 		INNER JOIN
-        // 			users as lreq
-        // 		ON
-        // 			lreq.user_id = production_request.pe_requested_by
-        // 		INNER JOIN
-        // 			users as lcan
-        // 		ON
-        // 			lcan.user_id = cancelled_production_request.cpr_by
-        // 		ORDER BY
-        // 			cancelled_production_request.cpr_id
-        // 		DESC
-        // 	");
+    }
 
-        // 	if($query)
-        // 	{
-        // 		while ($row = $query->fetch_object()) 
-        // 		{
-        // 			$rows[] = $row;
-        // 		}
-        // 		return $rows;
-        // 	}
-        // 	else 
-        // 	{
-        // 		return $link->error;
-        // 	}
-        // }
+    public function viewApprovedProduction(string $id)
+    {
+        $productionRequest = ProductionRequest::find($id)
+            ->load(
+                'user:user_id,firstname,lastname',
+                'approvedProductionRequest.user:user_id,firstname,lastname'
+            );
 
+        $items = ProductionRequestItem::selectRaw(
+            "pe_items_quantity * denomination AS totalRow,
+            denomination.denomination,
+            (SUM(production_request_items.pe_items_quantity * denomination.denomination)) as total,
+            (SELECT barcode_no FROM gc WHERE gc.denom_id = production_request_items.pe_items_denomination AND gc.pe_entry_gc = $id LIMIT 1) AS barcode_start,
+            (SELECT barcode_no FROM gc WHERE gc.denom_id = production_request_items.pe_items_denomination AND gc.pe_entry_gc = $id ORDER BY barcode_no DESC LIMIT 1 ) AS barcode_end,
+            production_request_items.pe_items_quantity,
+            production_request_items.pe_items_denomination"
+        )
+            ->join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+            ->where('pe_items_request_id', $id)
+            ->groupBy('denomination.denomination', 'production_request_items.pe_items_quantity', 'production_request_items.pe_items_denomination')
+            ->get();
 
+        $sum = NumberHelper::currency($items->sum('totalRow'));
+
+        $format = $items->map(function ($i) {
+            $i->denomination = NumberHelper::currency($i->denomination);
+            $i->totalRow = NumberHelper::currency($i->totalRow);
+            return $i;
+        });
+
+        return (object) [
+            'totalRow' => $sum,
+            'productionRequest' => $productionRequest,
+            'transformItems' => $format,
+        ];
+    }
+    public function viewBarcodeGenerated(string $id)
+    {
+        $gc = Gc::with('denomination')->where([['pe_entry_gc', $id], ['gc_validated', '']])->get();
+        $gcv = Gc::select('barcode_no', 'denom_id')
+            ->with([
+                'denomination:denom_id,denomination',
+                'custodianSrrItems.custodiaSsr:csrr_id,csrr_datetime'
+            ])
+            ->where([['pe_entry_gc', $id], ['gc_validated', '*']])
+            ->get();
+
+        return [
+            'gcForValidation' => $gc,
+            'gcValidated' => $gcv
+        ];
+    }
+    public function viewRequisition(string $id)
+    {
+        return RequisitionEntry::select(
+            'repuis_pro_id',
+            'requis_supplierid',
+            'requis_req_by',
+            'requis_erno',
+            'requis_req',
+            'requis_loc',
+            'requis_dept',
+            'requis_rem',
+            'requis_checked',
+            'requis_approved'
+        )->with([
+                    'user:user_id,firstname,lastname',
+                    'productionRequest:pe_id,pe_date_needed',
+                    'supplier:gcs_id,gcs_companyname,gcs_contactperson,gcs_contactnumber,gcs_address'
+                ])
+            ->where('repuis_pro_id', $id)->first();
     }
 }

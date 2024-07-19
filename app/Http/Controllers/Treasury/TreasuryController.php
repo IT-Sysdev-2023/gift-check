@@ -6,7 +6,9 @@ use App\DashboardClass;
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovedGcRequestResource;
+use App\Http\Resources\BudgetLedgerResource;
 use App\Http\Resources\BudgetRequestResource;
+use App\Http\Resources\GcLedgerResource;
 use App\Http\Resources\ProductionRequestResource;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\BudgetRequest;
@@ -15,15 +17,13 @@ use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
-use App\Models\StoreGcrequest;
-use App\Models\StoreRequestItem;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Dashboard\BudgetRequestService;
 use App\Services\Treasury\Dashboard\GcProductionRequestService;
 use App\Services\Treasury\Dashboard\StoreGcRequestService;
 use App\Services\Treasury\LedgerService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class TreasuryController extends Controller
 {
@@ -38,15 +38,29 @@ class TreasuryController extends Controller
     public function index()
     {
         $record = $this->dashboardClass->treasuryDashboard();
+
         return inertia('Treasury/TreasuryDashboard', ['data' => $record]);
     }
     public function budgetLedger(Request $request)
     {
-        return $this->ledgerService->budgetLedger($request);
+        $record = $this->ledgerService->budgetLedger($request);
+
+        return inertia('Treasury/Table', [
+            'filters' => $request->all('search', 'date'),
+            'remainingBudget' => LedgerBudget::currentBudget(),
+            'data' => BudgetLedgerResource::collection($record),
+            'columns' => \App\Helpers\ColumnHelper::$budget_ledger_columns,
+        ]);
     }
     public function gcLedger(Request $request)
     {
-        return $this->ledgerService->gcLedger($request);
+        $record = $this->ledgerService->gcLedger($request);
+        return inertia('Treasury/Table', [
+            'filters' => $request->all('search', 'date'),
+            'remainingBudget' => LedgerBudget::currentBudget(),
+            'data' => GcLedgerResource::collection($record),
+            'columns' =>  \App\Helpers\ColumnHelper::$gc_ledger_columns,
+        ]);
     }
 
     //BUDGET REQUEST
@@ -64,7 +78,7 @@ class TreasuryController extends Controller
 
         );
     }
-    public function viewApprovedRequest(BudgetRequest $id)
+    public function viewApprovedRequest(BudgetRequest $id): JsonResponse
     {
         $data = $this->budgetRequestService->viewApprovedRequest($id);
         return response()->json($data);
@@ -72,6 +86,7 @@ class TreasuryController extends Controller
     public function pendingRequest()
     {
         $record = $this->budgetRequestService->pendingRequest();
+
         return inertia(
             'Treasury/BudgetRequest/PendingRequest',
             [
@@ -105,9 +120,10 @@ class TreasuryController extends Controller
 
         );
     }
-    public function viewCancelledRequest(BudgetRequest $id)
+    public function viewCancelledRequest(BudgetRequest $id): JsonResponse
     {
-        return $this->budgetRequestService->viewCancelledRequest($id);
+        $record = $this->budgetRequestService->viewCancelledRequest($id);
+        return response()->json($record);
     }
 
     //STORE GC
@@ -161,7 +177,7 @@ class TreasuryController extends Controller
 
         return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
     }
-    public function viewCancelledGc($id)
+    public function viewCancelledGc($id): JsonResponse
     {
         $record = $this->storeGcRequestService->viewCancelledGc($id);
         return response()->json($record);
@@ -184,76 +200,31 @@ class TreasuryController extends Controller
 
         );
     }
-
-    public function viewApprovedProduction($id)
+    public function viewApprovedProduction($id): JsonResponse
     {
-        $productionRequest = ProductionRequest::find($id)
-            ->load(
-                'user:user_id,firstname,lastname',
-                'approvedProductionRequest.user:user_id,firstname,lastname'
-            );
-
-        $items = ProductionRequestItem::selectRaw(
-            "pe_items_quantity * denomination AS totalRow,
-            denomination.denomination,
-            (SUM(production_request_items.pe_items_quantity * denomination.denomination)) as total,
-            (SELECT barcode_no FROM gc WHERE gc.denom_id = production_request_items.pe_items_denomination AND gc.pe_entry_gc = $id LIMIT 1) AS barcode_start,
-            (SELECT barcode_no FROM gc WHERE gc.denom_id = production_request_items.pe_items_denomination AND gc.pe_entry_gc = $id ORDER BY barcode_no DESC LIMIT 1 ) AS barcode_end,
-            production_request_items.pe_items_quantity,
-            production_request_items.pe_items_denomination"
-        )
-            ->join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
-            ->where('pe_items_request_id', $id)
-            ->groupBy('denomination.denomination', 'production_request_items.pe_items_quantity', 'production_request_items.pe_items_denomination')
-            ->get();
-
-        $sum = NumberHelper::currency($items->sum('totalRow'));
-
-        $format = $items->map(function ($i) {
-            $i->denomination = NumberHelper::currency($i->denomination);
-            $i->totalRow = NumberHelper::currency($i->totalRow);
-            return $i;
-        });
-
+       
+        $record = $this->gcProductionRequestService->viewApprovedProduction($id);
         $data = [
-            'total' => $sum,
-            'productionRequest' => new ProductionRequestResource($productionRequest),
-            'items' => $format
+            'total' => $record->totalRow,
+            'productionRequest' => new ProductionRequestResource($record->productionRequest),
+            'items' => $record->transformItems
         ];
         return response()->json($data);
     }
-    public function viewBarcodeGenerate($id)
+    public function viewBarcodeGenerate($id): JsonResponse
     {
-        $gc = Gc::with('denomination')->where([['pe_entry_gc', $id], ['gc_validated', '']])->get();
-        $gcv = Gc::select('barcode_no', 'denom_id')
-            ->with([
-                'denomination:denom_id,denomination',
-                'custodianSrrItems.custodiaSsr:csrr_id,csrr_datetime'
-            ])
-            ->where([['pe_entry_gc', $id], ['gc_validated', '*']])
-            ->get();
+        $record = $this->gcProductionRequestService->viewBarcodeGenerated($id);
 
-        return response()->json(['gcForValidation' => $gc, 'gcValidated' => $gcv]);
-    }
-    public function viewRequisition($id)
-    {
-        $record = RequisitionEntry::select(
-            'repuis_pro_id',
-            'requis_supplierid',
-            'requis_req_by',
-            'requis_erno',
-            'requis_req',
-            'requis_loc',
-            'requis_dept',
-            'requis_rem',
-            'requis_checked',
-            'requis_approved'
-        )->with([
-                    'user:user_id,firstname,lastname',
-                    'productionRequest:pe_id,pe_date_needed',
-                    'supplier:gcs_id,gcs_companyname,gcs_contactperson,gcs_contactnumber,gcs_address'
-                ])
-            ->where('repuis_pro_id', $id)->first();
         return response()->json($record);
+    }
+    public function viewRequisition($id): JsonResponse
+    {
+        $record = $this->gcProductionRequestService->viewRequisition($id);
+        return response()->json($record);
+    }
+
+    //SPECIAL GC REQUEST
+    public function pendingSpecialGc(){
+        dd(1);
     }
 }

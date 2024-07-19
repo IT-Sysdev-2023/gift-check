@@ -150,12 +150,17 @@ Route::prefix('treasury')->group(function () {
             Route::get('view-cancelled-gc/{id}', [TreasuryController::class, 'viewCancelledGc'])->name('cancelled.gc');
 
         });
-
         Route::prefix('gc-production-request')->name('production.request.')->group(function () {
             Route::get('approved-request', [TreasuryController::class, 'approvedProductionRequest'])->name('approved');
             Route::get('view-approved-request/{id}', [TreasuryController::class, 'viewApprovedProduction'])->name('view.approved');
             Route::get('view-barcode-generated/{id}', [TreasuryController::class, 'viewBarcodeGenerate'])->name('view.barcode');
             Route::get('view-requisition/{id}', [TreasuryController::class, 'viewRequisition'])->name('requisition');
+        });
+        Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
+            Route::get('pending-special-gc', [TreasuryController::class, 'pendingSpecialGc'])->name('pending');
+            // Route::get('view-approved-request/{id}', [TreasuryController::class, 'viewApprovedProduction'])->name('view.approved');
+            // Route::get('view-barcode-generated/{id}', [TreasuryController::class, 'viewBarcodeGenerate'])->name('view.barcode');
+            // Route::get('view-requisition/{id}', [TreasuryController::class, 'viewRequisition'])->name('requisition');
         });
 
 

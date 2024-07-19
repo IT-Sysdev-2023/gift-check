@@ -32,7 +32,7 @@ class LedgerService extends ExcelWriter
     }
     public function budgetLedger(Request $request) //ledger_budget.php
     {
-        $record =  LedgerBudget::with('approvedGcRequest.storeGcRequest.store:store_id,store_name')
+        return LedgerBudget::with('approvedGcRequest.storeGcRequest.store:store_id,store_name')
             ->filter($request->only('search', 'date'))
             ->select(
                 [
@@ -48,13 +48,6 @@ class LedgerService extends ExcelWriter
             ->orderByDesc('bledger_no')
             ->paginate(10)
             ->withQueryString();
-
-        return Inertia::render('Treasury/Table', [
-            'filters' => $request->all('search', 'date'),
-            'remainingBudget' => LedgerBudget::currentBudget(),
-            'data' => BudgetLedgerResource::collection($record),
-            'columns' => ColumnHelper::$budget_ledger_columns,
-        ]);
     }
 
 
@@ -62,7 +55,7 @@ class LedgerService extends ExcelWriter
     public function gcLedger(Request $request) // gccheckledger.php
     {
 
-        $record = LedgerCheck::with('user:user_id,firstname,lastname')
+        return LedgerCheck::with('user:user_id,firstname,lastname')
             ->select(
                 'cledger_id',
                 'c_posted_by',
@@ -78,12 +71,7 @@ class LedgerService extends ExcelWriter
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('Treasury/Table', [
-            'filters' => $request->all('search', 'date'),
-            'remainingBudget' => LedgerBudget::currentBudget(),
-            'data' => GcLedgerResource::collection($record),
-            'columns' => ColumnHelper::$gc_ledger_columns,
-        ]);
+       
     }
     public static function spgcLedger($filters)
     {

@@ -55,6 +55,9 @@ const storeGcCancelled = () => routeTo("store.gc", "cancelled");
 
 // GC Production request handlers
 const approvedProductionRequest = () => routeTo("production.request", "approved");
+
+//Special GC Requesh
+const specialGcPending = () => routeTo("special.gc", "pending")
 </script>
 
 <template>
@@ -134,6 +137,7 @@ const approvedProductionRequest = () => routeTo("production.request", "approved"
                                 :pending="data?.specialGcRequest.pending"
                                 :approved="data?.specialGcRequest.approved"
                                 :cancelled="data?.specialGcRequest.cancelled"
+                                @pending-event="specialGcPending"
                             >
                                 <CardBadge
                                     :count="data?.specialGcRequest.reviewed"
