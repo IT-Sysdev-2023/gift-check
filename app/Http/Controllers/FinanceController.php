@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
 use App\Http\Resources\SpgcLedgerResource;
+use App\Services\Finance\ApprovedPromoGCRequestService;
 use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
 use App\Services\Finance\SpgcLedgerExcelService;
@@ -108,5 +109,10 @@ class FinanceController extends Controller
             'filePath' => $save,
         ]);
 
+    }
+
+    public function approvedPromoRequest()
+    {
+        return (new ApprovedPromoGCRequestService())->approvedPromoGCRequestIndex();
     }
 }

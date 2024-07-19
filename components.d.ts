@@ -42,6 +42,8 @@ declare module 'vue' {
     AModal: typeof import('ant-design-vue/es')['Modal']
     ApplicationLogo: typeof import('./resources/js/Components/ApplicationLogo.vue')['default']
     ApprovedAndReleaseSpgc: typeof import('./resources/js/Pages/Finance/ApprovedAndReleaseSpgc.vue')['default']
+    ApprovedPromoGcRequest: typeof import('./resources/js/Pages/Finance/ApprovedPromoGcRequest.vue')['default']
+    ApprovedPromoGCTable: typeof import('./resources/js/Pages/Finance/Tables/ApprovedPromoGCTable.vue')['default']
     ApprovedSpgcExcelResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcExcelResult.vue')['default']
     ApprovedSpgcPdfResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcPdfResult.vue')['default']
     ApprovedTab: typeof import('./resources/js/Pages/Finance/Reports/ApprovedTab.vue')['default']

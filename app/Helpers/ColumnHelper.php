@@ -156,6 +156,34 @@ class ColumnHelper
 
     ];
 
+    public static  $app_request_columns = [
+        [
+            'title' => 'RFPROM #.',
+            'dataIndex' => 'req_no',
+        ],
+        [
+            'title' => 'Date Requested.',
+            'dataIndex' => 'date_req',
+        ],
+        [
+            'title' => 'Date Needed.',
+            'dataIndex' => 'date_needed',
+        ],
+        [
+            'title' => 'Total Gc.',
+            'dataIndex' => 'total',
+        ],
+        [
+            'title' => 'Recommended By.',
+            'dataIndex' => 'approved_by',
+        ],
+        [
+            'title' => 'Requested By.',
+            'dataIndex' => 'user',
+        ],
+    ];
+
+
     public static function getColumns($columns)
     {
         return array_map(function ($item) {
