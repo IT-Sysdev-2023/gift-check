@@ -7,6 +7,7 @@ use App\Http\Resources\SpgcLedgerResource;
 use App\Services\Finance\ApprovedPromoGCRequestService;
 use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
+use App\Services\Finance\FinanceDashboardService;
 use App\Services\Finance\SpgcLedgerExcelService;
 use App\Services\Finance\SpgcService;
 use App\Services\Treasury\LedgerService;
@@ -24,7 +25,7 @@ class FinanceController extends Controller
 
     public function index()
     {
-        return inertia('Finance/FinanceDashboard');
+        return (new FinanceDashboardService())->dashboard();
     }
     public function budgetLedger(Request $request)
     {
@@ -111,8 +112,8 @@ class FinanceController extends Controller
 
     }
 
-    public function approvedPromoRequest()
+    public function approvedPromoRequest(Request $request)
     {
-        return (new ApprovedPromoGCRequestService())->approvedPromoGCRequestIndex();
+        return (new ApprovedPromoGCRequestService())->approvedPromoGCRequestIndex($request);
     }
 }

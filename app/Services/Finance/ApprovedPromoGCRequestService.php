@@ -8,14 +8,13 @@ use App\Models\PromoGcRequest;
 
 class ApprovedPromoGCRequestService
 {
-    public function approvedPromoGCRequestIndex()
+    public function approvedPromoGCRequestIndex($request)
     {
         $record = PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
             ->selectPromoApproved()
-            ->where('pgcreq_group', '!=', '')
-            ->where('pgcreq_group_status', 'approved')
-            ->where('pgcreq_status', 'approved')
+            ->whereFilter()
             ->orderByDesc('pgcreq_id')
+            ->searchFilter($request)
             ->paginate()
             ->withQueryString();
 

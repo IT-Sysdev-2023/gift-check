@@ -1,6 +1,6 @@
 <template>
     <a-card class="bg-card">
-        <a-alert  message="Promo Gc Request"  show-icon />
+        <a-alert message="Promo Gc Request" show-icon />
         <div class="card" style="background-color: #EE4E4E">
             <svg class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -13,12 +13,18 @@
             </div>
 
             <div class="message-text-container">
-                <p class="message-text text-white" >Pendings</p>
-                <p class="sub-text text-white" >All Pending Request</p>
+                <p class="message-text text-white">Pendings</p>
+                <p class="sub-text text-white">All Pending Request</p>
             </div>
-            <a-button >
-                View
-            </a-button>
+            <a-badge count="5">
+                <a-button>
+                    <template #icon>
+                        <FolderFilled />
+                    </template>
+                    View
+                </a-button>
+            </a-badge>
+
         </div>
 
         <div class="card" style="background-color: #34B3F1">
@@ -35,9 +41,15 @@
                 <p class="message-text text-white">Approved</p>
                 <p class="sub-text text-white">All Approved Request</p>
             </div>
-            <a-button @click="() => $inertia.get(route('finance.app.promo.request'))">
-                View
-            </a-button>
+            <a-badge count="5" :number-style="{ backgroundColor: '#52c41a' }">
+                <a-button @click="() => $inertia.get(route('finance.app.promo.request'))">
+                    <template #icon>
+                        <FolderFilled />
+                    </template>
+                    View
+                </a-button>
+            </a-badge>
+
         </div>
 
         <div class="card" style="background-color: #758694">
@@ -55,15 +67,26 @@
                 <p class="sub-text text-white">All Cancel Request</p>
             </div>
             <a-button>
+                <template #icon>
+                    <FolderFilled />
+                </template>
                 View
             </a-button>
         </div>
     </a-card>
 </template>
+<script>
+export default {
+    props: {
+        count: Array,
+    }
+}
+</script>
 <style scoped>
-.bg-card{
+.bg-card {
     box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
 }
+
 .card {
 
     height: 65px;

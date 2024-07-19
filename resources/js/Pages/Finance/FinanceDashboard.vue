@@ -1,7 +1,7 @@
 <template>
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
-           <PromoGCCard/>
+           <PromoGCCard :count="count"/>
         </a-col>
         <a-col :span="8">
             <!-- <PromoGCCard/> -->
@@ -15,6 +15,9 @@
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
 export default {
     layout: Authenticatedlayout,
+    props: {
+        count: Array,
+    }
 };
 </script>
 

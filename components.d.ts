@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: typeof import('ant-design-vue/es')['Alert']
+    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
@@ -40,6 +41,8 @@ declare module 'vue' {
     AMenu: typeof import('ant-design-vue/es')['Menu']
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
     AModal: typeof import('ant-design-vue/es')['Modal']
+    AndroidOutlined: typeof import('@ant-design/icons-vue')['AndroidOutlined']
+    AppleOutlined: typeof import('@ant-design/icons-vue')['AppleOutlined']
     ApplicationLogo: typeof import('./resources/js/Components/ApplicationLogo.vue')['default']
     ApprovedAndReleaseSpgc: typeof import('./resources/js/Pages/Finance/ApprovedAndReleaseSpgc.vue')['default']
     ApprovedPromoGcRequest: typeof import('./resources/js/Pages/Finance/ApprovedPromoGcRequest.vue')['default']
@@ -108,8 +111,11 @@ declare module 'vue' {
     FileSearchOutlined: typeof import('@ant-design/icons-vue')['FileSearchOutlined']
     FileTextOutlined: typeof import('@ant-design/icons-vue')['FileTextOutlined']
     FinanceDashboard: typeof import('./resources/js/Pages/Finance/FinanceDashboard.vue')['default']
+    FinanceDashboardTables: typeof import('./resources/js/Pages/Finance/Tables/FinanceDashboardTables.vue')['default']
     FinanceSideBar: typeof import('./resources/js/Components/FinanceSideBar.vue')['default']
     FireOutlined: typeof import('@ant-design/icons-vue')['FireOutlined']
+    FolderFilled: typeof import('@ant-design/icons-vue')['FolderFilled']
+    FolderViewOutlined: typeof import('@ant-design/icons-vue')['FolderViewOutlined']
     ForgotPassword: typeof import('./resources/js/Pages/Auth/ForgotPassword.vue')['default']
     FormItem: typeof import('./resources/js/Components/FormItem.vue')['default']
     FundProjectionScreenOutlined: typeof import('@ant-design/icons-vue')['FundProjectionScreenOutlined']

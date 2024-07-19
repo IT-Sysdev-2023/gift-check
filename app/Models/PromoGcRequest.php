@@ -9,9 +9,9 @@ class PromoGcRequest extends Model
 {
     use HasFactory;
 
-    protected $table= 'promo_gc_request';
+    protected $table = 'promo_gc_request';
 
-    protected $primaryKey= 'pgcreq_id';
+    protected $primaryKey = 'pgcreq_id';
 
     public $timestamps = false;
 
@@ -21,7 +21,7 @@ class PromoGcRequest extends Model
 
     public function userReqby()
     {
-        return $this->hasOne(User::class,'user_id', 'pgcreq_reqby');
+        return $this->hasOne(User::class, 'user_id', 'pgcreq_reqby');
     }
 
     public function scopeSelectPromoApproved($builder)
@@ -42,7 +42,19 @@ class PromoGcRequest extends Model
                 LIMIT 1
             ) AS approved_by"
         );
-
     }
-
+    public function scopeWhereFilter($query)
+    {
+        return $query->where('pgcreq_group', '!=', '')
+            ->where('pgcreq_group_status', 'approved')
+            ->where('pgcreq_status', 'approved');
+    }
+    public function scopeSearchFilter($query, $filter)
+    {
+        return $query->whereAny([
+            'pgcreq_datereq',
+            'pgcreq_reqby',
+            'pgcreq_reqnum'
+        ], 'LIKE', '%' . $filter->search . '%');
+    }
 }
