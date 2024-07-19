@@ -50,7 +50,11 @@ class SpecialExternalGcrequest extends Model
     {
         return $this->belongsTo(SpecialExternalCustomer::class, 'spexgc_company', 'spcus_id');
     }
-    public function user(): BelongsTo
+    public function specialExternalGcrequestItems()
+    {
+        return $this->hasOne(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
+    }
+    public function user()
     {
         return $this->belongsTo(User::class, 'spexgc_reqby', 'user_id');
     }
@@ -75,14 +79,14 @@ class SpecialExternalGcrequest extends Model
             ->spexgcReleased('released');
     }
 
-    // public function requestBy(): BelongsTo{
-    //     return $this->belongsTo(User::class, 'spexgc_reqby', 'user_id');
-    // }
-
     public function approvedRequest()
     {
         return $this->belongsTo(ApprovedRequest::class, 'spexgc_id', 'reqap_trid');
     }
 
+    public function specialExternalBankPaymentInfo()
+    {
+        return $this->hasOne(SpecialExternalBankPaymentInfo::class, 'spexgcbi_trid', 'spexgc_id');
+    }
 
 }

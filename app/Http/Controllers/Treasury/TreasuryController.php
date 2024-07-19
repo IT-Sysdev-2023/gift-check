@@ -10,6 +10,7 @@ use App\Http\Resources\BudgetLedgerResource;
 use App\Http\Resources\BudgetRequestResource;
 use App\Http\Resources\GcLedgerResource;
 use App\Http\Resources\ProductionRequestResource;
+use App\Http\Resources\SpecialExternalGcRequestResource;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\BudgetRequest;
 use App\Models\Gc;
@@ -17,6 +18,7 @@ use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
+use App\Models\SpecialExternalGcrequest;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Dashboard\BudgetRequestService;
 use App\Services\Treasury\Dashboard\GcProductionRequestService;
@@ -59,7 +61,7 @@ class TreasuryController extends Controller
             'filters' => $request->all('search', 'date'),
             'remainingBudget' => LedgerBudget::currentBudget(),
             'data' => GcLedgerResource::collection($record),
-            'columns' =>  \App\Helpers\ColumnHelper::$gc_ledger_columns,
+            'columns' => \App\Helpers\ColumnHelper::$gc_ledger_columns,
         ]);
     }
 
@@ -190,7 +192,7 @@ class TreasuryController extends Controller
         $record = $this->gcProductionRequestService->approvedRequest($request);
 
         return inertia(
-            'Treasury/ProductionRequest/TableProduction',
+            'Treasury/ProductionRequest/TableGcProduction',
             [
                 'filters' => $request->only('search', 'date'),
                 'title' => 'Approved GC Production Request',
@@ -202,7 +204,7 @@ class TreasuryController extends Controller
     }
     public function viewApprovedProduction($id): JsonResponse
     {
-       
+
         $record = $this->gcProductionRequestService->viewApprovedProduction($id);
         $data = [
             'total' => $record->totalRow,
@@ -224,7 +226,41 @@ class TreasuryController extends Controller
     }
 
     //SPECIAL GC REQUEST
-    public function pendingSpecialGc(){
-        dd(1);
+    public function pendingSpecialGc(Request $request)
+    {
+        $record = SpecialExternalGcrequest::with(
+            'user:user_id,firstname,lastname',
+            'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty',
+            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname'
+        )
+            ->select('spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq', 'spexgc_company', 'spexgc_reqby')
+            ->where([
+                ['special_external_gcrequest.spexgc_status', 'pending'],
+                ['special_external_gcrequest.spexgc_promo', '0']
+            ])
+            ->paginate()
+            ->withQueryString();
+
+                // dd(SpecialExternalGcRequestResource::collection($record)->toArray(request()));
+
+        return inertia(
+            'Treasury/Dashboard/SpecialGcTable',
+            [
+                'filters' => $request->only('search', 'date'),
+                'title' => 'Special GC Request',
+                'data' => SpecialExternalGcRequestResource::collection($record),
+                'columns' => ColumnHelper::$pendingSpecialGc,
+            ]
+        );
+    }
+    public function updatePendingSpecialGc(SpecialExternalGcrequest $id){
+        $record = $id->load('specialExternalCustomer', 'specialExternalBankPaymentInfo');
+
+        // dd((new SpecialExternalGcRequestResource($record))->toArray(request()));
+        return inertia('Treasury/Dashboard/UpdateSpecialExternal',
+        [
+            'title' => 'Special GC Request',
+            'data' => new SpecialExternalGcRequestResource($record),
+        ]);
     }
 }

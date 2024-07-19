@@ -223,11 +223,9 @@ import _ from "lodash";
 export default {
     layout: AuthenticatedLayout,
     props: {
-        desc: String,
         title: String,
         data: Object,
         columns: Array,
-        remainingBudget: String,
         filters: Object,
     },
     data() {

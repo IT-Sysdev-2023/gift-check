@@ -15,8 +15,18 @@ class SpecialExternalGcRequestResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->spexgc_id,
-            'status' => $this->spexgc_status,
+            'spexgc_num' => $this->spexgc_num,
+            'spexgc_dateneed' => $this->spexgc_dateneed,
+            'spexgc_payment_arnum' => $this->spexgc_payment_arnum,
+            'spexgc_paymentype' => $this->spexgc_paymentype,
+            'spexgc_id' => $this->spexgc_id,
+            'spexgc_datereq' => $this->spexgc_datereq,
+            'user' => $this->whenLoaded('user', fn($q) => $q->full_name),
+            'specialExternalCustomer' => $this->whenLoaded('specialExternalCustomer'),
+            'specialExternalGcrequestItems' => $this->whenLoaded(
+                'specialExternalGcrequestItems',
+                fn($q) => (float) $q->specit_denoms * (float) $q->specit_qty
+            )
         ];
     }
 }

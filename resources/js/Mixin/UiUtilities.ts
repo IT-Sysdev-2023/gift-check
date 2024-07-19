@@ -40,4 +40,10 @@ export function onProgress(){
 }
 
 export const onLoading = ref(false);
+
+export function dashboardRoute() {
+    const webRoute = route().current();
+    const res = webRoute?.split(".")[0];
+    return res + ".dashboard";
+};
 // export const onTableLoading = ref(false);

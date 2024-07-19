@@ -447,11 +447,9 @@ import { onLoading } from "@/Mixin/UiUtilities";
 export default {
     layout: AuthenticatedLayout,
     props: {
-        desc: String,
         title: String,
         data: Object,
         columns: Array,
-        remainingBudget: String,
         filters: Object,
     },
     data() {
@@ -467,7 +465,6 @@ export default {
             },
             record: {},
             requisition: {},
-            onLoading: false,
             barcodeGenerated: {},
         };
     },

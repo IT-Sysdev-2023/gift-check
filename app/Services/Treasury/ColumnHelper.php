@@ -237,4 +237,41 @@ class ColumnHelper
 
         ],
     ];
+    public static $pendingSpecialGc = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' =>  'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Total Denomination',
+            'dataIndex' => 'specialExternalGcrequestItems',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => ['specialExternalCustomer', 'spcus_acctname'],
+            'key' => 'customer'
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'user',
+
+        ],
+        [
+            'title' => 'Action',
+            'dataIndex' => 'action',
+
+        ],
+    ];
 }
