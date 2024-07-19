@@ -1,6 +1,6 @@
 <template>
     <a-tabs v-model:activeKey="activeKey" type="card">
-        <a-tab-pane key="1">
+        <a-tab-pane>
             <template #tab>
                 <span>
                     <CheckCircleFilled />
@@ -13,9 +13,9 @@
                         @search="onSearch" class="mb-2" />
                 </div>
                 <a-table size="small" bordered :data-source="record.data" :columns="columns" :pagination="false">
-                    <template #bodyCell="{column, record}">
+                    <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'open'">
-                            <a-button>
+                            <a-button @click="setup(record.req_id)">
                                 <template #icon>
                                     <TagFilled />
                                 </template>
@@ -27,6 +27,15 @@
                 <pagination-resource class="mt-4" :datarecords="record" />
             </a-card>
         </a-tab-pane>
+            <a-tab-pane key="2" v-if="activeKey === '2'">
+                <template #tab>
+                    <span>
+                        <CheckCircleFilled />
+                        Pending Promo Approval Setup
+                    </span>
+                </template>
+                <PromoForApproval />
+            </a-tab-pane>
     </a-tabs>
 </template>
 <script>
@@ -39,13 +48,23 @@ export default {
     props: {
         record: Object,
         columns: Object,
-        title: String
+        title: String,
+        activeKey: String
     },
     data() {
         return {
             form: {
                 search: ''
-            }
+            },
+            activeKey: this.activeKey,
+        }
+    },
+    methods: {
+        setup(id) {
+            this.$inertia.get(route('finance.pen.promo.request'), {
+                id: id,
+                activeKey: '2',
+            })
         }
     },
     watch: {

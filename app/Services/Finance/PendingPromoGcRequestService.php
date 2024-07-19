@@ -22,6 +22,17 @@ class PendingPromoGcRequestService
         return inertia('Finance/PendingPromoGcRequest', [
             'data' => PromoGcRequestResource::collection($record),
             'columns' => ColumnHelper::app_pend_request_columns(true),
+            'promoRequestDetails' => self::getRequestDetails($request),
+            'activeKey' => $request->activeKey,
         ]);
+    }
+
+    public static function getRequestDetails($request)
+    {
+
+        return PromoGcRequest::with(['userReqby.accessPage', 'approvedReq.userPrepBy'])
+            ->where('pgcreq_id', $request->id)
+            ->get()
+            ->toArray();
     }
 }
