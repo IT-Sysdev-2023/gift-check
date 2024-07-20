@@ -75,8 +75,8 @@ Route::prefix('marketing')->group(function () {
             Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add.promo');
             Route::post('validate-gc', [MarketingController::class, 'validateGc'])->name('validate');
             Route::get('promo-list', [MarketingController::class, 'promoList'])->name('list');
-            // Route::post('gc-promo-validation', [MarketingController::class, 'gcpromovalidation'])->name('gcpromovalidation');
-            // Route::post('truncategcpromovalidation', [MarketingController::class, 'truncate'])->name('truncategcpromovalidation');
+            Route::post('gc-promo-validation', [MarketingController::class, 'gcpromovalidation'])->name('gcpromovalidation');
+            Route::post('truncategcpromovalidation', [MarketingController::class, 'truncate'])->name('truncategcpromovalidation');
         });
     });
 
