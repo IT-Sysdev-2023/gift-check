@@ -45,6 +45,7 @@ class MarketingController extends Controller
     }
     public function promoList(Request $request)
     {
+        // dd(1);
         $tag = auth()->user()->promo_tag;
         $data = Promo::with('user:user_id,firstname,lastname,promo_tag')->filter($request->only('search'))
             ->where('promo.promo_tag', $tag)
@@ -67,6 +68,7 @@ class MarketingController extends Controller
 
     public function addnewpromo()
     {
+        dd(1);
         $promoNum = promo::count() + 1;
 
         //         $getDenomination = Denomination::with('getDenom')->where('denom_type', 'RSGC')->where('denom_status', 'active')->get();

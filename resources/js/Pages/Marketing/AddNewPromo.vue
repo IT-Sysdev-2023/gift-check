@@ -199,7 +199,7 @@ export default {
           description: response.data.description,
         });
 
-        window.location.reload();
+
       })
     },
 

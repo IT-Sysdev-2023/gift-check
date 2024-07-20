@@ -11,7 +11,6 @@ const currentActiveMenu = [route().current().split(".")[1]];
 
 <template>
     <a-menu
-        :openKeys="currentActiveMenu"
         :selectedKeys="highlightRoute"
         theme="dark"
         mode="inline"
@@ -30,8 +29,8 @@ const currentActiveMenu = [route().current().split(".")[1]];
                     <span>Promo</span>
                 </span>
             </template>
-            <a-menu-item key="marketing.addPromo.add">
-                <Link :href="route('marketing.addPromo.add')">Add New Promo</Link>
+            <a-menu-item key="marketing.addPromo.add.promo">
+                <Link :href="route('marketing.addPromo.add.promo')">Add New Promo</Link>
             </a-menu-item>
             <a-menu-item key="marketing.addPromo.list">
                 <Link :href="route('marketing.addPromo.list')">Promo List</Link>
