@@ -47,11 +47,11 @@
       <a-card>
         <a-card title="" :bordered="false">
           <div>
-            <a-table :dataSource="data" :columns="columns" :pagination="false">
+            <a-table :dataSource="form.data" :columns="form.columns" :pagination="false">
 
               <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'denom_id'">
-                    <a-input readonly :value="record.countDen" style="width: 100px;"></a-input>
+                  <a-input readonly :value="record.countDen" style="width: 100px;"></a-input>
                 </template>
               </template>
             </a-table>
@@ -128,8 +128,6 @@ export default {
 
   props: {
     PromoNum: String,
-    data: Object,
-    columns: Array,
     promoId: Array,
     countItems: Array,
   },
@@ -153,6 +151,8 @@ export default {
         prepByName: this.$page.props.auth.user.full_name,
         scannedGCValue: 0,
         barcode: '',
+        data:'',
+        columns: '',
       }
     };
   },
@@ -168,13 +168,10 @@ export default {
     }
   },
 
-  // mounted:
 
 
- 
   methods: {
     addGcModal(data) {
-      console.log(data);
       this.open = true;
     },
     handleOk() {
@@ -187,18 +184,19 @@ export default {
       const input = event.target.value;
       this.digitCount = (input.match(/\d/g) || []).length;
     },
-    validateGc() {
-      axios.post(route('marketing.addPromo.gcpromovalidation'), {
+    async validateGc() {
+      await axios.post(route('marketing.addPromo.gcpromovalidation'), {
         barcode: this.form.barcode,
         promoId: this.promoId,
         promoGroup: this.form.promoGroup,
         gctype: 1,
       }).then(response => {
-        notification[response.data.type]({
-          message: response.data.msg,
-          description: response.data.description,
+        notification[response.data.response.type]({
+          message: response.data.response.msg,
+          description: response.data.response.description,
         });
-
+        this.form.data = response.data.data
+        this.form.columns = response.data.columns
 
       })
     },

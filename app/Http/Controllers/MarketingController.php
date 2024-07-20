@@ -68,35 +68,11 @@ class MarketingController extends Controller
 
     public function addnewpromo()
     {
+
         $promoNum = promo::count() + 1;
-
-        //         $getDenomination = Denomination::with('getDenom')->where('denom_type', 'RSGC')->where('denom_status', 'active')->get();
-        // dd( $getDenomination->toArray());
-        $getDenomination = Denomination::with('getDenom')
-            ->where('denom_type', 'RSGC')
-            ->where('denom_status', 'active')
-            ->get()
-            ->map(function ($denomination) {
-                return [
-                    "denom_id" => $denomination->denom_id,
-                    "denom_code" => $denomination->denom_code,
-                    "denomination" => $denomination->denomination,
-                    "countDen" => $denomination->getDenom->count(),
-
-                ];
-            });
-
-        $columns = array_map(
-            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
-            ['Denomination', 'Scanned GC'],
-            ['denomination', 'denom_id']
-        );
 
         return Inertia::render('Marketing/AddNewPromo', [
             'PromoNum' =>  $promoNum,
-            'data' =>  $getDenomination,
-            // 'countItems' => $countItems,
-            'columns' => ColumnHelper::getColumns($columns),
             'promoId' => $promoNum
         ]);
     }
@@ -734,7 +710,7 @@ class MarketingController extends Controller
                 $response['msg'] = 'GC Barcode #' . $barcode . ' not found.';
             } else {
 
-                
+
 
 
                 $inserted = TempPromo::insert([
@@ -763,6 +739,27 @@ class MarketingController extends Controller
 
     public function gcpromovalidation(Request $request)
     {
+
+        $getDenomination = Denomination::with('getDenom')
+            ->where('denom_type', 'RSGC')
+            ->where('denom_status', 'active')
+            ->get()
+            ->map(function ($denomination) {
+                return [
+                    "denom_id" => $denomination->denom_id,
+                    "denom_code" => $denomination->denom_code,
+                    "denomination" => $denomination->denomination,
+                    "countDen" => $denomination->getDenom->count(),
+
+                ];
+            });
+
+        $columns = array_map(
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Denomination', 'Scanned GC'],
+            ['denomination', 'denom_id']
+        );
+
         $denom = Gc::select('denom_id')->where('barcode_no', $request->barcode)->get();
         $response = [];
         $barcode = $request->barcode;
@@ -803,7 +800,7 @@ class MarketingController extends Controller
                     'tp_by' => auth()->user()->user_id,
                     'tp_gctype' => $request->gctype,
                 ]);
-            
+
                 if ($tempData) {
                     $response = [
                         'msg' => 'Success',
@@ -815,7 +812,11 @@ class MarketingController extends Controller
                 }
             }
         }
-        return response()->json($response);
+        return response()->json([
+            'data' =>  $getDenomination,
+            'columns' => ColumnHelper::getColumns($columns),
+            'response' => $response
+        ]);
     }
 
     public function truncate()
