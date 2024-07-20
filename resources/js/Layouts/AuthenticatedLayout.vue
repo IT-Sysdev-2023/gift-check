@@ -35,7 +35,7 @@ const dashboardRoute = computed(() => {
                         <div class="flex justify-center">
                             <div v-if="page.auth.user.user_id == 322">
                                 <img style="height: 80px; width: 80px; border-radius: 50%;"
-                                    src="../../../public/images/zenitsu.jpg" alt="usersimage">
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRdFHrJafrBwCbcW8dJet_I0ZHwhwL8lbM5g&s" alt="usersimage">
                             </div>
                             <div v-else>
                                 <img style="height: 80px; width: 80px; border-radius: 50%;"
