@@ -19,9 +19,15 @@ class PromoGcRequest extends Model
     protected $guarded = [];
 
 
+
     public function userReqby()
     {
         return $this->hasOne(User::class, 'user_id', 'pgcreq_reqby');
+    }
+    public function approvedReq()
+    {
+        return $this->hasOne(ApprovedRequest::class,  'reqap_trid' ,'pgcreq_id'
+    );
     }
 
     public function scopeSelectPromoRequest($builder)
@@ -64,4 +70,9 @@ class PromoGcRequest extends Model
             'pgcreq_reqnum'
         ], 'LIKE', '%' . $filter->search . '%');
     }
+
+    // public function scopeJoinTables($query)
+    // {
+    //     $query->join('users')
+    // }
 }
