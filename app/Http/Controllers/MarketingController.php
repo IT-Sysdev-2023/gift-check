@@ -67,13 +67,23 @@ class MarketingController extends Controller
 
     public function addnewpromo()
     {
-        $num = Promo::select('promo_num')->orderByDesc('promo_id')->first();
-        $promoNum = (int)$num->promo_num + 1;
-        $formattedPromoNum = sprintf('%03d', $promoNum);
+        $promoNum = promo::count() + 1;
 
-        $getDenomination = Denomination::where('denom_type', 'RSGC')->where('denom_status', 'active')->get();
+        //         $getDenomination = Denomination::with('getDenom')->where('denom_type', 'RSGC')->where('denom_status', 'active')->get();
+        // dd( $getDenomination->toArray());
+        $getDenomination = Denomination::with('getDenom')
+            ->where('denom_type', 'RSGC')
+            ->where('denom_status', 'active')
+            ->get()
+            ->map(function ($denomination) {
+                return [
+                    "denom_id" => $denomination->denom_id,
+                    "denom_code" => $denomination->denom_code,
+                    "denomination" => $denomination->denomination,
+                    "countDen" => $denomination->getDenom->count(),
 
-
+                ];
+            });
 
         $columns = array_map(
             fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
@@ -82,8 +92,9 @@ class MarketingController extends Controller
         );
 
         return Inertia::render('Marketing/AddNewPromo', [
-            'PromoNum' => $formattedPromoNum,
+            'PromoNum' =>  $promoNum,
             'data' =>  $getDenomination,
+            // 'countItems' => $countItems,
             'columns' => ColumnHelper::getColumns($columns),
             'promoId' => $promoNum
         ]);
@@ -145,10 +156,10 @@ class MarketingController extends Controller
             $item->status = is_null($item->promo_name) ? 'Available' : (!is_null($item->promo_name) && is_null($item->relat) ? 'Pending' : 'Released');
             return $item;
         });
-        
 
 
-      
+
+
 
         $columns = array_map(
             fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
@@ -711,7 +722,7 @@ class MarketingController extends Controller
                 ->leftJoin('promo_gc_request', 'promo_gc_request.pgcreq_id', '=', 'promo_gc_release_to_details.prrelto_trid')
                 ->where('promo_gc_release_to_items.prreltoi_barcode', $barcode)
                 ->first();
-          
+
             if (!$promo) {
                 $response['msg'] = 'GC Barcode #' . $barcode . ' not found.';
             } elseif (empty($promo->gc_validated) || empty($promo->gc_ispromo)) {
@@ -720,8 +731,11 @@ class MarketingController extends Controller
                 $response['msg'] = 'GC Barcode #' . $barcode . ' does not belong to Group ' . $group . '.';
             } elseif ($promo->pgcreq_tagged != $tag) {
                 $response['msg'] = 'GC Barcode #' . $barcode . ' not found.';
-            } else { 
-                dd(1);
+            } else {
+
+                
+
+
                 $inserted = TempPromo::insert([
                     'tp_barcode' => $barcode,
                     'tp_den' => $denom,
@@ -743,5 +757,68 @@ class MarketingController extends Controller
 
 
         return response()->json($response);
+    }
+
+
+    public function gcpromovalidation(Request $request)
+    {
+        $denom = Gc::select('denom_id')->where('barcode_no', $request->barcode)->get();
+        $response = [];
+        $barcode = $request->barcode;
+
+        if (!Gc::where('barcode_no', $request->barcode)->exists()) {
+            $response = ['msg' => 'Opps! Error', 'description' => 'Barcode does not exist', 'type' => 'error'];
+        } elseif (PromoGc::where('prom_barcode', $request->barcode)->exists()) {
+            $response = ['msg' => 'Opps! Error', 'description' => $request->barcode . ' is already validated for promo', 'type' => 'error'];
+        } elseif (TempPromo::where('tp_barcode', $request->barcode)->exists()) {
+            $response = ['msg' => 'Opps! Warning', 'description' => $request->barcode . ' already scanned for promo validation', 'type' => 'warning'];
+        } else {
+
+            $promo = PromoGcReleaseToItem::select([
+                'promo_gc_release_to_items.prreltoi_barcode',
+                'gc.gc_validated',
+                'gc.gc_ispromo',
+                'gc.denom_id',
+                'promo_gc_request.pgcreq_group',
+                'promo_gc_request.pgcreq_tagged'
+            ])
+                ->where('promo_gc_release_to_items.prreltoi_barcode', $barcode)
+                ->join('gc', 'gc.barcode_no', '=', 'promo_gc_release_to_items.prreltoi_barcode')
+                ->leftJoin('promo_gc_release_to_details', 'promo_gc_release_to_details.prrelto_id', '=', 'promo_gc_release_to_items.prreltoi_relid')
+                ->leftJoin('promo_gc_request', 'promo_gc_request.pgcreq_id', '=', 'promo_gc_release_to_details.prrelto_trid')
+                ->get();
+
+            if (!count($promo) > 0) {
+                $response = ['msg' => 'Opps! Error', 'description' => 'Barcode does not exist', 'type' => 'error'];
+            } elseif ($promo[0]->gc_validated == '' || $promo[0]->gc_ispromo == '') {
+                $response = ['msg' => 'Opps! Error', 'description' => 'Barcode ' . $barcode . ' is not for Promo', 'type' => 'error'];
+            } elseif ($promo[0]->pgcreq_group != $request->promoGroup) {
+                $response = ['msg' => 'Opps! Error', 'description' => 'Barcode ' . $barcode . ' does not belong to Group:' . $request->promoGroup, 'type' => 'error'];
+            } else {
+                $tempData = TempPromo::insert([
+                    'tp_barcode' => $barcode,
+                    'tp_den' => $denom[0]->denom_id,
+                    'tp_promoid' => $request->promoId,
+                    'tp_by' => auth()->user()->user_id,
+                    'tp_gctype' => $request->gctype,
+                ]);
+            
+                if ($tempData) {
+                    $response = [
+                        'msg' => 'Success',
+                        'description' => 'Barcode ' . $barcode . ' successfully validated for Group: ' . $request->promoGroup,
+                        'type' => 'success'
+                    ];
+                } else {
+                    $response = ['msg' => 'Opps! Error', 'description' => 'Failed to insert data for Barcode: ' . $barcode, 'type' => 'error'];
+                }
+            }
+        }
+        return response()->json($response);
+    }
+
+    public function truncate()
+    {
+        TempPromo::truncate();
     }
 }

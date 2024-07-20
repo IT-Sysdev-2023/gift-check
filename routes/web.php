@@ -70,6 +70,8 @@ Route::prefix('marketing')->group(function () {
     Route::name('addnewpromo.')->group(function () {
         Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
         Route::post('validate-gc', [MarketingController::class, 'validateGc'])->name('validate');
+        Route::post('gc-promo-validation', [MarketingController::class, 'gcpromovalidation'])->name('gcpromovalidation');
+        Route::post('truncategcpromovalidation', [MarketingController::class, 'truncate'])->name('truncategcpromovalidation');
     });
 
 });
