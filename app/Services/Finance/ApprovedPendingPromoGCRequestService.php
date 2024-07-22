@@ -8,22 +8,6 @@ use App\Models\PromoGcRequest;
 
 class ApprovedPendingPromoGCRequestService
 {
-    public function approvedPromoGCRequestIndex($request)
-    {
-        return inertia('Finance/ApprovedPromoGcRequest', [
-            'data' => PromoGcRequestResource::collection(
-                PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
-                    ->selectPromoRequest()
-                    ->whereFilterForApproved()
-                    ->orderByDesc('pgcreq_id')
-                    ->searchFilter($request)
-                    ->paginate()
-                    ->withQueryString()
-            ),
-            'columns' => ColumnHelper::app_pend_request_columns(false),
-        ]);
-    }
-
     public function pendingPromoGCRequestIndex($request)
     {
 
@@ -56,5 +40,20 @@ class ApprovedPendingPromoGCRequestService
         ])
             ->where('pgcreq_id', $request->id)
             ->get()->toArray();
+    }
+    public function approvedPromoGCRequestIndex($request)
+    {
+        return inertia('Finance/ApprovedPromoGcRequest', [
+            'data' => PromoGcRequestResource::collection(
+                PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
+                    ->selectPromoRequest()
+                    ->whereFilterForApproved()
+                    ->orderByDesc('pgcreq_id')
+                    ->searchFilter($request)
+                    ->paginate()
+                    ->withQueryString()
+            ),
+            'columns' => ColumnHelper::app_pend_request_columns(false),
+        ]);
     }
 }
