@@ -26,8 +26,11 @@ class PromoGcRequest extends Model
     }
     public function approvedReq()
     {
-        return $this->hasOne(ApprovedRequest::class,  'reqap_trid' ,'pgcreq_id'
-    );
+        return $this->hasOne(
+            ApprovedRequest::class,
+            'reqap_trid',
+            'pgcreq_id'
+        );
     }
 
     public function scopeSelectPromoRequest($builder)
@@ -71,8 +74,18 @@ class PromoGcRequest extends Model
         ], 'LIKE', '%' . $filter->search . '%');
     }
 
-    // public function scopeJoinTables($query)
-    // {
-    //     $query->join('users')
-    // }
+    public function scopeSelectPendingRequest($query)
+    {
+        // dd($query->get()->toArray());
+        $query->select(
+            'pgcreq_id',
+            'pgcreq_reqnum',
+            'pgcreq_reqby',
+            'pgcreq_datereq',
+            'pgcreq_dateneeded',
+            'pgcreq_group',
+            'pgcreq_total',
+            'pgcreq_remarks'
+        );
+    }
 }

@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Http\Resources\SpgcLedgerResource;
-use App\Services\Finance\ApprovedPromoGCRequestService;
+use App\Services\Finance\ApprovedPendingPromoGCRequestService;
 use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
-use App\Services\Finance\FinanceDashboardService;
-use App\Services\Finance\PendingPromoGcRequestService;
 use App\Services\Finance\SpgcLedgerExcelService;
 use App\Services\Finance\SpgcService;
 use App\Services\Treasury\LedgerService;
@@ -119,11 +117,11 @@ class FinanceController extends Controller
     }
     public function pendingPromoRequest(Request $request)
     {
-        return (new PendingPromoGcRequestService())->pendingPromoGCRequestIndex($request);
+        return (new ApprovedPendingPromoGCRequestService())->pendingPromoGCRequestIndex($request);
     }
 
     public function approvedPromoRequest(Request $request)
     {
-        return (new ApprovedPromoGCRequestService())->approvedPromoGCRequestIndex($request);
+        return (new ApprovedPendingPromoGCRequestService())->approvedPromoGCRequestIndex($request);
     }
 }
