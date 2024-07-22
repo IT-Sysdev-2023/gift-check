@@ -30,11 +30,11 @@
             <a-tab-pane key="2" v-if="activeKey === '2'">
                 <template #tab>
                     <span>
-                        <CheckCircleFilled />
+                        <TagsFilled />
                         Pending Promo Approval Setup
                     </span>
                 </template>
-                <PromoForApproval />
+                <PromoForApproval  :details="details"/>
             </a-tab-pane>
     </a-tabs>
 </template>
@@ -42,6 +42,7 @@
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
+import { TagsFilled } from "@ant-design/icons-vue";
 
 export default {
     layout: Authenticatedlayout,
@@ -49,7 +50,8 @@ export default {
         record: Object,
         columns: Object,
         title: String,
-        activeKey: String
+        activeKey: String,
+        details: Object,
     },
     data() {
         return {
@@ -67,6 +69,7 @@ export default {
             })
         }
     },
+
     watch: {
         form: {
             deep: true,

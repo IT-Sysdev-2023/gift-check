@@ -3,6 +3,7 @@
 namespace App\Services\Finance;
 
 use App\Helpers\ColumnHelper;
+use App\Http\Resources\PromoGcDetailResource;
 use App\Http\Resources\PromoGcRequestResource;
 use App\Models\PromoGcRequest;
 
@@ -10,7 +11,6 @@ class ApprovedPendingPromoGCRequestService
 {
     public function pendingPromoGCRequestIndex($request)
     {
-
         return inertia('Finance/PendingPromoGcRequest', [
             'data' => PromoGcRequestResource::collection(
                 PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
@@ -22,7 +22,7 @@ class ApprovedPendingPromoGCRequestService
                     ->withQueryString()
             ),
             'columns' => ColumnHelper::app_pend_request_columns(true),
-            'details' => self::getRequestDetails($request),
+            'details' => PromoGcDetailResource::collection(self::getRequestDetails($request)),
             'activeKey' => $request->activeKey,
         ]);
     }
@@ -30,7 +30,7 @@ class ApprovedPendingPromoGCRequestService
     public static function getRequestDetails($request)
     {
 
-        return PromoGcRequest::selectPendingRequest()->with([
+     return  PromoGcRequest::selectPendingRequest()->with([
             'userReqby' => function ($query) {
                 $query->select('usertype', 'user_id', 'firstname', 'lastname');
             },
@@ -39,8 +39,9 @@ class ApprovedPendingPromoGCRequestService
             }
         ])
             ->where('pgcreq_id', $request->id)
-            ->get()->toArray();
+            ->get();
     }
+
     public function approvedPromoGCRequestIndex($request)
     {
         return inertia('Finance/ApprovedPromoGcRequest', [
