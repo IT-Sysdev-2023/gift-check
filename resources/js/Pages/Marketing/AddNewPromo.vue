@@ -184,8 +184,8 @@ export default {
       const input = event.target.value;
       this.digitCount = (input.match(/\d/g) || []).length;
     },
-    async validateGc() {
-      await axios.post(route('marketing.addPromo.gcpromovalidation'), {
+     validateGc() {
+    axios.post(route('marketing.addPromo.gcpromovalidation'), {
         barcode: this.form.barcode,
         promoId: this.promoId,
         promoGroup: this.form.promoGroup,
@@ -197,7 +197,6 @@ export default {
         });
         this.form.data = response.data.data
         this.form.columns = response.data.columns
-
       })
     },
 
