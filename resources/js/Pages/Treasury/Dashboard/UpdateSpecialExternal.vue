@@ -87,10 +87,25 @@ const onFinish = (values: any) => {
                         <a-form-item label="Date Validity:">
                             <a-date-picker v-model:value="dateValidity" />
                         </a-form-item>
-                        <!-- <a-form-item label="Document Uploaded:">
-                            <a-button>
-                                Remove
-                            </a-button>
+                        <!-- <a-form-item label="Uploaded Document">
+                            <a-space wrap class="ml-2">
+                                <a-button
+                                    type="primary"
+                                    v-if="props.data.br_file_docno"
+                                    >
+                                    @click="download(props.data.br_file_docno)"
+                                    <template #icon>
+                                        <DownloadOutlined />
+                                    </template>
+                                    Download
+                                </a-button>
+                                <a-tag color="error" v-else>
+                                    <template #icon>
+                                        <close-circle-outlined />
+                                    </template>
+                                    NONE
+                                </a-tag>
+                            </a-space>
                         </a-form-item> -->
                         <!-- <a-form-item label="Upload Document #:">
                             <a-upload
