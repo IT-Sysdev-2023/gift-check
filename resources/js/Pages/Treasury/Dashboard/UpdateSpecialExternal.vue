@@ -139,14 +139,14 @@ const onFinish = (values: any) => {
 
                         <a-form-item label="Payment Type:">
                             <a-space>
-                                <a-select
+                                <!-- <a-select
                                     ref="select"
                                     v-model:value="value1"
                                     style="width: 120px"
                                     :options="options1"
                                     @focus="focus"
                                     @change="handleChange"
-                                ></a-select>
+                                ></a-select> -->
                             </a-space>
                         </a-form-item>
                         <a-form-item label="Amount">

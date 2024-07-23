@@ -3,9 +3,11 @@
 namespace App\Services\Finance;
 
 use App\Helpers\ColumnHelper;
+use App\Helpers\NumberHelper;
 use App\Http\Resources\PromoGcDetailResource;
 use App\Http\Resources\PromoGcRequestResource;
 use App\Models\PromoGcRequest;
+use App\Models\PromoGcRequestItem;
 
 class ApprovedPendingPromoGCRequestService
 {
@@ -24,13 +26,14 @@ class ApprovedPendingPromoGCRequestService
             'columns' => ColumnHelper::app_pend_request_columns(true),
             'details' => PromoGcDetailResource::collection(self::getRequestDetails($request)),
             'activeKey' => $request->activeKey,
+            'denomination' => self::getDenomination($request->id),
         ]);
     }
 
     public static function getRequestDetails($request)
     {
 
-     return  PromoGcRequest::selectPendingRequest()->with([
+        return  PromoGcRequest::selectPendingRequest()->with([
             'userReqby' => function ($query) {
                 $query->select('usertype', 'user_id', 'firstname', 'lastname');
             },
@@ -56,5 +59,24 @@ class ApprovedPendingPromoGCRequestService
             ),
             'columns' => ColumnHelper::app_pend_request_columns(false),
         ]);
+    }
+
+    public static function getDenomination($id)
+    {
+        $data =  PromoGcRequestItem::select('pgcreqi_qty', 'pgcreqi_denom')
+            ->where('pgcreqi_trid', $id)
+            ->with('denomination:denom_id,denomination')
+            ->get();
+
+        $data->transform(function ($item){
+            $item->subt = $item->denomination->denomination * $item->pgcreqi_qty;
+            $item->subtotal = NumberHelper::currency($item->denomination->denomination * $item->pgcreqi_qty);
+            $item->denomination->denomination = NumberHelper::currency($item->denomination->denomination);
+            return $item;
+        });
+        return (object)[
+            'data' => $data,
+            'total' => NumberHelper::currency($data->sum('subt')),
+        ];
     }
 }

@@ -14,24 +14,27 @@
                                 }}</a-descriptions-item>
                         </a-descriptions>
                     </a-form-item>
-                    <a-form-item label="Request Status">
-                        <a-select ref="select" placeholder="Select Status"
-                            >
-                            <a-select-option value="jack">Approved</a-select-option>
-                            <a-select-option value="lucy">Cancel</a-select-option>
+                    <a-form-item label="Request Status" v-model:value="form.status">
+                        <a-select ref="select" placeholder="Select Status">
+                            <a-select-option :value="1">Approved</a-select-option>
+                            <a-select-option :value="2">Cancel</a-select-option>
                         </a-select>
                     </a-form-item>
                     <a-row :gutter="[16, 16]">
                         <a-col :span="12">
                             <a-form-item label="Check By:">
-                                <a-input-search v-model:value="value" placeholder="input search text"
-                                    @search="onSearch" />
+                                <a-select ref="select" v-model:value="form.checkby" placeholder="Select Checked by">
+                                    <a-select-option v-for="item in cdata" :value="item.assig_id">{{ item.assig_name
+                                        }}</a-select-option>
+                                </a-select>
                             </a-form-item>
                         </a-col>
                         <a-col :span="12">
                             <a-form-item label="Approved By:">
-                                <a-input-search v-model:value="value" placeholder="input search text"
-                                    @search="onSearch" />
+                                <a-select ref="select" v-model:value="form.appby" placeholder="Select Approved By">
+                                    <a-select-option v-for="item in cdata" :value="item.assig_id">{{ item.assig_name
+                                        }}</a-select-option>
+                                </a-select>
                             </a-form-item>
                         </a-col>
                     </a-row>
@@ -39,7 +42,7 @@
                         <a-textarea v-model:value="value" placeholder="Basic usage" :rows="2" />
                     </a-form-item>
                     <a-form-item>
-                        <a-upload-dragger size="small" v-model:fileList="fileList" name="file" :multiple="true"
+                        <a-upload-dragger v-model:fileList="fileList" name="file" :multiple="true"
                             action="https://www.mocky.io/v2/5cc8019d300000980a055e76" @change="handleChange"
                             @drop="handleDrop">
                             <p class="ant-upload-drag-icon">
@@ -119,14 +122,70 @@
                     </a-descriptions>
                 </div>
             </a-card>
+            <a-card class="mt-2">
+                <a-table size="small" :pagination="false" class="mt-1" :columns="[
+                    {
+                        title: 'Denomination',
+                        dataIndex: 'denomination',
+                        key: 'denom',
+                    },
+                    {
+                        title: 'Quantity',
+                        dataIndex: 'pgcreqi_qty',
+                        align: 'center'
+
+                    },
+                    {
+                        title: 'Subtotal',
+                        dataIndex: 'subtotal',
+                         align: 'end'
+                    },
+                ]" :data-source="denomination.data">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key == 'denom'">
+                            <span>
+                                {{ record.denomination.denomination }}
+                            </span>
+                        </template>
+                    </template>
+
+                </a-table>
+                <div class="mt-2 flex justify-end">
+                    <a-typography-text class="mt-2" keyboard>Total: {{ denomination.total }} </a-typography-text>
+                </div>
+            </a-card>
         </a-col>
     </a-row>
 
 </template>
 <script>
+import axios from 'axios';
+
 export default {
     props: {
-        details: Object
-    }
+        details: Object,
+        denomination: Object,
+    },
+    data() {
+        return {
+            cdata: [],
+            form: {
+                appby: null,
+                checkby: null,
+                status: null,
+            }
+        }
+    },
+    created() {
+        this.getCheckBy();
+    },
+    methods: {
+        getCheckBy() {
+            axios.get(route('search.checkBy'))
+                .then(response => {
+                    this.cdata = response.data;
+                })
+        }
+    },
 }
 </script>

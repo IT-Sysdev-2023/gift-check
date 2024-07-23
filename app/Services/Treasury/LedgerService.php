@@ -2,25 +2,13 @@
 
 namespace App\Services\Treasury;
 
-use App\Events\ApprovedReleasedEvents;
+
 use App\Helpers\Excel\ExcelWriter;
-use App\Helpers\ColumnHelper;
-use App\Http\Resources\BudgetLedgerResource;
-use App\Http\Resources\BudgetRequestResource;
-use App\Http\Resources\GcLedgerResource;
-use App\Models\BudgetRequest;
 use App\Models\LedgerBudget;
 use App\Models\LedgerCheck;
 use App\Models\LedgerSpgc;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Dompdf\Dompdf;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use App\Services\Treasury\Dashboard\excel\ExtendsExcelService;
-use Faker\Core\Number;
-use Illuminate\Support\Facades\Auth;
+
 
 class LedgerService extends ExcelWriter
 {
@@ -71,7 +59,7 @@ class LedgerService extends ExcelWriter
             ->paginate(10)
             ->withQueryString();
 
-       
+
     }
     public static function spgcLedger($filters)
     {

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Http\Resources\BudgetLedgerResource;
 use App\Http\Resources\SpgcLedgerResource;
+use App\Models\LedgerBudget;
 use App\Services\Finance\ApprovedPendingPromoGCRequestService;
 use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
@@ -33,7 +35,15 @@ class FinanceController extends Controller
     }
     public function budgetLedger(Request $request)
     {
-        return $this->ledgerService->budgetLedger($request);
+        // dd(1);
+        $record = $this->ledgerService->budgetLedger($request);
+
+        return inertia('Treasury/Table', [
+            'filters' => $request->all('search', 'date'),
+            'remainingBudget' => LedgerBudget::currentBudget(),
+            'data' => BudgetLedgerResource::collection($record),
+            'columns' => \App\Helpers\ColumnHelper::$budget_ledger_columns,
+        ]);
     }
 
     public function spgcLedger(Request $request)

@@ -12,4 +12,9 @@ class PromoGcRequestItem extends Model
     protected $primaryKey = 'pgcreqi_id';
     public $timestamps = false;
     protected $guarded = [];
+
+    public function denomination()
+    {
+        return $this->belongsTo(Denomination::class, 'pgcreqi_denom', 'denom_id' );
+    }
 }

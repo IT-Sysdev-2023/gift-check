@@ -11,6 +11,7 @@ use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\RetailController;
+use App\Http\Controllers\QueryFilterController;
 use App\Http\Controllers\Treasury\MainController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Middleware\UserTypeRoute;
@@ -53,7 +54,6 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('view-barcode-status', [AdminController::class, 'index'])->name('view.barcode.status');
-
     });
 });
 
@@ -66,7 +66,7 @@ Route::middleware('auth')->group(function () {
 
 //Marketing
 Route::prefix('marketing')->group(function () {
-    Route::name('marketing.')->group(function (){
+    Route::name('marketing.')->group(function () {
         Route::name('promo.gc.')->group(function () {
             Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
             Route::post('', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
@@ -79,8 +79,6 @@ Route::prefix('marketing')->group(function () {
             Route::post('truncategcpromovalidation', [MarketingController::class, 'truncate'])->name('truncategcpromovalidation');
         });
     });
-
-
 });
 
 
@@ -141,7 +139,6 @@ Route::prefix('treasury')->group(function () {
 
             Route::get('cancelled-request', [TreasuryController::class, 'cancelledRequest'])->name('cancelled');
             Route::get('view-cancelled-request/{$id}', [TreasuryController::class, 'viewCancelledRequest'])->name('view.cancelled');
-
         });
         Route::prefix('store-gc')->name('store.gc.')->group(function () {
             Route::get('pending-request', [TreasuryController::class, 'pendingRequestStoreGc'])->name('pending');
@@ -150,7 +147,6 @@ Route::prefix('treasury')->group(function () {
 
             Route::get('reprint/{id}', [TreasuryController::class, 'reprint'])->name('reprint');
             Route::get('view-cancelled-gc/{id}', [TreasuryController::class, 'viewCancelledGc'])->name('cancelled.gc');
-
         });
         Route::prefix('gc-production-request')->name('production.request.')->group(function () {
             Route::get('approved-request', [TreasuryController::class, 'approvedProductionRequest'])->name('approved');
@@ -166,10 +162,7 @@ Route::prefix('treasury')->group(function () {
 
         Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
-
-
     });
-
 });
 Route::prefix('documents')->group(function () {
     Route::name('start.')->group(function () {
@@ -195,6 +188,12 @@ Route::prefix('finance')->group(function () {
         $filePath = storage_path('app/' . $filename);
         return response()->download($filePath);
     })->name('download');
+});
+
+Route::prefix('search')->group(function () {
+    Route::name('search.')->group(function () {
+        Route::get('check-by' ,[QueryFilterController::class, 'getCheckBy'])->name('checkBy');
+    });
 });
 
 

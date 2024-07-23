@@ -34,7 +34,7 @@
                         Pending Promo Approval Setup
                     </span>
                 </template>
-                <PromoForApproval  :details="details"/>
+                <PromoForApproval :denomination="denomination" :details="details"/>
             </a-tab-pane>
     </a-tabs>
 </template>
@@ -52,6 +52,7 @@ export default {
         title: String,
         activeKey: String,
         details: Object,
+        denomination: Object,
     },
     data() {
         return {
