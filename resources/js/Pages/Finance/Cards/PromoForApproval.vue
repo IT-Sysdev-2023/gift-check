@@ -7,18 +7,20 @@
                         <a-descriptions size="small" bordered>
                             <a-descriptions-item label="Prepared By:" class="text-end">{{
                                 $page.props.auth.user.full_name
-                                }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                         </a-descriptions>
                         <a-descriptions size="small" bordered>
                             <a-descriptions-item label="Date Approved/Cancel:" class="text-end">{{ details.data[0].today
                                 }}</a-descriptions-item>
                         </a-descriptions>
                     </a-form-item>
-                    <a-form-item label="Request Status" v-model:value="form.status">
-                        <a-select ref="select" placeholder="Select Status">
+
+                    <a-form-item label="Request Status">
+                        <a-select v-model:value="form.status" ref="select" placeholder="Select Status">
                             <a-select-option :value="1">Approved</a-select-option>
                             <a-select-option :value="2">Cancel</a-select-option>
                         </a-select>
+                        <Errors v-if="errors.status" :errors="errors.status[0]" />
                     </a-form-item>
                     <a-row :gutter="[16, 16]">
                         <a-col :span="12">
@@ -27,6 +29,7 @@
                                     <a-select-option v-for="item in cdata" :value="item.assig_id">{{ item.assig_name
                                         }}</a-select-option>
                                 </a-select>
+                                <Errors v-if="errors.checkby" :errors="errors.checkby[0]" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="12">
@@ -35,16 +38,17 @@
                                     <a-select-option v-for="item in cdata" :value="item.assig_id">{{ item.assig_name
                                         }}</a-select-option>
                                 </a-select>
+                                <Errors v-if="errors.appby" :errors="errors.appby[0]" />
                             </a-form-item>
                         </a-col>
                     </a-row>
                     <a-form-item>
-                        <a-textarea v-model:value="value" placeholder="Basic usage" :rows="2" />
+                        <a-textarea v-model:value="form.remarks" placeholder="Enter remarks" :rows="2" />
+                        <Errors v-if="errors.remarks" :errors="errors.remarks[0]" />
                     </a-form-item>
                     <a-form-item>
-                        <a-upload-dragger v-model:fileList="fileList" name="file" :multiple="true"
-                            action="https://www.mocky.io/v2/5cc8019d300000980a055e76" @change="handleChange"
-                            @drop="handleDrop">
+                        <a-upload-dragger name="file" accept="image/png, image/jpeg" @change="handleChange"
+                            :before-upload="() => false" list-type="picture" :max-count="1">
                             <p class="ant-upload-drag-icon">
                                 <inbox-outlined></inbox-outlined>
                             </p>
@@ -54,9 +58,11 @@
                                 other
                                 band files
                             </p>
-                        </a-upload-dragger> </a-form-item>
+                        </a-upload-dragger>
+                        <Errors v-if="errors.docs" :errors="errors.docs[0]" />
+                    </a-form-item>
                     <a-form-item>
-                        <a-button type="primary" block>
+                        <a-button type="primary" block @click="approve" :loading="isSubmitting">
                             <template #icon>
                                 <TagsFilled />
                             </template>
@@ -92,12 +98,12 @@
                     <a-descriptions size="small" bordered>
                         <a-descriptions-item label="Retail Group" class="text-end">Group {{
                             details.data[0].pgcreq_group
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
                         <a-descriptions-item label="Date Requested" class="text-end">{{
                             details.data[0].pgcreq_datereq
-                            }}
+                        }}
                         </a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
@@ -122,6 +128,7 @@
                     </a-descriptions>
                 </div>
             </a-card>
+            {{ id }}
             <a-card class="mt-2">
                 <a-table size="small" :pagination="false" class="mt-1" :columns="[
                     {
@@ -138,7 +145,7 @@
                     {
                         title: 'Subtotal',
                         dataIndex: 'subtotal',
-                         align: 'end'
+                        align: 'end'
                     },
                 ]" :data-source="denomination.data">
                     <template #bodyCell="{ column, record }">
@@ -160,19 +167,26 @@
 </template>
 <script>
 import axios from 'axios';
-
+import pickBy from "lodash/pickBy";
+import { notification } from 'ant-design-vue';
 export default {
     props: {
         details: Object,
         denomination: Object,
+        reqid: Number,
     },
     data() {
         return {
             cdata: [],
+            errors: {},
+            isSubmitting: false,
             form: {
                 appby: null,
                 checkby: null,
                 status: null,
+                remarks: null,
+                reqid: this.reqid,
+                docs: null,
             }
         }
     },
@@ -185,6 +199,32 @@ export default {
                 .then(response => {
                     this.cdata = response.data;
                 })
+        },
+        approve() {
+            this.isSubmitting = true;
+            axios.post(route('finance.approve.request'), {
+                ...pickBy(this.form)
+            }).then(response => {
+                notification['success']({
+                    message: 'Success',
+                    description:
+                        response.data.success,
+                });
+                setTimeout(() => {
+                    window.location.href = '/finance/pen-promo-request'
+                }, 4000);
+            }).catch(e => {
+                notification['error']({
+                    message: 'Error',
+                    description:
+                        'Opps Something went wrong check the fields',
+                });
+                this.errors = e.response.data.errors;
+                this.isSubmitting = false;
+            });
+        },
+        handleChange(data) {
+            this.form.docs = data.file;
         }
     },
 }

@@ -182,6 +182,7 @@ Route::prefix('finance')->group(function () {
         Route::get('generate-approved-spgc-reports', [FinanceController::class, 'approvedSpgdcPdfExcelFunction'])->name('approved.spgc.pdf.excel');
         Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.excel');
         Route::get('generate-spgc-ledger', [FinanceController::class, 'generateSpgcPromotionalExcel'])->name('spgc.ledger.start');
+        Route::post('approve-request', [FinanceController::class, 'approveRequest'])->name('approve.request');
     });
 
     Route::get('/download/{filename}', function ($filename) {

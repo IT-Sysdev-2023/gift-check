@@ -1,5 +1,13 @@
 <template>
-    <PromoRequestTable :denomination="denomination" :details="details"  :activeKey="activeKey" :record="data" :columns="columns" :title="'Pending Promo Request Table'"/>
+    <PromoRequestTable
+    :denomination="denomination"
+    :details="details"
+    :activeKey="activeKey"
+    :record="data"
+    :columns="columns"
+    :reqid="reqid"
+    :title="'Pending Promo Request Table'"
+    />
 </template>
 <script>
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
@@ -10,7 +18,8 @@ export default {
         columns: Object,
         activeKey: String,
         details: Object,
-        denomination: Object
+        denomination: Object,
+        reqid: Number,
     },
 
 };
