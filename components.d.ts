@@ -98,6 +98,7 @@ declare module 'vue' {
     Dropdown: typeof import('./resources/js/Components/Dropdown.vue')['default']
     DropdownLink: typeof import('./resources/js/Components/DropdownLink.vue')['default']
     Edit: typeof import('./resources/js/Pages/Profile/Edit.vue')['default']
+    Errors: typeof import('./resources/js/Pages/Finance/Cards/Errors.vue')['default']
     ExclamationCircleFilled: typeof import('@ant-design/icons-vue')['ExclamationCircleFilled']
     EyeOutlined: typeof import('@ant-design/icons-vue')['EyeOutlined']
     FarmersMarket: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/FarmersMarket.vue')['default']
