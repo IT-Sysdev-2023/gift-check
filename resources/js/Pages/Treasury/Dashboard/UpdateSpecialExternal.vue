@@ -3,6 +3,7 @@ import AuthenticatedLayout from "../../../Layouts/AuthenticatedLayout.vue";
 import { dashboardRoute } from "../../../Mixin/UiUtilities";
 import { PageProps } from "../../../types/index";
 import { usePage } from "@inertiajs/vue3";
+import type { SelectProps } from "ant-design-vue";
 import { reactive, ref } from "vue";
 import type { FormInstance } from "ant-design-vue";
 import dayjs, { Dayjs } from "dayjs";
@@ -26,6 +27,7 @@ const props = defineProps<{
                 spcus_type: number;
             };
             spexgc_company: string;
+            spexgc_payment: string;
             spexgc_payment_arnum: string;
             spexgc_paymentype: string;
             spexgc_dateneed: string;
@@ -38,7 +40,17 @@ const page = props.data.data;
 const dateRequested = <Dayjs>dayjs(page.spexgc_datereq);
 const dateValidity = ref<Dayjs>(dayjs(page.spexgc_dateneed));
 
-const paymentChange = ref()
+const paymentOptions = ref<SelectProps["options"]>([
+    {
+        value: "1",
+        label: "Cash",
+    },
+    {
+        value: "2",
+        label: "Check",
+    },
+]);
+const paymentTypeSelected = ref(page.spexgc_paymentype);
 const formRef = ref<FormInstance>();
 const formState = reactive({});
 const onFinish = (values: any) => {
@@ -75,10 +87,25 @@ const onFinish = (values: any) => {
                         <a-form-item label="Date Validity:">
                             <a-date-picker v-model:value="dateValidity" />
                         </a-form-item>
-                        <!-- <a-form-item label="Document Uploaded:">
-                            <a-button>
-                                Remove
-                            </a-button>
+                        <!-- <a-form-item label="Uploaded Document">
+                            <a-space wrap class="ml-2">
+                                <a-button
+                                    type="primary"
+                                    v-if="props.data.br_file_docno"
+                                    >
+                                    @click="download(props.data.br_file_docno)"
+                                    <template #icon>
+                                        <DownloadOutlined />
+                                    </template>
+                                    Download
+                                </a-button>
+                                <a-tag color="error" v-else>
+                                    <template #icon>
+                                        <close-circle-outlined />
+                                    </template>
+                                    NONE
+                                </a-tag>
+                            </a-space>
                         </a-form-item> -->
                         <!-- <a-form-item label="Upload Document #:">
                             <a-upload
@@ -133,7 +160,7 @@ const onFinish = (values: any) => {
                         <a-form-item label="AR Number:">
                             <a-input
                                 :value="page.spexgc_payment_arnum"
-                                placeholder="placeholder"
+                                readonly
                             ></a-input>
                         </a-form-item>
 
@@ -141,7 +168,7 @@ const onFinish = (values: any) => {
                             <a-space>
                                 <!-- <a-select
                                     ref="select"
-                                    v-model:value="value1"
+                                    v-model:value="paymentTypeSelected"
                                     style="width: 120px"
                                     :options="options1"
                                     @focus="focus"
@@ -149,9 +176,22 @@ const onFinish = (values: any) => {
                                 ></a-select> -->
                             </a-space>
                         </a-form-item>
+                        <!-- <a-form-item label="Bank Name" v-if="page.spexgc_paymentype == 1 ">
+                            <a-input
+                                :value="page.spexgcbi_bankname"
+                                placeholder="placeholder"
+                            ></a-input>
+                        </a-form-item>
+                        <a-form-item label="Amount" v-if="page.spexgc_paymentype == 1 ">
+                            <a-input
+                                :value="page.spexgcbi_checknumber"
+                                placeholder="placeholder"
+                            ></a-input>
+                        </a-form-item> -->
                         <a-form-item label="Amount">
                             <a-input
-                                value="formState[`field-${i}`]"
+                                type="number"
+                                :value="page.spexgc_payment"
                                 placeholder="placeholder"
                             ></a-input>
                         </a-form-item>

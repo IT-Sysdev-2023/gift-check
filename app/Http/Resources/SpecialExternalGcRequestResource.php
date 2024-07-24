@@ -20,6 +20,7 @@ class SpecialExternalGcRequestResource extends JsonResource
             'spexgc_payment_arnum' => $this->spexgc_payment_arnum,
             'spexgc_paymentype' => $this->spexgc_paymentype,
             'spexgc_id' => $this->spexgc_id,
+            'spexgc_payment' => $this->spexgc_payment,
             'spexgc_datereq' => $this->spexgc_datereq,
             'user' => $this->whenLoaded('user', fn($q) => $q->full_name),
             'specialExternalCustomer' => $this->whenLoaded('specialExternalCustomer'),
