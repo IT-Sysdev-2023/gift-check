@@ -2,8 +2,12 @@
 import AuthenticatedLayout from "../../../Layouts/AuthenticatedLayout.vue";
 import { dashboardRoute } from "../../../Mixin/UiUtilities";
 import { PageProps } from "../../../types/index";
-import { usePage } from "@inertiajs/vue3";
-import type { SelectProps } from "ant-design-vue";
+import { usePage, useForm } from "@inertiajs/vue3";
+import type {
+    SelectProps,
+    UploadProps,
+    UploadChangeParam,
+} from "ant-design-vue";
 import { reactive, ref } from "vue";
 import type { FormInstance } from "ant-design-vue";
 import dayjs, { Dayjs } from "dayjs";
@@ -33,9 +37,11 @@ const props = defineProps<{
             spexgc_dateneed: string;
             spexgc_datereq: string;
             spexgc_num: string;
+            document: string;
         };
     };
 }>();
+const fileList = ref<UploadProps["fileList"]>([]);
 const page = props.data.data;
 const dateRequested = <Dayjs>dayjs(page.spexgc_datereq);
 const dateValidity = ref<Dayjs>(dayjs(page.spexgc_dateneed));
@@ -52,10 +58,15 @@ const paymentOptions = ref<SelectProps["options"]>([
 ]);
 const paymentTypeSelected = ref(page.spexgc_paymentype);
 const formRef = ref<FormInstance>();
-const formState = reactive({});
 const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
     console.log("formState: ", formState);
+};
+const formState = useForm({
+    file: null,
+});
+const handleChange = (info: UploadChangeParam) => {
+    formState.file = info.file;
 };
 </script>
 <template>
@@ -84,56 +95,7 @@ const onFinish = (values: any) => {
                         <a-form-item label="Date Requested:">
                             <a-date-picker disabled :value="dateRequested" />
                         </a-form-item>
-                        <a-form-item label="Date Validity:">
-                            <a-date-picker v-model:value="dateValidity" />
-                        </a-form-item>
-                        <!-- <a-form-item label="Uploaded Document">
-                            <a-space wrap class="ml-2">
-                                <a-button
-                                    type="primary"
-                                    v-if="props.data.br_file_docno"
-                                    >
-                                    @click="download(props.data.br_file_docno)"
-                                    <template #icon>
-                                        <DownloadOutlined />
-                                    </template>
-                                    Download
-                                </a-button>
-                                <a-tag color="error" v-else>
-                                    <template #icon>
-                                        <close-circle-outlined />
-                                    </template>
-                                    NONE
-                                </a-tag>
-                            </a-space>
-                        </a-form-item> -->
-                        <!-- <a-form-item label="Upload Document #:">
-                            <a-upload
-                                v-model:file-list="fileList"
-                                name="avatar"
-                                list-type="picture-card"
-                                class="avatar-uploader"
-                                :show-upload-list="false"
-                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                :before-upload="beforeUpload"
-                                @change="handleChange"
-                            >
-                                <img
-                                    v-if="imageUrl"
-                                    :src="imageUrl"
-                                    alt="avatar"
-                                />
-                                <div v-else>
-                                    <loading-outlined
-                                        v-if="loading"
-                                    ></loading-outlined>
-                                    <plus-outlined v-else></plus-outlined>
-                                    <div class="ant-upload-text">Upload</div>
-                                </div>
-                            </a-upload>
-                        </a-form-item> -->
-                    </a-col>
-                    <a-col :span="8">
+
                         <a-form-item label="Company Name:">
                             <a-textarea
                                 :value="
@@ -151,32 +113,93 @@ const onFinish = (values: any) => {
                                 readonly
                             ></a-textarea>
                         </a-form-item>
-                        <a-form-item label="Search Customer:">
-                            <a-input
-                                value="formState[`field-${i}`]"
-                                placeholder="placeholder"
-                            ></a-input>
+                        <a-form-item label="Uploaded Document">
+                            <a-space wrap class="ml-2">
+                                <a-button type="primary" v-if="page.document">
+                                    <template #icon>
+                                        <DownloadOutlined />
+                                    </template>
+                                    Download
+                                </a-button>
+                                <a-tag color="error" v-else>
+                                    <template #icon>
+                                        <close-circle-outlined />
+                                    </template>
+                                    NONE
+                                </a-tag>
+                            </a-space>
                         </a-form-item>
-                        <a-form-item label="AR Number:">
-                            <a-input
-                                :value="page.spexgc_payment_arnum"
-                                readonly
-                            ></a-input>
+                        <a-form-item label="Upload Scan Copy">
+                            <a-upload
+                                accept="image/png, image/jpeg"
+                                v-model:file-list="fileList"
+                                @change="handleChange"
+                                class="avatar-uploader"
+                                name="file"
+                                :show-upload-list="false"
+                                :before-upload="() => false"
+                                list-type="picture-card"
+                                :max-count="1"
+                            >
+                                <div>
+                                    <!-- <loading-outlined></loading-outlined> -->
+                                    <plus-outlined></plus-outlined>
+                                    <div class="ant-upload-text">Upload</div>
+                                </div>
+                            </a-upload>
                         </a-form-item>
+                    </a-col>
+                    <a-col :span="16">
+                        <a-card class="mb-10">
+                            <a-row>
+                                <a-col :span="12">
+                                    <a-statistic
+                                        title="Total"
+                                        :value="page.spexgc_payment"
+                                        style="margin-right: 50px"
+                                    />
+                                </a-col>
+                                <a-col :span="12">
+                                    <a-statistic
+                                        title="Updateb By:"
+                                        :precision="2"
+                                        :value="$page.props.auth.user.full_name"
+                                    />
+                                </a-col>
+                            </a-row>
+                        </a-card>
+                        <a-row :gutter="24">
+                            <a-col :span="12">
+                                <a-form-item label="Date Validity:">
+                                    <a-date-picker
+                                        v-model:value="dateValidity"
+                                    />
+                                </a-form-item>
+                                <a-form-item label="Search Customer:">
+                                    <a-input
+                                        value="formState[`field-${i}`]"
+                                        placeholder="placeholder"
+                                    ></a-input>
+                                </a-form-item>
+                                <a-form-item label="AR Number:">
+                                    <a-input
+                                        :value="page.spexgc_payment_arnum"
+                                        readonly
+                                    ></a-input>
+                                </a-form-item>
 
-                        <a-form-item label="Payment Type:">
-                            <a-space>
-                                <!-- <a-select
+                                <a-form-item label="Payment Type:">
+                                    <a-space>
+                                        <a-select
                                     ref="select"
                                     v-model:value="paymentTypeSelected"
                                     style="width: 120px"
-                                    :options="options1"
-                                    @focus="focus"
+                                    :options="paymentOptions"
                                     @change="handleChange"
-                                ></a-select> -->
-                            </a-space>
-                        </a-form-item>
-                        <!-- <a-form-item label="Bank Name" v-if="page.spexgc_paymentype == 1 ">
+                                ></a-select>
+                                    </a-space>
+                                </a-form-item>
+                                <!-- <a-form-item label="Bank Name" v-if="page.spexgc_paymentype == 1 ">
                             <a-input
                                 :value="page.spexgcbi_bankname"
                                 placeholder="placeholder"
@@ -188,51 +211,36 @@ const onFinish = (values: any) => {
                                 placeholder="placeholder"
                             ></a-input>
                         </a-form-item> -->
-                        <a-form-item label="Amount">
-                            <a-input
-                                type="number"
-                                :value="page.spexgc_payment"
-                                placeholder="placeholder"
-                            ></a-input>
-                        </a-form-item>
-                        <a-form-item label="Amount in Words:">
-                            <a-input
-                                value="formState[`field-${i}`]"
-                                placeholder="placeholder"
-                            ></a-input>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="8">
-                        <a-form-item label="Remarks:">
-                            <a-input
-                                value="formState[`field-${i}`]"
-                                placeholder="placeholder"
-                            ></a-input>
-                        </a-form-item>
-                        <a-form-item label="Denomination:">
-                            <a-input
-                                value="formState[`field-${i}`]"
-                                placeholder="placeholder"
-                            ></a-input>
-                        </a-form-item>
-                        <a-form-item label="Quantity:">
-                            <a-input
-                                value="formState[`field-${i}`]"
-                                placeholder="placeholder"
-                            ></a-input>
-                        </a-form-item>
-                        <a-form-item label="Total:">
-                            <a-input
-                                value="formState[`field-${i}`]"
-                                placeholder="placeholder"
-                            ></a-input>
-                        </a-form-item>
-                        <a-form-item label="Updated By:">
-                            <a-input
-                                value="formState[`field-${i}`]"
-                                placeholder="placeholder"
-                            ></a-input>
-                        </a-form-item>
+                                <a-form-item label="Amount">
+                                    <a-input
+                                        type="number"
+                                        :value="page.spexgc_payment"
+                                        placeholder="placeholder"
+                                    ></a-input>
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="12">
+                                <a-form-item label="Remarks:">
+                                    <a-input
+                                        value="formState[`field-${i}`]"
+                                        placeholder="placeholder"
+                                    ></a-input>
+                                </a-form-item>
+                                <a-form-item label="Denomination:">
+                                    <a-input
+                                        value="formState[`field-${i}`]"
+                                        placeholder="placeholder"
+                                    ></a-input>
+                                </a-form-item>
+                                <a-form-item label="Quantity:">
+                                    <a-input
+                                        value="formState[`field-${i}`]"
+                                        placeholder="placeholder"
+                                    ></a-input>
+                                </a-form-item>
+                               
+                            </a-col>
+                        </a-row>
                     </a-col>
                 </a-row>
                 <a-row>

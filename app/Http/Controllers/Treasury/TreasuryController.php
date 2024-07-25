@@ -254,8 +254,9 @@ class TreasuryController extends Controller
         );
     }
     public function updatePendingSpecialGc(SpecialExternalGcrequest $id){
-        $record = $id->load('specialExternalCustomer', 'specialExternalBankPaymentInfo');
+        $record = $id->load('specialExternalCustomer', 'specialExternalBankPaymentInfo', 'document');
 
+        // dd($record);
         // dd((new SpecialExternalGcRequestResource($record))->toArray(request()));
         return inertia('Treasury/Dashboard/UpdateSpecialExternal',
         [
