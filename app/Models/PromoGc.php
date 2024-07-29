@@ -11,5 +11,10 @@ class PromoGc extends Model
 
     protected $table= 'promo_gc';
 
+    protected $guarded=[];
+
+
+    public $timestamps= false;
+
     protected $primaryKey= 'prom_barcode';
 }

@@ -12,6 +12,10 @@ class Promo extends Model
     use HasFactory;
 
     protected $table = 'promo';
+    protected $guarded=[];
+
+
+    public $timestamps= false;
 
     protected $primaryKey = 'promo_id';
 

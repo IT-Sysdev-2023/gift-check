@@ -32,6 +32,7 @@ use App\Models\TransactionSale;
 use App\Models\TransactionStore;
 use GuzzleHttp\Psr7\UploadedFile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -736,11 +737,9 @@ class MarketingController extends Controller
         return response()->json($response);
     }
 
-
-    public function gcpromovalidation(Request $request)
+    public function getdenom()
     {
-
-        $getDenomination = Denomination::with('getDenom')
+        $data = Denomination::with('getDenom')
             ->where('denom_type', 'RSGC')
             ->where('denom_status', 'active')
             ->get()
@@ -753,6 +752,21 @@ class MarketingController extends Controller
 
                 ];
             });
+        $columns = array_map(
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Denomination', 'Scanned GC'],
+            ['denomination', 'denom_id']
+        );
+
+        return response()->json([
+            'data' => $data,
+            'columns' => ColumnHelper::getColumns($columns),
+        ]);
+    }
+
+    public function gcpromovalidation(Request $request)
+    {
+
 
         $columns = array_map(
             fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
@@ -764,6 +778,7 @@ class MarketingController extends Controller
         $response = [];
         $barcode = $request->barcode;
 
+
         if (!Gc::where('barcode_no', $request->barcode)->exists()) {
             $response = ['msg' => 'Opps! Error', 'description' => 'Barcode does not exist', 'type' => 'error'];
         } elseif (PromoGc::where('prom_barcode', $request->barcode)->exists()) {
@@ -771,6 +786,9 @@ class MarketingController extends Controller
         } elseif (TempPromo::where('tp_barcode', $request->barcode)->exists()) {
             $response = ['msg' => 'Opps! Warning', 'description' => $request->barcode . ' already scanned for promo validation', 'type' => 'warning'];
         } else {
+
+
+
 
             $promo = PromoGcReleaseToItem::select([
                 'promo_gc_release_to_items.prreltoi_barcode',
@@ -791,7 +809,7 @@ class MarketingController extends Controller
             } elseif ($promo[0]->gc_validated == '' || $promo[0]->gc_ispromo == '') {
                 $response = ['msg' => 'Opps! Error', 'description' => 'Barcode ' . $barcode . ' is not for Promo', 'type' => 'error'];
             } elseif ($promo[0]->pgcreq_group != $request->promoGroup) {
-                $response = ['msg' => 'Opps! Error', 'description' => 'Barcode ' . $barcode . ' does not belong to Group:' . $request->promoGroup, 'type' => 'error'];
+                $response = ['msg' => 'Opps! Error', 'description' => 'Barcode ' . $barcode . ' does not belong to Group ' . $request->promoGroup, 'type' => 'error'];
             } else {
                 $tempData = TempPromo::insert([
                     'tp_barcode' => $barcode,
@@ -807,13 +825,14 @@ class MarketingController extends Controller
                         'description' => 'Barcode ' . $barcode . ' successfully validated for Group: ' . $request->promoGroup,
                         'type' => 'success'
                     ];
+                    // $data = $getDenomination; 
                 } else {
                     $response = ['msg' => 'Opps! Error', 'description' => 'Failed to insert data for Barcode: ' . $barcode, 'type' => 'error'];
                 }
             }
         }
         return response()->json([
-            'data' =>  $getDenomination,
+            'data' => self::getDenomination(),
             'columns' => ColumnHelper::getColumns($columns),
             'response' => $response
         ]);
@@ -822,5 +841,129 @@ class MarketingController extends Controller
     public function truncate()
     {
         TempPromo::truncate();
+    }
+
+
+    public function scannedGc()
+    {
+        $scannedGcdata = TempPromo::join('denomination', 'denom_id', '=', 'tp_den')->get();
+        $scannedCol = array_map(
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Barcode', 'Denomination', 'GC Type', 'Action'],
+            ['tp_barcode', 'denomination', 'tp_gctype', 'action']
+        );
+
+        $columns = array_map(
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Denomination', 'Scanned GC'],
+            ['denomination', 'denom_id']
+        );
+
+        return response()->json([
+            'scannedGcdata' => $scannedGcdata,
+            'scannedCol' => $scannedCol,
+            'columns' => ColumnHelper::getColumns($columns)
+        ]);
+    }
+
+    public static function getDenomination()
+    {
+      return Denomination::with('getDenom')
+            ->where('denom_type', 'RSGC')
+            ->where('denom_status', 'active')
+            ->get()
+            ->map(function ($denomination) {
+                return [
+                    "denom_id" => $denomination->denom_id,
+                    "denom_code" => $denomination->denom_code,
+                    "denomination" => $denomination->denomination,
+                    "countDen" => $denomination->getDenom->count(),
+
+                ];
+            });
+    }
+
+    public function removeGc(Request $request)
+    {
+        $barcode = $request->barcode;
+        $isDeleted = TempPromo::where('tp_barcode', $barcode)->delete();
+
+        $response = [
+            'msg' => $isDeleted ? 'Removed' : 'Oops! Error',
+            'description' => $isDeleted
+                ? "Barcode $barcode has been removed"
+                : 'Something went wrong',
+            'type' => $isDeleted ? 'success' : 'error'
+        ];
+
+        return response()->json([
+            'response' => $response,
+            'dataScanned' => TempPromo::join('denomination', 'denom_id', '=', 'tp_den')->get(),
+            'data' => self::getDenomination(),
+        ]);
+    }
+
+
+    public function newpromo(Request $request)
+    {
+
+
+        $response = [];
+        $data = ($request->data);
+        $tag = auth()->user()->promo_tag;
+        $promoId = $data['promoNo'];
+        $dateCreated = $data['dateCreated'];
+
+
+        $expiryDate = $data['expiryDate'];
+
+        $prepby = $data['prepby'];
+
+        $notes = $data['details'];
+        $promoName = $data['promoName'];
+        $promoGroup = $data['promoGroup'];
+        $drawDate = $data['drawDate'];
+        $dateNotify = $data['dateNotify'];
+
+
+        if (empty($notes) || empty($promoName) || empty($drawDate) || empty($promoGroup) || empty($dateNotify)) {
+            $response = ['msg' => 'Opps! error', 'description' => 'Please fill all the required fields', 'type' => 'error'];
+        } else if (empty($data['scannedgc'])) {
+            $response = ['msg' => 'Opps! error', 'description' => 'Please scan barcodes', 'type' => 'error'];
+        } else {
+            //check temp table is not empty
+
+            $tempbarcodes = TempPromo::all();
+
+            if ($tempbarcodes) {
+
+                DB::transaction(function () use ($tempbarcodes, $data, $promoName, $promoGroup, $tag, $notes) {
+
+                    Promo::create([
+                        'promo_num' => $data['promoNo'],
+                        'promo_name' =>  $promoName,
+                        'promo_group' =>  $promoGroup,
+                        'promo_tag' =>  $tag,
+                        'promo_date' =>  Date::parse($data['dateCreated'])->format('Y-m-d'),
+                        'promo_remarks' =>  $notes,
+                        'promo_valby' =>  $data['prepby'],
+                        'promo_dateexpire' =>  Date::parse($data['expiryDate'])->format('Y-m-d'),
+                        'promo_datenotified' =>  Date::parse($data['dateNotify'])->format('Y-m-d'),
+                        'promo_drawdate' =>   Date::parse($data['drawDate'])->format('Y-m-d')
+                    ]);
+
+                    foreach ($tempbarcodes as $item) {
+                        PromoGc::create([
+                            'prom_promoid' => $item->tp_promoid,
+                            'prom_barcode' => $item->tp_barcode,
+                            'prom_denom' => $item->tp_den,
+                            'prom_gctype' => $item->tp_gctype,
+                        ]);
+                    }
+                });
+            }
+            $response = ['msg' => 'Nice!', 'description' => 'Promo successfully saved', 'type' => 'success'];
+        }
+        return response()->json(['response' => $response]);
     }
 }
