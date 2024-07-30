@@ -30,8 +30,10 @@ class AdminController extends Controller
 
         // dd($regular->first()->toArray());
 
-        if ($regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
-        && !$regular->whereHas('barcodePromo', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()) {
+        if (
+            $regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
+            && !$regular->whereHas('barcodePromo', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
+        ) {
             //result regular gc
             $transType = 'Reqular Gift Check';
             $steps = self::regularGc($regular, $request);
@@ -189,6 +191,7 @@ class AdminController extends Controller
         }
 
         $isRevDateExists = $q2->where('barcode_no', $request->barcode)->where('vs_reverifydate', $rev_date)->exists();
+
         $isRevDateNull = $q2->where('barcode_no', $request->barcode)->where('vs_reverifydate', null)->exists();
 
         if ($isRevDateNull) {
@@ -199,7 +202,6 @@ class AdminController extends Controller
                 'title' => 'Reverification',
                 'description' => 'Reverified By CFS at ' . Date::parse($rev_date)->toFormattedDateString(),
             ]);
-
         } else {
             //no result here..
         }
@@ -359,18 +361,30 @@ class AdminController extends Controller
                 'description' => 'Not yet Scanned and Validated By Treasury'
             ]);
         }
+        $query =  $promo->join('promo_gc', 'promo_gc.prom_barcode', '=', 'prreltoi_barcode')
+            ->leftJoin('promo', 'promo.promo_id', '=', 'promo_gc.prom_promoid')
+            ->leftJoin('promogc_released', 'prgcrel_barcode', '=', 'prreltoi_barcode')
+            ->where('promo_gc.prom_barcode', $request->barcode)->first();
 
-        if ($promo->join('promo_gc', 'promo_gc.prom_barcode', '=', 'prreltoi_barcode')->where('promo_gc.prom_barcode', $request->barcode)->exists()) {
+            // dd($query->promo_name);
+        if (empty($query->promo_name)) {
+            $steps->push((object) [
+                'status' => 'current',
+                'title' => 'Marketing',
+                'description' => 'Gift Check is Available'
+            ]);
+        } elseif (!is_null($query->promo_name) && is_null($query->prgcrel_at)) {
+            $steps->push((object) [
+                'status' => 'wait',
+                'title' => 'Marketing',
+                'description' => 'Gift Check is Pending'
+            ]);
+        }else{
             $steps->push((object) [
                 'title' => 'Marketing',
-                'description' => 'Released By Marketing'
+                'description' => 'Gift Check is Released'
             ]);
-        } else {
-            $steps->push((object) [
-                'status' => 'error',
-                'title' => 'Marketing',
-                'description' => 'Not yet Released By Marketing'
-            ]);
+
         }
         $q2 =  $promo->join('store_verification', 'store_verification.vs_barcode', '=', 'prreltoi_barcode')->where('store_verification.vs_barcode', $request->barcode);
 
@@ -389,20 +403,27 @@ class AdminController extends Controller
 
         // dd($q2->first()->vs_reverifydate);
         // dd($q2->first()->vs_reverifydate);
-        $isRevDateExists = $q2->where('vs_barcode', $request->barcode)->where('vs_reverifydate', $q2->first()->vs_reverifydate)->exists();
+
+        $isRevDateExists = $q2->where('vs_barcode', $request->barcode);
+
+
+        if ($isRevDateExists) {
+            $isRev =  $isRevDateExists->whereNotNull('vs_reverifydate')->exists();
+        } else {
+        }
+
         $isRevDateNull = $q2->where('vs_barcode', $request->barcode)->where('vs_reverifydate', null)->exists();
 
         $q2 =  $promo->join('store_verification', 'store_verification.vs_barcode', '=', 'prreltoi_barcode')->where('store_verification.vs_barcode', $request->barcode);
 
         if ($isRevDateNull) {
             //no result here..
-        } elseif ($isRevDateExists) {
+        } elseif ($isRev) {
 
             $steps->push((object) [
                 'title' => 'Reverification',
                 'description' => 'Reverified By CFS at ' . Date::parse($q2->first()->vs_reverifydate)->toFormattedDateString(),
             ]);
-
         } else {
             //no result here..
         }

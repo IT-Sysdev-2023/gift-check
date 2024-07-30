@@ -134,7 +134,9 @@ class MarketingController extends Controller
             ->withQueryString();
 
         $query->transform(function ($item) {
-            $item->status = is_null($item->promo_name) ? 'Available' : (!is_null($item->promo_name) && is_null($item->relat) ? 'Pending' : 'Released');
+            $item->status = is_null($item->promo_name)
+                ? 'Available' : (!is_null($item->promo_name)
+                    && is_null($item->relat) ? 'Pending' : 'Released');
             return $item;
         });
 
