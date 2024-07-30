@@ -46,4 +46,3 @@ export function dashboardRoute() {
     const res = webRoute?.split(".")[0];
     return res + ".dashboard";
 };
-// export const onTableLoading = ref(false);

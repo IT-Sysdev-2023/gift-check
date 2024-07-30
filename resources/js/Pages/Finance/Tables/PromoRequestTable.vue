@@ -30,11 +30,11 @@
             <a-tab-pane key="2" v-if="activeKey === '2'">
                 <template #tab>
                     <span>
-                        <CheckCircleFilled />
+                        <TagsFilled />
                         Pending Promo Approval Setup
                     </span>
                 </template>
-                <PromoForApproval />
+                <PromoForApproval :reqid="reqid"  :denomination="denomination" :details="details"/>
             </a-tab-pane>
     </a-tabs>
 </template>
@@ -42,6 +42,7 @@
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
+import { TagsFilled } from "@ant-design/icons-vue";
 
 export default {
     layout: Authenticatedlayout,
@@ -49,7 +50,10 @@ export default {
         record: Object,
         columns: Object,
         title: String,
-        activeKey: String
+        activeKey: String,
+        details: Object,
+        denomination: Object,
+        reqid: Number,
     },
     data() {
         return {
@@ -64,9 +68,11 @@ export default {
             this.$inertia.get(route('finance.pen.promo.request'), {
                 id: id,
                 activeKey: '2',
+
             })
         }
     },
+
     watch: {
         form: {
             deep: true,

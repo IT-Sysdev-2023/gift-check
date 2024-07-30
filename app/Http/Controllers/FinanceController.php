@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Http\Requests\PromoForApprovalRequest;
+use App\Http\Resources\BudgetLedgerResource;
 use App\Http\Resources\SpgcLedgerResource;
-use App\Services\Finance\ApprovedPromoGCRequestService;
+use App\Models\LedgerBudget;
+use App\Services\Finance\ApprovedPendingPromoGCRequestService;
 use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
-use App\Services\Finance\FinanceDashboardService;
-use App\Services\Finance\PendingPromoGcRequestService;
 use App\Services\Finance\SpgcLedgerExcelService;
 use App\Services\Finance\SpgcService;
 use App\Services\Treasury\LedgerService;
@@ -35,7 +36,14 @@ class FinanceController extends Controller
     }
     public function budgetLedger(Request $request)
     {
-        return $this->ledgerService->budgetLedger($request);
+        $record = $this->ledgerService->budgetLedger($request);
+
+        return inertia('Treasury/Table', [
+            'filters' => $request->all('search', 'date'),
+            'remainingBudget' => LedgerBudget::currentBudget(),
+            'data' => BudgetLedgerResource::collection($record),
+            'columns' => \App\Helpers\ColumnHelper::$budget_ledger_columns,
+        ]);
     }
 
     public function spgcLedger(Request $request)
@@ -107,7 +115,7 @@ class FinanceController extends Controller
 
     public function generateSpgcPromotionalExcel(Request $request)
     {
-        // dd($request->date);
+
         $record = LedgerService::spgcLedgerToExcel($request);
 
         $save = (new SpgcLedgerExcelService())->record($record)->date($request->date)->writeResult()->save();
@@ -119,11 +127,17 @@ class FinanceController extends Controller
     }
     public function pendingPromoRequest(Request $request)
     {
-        return (new PendingPromoGcRequestService())->pendingPromoGCRequestIndex($request);
+        return (new ApprovedPendingPromoGCRequestService())->pendingPromoGCRequestIndex($request);
+    }
+
+    public function approveRequest(PromoForApprovalRequest $request)
+    {
+
+        return (new ApprovedPendingPromoGCRequestService())->approveRequest($request);
     }
 
     public function approvedPromoRequest(Request $request)
     {
-        return (new ApprovedPromoGCRequestService())->approvedPromoGCRequestIndex($request);
+        return (new ApprovedPendingPromoGCRequestService())->approvedPromoGCRequestIndex($request);
     }
 }

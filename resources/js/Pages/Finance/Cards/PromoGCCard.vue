@@ -17,7 +17,7 @@
                 <p class="sub-text text-white">All Pending Request</p>
             </div>
             <a-badge :count="count?.penPomoCount" @click="() => $inertia.get(route('finance.pen.promo.request'))">
-                <a-button>
+                <a-button :disabled="count.penPomoCount <= 0">
                     <template #icon>
                         <FolderFilled />
                     </template>
