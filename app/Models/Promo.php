@@ -17,8 +17,6 @@ class Promo extends Model
 
     public $timestamps= false;
 
-    protected $primaryKey = 'promo_id';
-
     public function scopeFilter(Builder $builder, $filter)
     {
         return $builder->when($filter['search'] ?? null, function ($query, $search) {

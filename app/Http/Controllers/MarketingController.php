@@ -37,6 +37,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
+use function Pest\Laravel\json;
+
 class MarketingController extends Controller
 {
 
@@ -71,6 +73,7 @@ class MarketingController extends Controller
     {
 
         $promoNum = promo::count() + 1;
+        // dd($promoNum);/
 
         return Inertia::render('Marketing/AddNewPromo', [
             'PromoNum' =>  $promoNum,
@@ -500,7 +503,7 @@ class MarketingController extends Controller
             'columns' => ColumnHelper::$ver_gc_alturas_mall_columns,
         ]);
     }
-    public function getPromoDetails(Request $request)
+    public function getPromoDetails()
     {
         $data = PromoGc::join('denomination', 'denomination.denom_id', '=', 'promo_gc.prom_denom')
             ->join('gc_type', 'gc_type.gc_type_id', '=', 'promo_gc.prom_gctype')
@@ -868,7 +871,7 @@ class MarketingController extends Controller
 
     public static function getDenomination()
     {
-      return Denomination::with('getDenom')
+        return Denomination::with('getDenom')
             ->where('denom_type', 'RSGC')
             ->where('denom_status', 'active')
             ->get()
@@ -906,18 +909,16 @@ class MarketingController extends Controller
 
     public function newpromo(Request $request)
     {
+        // dd($request->all());
+        $tempbarcodes = TempPromo::where('tp_by', auth()->user()->user_id)->get();
 
+        // dd($tempbarcodes->toArray());
+
+        $data = $request->data;
 
         $response = [];
-        $data = ($request->data);
+        // $data = ($request->data);
         $tag = auth()->user()->promo_tag;
-        $promoId = $data['promoNo'];
-        $dateCreated = $data['dateCreated'];
-
-
-        $expiryDate = $data['expiryDate'];
-
-        $prepby = $data['prepby'];
 
         $notes = $data['details'];
         $promoName = $data['promoName'];
@@ -928,18 +929,15 @@ class MarketingController extends Controller
 
         if (empty($notes) || empty($promoName) || empty($drawDate) || empty($promoGroup) || empty($dateNotify)) {
             $response = ['msg' => 'Opps! error', 'description' => 'Please fill all the required fields', 'type' => 'error'];
-        } else if (empty($data['scannedgc'])) {
+        } else if (empty($tempbarcodes)) {
             $response = ['msg' => 'Opps! error', 'description' => 'Please scan barcodes', 'type' => 'error'];
         } else {
-            //check temp table is not empty
-
-            $tempbarcodes = TempPromo::all();
-
             if ($tempbarcodes) {
 
                 DB::transaction(function () use ($tempbarcodes, $data, $promoName, $promoGroup, $tag, $notes) {
 
                     Promo::create([
+                        'promo_id' => $data['promoNo'],
                         'promo_num' => $data['promoNo'],
                         'promo_name' =>  $promoName,
                         'promo_group' =>  $promoGroup,
@@ -952,14 +950,17 @@ class MarketingController extends Controller
                         'promo_drawdate' =>   Date::parse($data['drawDate'])->format('Y-m-d')
                     ]);
 
+
                     foreach ($tempbarcodes as $item) {
+
                         PromoGc::create([
-                            'prom_promoid' => $item->tp_promoid,
+                            'prom_promoid' => $data['promoNo'],
                             'prom_barcode' => $item->tp_barcode,
                             'prom_denom' => $item->tp_den,
                             'prom_gctype' => $item->tp_gctype,
                         ]);
                     }
+                    return redirect(route('marketing.addPromo.list'));
                 });
             }
             $response = ['msg' => 'Nice!', 'description' => 'Promo successfully saved', 'type' => 'success'];

@@ -38,7 +38,7 @@
             <a-input v-model:value="form.prepby" class="hidden" />
           </a-form-item>
           <a-form-item>
-            <a-button type="primary" html-type="submit">Submit</a-button>
+            <a-button @click="addPromo()" type="primary" html-type="submit">Submit</a-button>
           </a-form-item>
         </a-form>
       </a-card>
@@ -124,7 +124,7 @@
 
 <script>
 import { PlusOutlined, BarcodeOutlined, RedoOutlined } from "@ant-design/icons-vue";
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import { notification } from 'ant-design-vue';
@@ -167,7 +167,6 @@ export default {
         barcode: '',
         data: [],
         columns: [],
-
         scannedGc: [],
         scannedGccolumns: []
       }
@@ -225,8 +224,8 @@ export default {
       })
     },
 
- scannedGc() {
-   axios.get(route('marketing.addPromo.scannedGc'))
+    scannedGc() {
+      axios.get(route('marketing.addPromo.scannedGc'))
         .then(response => {
           this.scannedbarcodemodal = true;
           this.form.scannedGc = response.data.scannedGcdata;
@@ -244,6 +243,17 @@ export default {
         });
         this.form.data = response.data.data;
         this.form.scannedGc = response.data.dataScanned;
+      })
+    },
+    addPromo() {
+      axios.post(route('marketing.addPromo.newpromo'), {
+        data: this.form
+      }).then(response => {
+        notification[response.data.response.type]({
+          message: response.data.response.msg,
+          description: response.data.response.description,
+        });
+        window.location.href="promo-list";
       })
     }
   },

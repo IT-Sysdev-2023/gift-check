@@ -16,5 +16,5 @@ class PromoGc extends Model
 
     public $timestamps= false;
 
-    protected $primaryKey= 'prom_barcode';
+
 }
