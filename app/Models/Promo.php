@@ -12,8 +12,10 @@ class Promo extends Model
     use HasFactory;
 
     protected $table = 'promo';
+    protected $guarded=[];
 
-    protected $primaryKey = 'promo_id';
+
+    public $timestamps= false;
 
     public function scopeFilter(Builder $builder, $filter)
     {

@@ -73,10 +73,14 @@ Route::prefix('marketing')->group(function () {
         });
         Route::name('addPromo.')->group(function () {
             Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
+            Route::get('get-denom', [MarketingController::class, 'getdenom'])->name('get.denom');
             Route::post('validate-gc', [MarketingController::class, 'validateGc'])->name('validate');
             Route::get('promo-list', [MarketingController::class, 'promoList'])->name('list');
             Route::post('gc-promo-validation', [MarketingController::class, 'gcpromovalidation'])->name('gcpromovalidation');
             Route::post('truncategcpromovalidation', [MarketingController::class, 'truncate'])->name('truncategcpromovalidation');
+            Route::get('scannedGc', [MarketingController::class, 'scannedGc'])->name('scannedGc');
+            Route::post('removeGc', [MarketingController::class, 'removeGc'])->name('removeGc');
+            Route::post('newpromo', [MarketingController::class, 'newpromo'])->name('newpromo');
         });
     });
 });

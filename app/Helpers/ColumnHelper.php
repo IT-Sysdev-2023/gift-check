@@ -39,6 +39,20 @@ class ColumnHelper
         ],
     ];
 
+    public static $get_denom_columns = [
+        [
+            'title' => 'Denomination',
+            'dataIndex' => 'denomination',
+
+        ],
+        [
+            'title' => 'Scanned Gc',
+            'dataIndex' => 'countDen',
+            'key' => 'denom_id'
+
+        ],
+    ];
+
     public static $gc_ledger_columns = [
         [
             'title' => 'Legder No.',

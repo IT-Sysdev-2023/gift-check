@@ -108,7 +108,7 @@
                         </a-list-item-meta>
                     </a-list-item>
                     <a-list-item>
-                        <a-list-item-meta :description="selectedData.fullname">
+                        <a-list-item-meta :description="selectedData.user.full_name">
                             <template #title>
                                 <a>Created By</a>
                             </template>

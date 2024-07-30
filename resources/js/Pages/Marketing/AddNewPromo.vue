@@ -38,7 +38,7 @@
             <a-input v-model:value="form.prepby" class="hidden" />
           </a-form-item>
           <a-form-item>
-            <a-button type="primary" html-type="submit">Submit</a-button>
+            <a-button @click="addPromo()" type="primary" html-type="submit">Submit</a-button>
           </a-form-item>
         </a-form>
       </a-card>
@@ -72,7 +72,7 @@
                 </a-button>
               </a-tooltip>
             </div>
-            <a-button type="primary" danger ghost>
+            <a-button @click="scannedGc" type="primary" danger ghost>
               <BarcodeOutlined /> Scanned GC
             </a-button>
           </a-space>
@@ -81,8 +81,7 @@
     </a-col>
   </a-row>
 
-  <a-modal v-model:open="open" width="50%" style="top: 65px" :title="title = 'GC Promo Validation '"
-    :confirm-loading="confirmLoading">
+  <a-modal v-model:open="open" width="50%" style="top: 65px" :title="title = 'GC Promo Validation '">
     <a-flex justify="space-between" align="middle" style="margin-top: 40px;">
       <a-form-item label="Promo No:" name="promoNo">
         <a-input style="width: 50px;" v-model:value="form.promoNo" readonly />
@@ -97,7 +96,8 @@
         <a-input style="width: auto;" v-model:value="form.prepByName" readonly />
       </a-form-item>
     </a-flex>
-    <a-input v-model:value="form.barcode" @input="updateDigitCount" style="height: 100px; font-size: 90px; " />
+    <a-input v-model:value="form.barcode" @keyup.enter="validateGc" @input="updateDigitCount"
+      style="height: 100px; font-size: 90px; " />
     <a-form-item class="mt-2" label="Input count:" name="promoGroup">
       <a-input style="width: 50px;" :value="digitCount" readonly />
     </a-form-item>
@@ -109,20 +109,33 @@
     </template>
   </a-modal>
 
+  <a-modal v-model:open="scannedbarcodemodal" title="Scanned GC" @ok="handleOk">
+
+    <a-table :dataSource="form.scannedGc" :columns="form.scannedGccolumns">
+      <template #bodyCell="{ column, record }">
+        <div v-if="column.dataIndex === 'action'">
+          <a-button @click="removeGc(record.tp_barcode)" danger>Remove</a-button>
+        </div>
+      </template>
+    </a-table>
+  </a-modal>
+
 </template>
 
 <script>
-import { PlusOutlined, BarcodeOutlined } from "@ant-design/icons-vue";
-import { Link } from '@inertiajs/vue3';
+import { PlusOutlined, BarcodeOutlined, RedoOutlined } from "@ant-design/icons-vue";
+import { Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import { notification } from 'ant-design-vue';
+import axios from "axios";
 
 export default {
   layout: AuthenticatedLayout,
   components: {
     PlusOutlined,
     BarcodeOutlined,
+    RedoOutlined,
     Link
   },
 
@@ -134,6 +147,7 @@ export default {
 
   data() {
     return {
+      scannedbarcodemodal: false,
       open: false,
       value: '',
       digitCount: 0,
@@ -151,8 +165,10 @@ export default {
         prepByName: this.$page.props.auth.user.full_name,
         scannedGCValue: 0,
         barcode: '',
-        data:'',
-        columns: '',
+        data: [],
+        columns: [],
+        scannedGc: [],
+        scannedGccolumns: []
       }
     };
   },
@@ -165,13 +181,20 @@ export default {
       } else {
         this.form.expiryDate = null;
       }
-    }
+    },
+  },
+  mounted() {
+    this.fetch();
   },
 
-
-
   methods: {
-    addGcModal(data) {
+    async fetch() {
+      await axios.get(route('marketing.addPromo.get.denom')).then(response => {
+        this.form.data = response.data.data;
+        this.form.columns = response.data.columns;
+      })
+    },
+    addGcModal() {
       this.open = true;
     },
     handleOk() {
@@ -184,8 +207,8 @@ export default {
       const input = event.target.value;
       this.digitCount = (input.match(/\d/g) || []).length;
     },
-    async validateGc() {
-      await axios.post(route('marketing.addPromo.gcpromovalidation'), {
+    validateGc() {
+      axios.post(route('marketing.addPromo.gcpromovalidation'), {
         barcode: this.form.barcode,
         promoId: this.promoId,
         promoGroup: this.form.promoGroup,
@@ -195,14 +218,48 @@ export default {
           message: response.data.response.msg,
           description: response.data.response.description,
         });
-        this.form.data = response.data.data
+        this.form.data = response.data.data;
+        console.log(this.form.data)
         this.form.columns = response.data.columns
-
       })
     },
 
+    scannedGc() {
+      axios.get(route('marketing.addPromo.scannedGc'))
+        .then(response => {
+          this.scannedbarcodemodal = true;
+          this.form.scannedGc = response.data.scannedGcdata;
+          this.form.scannedGccolumns = response.data.scannedCol
+        });
+    },
 
+    removeGc(data) {
+      axios.post(route('marketing.addPromo.removeGc'), {
+        barcode: data
+      }).then(response => {
+        notification[response.data.response.type]({
+          message: response.data.response.msg,
+          description: response.data.response.description,
+        });
+        this.form.data = response.data.data;
+        this.form.scannedGc = response.data.dataScanned;
+      })
+    },
+    addPromo() {
+      axios.post(route('marketing.addPromo.newpromo'), {
+        data: this.form
+      }).then(response => {
+        notification[response.data.response.type]({
+          message: response.data.response.msg,
+          description: response.data.response.description,
+        });
+        window.location.href="promo-list";
+      })
+    }
   },
+
+
+
 
   beforeUnmount() {
     axios.post(route('marketing.addPromo.truncategcpromovalidation'));
