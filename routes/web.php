@@ -157,6 +157,8 @@ Route::prefix('treasury')->group(function () {
         Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
             Route::get('pending-special-gc', [TreasuryController::class, 'pendingSpecialGc'])->name('pending');
             Route::get('update-pending-special-gc/{id}', [TreasuryController::class, 'updatePendingSpecialGc'])->name('update.pending');
+
+            Route::get('get-assign-employee', [TreasuryController::class, 'getAssignEmployee'])->name('get.assign.employee');
         });
 
 

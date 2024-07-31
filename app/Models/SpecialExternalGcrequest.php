@@ -6,6 +6,8 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SpecialExternalGcrequest extends Model
 {
@@ -84,14 +86,18 @@ class SpecialExternalGcrequest extends Model
         return $this->belongsTo(ApprovedRequest::class, 'spexgc_id', 'reqap_trid');
     }
 
-    public function specialExternalBankPaymentInfo()
+    public function specialExternalBankPaymentInfo(): HasOne
     {
         return $this->hasOne(SpecialExternalBankPaymentInfo::class, 'spexgcbi_trid', 'spexgc_id');
     }
 
-    public function document()
+    public function document() : HasOne
     {
         return $this->hasOne(Document::class, 'doc_trid', 'spexgc_id');
+    }
+    public function specialExternalGcrequestEmpAssign() : HasMany 
+    {
+        return $this->hasMany(SpecialExternalGcrequestEmpAssign::class, 'spexgcemp_trid', 'spexgc_id');
     }
 
 }

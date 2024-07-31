@@ -1,20 +1,21 @@
 <script setup lang="ts">
-import AuthenticatedLayout from "../../../Layouts/AuthenticatedLayout.vue";
-import { dashboardRoute } from "../../../Mixin/UiUtilities";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { dashboardRoute } from "@/Mixin/UiUtilities";
+import AntFormNest from "@/Components/Treasury/AntFormNest.vue";
 import { PageProps } from "../../../types/index";
 import { usePage, useForm } from "@inertiajs/vue3";
-import type {
-    SelectProps,
-    UploadProps,
-    UploadChangeParam,
-} from "ant-design-vue";
-import { reactive, ref } from "vue";
+import type { SelectProps, UploadChangeParam } from "ant-design-vue";
+import { ref } from "vue";
 import type { FormInstance } from "ant-design-vue";
 import dayjs, { Dayjs } from "dayjs";
 
 const dRoute = dashboardRoute();
 const props = defineProps<{
     title: String;
+    options: {
+        value: number;
+        label: string;
+    }[];
     data: {
         data: {
             spexgc_id: number;
@@ -30,6 +31,12 @@ const props = defineProps<{
                 spcus_id: number;
                 spcus_type: number;
             };
+            specialExternalGcrequestEmpAssign: {
+                denom: number;
+                id: number;
+                qty: number;
+                primary_id: number
+            }[];
             spexgc_company: string;
             spexgc_payment: string;
             spexgc_payment_arnum: string;
@@ -37,11 +44,12 @@ const props = defineProps<{
             spexgc_dateneed: string;
             spexgc_datereq: string;
             spexgc_num: string;
+            spexgc_remarks: string;
             document: string;
         };
     };
 }>();
-const fileList = ref<UploadProps["fileList"]>([]);
+
 const page = props.data.data;
 const dateRequested = <Dayjs>dayjs(page.spexgc_datereq);
 const dateValidity = ref<Dayjs>(dayjs(page.spexgc_dateneed));
@@ -65,7 +73,8 @@ const onFinish = (values: any) => {
 const formState = useForm({
     file: null,
 });
-const handleChange = (info: UploadChangeParam) => {
+
+const handleUploadChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };
 </script>
@@ -75,6 +84,11 @@ const handleChange = (info: UploadChangeParam) => {
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
                 <Link :href="route(dRoute)">Home</Link>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>
+                <Link :href="route('treasury.special.gc.pending')"
+                    >Pending Request</Link
+                >
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
@@ -130,23 +144,7 @@ const handleChange = (info: UploadChangeParam) => {
                             </a-space>
                         </a-form-item>
                         <a-form-item label="Upload Scan Copy">
-                            <a-upload
-                                accept="image/png, image/jpeg"
-                                v-model:file-list="fileList"
-                                @change="handleChange"
-                                class="avatar-uploader"
-                                name="file"
-                                :show-upload-list="false"
-                                :before-upload="() => false"
-                                list-type="picture-card"
-                                :max-count="1"
-                            >
-                                <div>
-                                    <!-- <loading-outlined></loading-outlined> -->
-                                    <plus-outlined></plus-outlined>
-                                    <div class="ant-upload-text">Upload</div>
-                                </div>
-                            </a-upload>
+                            <ant-upload-image />
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -161,7 +159,7 @@ const handleChange = (info: UploadChangeParam) => {
                                 </a-col>
                                 <a-col :span="12">
                                     <a-statistic
-                                        title="Updateb By:"
+                                        title="Updated By:"
                                         :precision="2"
                                         :value="$page.props.auth.user.full_name"
                                     />
@@ -176,27 +174,22 @@ const handleChange = (info: UploadChangeParam) => {
                                     />
                                 </a-form-item>
                                 <a-form-item label="Search Customer:">
-                                    <a-input
-                                        value="formState[`field-${i}`]"
-                                        placeholder="placeholder"
-                                    ></a-input>
+                                    <ant-select :options="props.options" />
                                 </a-form-item>
                                 <a-form-item label="AR Number:">
                                     <a-input
                                         :value="page.spexgc_payment_arnum"
-                                        readonly
                                     ></a-input>
                                 </a-form-item>
 
                                 <a-form-item label="Payment Type:">
                                     <a-space>
                                         <a-select
-                                    ref="select"
-                                    v-model:value="paymentTypeSelected"
-                                    style="width: 120px"
-                                    :options="paymentOptions"
-                                    @change="handleChange"
-                                ></a-select>
+                                            ref="select"
+                                            v-model:value="paymentTypeSelected"
+                                            style="width: 120px"
+                                            :options="paymentOptions"
+                                        ></a-select>
                                     </a-space>
                                 </a-form-item>
                                 <!-- <a-form-item label="Bank Name" v-if="page.spexgc_paymentype == 1 ">
@@ -218,27 +211,19 @@ const handleChange = (info: UploadChangeParam) => {
                                         placeholder="placeholder"
                                     ></a-input>
                                 </a-form-item>
+                                <a-form-item label="Remarks:">
+                                    <a-textarea
+                                        :value="page.spexgc_remarks"
+                                        placeholder="placeholder"
+                                    ></a-textarea>
+                                </a-form-item>
                             </a-col>
                             <a-col :span="12">
-                                <a-form-item label="Remarks:">
-                                    <a-input
-                                        value="formState[`field-${i}`]"
-                                        placeholder="placeholder"
-                                    ></a-input>
+                                <a-form-item>
+                                    <ant-form-nest
+                                        :data="page.specialExternalGcrequestEmpAssign"
+                                    />
                                 </a-form-item>
-                                <a-form-item label="Denomination:">
-                                    <a-input
-                                        value="formState[`field-${i}`]"
-                                        placeholder="placeholder"
-                                    ></a-input>
-                                </a-form-item>
-                                <a-form-item label="Quantity:">
-                                    <a-input
-                                        value="formState[`field-${i}`]"
-                                        placeholder="placeholder"
-                                    ></a-input>
-                                </a-form-item>
-                               
                             </a-col>
                         </a-row>
                     </a-col>
@@ -246,7 +231,7 @@ const handleChange = (info: UploadChangeParam) => {
                 <a-row>
                     <a-col :span="24" style="text-align: right">
                         <a-button type="primary" html-type="submit"
-                            >Search</a-button
+                            >Submit</a-button
                         >
                         <a-button
                             style="margin: 0 8px"

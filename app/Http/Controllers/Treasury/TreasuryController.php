@@ -18,7 +18,9 @@ use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
+use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Dashboard\BudgetRequestService;
 use App\Services\Treasury\Dashboard\GcProductionRequestService;
@@ -241,7 +243,7 @@ class TreasuryController extends Controller
             ->paginate()
             ->withQueryString();
 
-                // dd(SpecialExternalGcRequestResource::collection($record)->toArray(request()));
+        // dd(SpecialExternalGcRequestResource::collection($record)->toArray(request()));
 
         return inertia(
             'Treasury/Dashboard/SpecialGcTable',
@@ -253,15 +255,61 @@ class TreasuryController extends Controller
             ]
         );
     }
-    public function updatePendingSpecialGc(SpecialExternalGcrequest $id){
-        $record = $id->load('specialExternalCustomer', 'specialExternalBankPaymentInfo', 'document');
+    public function updatePendingSpecialGc(SpecialExternalGcrequest $id)
+    {
+        $record = $id->load('specialExternalCustomer', 'specialExternalBankPaymentInfo', 'document', 'specialExternalGcrequestEmpAssign');
 
-        // dd($record);
+        // dd($record->toArray());
         // dd((new SpecialExternalGcRequestResource($record))->toArray(request()));
-        return inertia('Treasury/Dashboard/UpdateSpecialExternal',
-        [
-            'title' => 'Special GC Request',
-            'data' => new SpecialExternalGcRequestResource($record),
+        return inertia(
+            'Treasury/Dashboard/UpdateSpecialExternal',
+            [
+                'title' => 'Special GC Request',
+                'data' => new SpecialExternalGcRequestResource($record),
+                'options' => self::options()
+            ]
+        );
+    }
+
+    private function options()
+    {
+        return SpecialExternalCustomer::has('user')
+            ->select('spcus_id as value', 'spcus_by', 'spcus_companyname as label', 'spcus_acctname as account_name')
+            ->where('spcus_type', 2)
+            ->orderByDesc('spcus_id')
+            ->get();
+    }
+
+    public function getAssignEmployee(Request $request)
+    {
+
+        $record = SpecialExternalGcrequestEmpAssign::select(
+            'spexgcemp_fname as fname',
+            'spexgcemp_lname as lname',
+            'spexgcemp_mname as mname',
+            'spexgcemp_extname as xname'
+        )->where('spexgcemp_trid', $request->id)->get();
+
+        return response()->json([
+            'data' => $record,
+            'columns' => [
+                [
+                    'title' => 'Last Name',
+                    'dataIndex' => 'lname',
+                ],
+                [
+                    'title' => 'First Name',
+                    'dataIndex' => 'fname',
+                ],
+                [
+                    'title' => 'Middle Name',
+                    'dataIndex' => 'mname',
+                ],
+                [
+                    'title' => 'Name Ext.',
+                    'dataIndex' => 'xname',
+                ],
+            ]
         ]);
     }
 }
