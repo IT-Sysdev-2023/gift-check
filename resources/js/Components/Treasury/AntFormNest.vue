@@ -13,16 +13,18 @@
         >
             <a-form-item label="Denomination" :name="['form', index, 'denom']">
                 <a-input
-                    v-model:value="user.denom"
+                    :value="user.denom"
                     placeholder="Denomination"
                     type="number"
+                    readonly
                 />
             </a-form-item>
             <a-form-item label="Quantity" :name="['form', index, 'qty']">
                 <a-input
-                    v-model:value="user.qty"
+                    :value="user.qty"
                     placeholder="Qty"
                     type="number"
+                    readonly
                 />
             </a-form-item>
             <div
@@ -33,9 +35,7 @@
                     justify-content: flex-end;
                 "
             >
-                <UserSwitchOutlined
-                    @click="assignEmployee(user.primary_id)"
-                />
+                <UserSwitchOutlined @click="assignEmployee(user.primary_id)" />
                 <MinusCircleOutlined
                     class="ml-2"
                     @click="removeUser(user)"
@@ -57,7 +57,7 @@
         :footer="null"
     >
         <a-card>
-            <ant-form-inline :data="assignEmployeeData"/>
+            <ant-form-inline :data="assignEmployeeData" />
         </a-card>
     </a-modal>
 </template>
@@ -72,7 +72,7 @@ interface User {
     denom: number;
     qty: number;
     id: number;
-    primary_id: number
+    primary_id: number;
 }
 
 const props = defineProps<{
@@ -103,14 +103,15 @@ const addUser = () => {
 
 const assignEmployee = async (id: number) => {
     openModalAssign.value = true;
-    const {data} = await axios.get(route("treasury.special.gc.get.assign.employee"), {
-        params: {
-            id: id
-        },
-    });
+    const { data } = await axios.get(
+        route("treasury.special.gc.get.assign.employee"),
+        {
+            params: {
+                id: id,
+            },
+        }
+    );
     assignEmployeeData.value = data;
-    console.log(assignEmployeeData.value);
-    // console.log(data);
 };
 const onFinish = (values) => {
     console.log("Received values of form:", values);

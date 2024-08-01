@@ -159,6 +159,7 @@ Route::prefix('treasury')->group(function () {
             Route::get('update-pending-special-gc/{id}', [TreasuryController::class, 'updatePendingSpecialGc'])->name('update.pending');
 
             Route::get('get-assign-employee', [TreasuryController::class, 'getAssignEmployee'])->name('get.assign.employee');
+            Route::post('get-assign-employee', [TreasuryController::class, 'addAssignEmployee'])->name('add.assign.employee');
         });
 
 

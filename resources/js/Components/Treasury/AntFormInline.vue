@@ -2,7 +2,7 @@
     <a-form
         layout="inline"
         :model="formState"
-        style="text-align: center"
+        style="margin-top: 10px;"
         @finish="handleFinish"
         @finishFailed="handleFinishFailed"
     >
@@ -54,17 +54,19 @@
                 Submit
             </a-button>
         </a-form-item>
-
     </a-form>
-    <a-table class="mt-10" :columns="props.data.columns" :data-source="data.data" bordered >
-
-    </a-table>
+    <a-table
+        class="mt-10"
+        :columns="props.data.columns"
+        :data-source="data.data"
+        bordered
+    />
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
-import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
 import type { UnwrapRef } from "vue";
 import type { FormProps } from "ant-design-vue";
+import axios from 'axios';
 
 interface FormState {
     firstname: string;
@@ -80,17 +82,21 @@ const formState: UnwrapRef<FormState> = reactive({
 });
 
 const props = defineProps<{
-        data: any
+    data: any;
 }>();
-const handleFinish: FormProps["onFinish"] = (values) => {
+const handleFinish: FormProps["onFinish"] = async(values) => {
     console.log(values, formState);
+    const res = await axios.post(route('treasury.special.gc.add.assign.employee'), formState);
+    console.log(res)
 };
 const handleFinishFailed: FormProps["onFinishFailed"] = (errors) => {
     console.log(errors);
 };
 </script>
 <style scoped>
-.ant-table-thead .ant-table-cell {
-  background-color: green;
+.mt-10 >>> .ant-table-thead > tr > th {
+  background-color: #1890ff; /* Your desired background color */
+  font-weight: 500;
+  color: white;
 }
 </style>

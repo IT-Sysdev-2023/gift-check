@@ -290,6 +290,7 @@ class TreasuryController extends Controller
             'spexgcemp_extname as xname'
         )->where('spexgcemp_trid', $request->id)->get();
 
+        dd($request->id);
         return response()->json([
             'data' => $record,
             'columns' => [
@@ -311,5 +312,9 @@ class TreasuryController extends Controller
                 ],
             ]
         ]);
+    }
+
+    public function addAssignEmployee(Request $request){
+        dd($request->all());
     }
 }

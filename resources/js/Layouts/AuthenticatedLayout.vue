@@ -38,8 +38,8 @@ const dashboardRoute = computed(() => {
                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRdFHrJafrBwCbcW8dJet_I0ZHwhwL8lbM5g&s" alt="usersimage">
                             </div>
                             <div v-else>
-                                <img style="height: 80px; width: 80px; border-radius: 50%;"
-                                    src="../../../public/images/zenitsu.jpg" alt="usersimage">
+                                <img style="height: 80px; width: 80px; border-radius: 50%; object-fit: cover; object-position: center;"
+                                    src="https://imageio.forbes.com/specials-images/imageserve/62af107cfb61140c4b0ae103/starr/960x0.jpg?format=jpg&width=960" alt="usersimage">
                             </div>
                         </div>
 
