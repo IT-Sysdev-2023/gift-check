@@ -43,7 +43,7 @@ class BudgetRequestService extends UploadFileHandler
 		])
 			->where('br_request_status', '2')
 			->paginate()
-			->withQueryString();	
+			->withQueryString();
 	}
 	public function approvedRequest(Request $request)
 	{
@@ -52,7 +52,7 @@ class BudgetRequestService extends UploadFileHandler
 			->where('br_request_status', '1')
 			->orderByDesc('br_requested_at')
 			->paginate()
-			->withQueryString();
+        ->withQueryString();
 	}
 	public function viewApprovedRequest(BudgetRequest $id)
 	{
@@ -84,8 +84,8 @@ class BudgetRequestService extends UploadFileHandler
 
 		return $id->load(['cancelled_budget_request', 'user', 'cancelled_budget_request.user']);
 		//Untested
-		//Gamiti nig Api resource 
-		
+		//Gamiti nig Api resource
+
 
 	}
 }

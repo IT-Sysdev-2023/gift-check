@@ -14,7 +14,7 @@
             </a-config-provider>
         </a-col>
     </a-row>
-</template>
+</template> 
 
 <script>
 import { Link } from '@inertiajs/vue3'
