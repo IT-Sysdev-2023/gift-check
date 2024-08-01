@@ -169,7 +169,7 @@ Route::prefix('treasury')->group(function () {
 
         Route::prefix('transactions')->name('transactions.')->group(function (){
             Route::prefix('production-request')->group(function (){
-                Route::get('gift-check', [TreasuryController::class, 'giftCheck'])->name('pr.gift.check');
+                Route::get('gift-check', [TreasuryController::class, 'giftCheck'])->name('production.gc');
                 Route::get('envelope', [TreasuryController::class, 'envelop'])->name('pr.envelope');
             });
         });

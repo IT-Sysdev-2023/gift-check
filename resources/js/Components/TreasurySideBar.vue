@@ -6,10 +6,26 @@ const highlightRoute = ref([route().current()]);
 const handleClick = (e: any) => {
     highlightRoute.value = [e.key];
 };
+
+// const currentActiveMenu = [route().current().split(".")[1]];
+
+const setActiveTab = () => {
+    const currentR = route().current().split(".");
+    const keys= ['masterfile', 'transactions', 'production', 'adjustment', 'reports'];
+    const keysToOpen = [];
+
+    keys.forEach(function (item) {
+        if(currentR.includes(item)){
+            keysToOpen.push(item)
+        }
+    })
+    return keysToOpen;
+}
 </script>
 
 <template>
     <a-menu
+        :openKeys="setActiveTab()"
         v-model:selectedKeys="highlightRoute"
         theme="dark"
         mode="inline"
@@ -23,7 +39,7 @@ const handleClick = (e: any) => {
                 ></span
             >
         </a-menu-item>
-        <a-sub-menu key="menu-sub-masterfile">
+        <a-sub-menu key="masterfile">
             <template #title>
                 <span>
                     <FileTextOutlined />
@@ -39,7 +55,7 @@ const handleClick = (e: any) => {
             >
         </a-sub-menu>
 
-        <a-sub-menu key="menu-sub-transactions">
+        <a-sub-menu key="transactions">
             <template #title>
                 <span>
                     <DollarOutlined />
@@ -50,18 +66,21 @@ const handleClick = (e: any) => {
             <a-menu-item key="menu-item-budget-request"
                 >Budget Request</a-menu-item
             >
-            <a-sub-menu key="menu-sub-adjustments-production">
+            <a-sub-menu key="production">
                 <template #title>
                     <span>
                         <span>Production Request</span>
                     </span>
                 </template>
-                <a-menu-item key="menu-item-gift-check">
+                <a-menu-item key="treasury.transactions.production.gc">
                     <span>
-                <Link :href="route('treasury.transactions.pr.gift.check')">
-                    Gift Check</Link
-                ></span
-            ></a-menu-item>
+                        <Link
+                            :href="route('treasury.transactions.production.gc')"
+                        >
+                            Gift Check</Link
+                        ></span
+                    ></a-menu-item
+                >
                 <a-menu-item key="menu-item-envelope">Envelope</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="menu-item-gc-allocation"
@@ -87,7 +106,7 @@ const handleClick = (e: any) => {
             >
         </a-sub-menu>
 
-        <a-sub-menu key="menu-sub-adjustments">
+        <a-sub-menu key="adjustment">
             <template #title>
                 <span>
                     <SwapOutlined />
@@ -118,7 +137,7 @@ const handleClick = (e: any) => {
             >
         </a-menu-item>
 
-        <a-sub-menu key="menu-sub-reports">
+        <a-sub-menu key="reports">
             <template #title>
                 <span>
                     <LineChartOutlined />
