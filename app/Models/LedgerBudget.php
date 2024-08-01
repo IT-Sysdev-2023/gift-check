@@ -17,6 +17,9 @@ class LedgerBudget extends Model
     protected $table = 'ledger_budget';
     protected $primaryKey = 'bledger_id';
 
+    protected $guarded = [];
+    public $timestamps = false;
+
     protected function casts(): array
     {
         return [

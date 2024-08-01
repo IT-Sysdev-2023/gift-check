@@ -12,6 +12,9 @@ class ApprovedRequest extends Model
 
     protected $table = 'approved_request';
     protected $primaryKey = 'reqap_id';
+    protected $guarded = [];
+
+    public $timestamps = false;
 
     public function user(){
         return $this->belongsTo(User::class, 'reqap_preparedby', 'user_id');

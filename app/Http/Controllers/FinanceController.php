@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Http\Requests\PromoForApprovalRequest;
 use App\Http\Resources\BudgetLedgerResource;
 use App\Http\Resources\SpgcLedgerResource;
 use App\Models\LedgerBudget;
@@ -35,7 +36,6 @@ class FinanceController extends Controller
     }
     public function budgetLedger(Request $request)
     {
-        // dd(1);
         $record = $this->ledgerService->budgetLedger($request);
 
         return inertia('Treasury/Table', [
@@ -115,7 +115,7 @@ class FinanceController extends Controller
 
     public function generateSpgcPromotionalExcel(Request $request)
     {
-        // dd($request->date);
+
         $record = LedgerService::spgcLedgerToExcel($request);
 
         $save = (new SpgcLedgerExcelService())->record($record)->date($request->date)->writeResult()->save();
@@ -128,6 +128,12 @@ class FinanceController extends Controller
     public function pendingPromoRequest(Request $request)
     {
         return (new ApprovedPendingPromoGCRequestService())->pendingPromoGCRequestIndex($request);
+    }
+
+    public function approveRequest(PromoForApprovalRequest $request)
+    {
+
+        return (new ApprovedPendingPromoGCRequestService())->approveRequest($request);
     }
 
     public function approvedPromoRequest(Request $request)

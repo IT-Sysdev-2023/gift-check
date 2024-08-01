@@ -34,7 +34,7 @@
                         Pending Promo Approval Setup
                     </span>
                 </template>
-                <PromoForApproval :denomination="denomination" :details="details"/>
+                <PromoForApproval :reqid="reqid"  :denomination="denomination" :details="details"/>
             </a-tab-pane>
     </a-tabs>
 </template>
@@ -53,6 +53,7 @@ export default {
         activeKey: String,
         details: Object,
         denomination: Object,
+        reqid: Number,
     },
     data() {
         return {
@@ -67,6 +68,7 @@ export default {
             this.$inertia.get(route('finance.pen.promo.request'), {
                 id: id,
                 activeKey: '2',
+
             })
         }
     },
