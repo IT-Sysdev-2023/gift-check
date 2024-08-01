@@ -8,6 +8,6 @@ class CustodianController extends Controller
 {
     public function index()
     {
-        return 'CustodianController';
+        return 'sadasd';
     }
 }

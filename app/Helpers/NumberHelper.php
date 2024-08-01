@@ -32,4 +32,8 @@ class NumberHelper
         $percent = ($current / $total) * 100;
         return self::format($percent);
     }
+
+    public static function leadingZero(int $num){
+        return sprintf("%04d", $num);
+    }
 }

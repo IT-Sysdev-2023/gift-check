@@ -56,7 +56,12 @@ const handleClick = (e: any) => {
                         <span>Production Request</span>
                     </span>
                 </template>
-                <a-menu-item key="menu-item-gift-check">Gift Check</a-menu-item>
+                <a-menu-item key="menu-item-gift-check">
+                    <span>
+                <Link :href="route('treasury.transactions.pr.gift.check')">
+                    Gift Check</Link
+                ></span
+            ></a-menu-item>
                 <a-menu-item key="menu-item-envelope">Envelope</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="menu-item-gc-allocation"
