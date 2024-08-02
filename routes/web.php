@@ -168,9 +168,10 @@ Route::prefix('treasury')->group(function () {
         });
 
         Route::prefix('transactions')->name('transactions.')->group(function (){
-            Route::prefix('production-request')->group(function (){
-                Route::get('gift-check', [TreasuryController::class, 'giftCheck'])->name('production.gc');
-                Route::get('envelope', [TreasuryController::class, 'envelop'])->name('pr.envelope');
+            Route::prefix('production-request')->name('production.')->group(function (){
+                Route::get('gift-check', [TreasuryController::class, 'giftCheck'])->name('gc');
+                Route::post('store-gift-check', [TreasuryController::class, 'giftCheckStore'])->name('gcSubmit');
+                Route::get('envelope', [TreasuryController::class, 'envelope'])->name('envelope');
             });
         });
         Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');

@@ -15,11 +15,8 @@ use App\Http\Resources\SpecialExternalGcRequestResource;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\BudgetRequest;
 use App\Models\Denomination;
-use App\Models\Gc;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
-use App\Models\ProductionRequestItem;
-use App\Models\RequisitionEntry;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
@@ -28,6 +25,7 @@ use App\Services\Treasury\Dashboard\BudgetRequestService;
 use App\Services\Treasury\Dashboard\GcProductionRequestService;
 use App\Services\Treasury\Dashboard\StoreGcRequestService;
 use App\Services\Treasury\LedgerService;
+use App\Services\Treasury\Transactions\TransactionProductionRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -39,6 +37,7 @@ class TreasuryController extends Controller
         public BudgetRequestService $budgetRequestService,
         public StoreGcRequestService $storeGcRequestService,
         public GcProductionRequestService $gcProductionRequestService,
+        public TransactionProductionRequest $transactionProductionRequest
     ) {
     }
     public function index()
@@ -326,22 +325,23 @@ class TreasuryController extends Controller
     public function giftCheck(){
 
         $denomination = Denomination::select('denomination', 'denom_id')->where([['denom_type', 'RSGC'], ['denom_status', 'active']])->get();
-        
         $pr = ProductionRequest::select('pe_num')->orderByDesc('pe_num')->first();
 
         if($pr){
-            $pn = $pr->pe_num ;
+            $pn = $pr->pe_num + 1;
         }else{
             $pn = 1;
         }
-
         // dd(NumberHelper::leadingZero($pn));
-
         return inertia('Treasury/Transactions/GiftCheck', [
             'title' => 'Gift Check',
             'denomination' => DenominationResource::collection($denomination),
             'prNo' => NumberHelper::leadingZero($pn),
             'remainingBudget' => LedgerBudget::currentBudget(),
         ]);
+    }
+
+    public function giftCheckStore(Request $request){
+        $this->transactionProductionRequest->storeGc($request);
     }
 }

@@ -12,8 +12,9 @@ class ProductionRequest extends Model
     use HasFactory;
 
     protected $table = 'production_request';
-
+    protected $guarded = [];
     protected $primaryKey = 'pe_id';
+    public $timestamps = false;
 
     protected function casts(): array
     {

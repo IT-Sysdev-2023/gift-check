@@ -33,19 +33,37 @@
                         :wrapper-col="{ span: 12 }"
                     >
                         <a-form-item ref="name" label="PR No." name="name">
-                            <a-input :value="prNo" readonly />
+                            <a-input :value="formState.prNo" readonly />
                         </a-form-item>
                         <a-form-item label="Date Requested:" name="name">
-                            <a-input v-model:value="currentDate" readonly/>
+                            <a-input v-model:value="currentDate" readonly />
                         </a-form-item>
-                        <a-form-item label="Date Needed:" name="name">
-                            <a-date-picker v-model:value="formState.currentDate" />
+                        <a-form-item
+                            label="Date Needed:"
+                            name="name"
+                            has-feedback
+                            :validate-status="getErrorStatus('dateNeeded')"
+                            :help="getErrorMessage('dateNeeded')"
+                        >
+                            <a-date-picker
+                                v-model:value="formState.dateNeeded"
+                                @change="clearError('dateNeeded')"
+                            />
                         </a-form-item>
                         <a-form-item label="Upload Scan Copy.:" name="name">
-                           <ant-upload-image/>
+                            <ant-upload-image @handle-change="handleChange" />
                         </a-form-item>
-                        <a-form-item label="Remarks:." name="name">
-                            <a-textarea v-model:value="formState.remarks" />
+                        <a-form-item
+                            label="Remarks:."
+                            name="name"
+                            has-feedback
+                            :validate-status="getErrorStatus('remarks')"
+                            :help="getErrorMessage('remarks')"
+                        >
+                            <a-textarea
+                                v-model:value="formState.remarks"
+                                @input="clearError('remarks')"
+                            />
                         </a-form-item>
                     </a-form>
                 </a-col>
@@ -62,7 +80,7 @@
                         <a-row
                             :gutter="16"
                             class="mt-5"
-                            v-for="(item, index) of denomination.data"
+                            v-for="(item, index) of formState.denom"
                             :key="index"
                         >
                             <a-col :span="12">
@@ -74,7 +92,7 @@
                             </a-col>
                             <a-col :span="12">
                                 <a-input
-                                    v-model:value="formState.qty"
+                                    v-model:value="item.qty"
                                     type="number"
                                 />
                             </a-col>
@@ -92,19 +110,14 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import { Dayjs } from "dayjs";
-import { reactive, ref, toRaw } from "vue";
-import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayout.vue";
-import type { UnwrapRef, Ref } from "vue";
-import dayjs from 'dayjs';
+import { ref } from "vue";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import type { UploadChangeParam } from "ant-design-vue";
+import dayjs from "dayjs";
+import { useForm } from "@inertiajs/vue3";
+import { FormStateGc } from "@/types/index";
 
-interface FormState {
-    qty: number;
-    name: string;
-    remarks: string;
-    currentDate: Ref<Dayjs | null>
-}
-defineProps<{
+const props = defineProps<{
     title?: string;
     prNo: string;
     denomination: {
@@ -113,25 +126,35 @@ defineProps<{
     remainingBudget: string;
 }>();
 
-const currentDate = dayjs().format('MMM DD, YYYY');
+const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
-const formState: UnwrapRef<FormState> = reactive({
-    qty: 0,
-    name: "",
+
+const formState = useForm<FormStateGc>({
+    denom: [...props.denomination.data],
+    prNo: props.prNo,
+    file: null,
     remarks: "",
-    currentDate: ref<Dayjs | null>(null),
+    dateNeeded: null,
 });
-const onSubmit = () => {
-    formRef.value
-        .validate()
-        .then(() => {
-            console.log("values", formState, toRaw(formState));
-        })
-        .catch((error: any) => {
-            console.log("error", error);
-        });
+
+const handleChange = (file: UploadChangeParam) => {
+    formState.file = file.file;
 };
-const resetForm = () => {
-    formRef.value.resetFields();
+const onSubmit = () => {
+    formState
+        .transform((data) => ({
+            ...data,
+            dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
+        }))
+        .post(route("treasury.transactions.production.gcSubmit"));
+};
+const getErrorStatus = (field: string) => {
+    return formState.errors[field] ? "error" : "";
+};
+const getErrorMessage = (field: string) => {
+    return formState.errors[field];
+};
+const clearError = (field: string) => {
+    formState.errors[field] = null; 
 };
 </script>
