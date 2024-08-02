@@ -198,6 +198,13 @@ Route::prefix('finance')->group(function () {
     })->name('download');
 });
 
+Route::prefix('finance')->group(function () {
+    Route::name('custodian.')->group(function () {
+        Route::get('barcode-checker', [CustodianController::class, 'barcodeCheckerIndex'])->name('barcode.checker');
+        Route::post('scan-barcode', [CustodianController::class, 'scanBarcode'])->name('scan.barcode');
+    });
+});
+
 Route::prefix('search')->group(function () {
     Route::name('search.')->group(function () {
         Route::get('check-by' ,[QueryFilterController::class, 'getCheckBy'])->name('checkBy');

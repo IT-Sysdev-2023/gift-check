@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Services\Custodian;
+
+use App\Models\BarcodeChecker;
+use App\Models\Gc;
+use Illuminate\Support\Facades\Date;
+
+class BarcodeCheckerServices
+{
+    public function barcodeChecker()
+    {
+        $data = BarcodeChecker::with(
+            'users:user_id,firstname,lastname',
+            'gc:barcode_no,denom_id',
+            'gc.denomination:denom_id,denomination'
+        )
+            ->orderByDesc('bcheck_date')
+            ->limit(10)->get();
+
+        $data->transform(function ($item) {
+            $item->fullname = $item->users->full_name;
+            $item->bcheck_date = Date::parse($item->bcheck_date)->toFormattedDateString();
+            $item->denomination = $item->gc->denomination->denomination ?? null;
+            return $item;
+        });
+
+        return $data;
+    }
+    public function reqularGcScannedCount()
+    {
+        return BarcodeChecker::whereHas('gc', function ($query) {
+            $query->whereColumn('barcode_no', 'bcheck_barcode');
+        })->count();
+    }
+    public function specialExternalGcCount()
+    {
+        return BarcodeChecker::whereHas('special', function ($query) {
+            $query->whereColumn('spexgcemp_barcode', 'bcheck_barcode');
+        })->count();
+    }
+    public function totalGcCount()
+    {
+        return BarcodeChecker::with('gc')->count();
+    }
+    public function todaysCount()
+    {
+        return BarcodeChecker::whereDate('bcheck_date', today())->count();
+    }
+
+    public function scanBarcodeFn($request)
+    {
+        $isInGc = Gc::where('barcode_no', $request->barcode)->exists();
+
+        $isInBc = BarcodeChecker::where('bcheck_barcode', $request->barcode)->exists();
+
+        $scanby = BarcodeChecker::with('scannedBy:user_id,firstname,lastname')
+            ->where('bcheck_barcode', $request->barcode)
+            ->first();
+
+        if ($isInGc && !$isInBc) {
+
+            BarcodeChecker::create([
+                'bcheck_barcode' => $request->barcode,
+                'bcheck_checkby' => $request->user()->user_id,
+                'bcheck_date' => now(),
+            ]);
+
+            return response()->json([
+                'msg' => 'Scan Successfully',
+                'status' => 'success',
+                'desc' => 'The Barcode ' . $request->barcode . ' Scanned Successfully',
+            ]);
+        } elseif ($isInBc) {
+            return response()->json([
+                'msg' => 'Already Scanned',
+                'status' => 'warning',
+                'desc' => 'The Barcode ' . $request->barcode . ' is Already Scanned By ' . $scanby->scannedBy->full_name,
+            ]);
+        } else {
+            return response()->json([
+                'msg' => '404 not Found!',
+                'status' => 'error',
+                'desc' => 'Oppss! The Barcode ' . $request->barcode . ' not found',
+            ]);
+        }
+    }
+}

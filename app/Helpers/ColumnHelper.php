@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Helpers;
+
 use Illuminate\Support\Collection;
 
 class ColumnHelper
@@ -50,6 +51,28 @@ class ColumnHelper
             'dataIndex' => 'countDen',
             'key' => 'denom_id'
 
+        ],
+    ];
+
+    public static $barcode_checker_columns = [
+        [
+            'title' => 'Gc Barcode #',
+            'dataIndex' => 'bcheck_barcode',
+        ],
+        [
+            'title' => 'Denomination.',
+            'dataIndex' => 'denomination',
+
+        ],
+        [
+            'title' => 'Date Scanned.',
+            'dataIndex' => 'bcheck_date',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Scanned By.',
+            'dataIndex' => 'fullname',
         ],
     ];
 
@@ -174,7 +197,7 @@ class ColumnHelper
     public static function app_pend_request_columns($isPending = false)
     {
 
-      return Collection::make([
+        return Collection::make([
             [
                 'title' => 'RFPROM #.',
                 'dataIndex' => 'req_no',
@@ -204,7 +227,7 @@ class ColumnHelper
                 'dataIndex' => 'open',
                 'align' => 'center'
             ] : null,
-        ])->reject(fn($value) => $value === null)->values();
+        ])->reject(fn ($value) => $value === null)->values();
     }
 
 

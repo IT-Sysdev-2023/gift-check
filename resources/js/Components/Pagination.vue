@@ -8,13 +8,13 @@
         <a-col>
             <a-config-provider>
                 <template v-for="(link, key) in datarecords.links" :key="`link-${key}`">
-                    <a-button style="border-radius: 2px;" :type="link.active ? 'primary' : 'default'"
+                    <a-button  style="border-radius: 2px;" :type="link.active ? 'primary' : 'default'"
                         v-html="link.label" @click="paginate(link)" />
                 </template>
             </a-config-provider>
         </a-col>
     </a-row>
-</template> 
+</template>
 
 <script>
 import { Link } from '@inertiajs/vue3'

@@ -830,7 +830,7 @@ class MarketingController extends Controller
                         'description' => 'Barcode ' . $barcode . ' successfully validated for Group: ' . $request->promoGroup,
                         'type' => 'success'
                     ];
-                    // $data = $getDenomination; 
+                    // $data = $getDenomination;
                 } else {
                     $response = ['msg' => 'Opps! Error', 'description' => 'Failed to insert data for Barcode: ' . $barcode, 'type' => 'error'];
                 }
