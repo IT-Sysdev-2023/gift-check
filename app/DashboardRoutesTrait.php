@@ -12,5 +12,6 @@ trait DashboardRoutesTrait
         '4' => 'custodian.dashboard',
         '6' => 'marketing.dashboard',
         '1' => 'admin.dashboard',
+        '10' => 'iad.dashboard',
     ];
 }

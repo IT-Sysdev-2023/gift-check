@@ -1,0 +1,24 @@
+FAD Purchase Order Details
+GC E-REQUISITION NO|15
+Receiving No|155
+Transaction Date|10/18/2021
+Reference No|2
+Purchase Order No|211
+Purchase Date|10/18/2021
+Reference PO No|CORPORATE-MARKETING
+Payment Terms|5
+Location Code|CORP
+Department Code|CORP-MKTG
+Supplier Name|UNI-FAB METAL INDUSTRIES
+Mode of Payment|Accounts Payable
+Remarks|OKEY
+Prepared By|MIGZ FORINAS
+Checked By|KOKOY
+SRR Type|WHOLE
+00002000|20000
+00002002|10000
+
+
+
+
+

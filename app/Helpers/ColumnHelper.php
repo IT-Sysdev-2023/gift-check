@@ -53,6 +53,55 @@ class ColumnHelper
 
         ],
     ];
+    public static $denomination_column = [
+        [
+            'title' => 'Denomination',
+            'dataIndex' => 'denomination',
+
+        ],
+        [
+            'title' => 'Quantity Received',
+            'key' => 'qty',
+        ],
+        [
+            'title' => 'Validated Gc',
+            'key' => 'valid',
+        ],
+    ];
+
+    public static $receiving_columns = [
+        [
+            'title' => 'Fad Rec #',
+            'dataIndex' => 'recno',
+
+        ],
+        [
+            'title' => 'E-req #',
+            'dataIndex' => 'recno',
+
+        ],
+        [
+            'title' => 'Transaction Date',
+            'dataIndex' => 'transdate',
+
+        ],
+        [
+            'title' => 'P.O #',
+            'dataIndex' => 'po',
+
+        ],
+        [
+            'title' => 'Textfile Name',
+            'dataIndex' => 'name',
+            'align' => 'center'
+
+        ],
+        [
+            'title' => 'Setup',
+            'dataIndex' => 'setup',
+            'align' => 'center'
+        ],
+    ];
 
     public static $barcode_checker_columns = [
         [

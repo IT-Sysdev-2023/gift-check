@@ -10,6 +10,8 @@ use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\IadController;
+use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\RetailController;
 use App\Http\Controllers\QueryFilterController;
 use App\Http\Controllers\Treasury\MainController;
@@ -44,6 +46,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
 
     Route::get('finance-dashboard', [FinanceController::class, 'index'])->name('finance.dashboard');
+
+    Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard');
 
     Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
@@ -198,16 +202,28 @@ Route::prefix('finance')->group(function () {
     })->name('download');
 });
 
-Route::prefix('finance')->group(function () {
+Route::prefix('custodian')->group(function () {
     Route::name('custodian.')->group(function () {
         Route::get('barcode-checker', [CustodianController::class, 'barcodeCheckerIndex'])->name('barcode.checker');
         Route::post('scan-barcode', [CustodianController::class, 'scanBarcode'])->name('scan.barcode');
     });
 });
 
+Route::prefix('iad')->group(function () {
+    Route::name('iad.')->group(function () {
+        Route::get('receiving-index', [IadController::class, 'receivingIndex'])->name('receiving');
+        Route::get('receiving-setup', [IadController::class, 'setupReceiving'])->name('setup.receiving');
+    });
+});
+
 Route::prefix('search')->group(function () {
     Route::name('search.')->group(function () {
         Route::get('check-by' ,[QueryFilterController::class, 'getCheckBy'])->name('checkBy');
+    });
+});
+Route::prefix('management')->group(function () {
+    Route::name('manager.')->group(function () {
+        Route::post('managers-key' ,[ManagerController::class, 'managersKey'])->name('managers.key');
     });
 });
 

@@ -1,0 +1,20 @@
+FAD Purchase Order Details
+GC E-REQUISITION NO|11
+Receiving No|1722
+Transaction Date|08/31/2019
+Reference No|dr4738 
+Purchase Order No|4-21693
+Purchase Date|08/01/2019
+Reference PO No|RS# 1710                                                                          
+Payment Terms|
+Location Code|CORP
+Department Code|CORPORATE PRM                                                                     
+Supplier Name|RED CARPET DIGITAL PRINT INC.
+Mode of Payment|
+Remarks|USING NEW SYSTEM
+Prepared By|RITCHEL MUTIA            
+Checked By|JOELMARAGUINOT
+SRR Type|WHOLE   
+00002000|6200
+00002002|6300
+
