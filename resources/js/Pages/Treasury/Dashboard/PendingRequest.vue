@@ -226,7 +226,7 @@ const formState = useForm<FormState>({
 const handleChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };
-const { notification, onLoading } = onProgress();
+const { openNotification, onLoading } = onProgress();
 const onFinish = (values: any) => {
     onLoading();
 
@@ -241,7 +241,7 @@ const onFinish = (values: any) => {
         .post(route("treasury.budget.request.budget.entry", props.data.br_id), {
             preserveScroll: true,
             onSuccess: (pages: { props: FlashProps }) => {
-                notification(pages.props.flash);
+                openNotification(pages.props.flash);
             },
         });
 };

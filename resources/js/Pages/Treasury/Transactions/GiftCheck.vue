@@ -90,13 +90,28 @@
                                     class="text-end"
                                 />
                             </a-col>
-                            <a-col :span="12">
-                                <a-input
+                            <a-col :span="12" style="text-align: center">
+                                <a-input-number
+                                    id="inputNumber"
                                     v-model:value="item.qty"
-                                    type="number"
-                                />
+                                    placeholder="0"
+                                    :min="0"
+                                    has-feedback
+                                    :validate-status="getErrorStatus('denom')"
+                                    :help="getErrorMessage('denom')"
+                                >
+                                    <template #upIcon>
+                                        <ArrowUpOutlined />
+                                    </template>
+                                    <template #downIcon>
+                                        <ArrowDownOutlined />
+                                    </template>
+                                </a-input-number>
                             </a-col>
                         </a-row>
+                        <div v-if="formState.errors.denom" style="color: red">
+                            {{ formState.errors.denom }}
+                        </div>
                     </a-card>
 
                     <a-form-item class="text-end mt-5">
@@ -116,6 +131,7 @@ import type { UploadChangeParam } from "ant-design-vue";
 import dayjs from "dayjs";
 import { useForm } from "@inertiajs/vue3";
 import { FormStateGc } from "@/types/index";
+import { onProgress } from "@/Mixin/UiUtilities";
 
 const props = defineProps<{
     title?: string;
@@ -137,6 +153,7 @@ const formState = useForm<FormStateGc>({
     dateNeeded: null,
 });
 
+const { openLeftNotification } = onProgress();
 const handleChange = (file: UploadChangeParam) => {
     formState.file = file.file;
 };
@@ -146,7 +163,11 @@ const onSubmit = () => {
             ...data,
             dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
         }))
-        .post(route("treasury.transactions.production.gcSubmit"));
+        .post(route("treasury.transactions.production.gcSubmit"), {
+            onSuccess: ({ props }) => {
+                openLeftNotification(props.flash);
+            },
+        });
 };
 const getErrorStatus = (field: string) => {
     return formState.errors[field] ? "error" : "";
@@ -155,6 +176,6 @@ const getErrorMessage = (field: string) => {
     return formState.errors[field];
 };
 const clearError = (field: string) => {
-    formState.errors[field] = null; 
+    formState.errors[field] = null;
 };
 </script>

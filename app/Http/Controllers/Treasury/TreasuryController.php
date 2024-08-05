@@ -325,18 +325,13 @@ class TreasuryController extends Controller
     public function giftCheck(){
 
         $denomination = Denomination::select('denomination', 'denom_id')->where([['denom_type', 'RSGC'], ['denom_status', 'active']])->get();
-        $pr = ProductionRequest::select('pe_num')->orderByDesc('pe_num')->first();
+        $latestRecord = ProductionRequest::max('pe_num');
+        $increment = $latestRecord ? $latestRecord + 1 : 1;
 
-        if($pr){
-            $pn = $pr->pe_num + 1;
-        }else{
-            $pn = 1;
-        }
-        // dd(NumberHelper::leadingZero($pn));
         return inertia('Treasury/Transactions/GiftCheck', [
             'title' => 'Gift Check',
             'denomination' => DenominationResource::collection($denomination),
-            'prNo' => NumberHelper::leadingZero($pn),
+            'prNo' => NumberHelper::leadingZero($increment),
             'remainingBudget' => LedgerBudget::currentBudget(),
         ]);
     }

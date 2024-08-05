@@ -1,4 +1,5 @@
-import { message } from 'ant-design-vue';
+import { message } from "ant-design-vue";
+import { notification } from "ant-design-vue";
 import { ref } from "vue";
 
 export function highlighten() {
@@ -19,24 +20,50 @@ export function highlighten() {
     return { highlightText };
 }
 
-export function onProgress(){
-    const loadingMessageKey = 'loadingMessage';
+export function onProgress() {
+    const loadingMessageKey = "loadingMessage";
 
     const onLoading = () => {
-        message.loading({ content: 'Action in progress..', key: loadingMessageKey, duration: 0 });
-    } 
-    
-    const notification = (page: {success: string, error: string}) => {
-        if (page.success) {
-            message.success({ content:  page.success, key: loadingMessageKey, duration: 3.5 });
-        }
-        
-        if (page.error) {
-            message.error({ content:  page.error, key: loadingMessageKey, duration: 3.5 });
-        }
-    }
+        message.loading({
+            content: "Action in progress..",
+            key: loadingMessageKey,
+            duration: 0,
+        });
+    };
 
-    return {notification, onLoading};
+    const openNotification = (page: { success: string; error: string }) => {
+        if (page.success) {
+            message.success({
+                content: page.success,
+                key: loadingMessageKey,
+                duration: 3.5,
+            });
+        }
+
+        if (page.error) {
+            message.error({
+                content: page.error,
+                key: loadingMessageKey,
+                duration: 3.5,
+            });
+        }
+    };
+    const openLeftNotification = (page: { success: string; error: string }) => {
+        if (page.success) {
+            notification.success({
+                message: "Request Submitted",
+                description: page.success,
+            });
+        }
+        if (page.error) {
+            notification.error({
+                message: "Request Failed",
+                description: page.error,
+            });
+        }
+    };
+
+    return { openNotification, onLoading, openLeftNotification };
 }
 
 export const onLoading = ref(false);
@@ -45,4 +72,4 @@ export function dashboardRoute() {
     const webRoute = route().current();
     const res = webRoute?.split(".")[0];
     return res + ".dashboard";
-};
+}
