@@ -6,6 +6,7 @@ use App\Helpers\ColumnHelper;
 use App\Helpers\GetVerifiedGc;
 use App\Http\Resources\PromoResource;
 use App\Models\ApprovedGcrequest;
+use App\Models\Assignatory;
 use App\Models\Gc;
 use App\Models\GcRelease;
 use App\Models\InstitutCustomer;
@@ -17,12 +18,18 @@ use App\Models\Store;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\User;
 use App\Models\Denomination;
+use App\Models\LedgerBudget;
+use App\Models\LedgerCheck;
+use App\Models\ProductionRequest;
+use App\Models\ProductionRequestItem;
 use App\Models\TempPromo;
 
 use App\Models\PromoGc;
+use App\Models\PromogcReleased;
 use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
+use App\Models\RequisitionEntry;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestItem;
 
@@ -30,6 +37,7 @@ use App\Models\Supplier;
 use App\Models\StoreVerification;
 use App\Models\TransactionSale;
 use App\Models\TransactionStore;
+use Carbon\Carbon;
 use GuzzleHttp\Psr7\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -42,9 +50,74 @@ use function Pest\Laravel\json;
 class MarketingController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render(('Marketing/MarketingDashboard'));
+        $supplier = Supplier::all();
+
+        $checkedBy = Assignatory::where('assig_dept', auth()->user()->usertype)
+            ->orWhere('assig_dept', 1)
+            ->get();
+
+        $budgetRow = LedgerBudget::where('bcus_guide', '!=', 'dti')
+            ->selectRaw('SUM(bdebit_amt) as total_debit, SUM(bcredit_amt) as total_credit')
+            ->first();
+        $debit = $budgetRow->total_debit;
+        $credit = $budgetRow->total_credit;
+        $budget = $debit - $credit;
+        $currentBudget = number_format($budget);
+
+        $requestNum = ProductionRequest::where('pe_generate_code', 1)
+            ->where('pe_requisition', 0)
+            ->where('pe_status', 1)->get();
+
+        $productionReqItems = ProductionRequestItem::join(
+            'denomination',
+            'production_request_items.pe_items_denomination',
+            '=',
+            'denomination.denom_id'
+        )->selectFilter()
+            ->where('pe_items_request_id', $request->data)->get();
+
+
+
+        $data = Gc::select('barcode_no')
+            ->where('denom_id', $productionReqItems[0]->pe_items_denomination ?? null)
+            ->where('pe_entry_gc',  $request->data)
+            ->orderBy('barcode_no')
+            ->get();
+
+        $barStart =  $data->first()->barcode_no ?? null;
+        $barEnd =  $data->last()->barcode_no ?? null;
+
+
+        $productionReqItems->transform(function ($item) use ($barStart, $barEnd) {
+            $item->barcodeStart = $barStart;
+            $item->barcodeEnd = $barEnd;
+            return $item;
+        });
+
+
+        $columns = array_map(
+            fn ($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Denomination', 'Qty', 'Barcode No. Start', 'Barcode No. End'],
+            ['denomination', 'pe_items_quantity', 'barcodeStart', 'barcodeEnd']
+        );
+
+        $query = RequisitionEntry::orderByDesc('requis_erno')->first();
+        $getRequestNo = intval($query->requis_erno) + 1;
+        $getRequestNo = sprintf('%04d', $getRequestNo);
+
+
+
+        return Inertia::render(('Marketing/MarketingDashboard'), [
+            'getRequestNo' => $getRequestNo,
+            'ReqNum' => $requestNum,
+            'currentBudget' => $currentBudget,
+            'checkBy' => $checkedBy,
+            'supplier' =>  $supplier,
+            'productionReqItems' => $productionReqItems,
+            'columns' => ColumnHelper::getColumns($columns)
+        ]);
     }
     public function promoList(Request $request)
     {
@@ -969,4 +1042,150 @@ class MarketingController extends Controller
         }
         return response()->json(['response' => $response]);
     }
+
+
+    public function gcpromoreleased(Request $request)
+    {
+        $response = [];
+        $barcode = $request->data['barcode'];
+        $dateReleased = Date::parse($request->data['dateReleased'])->format('Y-m-d');
+
+        $promoGc = PromoGc::join('promo', 'promo.promo_id', '=', 'promo_gc.prom_promoid')
+            ->where('promo_gc.prom_barcode', $barcode)
+            ->select('promo_gc.*', 'promo.promo_dateexpire', 'promo_gc.pr_stat')
+            ->first();
+
+        if (!$promoGc) {
+            return response()->json([
+                'response' => [
+                    'msg' => 'Oops!',
+                    'description' => 'Promo GC not found for the given barcode.',
+                    'type' => 'error'
+                ]
+            ]);
+        }
+
+        if ($promoGc->promo_dateexpire < $dateReleased) {
+            $response = [
+                'msg' => 'Oops!',
+                'description' => 'Barcode Already Expired: ' . $promoGc->promo_dateexpire,
+                'type' => 'error'
+            ];
+        } elseif ($promoGc->pr_stat == 1) {
+            $response = [
+                'msg' => 'Oops!',
+                'description' => 'Promo GC Barcode #: ' . $barcode . ' already released',
+                'type' => 'error'
+            ];
+        } else {
+
+            $inserted = PromogcReleased::create([
+                'prgcrel_barcode' => $barcode,
+                'prgcrel_at' => $dateReleased,
+                'prgcrel_by' => $request->data['releasedById'],
+                'prgcrel_claimant' => $request->data['receiveBy'],
+                'prgcrel_address' => $request->data['address'],
+            ]);
+
+            if ($inserted) {
+
+                $lastInsertedId = $inserted->prgcrel_id;
+
+
+                $ledgerNumber = LedgerBudget::orderByDesc('bledger_id')->first();
+                $ln = optional($ledgerNumber)->bledger_no + 1;
+
+
+                $denom = Gc::join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+                    ->where('gc.barcode_no', $barcode)
+                    ->select('denomination.denomination')
+                    ->first();
+
+                if ($denom) {
+
+                    $insertBudgetLedger = LedgerBudget::create([
+                        'bledger_no' =>  $ln,
+                        'bledger_trid' => $lastInsertedId,
+                        'bledger_datetime' => Carbon::now()->format('Y-m-d H:i:s'),
+                        'bledger_type' => 'PROMOGCRELEASING',
+                        'bdebit_amt' =>  $denom->denomination,
+                    ]);
+
+                    if ($insertBudgetLedger) {
+
+                        PromoGc::where('prom_barcode', $barcode)
+                            ->update(['pr_stat' => 1]);
+                        $response = [
+                            'msg' => 'Nice!',
+                            'description' => 'Barcode Has Been Released',
+                            'type' => 'success'
+                        ];
+                    } else {
+                        $response = [
+                            'msg' => 'Oops!',
+                            'description' => 'Failed to insert into LedgerBudget.',
+                            'type' => 'error'
+                        ];
+                    }
+                } else {
+                    $response = [
+                        'msg' => 'Oops!',
+                        'description' => 'Denomination not found for the given barcode.',
+                        'type' => 'error'
+                    ];
+                }
+            } else {
+                $response = [
+                    'msg' => 'Oops!',
+                    'description' => 'Failed to insert release record.',
+                    'type' => 'error'
+                ];
+            }
+        }
+
+
+        return response()->json(['response' => $response]);
+    }
+
+
+    // public function submitReqForm(Request $request)
+    // {
+    //     dd($request->all());
+
+    //     if ($request->data['finalize'] == 1) {
+    //         $lnumber = LedgerCheck::count() + 1;
+    //         $reqtotal = ProductionRequestItem::join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+    //             ->where('production_request_items.pe_items_request_id', $request->data['id'])
+    //             ->selectRaw('IFNULL(SUM(production_request_items.pe_items_quantity * denomination.denomination), 0) as total')
+    //             ->value('total');
+
+    //         DB::transaction(function () use ($request, $lnumber, $reqtotal) {
+    //             LedgerCheck::create([
+    //                 'cledger_no' => $lnumber,
+    //                 'cledger_datetime' => now()->toDateTimeString(),
+    //                 'cledger_type' => 'GCRA',
+    //                 'cledger_desc' => 'GC Requisition Approved',
+    //                 'cdebit_amt' => $reqtotal,
+    //                 'c_posted_by' => auth()->user()->user_id,
+    //             ]);
+
+    //             RequisitionEntry::create([
+    //                 'requis_erno' => $request->data['requestNo'],
+    //                 'requis_req' => now()->toDateTimeString(),
+    //                 'requis_need' => $request->data['dateNeeded'],
+    //                 'requis_loc' => $request->data['location'],
+    //                 'requis_dept' => $request->data['department'],
+    //                 'requis_rem' => $request->data['remarks'],
+    //                 'repuis_pro_id' => $request->data['id'],
+    //                 'requis_req_by' => auth()->user()->user_id,
+    //                 'requis_checked' => $request->data['checkedBy'],
+    //                 'requis_supplierid' => $request->data['selectedSupplierId'],
+    //                 'requis_ledgeref' => $lnumber,
+    //             ]);
+    //         });
+    //     } elseif($request->data['finalize'] == 3) {
+    //         dd(1);
+    //     }
+    // }
 }
+

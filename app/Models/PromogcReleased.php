@@ -10,6 +10,9 @@ class PromogcReleased extends Model
     use HasFactory;
 
     protected $table= 'promogc_released';
+    protected $guarded = [];
 
     protected $primaryKey= 'prgcrel_id';
+
+    public $timestamps = false;
 }

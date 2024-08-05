@@ -43,7 +43,7 @@ const currentActiveMenu = [route().current().split(".")[1]];
                 <RetweetOutlined />
             </template>
             <span>
-                <Link :href="route('released.promo.gc')"
+                <Link :href="route('marketing.releaseGc.releasegc')"
                     >Released Promo GC</Link
                 >
             </span>
