@@ -86,11 +86,17 @@ Route::prefix('marketing')->group(function () {
             Route::post('removeGc', [MarketingController::class, 'removeGc'])->name('removeGc');
             Route::post('newpromo', [MarketingController::class, 'newpromo'])->name('newpromo');
         });
+        Route::name('releaseGc.')->group(function () {
+            Route::get('released-promo-gc', [MarketingController::class, 'releasedpromogc'])->name('releasegc');
+            Route::post('gcpromoreleased', [MarketingController::class, 'gcpromoreleased'])->name('gcpromoreleased');
+        });
+        Route::name('requisition.')->group(function () {
+            Route::post('submit-requisition-form', [MarketingController::class, 'submitReqForm'])->name('submit.form');
+        });
+        
     });
 });
 
-
-Route::get('released-promo-gc', [MarketingController::class, 'releasedpromogc'])->name('released.promo.gc');
 Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
 Route::get('manage-supplier', [MarketingController::class, 'manageSupplier'])->name('manage.supplier');
 Route::get('sales-treasury-sales', [MarketingController::class, 'treasurySales'])->name('marketing.sales.treasury.sales');
@@ -218,7 +224,7 @@ Route::prefix('iad')->group(function () {
 
 Route::prefix('search')->group(function () {
     Route::name('search.')->group(function () {
-        Route::get('check-by' ,[QueryFilterController::class, 'getCheckBy'])->name('checkBy');
+        Route::get('check-by', [QueryFilterController::class, 'getCheckBy'])->name('checkBy');
     });
 });
 Route::prefix('management')->group(function () {
