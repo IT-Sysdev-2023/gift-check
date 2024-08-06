@@ -14,8 +14,6 @@ class Gc extends Model
     public $timestamps = false;
     protected $guarded = [];
 
-    protected $guarded = [];
-
     public function denomination(){
         return $this->belongsTo(Denomination::class, 'denom_id', 'denom_id');
     }

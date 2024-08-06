@@ -27,6 +27,7 @@ class IadController extends Controller
 
     public function setupReceiving(Request $request)
     {
+        
         $data = $this->iadServices->setupReceivingtxt($request);
 
         return inertia('Iad/SetupReceiving', [

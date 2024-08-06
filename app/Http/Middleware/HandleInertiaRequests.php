@@ -30,7 +30,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -39,10 +39,14 @@ class HandleInertiaRequests extends Middleware
             'flash' => function () use ($request) {
                 return [
                     'success' => $request->session()->get('success'),
+                    'status' => $request->session()->get('status'),
                     'error' => $request->session()->get('error'),
+                    'msg' => $request->session()->get('msg'),
                 ];
             },
-            'pendingPrRequest' => ProductionRequest::select('pe_id','pe_num')->where([['pe_generate_code','0'], ['pe_status','1']])->get()
+            'pendingPrRequest' => ProductionRequest::select('pe_id', 'pe_num')
+                ->where([['pe_generate_code', '0'], ['pe_status', '1']])
+                ->get()
         ];
     }
 }
