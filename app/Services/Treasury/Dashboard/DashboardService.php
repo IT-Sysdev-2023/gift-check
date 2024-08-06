@@ -67,9 +67,7 @@ class DashboardService
     {
 
         //Pending Request
-        $pending = ProductionRequest::whereHas('user', function ($query) {
-            $query->where('usertype', request()->user()->usertype);
-        })->where('pe_status', 0)->count();
+        $pending = ProductionRequest::whereRelation('user', 'usertype', request()->user()->usertype)->where('pe_status', 0)->count();
 
         //Approved Request
         $approved = ProductionRequest::where('pe_status', 1)->count();
