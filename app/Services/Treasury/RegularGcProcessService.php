@@ -39,7 +39,7 @@ class RegularGcProcessService
 
     }
 
-    public function generateGc($request, $id, $item)
+    private function generateGc($request, $id, $item)
     {
         $denom = $item->pe_items_denomination;
         $prefix = $item->denom_barcode_start;

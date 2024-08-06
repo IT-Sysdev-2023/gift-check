@@ -10,7 +10,7 @@ const handleClick = (e: any) => {
 // const currentActiveMenu = [route().current().split(".")[1]];
 
 const setActiveTab = () => {
-    const currentR = route().current().split(".");
+    const currentR = highlightRoute.value[0].split(".");
     const keys= ['masterfile', 'transactions', 'production', 'adjustment', 'reports'];
     const keysToOpen = [];
 
