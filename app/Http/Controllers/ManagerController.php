@@ -16,19 +16,53 @@ class ManagerController extends Controller
             'password' => 'required'
         ]);
 
+
         $user = User::where('username', $request->username)->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'status' => 'success',
-                'title' => 'Success',
-                'msg' => 'Successfully Validated'
-            ]);
+        if ($user) {
+            if (Hash::check($request->password, $user->password)) {
+                if ($user && $user->user_status == 'active') {
+                    if (($request->store_assigned == $user->store_assinged) || ($user->usertype == $request->usertype)) {
+                        if ($user->user_role) {
+                            return response()->json([
+                                'status' => 'success',
+                                'title' => 'Success',
+                                'msg' => 'Access Granted!'
+                            ]);
+                        } else {
+                            return response()->json([
+                                'status' => 'error',
+                                'title' => 'Error',
+                                'msg' => 'Access Denied!'
+                            ]);
+                        }
+                    } else {
+                        return response()->json([
+                            'status' => 'error',
+                            'title' => 'Error',
+                            'msg' => 'This account is not Authorizes!'
+                        ]);
+                    }
+                } else {
+
+                    return response()->json([
+                        'status' => 'error',
+                        'title' => 'Opps Error',
+                        'msg' => 'Manager Account is Inactive'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'title' => 'Incorrect',
+                    'msg' => 'The Password is Incorrect'
+                ]);
+            }
         } else {
             return response()->json([
                 'status' => 'error',
-                'title' => 'Opps Error',
-                'msg' => 'Invalid credentials'
+                'title' => 'Error',
+                'msg' => 'Manager Credentials Do not Exists!'
             ]);
         }
     }

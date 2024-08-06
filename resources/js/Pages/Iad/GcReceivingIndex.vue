@@ -7,7 +7,7 @@
         <a-table bordered size="small" :data-source="record" :columns="columns">
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex == 'setup'">
-                    <a-button @click="setup(record.name)">
+                    <a-button @click="setup(record)">
                         <template #icon>
                             <ToolFilled />
                         </template>
@@ -29,8 +29,12 @@ export default {
         columns: Array,
     },
     methods: {
-        setup(name){
-            this.$inertia.get(route('iad.setup.receiving'), {name});
+        setup(data){
+            console.log(data);
+            this.$inertia.get(route('iad.setup.receiving'), {
+                name: data.name,
+                requisId: data.reqno,
+            });
         }
     }
 }
