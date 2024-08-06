@@ -11,6 +11,8 @@ class Gc extends Model
 
     protected $table = 'gc';
     protected $primaryKey = 'gc_id';
+    public $timestamps = false;
+    protected $guarded = [];
 
     protected $guarded = [];
 

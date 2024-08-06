@@ -6,6 +6,7 @@ use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\CustodianController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\FadController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
@@ -52,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
-
+    
     Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 });
 Route::middleware(['auth'])->group(function () {
@@ -176,6 +177,15 @@ Route::prefix('treasury')->group(function () {
             Route::post('get-assign-employee', [TreasuryController::class, 'addAssignEmployee'])->name('add.assign.employee');
         });
 
+        Route::prefix('transactions')->name('transactions.')->group(function (){
+            Route::prefix('production-request')->name('production.')->group(function (){
+                Route::get('gift-check', [TreasuryController::class, 'giftCheck'])->name('gc');
+                Route::post('store-gift-check', [TreasuryController::class, 'giftCheckStore'])->name('gcSubmit');
+                Route::get('envelope', [TreasuryController::class, 'envelope'])->name('envelope');
+            });
+        });
+
+        Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
         Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');

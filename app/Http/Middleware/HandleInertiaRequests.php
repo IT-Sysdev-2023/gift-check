@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\ProductionRequest;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -41,6 +42,7 @@ class HandleInertiaRequests extends Middleware
                     'error' => $request->session()->get('error'),
                 ];
             },
+            'pendingPrRequest' => ProductionRequest::select('pe_id','pe_num')->where([['pe_generate_code','0'], ['pe_status','1']])->get()
         ];
     }
 }

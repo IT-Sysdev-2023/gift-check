@@ -12,11 +12,13 @@ class UploadFileHandler
 
     protected string $folderName = '';
     private $disk;
-    public function __construct() {
+    public function __construct()
+    {
         $this->disk = Storage::disk('public');
     }
 
-    protected function handleUpload(Request $request){
+    protected function handleUpload(Request $request)
+    {
         if ($request->hasFile('file')) {
 
             if (!is_null($request->document)) {
@@ -24,8 +26,8 @@ class UploadFileHandler
                 $this->disk->delete($this->folderName . $request->document);
             }
             //insert new image
-            $filename = "{$request->user()->user_id}-" . now()->format('Y-m-d-His') . ".jpg";
-            $this->disk->putFileAs($this->folderName, $request->file, $filename);
+            $filename = $this->createFileName($request);
+            $this->saveFile($request, $filename);
 
             return $filename;
         }
@@ -33,7 +35,22 @@ class UploadFileHandler
         return $request->document;
     }
 
-    protected function updateTable(Request $request, BudgetRequest $id, string $filename){
+    protected function createFileName(Request $request)
+    {
+        if ($request->hasFile('file')) {
+            return "{$request->user()->user_id}-" . now()->format('Y-m-d-His') . ".jpg";
+        }
+        return '';
+    }
+    protected function saveFile(Request $request, string $filename)
+    {
+        if ($request->hasFile('file')) {
+            return $this->disk->putFileAs($this->folderName, $request->file, $filename);
+        }
+    }
+
+    protected function updateTable(Request $request, BudgetRequest $id, string $filename)
+    {
         $res = $id->update([
             'br_requested_by' => $request->updatedById,
             'br_request' => $request->budget,
@@ -51,11 +68,11 @@ class UploadFileHandler
     }
 
     public function download(string $file)
-	{
-		if ($this->disk->exists($this->folderName . $file)) {
-			return $this->disk->download($this->folderName . $file);
-		} else {
-			return redirect()->back()->with('error', 'File Not Found');
-		}
-	}
+    {
+        if ($this->disk->exists($this->folderName . $file)) {
+            return $this->disk->download($this->folderName . $file);
+        } else {
+            return redirect()->back()->with('error', 'File Not Found');
+        }
+    }
 }

@@ -10,6 +10,8 @@ class ProductionRequestItem extends Model
     use HasFactory;
 
     protected $primaryKey = 'pe_items_id';
+    protected $guarded = [];
+    public $timestamps = false;
 
 
     public function scopeSelectFilter($query){

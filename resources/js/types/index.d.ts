@@ -38,6 +38,14 @@ export interface FormState {
     file: UploadFile | null;
 }
 
+export interface FormStateGc {
+    file: UploadFile | null;
+    prNo: string,
+    denom: any[];
+    remarks: string;
+    dateNeeded: null;
+}
+
 export interface FlashProps {
     flash?: { success: string; error: string };
     [key: string]: unknown;
