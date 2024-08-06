@@ -174,6 +174,9 @@ Route::prefix('treasury')->group(function () {
                 Route::get('envelope', [TreasuryController::class, 'envelope'])->name('envelope');
             });
         });
+
+        Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+
         Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
         Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
     });

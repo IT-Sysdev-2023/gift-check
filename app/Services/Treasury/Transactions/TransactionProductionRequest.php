@@ -18,9 +18,9 @@ class TransactionProductionRequest extends UploadFileHandler
 	}
 	public function storeGc(Request $request)
 	{
-		if ($request->user()->has('productionRequest')->exists()) {
-			return redirect()->back()->with('error', 'You have pending production request');
-		}
+		// if ($request->user()->has('productionRequest')->exists()) {
+		// 	return redirect()->back()->with('error', 'You have pending production request');
+		// }
 
 		$request->validate([
 			'remarks' => 'required',
@@ -67,7 +67,6 @@ class TransactionProductionRequest extends UploadFileHandler
 			$this->saveFile($request, $filename);
 
 			return redirect()->back()->with('success', 'SuccessFully Requested');
-			// return redirect()->back();
 
 		} catch (\Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong!');
