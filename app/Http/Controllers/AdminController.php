@@ -28,13 +28,17 @@ class AdminController extends Controller
         $transType = '';
         $success = false;
 
-        // dd($regular->first()->toArray());
+        // $q = Gc::where('barcode_no', $request->barcode)->get();
+        // dd($q->toArray());
 
-        if (
-            $regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
+        // dd($regular->first()->toArray());
+// dd($regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
+// );
+        if ($regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
             && !$regular->whereHas('barcodePromo', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
         ) {
             //result regular gc
+            // dd(1);
             $transType = 'Reqular Gift Check';
             $steps = self::regularGc($regular, $request);
             $success = true;
@@ -88,6 +92,8 @@ class AdminController extends Controller
                 'description' => 'Request Approved'
             ]
         ]);
+
+        // dd($step3->exists());
 
         if ($step3->exists()) {
             $steps->push((object) [

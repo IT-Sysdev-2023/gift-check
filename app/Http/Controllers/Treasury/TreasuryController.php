@@ -8,16 +8,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovedGcRequestResource;
 use App\Http\Resources\BudgetLedgerResource;
 use App\Http\Resources\BudgetRequestResource;
+use App\Http\Resources\DenominationResource;
 use App\Http\Resources\GcLedgerResource;
 use App\Http\Resources\ProductionRequestResource;
 use App\Http\Resources\SpecialExternalGcRequestResource;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\BudgetRequest;
-use App\Models\Gc;
+use App\Models\Denomination;
+use App\Services\Treasury\RegularGcProcessService;
+use Illuminate\Support\Facades\DB;
+use App\Models\Gcbarcodegenerate;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
-use App\Models\RequisitionEntry;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
@@ -26,6 +29,7 @@ use App\Services\Treasury\Dashboard\BudgetRequestService;
 use App\Services\Treasury\Dashboard\GcProductionRequestService;
 use App\Services\Treasury\Dashboard\StoreGcRequestService;
 use App\Services\Treasury\LedgerService;
+use App\Services\Treasury\Transactions\TransactionProductionRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -37,6 +41,8 @@ class TreasuryController extends Controller
         public BudgetRequestService $budgetRequestService,
         public StoreGcRequestService $storeGcRequestService,
         public GcProductionRequestService $gcProductionRequestService,
+        public TransactionProductionRequest $transactionProductionRequest,
+        public RegularGcProcessService $regularGcProcessService
     ) {
     }
     public function index()
@@ -72,7 +78,7 @@ class TreasuryController extends Controller
     {
         $record = $this->budgetRequestService->approvedRequest($request);
         return inertia(
-            'Treasury/BudgetRequest/TableApproved',
+            'Treasury/Dashboard/TableApproved',
             [
                 'filters' => $request->all('search', 'date'),
                 'title' => 'Approved Budget Request',
@@ -92,7 +98,7 @@ class TreasuryController extends Controller
         $record = $this->budgetRequestService->pendingRequest();
 
         return inertia(
-            'Treasury/BudgetRequest/PendingRequest',
+            'Treasury/Dashboard/PendingRequest',
             [
                 'currentBudget' => LedgerBudget::currentBudget(),
                 'title' => 'Update Budget Entry Form',
@@ -114,7 +120,7 @@ class TreasuryController extends Controller
         $record = $this->budgetRequestService->cancelledRequest($request);
 
         return inertia(
-            'Treasury/BudgetRequest/TableApproved',
+            'Treasury/Dashboard/TableApproved',
             [
                 'filters' => $request->all('search', 'date'),
                 'title' => 'Cancelled Budget Request',
@@ -136,7 +142,7 @@ class TreasuryController extends Controller
         $record = $this->storeGcRequestService->pendingRequest($request);
 
         return inertia(
-            'Treasury/StoreGcRequest/TableStoreGc',
+            'Treasury/Dashboard/TableStoreGc',
             [
                 'filters' => $request->all('search', 'date'),
                 'title' => 'Pending Request',
@@ -151,7 +157,7 @@ class TreasuryController extends Controller
         $record = $this->storeGcRequestService->releasedGc($request);
 
         return inertia(
-            'Treasury/StoreGcRequest/TableStoreGc',
+            'Treasury/Dashboard/TableStoreGc',
             [
                 'filters' => $request->all('search', 'date'),
                 'title' => 'Store Released Gc',
@@ -165,7 +171,7 @@ class TreasuryController extends Controller
     {
         $record = $this->storeGcRequestService->cancelledRequest($request);
         return inertia(
-            'Treasury/StoreGcRequest/TableStoreGc',
+            'Treasury/Dashboard/TableStoreGc',
             [
                 'filters' => $request->all('search', 'date'),
                 'title' => 'Store Cancelled Request',
@@ -194,7 +200,7 @@ class TreasuryController extends Controller
         $record = $this->gcProductionRequestService->approvedRequest($request);
 
         return inertia(
-            'Treasury/ProductionRequest/TableGcProduction',
+            'Treasury/Dashboard/TableGcProduction',
             [
                 'filters' => $request->only('search', 'date'),
                 'title' => 'Approved GC Production Request',
@@ -314,7 +320,41 @@ class TreasuryController extends Controller
         ]);
     }
 
-    public function addAssignEmployee(Request $request){
+    public function addAssignEmployee(Request $request)
+    {
         dd($request->all());
     }
+
+    //TRANSACTIONS
+
+    //Production Requests
+    public function giftCheck()
+    {
+
+        $denomination = Denomination::select('denomination', 'denom_id')->where([['denom_type', 'RSGC'], ['denom_status', 'active']])->get();
+        $latestRecord = ProductionRequest::max('pe_num');
+        $increment = $latestRecord ? $latestRecord + 1 : 1;
+
+        return inertia('Treasury/Transactions/GiftCheck', [
+            'title' => 'Gift Check',
+            'denomination' => DenominationResource::collection($denomination),
+            'prNo' => NumberHelper::leadingZero($increment),
+            'remainingBudget' => LedgerBudget::currentBudget(),
+        ]);
+    }
+
+    public function giftCheckStore(Request $request)
+    {
+        $this->transactionProductionRequest->storeGc($request);
+    }
+
+    public function acceptProductionRequest(Request $request, $id)
+    {
+        DB::transaction(function () use ($request, $id) {
+            $this->regularGcProcessService->approveProductionRequest($request, $id);
+        });
+        return redirect()->back()->with('success', 'Successfully Processed!');
+    }
+
+
 }

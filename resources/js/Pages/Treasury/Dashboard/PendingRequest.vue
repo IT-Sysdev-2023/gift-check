@@ -166,7 +166,7 @@
                         style="margin-right: 50px"
                     >
                         <template #prefix>
-                            <FireOutlined twoToneColor='#3f8600' />
+                            <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
                 </a-card>
@@ -175,16 +175,17 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayout.vue";
 import { ref } from "vue";
-import type {
-    UploadChangeParam,
-    UploadProps,
-} from "ant-design-vue";
+import type { UploadChangeParam, UploadProps } from "ant-design-vue";
 import { usePage, useForm } from "@inertiajs/vue3";
 import dayjs, { Dayjs } from "dayjs";
-import { PageProps, FormState, FlashProps } from "@/types/index";
-import { onProgress } from "@/Mixin/UiUtilities";
+import {
+    PageProps,
+    FormState,
+    FlashProps,
+} from "@/../../resources/js/types/index";
+import { onProgress } from "@/../../resources/js/Mixin/UiUtilities";
 
 const props = defineProps<{
     title: string;
@@ -225,7 +226,7 @@ const formState = useForm<FormState>({
 const handleChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };
-const {notification, onLoading} = onProgress();
+const { openNotification, onLoading } = onProgress();
 const onFinish = (values: any) => {
     onLoading();
 
@@ -233,16 +234,14 @@ const onFinish = (values: any) => {
         .transform((data) => ({
             ...data,
             updatedById: props.data.user.user_id,
-            dateRequested: data.dateRequested.format(
-                "YYYY-MM-DD HH:mm:ss"
-            ),
+            dateRequested: data.dateRequested.format("YYYY-MM-DD HH:mm:ss"),
             dateNeeded: data.dateNeeded.format("YYYY-MM-DD"),
             document: props.data.br_file_docno,
         }))
         .post(route("treasury.budget.request.budget.entry", props.data.br_id), {
             preserveScroll: true,
             onSuccess: (pages: { props: FlashProps }) => {
-               notification(pages.props.flash);
+                openNotification(pages.props.flash);
             },
         });
 };
@@ -252,7 +251,9 @@ const onFinishFailed = (errorInfo: any) => {
 };
 
 const download = (file: string) => {
-    const url = route('treasury.budget.request.download.document', { file: file });
+    const url = route("treasury.budget.request.download.document", {
+        file: file,
+    });
     location.href = url;
 };
 </script>

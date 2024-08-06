@@ -11,6 +11,10 @@ class Gc extends Model
 
     protected $table = 'gc';
     protected $primaryKey = 'gc_id';
+    public $timestamps = false;
+    protected $guarded = [];
+
+    protected $guarded = [];
 
     public function denomination(){
         return $this->belongsTo(Denomination::class, 'denom_id', 'denom_id');

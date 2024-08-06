@@ -99,4 +99,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(BudgetRequest::class, 'br_requested_by','user_id' );
     }
+    public function productionRequest(){
+        return $this->hasMany(ProductionRequest::class, 'pe_requested_by', 'user_id');
+    }
 }

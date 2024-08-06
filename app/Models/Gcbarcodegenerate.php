@@ -11,4 +11,6 @@ class Gcbarcodegenerate extends Model
 
     protected $table = 'gcbarcodegenerate';
     protected $primaryKey = 'gbcg_id';
+    public $timestamps = false;
+    protected $guarded = [];
 }

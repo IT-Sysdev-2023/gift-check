@@ -75,7 +75,7 @@ const formState = useForm({
 });
 
 const handleUploadChange = (info: UploadChangeParam) => {
-    formState.file = info.file;
+    // formState.file = info.file;
 };
 </script>
 <template>
