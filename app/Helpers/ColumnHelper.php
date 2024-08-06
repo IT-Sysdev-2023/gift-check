@@ -77,7 +77,7 @@ class ColumnHelper
         ],
         [
             'title' => 'E-req #',
-            'dataIndex' => 'recno',
+            'dataIndex' => 'reqno',
 
         ],
         [

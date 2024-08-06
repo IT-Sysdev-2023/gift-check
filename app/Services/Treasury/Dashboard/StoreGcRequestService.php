@@ -108,6 +108,7 @@ class StoreGcRequestService
 		];
 
 		$pdf = Pdf::loadView('pdf.storegc', ['data' => $data]);
+        
 		$pdf->setPaper('A3');
 
 		return $pdf->output();

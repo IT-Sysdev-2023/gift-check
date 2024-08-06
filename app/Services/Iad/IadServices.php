@@ -2,7 +2,11 @@
 
 namespace App\Services\Iad;
 
+use App\Models\CustodianSrr;
 use App\Models\Denomination;
+use App\Models\Gc;
+use App\Models\RequisitionEntry;
+use App\Models\TempValidation;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 
@@ -19,8 +23,7 @@ class IadServices
         foreach ($files as $key => $item) {
             $contents = file_get_contents($item->getPathname());
 
-            $array = explode("\r\n", $contents);
-
+            $array = explode("\n", $contents);
 
             foreach ($array as $line) {
                 $parts = explode('|', $line, 2);
@@ -48,6 +51,8 @@ class IadServices
             $innerData['name'] = $item->getFilename();
             $result[] = $innerData;
         }
+
+
         return $result;
     }
 
@@ -90,11 +95,14 @@ class IadServices
 
     public function setupReceivingtxt($request)
     {
+
+        $query = RequisitionEntry::where('requis_erno', $request->requisId)->exists();
+
         $directory = base_path('resources/js/Pages/Custodian/Textfiles/New/' . $request->name);
 
         $files = File::get($directory);
 
-        $array = explode("\r\n", $files);
+        $array = explode("\n", $files);
 
         foreach ($array as $line) {
             $parts = explode('|', $line, 2);
@@ -115,10 +123,20 @@ class IadServices
             }
             $result['name'] = $request->name;
         }
+
         return (object) [
-            'result' => $result,
+            'result' => $query ? $result : [],
             'denomres' => $denresult,
         ];
+    }
+
+    public function getRecNum()
+    {
+        $data =  CustodianSrr::orderByDesc('csrr_id')->first();
+
+        $recnum = !empty($data) ? $data->csrr_id + 1 : 1;
+
+        return $recnum;
     }
 
     public function getDenomination($denom)
@@ -139,5 +157,18 @@ class IadServices
         });
 
         return $data;
+    }
+
+    public function validateByRangeServices($request)
+    {
+        $denomid = Gc::select('denom_id')->where('barcode_no', $request->barcodeEnd)->first();
+
+        foreach (range($request->barcodeStart, $request->barcodeEnd) as $barcode) {
+            TempValidation::create([
+                'tval_barcode' => $barcode,
+                'tval_recnum' => $request->recnum,
+                'tval_denom' => $denomid->denom_id,
+            ]);
+        }
     }
 }

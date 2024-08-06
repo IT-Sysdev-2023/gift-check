@@ -228,6 +228,7 @@ Route::prefix('iad')->group(function () {
     Route::name('iad.')->group(function () {
         Route::get('receiving-index', [IadController::class, 'receivingIndex'])->name('receiving');
         Route::get('receiving-setup', [IadController::class, 'setupReceiving'])->name('setup.receiving');
+        Route::post('validate-with-range', [IadController::class, 'validateByRange'])->name('validate.range');
     });
 });
 
