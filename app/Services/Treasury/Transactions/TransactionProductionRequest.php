@@ -16,11 +16,27 @@ class TransactionProductionRequest extends UploadFileHandler
 		parent::__construct();
 		$this->folderName = "productionRequestFile/";
 	}
+
+	private function isAbleToRequest(Request $request)
+	{
+		$q = ProductionRequest::whereHas(
+			'user',
+			fn($builder) =>
+			$builder->where('usertype', $request->user()->usertype)
+		)
+			->where('production_request.pe_status', 0)
+			->count();
+
+		if ($q > 0) {
+			return true;
+		}
+		return false;
+	}
 	public function storeGc(Request $request)
 	{
-		// if ($request->user()->has('productionRequest')->exists()) {
-		// 	return redirect()->back()->with('error', 'You have pending production request');
-		// }
+		if ($this->isAbleToRequest($request)) {
+			return redirect()->back()->with('error', 'You have pending production request');
+		}
 
 		$request->validate([
 			'remarks' => 'required',
@@ -71,8 +87,5 @@ class TransactionProductionRequest extends UploadFileHandler
 		} catch (\Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong!');
 		}
-
-
-
 	}
 }

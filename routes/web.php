@@ -140,7 +140,6 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('verified.gc.island.city.mall');
 
 
-
 //Treasury
 Route::prefix('treasury')->group(function () {
     Route::name('treasury.')->group(function () {

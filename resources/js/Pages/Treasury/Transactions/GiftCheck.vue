@@ -109,7 +109,7 @@
                                 </a-input-number>
                             </a-col>
                         </a-row>
-                        <div v-if="formState.errors.denom" style="color: red">
+                        <div class="mt-5 text-red-500 text-center" v-if="formState.errors.denom">
                             {{ formState.errors.denom }}
                         </div>
                     </a-card>
@@ -129,7 +129,7 @@ import { ref } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import type { UploadChangeParam } from "ant-design-vue";
 import dayjs from "dayjs";
-import { useForm } from "@inertiajs/vue3";
+import { router, useForm } from "@inertiajs/vue3";
 import { FormStateGc } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
 
@@ -157,6 +157,7 @@ const { openLeftNotification } = onProgress();
 const handleChange = (file: UploadChangeParam) => {
     formState.file = file.file;
 };
+
 const onSubmit = () => {
     formState
         .transform((data) => ({
@@ -166,6 +167,9 @@ const onSubmit = () => {
         .post(route("treasury.transactions.production.gcSubmit"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
+                if(props.flash.success){
+                    router.visit(route('treasury.dashboard'));
+                }
             },
         });
 };
