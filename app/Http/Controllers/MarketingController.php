@@ -44,6 +44,10 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Response;
 
 use function Pest\Laravel\json;
 
@@ -82,12 +86,12 @@ class MarketingController extends Controller
 
         $data = Gc::select('barcode_no')
             ->where('denom_id', $productionReqItems[0]->pe_items_denomination ?? null)
-            ->where('pe_entry_gc',  $request->data)
+            ->where('pe_entry_gc', $request->data)
             ->orderBy('barcode_no')
             ->get();
 
-        $barStart =  $data->first()->barcode_no ?? null;
-        $barEnd =  $data->last()->barcode_no ?? null;
+        $barStart = $data->first()->barcode_no ?? null;
+        $barEnd = $data->last()->barcode_no ?? null;
 
 
         $productionReqItems->transform(function ($item) use ($barStart, $barEnd) {
@@ -114,7 +118,7 @@ class MarketingController extends Controller
             'ReqNum' => $requestNum,
             'currentBudget' => $currentBudget,
             'checkBy' => $checkedBy,
-            'supplier' =>  $supplier,
+            'supplier' => $supplier,
             'productionReqItems' => $productionReqItems,
             'columns' => ColumnHelper::getColumns($columns)
         ]);
@@ -149,7 +153,7 @@ class MarketingController extends Controller
         // dd($promoNum);/
 
         return Inertia::render('Marketing/AddNewPromo', [
-            'PromoNum' =>  $promoNum,
+            'PromoNum' => $promoNum,
             'promoId' => $promoNum
         ]);
     }
@@ -662,7 +666,7 @@ class MarketingController extends Controller
 
         return response()->json([
             'dataTransStore' => $dataTransactionStore,
-            'dataTransSales' =>  $dataTransactionSales,
+            'dataTransSales' => $dataTransactionSales,
             'selectedDataColumns' => ColumnHelper::getColumns($columns)
         ]);
     }
@@ -704,7 +708,7 @@ class MarketingController extends Controller
         $promoTag = auth()->user()->promo_tag;
 
         DB::transaction(function () use ($promoTag, $request) {
-            $fileName =  [];
+            $fileName = [];
             if ($request->has('fileList') && is_array($request->file('fileList'))) {
                 foreach ($request->file('fileList') as $file) {
 
@@ -717,7 +721,7 @@ class MarketingController extends Controller
                 }
             }
 
-            $promoGC =  PromoGcRequest::create([
+            $promoGC = PromoGcRequest::create([
                 'pgcreq_reqnum' => $request->rfprom_number,
                 'pgcreq_reqby' => $request->requestBy,
                 'pgcreq_datereq' => $request->dateR,
@@ -1014,15 +1018,15 @@ class MarketingController extends Controller
                     Promo::create([
                         'promo_id' => $data['promoNo'],
                         'promo_num' => $data['promoNo'],
-                        'promo_name' =>  $promoName,
-                        'promo_group' =>  $promoGroup,
-                        'promo_tag' =>  $tag,
-                        'promo_date' =>  Date::parse($data['dateCreated'])->format('Y-m-d'),
-                        'promo_remarks' =>  $notes,
-                        'promo_valby' =>  $data['prepby'],
-                        'promo_dateexpire' =>  Date::parse($data['expiryDate'])->format('Y-m-d'),
-                        'promo_datenotified' =>  Date::parse($data['dateNotify'])->format('Y-m-d'),
-                        'promo_drawdate' =>   Date::parse($data['drawDate'])->format('Y-m-d')
+                        'promo_name' => $promoName,
+                        'promo_group' => $promoGroup,
+                        'promo_tag' => $tag,
+                        'promo_date' => Date::parse($data['dateCreated'])->format('Y-m-d'),
+                        'promo_remarks' => $notes,
+                        'promo_valby' => $data['prepby'],
+                        'promo_dateexpire' => Date::parse($data['expiryDate'])->format('Y-m-d'),
+                        'promo_datenotified' => Date::parse($data['dateNotify'])->format('Y-m-d'),
+                        'promo_drawdate' => Date::parse($data['drawDate'])->format('Y-m-d')
                     ]);
 
 
@@ -1104,11 +1108,11 @@ class MarketingController extends Controller
                 if ($denom) {
 
                     $insertBudgetLedger = LedgerBudget::create([
-                        'bledger_no' =>  $ln,
+                        'bledger_no' => $ln,
                         'bledger_trid' => $lastInsertedId,
                         'bledger_datetime' => Carbon::now()->format('Y-m-d H:i:s'),
                         'bledger_type' => 'PROMOGCRELEASING',
-                        'bdebit_amt' =>  $denom->denomination,
+                        'bdebit_amt' => $denom->denomination,
                     ]);
 
                     if ($insertBudgetLedger) {
@@ -1148,44 +1152,296 @@ class MarketingController extends Controller
     }
 
 
-    // public function submitReqForm(Request $request)
-    // {
-    //     dd($request->all());
+    public function submitReqForm(Request $request)
+    {
 
-    //     if ($request->data['finalize'] == 1) {
-    //         $lnumber = LedgerCheck::count() + 1;
-    //         $reqtotal = ProductionRequestItem::join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
-    //             ->where('production_request_items.pe_items_request_id', $request->data['id'])
-    //             ->selectRaw('IFNULL(SUM(production_request_items.pe_items_quantity * denomination.denomination), 0) as total')
-    //             ->value('total');
 
-    //         DB::transaction(function () use ($request, $lnumber, $reqtotal) {
-    //             LedgerCheck::create([
-    //                 'cledger_no' => $lnumber,
-    //                 'cledger_datetime' => now()->toDateTimeString(),
-    //                 'cledger_type' => 'GCRA',
-    //                 'cledger_desc' => 'GC Requisition Approved',
-    //                 'cdebit_amt' => $reqtotal,
-    //                 'c_posted_by' => auth()->user()->user_id,
-    //             ]);
+        if ($request->data['finalize'] == 1) {
 
-    //             RequisitionEntry::create([
-    //                 'requis_erno' => $request->data['requestNo'],
-    //                 'requis_req' => now()->toDateTimeString(),
-    //                 'requis_need' => $request->data['dateNeeded'],
-    //                 'requis_loc' => $request->data['location'],
-    //                 'requis_dept' => $request->data['department'],
-    //                 'requis_rem' => $request->data['remarks'],
-    //                 'repuis_pro_id' => $request->data['id'],
-    //                 'requis_req_by' => auth()->user()->user_id,
-    //                 'requis_checked' => $request->data['checkedBy'],
-    //                 'requis_supplierid' => $request->data['selectedSupplierId'],
-    //                 'requis_ledgeref' => $lnumber,
-    //             ]);
-    //         });
-    //     } elseif($request->data['finalize'] == 3) {
-    //         dd(1);
-    //     }
-    // }
+            $lnumber = LedgerCheck::count() + 1;
+            $reqtotal = ProductionRequestItem::join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+                ->where('production_request_items.pe_items_request_id', $request->data['id'])
+                ->selectRaw('IFNULL(SUM(production_request_items.pe_items_quantity * denomination.denomination), 0) as total')
+                ->value('total');
+
+            $inserted = DB::transaction(function () use ($request, $lnumber, $reqtotal) {
+                $ledgerCheck = LedgerCheck::create([
+                    'cledger_no' => $lnumber,
+                    'cledger_datetime' => now(),
+                    'cledger_type' => 'GCRA',
+                    'cledger_desc' => 'GC Requisition Approved',
+                    'cdebit_amt' => $reqtotal,
+                    'c_posted_by' => auth()->user()->user_id,
+                ]);
+
+                $requisEntry = RequisitionEntry::create([
+                    'requis_erno' => $request->data['requestNo'],
+                    'requis_req' => now(),
+                    'requis_need' => substr($request->data['dateNeeded'], 0, 10),
+                    'requis_loc' => $request->data['location'],
+                    'requis_dept' => $request->data['department'],
+                    'requis_rem' => $request->data['remarks'],
+                    'repuis_pro_id' => $request->data['id'],
+                    'requis_req_by' => auth()->user()->user_id,
+                    'requis_checked' => $request->data['checkedBy'],
+                    'requis_supplierid' => $request->data['selectedSupplierId'],
+                    'requis_ledgeref' => $lnumber,
+                    'requis_foldersaved' => base_path('resources/js/Pages/Custodian/Requisition')
+                ]);
+
+                return [
+                    'legderCheck' => $ledgerCheck,
+                    'requisEntry' => $requisEntry,
+                ];
+            });
+
+
+            if ($inserted) {
+
+                $details = ProductionRequestItem::select([
+                    'denomination.denom_fad_item_number',
+                    'production_request_items.pe_items_quantity'
+                ])
+                    ->join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+                    ->where('production_request_items.pe_items_request_id', $request->data['id'])
+                    ->get();
+
+                $filePath = base_path('resources/js/Pages/Custodian/Requisition');
+                $fileName = $request->data['requestNo'] . '.txt';
+
+
+                $header = "HEADER:\n";
+                $header .= "GC E-REQUISION NO|" . ltrim($request->data['requestNo'], '0') . "\n";
+                $header .= "DATE_REQUESTED|" . substr($request->data['dateRequested'], 0, 10) . "\n";
+                $header .= "DATE_NEEDED|" . substr($request->data['dateNeeded'], 0, 10) . "\n";
+                $header .= "APPROVED_BY|" . auth()->user()->full_name . "\n";
+                $header .= "CHECKED_BY|" . $request->data['checkedBy'] . "\n";
+                $header .= "REMARKS|" . $request->data['remarks'] . "\n";
+                $header .= "DETAILS:\n";
+                foreach ($details as $key) {
+                    $header .= $key->denom_fad_item_number . '|' . $key->pe_items_quantity . '|pcs';
+                }
+                file_put_contents($filePath . '/' . $fileName, $header);
+
+                $pdf = $this->requisitionPdf($request->data, $details);
+
+                return Inertia::render('Marketing/Pdf/RequisitionResult', [
+                    'filePath' => $pdf,
+                ]);
+
+                //    if($pdf){
+                //     return redirect(url('/marketing/requis-pdf'));
+                //    }
+
+            } else {
+                dd(2);
+            }
+        } elseif ($request->data['finalize'] == 3) {
+            dd(2);
+        }
+    }
+
+    public function requisitionPdf($data, $details)
+    {
+
+        $html =
+            '
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GC E-Requisition</title>
+  <style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
 }
 
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #555555;
+}
+
+h3 {
+    font-size: 20px;
+    margin-bottom: 30px;
+    color: #333333;
+}
+
+.request-info, .supplier-info {
+    margin-bottom: 30px;
+}
+
+.request-info p, .supplier-info p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.breakdown table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.breakdown th, .breakdown td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+    font-size: 16px;
+}
+
+.breakdown th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.signatures {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping for small screens */
+    justify-content: space-between;
+    align-items: center; /* Aligns items vertically in the center */
+    gap: 10px; /* Adds space between signature sections */
+    margin-top: 30px;
+}
+
+.signature {
+    width: 45%;
+}
+
+.signature p {
+    margin-bottom: 5px;
+}
+
+.signature-line {
+    border-top: 1px solid #000;
+    padding-top: 5px;
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+    color: #555555;
+}
+
+
+
+  </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <p>Marketing Department</p>
+            <p>ALTURAS GROUP OF COMPANIES</p>
+            <p>GC E-Requisition</p>
+        </header>
+
+        <!-- Request Information Section -->
+        <section class="request-info">
+            <p><strong>E-Req. No:</strong> 0039</p>
+            <p><strong>Date Requested:</strong> July 15, 2024</p>
+            <p><strong>Date Needed:</strong> July 16, 2024</p>
+            <p><strong>Request:</strong> Request for gift cheque printing as per breakdown provided below.</p>
+        </section>
+
+        <!-- Table for Breakdown -->
+        <section class="breakdown">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Denomination</th>
+                        <th>Qty</th>
+                        <th>Barcode No. Start</th>
+                        <th>Barcode No. End</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>100.00</td>
+                        <td>2 pcs</td>
+                        <td>1010000055215</td>
+                        <td>1010000055216</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Supplier Information Section -->
+        <section class="supplier-info">
+            <h4>Supplier Information</h4>
+            <p><strong>Company Name:</strong> AlladinprintPhil.com</p>
+            <p><strong>Contact Person:</strong> Flor Javier</p>
+            <p><strong>Contact #:</strong> 09175280699</p>
+            <p><strong>Address:</strong> Pasig City</p>
+        </section>
+
+        <!-- Signatures Section -->
+        <section class="signatures">
+            <div class="signature">
+                <p><strong>Checked by:</strong></p>
+                <p style="text-align: center"> Mary Grace Celeste</p>
+                <div class="signature-line">Signature over Printed Name</div>
+            </div>
+            <div class="signature">
+                <p><strong>Prepared by:</strong></p>
+                <p style="text-align: center"> I. Bernaldez Marketing Sample</p>
+                <div class="signature-line">Signature over Printed Name</div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+
+        ';
+
+        // Create DOMPDF Options and configure them
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+
+        // Initialize Dompdf with the specified options
+        $dompdf = new Dompdf($options);
+
+        // Load HTML content into the DOMPDF object
+        $dompdf->loadHtml($html);
+
+        // Set paper size and orientation
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Render the PDF (generate the PDF from HTML)
+        $dompdf->render();
+
+        $output = $dompdf->output();
+
+        $filename = $data['requestNo'] . '.pdf';
+        $filePathName = storage_path('app/' . $filename);
+
+        if (!file_exists(dirname($filePathName))) {
+            mkdir(dirname($filePathName), 0755, true);
+        }
+        Storage::put($filename, $output);
+
+        $filePath = route('download', ['filename' => $filename]);
+
+        return $filePath;
+    }
+}

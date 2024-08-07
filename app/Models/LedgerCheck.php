@@ -11,7 +11,8 @@ class LedgerCheck extends Model
     use HasFactory;
 
     protected $table= 'ledger_check';
-
+    protected $guarded = [];
+    public $timestamps= false;
     protected $primaryKey = 'cledger_id';
 
     protected function casts(): array
