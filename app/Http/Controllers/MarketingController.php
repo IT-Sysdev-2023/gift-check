@@ -30,6 +30,7 @@ use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\RequisitionEntry;
+use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestItem;
 
@@ -1049,6 +1050,10 @@ class MarketingController extends Controller
 
     public function gcpromoreleased(Request $request)
     {
+
+
+
+
         $response = [];
         $barcode = $request->data['barcode'];
         $dateReleased = Date::parse($request->data['dateReleased'])->format('Y-m-d');
@@ -1153,8 +1158,6 @@ class MarketingController extends Controller
 
     public function submitReqForm(Request $request)
     {
-
-
         if ($request->data['finalize'] == 1) {
 
             $lnumber = LedgerCheck::count() + 1;
@@ -1202,6 +1205,12 @@ class MarketingController extends Controller
                     ->update([
                         'pe_requisition' => '1'
                     ]);
+
+                // RequisitionForm::create([
+                //     ''
+                // ]);    
+
+
                 return Inertia::render('Marketing/Pdf/RequisitionResult', [
                     'filePath' => $pdf,
                 ]);
