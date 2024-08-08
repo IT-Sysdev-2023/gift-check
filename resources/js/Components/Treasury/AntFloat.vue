@@ -10,8 +10,8 @@
                 <span>Production Request</span>
             </template>
             <a-space direction="vertical">
-                <a-alert
-                    v-for="(item, index) in page.pendingPrRequest"
+                <!-- <a-alert
+                    v-for="(item, index) in $page.props.pendingPrRequest"
                     :key="index"
                     :message="'Rst. no. ' + item.pe_num"
                     description="Production has been approved please click the button to generate barcode"
@@ -31,7 +31,7 @@
                             </a-popconfirm>
                         </a-space>
                     </template>
-                </a-alert>
+                </a-alert> -->
             </a-space>
         </a-card>
     </a-float-button-group>

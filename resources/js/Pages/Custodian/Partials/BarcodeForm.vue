@@ -2,16 +2,18 @@
     <a-card>
         <a-input-group compact>
             <span>Scan Barcode:</span>
-            <a-input show-count v-model:value="form.barcode" style="width: calc(100% - 31px)" @keyup.enter="submit" />
+            <a-input allow-clear show-count @keypress="handleKeyPress" v-model:value="form.barcode" size="large" style="width: calc(100% - 40px)"
+                @keyup.enter="submit" />
             <a-tooltip title="Scan Barcode here..">
-                <a-button :loading="form.processing">
+                <a-button :loading="form.processing" size="large" >
                     <template #icon>
                         <BarcodeOutlined />
                     </template>
                 </a-button>
             </a-tooltip>
         </a-input-group>
-        <a-button block class="mt-2" type="primary" @click="submit">Submit</a-button>
+        <a-button block class="mt-2" type="primary" @click="submit"
+            :disabled="form.barcode === null || form.barcode === ''">Submit</a-button>
 
         <a-alert v-if="status.status" class="mt-2" :message="status.desc" :type="status.status" show-icon />
 
@@ -55,6 +57,12 @@ export default {
 
                     this.status = response.data
                 });
+        },
+        handleKeyPress(event) {
+            const charCode = event.which ? event.which : event.keyCode;
+            if (charCode < 48 || charCode > 57) {
+                event.preventDefault();
+            }
         }
     }
 }

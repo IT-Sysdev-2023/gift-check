@@ -9,6 +9,10 @@ import {
 </script>
 
 <template>
+    <a-menu-item key="custodian">
+        <QrcodeOutlined />
+        <span> <Link :href="route('custodian.dashboard')"> Dashboard</Link></span>
+    </a-menu-item>
     <a-menu-item key="barcodeChecker">
         <QrcodeOutlined />
         <span> <Link :href="route('custodian.barcode.checker')"> Barcode Checker</Link></span>
