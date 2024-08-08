@@ -288,7 +288,7 @@ class TreasuryController extends Controller
 
     public function getAssignEmployee(Request $request)
     {
-
+        //in Development
         $record = SpecialExternalGcrequestEmpAssign::select(
             'spexgcemp_fname as fname',
             'spexgcemp_lname as lname',
@@ -327,6 +327,38 @@ class TreasuryController extends Controller
 
     //TRANSACTIONS
 
+    public function budgetRequest(Request $request)
+    {
+        $br = BudgetRequest::max('br_no');
+
+        return inertia('Treasury/Transactions/BudgetRequest', [
+            'title' => 'Budget Request',
+            'br' => NumberHelper::leadingZero($br + 1),
+            'remainingBudget' => LedgerBudget::currentBudget(),
+
+        ]);
+    }
+
+    public function budgetRequestSubmission(Request $request)
+    {
+        $r = BudgetRequest::whereRelation('user', 'usertype', $request->user()->usertype)
+            ->where('br_request_status', 0)
+            ->count();
+        if ($r) {
+            return redirect()->back()->with('error', 'You have pending budget request');
+        }
+
+        $request->validate([
+            "br" => 'required',
+            "dateNeeded" => 'required|date',
+            "budget" => 'required|not_in:0',
+            "remarks" => 'required',
+            'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048'
+        ]);
+        $dept = userDepartment($request->user());
+
+        $filename = $this->createFileName($request);
+    }
     //Production Requests
     public function giftCheck()
     {
@@ -342,17 +374,13 @@ class TreasuryController extends Controller
             'remainingBudget' => LedgerBudget::currentBudget(),
         ]);
     }
-
     public function giftCheckStore(Request $request)
     {
         $this->transactionProductionRequest->storeGc($request);
     }
-
     public function acceptProductionRequest(Request $request, $id)
     {
-        DB::transaction(function () use ($request, $id) {
-            $this->regularGcProcessService->approveProductionRequest($request, $id);
-        });
+        $this->regularGcProcessService->approveProductionRequest($request, $id);
         return redirect()->back()->with('success', 'Successfully Processed!');
     }
 

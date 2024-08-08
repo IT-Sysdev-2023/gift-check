@@ -182,6 +182,9 @@ Route::prefix('treasury')->group(function () {
                 Route::post('store-gift-check', [TreasuryController::class, 'giftCheckStore'])->name('gcSubmit');
                 Route::get('envelope', [TreasuryController::class, 'envelope'])->name('envelope');
             });
+
+            Route::get('budget-request', [TreasuryController::class, 'budgetRequest'])->name('budgetRequest');
+            Route::post('budget-request-submission', [TreasuryController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');

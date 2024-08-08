@@ -98,6 +98,7 @@ declare module 'vue' {
     BarcodeOutlined: typeof import('@ant-design/icons-vue')['BarcodeOutlined']
     BudgetLedger: typeof import('./resources/js/Pages/Finance/BudgetLedger.vue')['default']
     BudgetLedgerResult: typeof import('./resources/js/Pages/Documents/BudgetLedgerResult.vue')['default']
+    BudgetRequest: typeof import('./resources/js/Pages/Treasury/Transactions/BudgetRequest.vue')['default']
     Card: typeof import('./resources/js/Components/Card.vue')['default']
     CardBadge: typeof import('./resources/js/Components/CardBadge.vue')['default']
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']

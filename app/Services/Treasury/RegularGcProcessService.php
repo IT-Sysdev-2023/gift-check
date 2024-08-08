@@ -13,29 +13,31 @@ class RegularGcProcessService
 {
     public function approveProductionRequest(Request $request, $id)
     {
-        $q = ProductionRequestItem::select(
-            'production_request_items.pe_items_denomination',
-            'production_request_items.pe_items_quantity',
-            'denomination.denom_barcode_start'
-        )
-            ->join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
-            ->where('pe_items_request_id', $id)->get();
+        DB::transaction(function () use ($request, $id) {
+            $q = ProductionRequestItem::select(
+                'production_request_items.pe_items_denomination',
+                'production_request_items.pe_items_quantity',
+                'denomination.denom_barcode_start'
+            )
+                ->join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+                ->where('pe_items_request_id', $id)->cursor();
 
-        $q->each(function ($item, $key) use ($id, $request) {
-            $this->generateGc($request, $id, $item);
-        });
+            $q->each(function ($item) use ($id, $request) {
+                $this->generateGc($request, $id, $item);
+            });
 
-        $pr = ProductionRequest::where('pe_id', $id)->update([
-            'pe_generate_code' => '1'
-        ]);
-
-        if($pr){
-            Gcbarcodegenerate::create([
-                'gbcg_pro_id' => $id,
-                'gbcg_by' => $request->user()->user_id, 
-                'gbcg_at' => now()
+            $pr = ProductionRequest::where('pe_id', $id)->update([
+                'pe_generate_code' => '1'
             ]);
-        }
+
+            if ($pr) {
+                Gcbarcodegenerate::create([
+                    'gbcg_pro_id' => $id,
+                    'gbcg_by' => $request->user()->user_id,
+                    'gbcg_at' => now()
+                ]);
+            }
+        });
 
     }
 
