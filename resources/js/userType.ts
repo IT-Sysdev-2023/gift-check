@@ -21,6 +21,7 @@ export interface PageProps extends InertiaPageProps  {
 export function UserType() {
 
   const page = usePage<PageProps>();
+  
   const user = page.props.auth.user.usertype;
   const role = page.props.auth.user.user_role;
 

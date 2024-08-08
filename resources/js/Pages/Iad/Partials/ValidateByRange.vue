@@ -16,35 +16,40 @@
                 <a-col :span="12">
                     <a-input-group>
                         <a-typography-text keyboard>Barcode Start:</a-typography-text>
-                        <a-form-item has-feedback :validate-status="form.barcodeStart?.length === 13 ? 'success' : ''">
-                            <a-input size="large" show-count v-model:value="form.barcodeStart" allow-clear
-                                style="width: calc(100% - 40px);" @keypress="handleKeyPress" />
-                            <a-tooltip title="Barcode Start Here.">
-                                <a-button size="large" >
-                                    <template #icon>
-                                        <LogoutOutlined />
-                                    </template>
-                                </a-button>
-                            </a-tooltip>
+                        <a-form-item has-feedback :help="errors.barcodeStart"
+                            :validate-status="form.barcodeStart?.length === 13 ? 'success' : errors.barcodeStart ? 'error' : '' ">
+                            <a-input v-model:value="form.barcodeStart" size="large"
+                                placeholder="Start of Barcode here.." show-count allow-clear @keypress="handleKeyPress">
+                                <template #prefix>
+                                    <BarcodeOutlined />
+                                </template>
+                                <template #suffix>
+                                    <a-tooltip title="Barcode Start Here.">
+                                        <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                    </a-tooltip>
+                                </template>
+                            </a-input>
                         </a-form-item>
 
                     </a-input-group>
                 </a-col>
-
                 <a-col :span="12">
                     <a-input-group>
                         <a-typography-text keyboard>Barcode End:</a-typography-text>
                         <a-form-item has-feedback :validate-status="form.barcodeEnd?.length === 13 ? 'success' : ''">
-                            <a-input size="large" show-count v-model:value="form.barcodeEnd" allow-clear
-                                :disabled="form.barcodeStart === null || form.barcodeStart.length <= 0" style="width: calc(100% - 40px)"
-                                @keypress="handleKeyPress" />
-                            <a-tooltip title="Barcode Ends Here.">
-                                <a-button size="large" disabled>
-                                    <template #icon>
-                                        <LoginOutlined />
-                                    </template>
-                                </a-button>
-                            </a-tooltip>
+                            <a-input v-model:value="form.barcodeEnd" size="large" placeholder="End of Barcode here.."
+                                show-count allow-clear
+                                :disabled="form.barcodeStart === null || form.barcodeStart.length <= 0"
+                                @keypress="handleKeyPress">
+                                <template #prefix>
+                                    <BarcodeOutlined />
+                                </template>
+                                <template #suffix>
+                                    <a-tooltip title="BarcodeEnd Here.">
+                                        <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                    </a-tooltip>
+                                </template>
+                            </a-input>
                         </a-form-item>
                     </a-input-group>
                 </a-col>
@@ -73,6 +78,7 @@
     </a-modal>
 </template>
 <script>
+import { BarcodeOutlined } from "@ant-design/icons-vue";
 import pickBy from "lodash/pickBy";
 
 export default {
@@ -82,6 +88,7 @@ export default {
     },
     data() {
         return {
+            errors: {},
             response: {},
             form: {
                 barcodeStart: null,
@@ -98,6 +105,10 @@ export default {
                 onSuccess: (response) => {
                     this.response = response.props.flash;
                 },
+                onError: (errors) => {
+
+                    this.errors = errors;
+                }
             });
         },
         handleKeyPress(event) {

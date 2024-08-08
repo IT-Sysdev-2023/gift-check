@@ -162,56 +162,61 @@ class IadServices
     public function validateByRangeServices($request)
     {
 
-
-        $bstart = strlen((string)$request->barcodeStart);
-        $bend = strlen((string)$request->barcodeEnd);
-
-        $scanned = TempValidation::whereIn('tval_barcode', [$request->barcodeEnd, $request->barcodeStart])->count() == 2;
-
-        $inGc = Gc::whereIn('barcode_no', [$request->barcodeEnd, $request->barcodeStart])->count() == 2;
+        $request->validate([
+            'barcodeStart' => 'bail|lt:barcodeEnd|min:13|max:13',
+            'barcodeEnd' => 'bail|gt:barcodeStart|min:13|max:13',
+        ]);
 
 
-        if ($request->barcodeStart > $request->barcodeEnd) {
-            return back()->with([
-                'status' => 'error',
-                'msg' => 'Barocde should be sequence!',
-            ]);
-        } elseif (($bstart < 13 || $bend < 13)) {
-            return back()->with([
-                'status' => 'error',
-                'msg' => 'Barcode Number should be 13 characters long!',
-            ]);
-        } elseif (($bstart > 13 || $bend > 13)) {
-            return back()->with([
-                'status' => 'error',
-                'msg' => 'Barcode Number is 13 max character',
-            ]);
-        } elseif ($scanned) {
-            return back()->with([
-                'status' => 'error',
-                'msg' => 'Barcode ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' is already scanned',
-            ]);
-        } elseif ($inGc) {
+        // $bstart = strlen((string)$request->barcodeStart);
+        // $bend = strlen((string)$request->barcodeEnd);
 
-            $denomid = Gc::select('denom_id')->where('barcode_no', $request->barcodeEnd)->first();
+        // $scanned = TempValidation::whereIn('tval_barcode', [$request->barcodeEnd, $request->barcodeStart])->count() == 2;
 
-            foreach (range($request->barcodeStart, $request->barcodeEnd) as $barcode) {
-                TempValidation::create([
-                    'tval_barcode' => $barcode,
-                    'tval_recnum' => $request->recnum,
-                    'tval_denom' => $denomid->denom_id,
-                ]);
-            }
+        // $inGc = Gc::whereIn('barcode_no', [$request->barcodeEnd, $request->barcodeStart])->count() == 2;
 
-            return back()->with([
-                'status' => 'success',
-                'msg' => 'Barcode # ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' is Validated Successfully',
-            ]);
-        } elseif(!$inGc){
-            return back()->with([
-                'status' => 'error',
-                'msg' => 'Barcode ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' not Found! ',
-            ]);
-        }
+
+        // if ($request->barcodeStart > $request->barcodeEnd) {
+        //     return back()->with([
+        //         'status' => 'error',
+        //         'msg' => 'Barocde should be sequence!',
+        //     ]);
+        // } elseif (($bstart < 13 || $bend < 13) ) {
+        //     return back()->with([
+        //         'status' => 'error',
+        //         'msg' => 'Barcode Number should be 13 characters long!',
+        //     ]);
+        // } elseif (($bstart > 13 || $bend > 13)) {
+        //     return back()->with([
+        //         'status' => 'error',
+        //         'msg' => 'Barcode Number is 13 max character',
+        //     ]);
+        // } elseif ($scanned) {
+        //     return back()->with([
+        //         'status' => 'error',
+        //         'msg' => 'Barcode ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' is already scanned',
+        //     ]);
+        // } elseif ($inGc) {
+
+        //     $denomid = Gc::select('denom_id')->where('barcode_no', $request->barcodeEnd)->first();
+
+        //     foreach (range($request->barcodeStart, $request->barcodeEnd) as $barcode) {
+        //         TempValidation::create([
+        //             'tval_barcode' => $barcode,
+        //             'tval_recnum' => $request->recnum,
+        //             'tval_denom' => $denomid->denom_id,
+        //         ]);
+        //     }
+
+        //     return back()->with([
+        //         'status' => 'success',
+        //         'msg' => 'Barcode # ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' is Validated Successfully',
+        //     ]);
+        // } elseif(!$inGc){
+        //     return back()->with([
+        //         'status' => 'error',
+        //         'msg' => 'Barcode ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' not Found! ',
+        //     ]);
+        // }
     }
 }
