@@ -177,6 +177,7 @@ declare module 'vue' {
     PromoRequestTable: typeof import('./resources/js/Pages/Finance/Tables/PromoRequestTable.vue')['default']
     PromoStatus: typeof import('./resources/js/Pages/Marketing/PromoStatus.vue')['default']
     QrcodeOutlined: typeof import('@ant-design/icons-vue')['QrcodeOutlined']
+    ReceivedGc: typeof import('./resources/js/Pages/Custodian/ReceivedGc.vue')['default']
     ReconciliationOutlined: typeof import('@ant-design/icons-vue')['ReconciliationOutlined']
     Register: typeof import('./resources/js/Pages/Auth/Register.vue')['default']
     ReleasedPromoGc: typeof import('./resources/js/Pages/Marketing/ReleasedPromoGc.vue')['default']

@@ -23,7 +23,7 @@ import {
     </a-menu-item>
     <a-menu-item key="recievedGC">
         <GroupOutlined />
-        <span>Recieved GC</span>
+        <span> <Link :href="route('custodian.received.gc')"> Received Gc</Link></span>
     </a-menu-item>
     <a-menu-item key="gcTracking">
         <RiseOutlined />

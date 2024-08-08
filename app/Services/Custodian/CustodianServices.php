@@ -2,11 +2,13 @@
 
 namespace App\Services\Custodian;
 
+use App\Http\Resources\CustodianResource;
 use App\Models\BarcodeChecker;
+use App\Models\CustodianSrr;
 use App\Models\Gc;
 use Illuminate\Support\Facades\Date;
 
-class BarcodeCheckerServices
+class CustodianServices
 {
     public function barcodeChecker()
     {
@@ -84,5 +86,21 @@ class BarcodeCheckerServices
                 'desc' => 'Oppss! The Barcode ' . $request->barcode . ' not found',
             ]);
         }
+    }
+
+    public function receivedGcIndex()
+    {
+
+
+        $data = CustodianSrr::with('user:user_id,firstname,lastname')
+            ->join('requisition_entry', 'requisition_entry.requis_id', '=', 'csrr_requisition')
+            ->join('supplier', 'gcs_id', '=', 'requis_supplierid')
+            ->orderByDesc('csrr_id')
+            ->get();
+
+            // dd($data->toArray());
+
+
+        return CustodianResource::collection($data);
     }
 }

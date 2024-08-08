@@ -26,4 +26,9 @@ class RequisitionEntry extends Model
     {
         return $this->hasOne(User::class, 'user_id', 'requis_req_by');
     }
+
+    public function supplierCsrr()
+    {
+        return $this->belongsTo(Supplier::class, 'requis_supplierid', 'gcs_id');
+    }
 }

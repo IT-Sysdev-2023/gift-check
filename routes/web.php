@@ -53,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
-    
+
     Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 });
 Route::middleware(['auth'])->group(function () {
@@ -95,7 +95,7 @@ Route::prefix('marketing')->group(function () {
             Route::post('submit-requisition-form', [MarketingController::class, 'submitReqForm'])->name('submit.form');
             Route::get('requis-pdf', [MarketingController::class, 'requisitionPdf'])->name('requistion.pdf');
         });
-        
+
     });
 });
 
@@ -222,6 +222,7 @@ Route::prefix('custodian')->group(function () {
     Route::name('custodian.')->group(function () {
         Route::get('barcode-checker', [CustodianController::class, 'barcodeCheckerIndex'])->name('barcode.checker');
         Route::post('scan-barcode', [CustodianController::class, 'scanBarcode'])->name('scan.barcode');
+        Route::get('received-gc', [CustodianController::class, 'receivedGcIndex'])->name('received.gc');
     });
 });
 
