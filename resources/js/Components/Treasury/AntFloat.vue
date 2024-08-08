@@ -44,7 +44,7 @@ import { PageWithSharedProps } from "@/types/index";
 const page = usePage<PageWithSharedProps>().props;
 const { openLeftNotification } = onProgress();
 
-const acceptRequest = (id) => {
+const acceptRequest = (id: string | number) => {
     router.get(
         route("treasury.acceptProdRequest", id),
         {},
