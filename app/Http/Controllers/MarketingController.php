@@ -56,6 +56,8 @@ class MarketingController extends Controller
 
     public function index(Request $request)
     {
+
+
         $supplier = Supplier::all();
 
         $checkedBy = Assignatory::where('assig_dept', auth()->user()->usertype)
@@ -125,7 +127,6 @@ class MarketingController extends Controller
     }
     public function promoList(Request $request)
     {
-        // dd(1);
         $tag = auth()->user()->promo_tag;
         $data = Promo::with('user:user_id,firstname,lastname,promo_tag')->filter($request->only('search'))
             ->where('promo.promo_tag', $tag)
@@ -150,7 +151,6 @@ class MarketingController extends Controller
     {
 
         $promoNum = promo::count() + 1;
-        // dd($promoNum);/
 
         return Inertia::render('Marketing/AddNewPromo', [
             'PromoNum' => $promoNum,
@@ -988,10 +988,9 @@ class MarketingController extends Controller
 
     public function newpromo(Request $request)
     {
-        // dd($request->all());
+
         $tempbarcodes = TempPromo::where('tp_by', auth()->user()->user_id)->get();
 
-        // dd($tempbarcodes->toArray());
 
         $data = $request->data;
 
@@ -1186,7 +1185,7 @@ class MarketingController extends Controller
                     'requis_checked' => $request->data['checkedBy'],
                     'requis_supplierid' => $request->data['selectedSupplierId'],
                     'requis_ledgeref' => $lnumber,
-                    'requis_foldersaved' => base_path('resources/js/Pages/Custodian/Requisition')
+                    'requis_foldersaved' => ''
                 ]);
 
                 return [
@@ -1197,221 +1196,258 @@ class MarketingController extends Controller
 
 
             if ($inserted) {
+                $pdf = $this->requisitionPdf($request->data);
 
-                $details = ProductionRequestItem::select([
-                    'denomination.denom_fad_item_number',
-                    'production_request_items.pe_items_quantity'
-                ])
-                    ->join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
-                    ->where('production_request_items.pe_items_request_id', $request->data['id'])
-                    ->get();
-
-                $filePath = base_path('resources/js/Pages/Custodian/Requisition');
-                $fileName = $request->data['requestNo'] . '.txt';
-
-
-                $header = "HEADER:\n";
-                $header .= "GC E-REQUISION NO|" . ltrim($request->data['requestNo'], '0') . "\n";
-                $header .= "DATE_REQUESTED|" . substr($request->data['dateRequested'], 0, 10) . "\n";
-                $header .= "DATE_NEEDED|" . substr($request->data['dateNeeded'], 0, 10) . "\n";
-                $header .= "APPROVED_BY|" . auth()->user()->full_name . "\n";
-                $header .= "CHECKED_BY|" . $request->data['checkedBy'] . "\n";
-                $header .= "REMARKS|" . $request->data['remarks'] . "\n";
-                $header .= "DETAILS:\n";
-                foreach ($details as $key) {
-                    $header .= $key->denom_fad_item_number . '|' . $key->pe_items_quantity . '|pcs';
-                }
-                file_put_contents($filePath . '/' . $fileName, $header);
-
-                $pdf = $this->requisitionPdf($request->data, $details);
-
+                ProductionRequest::where('pe_id', $request->data['id'])
+                    ->update([
+                        'pe_requisition' => '1'
+                    ]);
                 return Inertia::render('Marketing/Pdf/RequisitionResult', [
                     'filePath' => $pdf,
                 ]);
-
-                //    if($pdf){
-                //     return redirect(url('/marketing/requis-pdf'));
-                //    }
-
             } else {
                 dd(2);
             }
         } elseif ($request->data['finalize'] == 3) {
             dd(2);
+        } elseif (
+            $request->data['id'] == null ||
+            $request->data['requestNo'] == null ||
+            $request->data['finalize'] == null ||
+            $request->data['productionReqNum'] == null ||
+            $request->data['dateRequested'] == null ||
+            $request->data['dateNeeded'] == null ||
+            $request->data['location'] == null ||
+            $request->data['department'] == null ||
+            $request->data['remarks'] == null ||
+            $request->data['checkedBy'] == null ||
+            $request->data['approvedById'] == null ||
+            $request->data['approvedBy'] == null ||
+            $request->data['selectedSupplierId'] == null ||
+            $request->data['contactPerson'] == null ||
+            $request->data['contactNum'] == null ||
+            $request->data['address'] == null
+        ) {
+            return back()->with([
+                'title' => "Select",
+                'msg' => "Please fill required fields",
+                'status' => "error",
+            ]);
         }
     }
 
-    public function requisitionPdf($data, $details)
+    public function requisitionPdf($data)
     {
+        $checkby = $data['checkedBy'];
+        $approveBy = User::where('user_id', $data['approvedById'])->get();
+        $approveByFirstname = $approveBy[0]->firstname;
+        $approveByLastname = $approveBy[0]->lastname;
+        $requestNo = $data['requestNo'];
+        $dateReq = Carbon::parse($data['dateRequested']);
+        $dateNeed = Carbon::parse($data['dateNeeded']);
+        $dateRequest =  $dateReq->format('F j, Y');
+        $dateNeed =  $dateNeed->format('F j, Y');
+
+        $supplier = Supplier::where('gcs_id', $data['selectedSupplierId'])->get();
+
+        $productionReqItems = ProductionRequestItem::join(
+            'denomination',
+            'production_request_items.pe_items_denomination',
+            '=',
+            'denomination.denom_id'
+        )->selectFilter()
+            ->where('pe_items_request_id', $data['id'])->get();
+
+
+
+        $data = Gc::select('barcode_no')
+            ->where('denom_id', $productionReqItems[0]->pe_items_denomination ?? null)
+            ->where('pe_entry_gc', $data['id'])
+            ->orderBy('barcode_no')
+            ->get();
+
+        $barStart = $data->first()->barcode_no ?? null;
+        $barEnd = $data->last()->barcode_no ?? null;
+
+
+        $productionReqItems->transform(function ($item) use ($barStart, $barEnd) {
+            $item->barcodeStart = $barStart;
+            $item->barcodeEnd = $barEnd;
+            return $item;
+        });
+
+
+
 
         $html =
-            '
-        <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GC E-Requisition</title>
-  <style>
-    body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-}
+            ' <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>GC E-Requisition</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    width: 100%;
+                }
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #ffffff;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
+                .container {
+                    background-color: #ffffff;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    border-radius: 8px;
+                    padding: 20px;
+                }
 
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
+                header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
 
-h1 {
-    font-size: 28px;
-    margin-bottom: 10px;
-}
+                h1 {
+                    font-size: 28px;
+                    margin-bottom: 10px;
+                }
 
-h2 {
-    font-size: 22px;
-    margin-bottom: 10px;
-    color: #555555;
-}
+                h2 {
+                    font-size: 22px;
+                    margin-bottom: 10px;
+                    color: #555555;
+                }
 
-h3 {
-    font-size: 20px;
-    margin-bottom: 30px;
-    color: #333333;
-}
+                h3 {
+                    font-size: 20px;
+                    margin-bottom: 30px;
+                    color: #333333;
+                }
 
-.request-info, .supplier-info {
-    margin-bottom: 30px;
-}
+                .request-info, .supplier-info {
+                    margin-bottom: 30px;
+                }
 
-.request-info p, .supplier-info p {
-    font-size: 16px;
-    line-height: 1.6;
-}
+                .request-info p, .supplier-info p {
+                    font-size: 16px;
+                    line-height: 1.6;
+                }
 
-.breakdown table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 30px;
-}
+                .breakdown table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 30px;
+                }
 
-.breakdown th, .breakdown td {
-    border: 1px solid #dddddd;
-    padding: 8px;
-    text-align: left;
-    font-size: 16px;
-}
+                .breakdown th, .breakdown td {
+                    border: 1px solid #dddddd;
+                    padding: 8px;
+                    text-align: left;
+                    font-size: 16px;
+                }
 
-.breakdown th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
+                .breakdown th {
+                    background-color: #f2f2f2;
+                    font-weight: bold;
+                }
 
-.signatures {
-    display: flex;
-    flex-wrap: wrap; /* Allow wrapping for small screens */
-    justify-content: space-between;
-    align-items: center; /* Aligns items vertically in the center */
-    gap: 10px; /* Adds space between signature sections */
-    margin-top: 30px;
-}
+                .signatures {
+                    width: 100%;
+                    
+                }
 
-.signature {
-    width: 45%;
-}
+                .signature {
+                    float: left;
+                    width: 40%;
+                    margin-right: 3.33%;
+                    padding: 20px;
+                    box-sizing: border-box;
+                    text-align: center;
+                }
 
-.signature p {
-    margin-bottom: 5px;
-}
+                .signature p {
+                    margin-bottom: 5px;
+                }
 
-.signature-line {
-    border-top: 1px solid #000;
-    padding-top: 5px;
-    margin-top: 15px;
-    text-align: center;
-    font-size: 14px;
-    color: #555555;
-}
+                .signature-line {
+                    border-top: 1px solid #000;
+                    padding-top: 5px;
+                    margin-top: 15px;
+                    text-align: center;
+                    font-size: 14px;
+                    color: #555555;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <!-- Header Section -->
+                <header>
+                    <p>Marketing Department</p>
+                    <p>ALTURAS GROUP OF COMPANIES</p>
+                    <p>GC E-Requisition</p>
+                </header>
+
+                <!-- Request Information Section -->
+                <section class="request-info">
+                    <p><strong>E-Req. No:</strong> ' . htmlspecialchars($requestNo) . '</p>
+                    <p><strong>Date Requested:</strong> ' . htmlspecialchars($dateRequest) . '</p>
+                    <p><strong>Date Needed:</strong> ' . htmlspecialchars($dateNeed) . '</p>
+                    <p><strong>Request:</strong> Request for gift cheque printing as per breakdown provided below.</p>
+                </section>
+
+                <!-- Table for Breakdown -->
+                <section class="breakdown">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Denomination</th>
+                                <th>Qty</th>
+                                <th>Barcode No. Start</th>
+                                <th>Barcode No. End</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
 
 
+        foreach ($productionReqItems as $item) {
+            $html .= '
+                            <tr>
+                                <td>' . htmlspecialchars($item->denomination) . '</td>
+                                <td>' . htmlspecialchars($item->pe_items_quantity) . '</td>
+                                <td>' . htmlspecialchars($item->barcodeStart) . '</td>
+                                <td>' . htmlspecialchars($item->barcodeEnd) . '</td>
+                            </tr>';
+        }
 
-  </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Header Section -->
-        <header>
-            <p>Marketing Department</p>
-            <p>ALTURAS GROUP OF COMPANIES</p>
-            <p>GC E-Requisition</p>
-        </header>
+        $html .= '
+                        </tbody>
+                    </table>
+                </section>
 
-        <!-- Request Information Section -->
-        <section class="request-info">
-            <p><strong>E-Req. No:</strong> 0039</p>
-            <p><strong>Date Requested:</strong> July 15, 2024</p>
-            <p><strong>Date Needed:</strong> July 16, 2024</p>
-            <p><strong>Request:</strong> Request for gift cheque printing as per breakdown provided below.</p>
-        </section>
+                <!-- Supplier Information Section -->
+                <section class="supplier-info">
+                    <h4>Supplier Information</h4>
+                    <p><strong>Company Name:</strong>' . $supplier[0]->gcs_companyname . '</p>
+                    <p><strong>Contact Person:</strong>' . $supplier[0]->gcs_contactperson . '</p>
+                    <p><strong>Contact #:</strong> ' . $supplier[0]->gcs_contactnumber . '</p>
+                    <p><strong>Address:</strong>' . $supplier[0]->gcs_address . '</p>
+                </section>
 
-        <!-- Table for Breakdown -->
-        <section class="breakdown">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Denomination</th>
-                        <th>Qty</th>
-                        <th>Barcode No. Start</th>
-                        <th>Barcode No. End</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>100.00</td>
-                        <td>2 pcs</td>
-                        <td>1010000055215</td>
-                        <td>1010000055216</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <!-- Supplier Information Section -->
-        <section class="supplier-info">
-            <h4>Supplier Information</h4>
-            <p><strong>Company Name:</strong> AlladinprintPhil.com</p>
-            <p><strong>Contact Person:</strong> Flor Javier</p>
-            <p><strong>Contact #:</strong> 09175280699</p>
-            <p><strong>Address:</strong> Pasig City</p>
-        </section>
-
-        <!-- Signatures Section -->
-        <section class="signatures">
-            <div class="signature">
-                <p><strong>Checked by:</strong></p>
-                <p style="text-align: center"> Mary Grace Celeste</p>
-                <div class="signature-line">Signature over Printed Name</div>
+                <!-- Signatures Section -->
+                <section class="signatures">
+                    <div class="signature">
+                        <p><strong>Checked by:</strong></p>
+                        <p>' .  $checkby . '</p>
+                        <div class="signature-line">Signature over Printed Name</div>
+                    </div>
+                    <div class="signature">
+                        <p><strong>Prepared by:</strong></p>
+                        <p>' . $approveByFirstname . ' ' . $approveByLastname . '</p>
+                        <div class="signature-line">Signature over Printed Name</div>
+                    </div>
+                </section>
             </div>
-            <div class="signature">
-                <p><strong>Prepared by:</strong></p>
-                <p style="text-align: center"> I. Bernaldez Marketing Sample</p>
-                <div class="signature-line">Signature over Printed Name</div>
-            </div>
-        </section>
-    </div>
-</body>
-</html>
-
-        ';
+        </body>
+        </html>';
 
         // Create DOMPDF Options and configure them
         $options = new Options();
@@ -1432,7 +1468,7 @@ h3 {
 
         $output = $dompdf->output();
 
-        $filename = $data['requestNo'] . '.pdf';
+        $filename = $requestNo . '.pdf';
         $filePathName = storage_path('app/' . $filename);
 
         if (!file_exists(dirname($filePathName))) {

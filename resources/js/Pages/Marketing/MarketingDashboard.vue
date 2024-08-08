@@ -1,6 +1,6 @@
 <template>
     <a-row>
-        <a-col :span="8">col-8</a-col>
+        <a-col :span="8">{{ form.id }}</a-col>
         <a-col :span="8">{{  checkBy }}</a-col>
         <a-col :span="8">
             <div class="mb-2">
@@ -130,8 +130,8 @@ export default {
                 requestNo: '',
                 finalize: '',
                 productionReqNum: '',
-                dateRequested: dayjs(this.ReqNum[0].pe_date_request),
-                dateNeeded: dayjs(this.ReqNum[0].pe_date_needed),
+                dateRequested: dayjs(this.ReqNum[0]?.pe_date_request),
+                dateNeeded: dayjs(this.ReqNum[0]?.pe_date_needed),
                 location: 'AGC Head Office',
                 department: 'Marketing',
                 remarks: '',
