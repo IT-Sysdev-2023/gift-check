@@ -10,7 +10,8 @@ class RequisitionEntry extends Model
     use HasFactory;
 
     protected $table = 'requisition_entry';
-
+    protected $guarded =[];
+    public $timestamps=false;
     protected $primaryKey = 'requis_is';
 
     public function productionRequest()

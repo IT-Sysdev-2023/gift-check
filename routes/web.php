@@ -93,6 +93,7 @@ Route::prefix('marketing')->group(function () {
         });
         Route::name('requisition.')->group(function () {
             Route::post('submit-requisition-form', [MarketingController::class, 'submitReqForm'])->name('submit.form');
+            Route::get('requis-pdf', [MarketingController::class, 'requisitionPdf'])->name('requistion.pdf');
         });
         
     });

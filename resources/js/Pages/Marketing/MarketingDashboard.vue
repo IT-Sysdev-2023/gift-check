@@ -1,6 +1,6 @@
 <template>
     <a-row>
-        <a-col :span="8">col-8</a-col>
+        <a-col :span="8">{{ form.id }}</a-col>
         <a-col :span="8">{{  checkBy }}</a-col>
         <a-col :span="8">
             <div class="mb-2">
@@ -11,7 +11,7 @@
             <div v-if="ReqNum">
                 <div v-for="request in ReqNum" :key="pe_id">
                     <a-button class="mb-2" @click="openReqModal(request)">
-                        Please fill up Requisition Form for Production Request # {{ request.pe_num }}
+                        Please fill up Requisition Form for Production Request # {{ request.pe_num }} P.O
                     </a-button>
                 </div>
             </div>
@@ -101,8 +101,6 @@
                 Submit
             </a-button>
         </template>
-
-        {{ this.form.id }}
     </a-modal>
 
 </template>
@@ -132,8 +130,8 @@ export default {
                 requestNo: '',
                 finalize: '',
                 productionReqNum: '',
-                dateRequested: dayjs(this.ReqNum[0].pe_date_request),
-                dateNeeded: dayjs(this.ReqNum[0].pe_date_needed),
+                dateRequested: dayjs(this.ReqNum[0]?.pe_date_request),
+                dateNeeded: dayjs(this.ReqNum[0]?.pe_date_needed),
                 location: 'AGC Head Office',
                 department: 'Marketing',
                 remarks: '',
@@ -175,7 +173,7 @@ export default {
             })
         },
         submitReqForm() {
-            axios.post(route('marketing.requisition.submit.form'), {
+            this.$inertia.post(route('marketing.requisition.submit.form'), {
                 data: this.form
             })
         },
