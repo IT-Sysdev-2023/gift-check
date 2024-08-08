@@ -9,15 +9,13 @@ const page = usePage<PageWithSharedProps>().props;
 const { userType, userRole } = UserType();
 const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(["1"]);
-const showingNavigationDropdown = ref(false);
 
 // const route = useRoute();
-
 // const url = route().current();
 
 const dashboardRoute = computed(() => {
     const webRoute = route().current(); //get current route in page
-    const res = webRoute?.split(".")[0]; // split the routes for e.g if the current route is "treasury.ledger", this will get the treasury
+    const res = webRoute?.split(".")[0]; // split the routes for e.g if the current route is "treasury.ledger", this would get the treasury
     return res + ".dashboard"; //this would result 'treasury.dashboard'
 });
 </script>
@@ -105,7 +103,7 @@ const dashboardRoute = computed(() => {
                     </a-layout-content>
                 </a-layout>
             </a-layout>
-            <ant-float v-if="(userType('2') && !userRole(2)) && ($page.props.pendingPrRequest.length) "/>
+            <ant-float v-if="(userType('2') && !userRole(2)) && (page.pendingPrRequest.length) "/>
         </a-layout>
     </div>
 </template>

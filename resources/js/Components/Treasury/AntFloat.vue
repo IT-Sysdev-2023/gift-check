@@ -4,7 +4,6 @@
             <a-badge dot :offset="[0, -12]">
                 <ExclamationCircleOutlined style="font-size: 20px" />
             </a-badge>
-            <!-- <ExclamationCircleOutlined v-else /> -->
         </template>
         <a-card class="card-admin-style">
             <template #title>
@@ -12,7 +11,7 @@
             </template>
             <a-space direction="vertical">
                 <a-alert
-                    v-for="(item, index) in $page.props.pendingPrRequest"
+                    v-for="(item, index) in page.pendingPrRequest"
                     :key="index"
                     :message="'Rst. no. ' + item.pe_num"
                     description="Production has been approved please click the button to generate barcode"
@@ -38,13 +37,23 @@
     </a-float-button-group>
 </template>
 <script setup lang="ts">
-import { router } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
 import { onProgress } from "@/Mixin/UiUtilities";
+import { PageWithSharedProps } from "@/types/index";
+
+const page = usePage<PageWithSharedProps>().props;
 const { openLeftNotification } = onProgress();
+
 const acceptRequest = (id) => {
-    router.get(route("treasury.acceptProdRequest", id),{}, {onSuccess: ({props}) =>{
-        openLeftNotification(props.flash);
-    }});
+    router.get(
+        route("treasury.acceptProdRequest", id),
+        {},
+        {
+            onSuccess: ({ props }) => {
+                openLeftNotification(props.flash);
+            },
+        }
+    );
 };
 </script>
 <style>

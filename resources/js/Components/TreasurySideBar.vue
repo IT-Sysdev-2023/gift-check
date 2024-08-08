@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 const highlightRoute = ref([route().current()]);
 
@@ -7,9 +7,7 @@ const handleClick = (e: any) => {
     highlightRoute.value = [e.key];
 };
 
-// const currentActiveMenu = [route().current().split(".")[1]];
-
-const setActiveTab = () => {
+const setActiveTab = computed(() => {
     const currentR = highlightRoute.value[0].split(".");
     const keys= ['masterfile', 'transactions', 'production', 'adjustment', 'reports'];
     const keysToOpen = [];
@@ -20,12 +18,12 @@ const setActiveTab = () => {
         }
     })
     return keysToOpen;
-}
+})
 </script>
 
 <template>
     <a-menu
-        :openKeys="setActiveTab()"
+        :openKeys="setActiveTab"
         v-model:selectedKeys="highlightRoute"
         theme="dark"
         mode="inline"
