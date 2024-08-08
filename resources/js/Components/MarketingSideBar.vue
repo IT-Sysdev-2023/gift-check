@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { Link } from "@inertiajs/vue3";
 import { ref } from "vue";
+import { PageWithSharedProps } from "@/types";
+import { usePage } from "@inertiajs/vue3";
+
+const page = usePage<PageWithSharedProps>().props;
 
 const highlightRoute = ref([route().current()]);
 const handleClick = (e: any) => {
@@ -17,6 +21,12 @@ const currentActiveMenu = [route().current().split(".")[1]];
         mode="inline"
         @click="handleClick"
     >
+        <a-menu-item key="marketing.dashboard">
+            <QrcodeOutlined />
+            <span>
+                <Link :href="route('marketing.dashboard')">  {{ page.auth.user.usertype == '1' ? 'Marketing Dashboard' : 'Dashboard'}}</Link>
+            </span>
+        </a-menu-item>
         <a-menu-item key="marketing.promo.gc.request">
             <QrcodeOutlined />
             <span>

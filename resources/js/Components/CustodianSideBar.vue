@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { PageWithSharedProps } from "@/types";
+import { usePage } from "@inertiajs/vue3";
+
+const page = usePage<PageWithSharedProps>().props;
 import {
     LineChartOutlined,
     GroupOutlined,
@@ -11,7 +15,7 @@ import {
 <template>
     <a-menu-item key="custodian">
         <QrcodeOutlined />
-        <span> <Link :href="route('custodian.dashboard')"> Dashboard</Link></span>
+        <span> <Link :href="route('custodian.dashboard')">  {{ page.auth.user.usertype == '1' ? 'Custodian Dashboard' : 'Dashboard'}}</Link></span>
     </a-menu-item>
     <a-menu-item key="barcodeChecker">
         <QrcodeOutlined />

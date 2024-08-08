@@ -16,8 +16,6 @@ class ProductionRequest extends Model
     protected $primaryKey = 'pe_id';
     public $timestamps = false;
 
-    public $timestamps= false;
-
     protected function casts(): array
     {
         return [

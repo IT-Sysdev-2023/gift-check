@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { PageWithSharedProps } from "@/types";
 import {
     FileOutlined,
     SwapOutlined,
@@ -6,10 +7,19 @@ import {
     LineChartOutlined,
     BarcodeOutlined
 } from "@ant-design/icons-vue";
+import { usePage } from "@inertiajs/vue3";
 
+const page = usePage<PageWithSharedProps>().props;
 </script>
 
 <template>
+    <a-menu-item key="retail.dashboard">
+        <BarcodeOutlined />
+        <span>
+            <Link :href="route('retail.dashboard')">{{ page.auth.user.usertype == '1' ? 'Retail Dashboard' :
+            'Dashboard'}}</Link>
+        </span>
+    </a-menu-item>
     <a-sub-menu key="transactions">
         <template #title>
             <span>
