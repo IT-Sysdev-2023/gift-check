@@ -357,7 +357,7 @@ class TreasuryController extends Controller
         ]);
         $dept = userDepartment($request->user());
 
-        $filename = $this->createFileName($request);
+        // $filename = $this->createFileName($request);
     }
     //Production Requests
     public function giftCheck()
