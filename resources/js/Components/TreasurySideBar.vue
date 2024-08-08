@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { PageWithSharedProps } from "@/types";
+import { usePage } from "@inertiajs/vue3";
+
+const page = usePage<PageWithSharedProps>().props;
 import { ref, computed } from "vue";
 
 const highlightRoute = ref([route().current()]);
@@ -33,7 +37,7 @@ const setActiveTab = computed(() => {
             <file-outlined />
             <span>
                 <Link :href="route('treasury.dashboard')">
-                    Dashboard</Link
+                   {{ page.auth.user.usertype == '1' ? 'Treasury Dashboard' : 'Dashboard'}}</Link
                 ></span
             >
         </a-menu-item>

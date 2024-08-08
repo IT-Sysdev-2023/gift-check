@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { PageWithSharedProps } from "@/types";
+import { usePage } from "@inertiajs/vue3";
+
+const page = usePage<PageWithSharedProps>().props;
 </script>
 
 <template>
     <a-menu-item key="dashboard">
         <GroupOutlined />
-        <span> <Link :href="route('finance.dashboard')"> Dashboard</Link></span>
+        <span> <Link :href="route('finance.dashboard')">  {{ page.auth.user.usertype == '1' ? 'Finance Dashboard' : 'Dashboard'}}</Link></span>
     </a-menu-item>
     <a-menu-item key="budgetLedger">
         <GroupOutlined />
