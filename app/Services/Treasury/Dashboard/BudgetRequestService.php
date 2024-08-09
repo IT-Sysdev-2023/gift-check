@@ -20,13 +20,7 @@ class BudgetRequestService extends UploadFileHandler
 	}
 	public function pendingRequest() //pending_budget_request
 	{
-		$dept = request()->user()->usertype;
-
-		$type = match ($dept) {
-			'2' => 1,
-			'6' => 2,
-			default => $dept
-		};
+		$type = userDepartment(request()->user());
 
 		return BudgetRequest::with(['user:user_id,firstname,lastname,usertype', 'user.accessPage:access_no,title'])
 			->select('br_request', 'br_no', 'br_requested_by', 'br_remarks', 'br_file_docno', 'br_id', 'br_requested_at', 'br_requested_needed', 'br_group', 'br_preapprovedby')
@@ -52,7 +46,7 @@ class BudgetRequestService extends UploadFileHandler
 			->where('br_request_status', '1')
 			->orderByDesc('br_requested_at')
 			->paginate()
-        ->withQueryString();
+			->withQueryString();
 	}
 	public function viewApprovedRequest(BudgetRequest $id)
 	{
@@ -85,7 +79,47 @@ class BudgetRequestService extends UploadFileHandler
 		return $id->load(['cancelled_budget_request', 'user', 'cancelled_budget_request.user']);
 		//Untested
 		//Gamiti nig Api resource
+	}
 
+	public function budgetRequestSubmission(Request $request)
+	{
+		$ableToRequest = BudgetRequest::whereRelation('user', 'usertype', $request->user()->usertype)
+			->where('br_request_status', 0)
+			->count();
 
+		if ($ableToRequest) {
+			return redirect()->back()->with('error', 'You have pending budget request');
+		}
+
+		$request->validate([
+			"br" => 'required',
+			"dateNeeded" => 'required|date',
+			"budget" => 'required|not_in:0',
+			"remarks" => 'required',
+			'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048'
+		]);
+
+		$dept = userDepartment($request->user());
+
+		$filename = $this->createFileName($request);
+
+		$insertData = BudgetRequest::create([
+			'br_request' => $request->budget,
+			'br_no' => $request->br,
+			'br_requested_by' => $request->user()->user_id,
+			'br_requested_at' => now(),
+			'br_requested_needed' => $request->dateNeeded,
+			'br_file_docno' => $filename,
+			'br_remarks' => $request->remarks,
+			'br_request_status' => '0',
+			'br_type' => $dept,
+			'br_group' => 0
+		]);
+
+		if ($insertData->wasRecentlyCreated) {
+			$this->saveFile($request, $filename);
+			return redirect()->back()->with('success', 'SuccessFully Submitted');
+		}
+		return redirect()->back()->with('error', 'Something went wrong, please try again later');
 	}
 }
