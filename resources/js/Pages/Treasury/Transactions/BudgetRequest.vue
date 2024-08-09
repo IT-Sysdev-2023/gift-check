@@ -105,14 +105,13 @@
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayout.vue";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import type { UploadChangeParam } from "ant-design-vue";
 import dayjs from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import type { UploadFile } from "ant-design-vue";
-import { PageWithSharedProps } from "@/../../resources/js/types/index";
-// import { FormStateGc } from "@/types/index";
-import { onProgress } from "@/../../resources/js/Mixin/UiUtilities";
+import { PageWithSharedProps } from "@/types/index";
+import { onProgress } from "@/Mixin/UiUtilities";
 interface FormStateGc {
     file: UploadFile | null;
     br: string;
@@ -145,7 +144,6 @@ const handleChange = (file: UploadChangeParam) => {
 };
 
 const onSubmit = () => {
-    // if (formState.budget !== 0) {
     formState
         .transform((data) => ({
             ...data,
@@ -158,13 +156,7 @@ const onSubmit = () => {
                     router.visit(route("treasury.dashboard"));
                 }
             },
-            onError: (e) => {
-                console.log(e);
-            },
         });
-    // }else{
-    //     alert('Your Budget is Zero')
-    // }
 };
 const getErrorStatus = (field: string) => {
     return formState.errors[field] ? "error" : "";
