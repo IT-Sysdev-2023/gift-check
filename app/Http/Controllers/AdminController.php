@@ -2,21 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ColumnHelper;
+use App\Http\Requests\PurchaseOrderRequest;
+use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\Promo;
 use App\Models\PromoGcReleaseToItem;
+use App\Models\RequisitionForm;
+use App\Models\RequisitionFormDenomination;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Services\Admin\AdminServices;
+use App\Services\Admin\DBTransaction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use PhpParser\Node\Expr\Cast\Bool_;
 
 class AdminController extends Controller
 {
+    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction)
+    {
+    }
+
+    public function index()
+    {
+        return inertia('Admin/AdminDashboard');
+    }
     //
-    public function index(Request $request)
+    public function statusScanner(Request $request)
     {
 
         $regular = new Gc();
@@ -28,22 +44,17 @@ class AdminController extends Controller
         $transType = '';
         $success = false;
 
-        // $q = Gc::where('barcode_no', $request->barcode)->get();
-        // dd($q->toArray());
 
-        // dd($regular->first()->toArray());
-// dd($regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
-// );
-        if ($regular->where('barcode_no', $request->barcode)->exists()
+        if (
+            $regular->where('barcode_no', $request->barcode)->exists()
             && !$regular->whereHas('barcodePromo', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
         ) {
-            //result regular gc
-            // dd(1);
+
             $transType = 'Reqular Gift Check';
             $steps = self::regularGc($regular, $request);
             $success = true;
         } elseif ($special->where('spexgcemp_barcode', $request->barcode)->exists()) {
-            //result specaial gc
+
             $transType = 'Special Gift Check';
             $steps = self::specialStatus($special, $request);
             $success = true;
@@ -57,7 +68,7 @@ class AdminController extends Controller
             $barcodeNotFound = true;
         }
 
-        return Inertia::render('Admin/AdminDashboard', [
+        return Inertia::render('Admin/StatusScanner', [
             'data' => $steps,
             'latestStatus' => 0,
             'transType' => $transType,
@@ -326,9 +337,6 @@ class AdminController extends Controller
             ]
         ]);
 
-
-        // dd($promo->toArray());
-
         if ($promo->exists()) {
             $steps->push((object) [
                 'title' => 'FAD',
@@ -372,7 +380,7 @@ class AdminController extends Controller
             ->leftJoin('promogc_released', 'prgcrel_barcode', '=', 'prreltoi_barcode')
             ->where('promo_gc.prom_barcode', $request->barcode)->first();
 
-            // dd($query->promo_name);
+        // dd($query->promo_name);
         if (empty($query->promo_name)) {
             $steps->push((object) [
                 'status' => 'current',
@@ -385,12 +393,11 @@ class AdminController extends Controller
                 'title' => 'Marketing',
                 'description' => 'Gift Check is Pending'
             ]);
-        }else{
+        } else {
             $steps->push((object) [
                 'title' => 'Marketing',
                 'description' => 'Gift Check is Released'
             ]);
-
         }
         $q2 =  $promo->join('store_verification', 'store_verification.vs_barcode', '=', 'prreltoi_barcode')->where('store_verification.vs_barcode', $request->barcode);
 
@@ -453,5 +460,22 @@ class AdminController extends Controller
 
 
         return $steps;
+    }
+
+    public function purchaseOrderDetails()
+    {
+        return inertia('Admin/PurchaseOrderDetails', [
+            'denomination' => $this->adminservices->denomination(),
+            'columns' => ColumnHelper::$purchase_details_columns,
+            'record' => $this->adminservices->purchaseOrderDetails(),
+        ]);
+    }
+    public function submitPurchaseOrders(PurchaseOrderRequest $request)
+    {
+        $denomination = collect($request->denom)->filter(function ($item) {
+            return $item !== null;
+        });
+
+        return $this->dBTransaction->createPruchaseOrders($request, $denomination);
     }
 }

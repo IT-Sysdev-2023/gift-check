@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\RequisitionFormDenomination;
 
 class RequisitionForm extends Model
 {
@@ -11,8 +12,12 @@ class RequisitionForm extends Model
 
     protected $guarded = [];
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'req_no';
 
     protected $table = 'requisition_form';
-    
+
+    public function requisFormDenom()
+    {
+        return $this->hasMany(RequisitionFormDenomination::class, 'form_id' ,'req_no');
+    }
 }
