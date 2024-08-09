@@ -12,5 +12,7 @@ class RequisitionForm extends Model
     protected $guarded = [];
 
     protected $primaryKey = 'id';
+
+    protected $table = 'requisition_form';
     
 }

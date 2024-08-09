@@ -14,6 +14,7 @@ use App\Models\InstitutPayment;
 use App\Models\InstitutTransaction;
 use App\Models\InstitutTransactionsItem;
 use App\Models\Promo;
+use App\Models\RequisitionFormDenomination;
 use App\Models\Store;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\User;
@@ -1158,6 +1159,7 @@ class MarketingController extends Controller
 
     public function submitReqForm(Request $request)
     {
+
         if ($request->data['finalize'] == 1) {
 
             $lnumber = LedgerCheck::count() + 1;
@@ -1207,9 +1209,21 @@ class MarketingController extends Controller
                     ]);
 
                 // RequisitionForm::create([
-                //     ''
-                // ]);    
+                //     'req_no' => $request->data['requestNo'],
+                //     'sup_name' =>$request->supName,
+                //     'mop' =>
+                // ]);
 
+
+
+                foreach ($request->denom as $key => $value) {
+
+                    RequisitionFormDenomination::create([
+                        'form_id' => $request->data['requestNo'],
+                        'denom_id' => $value->denomination,
+                        'quantity' => $value->pe_items_quantity,
+                    ]);
+                }
 
                 return Inertia::render('Marketing/Pdf/RequisitionResult', [
                     'filePath' => $pdf,
@@ -1218,7 +1232,48 @@ class MarketingController extends Controller
                 dd(2);
             }
         } elseif ($request->data['finalize'] == 3) {
-            dd(2);
+            $total = 0;
+            $lnumber = LedgerCheck::count() + 1;
+            $productionDetails = ProductionRequest::where('pe_id', $request->data['id'])
+                ->select(['pe_type', 'pe_group'])
+                ->get();
+            $ptype = $productionDetails[0]->pe_type;
+            $pgroup = $productionDetails[0]->pe_group;
+
+
+            if ($productionDetails) {
+                $updateProductionStatus = ProductionRequest::where('pe_id', $request->data['id'])
+                    ->update([
+                        'pe_requisition' => '2'
+                    ]);
+
+                if ($updateProductionStatus) {
+                    $amount = ProductionRequestItem::join('denomination', 'production_request_items.pe_items_denomination', '=', 'denomination.denom_id')
+                        ->where('pe_items_request_id', $request->data['id'])->get();
+
+                    foreach ($amount as $item) {
+                        $sub = $item->pe_items_quantity * $item->denomination;
+                        $total = $total + $sub;
+                    }
+                    $cancelGc = Gc::where('pe_entry_gc', $request->data['id'])
+                    ->update(['gc_cancelled' => '*']);
+                    if($cancelGc){
+                        $isInserted= LedgerBudget::create([
+                            'bledger_no' => $lnumber,
+                            'bledger_datetime'=>now(),
+                            'bledger_type' => 'RC',
+                            'bledger_typeid' =>$ptype,
+                            'bledger_group' =>$pgroup,
+                            'bdebit_amt' =>$total
+                        ]);
+
+                        if($isInserted){
+                            
+                        }
+                    }
+
+                }
+            }
         } elseif (
             $request->data['id'] == null ||
             $request->data['requestNo'] == null ||
