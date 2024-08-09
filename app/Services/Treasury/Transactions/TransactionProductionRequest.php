@@ -20,7 +20,7 @@ class TransactionProductionRequest extends UploadFileHandler
 	private function isAbleToRequest(Request $request)
 	{
 		$q = ProductionRequest::whereRelation('user', 'usertype', $request->user()->usertype)->where('pe_status', 0)->count();
-		if ($q > 0) {
+		if ($q) {
 			return true;
 		}
 		return false;

@@ -341,23 +341,7 @@ class TreasuryController extends Controller
 
     public function budgetRequestSubmission(Request $request)
     {
-        $r = BudgetRequest::whereRelation('user', 'usertype', $request->user()->usertype)
-            ->where('br_request_status', 0)
-            ->count();
-        if ($r) {
-            return redirect()->back()->with('error', 'You have pending budget request');
-        }
-
-        $request->validate([
-            "br" => 'required',
-            "dateNeeded" => 'required|date',
-            "budget" => 'required|not_in:0',
-            "remarks" => 'required',
-            'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048'
-        ]);
-        $dept = userDepartment($request->user());
-
-        // $filename = $this->createFileName($request);
+        $this->budgetRequestService->budgetRequestSubmission($request);
     }
     //Production Requests
     public function giftCheck()
