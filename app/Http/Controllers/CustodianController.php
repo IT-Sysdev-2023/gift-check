@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
-use App\Services\Custodian\CustodianServices;
+use App\Services\Custodian\BarcodeCheckerServices;
 use Illuminate\Http\Request;
 
 class CustodianController extends Controller
 {
-    public function __construct(public CustodianServices $custodianServices)
+    public function __construct(public BarcodeCheckerServices $barcodeCheckerServices)
     {
     }
     public function index()
@@ -19,27 +19,20 @@ class CustodianController extends Controller
     public function barcodeCheckerIndex()
     {
         return inertia('Custodian/BarcodeChecker', [
-            'data' => $this->custodianServices->barcodeChecker(),
+            'data' => $this->barcodeCheckerServices->barcodeChecker(),
             'columns' => ColumnHelper::$barcode_checker_columns,
             'date' => today()->toFormattedDateString(),
             'count' => [
-                'regular' => $this->custodianServices->reqularGcScannedCount(),
-                'special' => $this->custodianServices->specialExternalGcCount(),
-                'total' => $this->custodianServices->totalGcCount(),
-                'today' => $this->custodianServices->todaysCount(),
+                'regular' => $this->barcodeCheckerServices->reqularGcScannedCount(),
+                'special' => $this->barcodeCheckerServices->specialExternalGcCount(),
+                'total' => $this->barcodeCheckerServices->totalGcCount(),
+                'today' => $this->barcodeCheckerServices->todaysCount(),
             ],
         ]);
     }
 
     public function scanBarcode(Request $request)
     {
-        return $this->custodianServices->scanBarcodeFn($request);
-    }
-
-    public function receivedGcIndex()
-    {
-        return inertia('Custodian/ReceivedGc', [
-            'record' => $this->custodianServices->receivedGcIndex(),
-        ]);
+        return $this->barcodeCheckerServices->scanBarcodeFn($request);
     }
 }
