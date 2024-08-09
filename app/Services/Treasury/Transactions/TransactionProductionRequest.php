@@ -38,16 +38,10 @@ class TransactionProductionRequest extends UploadFileHandler
 			'denom' => ['required', 'array', new DenomQty()],
 		]);
 
-		$type = match ($dept = $request->user()->usertype) {
-			'2' => 1,
-			'6' => 2,
-			default => $dept
-		};
-
 		$filename = $this->createFileName($request);
 
 		try {
-			DB::transaction(function () use ($request, $type, $filename) {
+			DB::transaction(function () use ($request, $filename) {
 
 				$pr = ProductionRequest::create([
 					'pe_num' => $request->prNo,
@@ -56,7 +50,7 @@ class TransactionProductionRequest extends UploadFileHandler
 					'pe_date_needed' => $request->dateNeeded,
 					'pe_file_docno' => $filename,
 					'pe_remarks' => $request->remarks,
-					'pe_type' => $type,
+					'pe_type' => userDepartment($request->user()),
 					'pe_group' => 0
 				]);
 

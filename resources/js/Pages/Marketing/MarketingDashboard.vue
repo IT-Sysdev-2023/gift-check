@@ -95,6 +95,7 @@
                 </a-card>
             </a-col>
         </a-row>
+
         <template #footer>
             <a-button type="default" @click="closeModal">Cancel</a-button>
             <a-button type="primary" @click="submitReqForm" :disabled="isSubmitDisabled">
@@ -141,7 +142,8 @@ export default {
                 selectedSupplierId: '',
                 contactPerson: '',
                 contactNum: '',
-                address: ''
+                address: '',
+
             }
         };
     },
@@ -161,7 +163,8 @@ export default {
         openReqModal(data) {
             this.$inertia.get(route('marketing.dashboard'),
                 {
-                    data: data.pe_id
+                    data: data.pe_id,
+                  
                 }, {
                 onSuccess: () => {
                     this.open = true;
@@ -174,7 +177,9 @@ export default {
         },
         submitReqForm() {
             this.$inertia.post(route('marketing.requisition.submit.form'), {
-                data: this.form
+                data: this.form,
+                denom: this.productionReqItems,
+                supName: this.supplier.filter(data => data.gcs_id == this.form.selectedSupplierId)[0].gcs_companyname
             })
         },
         closeModal() {

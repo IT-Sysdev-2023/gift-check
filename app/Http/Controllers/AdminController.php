@@ -34,7 +34,7 @@ class AdminController extends Controller
         // dd($regular->first()->toArray());
 // dd($regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
 // );
-        if ($regular->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
+        if ($regular->where('barcode_no', $request->barcode)->exists()
             && !$regular->whereHas('barcodePromo', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()
         ) {
             //result regular gc
@@ -95,7 +95,7 @@ class AdminController extends Controller
 
         // dd($step3->exists());
 
-        if ($step3->exists()) {
+        if ($step3->whereHas('barcode', fn (Builder $query) => $query->where('barcode_no', $request->barcode))->exists()) {
             $steps->push((object) [
                 'title' => 'FAD',
                 'description' => 'Scanned By FAD'
