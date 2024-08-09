@@ -242,6 +242,33 @@ class ColumnHelper
         ],
 
     ];
+    public static $received_gc_columns = [
+        [
+            'title' => 'Receiving No.',
+            'dataIndex' => 'rec_no',
+        ],
+        [
+            'title' => 'Date Received.',
+            'dataIndex' => 'date_rec',
+        ],
+        [
+            'title' => 'E Requisiton No.',
+            'dataIndex' => 'e_reqno',
+        ],
+        [
+            'title' => 'Supplier Name.',
+            'dataIndex' => 'supname',
+        ],
+        [
+            'title' => 'Received By.',
+            'dataIndex' => 'recby',
+        ],
+        [
+            'title' => 'Received Type.',
+            'dataIndex' => 'rectype',
+        ],
+
+    ];
 
     public static function app_pend_request_columns($isPending = false)
     {

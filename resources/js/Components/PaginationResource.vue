@@ -1,5 +1,5 @@
 <template>
-    <a-row class="flex justify-between" align="middle">
+    <a-row class="flex justify-between mt-5" align="middle">
         <a-col>
             <a-typography-text>{{ `Showing ${datarecords.meta.from || 0} to ${datarecords.meta.to || 0} of ${datarecords.meta.total.toLocaleString()}
                 records` }}
