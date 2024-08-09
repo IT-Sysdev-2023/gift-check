@@ -13,4 +13,6 @@ class RequisitionFormDenomination extends Model
 
     protected $primaryKey = 'id';
 
+    protected $table = 'requisition_form_denomination';
+
 }

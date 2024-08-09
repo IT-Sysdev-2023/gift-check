@@ -5,6 +5,7 @@ import { UserType } from "@/userType";
 import { PageWithSharedProps } from "@/types/index";
 import { computed } from "vue";
 import IadSideBar from "@/Components/IadSideBar.vue";
+import AdminSidebar from "@/Components/AdminSidebar.vue";
 
 const page = usePage<PageWithSharedProps>().props;
 const { userType, userRole } = UserType();
@@ -57,6 +58,7 @@ const dashboardRoute = computed(() => {
                     </div>
 
 
+                    <AdminSidebar v-if="userType('1')" />
                     <TreasurySideBar v-if="(userType('2') || userType('1')) && !userRole(2)" />
                     <RetailSidebar v-if="(userType('7') || userType('1')) && !userRole(7)" />
                     <AccountingSideBar v-if="(userType('9') || userType('1')) && !userRole(9)" />

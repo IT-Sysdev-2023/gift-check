@@ -69,6 +69,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::prefix('admin')->group(function () {
+    Route::name('admin.')->group(function () {
+        Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
+        Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
+        Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
+    });
+});
+
 //Marketing
 Route::prefix('marketing')->group(function () {
     Route::name('marketing.')->group(function () {
@@ -95,7 +103,6 @@ Route::prefix('marketing')->group(function () {
             Route::post('submit-requisition-form', [MarketingController::class, 'submitReqForm'])->name('submit.form');
             Route::get('requis-pdf', [MarketingController::class, 'requisitionPdf'])->name('requistion.pdf');
         });
-
     });
 });
 
@@ -177,8 +184,8 @@ Route::prefix('treasury')->group(function () {
             Route::post('get-assign-employee', [TreasuryController::class, 'addAssignEmployee'])->name('add.assign.employee');
         });
 
-        Route::prefix('transactions')->name('transactions.')->group(function (){
-            Route::prefix('production-request')->name('production.')->group(function (){
+        Route::prefix('transactions')->name('transactions.')->group(function () {
+            Route::prefix('production-request')->name('production.')->group(function () {
                 Route::get('gift-check', [TreasuryController::class, 'giftCheck'])->name('gc');
                 Route::post('store-gift-check', [TreasuryController::class, 'giftCheckStore'])->name('gcSubmit');
                 Route::get('envelope', [TreasuryController::class, 'envelope'])->name('envelope');
@@ -244,7 +251,7 @@ Route::prefix('search')->group(function () {
 });
 Route::prefix('management')->group(function () {
     Route::name('manager.')->group(function () {
-        Route::post('managers-key' ,[ManagerController::class, 'managersKey'])->name('managers.key');
+        Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
     });
 });
 
