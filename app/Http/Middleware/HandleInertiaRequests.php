@@ -43,6 +43,8 @@ class HandleInertiaRequests extends Middleware
                     'error' => $request->session()->get('error'),
                     'msg' => $request->session()->get('msg'),
                     'title' => $request->session()->get('title'),
+                    'type' => $request->session()->get('type'),
+                    'description' => $request->session()->get('description'),
                 ];
             },
             'pendingPrRequest' => ProductionRequest::select('pe_id', 'pe_num')
