@@ -72,28 +72,27 @@ class ColumnHelper
     public static $receiving_columns = [
         [
             'title' => 'Fad Rec #',
-            'dataIndex' => 'recno',
+            'dataIndex' => 'rec_no',
 
         ],
         [
             'title' => 'E-req #',
-            'dataIndex' => 'reqno',
+            'dataIndex' => 'req_no',
 
         ],
         [
             'title' => 'Transaction Date',
-            'dataIndex' => 'transdate',
+            'dataIndex' => 'trans_date',
+
+        ],
+        [
+            'title' => 'Supplier Name',
+            'dataIndex' => 'sup_name',
 
         ],
         [
             'title' => 'P.O #',
-            'dataIndex' => 'po',
-
-        ],
-        [
-            'title' => 'Textfile Name',
-            'dataIndex' => 'name',
-            'align' => 'center'
+            'dataIndex' => 'po_no',
 
         ],
         [
