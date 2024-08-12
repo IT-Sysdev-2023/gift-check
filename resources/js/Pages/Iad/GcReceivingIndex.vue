@@ -31,8 +31,7 @@ export default {
     methods: {
         setup(data){
             this.$inertia.get(route('iad.setup.receiving'), {
-                reqno   : data.req_no,
-                requisId: data.reqno,
+                requisId: data.req_no,
             });
         }
     }

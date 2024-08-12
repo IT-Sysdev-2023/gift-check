@@ -25,16 +25,15 @@ class IadController extends Controller
 
     public function setupReceiving(Request $request)
     {
+        // dd($request->all());
         $data =  $this->iadServices->setupReceivingtxt($request);
 
-        // dd($data->requisFormDenom->toArray());
-
         return inertia('Iad/SetupReceiving', [
-            'denominantion' => $this->iadServices->getDenomination($data->requisFormDenom),
+            'denomination' => $this->iadServices->getDenomination($data->requisFormDenom),
             'columns' => ColumnHelper::$denomination_column,
             'record' => $data,
             'recnum' => $this->iadServices->getRecNum(),
-            'reqid' => $request->reqno,
+            'reqid' => $request->requisId,
             'date' => today()->toFormattedDateString()
         ]);
     }
