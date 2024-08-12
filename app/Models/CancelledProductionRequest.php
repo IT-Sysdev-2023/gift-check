@@ -13,6 +13,9 @@ class CancelledProductionRequest extends Model
     protected $table = 'cancelled_production_request';
     protected $primaryKey = 'cpr_id';
 
+    protected $guarded=[];
+    public $timestamps= false;
+
     public function user(): BelongsTo{
         return $this->belongsTo(User::class, 'pe_requested_by', 'user_id');
     }

@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: typeof import('ant-design-vue/es')['Alert']
+    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
@@ -105,6 +106,7 @@ declare module 'vue' {
     Colonade_colon: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/Colonade_colon.vue')['default']
     ColonadeMandaue: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ColonadeMandaue.vue')['default']
     ConfirmPassword: typeof import('./resources/js/Pages/Auth/ConfirmPassword.vue')['default']
+    copy: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/PendingRequest copy.vue')['default']
     CustodianDashboard: typeof import('./resources/js/Pages/Custodian/CustodianDashboard.vue')['default']
     CustodianSideBar: typeof import('./resources/js/Components/CustodianSideBar.vue')['default']
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
@@ -168,6 +170,8 @@ declare module 'vue' {
     PaginationSmall: typeof import('./resources/js/Components/PaginationSmall.vue')['default']
     PendingPromoGcRequest: typeof import('./resources/js/Pages/Finance/PendingPromoGcRequest.vue')['default']
     PendingRequest: typeof import('./resources/js/Pages/Treasury/Dashboard/PendingRequest.vue')['default']
+    PendingRequestForm: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/PendingRequestForm.vue')['default']
+    PicRightOutlined: typeof import('@ant-design/icons-vue')['PicRightOutlined']
     PlazaMarcela: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/PlazaMarcela.vue')['default']
     PlusOutlined: typeof import('@ant-design/icons-vue')['PlusOutlined']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
