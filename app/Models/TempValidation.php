@@ -12,6 +12,7 @@ class TempValidation extends Model
     protected $table= 'temp_validation';
 
     protected $primaryKey= 'tval_barcode';
+    
     protected $guarded = [];
 
     public $timestamps = false;

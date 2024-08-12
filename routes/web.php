@@ -114,7 +114,7 @@ Route::prefix('marketing')->group(function () {
             Route::get('pending-request',[MarketingController::class, 'pendingRequest'])->name('pending.request');
             Route::post('submit-request',[MarketingController::class, 'submitPendingRequest'])->name('submit.request');
         });
-        
+
     });
 });
 
@@ -255,6 +255,7 @@ Route::prefix('iad')->group(function () {
         Route::get('receiving-index', [IadController::class, 'receivingIndex'])->name('receiving');
         Route::get('receiving-setup', [IadController::class, 'setupReceiving'])->name('setup.receiving');
         Route::post('validate-with-range', [IadController::class, 'validateByRange'])->name('validate.range');
+        Route::post('delete-scanned-barcode', [IadController::class, 'removeScannedGc'])->name('remove.scanned.gc');
     });
 });
 
