@@ -210,6 +210,7 @@ declare module 'vue' {
     Sale_treasurySales: typeof import('./resources/js/Pages/Marketing/Sale_treasurySales.vue')['default']
     SaveOutlined: typeof import('@ant-design/icons-vue')['SaveOutlined']
     ScanGcStatuses: typeof import('./resources/js/Pages/Admin/ScanGcStatuses.vue')['default']
+    ScannedGc: typeof import('./resources/js/Pages/Iad/Cards/ScannedGc.vue')['default']
     ScreenVille: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ScreenVille.vue')['default']
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
     SettingOutlined: typeof import('@ant-design/icons-vue')['SettingOutlined']

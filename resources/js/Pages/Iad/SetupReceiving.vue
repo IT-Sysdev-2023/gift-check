@@ -30,13 +30,6 @@
                                 </template>
                             </a-button>
                         </div>
-                        <div class="flex justify-end">
-                            <a-button class="mb-2">
-                                <template #icon>
-                                    <UnorderedListOutlined />
-                                </template>
-                            </a-button>
-                        </div>
                     </a-col>
                     <a-col :span="17">
                         <a-popconfirm title="Managers Key" v-model:open="isManKey" @cancel="cancel"
@@ -75,16 +68,34 @@
                         <a-button block class="mb-2">
                             Validate By Barcode
                         </a-button>
-                        <a-button block class="mb-2">
-                            Scanned Gc List
-                        </a-button>
+
                     </a-col>
 
-                    <validate-by-range v-model:open="openRangeBarcode" :recnum="recnum" :reqid="reqid"  :date="date"/>
+                    <validate-by-range v-model:open="openRangeBarcode" :recnum="recnum" :reqid="reqid" :date="date" />
                 </a-row>
             </a-col>
             <a-col :span="14">
-                <setup-details :record="record"/>
+                <a-tabs size="small" type="card" v-model:activeKey="activeKey">
+                    <a-tab-pane key="1">
+                        <template #tab>
+                            <span>
+                                <PaperClipOutlined />
+                                Requisition Details
+                            </span>
+                        </template>
+                        <setup-details :record="record" />
+                    </a-tab-pane>
+                    <a-tab-pane key="2">
+                        <template #tab>
+                            <span>
+                                <FileProtectOutlined />
+                               Scanned Gift-Check
+                            </span>
+                        </template>
+                        <scanned-gc :scannedGc="scannedGc"/>
+                    </a-tab-pane>
+                </a-tabs>
+
             </a-col>
         </a-row>
     </div>
@@ -104,6 +115,7 @@ export default {
 
     props: {
         denomination: Object,
+        scannedGc: Object,
         columns: Array,
         record: Object,
         recnum: Number,
@@ -112,7 +124,7 @@ export default {
     },
     data() {
         return {
-            activeKey: null,
+            activeKey: '1',
             byRange: false,
             form: {
                 username: null,

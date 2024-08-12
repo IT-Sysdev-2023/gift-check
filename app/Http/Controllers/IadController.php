@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
+use App\Models\TempValidation;
 use App\Services\Iad\IadServices;
 use Illuminate\Http\Request;
 
@@ -25,11 +26,11 @@ class IadController extends Controller
 
     public function setupReceiving(Request $request)
     {
-        // dd($request->all());
         $data =  $this->iadServices->setupReceivingtxt($request);
 
         return inertia('Iad/SetupReceiving', [
             'denomination' => $this->iadServices->getDenomination($data->requisFormDenom),
+            'scannedGc' => $this->iadServices->getScannedGc(),
             'columns' => ColumnHelper::$denomination_column,
             'record' => $data,
             'recnum' => $this->iadServices->getRecNum(),
@@ -41,5 +42,16 @@ class IadController extends Controller
     public function validateByRange(Request $request)
     {
         return $this->iadServices->validateByRangeServices($request);
+    }
+
+    public function removeScannedGc(Request $request)
+    {
+        TempValidation::where('tval_barcode', $request->barcode)->delete();
+
+        return back()->with([
+            'status' => 'success',
+            'title' => 'Success!',
+            'msg' => 'Remove Barcode Successfully',
+        ]);
     }
 }
