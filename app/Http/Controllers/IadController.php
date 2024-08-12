@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 
 class IadController extends Controller
 {
-    public function __construct(public IadServices $iadServices)
-    {
-    }
+    public function __construct(public IadServices $iadServices) {}
 
     public function index()
     {
@@ -27,15 +25,16 @@ class IadController extends Controller
 
     public function setupReceiving(Request $request)
     {
-        
-        $data = $this->iadServices->setupReceivingtxt($request);
+        $data =  $this->iadServices->setupReceivingtxt($request);
+
+        // dd($data->requisFormDenom->toArray());
 
         return inertia('Iad/SetupReceiving', [
-            'denomination' => $this->iadServices->getDenomination($data->denomres),
+            'denominantion' => $this->iadServices->getDenomination($data->requisFormDenom),
             'columns' => ColumnHelper::$denomination_column,
-            'record' => $data->result,
+            'record' => $data,
             'recnum' => $this->iadServices->getRecNum(),
-            'reqid' => $request->requisId,
+            'reqid' => $request->reqno,
             'date' => today()->toFormattedDateString()
         ]);
     }

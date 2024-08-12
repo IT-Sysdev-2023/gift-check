@@ -1,5 +1,6 @@
 <template>
-    <div v-if="ifRecord()">
+    <div v-if="Object.keys(record).length">
+
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
                 <a-card>
@@ -103,11 +104,11 @@ export default {
     layout: AuthenticatedLayout,
 
     props: {
-        record: Object,
-        columns: Array,
         denomination: Object,
-        reqid: Number,
+        columns: Array,
+        record: Object,
         recnum: Number,
+        reqid: Number,
         date: String,
     },
     data() {
@@ -126,10 +127,6 @@ export default {
         }
     },
     methods: {
-
-        ifRecord() {
-            return Object.keys(this.record).length;
-        },
 
         validateRange() {
             this.byRange = true;
