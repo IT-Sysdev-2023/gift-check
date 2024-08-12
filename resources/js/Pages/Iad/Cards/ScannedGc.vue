@@ -25,12 +25,10 @@ export default {
                 {
                     title: 'Barcode Number',
                     dataIndex: 'tval_barcode',
-                    align: 'center'
                 },
                 {
                     title: 'Denomination',
                     dataIndex: 'denomination',
-                    align: 'center'
                 },
                 {
                     title: 'Action',
