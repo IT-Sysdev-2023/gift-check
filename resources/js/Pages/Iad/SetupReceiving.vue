@@ -65,13 +65,14 @@
                             </a-button>
                         </a-popconfirm>
 
-                        <a-button block class="mb-2">
+                        <a-button block class="mb-2" @click="validateBarcode">
                             Validate By Barcode
                         </a-button>
 
                     </a-col>
 
                     <validate-by-range v-model:open="openRangeBarcode" :recnum="recnum" :reqid="reqid" :date="date" />
+                    <validate-barcode v-model:open="openBarcode" :recnum="recnum" :reqid="reqid" :date="date"/>
                 </a-row>
             </a-col>
             <a-col :span="14">
@@ -134,13 +135,19 @@ export default {
             error: {},
             response: {},
             openRangeBarcode: false,
+            openBarcode: false,
             isManKey: false,
+
         }
     },
     methods: {
 
         validateRange() {
             this.byRange = true;
+        },
+        validateBarcode(){
+
+            this.openBarcode = true;
         },
         submitKey() {
             this.isSubmitting = true;

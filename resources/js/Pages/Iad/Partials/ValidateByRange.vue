@@ -21,7 +21,7 @@
                             <a-input v-model:value="form.barcodeStart" size="large"
                                 placeholder="Start of Barcode here.." show-count allow-clear @keypress="handleKeyPress">
                                 <template #prefix>
-                                    <BarcodeOutlined />
+                                    <PaperClipOutlined />
                                 </template>
                                 <template #suffix>
                                     <a-tooltip title="Barcode Start Here.">
@@ -38,12 +38,12 @@
                         <a-typography-text keyboard>Barcode End:</a-typography-text>
                         <a-form-item :help="errors.barcodeStart" has-feedback
                             :validate-status="form.barcodeEnd?.length === 13 ? 'success' : errors.barcodeEnd ? 'error' : ''">
-                            <a-input v-model:value="form.barcodeEnd" size="large" placeholder="End of Barcode here.."
-                                show-count allow-clear
+                            <a-input v-model:value="form.barcodeEnd" @keyup.enter="validateRange" size="large"
+                                placeholder="End of Barcode here.." show-count allow-clear
                                 :disabled="form.barcodeStart === null || form.barcodeStart.length <= 0"
                                 @keypress="handleKeyPress">
                                 <template #prefix>
-                                    <BarcodeOutlined />
+                                    <PaperClipOutlined />
                                 </template>
                                 <template #suffix>
                                     <a-tooltip title="BarcodeEnd Here.">
@@ -58,6 +58,12 @@
 
             <a-row :gutter="[16, 16]">
                 <a-col :span="12">
+                    <p class="text-start mt-4" style="color: #3FA2F6;">
+                        Validated By: <a-typography-text keyboard>{{ $page.props.auth.user.full_name
+                            }}</a-typography-text>
+                    </p>
+                </a-col>
+                <a-col :span="12">
                     <div class="mt-2 flex justify-between">
                         <a-button block type="primary" @click="validateRange"
                             :disabled="(form.barcodeStart === null || form.barcodeEnd === null) || (form.barcodeEnd == '' || form.barcodeStart == '')">
@@ -67,12 +73,7 @@
                             Submit
                         </a-button>
                     </div>
-                </a-col>
-                <a-col :span="12">
-                    <p class="text-end mt-4" style="color: #3FA2F6;">
-                        Validated By: <a-typography-text keyboard>{{ $page.props.auth.user.full_name
-                            }}</a-typography-text>
-                    </p>
+
                 </a-col>
             </a-row>
         </div>
