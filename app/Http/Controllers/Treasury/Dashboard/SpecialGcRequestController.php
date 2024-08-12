@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Treasury\Dashboard;
 
+use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SpecialExternalGcRequestResource;
 use App\Models\SpecialExternalCustomer;
@@ -100,5 +101,21 @@ class SpecialGcRequestController extends Controller
     public function addAssignEmployee(Request $request)
     {
         dd($request->all());
+    }
+
+    //Special Gc Payment
+    public function specialExternalPayment()
+    {
+        $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
+
+        return inertia('Treasury/Transactions/SpecialGcPayment/SpecialExtPayment', [
+            'title' => 'Special External Gc Payment',
+            'trans' => $transactionNumber ? NumberHelper::leadingZero($transactionNumber + 1, "%03d") : '0001',
+            'options' => self::options()
+        ]);
+    }
+    public function specialExtPaymentSubmission(Request $request)
+    {
+        $request->dd();
     }
 }

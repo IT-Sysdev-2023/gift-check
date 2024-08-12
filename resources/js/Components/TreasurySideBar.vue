@@ -13,16 +13,23 @@ const handleClick = (e: any) => {
 
 const setActiveTab = computed(() => {
     const currentR = highlightRoute.value[0].split(".");
-    const keys= ['masterfile', 'transactions', 'production', 'adjustment', 'reports'];
+    const keys = [
+        "masterfile",
+        "transactions",
+        "production",
+        "adjustment",
+        "reports",
+        "special", //add more key sub-menu
+    ];
     const keysToOpen = [];
 
     keys.forEach(function (item) {
-        if(currentR.includes(item)){
-            keysToOpen.push(item)
+        if (currentR.includes(item)) {
+            keysToOpen.push(item);
         }
-    })
+    });
     return keysToOpen;
-})
+});
 </script>
 
 <template>
@@ -37,7 +44,11 @@ const setActiveTab = computed(() => {
             <file-outlined />
             <span>
                 <Link :href="route('treasury.dashboard')">
-                   {{ page.auth.user.usertype == '1' ? 'Treasury Dashboard' : 'Dashboard'}}</Link
+                    {{
+                        page.auth.user.usertype == "1"
+                            ? "Treasury Dashboard"
+                            : "Dashboard"
+                    }}</Link
                 ></span
             >
         </a-menu-item>
@@ -65,13 +76,11 @@ const setActiveTab = computed(() => {
                 </span>
             </template>
 
-            <a-menu-item key="treasury.transactions.budgetRequest"
-                >
+            <a-menu-item key="treasury.transactions.budgetRequest">
                 <Link :href="route('treasury.transactions.budgetRequest')">
                     Budget Request
                 </Link>
-                </a-menu-item
-            >
+            </a-menu-item>
             <a-sub-menu key="production">
                 <template #title>
                     <span>
@@ -104,9 +113,25 @@ const setActiveTab = computed(() => {
             <a-menu-item key="menu-item-institution-gc-refund"
                 >Institution GC Refund</a-menu-item
             >
-            <a-menu-item key="menu-item-special-gc-payment"
-                >Special GC Payment</a-menu-item
-            >
+            <a-sub-menu key="special">
+                <template #title>
+                    <span>
+                        <span>Special GC Payment</span>
+                    </span>
+                </template>
+                <a-menu-item key="treasury.transactions.special.ext">
+                    <span>
+                        <Link
+                            :href="route('treasury.transactions.special.ext')"
+                        >
+                            Special Ext. Gc Payment</Link
+                        ></span
+                    ></a-menu-item
+                >
+                <a-menu-item key="menu-item-envelope"
+                    >Special Int. Gc Payment</a-menu-item
+                >
+            </a-sub-menu>
             <a-menu-item key="menu-item-gc-sales-report-eod"
                 >GC Sales Report (EOD)</a-menu-item
             >

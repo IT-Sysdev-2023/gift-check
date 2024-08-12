@@ -19,6 +19,7 @@ use App\Http\Controllers\Treasury\Dashboard\BudgetRequestController;
 use App\Http\Controllers\Treasury\Dashboard\GcProductionRequestController;
 use App\Http\Controllers\Treasury\Dashboard\SpecialGcRequestController;
 use App\Http\Controllers\Treasury\Dashboard\StoreGcController;
+use App\Http\Controllers\Treasury\Transactions\SpecialGcPaymentController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\MainController;
 use App\Http\Controllers\Treasury\TreasuryController;
@@ -184,15 +185,23 @@ Route::middleware('auth')->group(function () {
             });
 
             Route::prefix('transactions')->name('transactions.')->group(function () {
+                //Budget Request
+                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+
+                //Production Request
                 Route::prefix('production-request')->name('production.')->group(function () {
                     Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
                     Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
                     Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
+                    Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
                 });
-                Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
-                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+                //Special Gc Payment
+                Route::prefix('special-gc-payment')->name('special.')->group(function () {
+                    Route::get('special-external-gc-payment', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('ext');
+                    Route::post('special-external-gc-payment-submission', [SpecialGcRequestController::class, 'specialExtPaymentSubmission'])->name('extSubmission');
+                });
             });
 
 
