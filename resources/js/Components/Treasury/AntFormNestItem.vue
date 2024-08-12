@@ -21,18 +21,21 @@
             </a-form-item>
             <a-form-item
                 :name="['denomination', index, 'qty']"
-                
                 :rules="{
                     required: true,
                     message: 'Missing Quantity',
                 }"
             >
                 <span>Quantity:</span>
-                <a-input-number v-model:value="item.qty" style="width: 120px" :min="0"/>
+                <a-input-number
+                    v-model:value="item.qty"
+                    style="width: 120px"
+                    :min="0"
+                />
             </a-form-item>
             <MinusCircleOutlined @click="removeUser(item)" />
         </a-space>
-        <a-form-item >
+        <a-form-item>
             <a-button type="dashed" block @click="addDenom">
                 <PlusOutlined />
                 Add Denomination
@@ -49,7 +52,9 @@ interface Denom {
     id: number;
 }
 const props = defineProps<{
-    form: { [key: string]: any };
+    form: {
+        denomination: any[];
+    };
 }>();
 
 const removeUser = (item: Denom) => {
