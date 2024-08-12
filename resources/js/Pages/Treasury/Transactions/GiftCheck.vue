@@ -24,14 +24,15 @@
             </a-row>
         </a-card>
         <a-card title="Submit a Gift Check" class="mt-10">
-            <a-row>
-                <a-col :span="10">
-                    <a-form
-                        ref="formRef"
-                        :model="formState"
-                        :label-col="{ span: 8 }"
-                        :wrapper-col="{ span: 12 }"
-                    >
+            <a-form
+                ref="formRef"
+                :model="formState"
+                :label-col="{ span: 8 }"
+                :wrapper-col="{ span: 12 }"
+                @finish="onSubmit"
+            >
+                <a-row>
+                    <a-col :span="10">
                         <a-form-item ref="name" label="PR No." name="name">
                             <a-input :value="formState.prNo" readonly />
                         </a-form-item>
@@ -65,62 +66,62 @@
                                 @input="clearError('remarks')"
                             />
                         </a-form-item>
-                    </a-form>
-                </a-col>
-                <a-col :span="14">
-                    <a-card>
-                        <a-row :gutter="16" class="text-center">
-                            <a-col :span="12">
-                                <span>Denomination</span>
-                            </a-col>
-                            <a-col :span="12">
-                                <span>Quantity</span>
-                            </a-col>
-                        </a-row>
-                        <a-row
-                            :gutter="16"
-                            class="mt-5"
-                            v-for="(item, index) of formState.denom"
-                            :key="index"
-                        >
-                            <a-col :span="12">
-                                <a-input
-                                    :value="item.denomination"
-                                    readonly
-                                    class="text-end"
-                                />
-                            </a-col>
-                            <a-col :span="12" style="text-align: center">
-                                <a-input-number
-                                    id="inputNumber"
-                                    v-model:value="item.qty"
-                                    placeholder="0"
-                                    :min="0"
-                                    has-feedback
-                                    :validate-status="getErrorStatus('denom')"
-                                    :help="getErrorMessage('denom')"
-                                >
-                                    <template #upIcon>
-                                        <ArrowUpOutlined />
-                                    </template>
-                                    <template #downIcon>
-                                        <ArrowDownOutlined />
-                                    </template>
-                                </a-input-number>
-                            </a-col>
-                        </a-row>
-                        <div class="mt-5 text-red-500 text-center" v-if="formState.errors.denom">
-                            {{ formState.errors.denom }}
-                        </div>
-                    </a-card>
+                    </a-col>
+                    <a-col :span="14">
+                        <a-card>
+                            <a-row :gutter="16" class="text-center">
+                                <a-col :span="12">
+                                    <span>Denomination</span>
+                                </a-col>
+                                <a-col :span="12">
+                                    <span>Quantity</span>
+                                </a-col>
+                            </a-row>
+                            <a-row
+                                :gutter="16"
+                                class="mt-5"
+                                v-for="(item, index) of formState.denom"
+                                :key="index"
+                            >
+                                <a-col :span="12">
+                                    <a-input
+                                        :value="item.denomination"
+                                        readonly
+                                        class="text-end"
+                                    />
+                                </a-col>
+                                <a-col :span="12" style="text-align: center">
+                                    <a-input-number
+                                        id="inputNumber"
+                                        v-model:value="item.qty"
+                                        placeholder="0"
+                                        :min="0"
+                                    >
+                                        <template #upIcon>
+                                            <ArrowUpOutlined />
+                                        </template>
+                                        <template #downIcon>
+                                            <ArrowDownOutlined />
+                                        </template>
+                                    </a-input-number>
+                                </a-col>
+                            </a-row>
+                            <div
+                                class="mt-5 text-red-500 text-center"
+                                v-if="formState.errors.denom"
+                            >
+                                {{ formState.errors.denom }}
+                            </div>
+                        </a-card>
 
-                    <a-form-item class="text-end mt-5">
-                        <a-button type="primary" @click="onSubmit"
-                            >Submit</a-button
-                        >
-                    </a-form-item>
-                </a-col>
-            </a-row>
+                        <a-form-item class="text-end mt-5">
+                            <a-button type="primary" html-type="submit"
+                                >Submit</a-button
+                            >
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+            </a-form>
         </a-card>
     </AuthenticatedLayout>
 </template>

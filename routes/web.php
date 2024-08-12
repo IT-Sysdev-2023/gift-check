@@ -15,6 +15,12 @@ use App\Http\Controllers\IadController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\RetailController;
 use App\Http\Controllers\QueryFilterController;
+use App\Http\Controllers\Treasury\Dashboard\BudgetRequestController;
+use App\Http\Controllers\Treasury\Dashboard\GcProductionRequestController;
+use App\Http\Controllers\Treasury\Dashboard\SpecialGcRequestController;
+use App\Http\Controllers\Treasury\Dashboard\StoreGcController;
+use App\Http\Controllers\Treasury\Transactions\SpecialGcPaymentController;
+use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\MainController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Middleware\UserTypeRoute;
@@ -53,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
+
 
     Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 });
@@ -154,40 +161,41 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 
 
 //Treasury
-Route::prefix('treasury')->group(function () {
-    Route::name('treasury.')->group(function () {
-        Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
-            Route::get('approved', [TreasuryController::class, 'approvedRequest'])->name('approved');
-            Route::get('view-approved-record/${id}', [TreasuryController::class, 'viewApprovedRequest'])->name('view.approved');
+Route::middleware('auth')->group(function () {
+    Route::prefix('treasury')->group(function () {
+        Route::name('treasury.')->group(function () {
+            Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
+                Route::get('approved', [BudgetRequestController::class, 'approvedRequest'])->name('approved');
+                Route::get('view-approved-record/${id}', [BudgetRequestController::class, 'viewApprovedRequest'])->name('view.approved');
 
-            Route::get('pending-request', [TreasuryController::class, 'pendingRequest'])->name('pending');
-            Route::post('submit-budget-entry/{id}', [TreasuryController::class, 'submitBudgetEntry'])->name('budget.entry');
-            Route::get('download-document/{file}', [TreasuryController::class, 'downloadDocument'])->name('download.document');
+                Route::get('pending-request', [BudgetRequestController::class, 'pendingRequest'])->name('pending');
+                Route::post('submit-budget-entry/{id}', [BudgetRequestController::class, 'submitBudgetEntry'])->name('budget.entry');
+                Route::get('download-document/{file}', [BudgetRequestController::class, 'downloadDocument'])->name('download.document');
 
-            Route::get('cancelled-request', [TreasuryController::class, 'cancelledRequest'])->name('cancelled');
-            Route::get('view-cancelled-request/{$id}', [TreasuryController::class, 'viewCancelledRequest'])->name('view.cancelled');
-        });
-        Route::prefix('store-gc')->name('store.gc.')->group(function () {
-            Route::get('pending-request', [TreasuryController::class, 'pendingRequestStoreGc'])->name('pending');
-            Route::get('released-gc', [TreasuryController::class, 'releasedGc'])->name('released');
-            Route::get('cancelled-request', [TreasuryController::class, 'cancelledRequestStoreGc'])->name('cancelled');
+                Route::get('cancelled-request', [BudgetRequestController::class, 'cancelledRequest'])->name('cancelled');
+                Route::get('view-cancelled-request/{$id}', [BudgetRequestController::class, 'viewCancelledRequest'])->name('view.cancelled');
+            });
+            Route::prefix('store-gc')->name('store.gc.')->group(function () {
+                Route::get('pending-request', [StoreGcController::class, 'pendingRequestStoreGc'])->name('pending');
+                Route::get('released-gc', [StoreGcController::class, 'releasedGc'])->name('released');
+                Route::get('cancelled-request', [StoreGcController::class, 'cancelledRequestStoreGc'])->name('cancelled');
 
-            Route::get('reprint/{id}', [TreasuryController::class, 'reprint'])->name('reprint');
-            Route::get('view-cancelled-gc/{id}', [TreasuryController::class, 'viewCancelledGc'])->name('cancelled.gc');
-        });
-        Route::prefix('gc-production-request')->name('production.request.')->group(function () {
-            Route::get('approved-request', [TreasuryController::class, 'approvedProductionRequest'])->name('approved');
-            Route::get('view-approved-request/{id}', [TreasuryController::class, 'viewApprovedProduction'])->name('view.approved');
-            Route::get('view-barcode-generated/{id}', [TreasuryController::class, 'viewBarcodeGenerate'])->name('view.barcode');
-            Route::get('view-requisition/{id}', [TreasuryController::class, 'viewRequisition'])->name('requisition');
-        });
-        Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
-            Route::get('pending-special-gc', [TreasuryController::class, 'pendingSpecialGc'])->name('pending');
-            Route::get('update-pending-special-gc/{id}', [TreasuryController::class, 'updatePendingSpecialGc'])->name('update.pending');
+                Route::get('reprint/{id}', [StoreGcController::class, 'reprint'])->name('reprint');
+                Route::get('view-cancelled-gc/{id}', [StoreGcController::class, 'viewCancelledGc'])->name('cancelled.gc');
+            });
+            Route::prefix('gc-production-request')->name('production.request.')->group(function () {
+                Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');
+                Route::get('view-approved-request/{id}', [GcProductionRequestController::class, 'viewApprovedProduction'])->name('view.approved');
+                Route::get('view-barcode-generated/{id}', [GcProductionRequestController::class, 'viewBarcodeGenerate'])->name('view.barcode');
+                Route::get('view-requisition/{id}', [GcProductionRequestController::class, 'viewRequisition'])->name('requisition');
+            });
+            Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
+                Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('pending');
+                Route::get('update-pending-special-gc/{id}', [SpecialGcRequestController::class, 'updatePendingSpecialGc'])->name('update.pending');
 
-            Route::get('get-assign-employee', [TreasuryController::class, 'getAssignEmployee'])->name('get.assign.employee');
-            Route::post('get-assign-employee', [TreasuryController::class, 'addAssignEmployee'])->name('add.assign.employee');
-        });
+                Route::get('get-assign-employee', [SpecialGcRequestController::class, 'getAssignEmployee'])->name('get.assign.employee');
+                Route::post('get-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
+            });
 
         Route::prefix('transactions')->name('transactions.')->group(function () {
             Route::prefix('production-request')->name('production.')->group(function () {
@@ -202,8 +210,9 @@ Route::prefix('treasury')->group(function () {
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
-        Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
-        Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
+            Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
+            Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
+        });
     });
 });
 Route::prefix('documents')->group(function () {
@@ -256,6 +265,7 @@ Route::prefix('search')->group(function () {
 });
 Route::prefix('management')->group(function () {
     Route::name('manager.')->group(function () {
+        Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
         Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
     });
 });

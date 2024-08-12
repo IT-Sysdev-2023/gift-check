@@ -46,7 +46,7 @@ const { openLeftNotification } = onProgress();
 
 const acceptRequest = (id: string | number) => {
     router.get(
-        route("treasury.acceptProdRequest", id),
+        route("treasury.transactions.production.acceptProdRequest", id),
         {},
         {
             onSuccess: ({ props }) => {

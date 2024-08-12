@@ -33,7 +33,7 @@ class NumberHelper
         return self::format($percent);
     }
 
-    public static function leadingZero(int $num){
-        return sprintf("%04d", $num);
+    public static function leadingZero(int $num, string $format = "%04d"){
+        return sprintf($format, $num);
     }
 }
