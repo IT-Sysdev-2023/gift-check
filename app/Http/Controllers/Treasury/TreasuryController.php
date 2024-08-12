@@ -60,4 +60,5 @@ class TreasuryController extends Controller
             'columns' => \App\Helpers\ColumnHelper::$gc_ledger_columns,
         ]);
     }
+    
 }

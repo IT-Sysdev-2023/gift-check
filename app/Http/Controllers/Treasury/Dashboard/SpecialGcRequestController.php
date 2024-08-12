@@ -114,8 +114,4 @@ class SpecialGcRequestController extends Controller
             'options' => self::options()
         ]);
     }
-    public function specialExtPaymentSubmission(Request $request)
-    {
-        $request->dd();
-    }
 }

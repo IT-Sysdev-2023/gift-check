@@ -195,17 +195,24 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('get-assign-employee', [SpecialGcRequestController::class, 'getAssignEmployee'])->name('get.assign.employee');
                 Route::post('get-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
+
+                
             });
 
         Route::prefix('transactions')->name('transactions.')->group(function () {
             Route::prefix('production-request')->name('production.')->group(function () {
-                Route::get('gift-check', [TreasuryController::class, 'giftCheck'])->name('gc');
-                Route::post('store-gift-check', [TreasuryController::class, 'giftCheckStore'])->name('gcSubmit');
-                Route::get('envelope', [TreasuryController::class, 'envelope'])->name('envelope');
+                Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
+                Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
+                Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
             });
 
-            Route::get('budget-request', [TreasuryController::class, 'budgetRequest'])->name('budgetRequest');
-            Route::post('budget-request-submission', [TreasuryController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+            Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+            Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+
+            //special gc payment
+            Route::prefix('special-gc-payment')->name('special.')->group(function () {
+                Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('ext');
+            });
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
