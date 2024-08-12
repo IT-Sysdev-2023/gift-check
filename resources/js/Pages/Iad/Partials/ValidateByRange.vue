@@ -17,7 +17,7 @@
                     <a-input-group>
                         <a-typography-text keyboard>Barcode Start:</a-typography-text>
                         <a-form-item has-feedback :help="errors.barcodeStart"
-                            :validate-status="form.barcodeStart?.length === 13 ? 'success' : errors.barcodeStart ? 'error' : '' ">
+                            :validate-status="form.barcodeStart?.length === 13 ? 'success' : errors.barcodeStart ? 'error' : ''">
                             <a-input v-model:value="form.barcodeStart" size="large"
                                 placeholder="Start of Barcode here.." show-count allow-clear @keypress="handleKeyPress">
                                 <template #prefix>
@@ -36,7 +36,8 @@
                 <a-col :span="12">
                     <a-input-group>
                         <a-typography-text keyboard>Barcode End:</a-typography-text>
-                        <a-form-item has-feedback :validate-status="form.barcodeEnd?.length === 13 ? 'success' : ''">
+                        <a-form-item :help="errors.barcodeStart" has-feedback
+                            :validate-status="form.barcodeEnd?.length === 13 ? 'success' : errors.barcodeEnd ? 'error' : ''">
                             <a-input v-model:value="form.barcodeEnd" size="large" placeholder="End of Barcode here.."
                                 show-count allow-clear
                                 :disabled="form.barcodeStart === null || form.barcodeStart.length <= 0"
@@ -79,34 +80,46 @@
 </template>
 <script>
 import { BarcodeOutlined } from "@ant-design/icons-vue";
+import { useForm } from "@inertiajs/vue3";
+import { notification } from 'ant-design-vue';
 import pickBy from "lodash/pickBy";
 
 export default {
     props: {
         recnum: Number,
         date: String,
+        reqid: Number
     },
     data() {
         return {
             errors: {},
             response: {},
-            form: {
+            form: useForm({
                 barcodeStart: null,
                 barcodeEnd: null,
-                recnum: this.recnum
-            },
+                reqid: this.reqid,
+                recnum: this.recnum,
+            }),
         }
     },
     methods: {
+
         validateRange() {
             this.$inertia.post(route('iad.validate.range'), {
                 ...pickBy(this.form)
             }, {
                 onSuccess: (response) => {
                     this.response = response.props.flash;
+                    notification[response.props.flash.status]({
+                        message: response.props.flash.title,
+                        description:
+                            response.props.flash.msg,
+                    });
+                    if (response.props.flash.status == 'success') {
+                        this.form.reset();
+                    }
                 },
                 onError: (errors) => {
-
                     this.errors = errors;
                 }
             });

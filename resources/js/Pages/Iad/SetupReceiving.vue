@@ -1,6 +1,5 @@
 <template>
     <div v-if="Object.keys(record).length">
-
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
                 <a-card>
@@ -10,7 +9,7 @@
                                 <a-input class="text-center" :value="record.qty ?? 0" readonly />
                             </template>
                             <template v-if="column.key == 'valid'">
-                                <a-input class="text-center" value="0" readonly />
+                                <a-input class="text-center" :value="record.scanned ?? 0" readonly />
                             </template>
                         </template>
                     </a-table>
@@ -81,7 +80,7 @@
                         </a-button>
                     </a-col>
 
-                    <validate-by-range v-model:open="openRangeBarcode" :recnum="recnum"  :date="date"/>
+                    <validate-by-range v-model:open="openRangeBarcode" :recnum="recnum" :reqid="reqid"  :date="date"/>
                 </a-row>
             </a-col>
             <a-col :span="14">
