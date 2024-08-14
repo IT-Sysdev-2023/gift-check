@@ -169,7 +169,7 @@ declare module 'vue' {
     PaginationResource: typeof import('./resources/js/Components/PaginationResource.vue')['default']
     PaginationSmall: typeof import('./resources/js/Components/PaginationSmall.vue')['default']
     PendingPromoGcRequest: typeof import('./resources/js/Pages/Finance/PendingPromoGcRequest.vue')['default']
-    PendingRequest: typeof import('./resources/js/Pages/Treasury/Dashboard/PendingRequest.vue')['default']
+    PendingRequest: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/PendingRequest.vue')['default']
     PendingRequestForm: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/PendingRequestForm.vue')['default']
     PicRightOutlined: typeof import('@ant-design/icons-vue')['PicRightOutlined']
     PlazaMarcela: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/PlazaMarcela.vue')['default']
