@@ -60,12 +60,14 @@ class ColumnHelper
 
         ],
         [
-            'title' => 'Quantity Received',
+            'title' => 'Quantity',
             'key' => 'qty',
+            'align' => 'center'
         ],
         [
-            'title' => 'Validated Gc',
+            'title' => 'Validated',
             'key' => 'valid',
+            'align' => 'center'
         ],
     ];
 
@@ -298,7 +300,7 @@ class ColumnHelper
         [
             'title' => 'Pay Terms.',
             'dataIndex' => 'pay_terms',
-             'align' => 'center'
+            'align' => 'center'
         ],
 
 
@@ -337,7 +339,7 @@ class ColumnHelper
                 'dataIndex' => 'open',
                 'align' => 'center'
             ] : null,
-        ])->reject(fn ($value) => $value === null)->values();
+        ])->reject(fn($value) => $value === null)->values();
     }
 
 

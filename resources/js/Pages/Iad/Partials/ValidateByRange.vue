@@ -1,5 +1,5 @@
 <template>
-    <a-modal title="Validate By Range" style="width: 45%;" :footer="false" :mask-closable="false">
+    <a-modal title="Validate By Range" style="width: 45%;" :footer="false" :mask-closable="false" @cancel="cancel">
         <div class="mt-5 mb-4">
             <a-descriptions size="small" class="mb-1 text-center" layout="horizontal" bordered>
                 <a-descriptions-item label="Received No.">{{ recnum }}</a-descriptions-item>
@@ -80,7 +80,6 @@
     </a-modal>
 </template>
 <script>
-import { BarcodeOutlined } from "@ant-design/icons-vue";
 import { useForm } from "@inertiajs/vue3";
 import { notification } from 'ant-design-vue';
 import pickBy from "lodash/pickBy";
@@ -124,6 +123,9 @@ export default {
                     this.errors = errors;
                 }
             });
+        },
+        cancel(){
+            this.response = [];
         },
         handleKeyPress(event) {
             const charCode = event.which ? event.which : event.keyCode;
