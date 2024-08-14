@@ -25,7 +25,7 @@
                     <a-form-item label="Request Status:">
                         <a-select v-model:value="form.status" placeholder="Select an option">
                             <a-select-option value="1">Approved</a-select-option>
-                            <a-select-option value="3">Cancelled</a-select-option>
+                            <a-select-option value="2">Cancelled</a-select-option>
                         </a-select>
                     </a-form-item>
                     <div v-if="form.status == '1'">
@@ -55,7 +55,7 @@
                             <a-input v-model:value="form.preparedBy" readonly />
                         </a-form-item>
                     </div>
-                    <div v-if="form.status == '3'">
+                    <div v-if="form.status == '2'">
                         <a-form-item label="Date Cancelled">
                             <a-input v-model:value="form.dateApproved" readonly />
                         </a-form-item>
@@ -101,12 +101,12 @@
             </a-button>
         </template>
     </a-modal>
-
 </template>
 
 <script>
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
 import { PicRightOutlined } from '@ant-design/icons-vue';
+import { notification } from 'ant-design-vue';
 import dayjs from "dayjs";
 
 export default {
@@ -122,6 +122,7 @@ export default {
         return {
             open: false,
             form: {
+                id: this.data[0].pe_id,
                 pe_no: '',
                 department: '',
                 dateRequested: '',
@@ -163,7 +164,25 @@ export default {
             })
         },
         submitReqForm() {
-            this.inertia.post(route('marketing.pendingRequest.submit.request'))
+            this.$inertia.post(route('marketing.pendingRequest.submit.request'), {
+                data: this.form
+            }, {
+                onSuccess: (response) => {
+                console.log(response);
+                    if (response.props.flash.type == 'success') {
+                        notification[response.props.flash.type]({
+                            message: response.props.flash.msg,
+                            description: response.props.flash.description,
+                        });
+                        this.$inertia.get(route('marketing.dashboard'))
+                    } else {
+                        notification[response.props.flash.type]({
+                            message: response.props.flash.msg,
+                            description: response.props.flash.description,
+                        });
+                    }
+                }
+            })
         },
         closeModal() {
             this.open = false;

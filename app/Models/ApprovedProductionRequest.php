@@ -11,6 +11,9 @@ class ApprovedProductionRequest extends Model
 
     protected $table = 'approved_production_request';
     protected $primaryKey = 'ape_id';
+    protected $guarded = [];
+
+    public $timestamps = false;
 
     protected function casts() : array
     {

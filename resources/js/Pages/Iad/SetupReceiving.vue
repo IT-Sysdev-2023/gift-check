@@ -1,21 +1,71 @@
 <template>
     <div v-if="Object.keys(record).length">
-
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
+                <a-descriptions size="small" class="mb-0 text-center" layout="horizontal" bordered>
+                    <a-descriptions-item style="width: 50%;" label="Received No.">{{ recnum }}</a-descriptions-item>
+                </a-descriptions>
+                <a-descriptions size="small" class="mb-0 text-center" layout="horizontal" bordered>
+                    <a-descriptions-item style="width: 50%;" label="E-Requisition No   ">0{{ reqid
+                        }}</a-descriptions-item>
+                </a-descriptions>
+
+                <a-descriptions size="small" class="mb-3 text-center" layout="horizontal" bordered>
+                    <a-descriptions-item style="width: 50%;" label="FAD Receiving Type"> {{ record.srr_type
+                        }}</a-descriptions-item>
+                </a-descriptions>
+                <a-descriptions size="small" class="mb-3 text-center" layout="horizontal" bordered>
+                    <a-descriptions-item style="width: 50%;" label="Received as">
+                        <a-form>
+                            <a-form-item has-feedback :help="errors.select"
+                                :validate-status="errors.select ? 'error' : ''">
+                                <a-select ref="select" placeholder="Select Type" v-model:value="select"
+                                    style="width: 100%" @focus="focus" @change="handleChange">
+                                    <a-select-option value="whole">Whole</a-select-option>
+                                    <a-select-option value="partial">Partials</a-select-option>
+                                    <a-select-option value="final">Final</a-select-option>
+                                </a-select>
+                            </a-form-item>
+                        </a-form>
+                    </a-descriptions-item>
+                </a-descriptions>
                 <a-card>
-                    <a-table :data-source="denomination" :columns="columns" size="small" :pagination="false">
-                        <template #bodyCell="{ column, record }">
-                            <template v-if="column.key == 'qty'">
-                                <a-input class="text-center" :value="record.qty ?? 0" readonly />
+                    <a-tabs v-model:activeKey="denomKey" size=small>
+                        <a-tab-pane key="1">
+                            <template #tab>
+                                <span>
+                                    <apple-outlined />
+                                    Denomation Available
+                                </span>
                             </template>
-                            <template v-if="column.key == 'valid'">
-                                <a-input class="text-center" value="0" readonly />
+                            <a-table :data-source="denomination" :columns="columns" size="small" :pagination="false">
+                                <template #bodyCell="{ column, record }">
+                                    <template v-if="column.key == 'qty'">
+                                        <a-input class="text-center" :value="record.qty ?? 0" readonly />
+                                    </template>
+                                    <template v-if="column.key == 'valid'">
+                                        <a-input class="text-center" :value="record.scanned ?? 0" readonly />
+                                    </template>
+                                </template>
+                            </a-table>
+                        </a-tab-pane>
+                        <a-tab-pane key="2">
+                            <template #tab>
+                                <span>
+                                    <android-outlined />
+                                    Remaining Available Item
+                                </span>
                             </template>
-                        </template>
-                    </a-table>
+                            <a-descriptions v-for="item in denomination" size="small" class="mb-0 text-center"
+                                layout="horizontal" bordered>
+                                <a-descriptions-item style="width: 50%;" :label="item.denomination">{{ item.item_remain
+                                    ?? 0 }}
+                                </a-descriptions-item>
+                            </a-descriptions>
+                        </a-tab-pane>
+                    </a-tabs>
                 </a-card>
-                <a-row class="mt-6">
+                <a-row cl ass="mt-6">
                     <a-col :span="7">
                         <div class="flex justify-end">
                             <a-button class="mb-2">
@@ -28,13 +78,6 @@
                             <a-button class="mb-2">
                                 <template #icon>
                                     <BarcodeOutlined />
-                                </template>
-                            </a-button>
-                        </div>
-                        <div class="flex justify-end">
-                            <a-button class="mb-2">
-                                <template #icon>
-                                    <UnorderedListOutlined />
                                 </template>
                             </a-button>
                         </div>
@@ -73,19 +116,43 @@
                             </a-button>
                         </a-popconfirm>
 
-                        <a-button block class="mb-2">
+                        <a-button block class="mb-2" @click="validateBarcode">
                             Validate By Barcode
                         </a-button>
-                        <a-button block class="mb-2">
-                            Scanned Gc List
+
+                        <a-button block class="mb-2" type="primary" @click="submit" :loading="isSubmittingReq"
+                            :disabled="denomination.filter(data => data.scanned).length == 0">
+                            Submit
                         </a-button>
+
                     </a-col>
 
-                    <validate-by-range v-model:open="openRangeBarcode" :recnum="recnum"  :date="date"/>
+                    <validate-by-range v-model:open="openRangeBarcode" :recnum="recnum" :reqid="reqid" :date="date" />
+                    <validate-barcode v-model:open="openBarcode" :recnum="recnum" :reqid="reqid" :date="date" />
                 </a-row>
             </a-col>
             <a-col :span="14">
-                <setup-details :record="record"/>
+                <a-tabs size="small" type="card" v-model:activeKey="activeKey">
+                    <a-tab-pane key="1">
+                        <template #tab>
+                            <span>
+                                <PaperClipOutlined />
+                                Requisition Details
+                            </span>
+                        </template>
+                        <setup-details :record="record" />
+                    </a-tab-pane>
+                    <a-tab-pane key="2">
+                        <template #tab>
+                            <span>
+                                <FileProtectOutlined />
+                                Scanned Gift-Check
+                            </span>
+                        </template>
+                        <scanned-gc :scannedGc="scannedGc" />
+                    </a-tab-pane>
+                </a-tabs>
+
             </a-col>
         </a-row>
     </div>
@@ -95,16 +162,19 @@
 </template>
 
 <script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { BarcodeOutlined, LockOutlined, LoginOutlined } from '@ant-design/icons-vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { notification } from 'ant-design-vue';
+import pickBy from "lodash/pickBy";
 import axios from 'axios';
+
 
 export default {
     layout: AuthenticatedLayout,
 
     props: {
         denomination: Object,
+        scannedGc: Object,
         columns: Array,
         record: Object,
         recnum: Number,
@@ -113,21 +183,30 @@ export default {
     },
     data() {
         return {
-            activeKey: null,
+            openRangeBarcode: false,
+            isSubmittingReq: false,
+            isSubmitting: false,
+            openBarcode: false,
+            activeKey: '1',
+            denomKey: '1',
+            isManKey: false,
+            response: {},
             byRange: false,
+            select: null,
+            errors: {},
+            error: {},
             form: {
                 username: null,
                 password: null,
             },
-            isSubmitting: false,
-            error: {},
-            response: {},
-            openRangeBarcode: false,
-            isManKey: false,
+
         }
     },
     methods: {
 
+        validateBarcode() {
+            this.openBarcode = true;
+        },
         validateRange() {
             this.byRange = true;
         },
@@ -162,6 +241,30 @@ export default {
                 this.isSubmitting = false;
             })
 
+        },
+        submit() {
+            this.$inertia.post(route('iad.submit.setup'), {
+                data: pickBy(this.record),
+                denom: pickBy(this.denomination),
+                select: this.select,
+                recnum: this.recnum,
+                scanned: pickBy(this.scannedGc),
+            }, {
+                onStart: () => {
+                    this.isSubmittingReq = true;
+                },
+                onSuccess: (response) => {
+                    notification[response.props.flash.status]({
+                        message: response.props.flash.title,
+                        description: response.props.flash.msg,
+                    });
+                    this.isSubmittingReq = false;
+                },
+                onError: (errors) => {
+                    this.errors = errors;
+                    this.isSubmittingReq = false;
+                }
+            })
         }
     }
 }
