@@ -4,14 +4,15 @@
 
         </a-col>
         <a-col :span="12">
-            <GcReceiving/>
+            <GcReceiving />
         </a-col>
     </a-row>
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { notification } from 'ant-design-vue';
 
 export default {
-    layout: AuthenticatedLayout
+    layout: AuthenticatedLayout,
 }
 </script>

@@ -14,7 +14,7 @@
                 <a-form class="mt-3">
                     <a-form-item has-feedback :help="errors.barcode"
                         :validate-status="form.barcode?.length === 13 ? 'success' : errors.barcode ? 'error' : ''">
-                        <a-input size="large" v-model:value="form.barcode" placeholder="Enter Barcode">
+                        <a-input size="large" v-model:value="form.barcode" placeholder="Enter Barcode" @keyup.enter="validate">
                             <template #prefix>
                                 <PaperClipOutlined />
                             </template>
@@ -36,7 +36,7 @@
                 </p>
             </div>
             <div>
-                <a-button class="mt-4 mb-3" type="primary" @click="validate" >
+                <a-button class="mt-4 mb-3" type="primary" @click="validate" :loading="form.processing">
                     <template #icon>
                         <SaveOutlined />
                     </template>
