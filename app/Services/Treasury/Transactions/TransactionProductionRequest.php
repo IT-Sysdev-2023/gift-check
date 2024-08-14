@@ -54,7 +54,7 @@ class TransactionProductionRequest extends UploadFileHandler
 					'pe_group' => 0
 				]);
 
-				$denom = collect($request->denom)->filter(fn($val) => isset ($val['qty']));
+				$denom = collect($request->denom)->filter(fn($val) => isset ($val['qty']) && $val['qty'] > 0);
 
 				$denom->each(function ($value) use ($pr) {
 					ProductionRequestItem::create([

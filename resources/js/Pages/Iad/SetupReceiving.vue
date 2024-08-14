@@ -1,5 +1,5 @@
 <template>
-    <div v-if="ifRecord()">
+    <div v-if="Object.keys(record).length">
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
                 <a-card>
@@ -9,7 +9,7 @@
                                 <a-input class="text-center" :value="record.qty ?? 0" readonly />
                             </template>
                             <template v-if="column.key == 'valid'">
-                                <a-input class="text-center" value="0" readonly />
+                                <a-input class="text-center" :value="record.scanned ?? 0" readonly />
                             </template>
                         </template>
                     </a-table>
@@ -27,13 +27,6 @@
                             <a-button class="mb-2">
                                 <template #icon>
                                     <BarcodeOutlined />
-                                </template>
-                            </a-button>
-                        </div>
-                        <div class="flex justify-end">
-                            <a-button class="mb-2">
-                                <template #icon>
-                                    <UnorderedListOutlined />
                                 </template>
                             </a-button>
                         </div>
@@ -72,19 +65,38 @@
                             </a-button>
                         </a-popconfirm>
 
-                        <a-button block class="mb-2">
+                        <a-button block class="mb-2" @click="validateBarcode">
                             Validate By Barcode
                         </a-button>
-                        <a-button block class="mb-2">
-                            Scanned Gc List
-                        </a-button>
+
                     </a-col>
 
-                    <validate-by-range v-model:open="openRangeBarcode" :recnum="recnum"  :date="date"/>
+                    <validate-by-range v-model:open="openRangeBarcode" :recnum="recnum" :reqid="reqid" :date="date" />
+                    <validate-barcode v-model:open="openBarcode" :recnum="recnum" :reqid="reqid" :date="date"/>
                 </a-row>
             </a-col>
             <a-col :span="14">
-                <setup-details :record="record"/>
+                <a-tabs size="small" type="card" v-model:activeKey="activeKey">
+                    <a-tab-pane key="1">
+                        <template #tab>
+                            <span>
+                                <PaperClipOutlined />
+                                Requisition Details
+                            </span>
+                        </template>
+                        <setup-details :record="record" />
+                    </a-tab-pane>
+                    <a-tab-pane key="2">
+                        <template #tab>
+                            <span>
+                                <FileProtectOutlined />
+                               Scanned Gift-Check
+                            </span>
+                        </template>
+                        <scanned-gc :scannedGc="scannedGc"/>
+                    </a-tab-pane>
+                </a-tabs>
+
             </a-col>
         </a-row>
     </div>
@@ -103,16 +115,17 @@ export default {
     layout: AuthenticatedLayout,
 
     props: {
-        record: Object,
-        columns: Array,
         denomination: Object,
-        reqid: Number,
+        scannedGc: Object,
+        columns: Array,
+        record: Object,
         recnum: Number,
+        reqid: Number,
         date: String,
     },
     data() {
         return {
-            activeKey: null,
+            activeKey: '1',
             byRange: false,
             form: {
                 username: null,
@@ -122,17 +135,19 @@ export default {
             error: {},
             response: {},
             openRangeBarcode: false,
+            openBarcode: false,
             isManKey: false,
+
         }
     },
     methods: {
 
-        ifRecord() {
-            return Object.keys(this.record).length;
-        },
-
         validateRange() {
             this.byRange = true;
+        },
+        validateBarcode(){
+
+            this.openBarcode = true;
         },
         submitKey() {
             this.isSubmitting = true;

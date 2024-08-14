@@ -3,131 +3,29 @@
 namespace App\Services\Iad;
 
 use App\Models\CustodianSrr;
+use App\Models\CustodianSrrItem;
 use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\RequisitionEntry;
+use App\Models\RequisitionForm;
 use App\Models\TempValidation;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 
 class IadServices
 {
     public function gcReceivingIndex()
     {
-        $directoryPath = base_path('resources/js/Pages/Custodian/Textfiles/New');
-
-        $files = File::files($directoryPath);
-
-        $innerData = [];
-
-        foreach ($files as $key => $item) {
-            $contents = file_get_contents($item->getPathname());
-
-            $array = explode("\n", $contents);
-
-            foreach ($array as $line) {
-                $parts = explode('|', $line, 2);
-                if (count($parts) === 2) {
-                    $key = trim($parts[0]);
-                    $value = trim($parts[1]);
-
-                    if ($key === 'Supplier Name') {
-                        $innerData['supname'] = $value;
-                    }
-                    if ($key === 'GC E-REQUISITION NO') {
-                        $innerData['reqno'] = $value;
-                    }
-                    if ($key === 'Transaction Date') {
-                        $innerData['transdate'] = Date::parse($value)->toFormattedDateString();
-                    }
-                    if ($key === 'Receiving No') {
-                        $innerData['recno'] = $value;
-                    }
-                    if ($key === 'Purchase Order No') {
-                        $innerData['po'] = $value;
-                    }
-                }
-            }
-            $innerData['name'] = $item->getFilename();
-            $result[] = $innerData;
-        }
-
-
-        return $result;
+        return RequisitionForm::get();
     }
 
-    private static function transactionType(string $type)
-    {
-        $transaction = [
-            'Supplier Name' => 'supname',
-            'GC E-REQUISITION NO' => 'reqno',
-            'Transaction Date' => 'transdate',
-            'Receiving No' => 'recno',
-            'Purchase Order No' => 'po',
-            'Reference No' => 'refno',
-            'Location Code' => 'loccode',
-            'Reference PO No' => 'rpn',
-            'Payment Terms' => 'payterms',
-            'Department Code' => 'depcode',
-            'Mode of Payment' => 'mop',
-            'Remarks' => 'remarks',
-            'Prepared By' => 'preby',
-            'Checked By' => 'checkby',
-            'SRR Type' => 'ssrType',
-            'Purchase Date' => 'purdate',
-        ];
-
-        return $transaction[$type] ?? null;
-    }
-    private static function denomType(string $type)
-    {
-        $transaction = [
-            '00002000' => '00002000',
-            '00002001' => '00002001',
-            '00002002' => '00002002',
-            '00002003' => '00002003',
-            '00002004' => '00002004',
-            '00002005' => '00002005',
-        ];
-
-        return $transaction[$type] ?? null;
-    }
 
     public function setupReceivingtxt($request)
     {
+        $isEntry = RequisitionEntry::where('requis_erno', $request->requisId)->exists();
 
-        $query = RequisitionEntry::where('requis_erno', $request->requisId)->exists();
+        $requisform = RequisitionForm::with('requisFormDenom')->where('req_no', $request->requisId)->first();
 
-        $directory = base_path('resources/js/Pages/Custodian/Textfiles/New/' . $request->name);
-
-        $files = File::get($directory);
-
-        $array = explode("\n", $files);
-
-        foreach ($array as $line) {
-            $parts = explode('|', $line, 2);
-
-            if (count($parts) === 2) {
-
-                $key = trim($parts[0]);
-                $value = trim($parts[1]);
-
-                $sup = self::transactionType($key);
-
-                $denom = self::denomType($key);
-
-
-                $result[$sup] = $value;
-
-                $denresult[$denom] = $value;
-            }
-            $result['name'] = $request->name;
-        }
-
-        return (object) [
-            'result' => $query ? $result : [],
-            'denomres' => $denresult,
-        ];
+        return $isEntry ? $requisform : [];
     }
 
     public function getRecNum()
@@ -142,15 +40,28 @@ class IadServices
     public function getDenomination($denom)
     {
 
-        $data =  Denomination::select('denomination', 'denom_fad_item_number', 'denom_code')
+        $data =  Denomination::select('denomination', 'denom_fad_item_number', 'denom_code','denom_id')
             ->where('denom_type', 'RSGC')
             ->where('denom_status', 'active')
             ->get();
 
-        $data->transform(function ($item) use ($denom) {
+        $cssritem = TempValidation::get()->groupBy('tval_denom');
+
+        $countItems = $cssritem->map(function ($item) {
+            return $item->count();
+        });
+
+
+        $data->transform(function ($item) use ($denom, $cssritem, $countItems) {
             foreach ($denom as $key => $value) {
-                if ($item->denom_fad_item_number == $key) {
-                    $item->qty = $value;
+                if ($item->denom_fad_item_number == $value->denom_no) {
+                    $item->qty = $value->quantity;
+                }
+            }
+            foreach ($countItems as $key => $value) {
+
+                if ($item->denom_id == $key) {
+                    $item->scanned =  $value;
                 }
             }
             return $item;
@@ -167,56 +78,62 @@ class IadServices
             'barcodeEnd' => 'bail|gt:barcodeStart|min:13|max:13',
         ]);
 
+        $query = RequisitionEntry::where('requis_erno', $request->reqid)->first();
 
-        // $bstart = strlen((string)$request->barcodeStart);
-        // $bend = strlen((string)$request->barcodeEnd);
+        $inGc =  $query->where('requis_id',   $query->requis_id)
+            ->join('gc', 'pe_entry_gc', '=', 'repuis_pro_id')
+            ->whereIn('barcode_no', [$request->barcodeStart, $request->barcodeEnd])
+            ->get();
 
-        // $scanned = TempValidation::whereIn('tval_barcode', [$request->barcodeEnd, $request->barcodeStart])->count() == 2;
+        if ($inGc->count() == 2) {
+            $isValidated = CustodianSrrItem::where('cssitem_barcode', [$request->barcodeStart, $request->barcodeEnd])->exists();
 
-        // $inGc = Gc::whereIn('barcode_no', [$request->barcodeEnd, $request->barcodeStart])->count() == 2;
+            if (!$isValidated) {
+                $ifNotScanned = TempValidation::whereIn('tval_barcode', [$request->barcodeEnd, $request->barcodeStart])->count() == 2;
 
+                if (!$ifNotScanned) {
+                    $denomid = Gc::select('denom_id')->where('barcode_no', $request->barcodeEnd)->first();
 
-        // if ($request->barcodeStart > $request->barcodeEnd) {
-        //     return back()->with([
-        //         'status' => 'error',
-        //         'msg' => 'Barocde should be sequence!',
-        //     ]);
-        // } elseif (($bstart < 13 || $bend < 13) ) {
-        //     return back()->with([
-        //         'status' => 'error',
-        //         'msg' => 'Barcode Number should be 13 characters long!',
-        //     ]);
-        // } elseif (($bstart > 13 || $bend > 13)) {
-        //     return back()->with([
-        //         'status' => 'error',
-        //         'msg' => 'Barcode Number is 13 max character',
-        //     ]);
-        // } elseif ($scanned) {
-        //     return back()->with([
-        //         'status' => 'error',
-        //         'msg' => 'Barcode ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' is already scanned',
-        //     ]);
-        // } elseif ($inGc) {
+                    foreach (range($request->barcodeStart, $request->barcodeEnd) as $barcode) {
+                        TempValidation::create([
+                            'tval_barcode' => $barcode,
+                            'tval_recnum' => $request->recnum,
+                            'tval_denom' => $denomid->denom_id,
+                        ]);
+                    }
 
-        //     $denomid = Gc::select('denom_id')->where('barcode_no', $request->barcodeEnd)->first();
+                    return back()->with([
+                        'status' => 'success',
+                        'title' => 'Success',
+                        'msg' => 'Barcode # ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' is Validated Successfully',
+                    ]);
+                } else {
+                    return back()->with([
+                        'status' => 'warning',
+                        'title' => 'Info',
+                        'msg' => 'Barcode # ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' is Already Scanned!',
+                    ]);
+                }
+            } else {
+                return back()->with([
+                    'status' => 'warning',
+                    'title' => 'Info',
+                    'msg' => 'Barcode # ' . $request->barcodeStart . ' is Already Validated!',
+                ]);
+            }
+        } else {
+            return back()->with([
+                'status' => 'error',
+                'title' => 'Error!',
+                'msg' => 'Barcode ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' not Found! ',
+            ]);
+        }
 
-        //     foreach (range($request->barcodeStart, $request->barcodeEnd) as $barcode) {
-        //         TempValidation::create([
-        //             'tval_barcode' => $barcode,
-        //             'tval_recnum' => $request->recnum,
-        //             'tval_denom' => $denomid->denom_id,
-        //         ]);
-        //     }
-
-        //     return back()->with([
-        //         'status' => 'success',
-        //         'msg' => 'Barcode # ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' is Validated Successfully',
-        //     ]);
-        // } elseif(!$inGc){
-        //     return back()->with([
-        //         'status' => 'error',
-        //         'msg' => 'Barcode ' . $request->barcodeStart . ' to ' . $request->barcodeEnd . ' not Found! ',
-        //     ]);
-        // }
+    }
+    public function getScannedGc()
+    {
+        return TempValidation::select('denom_id', 'tval_denom', 'tval_barcode', 'denomination')
+        ->join('denomination', 'denom_id', '=', 'tval_denom')
+        ->get();
     }
 }
