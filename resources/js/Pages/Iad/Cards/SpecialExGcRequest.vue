@@ -61,5 +61,5 @@ export default {
 }
 </script>
 
-<style src="css/card.css"></style>
+<!-- <style src="css/card.css"></style> -->
 

@@ -60,4 +60,4 @@ export default {
 }
 </script>
 
-<style scoped src="/public/css/card.css"></style>
+<!-- <style scoped src="/public/css/card.css"></style> -->
