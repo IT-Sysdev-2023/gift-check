@@ -1,30 +1,53 @@
 <template>
-    <a-row :gutter="[16,16]">
+    <a-row :gutter="[16, 16]">
         <a-col :span="8">
             <a-card title=" GC Production Request">
-                <a-badge :count=gcProductionRequest.pendingRequest>
-                    <a-button @click="pendingRequestLink" block style="width: 340px" class="mb-2 bg-red-500 text-white">
+                <div v-if="gcProductionRequest.pendingRequest">
+                    <a-badge :count=gcProductionRequest.pendingRequest>
+                        <a-button @click="pendingRequestLink" block style="width: 340px"
+                            class="mb-2 bg-red-500 text-white">
+                            Pending Request
+                        </a-button>
+                    </a-badge>
+                </div>
+                <div v-else>
+                    <a-button disabled block style="width: 340px" class="mb-2 bg-red-500 text-white">
                         Pending Request
                     </a-button>
-                </a-badge>
-                <a-badge :count=gcProductionRequest.approvedRequest :number-style="{
-                    backgroundColor: '#3b82f6',
-                    color: 'white',
-                    boxShadow: '0 0 0 1px #d9d9d9 inset',
-                }">
-                    <a-button block style="width: 340px" class="mb-2 bg-blue-500 text-white">
+                </div>
+                <div v-if="gcProductionRequest.approvedRequest">
+                    <a-badge :count=gcProductionRequest.approvedRequest :number-style="{
+                        backgroundColor: '#3b82f6',
+                        color: 'white',
+                        boxShadow: '0 0 0 1px #d9d9d9 inset',
+                    }">
+                        <a-button @click="ApprovedRequestLink" block style="width: 340px"
+                            class="mb-2 bg-blue-500 text-white">
+                            Approved Request
+                        </a-button>
+                    </a-badge>
+                </div>
+                <div v-else>
+                    <a-button disabled block style="width: 340px" class="mb-2 bg-blue-500 text-white">
                         Approved Request
                     </a-button>
-                </a-badge>
-                <a-badge :count=gcProductionRequest.cancelledRequest :number-style="{
-                    backgroundColor: '#6b7280',
-                    color: 'white',
-                    boxShadow: '0 0 0 1px #d9d9d9 inset',
-                }">
-                    <a-button block style="width: 340px" class="mb-2 bg-gray-500 text-white">
+                </div>
+                <div v-if="gcProductionRequest.cancelledRequest">
+                    <a-badge :count=gcProductionRequest.cancelledRequest :number-style="{
+                        backgroundColor: '#6b7280',
+                        color: 'white',
+                        boxShadow: '0 0 0 1px #d9d9d9 inset',
+                    }">
+                        <a-button block style="width: 340px" class="mb-2 bg-gray-500 text-white">
+                            Cancelled Request
+                        </a-button>
+                    </a-badge>
+                </div>
+                <div v-else>
+                    <a-button disabled block style="width: 340px" class="mb-2 bg-gray-500 text-white">
                         Cancelled Request
                     </a-button>
-                </a-badge>
+                </div>
 
 
             </a-card>
@@ -52,9 +75,9 @@
     </a-row>
 
     <a-modal v-model:open="open" width="95%" style="top: 65px;" title="Suggested E-Requisition Entry">
-        <a-row :gutter="[16,16]">
+        <a-row :gutter="[16, 16]">
             <a-col :span="12">
-                <a-card >
+                <a-card>
                     <a-form-item label="E-Request No:" :style="{ width: '70%' }">
                         <a-input v-model:value="form.requestNo" readonly />
                     </a-form-item>
@@ -71,16 +94,16 @@
                             <a-input v-model:value="form.productionReqNum" readonly />
                         </a-form-item>
                         <a-form-item label="Date Requested:" :style="{ width: '70%' }">
-                            <a-input v-model:value="form.dateRequested"  readonly />
+                            <a-input v-model:value="form.dateRequested" readonly />
                         </a-form-item>
-                        <a-form-item label="Date Needed:":style="{ width: '70%' }">
+                        <a-form-item label="Date Needed:" :style="{ width: '70%' }">
                             <a-input v-model:value="form.dateNeeded" readonly />
                         </a-form-item>
-                        <a-form-item label="Location:":style="{ width: '70%' }">
-                            <a-input v-model:value="form.location"  readonly />
+                        <a-form-item label="Location:" :style="{ width: '70%' }">
+                            <a-input v-model:value="form.location" readonly />
                         </a-form-item>
                         <a-form-item label="Department:" :style="{ width: '70%' }">
-                            <a-input v-model:value="form.department"  readonly />
+                            <a-input v-model:value="form.department" readonly />
                         </a-form-item>
                         <a-form-item label="Remarks:" name="remarks" :style="{ width: '70%' }">
                             <a-textarea v-model:value="form.remarks" />
@@ -104,13 +127,14 @@
 
 
 
-                    <a-form-item :label="form.finalize == '1' ? 'Approved By' : 'Cancelled By'" :style="{ width: '70%' }">
-                        <a-input v-model:value="form.approvedBy"  readonly />
+                    <a-form-item :label="form.finalize == '1' ? 'Approved By' : 'Cancelled By'"
+                        :style="{ width: '70%' }">
+                        <a-input v-model:value="form.approvedBy" readonly />
                     </a-form-item>
                 </a-card>
             </a-col>
             <a-col :span="12">
-                <a-card  v-if="form.finalize == '1'">
+                <a-card v-if="form.finalize == '1'">
                     <a-form-item label="Select Supplier:" :style="{ width: '70%' }">
                         <a-select v-model:value="form.selectedSupplierId" placeholder="Select an option">
                             <a-select-option v-for="item in supplier" :key="item.gcs_id" :value="item.gcs_id">
@@ -121,7 +145,7 @@
                     <a-form-item label="Contact Person:" :style="{ width: '70%' }">
                         <a-input v-model:value="form.contactPerson" />
                     </a-form-item>
-                    <a-form-item label="Contact No:":style="{ width: '70%' }">
+                    <a-form-item label="Contact No:" :style="{ width: '70%' }">
                         <a-input v-model:value="form.contactNum" />
                     </a-form-item>
                     <a-form-item label="Address:" :style="{ width: '70%' }">
@@ -237,9 +261,6 @@ export default {
                             description: response.props.flash.description,
                         });
                     }
-
-
-
                 },
             }
             )
@@ -248,8 +269,11 @@ export default {
             this.open = false;
         },
 
-        pendingRequestLink(){
+        pendingRequestLink() {
             this.$inertia.get(route('marketing.pendingRequest.pending.request'))
+        },
+        ApprovedRequestLink() {
+            this.$inertia.get(route('marketing.approvedRequest.approved.request'))
         }
     },
 };
