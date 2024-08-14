@@ -26,10 +26,11 @@ class IadController extends Controller
 
     public function setupReceiving(Request $request)
     {
+
         $data =  $this->iadServices->setupReceivingtxt($request);
 
         return inertia('Iad/SetupReceiving', [
-            'denomination' => $this->iadServices->getDenomination($data->requisFormDenom),
+            'denomination' => $this->iadServices->getDenomination($data->requisFormDenom, $request),
             'scannedGc' => $this->iadServices->getScannedGc(),
             'columns' => ColumnHelper::$denomination_column,
             'record' => $data,
@@ -53,5 +54,16 @@ class IadController extends Controller
             'title' => 'Success!',
             'msg' => 'Remove Barcode Successfully',
         ]);
+    }
+    public function validateBarcode(Request $request)
+    {
+       return $this->iadServices->validateBarcodeFunction($request);
+
+    }
+
+    public function submitSetup(Request $request)
+    {
+
+        return $this->iadServices->submitSetupFunction($request);
     }
 }

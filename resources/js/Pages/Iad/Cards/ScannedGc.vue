@@ -2,12 +2,16 @@
     <a-table :data-source="scannedGc" :columns="columns" size="small">
         <template #bodyCell="{ column, record }">
             <template v-if="column.key == 'remove'">
-                <a-button size="small" type="primary" danger @click="remove(record.tval_barcode)">
-                    <template #icon>
-                        <ClearOutlined />
-                    </template>
-                    Remove
-                </a-button>
+                <a-popconfirm :title="'Remove this? '+ record.tval_barcode" ok-text="Yes" cancel-text="No"
+                    @confirm="remove(record.tval_barcode)" @cancel="cancel">
+                    <a-button size="small" type="primary" danger>
+                        <template #icon>
+                            <ClearOutlined />
+                        </template>
+                        Remove
+                    </a-button>
+                </a-popconfirm>
+
             </template>
         </template>
     </a-table>
@@ -47,7 +51,7 @@ export default {
                     notification[reponse.props.flash.status]({
                         message: reponse.props.flash.title,
                         description:
-                        reponse.props.flash.msg,
+                            reponse.props.flash.msg,
                     });
                 }
             })

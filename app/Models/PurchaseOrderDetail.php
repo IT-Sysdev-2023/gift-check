@@ -9,7 +9,11 @@ class PurchaseOrderDetail extends Model
 {
     use HasFactory;
 
-    protected $table= 'purchased_orderdetails';
+    protected $table = 'purchase_orderdetails';
 
-    protected $primaryKey= 'purchorderdet_ref';
+    protected $primaryKey = 'purchorderdet_ref';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }
