@@ -114,7 +114,12 @@ Route::prefix('marketing')->group(function () {
             Route::get('pending-request',[MarketingController::class, 'pendingRequest'])->name('pending.request');
             Route::post('submit-request',[MarketingController::class, 'submitPendingRequest'])->name('submit.request');
         });
+        Route::name('approvedRequest.')->group(function () {
+            Route::get('approved-request',[MarketingController::class, 'approvedRequest'])->name('approved.request');
+        });
 
+
+        
     });
 });
 

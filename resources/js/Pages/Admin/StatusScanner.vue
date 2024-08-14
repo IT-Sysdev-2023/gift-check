@@ -85,7 +85,7 @@ export default {
             const barcode = this.form.barcode.replace(/\s+/g, '');
             this.isLoading = true;
 
-            this.$inertia.get(route("admin.dashboard"), {
+            this.$inertia.get(route("admin.status.scanner"), {
                 barcode,
                 fetch: true,
 

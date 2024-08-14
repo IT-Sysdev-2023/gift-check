@@ -58,6 +58,7 @@ declare module 'vue' {
     ApplicationLogo: typeof import('./resources/js/Components/ApplicationLogo.vue')['default']
     ApprovedAndReleaseSpgc: typeof import('./resources/js/Pages/Finance/ApprovedAndReleaseSpgc.vue')['default']
     ApprovedPromoGcRequest: typeof import('./resources/js/Pages/Finance/ApprovedPromoGcRequest.vue')['default']
+    ApprovedRequest: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/ApprovedRequest.vue')['default']
     ApprovedSpgcExcelResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcExcelResult.vue')['default']
     ApprovedSpgcPdfResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcPdfResult.vue')['default']
     ApprovedTab: typeof import('./resources/js/Pages/Finance/Reports/ApprovedTab.vue')['default']
