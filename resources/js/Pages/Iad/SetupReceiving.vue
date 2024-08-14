@@ -1,6 +1,13 @@
 <template>
     <div v-if="Object.keys(record).length">
+        <div class="flex justify-end mb-3">
+            <a-button @click="() => $inertia.get(route('iad.receiving'))">
+                <RollbackOutlined />
+                Back to the Table
+            </a-button>
+        </div>
         <a-row :gutter="[16, 16]">
+
             <a-col :span="10">
                 <a-descriptions size="small" class="mb-0 text-center" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="Received No.">{{ recnum }}</a-descriptions-item>
@@ -120,8 +127,7 @@
                             Validate By Barcode
                         </a-button>
 
-                        <a-button block class="mb-2" type="primary" @click="submit" :loading="isSubmittingReq"
-                            :disabled="denomination.filter(data => data.scanned).length == 0">
+                        <a-button block class="mb-2" type="primary" @click="submit" :loading="isSubmittingReq">
                             Submit
                         </a-button>
 

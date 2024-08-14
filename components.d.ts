@@ -205,6 +205,7 @@ declare module 'vue' {
     ResponsiveNavLink: typeof import('./resources/js/Components/ResponsiveNavLink.vue')['default']
     RetailSidebar: typeof import('./resources/js/Components/RetailSidebar.vue')['default']
     RetweetOutlined: typeof import('@ant-design/icons-vue')['RetweetOutlined']
+    RollbackOutlined: typeof import('@ant-design/icons-vue')['RollbackOutlined']
     Sale_storeSales: typeof import('./resources/js/Pages/Marketing/Sale_storeSales.vue')['default']
     Sale_treasurySales: typeof import('./resources/js/Pages/Marketing/Sale_treasurySales.vue')['default']
     SaveOutlined: typeof import('@ant-design/icons-vue')['SaveOutlined']
