@@ -25,7 +25,6 @@ class IadDbServices
             'csrr_remarks' => '',
         ]);
 
-        return $this;
     }
     public function custodianPurchaseOrderDetails($request)
     {
@@ -46,20 +45,16 @@ class IadDbServices
             'purchorderdet_prepby' => $request->data['prep_by'],
             'purchorderdet_checkby' => $request->data['check_by']
         ]);
-
-        return $this;
     }
     public function custodianSrrItems($request)
     {
 
-        foreach($request->scanned as $barcode){
+        foreach ($request->scanned as $barcode) {
             CustodianSrrItem::create([
                 'cssitem_barcode' => $barcode['tval_barcode'],
                 'cssitem_recnum' => $request->recnum
             ]);
         }
-
-        return $this;
     }
 
     public function custodianUpProdDetails($request)
@@ -82,10 +77,7 @@ class IadDbServices
             $prodRequest->update([
                 'pe_items_remain' => $ifRemainItem
             ]);
-
         }
-
-        return $this;
     }
     public function custodianDeleteTempValAndReqForm($id, $recnum)
     {
@@ -93,16 +85,14 @@ class IadDbServices
 
         $quickCheck = ProductionRequestItem::where('pe_items_request_id', $id)->sum('pe_items_remain');
 
-        if($quickCheck == 0) {
+        if ($quickCheck == 0) {
 
             RequisitionForm::where('req_no', $recnum)->delete();
 
             RequisitionFormDenomination::where('form_id', $recnum)->delete();
         }
 
-        TempValidation::truncate();
-
-     
+        
     }
 
 

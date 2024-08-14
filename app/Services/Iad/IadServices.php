@@ -168,6 +168,7 @@ class IadServices
 
     public function validateBarcodeFunction($request)
     {
+
         $request->validate([
             'barcode' => 'bail|min:13|max:13|required',
         ]);
@@ -179,28 +180,41 @@ class IadServices
             ->where('barcode_no', $request->barcode)
             ->exists();
 
+
+
         if ($inGc) {
-            $ifScanned = TempValidation::where('tval_barcode', $request->barcode)->exists();
 
-            if (!$ifScanned) {
-                $denomid = Gc::select('denom_id')->where('barcode_no', $request->barcode)->first();
+            $isValidated = CustodianSrrItem::where('cssitem_barcode', $request->barcode)->exists();
 
-                TempValidation::create([
-                    'tval_barcode' => $request->barcode,
-                    'tval_recnum' => $request->recnum,
-                    'tval_denom' => $denomid->denom_id,
-                ]);
+            if (!$isValidated) {
+                $ifScanned = TempValidation::where('tval_barcode', $request->barcode)->exists();
 
-                return back()->with([
-                    'status' => 'success',
-                    'title' => 'Success',
-                    'msg' => 'Barcode # ' . $request->barcode . ' is Validated Successfully',
-                ]);
+                if (!$ifScanned) {
+                    $denomid = Gc::select('denom_id')->where('barcode_no', $request->barcode)->first();
+
+                    TempValidation::create([
+                        'tval_barcode' => $request->barcode,
+                        'tval_recnum' => $request->recnum,
+                        'tval_denom' => $denomid->denom_id,
+                    ]);
+
+                    return back()->with([
+                        'status' => 'success',
+                        'title' => 'Success',
+                        'msg' => 'Barcode # ' . $request->barcode . ' is Validated Successfully',
+                    ]);
+                } else {
+                    return back()->with([
+                        'status' => 'warning',
+                        'title' => 'Warning!',
+                        'msg' => 'Barcode ' . $request->barcode . ' is Already Scanned! ',
+                    ]);
+                }
             } else {
                 return back()->with([
                     'status' => 'warning',
                     'title' => 'Warning!',
-                    'msg' => 'Barcode ' . $request->barcode . ' is Already Scanned! ',
+                    'msg' => 'Barcode ' . $request->barcode . ' is Already Validated! ',
                 ]);
             }
         } else {
@@ -213,15 +227,37 @@ class IadServices
     }
     public function submitSetupFunction($request)
     {
-        DB::transaction(function () use ($request) {
+        $request->validate([
+            'select' => 'required',
+        ]);
+
+        $create =  DB::transaction(function () use ($request) {
 
             $id = self::getRequistionNo($request->data['req_no']);
 
-            $this->iadDbServices->custodianPurchaseOrderDetails($request)
-                ->custodianSsrCreate($request)
-                ->custodianUpProdDetails($request)
-                ->custodianSrrItems($request)
-                ->custodianDeleteTempValAndReqForm($id, $request->data['req_no']);
+            $this->iadDbServices->custodianPurchaseOrderDetails($request);
+            $this->iadDbServices->custodianSsrCreate($request);
+            $this->iadDbServices->custodianUpProdDetails($request);
+            $this->iadDbServices->custodianSrrItems($request);
+            $this->iadDbServices->custodianDeleteTempValAndReqForm($id, $request->data['req_no']);
+
+            return true;
         });
+
+        if ($create) {
+            TempValidation::truncate();
+
+            return redirect()->route('iad.dashboard')->with([
+                'status' => 'success',
+                'title' => 'Success',
+                'msg' => 'Successfully Submitted!',
+            ]);
+        } else {
+            return back()->with([
+                'status' => 'error',
+                'title' => 'Error',
+                'msg' => 'Opss Something Went Wrong!',
+            ]);
+        }
     }
 }
