@@ -212,6 +212,7 @@ Route::middleware('auth')->group(function () {
             //special gc payment
             Route::prefix('special-gc-payment')->name('special.')->group(function () {
                 Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('ext');
+                Route::post('external-request', [SpecialGcRequestController::class, 'externalPaymentSubmission'])->name('extSubmission');
             });
         });
 

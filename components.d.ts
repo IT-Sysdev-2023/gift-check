@@ -49,6 +49,7 @@ declare module 'vue' {
     AntFormInline: typeof import('./resources/js/Components/Treasury/AntFormInline.vue')['default']
     AntFormNest: typeof import('./resources/js/Components/Treasury/AntFormNest.vue')['default']
     AntFormNestItem: typeof import('./resources/js/Components/Treasury/AntFormNestItem.vue')['default']
+    AntInputNumber: typeof import('./resources/js/Components/AntInputNumber.vue')['default']
     AntSelect: typeof import('./resources/js/Components/AntSelect.vue')['default']
     AntUploadImage: typeof import('./resources/js/Components/AntUploadImage.vue')['default']
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']

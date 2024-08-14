@@ -10,7 +10,7 @@
             >
                 <span>Denomination:</span>
                 <a-input-number
-                    v-model:value="item.denom"
+                    v-model:value="item.denomination"
                     :formatter="
                         (value) =>
                             `₱ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -41,6 +41,7 @@
                 Add Denomination
             </a-button>
         </a-form-item>
+        <span v-if="form.errors.denomination" class="text-red-500">{{ form.errors.denomination  }}</span>
     </a-card>
 </template>
 <script lang="ts" setup>
@@ -52,9 +53,7 @@ interface Denom {
     id: number;
 }
 const props = defineProps<{
-    form: {
-        denomination: any[];
-    };
+    form: any;
 }>();
 
 const removeUser = (item: Denom) => {
