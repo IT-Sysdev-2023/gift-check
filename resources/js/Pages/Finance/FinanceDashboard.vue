@@ -4,6 +4,7 @@
            <PromoGCCard :count="count"/>
         </a-col>
         <a-col :span="8">
+            <special-pending-request-finance/>
             <!-- <PromoGCCard/> -->
         </a-col>
         <a-col :span="8">

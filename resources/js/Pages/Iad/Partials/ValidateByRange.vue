@@ -36,7 +36,7 @@
                 <a-col :span="12">
                     <a-input-group>
                         <a-typography-text keyboard>Barcode End:</a-typography-text>
-                        <a-form-item :help="errors.barcodeStart" has-feedback
+                        <a-form-item :help="errors.barcodeEnd" has-feedback
                             :validate-status="form.barcodeEnd?.length === 13 ? 'success' : errors.barcodeEnd ? 'error' : ''">
                             <a-input v-model:value="form.barcodeEnd" @keyup.enter="validateRange" size="large"
                                 placeholder="End of Barcode here.." show-count allow-clear
@@ -126,6 +126,8 @@ export default {
         },
         cancel(){
             this.response = [];
+            this.errors = [];
+            this.form.reset();
         },
         handleKeyPress(event) {
             const charCode = event.which ? event.which : event.keyCode;

@@ -28,9 +28,9 @@
                                 :validate-status="errors.select ? 'error' : ''">
                                 <a-select ref="select" placeholder="Select Type" v-model:value="select"
                                     style="width: 100%" @focus="focus" @change="handleChange">
-                                    <a-select-option value="whole">Whole</a-select-option>
-                                    <a-select-option value="partial">Partials</a-select-option>
-                                    <a-select-option value="final">Final</a-select-option>
+                                    <a-select-option v-if="ifPartial()" value="whole">Whole</a-select-option>
+                                    <a-select-option v-if="!ifPartial()" value="partial">Partials</a-select-option>
+                                    <a-select-option v-if="ifPartial()" value="final">Final</a-select-option>
                                 </a-select>
                             </a-form-item>
                         </a-form>
@@ -126,8 +126,8 @@
                         <a-button block class="mb-2" @click="validateBarcode">
                             Validate By Barcode
                         </a-button>
-
                         <a-button block class="mb-2" type="primary" @click="submit" :loading="isSubmittingReq">
+                            <!-- :disabled="denomination.filter((data) => data.scanned).length === 0" -->
                             Submit
                         </a-button>
 
@@ -209,7 +209,6 @@ export default {
         }
     },
     methods: {
-
         validateBarcode() {
             this.openBarcode = true;
         },
@@ -271,6 +270,15 @@ export default {
                     this.isSubmittingReq = false;
                 }
             })
+        },
+        ifPartial() {
+            return this.denomination
+                .filter((data) => data.scanned)
+                .reduce((sum, data) => sum + data.scanned, 0)
+
+                == this.denomination
+                    .filter((data) => data.item_remain)
+                    .reduce((sum, data) => sum + data.item_remain, 0)
         }
     }
 }

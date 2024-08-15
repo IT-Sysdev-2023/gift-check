@@ -89,7 +89,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item key="beamAndGoGoReport">Beam and Go GC Report</a-menu-item>
         </a-sub-menu>
     </a-sub-menu>
-    <a-menu v-else>
+    <div v-else>
         <a-menu-item key="retail.dashboard">
             <BarcodeOutlined />
             <span>
@@ -158,6 +158,6 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item key="verifiedGCReports">Verified GC Reports</a-menu-item>
             <a-menu-item key="beamAndGoGoReport">Beam and Go GC Report</a-menu-item>
         </a-sub-menu>
-    </a-menu>
+    </div>
 
 </template>

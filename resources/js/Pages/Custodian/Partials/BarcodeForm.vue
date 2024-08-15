@@ -1,32 +1,23 @@
 <template>
     <a-card>
-        <a-input-group compact>
-            <span>Scan Barcode:</span>
-            <a-input allow-clear show-count @keypress="handleKeyPress" v-model:value="form.barcode" size="large" style="width: calc(100% - 40px)"
-                @keyup.enter="submit" />
-            <a-tooltip title="Scan Barcode here..">
-                <a-button :loading="form.processing" size="large" >
-                    <template #icon>
-                        <BarcodeOutlined />
-                    </template>
-                </a-button>
-            </a-tooltip>
-        </a-input-group>
+        <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
+            <a-descriptions-item label="Date Scanned" class="text-right">{{ date }}</a-descriptions-item>
+        </a-descriptions>
+        <a-descriptions size="small" layout="horizontal" bordered>
+            <a-descriptions-item label="Scanned By " class="text-right">{{ $page.props.auth.user.full_name
+                }}</a-descriptions-item>
+        </a-descriptions>
+
+        <div class="text-center mt-4">Scan Barcode</div>
+        <a-input prefix="#" show-count allow-clear @keypress="handleKeyPress" @keyup.enter="submit"
+            v-model:value="form.barcode" size="large" />
+
         <a-button block class="mt-2" type="primary" @click="submit"
             :disabled="form.barcode === null || form.barcode === ''">Submit</a-button>
 
         <a-alert v-if="status.status" class="mt-2" :message="status.desc" :type="status.status" show-icon />
 
     </a-card>
-
-
-    <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
-        <a-descriptions-item label="Date Scanned" class="text-right">{{ date }}</a-descriptions-item>
-    </a-descriptions>
-    <a-descriptions size="small" layout="horizontal" bordered>
-        <a-descriptions-item label="Scanned By " class="text-right">{{ $page.props.auth.user.full_name
-            }}</a-descriptions-item>
-    </a-descriptions>
 </template>
 
 <script>

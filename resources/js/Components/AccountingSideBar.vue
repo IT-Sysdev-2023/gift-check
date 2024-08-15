@@ -44,7 +44,7 @@ const page = usePage<PageWithSharedProps>().props;
         </a-sub-menu>
     </a-sub-menu>
 
-    <a-menu v-else>
+    <div v-else>
         <a-sub-menu key="menu-sub-masterfile">
             <template #title>
                 <span>
@@ -74,7 +74,7 @@ const page = usePage<PageWithSharedProps>().props;
                 <DollarOutlined /> SPGC Released
             </a-menu-item>
         </a-sub-menu>
-    </a-menu>
+    </div>
 
 
 

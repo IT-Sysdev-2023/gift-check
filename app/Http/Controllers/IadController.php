@@ -22,8 +22,8 @@ class IadController extends Controller
     public function receivingIndex()
     {
         return inertia('Iad/GcReceivingIndex', [
-            'record' =>  $this->iadServices->gcReceivingIndex(),
             'columns' => ColumnHelper::$receiving_columns,
+            'record' =>  $this->iadServices->gcReceivingIndex(),
         ]);
     }
 

@@ -109,7 +109,7 @@ const dashboardRoute = computed(() => {
                     </a-layout-content>
                 </a-layout>
             </a-layout>
-            <ant-float v-if="(userType('2') && !userRole(2)) && (page.pendingPrRequest.length) "/>
+            <ant-float v-if="(userType('2') || userType('1')  && !userRole(2)) && (page.pendingPrRequest.length) "/>
         </a-layout>
     </div>
 </template>

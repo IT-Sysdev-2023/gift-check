@@ -225,6 +225,7 @@ declare module 'vue' {
     SpecialExGcRequest: typeof import('./resources/js/Pages/Iad/Cards/SpecialExGcRequest.vue')['default']
     SpecialExtPayment: typeof import('./resources/js/Pages/Treasury/Transactions/SpecialGcPayment/SpecialExtPayment.vue')['default']
     SpecialGcTable: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGcTable.vue')['default']
+    SpecialPendingRequestFinance: typeof import('./resources/js/Pages/Finance/Cards/SpecialPendingRequestFinance.vue')['default']
     SpgcLedger: typeof import('./resources/js/Pages/Finance/SpgcLedger.vue')['default']
     SpgcLedgerResult: typeof import('./resources/js/Pages/Finance/Results/SpgcLedgerResult.vue')['default']
     Statistics: typeof import('./resources/js/Pages/Custodian/Partials/Statistics.vue')['default']

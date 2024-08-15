@@ -16,47 +16,47 @@ class IadDbServices
 {
     public function custodianSsrCreate($request)
     {
-        CustodianSrr::create([
-            'csrr_id' => $request->recnum,
-            'csrr_requisition' => $request->data['req_no'],
-            'csrr_receivetype' => $request->data['srr_type'],
-            'csrr_datetime' => today(),
-            'csrr_prepared_by' => $request->user()->user_id,
-            'csrr_receivedas' => $request->select,
-            'csrr_remarks' => '',
-        ]);
+        // CustodianSrr::create([
+        //     'csrr_id' => $request->recnum,
+        //     'csrr_requisition' => $request->data['req_no'],
+        //     'csrr_receivetype' => $request->data['srr_type'],
+        //     'csrr_datetime' => today(),
+        //     'csrr_prepared_by' => $request->user()->user_id,
+        //     'csrr_receivedas' => $request->select,
+        //     'csrr_remarks' => '',
+        // ]);
         return $this;
     }
     public function custodianPurchaseOrderDetails($request)
     {
-        PurchaseOrderDetail::create([
-            'purchorderdet_ref' => $request->recnum,
-            'purchorderdet_mnlno' => $request->data['req_no'],
-            'purchorderdet_fadrecno' => $request->data['rec_no'],
-            'purchorderdet_trandate' => $request->data['trans_date'],
-            'purchorderdet_refno' => $request->data['ref_no'],
-            'purchorderdet_purono' => $request->data['po_no'],
-            'purchorderdet_purdate' => $request->data['pur_date'],
-            'purchorderdet_payterms' => $request->data['pay_terms'],
-            'purchorderdet_locode' => $request->data['loc_code'],
-            'purchorderdet_deptcode' => $request->data['dep_code'],
-            'purchorderdet_supname' => $request->data['sup_name'],
-            'purchorderdet_modpay' => $request->data['mop'],
-            'purchorderdet_remarks' => $request->data['remarks'],
-            'purchorderdet_prepby' => $request->data['prep_by'],
-            'purchorderdet_checkby' => $request->data['check_by']
-        ]);
+        // PurchaseOrderDetail::create([
+        //     'purchorderdet_ref' => $request->recnum,
+        //     'purchorderdet_mnlno' => $request->data['req_no'],
+        //     'purchorderdet_fadrecno' => $request->data['rec_no'],
+        //     'purchorderdet_trandate' => $request->data['trans_date'],
+        //     'purchorderdet_refno' => $request->data['ref_no'],
+        //     'purchorderdet_purono' => $request->data['po_no'],
+        //     'purchorderdet_purdate' => $request->data['pur_date'],
+        //     'purchorderdet_payterms' => $request->data['pay_terms'],
+        //     'purchorderdet_locode' => $request->data['loc_code'],
+        //     'purchorderdet_deptcode' => $request->data['dep_code'],
+        //     'purchorderdet_supname' => $request->data['sup_name'],
+        //     'purchorderdet_modpay' => $request->data['mop'],
+        //     'purchorderdet_remarks' => $request->data['remarks'],
+        //     'purchorderdet_prepby' => $request->data['prep_by'],
+        //     'purchorderdet_checkby' => $request->data['check_by']
+        // ]);
         return $this;
     }
     public function custodianSrrItems($request)
     {
 
-        foreach ($request->scanned as $barcode) {
-            CustodianSrrItem::create([
-                'cssitem_barcode' => $barcode['tval_barcode'],
-                'cssitem_recnum' => $request->recnum
-            ]);
-        }
+        // foreach ($request->scanned as $barcode) {
+        //     CustodianSrrItem::create([
+        //         'cssitem_barcode' => $barcode['tval_barcode'],
+        //         'cssitem_recnum' => $request->recnum
+        //     ]);
+        // }
         return $this;
     }
 
@@ -81,17 +81,17 @@ class IadDbServices
             $prodRequest->update([
                 'pe_items_remain' => $ifRemainItem
             ]);
+
+            
         }
+
+        // dd($prodRequest);
 
         return $this;
     }
-    public function custodianDeleteTempValAndReqForm($id, $recnum)
+    public function custodianUsedAndValidated($id, $recnum, $type)
     {
-
-
-        $quickCheck = ProductionRequestItem::where('pe_items_request_id', $id)->sum('pe_items_remain');
-
-        if ($quickCheck == 0) {
+        if (($type == 'whole' || $type == 'final')) {
 
             RequisitionForm::where('req_no', $recnum)->update([
                 'used' => 'used',
@@ -101,6 +101,7 @@ class IadDbServices
                 'used' => 'used'
             ]);
         }
+
 
         return $this;
     }

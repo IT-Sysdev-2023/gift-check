@@ -32,7 +32,7 @@ const page = usePage<PageWithSharedProps>().props;
     </a-menu-item>
   </a-sub-menu>
 
-  <a-menu v-else>
+  <div v-else>
     <a-menu-item key="dashboard">
         <GroupOutlined />
         <span> <Link :href="route('finance.dashboard')">  {{ page.auth.user.usertype == '1' ? 'Finance Dashboard' : 'Dashboard'}}</Link></span>
@@ -49,7 +49,7 @@ const page = usePage<PageWithSharedProps>().props;
         <GroupOutlined />
         <span> <Link :href="route('finance.approved.released.reports')"> Reports</Link></span>
     </a-menu-item>
-  </a-menu>
+</div>
 
 </template>
 

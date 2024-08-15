@@ -237,7 +237,7 @@ class IadServices
             $id = self::getRequistionNo($request->data['req_no']);
 
             $this->iadDbServices->custodianPurchaseOrderDetails($request)
-                ->custodianDeleteTempValAndReqForm($id, $request->data['req_no'])
+                ->custodianUsedAndValidated($id, $request->data['req_no'], $request->select)
                 ->custodianRequisitionUpdate($request)
                 ->custodianUpProdDetails($request)
                 ->custodianGcUpdate($request)
