@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Models\TempValidation;
 use App\Services\Iad\IadServices;
@@ -9,11 +10,13 @@ use Illuminate\Http\Request;
 
 class IadController extends Controller
 {
-    public function __construct(public IadServices $iadServices) {}
+    public function __construct(public IadServices $iadServices , public DashboardClass $dashboardClass) {}
 
     public function index()
     {
-        return inertia('Iad/IadDashboard');
+        return inertia('Iad/IadDashboard', [
+            'counts' => $this->dashboardClass->iadDashboard(),
+        ]);
     }
 
     public function receivingIndex()

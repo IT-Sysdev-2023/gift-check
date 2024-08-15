@@ -4,7 +4,7 @@
 
         </a-col>
         <a-col :span="12">
-            <GcReceiving />
+            <GcReceiving :counts="counts"/>
         </a-col>
     </a-row>
 </template>
@@ -14,5 +14,8 @@ import { notification } from 'ant-design-vue';
 
 export default {
     layout: AuthenticatedLayout,
+    props: {
+        counts: Object,
+    }
 }
 </script>
