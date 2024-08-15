@@ -56,6 +56,7 @@ declare module 'vue' {
     AntSelect: typeof import('./resources/js/Components/AntSelect.vue')['default']
     AntUploadImage: typeof import('./resources/js/Components/AntUploadImage.vue')['default']
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']
+    APopover: typeof import('ant-design-vue/es')['Popover']
     AppleOutlined: typeof import('@ant-design/icons-vue')['AppleOutlined']
     ApplicationLogo: typeof import('./resources/js/Components/ApplicationLogo.vue')['default']
     ApprovedAndReleaseSpgc: typeof import('./resources/js/Pages/Finance/ApprovedAndReleaseSpgc.vue')['default']

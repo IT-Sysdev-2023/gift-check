@@ -1,17 +1,65 @@
 <template>
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
-            <a-card title=" GC Production Request">
-                <div v-if="gcProductionRequest.pendingRequest">
+            <a-card class="bg-blue-100 mb-5" title="Promo GC Request">
+                <div v-if="countPromoGcRequest.pendingRequest">
                     <a-badge :count=gcProductionRequest.pendingRequest>
-                        <a-button @click="pendingRequestLink" block style="width: 340px"
-                            class="mb-2 bg-red-500 text-white">
+                        <a-button block style="width: 330px" class="mb-2 bg-red-500 text-white">
                             Pending Request
                         </a-button>
                     </a-badge>
                 </div>
                 <div v-else>
-                    <a-button disabled block style="width: 340px" class="mb-2 bg-red-500 text-white">
+                    <a-button disabled block style="width: 330px" class="mb-2 bg-red-500 text-white">
+                        Pending Request
+                    </a-button>
+                </div>
+                <div v-if="countPromoGcRequest.approvedRequest">
+                    <a-badge :count=countPromoGcRequest.approvedRequest :number-style="{
+                        backgroundColor: '#3b82f6',
+                        color: 'white',
+                        boxShadow: '0 0 0 1px #d9d9d9 inset',
+                    }">
+                        <a-button block style="width: 330px" class="mb-2 bg-blue-500 text-white">
+                            Approved Request
+                        </a-button>
+                    </a-badge>
+                </div>
+                <div v-else>
+                    <a-button disabled block style="width: 330px" class="mb-2 bg-red-500 text-white">
+                        Approved Request
+                    </a-button>
+                </div>
+
+                <div v-if="countPromoGcRequest.cancelledRequest">
+                    <a-badge :count=countPromoGcRequest.cancelledRequest :number-style="{
+                        backgroundColor: '#6b7280',
+                        color: 'white',
+                        boxShadow: '0 0 0 1px #d9d9d9 inset',
+                    }">
+                        <a-button block style="width: 330px" class="mb-2 bg-gray-500 text-white">
+                            Cancelled Request
+                        </a-button>
+                    </a-badge>
+                </div>
+                <div v-else>
+                    <a-button disabled block style="width: 330px" class="mb-2 bg-gray-500 text-white">
+                        Cancelled Request
+                    </a-button>
+                </div>
+            </a-card>
+
+            <a-card class="bg-blue-100" title=" GC Production Request">
+                <div v-if="gcProductionRequest.pendingRequest">
+                    <a-badge :count=gcProductionRequest.pendingRequest>
+                        <a-button @click="() => $inertia.get(route('marketing.pendingRequest.pending.request'))"
+                            style="width: 330px" class="mb-2 bg-red-500 text-white">
+                            Pending Request
+                        </a-button>
+                    </a-badge>
+                </div>
+                <div v-else>
+                    <a-button disabled block style="width: 330px" class="mb-2 bg-red-500 text-white">
                         Pending Request
                     </a-button>
                 </div>
@@ -21,14 +69,14 @@
                         color: 'white',
                         boxShadow: '0 0 0 1px #d9d9d9 inset',
                     }">
-                        <a-button @click="ApprovedRequestLink" block style="width: 340px"
-                            class="mb-2 bg-blue-500 text-white">
+                        <a-button @click="() => $inertia.get(route('marketing.approvedRequest.approved.request'))"
+                            style="width: 330px" class="mb-2 bg-blue-500 text-white">
                             Approved Request
                         </a-button>
                     </a-badge>
                 </div>
                 <div v-else>
-                    <a-button disabled block style="width: 340px" class="mb-2 bg-blue-500 text-white">
+                    <a-button disabled block style="width: 330px" class="mb-2 bg-blue-500 text-white">
                         Approved Request
                     </a-button>
                 </div>
@@ -38,24 +86,92 @@
                         color: 'white',
                         boxShadow: '0 0 0 1px #d9d9d9 inset',
                     }">
-                        <a-button block style="width: 340px" class="mb-2 bg-gray-500 text-white">
+                        <a-button block style="width: 330px" class="mb-2 bg-gray-500 text-white">
                             Cancelled Request
                         </a-button>
                     </a-badge>
                 </div>
                 <div v-else>
-                    <a-button disabled block style="width: 340px" class="mb-2 bg-gray-500 text-white">
+                    <a-button disabled block style="width: 330px" class="mb-2 bg-gray-500 text-white">
                         Cancelled Request
                     </a-button>
                 </div>
-
-
             </a-card>
+
+
 
         </a-col>
         <a-col :span="8">
-            <a-card>
-                yyy
+            <a-card class="bg-blue-100 mb-5" title="Special External GC Request">
+                <div v-if="countPromoGcRequest.pendingRequest">
+                    <a-badge :count=gcProductionRequest.pendingRequest>
+                        <a-button block style="width: 330px" class="mb-2 bg-red-500 text-white">
+                            Pending Request
+                        </a-button>
+                    </a-badge>
+                </div>
+                <div v-else>
+                    <a-button disabled block style="width: 330px" class="mb-2 bg-red-500 text-white">
+                        Pending Request
+                    </a-button>
+                </div>
+                <div v-if="countPromoGcRequest.approvedRequest">
+                    <a-badge :count=countPromoGcRequest.approvedRequest :number-style="{
+                        backgroundColor: '#3b82f6',
+                        color: 'white',
+                        boxShadow: '0 0 0 1px #d9d9d9 inset',
+                    }">
+                        <a-button block style="width: 330px" class="mb-2 bg-blue-500 text-white">
+                            Approved Request
+                        </a-button>
+                    </a-badge>
+                </div>
+                <div v-else>
+                    <a-button disabled block style="width: 330px" class="mb-2 bg-red-500 text-white">
+                        Approved Request
+                    </a-button>
+                </div>
+
+                <div v-if="countPromoGcRequest.cancelledRequest">
+                    <a-badge :count=countPromoGcRequest.cancelledRequest :number-style="{
+                        backgroundColor: '#6b7280',
+                        color: 'white',
+                        boxShadow: '0 0 0 1px #d9d9d9 inset',
+                    }">
+                        <a-button block style="width: 330px" class="mb-2 bg-gray-500 text-white">
+                            Cancelled Request
+                        </a-button>
+                    </a-badge>
+                </div>
+                <div v-else>
+                    <a-button disabled block style="width: 330px" class="mb-2 bg-gray-500 text-white">
+                        Cancelled Request
+                    </a-button>
+                </div>
+            </a-card>
+            <a-card class="bg-blue-100" title="Promo GC Received">
+                <div v-if="countPromoGcRequest.approvedRequest">
+                    <a-badge :count=countPromoGcRequest.approvedRequest :number-style="{
+                        backgroundColor: '#3b82f6',
+                        color: 'white',
+                        boxShadow: '0 0 0 1px #d9d9d9 inset',
+                    }">
+                        <a-button block style="width: 330px" class="mb-2 bg-blue-500 text-white">
+                            Released GC
+                        </a-button>
+                    </a-badge>
+                </div>
+                <div v-if="countPromoGcRequest.approvedRequest">
+                    <a-badge :count=countPromoGcRequest.approvedRequest :number-style="{
+                        backgroundColor: '#3b82f6',
+                        color: 'white',
+                        boxShadow: '0 0 0 1px #d9d9d9 inset',
+                    }">
+                        <a-button block style="width: 330px" class="mb-2 bg-red-500 text-white">
+                            Released GC
+                        </a-button>
+                    </a-badge>
+                </div>
             </a-card>
         </a-col>
         <a-col :span="8">
@@ -64,15 +180,9 @@
                     <h2>₱ {{ currentBudget }}</h2>
                 </a-card>
             </div>
-            <div v-if="ReqNum">
-                <div v-for="request in ReqNum" :key="pe_id">
-                    <a-button class="mb-2" @click="openReqModal(request)">
-                        Please fill up Requisition Form for Production Request # {{ request.pe_num }} P.O
-                    </a-button>
-                </div>
-            </div>
         </a-col>
     </a-row>
+
 
     <a-modal v-model:open="open" width="95%" style="top: 65px;" title="Suggested E-Requisition Entry">
         <a-row :gutter="[16, 16]">
@@ -169,6 +279,25 @@
         </template>
     </a-modal>
 
+    <a-modal v-model:open="requestListModal" title="List of Requisition Request" @ok="handleOk">
+        <div v-if="ReqNum && ReqNum.length">
+            <div v-for="request in ReqNum" :key="request.pe_id">
+                <a-button class="mb-2" @click="openReqModal(request)">
+                    Please fill up Requisition Form for Production Request # {{ request.pe_num }} P.O
+                </a-button>
+            </div>
+        </div>
+        <div v-else>
+            <a-empty />
+        </div>
+        <template #footer>
+            <a-button type="default" @click="requestListModal = false">Cancel</a-button>
+        </template>
+    </a-modal>
+
+
+    <a-float-button title="List of Requisition Request" @click="requisitionListModal"
+        :badge="{ count: Object.keys(ReqNum).length, overflowCount: 999 }" />
 </template>
 
 <script>
@@ -187,11 +316,13 @@ export default {
         supplier: Array,
         productionReqItems: Object,
         columns: Object,
-        gcProductionRequest: Object
+        gcProductionRequest: Object,
+        countPromoGcRequest: Object
     },
 
     data() {
         return {
+            requestListModal: false,
             open: false,
             form: {
                 id: '',
@@ -210,10 +341,10 @@ export default {
                 contactPerson: '',
                 contactNum: '',
                 address: '',
-
-            }
+            },
         };
     },
+
 
     watch: {
         'form.selectedSupplierId': function (newVal) {
@@ -268,13 +399,9 @@ export default {
         closeModal() {
             this.open = false;
         },
-
-        pendingRequestLink() {
-            this.$inertia.get(route('marketing.pendingRequest.pending.request'))
+        requisitionListModal() {
+            this.requestListModal = true
         },
-        ApprovedRequestLink() {
-            this.$inertia.get(route('marketing.approvedRequest.approved.request'))
-        }
     },
 };
 </script>
