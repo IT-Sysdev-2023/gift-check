@@ -22,6 +22,7 @@ declare module 'vue' {
     ADescriptionsItem: typeof import('ant-design-vue/es')['DescriptionsItem']
     AdminDashboard: typeof import('./resources/js/Pages/Admin/AdminDashboard.vue')['default']
     AdminSidebar: typeof import('./resources/js/Components/AdminSidebar.vue')['default']
+    ADrawer: typeof import('ant-design-vue/es')['Drawer']
     AEmpty: typeof import('ant-design-vue/es')['Empty']
     AFlex: typeof import('ant-design-vue/es')['Flex']
     AFloatButton: typeof import('ant-design-vue/es')['FloatButton']
