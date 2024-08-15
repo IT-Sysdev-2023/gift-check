@@ -16,7 +16,7 @@
                 <p class="message-text text-white">Receving</p>
                 <p class="sub-text text-white">For receving gift cheque</p>
             </div>
-            <a-badge >
+            <a-badge :count="counts.countReceiving" :number-style="{ backgroundColor: '#52c41a' }">
                 <a-button @click="() => $inertia.get(route('iad.receiving'))">
                     <template #icon>
                         <FolderFilled />
@@ -55,7 +55,7 @@
 <script>
 export default {
     props: {
-        count: Array,
+        counts: Object,
     },
 }
 </script>

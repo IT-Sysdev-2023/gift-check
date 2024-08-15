@@ -7,6 +7,7 @@ use App\Models\InstitutTransaction;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcReleaseToDetail;
 use App\Models\PromoGcRequest;
+use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
 use App\Services\Finance\FinanceDashboardService;
 use App\Services\Treasury\Dashboard\DashboardService;
@@ -56,5 +57,11 @@ class DashboardClass extends DashboardService
     public function marketingDashboard()
     {
         //
+    }
+    public function iadDashboard()
+    {
+        return [
+            'countReceiving' => RequisitionForm::where('used', null)->count(),
+        ];
     }
 }
