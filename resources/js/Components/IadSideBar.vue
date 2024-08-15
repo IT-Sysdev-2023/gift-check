@@ -11,8 +11,30 @@ const page = usePage<PageWithSharedProps>().props;
 </script>
 
 <template>
-    <a-menu-item key="iad">
-        <QrcodeOutlined />
-        <span> <Link :href="route('iad.dashboard')"> {{ page.auth.user.usertype == 1 ? 'Iad Dashboard' : 'Dashboard'}}</Link></span>
-    </a-menu-item>
+    <a-sub-menu v-if="page.auth.user.usertype === '1'" key="iad-side-bar">
+        <template #title>
+            <span>
+                <SwapOutlined />
+                <span>Iad Sidebar</span>
+            </span>
+        </template>
+
+        <a-menu-item key="iad">
+            <QrcodeOutlined />
+            <span>
+                <Link :href="route('iad.dashboard')"> {{ page.auth.user.usertype == 1 ? 'Iad Dashboard' : 'Dashboard' }}
+                </Link>
+            </span>
+        </a-menu-item>
+    </a-sub-menu>
+
+    <a-menu v-else>
+        <a-menu-item key="iad">
+            <QrcodeOutlined />
+            <span>
+                <Link :href="route('iad.dashboard')"> {{ page.auth.user.usertype == 1 ? 'Iad Dashboard' : 'Dashboard' }}
+                </Link>
+            </span>
+        </a-menu-item>
+    </a-menu>
 </template>
