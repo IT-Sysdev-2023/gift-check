@@ -122,7 +122,8 @@ class MarketingController extends Controller
         $debit = $budgetRow->total_debit;
         $credit = $budgetRow->total_credit;
         $budget = $debit - $credit;
-        $currentBudget = number_format($budget);
+        $currentBudget = number_format($budget, 2);
+
 
         $requestNum = ProductionRequest::where('pe_generate_code', 1)
             ->where('pe_requisition', 0)

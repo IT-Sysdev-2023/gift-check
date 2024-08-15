@@ -65,7 +65,6 @@
         </a-card>
         <template #footer>
             <a-button key="back" @click="handleCancel">Close</a-button>
-            <a-button key="submit" type="primary" :loading="loading" @click="handleOk">Reprint this Request</a-button>
         </template>
     </a-modal>
 </template>
