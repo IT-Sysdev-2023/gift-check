@@ -36,10 +36,6 @@ class SpecialGcPaymentService extends UploadFileHandler
             'paymentType.amount' => 'The selected payment amount is required.'
 
         ]);
-
-
-
-
         DB::transaction(function () use ($request) {
             $q = SpecialExternalGcrequest::create([
                 'spexgc_num' => $request->trans,
@@ -69,7 +65,7 @@ class SpecialGcPaymentService extends UploadFileHandler
                     'specit_trid' => $latestId
                 ]);
             });
-            $this->saveMultiFile($request);
+            $this->saveMultiFiles($request, $latestId);
         });
 
     }

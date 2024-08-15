@@ -3,8 +3,10 @@
 namespace App\Services\Documents;
 
 use App\Models\BudgetRequest;
+use App\Models\Document;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 
 class UploadFileHandler
@@ -55,12 +57,18 @@ class UploadFileHandler
         }
     }
 
-    protected function saveMultiFile(Request $request)
+    protected function saveMultiFiles(Request $request, $id)
     {
         if ($request->hasFile('file')) {
             foreach ($request->file as $image) {
                 $name = $this->getOriginalFileName($request, $image);
-                $this->disk->putFileAs($this->folder(), $image, $name);
+                $path = $this->disk->putFileAs($this->folder(), $image, $name);
+
+                Document::create([
+                    'doc_trid' => $id,
+                    'doc_type' => 'Special External GC Request',
+                    'doc_fullpath' => $path
+                ]);
             }
         }
     }
@@ -97,6 +105,11 @@ class UploadFileHandler
 
         $originalName = $image->getClientOriginalName();
         $nameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
-        return "{$nameWithoutExtension}-{$filename}";
+
+        //remove special Unicode character (\u{202F})
+        $cleanedFilename = preg_replace('/[^\x20-\x7E]/', '', $nameWithoutExtension);
+        $name = Str::replace(' ', '-', $cleanedFilename);
+
+        return "{$name}-{$filename}";
     }
 }

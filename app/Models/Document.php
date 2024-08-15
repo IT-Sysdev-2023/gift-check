@@ -9,5 +9,7 @@ class Document extends Model
 {
     use HasFactory;
 
-    protected $primaryKey= 'doc_id';
+    protected $primaryKey = 'doc_id';
+    protected $guarded = [];
+    public $timestamps = false;
 }
