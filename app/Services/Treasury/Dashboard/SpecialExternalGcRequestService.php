@@ -25,29 +25,6 @@ class SpecialExternalGcRequestService
             ->spexgcStatus('approved')->get();
 
         return $record;
-
-        //     $table = 'special_external_gcrequest';
-        // $select = 'special_external_gcrequest.spexgc_id,
-        //     special_external_gcrequest.spexgc_num,
-        //     special_external_gcrequest.spexgc_datereq,
-        //     special_external_gcrequest.spexgc_dateneed,
-        //     approved_request.reqap_approvedby,
-        //     approved_request.reqap_date,
-        //     special_external_customer.spcus_acctname,
-        //     special_external_customer.spcus_companyname';
-        // $where = "special_external_gcrequest.spexgc_status='approved' AND
-        //         approved_request.reqap_approvedtype = 'Special External GC Approved'";
-
-        // $join = 'INNER JOIN
-        //         special_external_customer
-        //     ON
-        //         special_external_customer.spcus_id = special_external_gcrequest.spexgc_company
-        //     LEFT JOIN
-        //         approved_request
-        //     ON
-        //         approved_request.reqap_trid = special_external_gcrequest.spexgc_id';
-        // $limit ='';
-        // $data = getAllData($link,$table,$select,$where,$join,$limit);
     }
 
     public static function reviewedGc(): Collection //special-external-gc-reviewed
@@ -75,40 +52,6 @@ class SpecialExternalGcRequestService
             ->get();
 
         return $data;
-
-        // $table = 'special_external_gcrequest';
-        // $select = "special_external_gcrequest.spexgc_num,
-        //     special_external_gcrequest.spexgc_dateneed,
-        //     special_external_gcrequest.spexgc_id,
-        //     special_external_gcrequest.spexgc_datereq,
-        //     CONCAT(users.firstname,' ',users.lastname) as prep,
-        //     special_external_customer.spcus_acctname,
-        //     special_external_customer.spcus_companyname,
-        //     approved_request.reqap_approvedby";
-        // $where = "special_external_gcrequest.spexgc_status='approved'
-        //     AND
-        //         special_external_gcrequest.spexgc_reviewed='reviewed'
-        //     AND
-        //         approved_request.reqap_approvedtype='Special External GC Approved'
-        //     AND
-        //         special_external_gcrequest.spexgc_released=''
-        //     AND 
-        //         special_external_gcrequest.spexgc_promo = '0'";
-        // $join = 'INNER JOIN
-        //         users
-        //     ON
-        //         users.user_id = special_external_gcrequest.spexgc_reqby
-        //     INNER JOIN
-        //         special_external_customer
-        //     ON
-        //         special_external_customer.spcus_id = special_external_gcrequest.spexgc_company
-        //     INNER JOIN
-        //         approved_request
-        //     ON
-        //         approved_request.reqap_trid = special_external_gcrequest.spexgc_id';
-        // $limit = 'ORDER BY special_external_gcrequest.spexgc_id ASC';
-
-        // $request = getAllData($link,$table,$select,$where,$join,$limit);
     }
 
 
@@ -122,54 +65,6 @@ class SpecialExternalGcRequestService
     public static function cancelledGcRequest(): Collection //cancelled-gc-request.php
     {
         return StoreGcrequest::cancelledGcRequest()->get();
-
-        // $rows = [];
-
-        // $query = $link->query(
-        // 	"SELECT 
-        // 		`store_gcrequest`.`sgc_id`,
-        // 		`store_gcrequest`.`sgc_num`,
-        // 		`cancelled_store_gcrequest`.`csgr_by`,
-        // 		`cancelled_store_gcrequest`.`csgr_at`,
-        // 		`stores`.`store_name`,
-        // 		`store_gcrequest`.`sgc_requested_by`,
-        // 		`users`.`firstname`,
-        // 		`users`.`lastname`,
-        // 		`store_gcrequest`.`sgc_date_request`
-
-        // 	FROM 
-        // 		`store_gcrequest` 
-        // 	INNER JOIN
-        // 		`cancelled_store_gcrequest`
-        // 	ON
-        // 		`store_gcrequest`.`sgc_id` = `cancelled_store_gcrequest`.`csgr_gc_id`
-        // 	INNER JOIN 
-        // 		`stores`
-        // 	ON
-        // 		`store_gcrequest`.`sgc_store` = `stores`.`store_id`
-        // 	INNER JOIN
-        // 		`users`
-        // 	ON
-        // 		`store_gcrequest`.`sgc_requested_by` = `users`.`user_id`
-        // 	WHERE 
-        // 		`store_gcrequest`.`sgc_status`=0
-        // 	AND
-        // 		`store_gcrequest`.`sgc_cancel`='*'			
-        // ");
-
-        // if($query)
-        // {
-        // 	while($row = $query->fetch_object())
-        // 	{
-        // 		$rows[] = $row;
-        // 	}
-
-        // 	return $rows;
-        // }
-        // else 
-        // {
-        // 	return $rows[] = $link->error;
-        // }
     }
 
 

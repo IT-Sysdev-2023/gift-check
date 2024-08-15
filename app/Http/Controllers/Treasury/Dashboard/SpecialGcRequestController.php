@@ -8,12 +8,19 @@ use App\Http\Resources\SpecialExternalGcRequestResource;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\SpecialExternalGcrequestItem;
 use App\Rules\DenomQty;
+use App\Services\Treasury\ColumnHelper;
+use App\Services\Treasury\Transactions\SpecialGcPaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SpecialGcRequestController extends Controller
 {
+
+    public function __construct(public SpecialGcPaymentService $specialGcPaymentService){
+        
+    }
     public function pendingSpecialGc(Request $request)
     {
         $record = SpecialExternalGcrequest::with(
@@ -117,46 +124,10 @@ class SpecialGcRequestController extends Controller
 
     public function externalPaymentSubmission(Request $request)
     {
-        // $request->dd();
-        $request->validate([
-            'companyId' => 'required|exists:special_external_customer,spcus_id',
-            'denomination' => ['required', 'array', new DenomQty()],
-            'dateNeeded' => 'required|date',
-            'paymentType.type' => 'required',
-            'paymentType.amount' => [
-                function ($attribute, $value, $fail) use ($request) {
-                    if ($request->input('paymentType.type') != 2 && (is_null($value) || $value == 0)) {
-                        $fail('The ' . $attribute . ' is required and cannot be 0 if type is not 2.');
-                    }
-                },
-            ]
-        ], [
-            'paymentType.type' => 'The payment type field is required.',
-            'paymentType.amount' => 'The selected payment amount is required.'
+        $this->specialGcPaymentService->externalSubmission($request);
 
-        ]);
+        return redirect()->back()->with('success', 'Process Success');
 
-        $request->dd();
 
-        DB::transaction(function() use ($request){
-            // SpecialExternalGcrequest::create([
-            //     'spexgc_num' => $request->trans, 
-			// 	    'spexgc_reqby' => $request->user()->user_id, 
-			// 	    'spexgc_datereq' => now(), 
-			// 	    'spexgc_dateneed' => $request->dateNeeded, 
-			// 	    'spexgc_remarks' => $remarks, 
-			// 	    'spexgc_company', 
-			// 	    'spexgc_payment', 
-			// 	    'spexgc_paymentype',
-			// 	    'spexgc_status',
-			// 	    'spexgc_type',
-			// 	    'spexgc_payment_stat',
-			// 	    'spexgc_addemp',
-			// 	    'spexgc_promo',
-			// 	    'spexgc_payment_arnum'
-            // ]);
-        });
-
-        
     }
 }

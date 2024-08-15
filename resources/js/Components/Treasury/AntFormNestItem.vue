@@ -2,7 +2,7 @@
     <a-card>
         <a-space v-for="(item, index) in form.denomination" :key="item.id">
             <a-form-item
-                :name="['denomination', index, 'denom']"
+                :name="['denomination', index, 'denomination']"
                 :rules="{
                     required: true,
                     message: 'Missing Denomination',
@@ -48,7 +48,7 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons-vue";
 
 interface Denom {
-    denom: number;
+    denomination: number;
     qty: number;
     id: number;
 }
@@ -64,7 +64,7 @@ const removeUser = (item: Denom) => {
 };
 const addDenom = () => {
     props.form.denomination.push({
-        denom: 0,
+        denomination: 0,
         qty: 0,
         id: Date.now(),
     });

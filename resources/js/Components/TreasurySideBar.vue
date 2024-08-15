@@ -119,7 +119,7 @@ const setActiveTab = computed(() => {
                         <span>Special GC Payment</span>
                     </span>
                 </template>
-                <!-- <a-menu-item key="treasury.transactions.special.ext">
+                <a-menu-item key="treasury.transactions.special.ext">
                     <span>
                         <Link
                             :href="route('treasury.transactions.special.ext')"
@@ -127,7 +127,7 @@ const setActiveTab = computed(() => {
                             Special Ext. Gc Payment</Link
                         ></span
                     ></a-menu-item
-                > -->
+                >
                 <a-menu-item key="menu-item-envelope"
                     >Special Int. Gc Payment</a-menu-item
                 >

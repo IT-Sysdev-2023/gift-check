@@ -182,6 +182,7 @@ const onSubmit = () => {
         .transform((data) => ({
             ...data,
             dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
+            denomination: data.denomination.filter(item => item.denomination !== 0 && item.qty !== 0),
         }))
         .post(route("treasury.transactions.special.extSubmission"), {
             onSuccess: ({ props }) => {
