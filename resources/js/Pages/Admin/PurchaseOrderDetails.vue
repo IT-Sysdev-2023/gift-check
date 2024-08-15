@@ -11,31 +11,31 @@
                     <a-row :gutter="[16, 16]">
                         <a-col :span="12">
                             <a-descriptions size="small" layout="horizontal" bordered>
-                                <a-descriptions-item label="Reference Purchase Order No.">{{ record.ref_po_no
+                                <a-descriptions-item style="width: 50%;" label="Reference Purchase Order No.">{{ record.ref_po_no
                                     }}</a-descriptions-item>
                             </a-descriptions>
                             <a-descriptions size="small" layout="horizontal" bordered>
-                                <a-descriptions-item label="Deparment Code">{{ record.dep_code }}</a-descriptions-item>
+                                <a-descriptions-item style="width: 50%;" label="Deparment Code">{{ record.dep_code }}</a-descriptions-item>
                             </a-descriptions>
                             <a-descriptions size="small" layout="horizontal" bordered>
-                                <a-descriptions-item label="Location Code.">{{ record.loc_code }}</a-descriptions-item>
+                                <a-descriptions-item style="width: 50%;" label="Location Code.">{{ record.loc_code }}</a-descriptions-item>
                             </a-descriptions>
                             <a-descriptions size="small" layout="horizontal" bordered>
-                                <a-descriptions-item label="Receiving No.">{{ record.rec_no }}</a-descriptions-item>
+                                <a-descriptions-item style="width: 50%;" label="Receiving No.">{{ record.rec_no }}</a-descriptions-item>
                             </a-descriptions>
                             <a-descriptions size="small" layout="horizontal" bordered>
-                                <a-descriptions-item label="Reference No.">{{ record.ref_no }}</a-descriptions-item>
+                                <a-descriptions-item style="width: 50%;" label="Reference No.">{{ record.ref_no }}</a-descriptions-item>
                             </a-descriptions>
                             <a-descriptions size="small" layout="horizontal" bordered>
-                                <a-descriptions-item label="Remarks.">{{ record.remarks }}</a-descriptions-item>
+                                <a-descriptions-item style="width: 50%;" label="Remarks.">{{ record.remarks }}</a-descriptions-item>
                             </a-descriptions>
                         </a-col>
                         <a-col :span="12">
                             <a-descriptions size="small" layout="horizontal" bordered>
-                                <a-descriptions-item label="Check By">{{ record.check_by }}</a-descriptions-item>
+                                <a-descriptions-item style="width: 50%;" label="Check By">{{ record.check_by }}</a-descriptions-item>
                             </a-descriptions>
                             <a-descriptions size="small" layout="horizontal" bordered>
-                                <a-descriptions-item label="Prepare By">{{ record.prep_by }}</a-descriptions-item>
+                                <a-descriptions-item style="width: 50%;" label="Prepare By">{{ record.prep_by }}</a-descriptions-item>
                             </a-descriptions>
                             <a-table :pagination="false" size="small" class="mt-2" :data-source="record.requis_form_denom" :columns="[
                                 {

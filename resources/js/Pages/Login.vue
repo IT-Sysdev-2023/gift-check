@@ -22,9 +22,7 @@ const submit = () => {
 };
 </script>
 
-<style></style>
 <template>
-
     <a-row :gutter="[16, 16]" style="background-image: url('/bg-circuit.png');">
         <a-col :span="12">
             <div class="flex justify-center items-center" style="height: 90vh; margin-top: 30px;">
@@ -33,29 +31,35 @@ const submit = () => {
         </a-col>
         <a-col :span="12">
             <body>
-                <div class="container" >
+                <div class="container">
                     <div class="login-box">
                         <h2>Login</h2>
                         <form action="#" @submit.prevent="submit">
                             <div class="input-box">
-                                <input name="username" v-model="form.username" type="text" required>
+                                <input name="username" 
+                                       v-model="form.username" 
+                                       type="text" 
+                                       required>
                                 <label>Username</label>
                                 <InputError class="mt-2" :message="form.errors.username" />
                             </div>
                             <div class="input-box">
-                                <input name="password" v-model="form.password" type="password" required>
+                                <input name="password" 
+                                       v-model="form.password" 
+                                       type="password" 
+                                       required>
                                 <label>Password</label>
                                 <InputError class="mt-2" :message="form.errors.password" />
                             </div>
                             <button type="submit" class="btn">Login</button>
                         </form>
                     </div>
-
                 </div>
             </body>
         </a-col>
     </a-row>
 </template>
+
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -110,7 +114,6 @@ body {
 .login-box {
     position: absolute;
     width: 400px;
-    /* background: red; */
 }
 
 .login-box form {
@@ -142,45 +145,23 @@ h2 {
     transition: .5s ease;
 }
 
-.input-box input:focus,
-.input-box input:valid {
+.input-box input:focus {
     border-color: #0ef;
 }
 
 .input-box label {
     position: absolute;
-    top: 50%;
+    top: -10px; /* Position the label at the top */
     left: 20px;
-    transform: translateY(-50%);
-    font-size: 1em;
-    color: #fff;
-    pointer-events: none;
-    transition: .5s ease;
-}
-
-.input-box input:focus~label,
-.input-box input:valid~label {
-    top: 1px;
-    font-size: .8em;
+    font-size: .8em; /* Smaller font size */
     background: #1f293a;
     padding: 0 6px;
     color: #0ef;
+    transition: .5s ease;
+    border-radius: 5px;
 }
 
-.forgot-pass {
-    margin: -15px 0 10px;
-    text-align: center;
-}
 
-.forgot-pass a {
-    font-size: .75em;
-    color: #fff;
-    text-decoration: none;
-}
-
-.forgot-pass a:hover {
-    text-decoration: underline;
-}
 
 .btn {
     width: 100%;
@@ -195,21 +176,7 @@ h2 {
     font-weight: 600;
 }
 
-.signup-link {
-    margin: 20px 0 10px;
-    text-align: center;
-}
 
-.signup-link a {
-    font-size: 1em;
-    color: #0ef;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.signup-link a:hover {
-    text-decoration: underline;
-}
 
 p {
     color: #fff;

@@ -17,7 +17,7 @@ class IadServices
     public function __construct(public IadDbServices $iadDbServices) {}
     public function gcReceivingIndex()
     {
-        return RequisitionForm::get();
+        return RequisitionForm::where('used', null)->get();
     }
 
 
@@ -227,6 +227,7 @@ class IadServices
     }
     public function submitSetupFunction($request)
     {
+
         $request->validate([
             'select' => 'required',
         ]);
@@ -235,11 +236,12 @@ class IadServices
 
             $id = self::getRequistionNo($request->data['req_no']);
 
-            $this->iadDbServices->custodianPurchaseOrderDetails($request);
-            $this->iadDbServices->custodianSsrCreate($request);
-            $this->iadDbServices->custodianUpProdDetails($request);
-            $this->iadDbServices->custodianSrrItems($request);
-            $this->iadDbServices->custodianDeleteTempValAndReqForm($id, $request->data['req_no']);
+            $this->iadDbServices->custodianPurchaseOrderDetails($request)
+                ->custodianDeleteTempValAndReqForm($id, $request->data['req_no'])
+                ->custodianRequisitionUpdate($request)
+                ->custodianUpProdDetails($request)
+                ->custodianGcUpdate($request)
+                ->custodianSrrItems($request);
 
             return true;
         });
