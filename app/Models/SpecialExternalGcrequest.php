@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Database\Eloquent\Builder;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Builder;
 
 class SpecialExternalGcrequest extends Model
 {
@@ -91,13 +92,23 @@ class SpecialExternalGcrequest extends Model
         return $this->hasOne(SpecialExternalBankPaymentInfo::class, 'spexgcbi_trid', 'spexgc_id');
     }
 
-    public function document() : HasOne
+    public function document(): HasOne
     {
         return $this->hasOne(Document::class, 'doc_trid', 'spexgc_id');
     }
-    public function specialExternalGcrequestEmpAssign() : HasMany 
+    public function specialExternalGcrequestEmpAssign(): HasMany
     {
         return $this->hasMany(SpecialExternalGcrequestEmpAssign::class, 'spexgcemp_trid', 'spexgc_id');
     }
-
+    public function scopeSelectFilter(Builder $query)
+    {
+        return $query->select(
+            'spexgc_num',
+            'spexgc_dateneed',
+            'spexgc_id',
+            'spexgc_datereq',
+            'spexgc_company',
+            'spexgc_reqby',
+        );
+    }
 }

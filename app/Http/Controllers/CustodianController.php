@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
+use App\Models\SpecialExternalGcrequest;
 use App\Services\Custodian\CustodianServices;
 use Illuminate\Http\Request;
 
 class CustodianController extends Controller
 {
-    public function __construct(public CustodianServices $custodianservices)
-    {
-    }
+    public function __construct(public CustodianServices $custodianservices) {}
     public function index()
     {
         return inertia('Custodian/CustodianDashboard');
@@ -45,4 +44,14 @@ class CustodianController extends Controller
             'columns' => ColumnHelper::$received_gc_columns
         ]);
     }
+
+    public function pendingHolderEntry(Request $request)
+    {
+
+        return inertia('Custodian/SpecialGcRequestHolder', [
+            'specExRecord' => $this->custodianservices->specialExternalGcRequest($request),
+            'columns' => ColumnHelper::$special_gc_request_holder,
+        ]);
+    }
+
 }

@@ -3,9 +3,12 @@
 namespace App\Services\Custodian;
 
 use App\Http\Resources\CustodianSrrResource;
+use App\Http\Resources\SpecialGcRequestResource;
 use App\Models\BarcodeChecker;
 use App\Models\CustodianSrr;
 use App\Models\Gc;
+use App\Models\SpecialExternalGcrequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 
 class CustodianServices
@@ -119,5 +122,18 @@ class CustodianServices
             ->withQueryString();
 
         return CustodianSrrResource::collection($collection);
+    }
+
+    public function specialExternalGcRequest($request)
+    {
+        $data =  SpecialExternalGcrequest::selectFilter()
+            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty')
+            ->where('spexgc_status', 'pending')
+            ->where('spexgc_addemp', 'pending')
+            ->where('spexgc_promo', '0')
+            ->orderByDesc('spexgc_num')
+            ->get();
+
+        return SpecialGcRequestResource::collection($data)->toArray($request);
     }
 }

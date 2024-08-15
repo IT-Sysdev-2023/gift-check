@@ -53,6 +53,44 @@ class ColumnHelper
 
         ],
     ];
+
+    public static $special_gc_request_holder = [
+        [
+            'title' => 'RFSEGC',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Total Denomination',
+            'dataIndex' => 'items_calculation',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'spcus_companyname',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'full_name',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'setup',
+
+        ],
+    ];
     public static $denomination_column = [
         [
             'title' => 'Denomination',
