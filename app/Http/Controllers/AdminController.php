@@ -53,8 +53,7 @@ class AdminController extends Controller
             $transType = 'Reqular Gift Check';
             $steps = self::regularGc($regular, $request);
             $success = true;
-        } elseif ($special->where('spexgcemp_barcode', $request->barcode)->exists()) {
-
+        } elseif ($special->where('spexgcemp_barcode', $request->barcode)->where('spexgcemp_barcode', '!=', '0')->exists()) {
             $transType = 'Special Gift Check';
             $steps = self::specialStatus($special, $request);
             $success = true;

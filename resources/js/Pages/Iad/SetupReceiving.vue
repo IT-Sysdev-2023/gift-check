@@ -1,6 +1,13 @@
 <template>
     <div v-if="Object.keys(record).length">
+        <div class="flex justify-end mb-3">
+            <a-button @click="() => $inertia.get(route('iad.receiving'))">
+                <RollbackOutlined />
+                Back to the Table
+            </a-button>
+        </div>
         <a-row :gutter="[16, 16]">
+
             <a-col :span="10">
                 <a-descriptions size="small" class="mb-0 text-center" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="Received No.">{{ recnum }}</a-descriptions-item>
@@ -16,12 +23,17 @@
                 </a-descriptions>
                 <a-descriptions size="small" class="mb-3 text-center" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="Received as">
-                        <a-select ref="select" placeholder="Select Type" v-model:value="select" style="width: 100%"
-                            @focus="focus" @change="handleChange">
-                            <a-select-option value="whole">Whole</a-select-option>
-                            <a-select-option value="partial">Partials</a-select-option>
-                            <a-select-option value="final">Final</a-select-option>
-                        </a-select>
+                        <a-form>
+                            <a-form-item has-feedback :help="errors.select"
+                                :validate-status="errors.select ? 'error' : ''">
+                                <a-select ref="select" placeholder="Select Type" v-model:value="select"
+                                    style="width: 100%" @focus="focus" @change="handleChange">
+                                    <a-select-option value="whole">Whole</a-select-option>
+                                    <a-select-option value="partial">Partials</a-select-option>
+                                    <a-select-option value="final">Final</a-select-option>
+                                </a-select>
+                            </a-form-item>
+                        </a-form>
                     </a-descriptions-item>
                 </a-descriptions>
                 <a-card>
@@ -115,7 +127,7 @@
                             Validate By Barcode
                         </a-button>
 
-                        <a-button block class="mb-2" type="primary" @click="submit" :disabled="denomination.filter(data => data.scanned).length == 0">
+                        <a-button block class="mb-2" type="primary" @click="submit" :loading="isSubmittingReq">
                             Submit
                         </a-button>
 
@@ -178,6 +190,7 @@ export default {
     data() {
         return {
             openRangeBarcode: false,
+            isSubmittingReq: false,
             isSubmitting: false,
             openBarcode: false,
             activeKey: '1',
@@ -186,6 +199,7 @@ export default {
             response: {},
             byRange: false,
             select: null,
+            errors: {},
             error: {},
             form: {
                 username: null,
@@ -242,13 +256,19 @@ export default {
                 recnum: this.recnum,
                 scanned: pickBy(this.scannedGc),
             }, {
+                onStart: () => {
+                    this.isSubmittingReq = true;
+                },
                 onSuccess: (response) => {
                     notification[response.props.flash.status]({
                         message: response.props.flash.title,
                         description: response.props.flash.msg,
                     });
-
-                
+                    this.isSubmittingReq = false;
+                },
+                onError: (errors) => {
+                    this.errors = errors;
+                    this.isSubmittingReq = false;
                 }
             })
         }

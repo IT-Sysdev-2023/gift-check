@@ -17,7 +17,7 @@ class DenomQty implements ValidationRule
         // Check if at least one array contains a 'qty' with a minimum value of 1
         $valid = false;
         foreach ($value as $item) {
-            if (isset($item['qty']) && $item['qty'] >= 1) {
+            if ((isset($item['qty']) && $item['qty'] >= 1) && (isset($item['denomination']) && $item['denomination'] >= 1)) {
                 $valid = true;
                 break;
             }

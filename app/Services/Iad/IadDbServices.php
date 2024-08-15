@@ -4,6 +4,7 @@ namespace App\Services\Iad;
 
 use App\Models\CustodianSrr;
 use App\Models\CustodianSrrItem;
+use App\Models\Gc;
 use App\Models\ProductionRequestItem;
 use App\Models\PurchaseOrderDetail;
 use App\Models\RequisitionEntry;
@@ -24,7 +25,6 @@ class IadDbServices
             'csrr_receivedas' => $request->select,
             'csrr_remarks' => '',
         ]);
-
         return $this;
     }
     public function custodianPurchaseOrderDetails($request)
@@ -46,24 +46,23 @@ class IadDbServices
             'purchorderdet_prepby' => $request->data['prep_by'],
             'purchorderdet_checkby' => $request->data['check_by']
         ]);
-
         return $this;
     }
     public function custodianSrrItems($request)
     {
 
-        foreach($request->scanned as $barcode){
+        foreach ($request->scanned as $barcode) {
             CustodianSrrItem::create([
                 'cssitem_barcode' => $barcode['tval_barcode'],
                 'cssitem_recnum' => $request->recnum
             ]);
         }
-
         return $this;
     }
 
     public function custodianUpProdDetails($request)
     {
+
 
         $reqNo = self::getRequistionNo($request->data);
 
@@ -82,7 +81,6 @@ class IadDbServices
             $prodRequest->update([
                 'pe_items_remain' => $ifRemainItem
             ]);
-
         }
 
         return $this;
@@ -93,16 +91,45 @@ class IadDbServices
 
         $quickCheck = ProductionRequestItem::where('pe_items_request_id', $id)->sum('pe_items_remain');
 
-        if($quickCheck == 0) {
+        if ($quickCheck == 0) {
 
-            RequisitionForm::where('req_no', $recnum)->delete();
+            RequisitionForm::where('req_no', $recnum)->update([
+                'used' => 'used',
+            ]);
 
-            RequisitionFormDenomination::where('form_id', $recnum)->delete();
+            RequisitionFormDenomination::where('form_id', $recnum)->update([
+                'used' => 'used'
+            ]);
         }
 
-        TempValidation::truncate();
+        return $this;
+    }
 
-     
+    public function custodianGcUpdate($request)
+    {
+
+        foreach($request->scanned as $barcode){
+            Gc::where('barcode_no', $barcode['tval_barcode'])->update([
+                'gc_validated' => '*'
+            ]);
+        }
+        return $this;
+    }
+    public function custodianRequisitionUpdate($request)
+    {
+        $rectype = strtoupper($request->select);
+
+        if ($rectype == 'PARTIAL') {
+            $recStatus = 1;
+        } elseif ($rectype == 'WHOLE') {
+            $recStatus = 2;
+        } elseif ($rectype == 'FINAL') {
+            $recStatus = 2;
+        }
+        RequisitionEntry::where('requis_erno', $request->data['req_no'])->update([
+            'requis_status' => $recStatus
+        ]);
+        return $this;
     }
 
 

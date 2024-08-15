@@ -65,7 +65,7 @@
                 </a-col>
                 <a-col :span="12">
                     <div class="mt-2 flex justify-between">
-                        <a-button block type="primary" @click="validateRange"
+                        <a-button block type="primary" @click="validateRange" :loading="form.processing"
                             :disabled="(form.barcodeStart === null || form.barcodeEnd === null) || (form.barcodeEnd == '' || form.barcodeStart == '')">
                             <template #icon>
                                 <SaveOutlined />

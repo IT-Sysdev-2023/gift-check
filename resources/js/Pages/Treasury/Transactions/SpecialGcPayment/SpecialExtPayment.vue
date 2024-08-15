@@ -53,17 +53,19 @@
                                 :options="props.options"
                                 @handle-change="handleCustomerChange"
                             />
+                            <span v-if="formState.errors.companyId" class="text-red-500">{{ formState.errors.companyId  }}</span>
                         </a-form-item>
                         <a-form-item label="AR no." name="ar">
                             <a-input v-model:value="formState.arNo" />
                         </a-form-item>
-                        <a-form-item label="Payment Type:">
+                        <a-form-item label="Payment Type:" :validate-status="getErrorStatus('paymentType.type')"
+                        :help="getErrorMessage('paymentType.type')">
                             <ant-select
                                 :options="paymentType"
                                 @handle-change="handlePaymentChange"
                             />
                         </a-form-item>
-                        <payment-type :type="formState.paymentType"/>
+                        <PaymentType :form="formState" v-if="formState.paymentType.type"/>
 
                         
                     </a-col>
@@ -104,11 +106,11 @@ import { onProgress } from "@/../../resources/js/Mixin/UiUtilities";
 interface FormStateGc {
     trans: string;
     file: UploadFile | null;
-    customer: string;
+    companyId: string;
     arNo: number | string;
 
     denomination: any[];
-    paymentType: string;
+    paymentType: any;
     remarks: string;
     dateNeeded: null;
 }
@@ -125,12 +127,15 @@ const formRef = ref();
 
 const formState = useForm<FormStateGc>({
     trans: props.trans,
-    customer: "",
+    companyId: "",
     arNo: "",
     dateNeeded: null,
     file: null,
     denomination: [],
-    paymentType: "",
+    paymentType: {
+        type: "",
+        amount: 0
+    },
     remarks: "",
 });
 const accountName = ref(null);
@@ -162,16 +167,17 @@ const handleChange = (file: UploadChangeParam) => {
 };
 
 const handlePaymentChange = (value: string) => {
-    formState.paymentType = value;
+    clearError('paymentType.type');
+    formState.paymentType.type = value;
 };
 
 const handleCustomerChange = (value: string, acc) => {
+    clearError('companyId');
     accountName.value = acc.account_name;
-    formState.customer = value;
+    formState.companyId = value;
 };
 
 const onSubmit = () => {
-    // console.log(formState);
     formState
         .transform((data) => ({
             ...data,
@@ -184,6 +190,9 @@ const onSubmit = () => {
                     router.visit(route("treasury.dashboard"));
                 }
             },
+            onError: (e) =>{
+                console.log(e);
+            }
         });
 };
 const getErrorStatus = (field: string) => {
