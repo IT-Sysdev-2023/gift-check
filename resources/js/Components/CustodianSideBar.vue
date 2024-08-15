@@ -45,7 +45,7 @@ import {
             <span>GC Tracking</span>
         </a-menu-item>
     </a-sub-menu>
-    <a-menu v-else>
+    <div v-else>
         <a-menu-item key="custodian">
             <QrcodeOutlined />
             <span>
@@ -69,7 +69,7 @@ import {
             <RiseOutlined />
             <span>GC Tracking</span>
         </a-menu-item>
-    </a-menu>
+    </div>
 
 
 </template>

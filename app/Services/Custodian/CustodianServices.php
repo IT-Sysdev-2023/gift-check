@@ -29,6 +29,22 @@ class CustodianServices
 
         return $data;
     }
+    public function searchBarcode($request)
+    {
+        $data = BarcodeChecker::with(
+            'users:user_id,firstname,lastname',
+            'gc:barcode_no,denom_id',
+            'gc.denomination:denom_id,denomination'
+        )->where('bcheck_barcode', $request->search)
+            ->orderByDesc('bcheck_date')
+            ->limit(1)->get();
+
+        $data->transform(function ($item) {
+            $item->bcheck_date = Date::parse($item->bcheck_date)->toFormattedDateString();
+            return $item;
+        });
+        return $data;
+    }
     public function reqularGcScannedCount()
     {
         return BarcodeChecker::whereHas('gc', function ($query) {

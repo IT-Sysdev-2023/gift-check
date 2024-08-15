@@ -16,11 +16,13 @@ class CustodianController extends Controller
         return inertia('Custodian/CustodianDashboard');
     }
 
-    public function barcodeCheckerIndex()
+    public function barcodeCheckerIndex(Request $request)
     {
+        // dd($request->all());
         return inertia('Custodian/BarcodeChecker', [
-            'data' => $this->custodianservices->barcodeChecker(),
             'columns' => ColumnHelper::$barcode_checker_columns,
+            'search' => $this->custodianservices->searchBarcode($request),
+            'data' => $this->custodianservices->barcodeChecker(),
             'date' => today()->toFormattedDateString(),
             'count' => [
                 'regular' => $this->custodianservices->reqularGcScannedCount(),
