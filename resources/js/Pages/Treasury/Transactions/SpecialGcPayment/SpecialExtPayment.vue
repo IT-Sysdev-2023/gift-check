@@ -37,7 +37,7 @@
                             />
                         </a-form-item>
                         <a-form-item label="Upload Scan Copy.:" name="upload">
-                            <ant-upload-image @handle-change="handleChange" />
+                            <ant-upload-multi-image @handle-change="handleChange" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="8">
@@ -103,9 +103,10 @@ import { router, useForm, usePage } from "@inertiajs/vue3";
 import type { UploadFile, SelectProps } from "ant-design-vue";
 import { PageWithSharedProps } from "@/../../resources/js/types/index";
 import { onProgress } from "@/../../resources/js/Mixin/UiUtilities";
+import type { UploadProps } from "ant-design-vue";
 interface FormStateGc {
     trans: string;
-    file: UploadFile | null;
+    file: UploadProps['fileList'];
     companyId: string;
     arNo: number | string;
 
@@ -130,7 +131,7 @@ const formState = useForm<FormStateGc>({
     companyId: "",
     arNo: "",
     dateNeeded: null,
-    file: null,
+    file: [],
     denomination: [],
     paymentType: {
         type: "",
@@ -163,7 +164,7 @@ const paymentType = ref<SelectProps["options"]>([
 ]);
 const { openLeftNotification } = onProgress();
 const handleChange = (file: UploadChangeParam) => {
-    formState.file = file.file;
+    formState.file = file.fileList;
 };
 
 const handlePaymentChange = (value: string) => {
@@ -183,6 +184,7 @@ const onSubmit = () => {
             ...data,
             dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
             denomination: data.denomination.filter(item => item.denomination !== 0 && item.qty !== 0),
+            file: data.file.map(item => item.originFileObj),
         }))
         .post(route("treasury.transactions.special.extSubmission"), {
             onSuccess: ({ props }) => {

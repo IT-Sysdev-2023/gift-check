@@ -14,7 +14,8 @@ class SpecialExternalGcrequest extends Model
     use HasFactory;
 
     protected $table = 'special_external_gcrequest';
-
+    protected $guarded = [];
+    public $timestamps = false;
     protected $primaryKey = 'spexgc_id';
 
     public function scopeSpexgcStatus(Builder $builder, mixed $request)
@@ -91,11 +92,11 @@ class SpecialExternalGcrequest extends Model
         return $this->hasOne(SpecialExternalBankPaymentInfo::class, 'spexgcbi_trid', 'spexgc_id');
     }
 
-    public function document() : HasOne
+    public function document(): HasOne
     {
         return $this->hasOne(Document::class, 'doc_trid', 'spexgc_id');
     }
-    public function specialExternalGcrequestEmpAssign() : HasMany 
+    public function specialExternalGcrequestEmpAssign(): HasMany
     {
         return $this->hasMany(SpecialExternalGcrequestEmpAssign::class, 'spexgcemp_trid', 'spexgc_id');
     }

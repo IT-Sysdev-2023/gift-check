@@ -14,7 +14,7 @@ class TransactionProductionRequest extends UploadFileHandler
 	public function __construct()
 	{
 		parent::__construct();
-		$this->folderName = "productionRequestFile/";
+		$this->folderName = "productionRequestFile";
 	}
 
 	private function isAbleToRequest(Request $request)

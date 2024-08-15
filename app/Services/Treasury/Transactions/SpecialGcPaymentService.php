@@ -13,11 +13,11 @@ class SpecialGcPaymentService extends UploadFileHandler
 {
     public function __construct()
     {
+        parent::__construct();
         $this->folderName = 'externalDocs';
     }
     public function externalSubmission(Request $request)
     {
-        // $request->dd();
         $request->validate([
             'companyId' => 'required|exists:special_external_customer,spcus_id',
             'denomination' => ['required', 'array', new DenomQty()],
@@ -37,6 +37,9 @@ class SpecialGcPaymentService extends UploadFileHandler
 
         ]);
 
+
+
+
         DB::transaction(function () use ($request) {
             $q = SpecialExternalGcrequest::create([
                 'spexgc_num' => $request->trans,
@@ -55,17 +58,19 @@ class SpecialGcPaymentService extends UploadFileHandler
                 'spexgc_payment_arnum' => $request->arNo
             ]);
 
-            $lastId = $q->spexgc_id;
+            $latestId = $q->spexgc_id;
 
-            $denom = collect($request->denomination);
+            $listOfDenom = collect($request->denomination);
 
-            $denom->each(function ($item) use ($lastId) {
+            $listOfDenom->each(function ($denom) use ($latestId) {
                 SpecialExternalGcrequestItem::create([
-                    'specit_denoms' => $item->denomination,
-                    'specit_qty' => $item->qty,
-                    'specit_trid' => $lastId
+                    'specit_denoms' => $denom['denomination'],
+                    'specit_qty' => $denom['qty'],
+                    'specit_trid' => $latestId
                 ]);
             });
+            $this->saveMultiFile($request);
         });
+
     }
 }
