@@ -1,6 +1,6 @@
 <template>
     <a-card class="bg-card">
-        <a-alert message="Internal Gift Check" show-icon />
+        <a-alert :message="title" show-icon />
         <div class="card" style="background-color: #FD9B63">
             <svg class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -13,11 +13,11 @@
             </div>
 
             <div class="message-text-container">
-                <p class="message-text text-white">Receving</p>
-                <p class="sub-text text-white">For receving gift cheque</p>
+                <p class="message-text text-white">{{ containerTitle1 }}</p>
+                <p class="sub-text text-white">{{ containerDesc1 }}</p>
             </div>
             <a-badge >
-                <a-button @click="() => $inertia.get(route('iad.receiving'))">
+                <a-button @click="$emit('container1-event')">
                     <template #icon>
                         <FolderFilled />
                     </template>
@@ -38,8 +38,8 @@
                 <CheckCircleFilled />
             </div>
             <div class="message-text-container">
-                <p class="message-text text-white">Received</p>
-                <p class="sub-text text-white">Received Gift Check</p>
+                <p class="message-text text-white">{{  containerTitle2 }}</p>
+                <p class="sub-text text-white">{{ containerDesc2 }}</p>
             </div>
             <a-badge>
                 <a-button>
@@ -52,12 +52,15 @@
         </div>
     </a-card>
 </template>
-<script>
-export default {
-    props: {
-        count: Array,
-    },
-}
+<script setup lang="ts">
+defineProps<{
+    count: array,
+    title: string,
+    containerTitle1: string,
+    containerTitle2: string,
+    containerDesc1: string
+    containerDesc2: string
+}>();
 </script>
 
 <style scoped src="/public/css/card.css"></style>

@@ -274,4 +274,42 @@ class ColumnHelper
 
         ],
     ];
+
+    public static $approvedGcForReviewed = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' =>  'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Total Denomination',
+            'dataIndex' => 'totalGcRequestItems',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => ['specialExternalCustomer', 'spcus_acctname'],
+            'key' => 'customer'
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'user',
+
+        ],
+        [
+            'title' => 'Action',
+            'dataIndex' => 'action',
+
+        ],
+    ];
 }

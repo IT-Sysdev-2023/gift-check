@@ -1,18 +1,43 @@
 <template>
-    <a-row :gutter="[16, 16]">
-        <a-col :span="12">
+    <Head title="Dashboard" />
 
-        </a-col>
-        <a-col :span="12">
-            <GcReceiving />
-        </a-col>
-    </a-row>
+    <AuthenticatedLayout>
+        <a-row :gutter="[16, 16]">
+            <a-col :span="12">
+                <GcReceiving
+                    title="Special External Gc Request"
+                    containerTitle1="Approved Gc For Review"
+                    containerTitle2="Reviewed GC"
+                    containerDesc1="For receving gift cheque"
+                    containerDesc2="Received Gift Check"
+                    @container1-event="approvedGcForReview"
+                />
+                <p>TOTal Approved GC : {{ approvedGc }}</p>
+            </a-col>
+            <a-col :span="12">
+                <GcReceiving
+                    title="Internal GC"
+                    containerTitle1="GC Receiving"
+                    containerTitle2="GC Received"
+                    containerDesc1="For receving gift cheque"
+                    containerDesc2="Received Gift Check"
+                    @container1-event="gcReceiving"
+                />
+            </a-col>
+        </a-row>
+    </AuthenticatedLayout>
 </template>
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { notification } from 'ant-design-vue';
+<script setup lang="ts">
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { router } from "@inertiajs/vue3";
 
-export default {
-    layout: AuthenticatedLayout,
-}
+defineProps<{
+    approvedGc: number;
+}>();
+const approvedGcForReview = () => {
+    router.get(route("iad.special.external.approvedGc"));
+};
+const gcReceiving = () => {
+    router.get(route("iad.receiving"));
+};
 </script>

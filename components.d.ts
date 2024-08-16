@@ -61,6 +61,7 @@ declare module 'vue' {
     AppleOutlined: typeof import('@ant-design/icons-vue')['AppleOutlined']
     ApplicationLogo: typeof import('./resources/js/Components/ApplicationLogo.vue')['default']
     ApprovedAndReleaseSpgc: typeof import('./resources/js/Pages/Finance/ApprovedAndReleaseSpgc.vue')['default']
+    ApprovedGcTable: typeof import('./resources/js/Pages/Iad/Dashboard/ApprovedGcTable.vue')['default']
     ApprovedPromoGcRequest: typeof import('./resources/js/Pages/Finance/ApprovedPromoGcRequest.vue')['default']
     ApprovedRequest: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/ApprovedRequest.vue')['default']
     ApprovedSpgcExcelResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcExcelResult.vue')['default']
@@ -151,6 +152,7 @@ declare module 'vue' {
     HomeOutlined: typeof import('@ant-design/icons-vue')['HomeOutlined']
     IadDashboard: typeof import('./resources/js/Pages/Iad/IadDashboard.vue')['default']
     IadSideBar: typeof import('./resources/js/Components/IadSideBar.vue')['default']
+    IadTable: typeof import('./resources/js/Components/Iad/IadTable.vue')['default']
     InboxOutlined: typeof import('@ant-design/icons-vue')['InboxOutlined']
     InfoCircleOutlined: typeof import('@ant-design/icons-vue')['InfoCircleOutlined']
     InputError: typeof import('./resources/js/Components/InputError.vue')['default']
@@ -252,6 +254,7 @@ declare module 'vue' {
     ValidateBarcode: typeof import('./resources/js/Pages/Iad/Partials/ValidateBarcode.vue')['default']
     ValidateByRange: typeof import('./resources/js/Pages/Iad/Partials/ValidateByRange.vue')['default']
     VerifyEmail: typeof import('./resources/js/Pages/Auth/VerifyEmail.vue')['default']
+    ViewApprovedGcTable: typeof import('./resources/js/Pages/Iad/Dashboard/ViewApprovedGcTable.vue')['default']
     Welcome: typeof import('./resources/js/Pages/Welcome.vue')['default']
   }
 }

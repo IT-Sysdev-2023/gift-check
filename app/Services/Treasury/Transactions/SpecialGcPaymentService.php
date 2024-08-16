@@ -114,7 +114,6 @@ class SpecialGcPaymentService extends UploadFileHandler
                 'accountName' => $company->spcus_companyname,
             ],
 
-
             'denom' => $listOfDenom,
             'totalGcQty' => $listOfDenom->sum('qty'),
             'totalGcAmount' => NumberHelper::format($amount),

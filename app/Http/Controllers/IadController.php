@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
+use App\Models\SpecialExternalGcrequest;
 use App\Models\TempValidation;
 use App\Services\Iad\IadServices;
 use Illuminate\Http\Request;
@@ -13,7 +14,11 @@ class IadController extends Controller
 
     public function index()
     {
-        return inertia('Iad/IadDashboard');
+        // numRowsWhereTwo($link,'special_external_gcrequest','spexgc_id','spexgc_status','spexgc_reviewed','approved','')
+        $approvedGc = SpecialExternalGcrequest::where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])->count();
+        return inertia('Iad/IadDashboard', [
+            'approvedGc' => $approvedGc
+        ]);
     }
 
     public function receivingIndex()
