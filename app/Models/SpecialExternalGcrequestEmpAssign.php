@@ -13,6 +13,10 @@ class SpecialExternalGcrequestEmpAssign extends Model
 
     protected $primaryKey = 'spexgcemp_id';
 
+    protected $guarded = [];
+
+    public $timestamps = false;
+
     public static function scopeSelectFilter($builder)
     {
         $builder->select(

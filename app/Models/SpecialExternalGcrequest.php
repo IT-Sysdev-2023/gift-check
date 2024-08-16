@@ -18,6 +18,11 @@ class SpecialExternalGcrequest extends Model
 
     protected $primaryKey = 'spexgc_id';
 
+
+    protected $guarded = [];
+
+    public $timestamps = false;
+
     public function scopeSpexgcStatus(Builder $builder, mixed $request)
     {
         return $builder->where('spexgc_status', $request);
@@ -56,6 +61,10 @@ class SpecialExternalGcrequest extends Model
     public function specialExternalGcrequestItems()
     {
         return $this->hasOne(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
+    }
+    public function specialExternalGcrequestItemsHasMany()
+    {
+        return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
     }
     public function user()
     {
@@ -100,7 +109,7 @@ class SpecialExternalGcrequest extends Model
     {
         return $this->hasMany(SpecialExternalGcrequestEmpAssign::class, 'spexgcemp_trid', 'spexgc_id');
     }
-    public function scopeSelectFilter(Builder $query)
+    public function scopeSelectFilterEntry(Builder $query)
     {
         return $query->select(
             'spexgc_num',
@@ -109,6 +118,23 @@ class SpecialExternalGcrequest extends Model
             'spexgc_datereq',
             'spexgc_company',
             'spexgc_reqby',
+            'spexgc_id'
+        );
+    }
+    public function scopeSelectFilterSetup(Builder $query)
+    {
+        return $query->select(
+            'spexgc_payment_arnum',
+            'spexgc_paymentype',
+            'spexgc_dateneed',
+            'spexgc_remarks',
+            'spexgc_payment',
+            'spexgc_datereq',
+            'spexgc_company',
+            'spexgc_reqby',
+            'spexgc_type',
+            'spexgc_num',
+            'spexgc_id',
         );
     }
 }

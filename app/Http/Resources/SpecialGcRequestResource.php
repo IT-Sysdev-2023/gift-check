@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Date;
 
 class SpecialGcRequestResource extends JsonResource
 {
@@ -17,17 +18,22 @@ class SpecialGcRequestResource extends JsonResource
     public function toArray(Request $request): array
     {
 
+        $test = $this->specialExternalGcrequestItemsHasMany->each(function ($item) {
+            return $item->subtotal = (float)$item->specit_denoms * $item->specit_qty;
+
+
+        });
+
         return [
-            'spexgc_num' => $this->spexgc_num,
-            'spexgc_dateneed' => $this->spexgc_dateneed,
-            'spexgc_reqby' => $this->spexgc_reqby,
-            'spexgc_datereq' => $this->spexgc_datereq,
-            'full_name' => $this->user->full_name,
-            'spcus_acctname' => $this->specialExternalCustomer?->spcus_acctname,
+            'total' => $test->sum('subtotal'),
             'spcus_companyname' => $this->specialExternalCustomer?->spcus_companyname,
-            'items_calculation' => (float)($this->specialExternalGcrequestItems->specit_denoms) * (float)($this->specialExternalGcrequestItems->specit_qty),
-            'denoms' => $this->specialExternalGcrequestItems->specit_denoms,
-            'qty' => $this->specialExternalGcrequestItems->specit_qty,
+            'spexgc_dateneed' => Date::parse($this->spexgc_dateneed)->toFormattedDateString(),
+            'spcus_acctname' => $this->specialExternalCustomer?->spcus_acctname,
+            'spexgc_datereq' => Date::parse($this->spexgc_datereq)->toFormattedDateString(),
+            'spexgc_reqby' => $this->spexgc_reqby,
+            'spexgc_num' => $this->spexgc_num,
+            'spexgc_id' => $this->spexgc_id,
+            'full_name' => $this->user->full_name,
         ];
     }
 }
