@@ -124,16 +124,39 @@ class CustodianServices
         return CustodianSrrResource::collection($collection);
     }
 
-    public function specialExternalGcRequest($request)
+    public function specialExternalGcEntry($request)
     {
-        $data =  SpecialExternalGcrequest::selectFilter()
-            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty')
+        $data =  SpecialExternalGcrequest::selectFilterEntry()
+            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalGcrequestItemsHasMany:specit_trid,specit_denoms,specit_qty')
             ->where('spexgc_status', 'pending')
             ->where('spexgc_addemp', 'pending')
             ->where('spexgc_promo', '0')
             ->orderByDesc('spexgc_num')
             ->get();
 
-        return SpecialGcRequestResource::collection($data)->toArray($request);
+        return SpecialGcRequestResource::collection($data);
+    }
+
+    public function specialExternalGcSetup($request)
+    {
+
+        $data = SpecialExternalGcrequest::selectFilterSetup()
+            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalGcrequestItemsHasMany:specit_trid,specit_denoms,specit_qty')
+            ->where('spexgc_id', $request->id)
+            ->where('spexgc_status', 'pending')
+            ->get();
+
+        $data->transform(function ($item) {
+
+            $item->specialExternalGcrequestItemsHasMany->each(function ($subitem) {
+                return $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
+            });
+
+            $item->total =  $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
+
+            return $item;
+        });
+
+        return $data;
     }
 }

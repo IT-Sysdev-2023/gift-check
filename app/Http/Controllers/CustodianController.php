@@ -49,8 +49,16 @@ class CustodianController extends Controller
     {
 
         return inertia('Custodian/SpecialGcRequestHolder', [
-            'specExRecord' => $this->custodianservices->specialExternalGcRequest($request),
+            'specExRecord' => $this->custodianservices->specialExternalGcEntry($request),
             'columns' => ColumnHelper::$special_gc_request_holder,
+        ]);
+
+    }
+    public function pendingHolderSetup(Request $request)
+    {
+
+        return inertia('Custodian/SpecialGcRequestSetup', [
+            'record' => $this->custodianservices->specialExternalGcSetup($request),
         ]);
     }
 

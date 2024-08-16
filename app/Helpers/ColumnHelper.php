@@ -72,7 +72,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Total Denomination',
-            'dataIndex' => 'items_calculation',
+            'dataIndex' => 'total',
 
         ],
         [
