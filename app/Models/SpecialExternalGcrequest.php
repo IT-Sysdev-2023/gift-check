@@ -18,6 +18,11 @@ class SpecialExternalGcrequest extends Model
 
     protected $primaryKey = 'spexgc_id';
 
+
+    protected $guarded = [];
+
+    public $timestamps = false;
+
     public function scopeSpexgcStatus(Builder $builder, mixed $request)
     {
         return $builder->where('spexgc_status', $request);

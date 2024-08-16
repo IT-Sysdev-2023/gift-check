@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
 use App\Models\SpecialExternalGcrequest;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Custodian\CustodianServices;
 use Illuminate\Http\Request;
 
@@ -52,14 +53,15 @@ class CustodianController extends Controller
             'specExRecord' => $this->custodianservices->specialExternalGcEntry($request),
             'columns' => ColumnHelper::$special_gc_request_holder,
         ]);
-
     }
     public function pendingHolderSetup(Request $request)
     {
-
         return inertia('Custodian/SpecialGcRequestSetup', [
             'record' => $this->custodianservices->specialExternalGcSetup($request),
         ]);
     }
-
+    public function submitSpecialExternalGc(Request $request)
+    {
+        return  $this->custodianservices->submitSpecialExternalGc($request);
+    }
 }

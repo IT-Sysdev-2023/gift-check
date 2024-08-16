@@ -8,11 +8,13 @@ use App\Models\BarcodeChecker;
 use App\Models\CustodianSrr;
 use App\Models\Gc;
 use App\Models\SpecialExternalGcrequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use App\Services\Custodian\CustodianDbServices;
+use Illuminate\Support\Facades\DB;
 
 class CustodianServices
 {
+    public function __construct(public CustodianDbServices $custodianDbServices) {}
     public function barcodeChecker()
     {
         $data = BarcodeChecker::with(
@@ -146,10 +148,15 @@ class CustodianServices
             ->where('spexgc_status', 'pending')
             ->get();
 
-        $data->transform(function ($item) {
 
-            $item->specialExternalGcrequestItemsHasMany->each(function ($subitem) {
-                return $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
+
+        $count = 1;
+        $data->transform(function ($item) use (&$count) {
+
+            $item->specialExternalGcrequestItemsHasMany->each(function ($subitem) use (&$count) {
+                $subitem->tempId = $count++;
+                $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
+                return $subitem;
             });
 
             $item->total =  $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
@@ -158,5 +165,20 @@ class CustodianServices
         });
 
         return $data;
+    }
+
+    public function submitSpecialExternalGc($request)
+    {
+        DB::transaction(function () use ($request) {
+            $this->custodianDbServices
+                ->specialGcExternalEmpAssign($request)
+                ->updateSpecialExtRequest($request->reqid);
+        });
+
+        return redirect()->route('custodian.dashboard')->with([
+            'status' => 'success',
+            'msg' => 'Successfully Submitted Form',
+            'title' => 'Success',
+        ]);
     }
 }

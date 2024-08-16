@@ -266,6 +266,7 @@ Route::prefix('custodian')->group(function () {
         Route::name('pendings.')->group(function () {
             Route::get('pending-holder-entry', [CustodianController::class, 'pendingHolderEntry'])->name('holder.entry');
             Route::get('pending-holder-setup', [CustodianController::class, 'pendingHolderSetup'])->name('external.holder.setup');
+            Route::post('submit-special-external', [CustodianController::class, 'submitSpecialExternalGc'])->name('external.submit');
         });
     });
 });
