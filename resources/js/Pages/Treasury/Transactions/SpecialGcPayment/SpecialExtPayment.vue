@@ -92,6 +92,9 @@
                 </a-row>
             </a-form>
         </a-card>
+        <a-modal  v-model:open="openIframe" style="width: 70%; top: 50px;" :footer="null" :afterClose="routeToHome">
+            <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
@@ -100,7 +103,7 @@ import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayou
 import type { UploadChangeParam } from "ant-design-vue";
 import dayjs from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
-import type { UploadFile, SelectProps } from "ant-design-vue";
+import type { SelectProps } from "ant-design-vue";
 import { PageWithSharedProps } from "@/../../resources/js/types/index";
 import { onProgress } from "@/../../resources/js/Mixin/UiUtilities";
 import type { UploadProps } from "ant-design-vue";
@@ -140,6 +143,8 @@ const formState = useForm<FormStateGc>({
     remarks: "",
 });
 const accountName = ref(null);
+const stream = ref(null);
+const openIframe = ref(false);
 const paymentType = ref<SelectProps["options"]>([
     {
         value: "1",
@@ -148,6 +153,7 @@ const paymentType = ref<SelectProps["options"]>([
     {
         value: "2",
         label: "Check",
+        disabled: true,
     },
     {
         value: "3",
@@ -187,17 +193,20 @@ const onSubmit = () => {
             file: data.file.map(item => item.originFileObj),
         }))
         .post(route("treasury.transactions.special.extSubmission"), {
-            onSuccess: ({ props }) => {
+            onSuccess: ({props}) => {
                 openLeftNotification(props.flash);
                 if (props.flash.success) {
-                    router.visit(route("treasury.dashboard"));
+                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                    openIframe.value = true;
                 }
             },
-            onError: (e) =>{
-                console.log(e);
-            }
+           
         });
 };
+
+const routeToHome = () => {
+    router.visit(route("treasury.dashboard"));
+}
 const getErrorStatus = (field: string) => {
     return formState.errors[field] ? "error" : "";
 };
