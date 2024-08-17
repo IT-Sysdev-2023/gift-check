@@ -343,6 +343,33 @@ class ColumnHelper
 
 
     ];
+    public static $approved_gc_column = [
+        [
+            'title' => 'RFSEGC#',
+            'dataIndex' => 'spexgc_num',
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' => 'spexgc_dateneed',
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'company',
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => 'reqap_date',
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'reqap_approvedby',
+        ],
+
+    ];
 
     public static function app_pend_request_columns($isPending = false)
     {

@@ -137,4 +137,16 @@ class SpecialExternalGcrequest extends Model
             'spexgc_id',
         );
     }
+    public function scopeSelectFilterApproved(Builder $query)
+    {
+        return $query->select(
+            'spexgc_id',
+            'spexgc_num',
+            'spexgc_datereq',
+            'spexgc_dateneed',
+            'reqap_approvedby',
+            'reqap_date',
+            'spexgc_company',
+        );
+    }
 }

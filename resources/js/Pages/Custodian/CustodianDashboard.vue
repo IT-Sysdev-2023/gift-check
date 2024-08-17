@@ -1,7 +1,7 @@
 <template>
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
-            <special-external-gc-request/>
+            <special-external-gc-request :count="count"/>
         </a-col>
         <a-col :span="8">
 
@@ -16,6 +16,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 export default {
     layout: AuthenticatedLayout,
+    props: {
+        count: Array,
+    }
 
 }
 </script>

@@ -18,9 +18,7 @@ class DashboardClass extends DashboardService
      * Create a new class instance.
      */
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
     public function treasuryDashboard()
     {
         return [
@@ -43,7 +41,7 @@ class DashboardClass extends DashboardService
     }
     public function financeDashboard()
     {
-        return[
+        return [
             'appPromoCount' =>  PromoGcRequest::with('userReqby')
                 ->whereFilterForApproved()
                 ->selectPromoRequest()
@@ -62,6 +60,17 @@ class DashboardClass extends DashboardService
     {
         return [
             'countReceiving' => RequisitionForm::where('used', null)->count(),
+        ];
+    }
+    public function custodianDashboard()
+    {
+        return [
+            'countIntExRequest' => SpecialExternalGcrequest::selectFilterEntry()
+                ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalGcrequestItemsHasMany:specit_trid,specit_denoms,specit_qty')
+                ->where('spexgc_status', 'pending')
+                ->where('spexgc_addemp', 'pending')
+                ->orderByDesc('spexgc_num')
+                ->count(),
         ];
     }
 }

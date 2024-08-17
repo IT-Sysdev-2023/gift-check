@@ -1,6 +1,8 @@
 <template>
     <div class="flex justify-end mb-4">
-        <a-button @click="() => $inertia.get(route('custodian.pendings.holder.entry'))">
+        <a-button @click="() => $inertia.get(route('custodian.pendings.holder.entry'), {
+            activeKey: '1',
+        })">
             <template #icon>
                 <RollbackOutlined />
             </template>

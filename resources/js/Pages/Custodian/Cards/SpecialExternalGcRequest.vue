@@ -16,8 +16,8 @@
                 <p class="message-text text-white">Pendings</p>
                 <p class="sub-text text-white">Gc Holder Entry</p>
             </div>
-            <a-badge >
-                <a-button @click="() => $inertia.get(route('custodian.pendings.holder.entry'))">
+            <a-badge :count="count.countIntExRequest">
+                <a-button size="small" @click="() => $inertia.get(route('custodian.pendings.holder.entry'))">
                     <template #icon>
                         <FolderFilled />
                     </template>
@@ -41,8 +41,8 @@
                 <p class="message-text text-white">Approved</p>
                 <p class="sub-text text-white">Approved Gc Request</p>
             </div>
-            <a-badge >
-                <a-button>
+            <a-badge @click="() => $inertia.get(route('custodian.approved.request'))">
+                <a-button  size="small">
                     <template #icon>
                         <FolderFilled />
                     </template>
@@ -66,7 +66,7 @@
                 <p class="message-text text-white">Cancelled</p>
                 <p class="sub-text text-white">All Cancel Request</p>
             </div>
-            <a-button>
+            <a-button  size="small">
                 <template #icon>
                     <FolderFilled />
                 </template>

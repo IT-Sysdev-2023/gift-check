@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\DashboardClass;
 use App\Helpers\ColumnHelper;
-use App\Models\SpecialExternalGcrequest;
-use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Custodian\CustodianServices;
 use Illuminate\Http\Request;
 
 class CustodianController extends Controller
 {
-    public function __construct(public CustodianServices $custodianservices) {}
+    public function __construct(public CustodianServices $custodianservices , public DashboardClass $dashboardClass) {}
     public function index()
     {
-        return inertia('Custodian/CustodianDashboard');
+        return inertia('Custodian/CustodianDashboard', [
+            'count' => $this->dashboardClass->custodianDashboard(),
+        ]);
     }
 
     public function barcodeCheckerIndex(Request $request)
     {
-        // dd($request->all());
         return inertia('Custodian/BarcodeChecker', [
             'columns' => ColumnHelper::$barcode_checker_columns,
             'search' => $this->custodianservices->searchBarcode($request),
@@ -48,10 +48,10 @@ class CustodianController extends Controller
 
     public function pendingHolderEntry(Request $request)
     {
-
         return inertia('Custodian/SpecialGcRequestHolder', [
             'specExRecord' => $this->custodianservices->specialExternalGcEntry($request),
             'columns' => ColumnHelper::$special_gc_request_holder,
+            'activeKey' => $request->activeKey ?? '1',
         ]);
     }
     public function pendingHolderSetup(Request $request)
@@ -63,5 +63,12 @@ class CustodianController extends Controller
     public function submitSpecialExternalGc(Request $request)
     {
         return  $this->custodianservices->submitSpecialExternalGc($request);
+    }
+    public function approvedGcRequest()
+    {
+        return inertia('Custodian/ApprovedGcRequest', [
+            'columns' => ColumnHelper::$approved_gc_column,
+            'record' => $this->custodianservices->approvedGcList()
+        ]);
     }
 }

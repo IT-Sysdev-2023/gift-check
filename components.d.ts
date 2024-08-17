@@ -61,6 +61,7 @@ declare module 'vue' {
     AppleOutlined: typeof import('@ant-design/icons-vue')['AppleOutlined']
     ApplicationLogo: typeof import('./resources/js/Components/ApplicationLogo.vue')['default']
     ApprovedAndReleaseSpgc: typeof import('./resources/js/Pages/Finance/ApprovedAndReleaseSpgc.vue')['default']
+    ApprovedGcRequest: typeof import('./resources/js/Pages/Custodian/ApprovedGcRequest.vue')['default']
     ApprovedPromoGcRequest: typeof import('./resources/js/Pages/Finance/ApprovedPromoGcRequest.vue')['default']
     ApprovedRequest: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/ApprovedRequest.vue')['default']
     ApprovedSpgcExcelResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcExcelResult.vue')['default']

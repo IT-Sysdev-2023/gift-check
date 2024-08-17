@@ -128,11 +128,13 @@ class CustodianServices
 
     public function specialExternalGcEntry($request)
     {
+        $key = $request->activeKey == '2' ? '*' : '0';
+
         $data =  SpecialExternalGcrequest::selectFilterEntry()
             ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalGcrequestItemsHasMany:specit_trid,specit_denoms,specit_qty')
             ->where('spexgc_status', 'pending')
             ->where('spexgc_addemp', 'pending')
-            ->where('spexgc_promo', '0')
+            ->where('spexgc_promo', $key)
             ->orderByDesc('spexgc_num')
             ->get();
 
@@ -180,5 +182,26 @@ class CustodianServices
             'msg' => 'Successfully Submitted Form',
             'title' => 'Success',
         ]);
+    }
+
+    public function approvedGcList()
+    {
+        $data = SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+            ->selectFilterApproved()
+            ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
+            ->where('spexgc_status', 'approved')
+            ->where('reqap_approvedtype', 'Special External GC Approved')
+            ->orderByDesc('spexgc_num')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+
+            $item->company = $item->specialExternalCustomer->spcus_companyname;
+
+            return $item;
+        });
+
+        return $data;
     }
 }
