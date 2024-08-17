@@ -128,21 +128,57 @@
                             }}</a-descriptions-item
                         >
                     </a-descriptions>
-                    <a-button @click="scanGc">
-                        Scan GC</a-button
-                    >
+                    <a-button @click="scanGc"> Scan GC</a-button>
+
+                    <a-card class="mt-10">
+                        <a-form
+                            :model="formState"
+                            name="basic"
+                            :label-col="{ span: 8 }"
+                            :wrapper-col="{ span: 16 }"
+                            autocomplete="off"
+                            @finish="onFinish"
+                        >
+                            <a-form-item label="Remarks" name="remarks">
+                                <a-input v-model:value="formState.remarks" />
+                            </a-form-item>
+                            <a-form-item
+                                label="Total Gc Scanned"
+                                name="totalGc"
+                            >
+                                <a-input-number
+                                    v-model:value="formState.totalGcScanned"
+                                />
+                            </a-form-item>
+                            <a-form-item
+                                label="Total Denomination"
+                                name="denomination"
+                            >
+                                <a-input-number
+                                    v-model:value="formState.totalDenomination"
+                                />
+                            </a-form-item>
+
+                            <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+                                <a-button type="primary" html-type="submit"
+                                    >Submit</a-button
+                                >
+                            </a-form-item>
+                        </a-form>
+                    </a-card>
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="GC Holder" force-render
                     >GC Holder</a-tab-pane
                 >
             </a-tabs>
         </a-card>
+
         <a-modal v-model:open="openScanGc" title="Scan GC" :footer="null">
             <a-form
-                :model="formState"
+                :model="barcodeForm"
                 name="basic"
                 autocomplete="off"
-                @finish="onFinish"
+                @finish="onFinishBarcode"
             >
                 <a-form-item
                     label="Barcode"
@@ -154,7 +190,10 @@
                         },
                     ]"
                 >
-                    <a-input-number v-model:value="formState.barcode" style="width: 100%;" />
+                    <a-input-number
+                        v-model:value="barcodeForm.barcode"
+                        style="width: 100%"
+                    />
                 </a-form-item>
 
                 <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
@@ -206,12 +245,24 @@ const props = defineProps<{
     };
 }>();
 
-interface FormStateGc {
+interface barcodeFormTypes {
     barcode: number;
 }
+interface formState {
+    remarks: string;
+    totalGcScanned: number;
+    totalDenomination: number;
+    reviewedBy: string;
+}
 
-const formState = useForm<FormStateGc>({
+const barcodeForm = useForm<barcodeFormTypes>({
     barcode: 0,
+});
+const formState = useForm<formState>({
+    remarks: "",
+    totalGcScanned: 0,
+    totalDenomination: 0,
+    reviewedBy: "",
 });
 const openScanGc = ref<boolean>(false);
 
@@ -224,6 +275,10 @@ const scanGc = () => {
 };
 
 const onFinish = () => {
-    formState.post(route('iad.special.external.barcode', records.spexgc_id));
+    barcodeForm.post(route("iad.special.external.gcreview", records.spexgc_id));
+};
+
+const onFinishBarcode = () => {
+    barcodeForm.post(route("iad.special.external.barcode", records.spexgc_id));
 };
 </script>

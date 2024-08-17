@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Iad\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SpecialExternalGcRequestResource;
+use App\Models\ApprovedRequest;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
@@ -84,6 +85,17 @@ class SpecialExternalGcRequestController extends Controller
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} GC request is still Pending!");
         }
         
+        //ajax.php search = gcreviewscangc
+    }
+
+    public function gcReview($id){
+        
+        $isExist = ApprovedRequest::where([['reqap_trid', $id], ['reqap_approvedtype', 'special external gc review']])->exists();
+        if($isExist){
+            return redirect()->back()->with('error', 'GC Request already reviewed.');
+        }
+
+        //ajax.php search = gcreview
         
     }
 }

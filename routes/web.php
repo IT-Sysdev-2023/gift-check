@@ -279,6 +279,7 @@ Route::middleware('auth')->group(function () {
             Route::get('view-approved-gc-{id}', [SpecialExternalGcRequestController::class, 'viewApprovedGcRecord'])->name('viewApprovedGc');
 
             Route::post('barcode-submission-{id}', [SpecialExternalGcRequestController::class, 'barcodeSubmission'])->name('barcode');
+            Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
         });
     });
 });
