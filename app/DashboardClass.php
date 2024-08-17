@@ -41,15 +41,27 @@ class DashboardClass extends DashboardService
     }
     public function financeDashboard()
     {
+        $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '0')->where('spexgc_addemp','done')->count();
+        $pendingInternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '*')->where('spexgc_addemp','done')->count();
+
         return [
-            'appPromoCount' =>  PromoGcRequest::with('userReqby')
+            'specialGcRequest' => [
+                'pending' => $pendingExternal+$pendingInternal,
+                'internal' =>$pendingInternal,
+                'external' =>$pendingExternal,
+                'approve' => SpecialExternalGcrequest::where('spexgc_status', 'approved')->count(),
+                'cancel' => SpecialExternalGcrequest::where('spexgc_status', 'cancelled')->count(),
+            ],
+
+            'appPromoCount' => PromoGcRequest::with('userReqby')
                 ->whereFilterForApproved()
                 ->selectPromoRequest()
                 ->count(),
-            'penPomoCount' =>  PromoGcRequest::with('userReqby')
+            'penPomoCount' => PromoGcRequest::with('userReqby')
                 ->whereFilterForPending()
                 ->selectPromoRequest()
                 ->count(),
+
         ];
     }
     public function marketingDashboard()
