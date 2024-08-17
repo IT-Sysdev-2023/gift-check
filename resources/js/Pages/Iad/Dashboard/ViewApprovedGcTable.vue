@@ -275,7 +275,7 @@ const scanGc = () => {
 };
 
 const onFinish = () => {
-    barcodeForm.post(route("iad.special.external.gcreview", records.spexgc_id));
+    formState.post(route("iad.special.external.gcreview", records.spexgc_id));
 };
 
 const onFinishBarcode = () => {

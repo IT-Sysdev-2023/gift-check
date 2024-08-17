@@ -10,6 +10,7 @@ use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
 use App\Services\Treasury\ColumnHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SpecialExternalGcRequestController extends Controller
 {
@@ -63,39 +64,84 @@ class SpecialExternalGcRequestController extends Controller
 
     public function barcodeSubmission(Request $request, $id)
     {
-        $gc = SpecialExternalGcrequestEmpAssign::select('spexgcemp_trid', 'spexgcemp_denom', 'spexgcemp_fname','spexgcemp_lname','spexgcemp_mname','spexgcemp_extname','spexgcemp_barcode','spexgcemp_review','spexgcemp_id')
-        ->where([
-            ['spexgcemp_trid', $id],
-            ['spexgcemp_review', ''],
-            ['spexgcemp_barcode', $request->barcode]
-        ])
-            ->withWhereHas('specialExternalGcrequest', function ($q){
-                $q->where('spexgc_status','approved');
+        $gc = SpecialExternalGcrequestEmpAssign::select('spexgcemp_trid', 'spexgcemp_denom', 'spexgcemp_fname', 'spexgcemp_lname', 'spexgcemp_mname', 'spexgcemp_extname', 'spexgcemp_barcode', 'spexgcemp_review', 'spexgcemp_id')
+            ->where([
+                ['spexgcemp_trid', $id],
+                ['spexgcemp_review', ''],
+                ['spexgcemp_barcode', $request->barcode]
+            ])
+            ->withWhereHas('specialExternalGcrequest', function ($q) {
+                $q->where('spexgc_status', 'approved');
             })->get();
 
-        if($gc->isEmpty()){
+        if ($gc->isEmpty()) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
         }
-        
-        if(!empty($gc->spexgcemp_review)){
+
+        if (!empty($gc->spexgcemp_review)) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Reviewed!");
         }
 
-        if($gc->spexgc_status!='approved'){
+        if ($gc->spexgc_status != 'approved') {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} GC request is still Pending!");
         }
-        
+
         //ajax.php search = gcreviewscangc
     }
 
-    public function gcReview($id){
-        
+    public function gcReview(Request $request, $id)
+    {
+        // dd($request->all());
         $isExist = ApprovedRequest::where([['reqap_trid', $id], ['reqap_approvedtype', 'special external gc review']])->exists();
-        if($isExist){
+        if ($isExist) {
             return redirect()->back()->with('error', 'GC Request already reviewed.');
         }
 
+        if ($request->session()->has('scanReviewGC')) {
+
+            DB::transaction(function () use ($id, $request) {
+                $update = SpecialExternalGcrequest::where('spexgc_id', $id)->update([
+                    'spexgc_reviewed' => 'reviewed'
+                ]);
+
+                if($update){
+
+                    ApprovedRequest::create([
+                        'reqap_trid' => $id, 
+                        'reqap_remarks' => $request->remarks,
+                        'reqap_approvedtype' => 'special external gc review',
+                        'reqap_date' => now(),
+                        'reqap_preparedby' => $request->user()->user_id
+                    ]);
+
+
+                    // $query = $link->query(
+                    //     "INSERT INTO 
+                    //         approved_request
+                    //     (
+                    //         reqap_trid, 
+                    //         reqap_remarks,
+                    //         reqap_approvedtype,
+                    //         reqap_date,
+                    //         reqap_preparedby
+                    //     ) 
+                    //     VALUES 
+                    //     (
+                    //         '$trid',
+                    //         '$remarks',
+                    //         'special external gc review',
+                    //         NOW(),
+                    //         '".$_SESSION['gc_id']."'
+
+                    //     )
+                    // ");
+
+
+                }
+
+            });
+        }
         //ajax.php search = gcreview
-        
+
     }
 }
