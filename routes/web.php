@@ -111,11 +111,11 @@ Route::prefix('marketing')->group(function () {
             Route::get('requis-pdf', [MarketingController::class, 'requisitionPdf'])->name('requistion.pdf');
         });
         Route::name('pendingRequest.')->group(function () {
-            Route::get('pending-request',[MarketingController::class, 'pendingRequest'])->name('pending.request');
-            Route::post('submit-request',[MarketingController::class, 'submitPendingRequest'])->name('submit.request');
+            Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
+            Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
         });
         Route::name('approvedRequest.')->group(function () {
-            Route::get('approved-request',[MarketingController::class, 'approvedRequest'])->name('approved.request');
+            Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
 
 
@@ -204,25 +204,25 @@ Route::middleware('auth')->group(function () {
 
             });
 
-        Route::prefix('transactions')->name('transactions.')->group(function () {
-            Route::prefix('production-request')->name('production.')->group(function () {
-                Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
-                Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
-                Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
-                Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+            Route::prefix('transactions')->name('transactions.')->group(function () {
+                Route::prefix('production-request')->name('production.')->group(function () {
+                    Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
+                    Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
+                    Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
+                    Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+                });
+
+                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+
+                //special gc payment
+                Route::prefix('special-gc-payment')->name('special.')->group(function () {
+                    Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('ext');
+                    Route::post('external-request', [SpecialGcRequestController::class, 'externalPaymentSubmission'])->name('extSubmission');
+                });
             });
 
-            Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-            Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
-
-            //special gc payment
-            Route::prefix('special-gc-payment')->name('special.')->group(function () {
-                Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('ext');
-                Route::post('external-request', [SpecialGcRequestController::class, 'externalPaymentSubmission'])->name('extSubmission');
-            });
-        });
-
-        Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+            Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
             Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
             Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
@@ -248,12 +248,18 @@ Route::prefix('finance')->group(function () {
         Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.excel');
         Route::get('generate-spgc-ledger', [FinanceController::class, 'generateSpgcPromotionalExcel'])->name('spgc.ledger.start');
         Route::post('approve-request', [FinanceController::class, 'approveRequest'])->name('approve.request');
+        Route::name('pendingGc.')->group(function () {
+            Route::get('pending-list', [FinanceController::class, 'specialGcPending'])->name('pending');
+            Route::get('pending-approval-form', [FinanceController::class, 'SpecialGcApprovalForm'])->name('approval.form');
+        });
     });
 
     Route::get('/download/{filename}', function ($filename) {
         $filePath = storage_path('app/' . $filename);
         return response()->download($filePath);
     })->name('download');
+
+
 });
 
 Route::prefix('custodian')->group(function () {
