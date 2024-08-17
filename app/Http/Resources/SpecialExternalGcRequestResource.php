@@ -28,19 +28,23 @@ class SpecialExternalGcRequestResource extends JsonResource
             'spexgc_num' => $this->spexgc_num,
             'spexgc_dateneed' => $this->spexgc_dateneed->toFormattedDateString(),
             'spexgc_payment_arnum' => $this->spexgc_payment_arnum,
-            'spexgc_paymentype' => $this->spexgc_paymentype,
+            'spexgc_paymentype' => !is_null($this->spexgc_paymentype) ? $this->paymentType($this->spexgc_paymentype) : '',
             'spexgc_id' => $this->spexgc_id,
             'spexgc_payment' => $this->spexgc_payment,
-            'spexgc_datereq' => $this->spexgc_datereq->toFormattedDateString(),
+            'spexgc_datereq' => $this->spexgc_datereq->toDayDateTimeString(),
             'spexgc_remarks' => $this->spexgc_remarks,
             'user' => $this->whenLoaded('user', fn($q) => $q->full_name),
-            'document' => $this->whenLoaded('document'),
+            'userAccessPageTitle' => $this->whenLoaded('user', function ($q) {
+                return $q->accessPage?->title;
+            }),
+            'document' => $this->when($this->document->isNotEmpty(), function () {
+                return DocumentResource::collection($this->document);
+            }),
             'specialExternalCustomer' => $this->whenLoaded('specialExternalCustomer'),
             'specialExternalGcrequestItems' => $this->whenLoaded(
                 'specialExternalGcrequestItems',
                 fn($q) => (float) $q->specit_denoms * (float) $q->specit_qty
             ),
-            // 'testing' => $this->whenLoaded('hasManySpecialExternalGcrequestItems'),
 
             'totalGcRequestItems' => $this->whenLoaded('hasManySpecialExternalGcrequestItems', function ($item) {
                 $denom = $item->map(function ($i) {
@@ -59,6 +63,20 @@ class SpecialExternalGcRequestResource extends JsonResource
                     ];
                 });
             }),
+
+            'approvedRequest' => $this->whenLoaded('approvedRequest', new ApprovedRequestResource($this->approvedRequest))
         ];
+    }
+    private function paymentType(int $num)
+    {
+        $types = [
+            1 => 'Cash',
+            2 => 'Check',
+            3 => 'JV',
+            4 => 'AR',
+            5 => 'On Account'
+        ];
+
+        return $types[$num] ?? '';
     }
 }

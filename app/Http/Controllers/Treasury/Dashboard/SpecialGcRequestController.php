@@ -125,9 +125,9 @@ class SpecialGcRequestController extends Controller
         ]);
     }
 
-    public function externalPaymentSubmission(Request $request)
+    public function gcPaymentSubmission(Request $request)
     {
-        $data = $this->specialGcPaymentService->externalSubmission($request);
+        $data = $this->specialGcPaymentService->store($request);
         $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
 
         $pdf->setPaper('A3');

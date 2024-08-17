@@ -101,9 +101,9 @@ class SpecialExternalGcrequest extends Model
         return $this->hasOne(SpecialExternalBankPaymentInfo::class, 'spexgcbi_trid', 'spexgc_id');
     }
 
-    public function document(): HasOne
+    public function document()
     {
-        return $this->hasOne(Document::class, 'doc_trid', 'spexgc_id');
+        return $this->hasMany(Document::class, 'doc_trid', 'spexgc_id');
     }
     public function specialExternalGcrequestEmpAssign(): HasMany
     {

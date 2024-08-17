@@ -18,8 +18,7 @@ const setActiveTab = computed(() => {
         "transactions",
         "production",
         "adjustment",
-        "reports",
-        "special", //add more key sub-menu
+        "reports", //add more key sub-menu
     ];
     const keysToOpen = [];
 
@@ -113,25 +112,15 @@ const setActiveTab = computed(() => {
             <a-menu-item key="menu-item-institution-gc-refund"
                 >Institution GC Refund</a-menu-item
             >
-            <a-sub-menu key="special">
-                <template #title>
-                    <span>
-                        <span>Special GC Payment</span>
-                    </span>
-                </template>
-                <a-menu-item key="treasury.transactions.special.ext">
+            <a-menu-item key="treasury.transactions.special.index">
                     <span>
                         <Link
-                            :href="route('treasury.transactions.special.ext')"
+                            :href="route('treasury.transactions.special.index')"
                         >
-                            Special Ext. Gc Payment</Link
+                            Special Gc Payment</Link
                         ></span
                     ></a-menu-item
                 >
-                <a-menu-item key="menu-item-envelope"
-                    >Special Int. Gc Payment</a-menu-item
-                >
-            </a-sub-menu>
             <a-menu-item key="menu-item-gc-sales-report-eod"
                 >GC Sales Report (EOD)</a-menu-item
             >

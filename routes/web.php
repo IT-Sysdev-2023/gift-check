@@ -218,8 +218,8 @@ Route::middleware('auth')->group(function () {
 
                 //special gc payment
                 Route::prefix('special-gc-payment')->name('special.')->group(function () {
-                    Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('ext');
-                    Route::post('external-request', [SpecialGcRequestController::class, 'externalPaymentSubmission'])->name('extSubmission');
+                    Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
+                    Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                 });
             });
 
@@ -277,6 +277,8 @@ Route::middleware('auth')->group(function () {
         Route::prefix('special-external-gc-request')->name('special.external.')->group(function () {
             Route::get('view-approved-gc', [SpecialExternalGcRequestController::class, 'approvedGc'])->name('approvedGc');
             Route::get('view-approved-gc-{id}', [SpecialExternalGcRequestController::class, 'viewApprovedGcRecord'])->name('viewApprovedGc');
+
+            Route::post('barcode-submission-{id}', [SpecialExternalGcRequestController::class, 'barcodeSubmission'])->name('barcode');
         });
     });
 });

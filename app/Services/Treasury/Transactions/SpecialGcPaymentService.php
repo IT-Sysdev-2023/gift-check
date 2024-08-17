@@ -19,7 +19,7 @@ class SpecialGcPaymentService extends UploadFileHandler
         parent::__construct();
         $this->folderName = 'externalDocs';
     }
-    public function externalSubmission(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'companyId' => 'required|exists:special_external_customer,spcus_id',
@@ -56,6 +56,7 @@ class SpecialGcPaymentService extends UploadFileHandler
 
     private function segStore(Request $request)
     {
+        $gcPayment = $request->switchGc;
         $q = SpecialExternalGcrequest::create([
             'spexgc_num' => $request->trans,
             'spexgc_reqby' => $request->user()->user_id,
@@ -69,7 +70,7 @@ class SpecialGcPaymentService extends UploadFileHandler
             'spexgc_type' => 2,
             'spexgc_payment_stat' => 'paid',
             'spexgc_addemp' => 'pending',
-            'spexgc_promo' => '0',
+            'spexgc_promo' => $gcPayment ? '*' : '0',
             'spexgc_payment_arnum' => $request->arNo
         ]);
 

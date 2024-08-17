@@ -13,6 +13,10 @@ class SpecialExternalGcrequestEmpAssign extends Model
 
     protected $primaryKey = 'spexgcemp_id';
 
+    public function specialExternalGcrequest(){
+        return $this->belongsTo(SpecialExternalGcrequest::class, 'spexgcemp_trid', 'spexgc_id');
+    }
+
     public static function scopeSelectFilter($builder)
     {
         $builder->select(
