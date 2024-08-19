@@ -7,6 +7,7 @@ use App\Models\Document;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Str;
 
 
 class UploadFileHandler
@@ -50,6 +51,7 @@ class UploadFileHandler
         }
         return '';
     }
+
     protected function saveFile(Request $request, string $filename)
     {
         if ($request->hasFile('file')) {

@@ -259,6 +259,10 @@ Route::prefix('finance')->group(function () {
         Route::name('pendingGc.')->group(function () {
             Route::get('pending-list', [FinanceController::class, 'specialGcPending'])->name('pending');
             Route::get('pending-approval-form', [FinanceController::class, 'SpecialGcApprovalForm'])->name('approval.form');
+            Route::post('pending-approval-form-submit', [FinanceController::class, 'SpecialGcApprovalSubmit'])->name('approval.submit');
+        });
+        Route::name('approvedGc.')->group(function () {
+            Route::get('approved-special-gc',[FinanceController::class, 'approvedGc'])->name('approved');
         });
     });
 
