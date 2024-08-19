@@ -203,13 +203,7 @@ Route::middleware('auth')->group(function () {
                 Route::post('get-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
             });
 
-            Route::prefix('transactions')->name('transactions.')->group(function () {
-                Route::prefix('production-request')->name('production.')->group(function () {
-                    Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
-                    Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
-                    Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
-                    Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
-                });
+           
                 Route::prefix('transactions')->name('transactions.')->group(function () {
                     Route::prefix('production-request')->name('production.')->group(function () {
                         Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
@@ -237,7 +231,6 @@ Route::middleware('auth')->group(function () {
             });
         });
     });
-});
 Route::prefix('documents')->group(function () {
     Route::name('start.')->group(function () {
         Route::get('budget-ledger', [DocumentController::class, 'startGeneratingBudgetLedger'])->name('budget.ledger');
