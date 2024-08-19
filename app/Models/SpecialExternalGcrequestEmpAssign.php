@@ -107,9 +107,5 @@ class SpecialExternalGcrequestEmpAssign extends Model
     {
         return $this->belongsTo(StoreVerification::class, 'spexgcemp_barcode', 'vs_barcode');
     }
-    public function specialExternalGcRequest()
-    {
-        return $this->belongsTo(SpecialExternalGcrequest::class, 'spexgcemp_trid', 'spexgc_id');
-    }
   
 }

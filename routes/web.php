@@ -210,13 +210,6 @@ Route::middleware('auth')->group(function () {
                     Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
                     Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
                 });
-            Route::prefix('transactions')->name('transactions.')->group(function () {
-                Route::prefix('production-request')->name('production.')->group(function () {
-                    Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
-                    Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
-                    Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
-                    Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
-                });
 
                 Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
                 Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
