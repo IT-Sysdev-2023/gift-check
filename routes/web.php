@@ -297,6 +297,7 @@ Route::middleware('auth')->group(function () {
 
             Route::post('barcode-submission-{id}', [SpecialExternalGcRequestController::class, 'barcodeSubmission'])->name('barcode');
             Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
+            Route::get('reprint-gc-{id}', [SpecialExternalGcRequestController::class, 'reprintGc'])->name('reprint-gc');
         });
     });
 });
