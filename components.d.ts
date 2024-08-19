@@ -185,6 +185,7 @@ declare module 'vue' {
     MarketingSideBar: typeof import('./resources/js/Components/MarketingSideBar.vue')['default']
     MenuFoldOutlined: typeof import('@ant-design/icons-vue')['MenuFoldOutlined']
     MenuUnfoldOutlined: typeof import('@ant-design/icons-vue')['MenuUnfoldOutlined']
+    MinusCircleOutlined: typeof import('@ant-design/icons-vue')['MinusCircleOutlined']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     NotFoundResult: typeof import('./resources/js/Pages/Iad/Components/NotFoundResult.vue')['default']
