@@ -11,6 +11,8 @@ use App\Models\SpecialExternalGcrequestItem;
 use App\Services\Treasury\ColumnHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Number;
+use Rmunate\Utilities\SpellNumber;
 
 class SpecialExternalGcRequestController extends Controller
 {
@@ -64,7 +66,17 @@ class SpecialExternalGcRequestController extends Controller
 
     public function barcodeSubmission(Request $request, $id)
     {
-        $gc = SpecialExternalGcrequestEmpAssign::select('spexgcemp_trid', 'spexgcemp_denom', 'spexgcemp_fname', 'spexgcemp_lname', 'spexgcemp_mname', 'spexgcemp_extname', 'spexgcemp_barcode', 'spexgcemp_review', 'spexgcemp_id')
+        $gc = SpecialExternalGcrequestEmpAssign::select(
+            'spexgcemp_trid',
+            'spexgcemp_denom',
+            'spexgcemp_fname',
+            'spexgcemp_lname',
+            'spexgcemp_mname',
+            'spexgcemp_extname',
+            'spexgcemp_barcode',
+            'spexgcemp_review',
+            'spexgcemp_id'
+        )
             ->where([
                 ['spexgcemp_trid', $id],
                 ['spexgcemp_review', ''],
@@ -72,7 +84,7 @@ class SpecialExternalGcRequestController extends Controller
             ])
             ->withWhereHas('specialExternalGcrequest', function ($q) {
                 $q->where('spexgc_status', 'approved');
-            })->get();
+            })->first();
 
         if ($gc->isEmpty()) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
@@ -82,16 +94,35 @@ class SpecialExternalGcRequestController extends Controller
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Reviewed!");
         }
 
-        if ($gc->spexgc_status != 'approved') {
+        if ($gc->specialExternalGcrequest->spexgc_status != 'approved') {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} GC request is still Pending!");
         }
+
+        $sessionName = 'scanReviewGC';
+        $toSession = [
+            "lastname" => $gc->spexgcemp_lname,
+            "firstname" => $gc->spexgcemp_fname,
+            "middlename" => $gc->spexgcemp_mname,
+            "extname" => $gc->spexgcemp_extname,
+            "denom" => $gc->spexgcemp_denom,
+            "barcode" => $gc->spexgcemp_barcode,
+            "trid" => $id,
+            "gcid" => $gc->spexgcemp_id
+        ];
+        $scanGc = collect($request->session()->get($sessionName, []));
+
+        if ($scanGc->contains('barcode', $request->barcode)) {
+            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Scanned!");
+        }
+
+        $request->session()->push($sessionName, $toSession);
+        return redirect()->back()->with('success', "GC Barcode # {$request->barcode} successfully Scanned!");
 
         //ajax.php search = gcreviewscangc
     }
 
     public function gcReview(Request $request, $id)
     {
-        // dd($request->all());
         $isExist = ApprovedRequest::where([['reqap_trid', $id], ['reqap_approvedtype', 'special external gc review']])->exists();
         if ($isExist) {
             return redirect()->back()->with('error', 'GC Request already reviewed.');
@@ -104,43 +135,35 @@ class SpecialExternalGcRequestController extends Controller
                     'spexgc_reviewed' => 'reviewed'
                 ]);
 
-                if($update){
-
+                if ($update) {
                     ApprovedRequest::create([
-                        'reqap_trid' => $id, 
+                        'reqap_trid' => $id,
                         'reqap_remarks' => $request->remarks,
                         'reqap_approvedtype' => 'special external gc review',
                         'reqap_date' => now(),
                         'reqap_preparedby' => $request->user()->user_id
                     ]);
 
+                    $scanGc = collect($request->session()->get('scanReviewGC'));
 
-                    // $query = $link->query(
-                    //     "INSERT INTO 
-                    //         approved_request
-                    //     (
-                    //         reqap_trid, 
-                    //         reqap_remarks,
-                    //         reqap_approvedtype,
-                    //         reqap_date,
-                    //         reqap_preparedby
-                    //     ) 
-                    //     VALUES 
-                    //     (
-                    //         '$trid',
-                    //         '$remarks',
-                    //         'special external gc review',
-                    //         NOW(),
-                    //         '".$_SESSION['gc_id']."'
+                    $scanGc->each(function ($item) use ($id) {
+                        if ($item['trid'] === $id) {
+                            SpecialExternalGcrequestEmpAssign::where([
+                                ['spexgcemp_trid', $item['trid']],
+                                ['spexgcemp_id', $item['gcid']]
+                            ])->update(['spexgcemp_review' => '*']);
+                        };
+                    });
 
-                    //     )
-                    // ");
+                    return redirect()->back()->with('success', 'Request successfully reviewed.');
 
-
+                } else {
+                    return redirect()->back()->with('error', 'Request already reviewed');
                 }
-
             });
         }
+
+        return redirect()->back()->with('error', 'Please scan the Gc first!');
         //ajax.php search = gcreview
 
     }
