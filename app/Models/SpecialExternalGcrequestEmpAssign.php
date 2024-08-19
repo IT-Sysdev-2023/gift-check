@@ -17,9 +17,9 @@ class SpecialExternalGcrequestEmpAssign extends Model
 
     public $timestamps = false;
 
-    public function specialExternalGcrequest(){
-        return $this->belongsTo(SpecialExternalGcrequest::class, 'spexgcemp_trid', 'spexgc_id');
-    }
+    // public function specialExternalGcrequest(){
+    //     return $this->belongsTo(SpecialExternalGcrequest::class, 'spexgcemp_trid', 'spexgc_id');
+    // }
 
     public static function scopeSelectFilter($builder)
     {
