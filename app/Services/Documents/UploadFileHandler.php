@@ -3,8 +3,10 @@
 namespace App\Services\Documents;
 
 use App\Models\BudgetRequest;
+use App\Models\Document;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 
 class UploadFileHandler
@@ -17,13 +19,18 @@ class UploadFileHandler
         $this->disk = Storage::disk('public');
     }
 
+    private function folder()
+    {
+        return "$this->folderName/";
+    }
+
     protected function handleUpload(Request $request)
     {
         if ($request->hasFile('file')) {
 
             if (!is_null($request->document)) {
                 //delete old image
-                $this->disk->delete($this->folderName . $request->document);
+                $this->disk->delete($this->folder() . $request->document);
             }
             //insert new image
             $filename = $this->createFileName($request);
@@ -35,6 +42,7 @@ class UploadFileHandler
         return $request->document;
     }
 
+
     protected function createFileName(Request $request)
     {
         if ($request->hasFile('file')) {
@@ -45,7 +53,23 @@ class UploadFileHandler
     protected function saveFile(Request $request, string $filename)
     {
         if ($request->hasFile('file')) {
-            return $this->disk->putFileAs($this->folderName, $request->file, $filename);
+            return $this->disk->putFileAs($this->folder(), $request->file, $filename);
+        }
+    }
+
+    protected function saveMultiFiles(Request $request, $id)
+    {
+        if ($request->hasFile('file')) {
+            foreach ($request->file as $image) {
+                $name = $this->getOriginalFileName($request, $image);
+                $path = $this->disk->putFileAs($this->folder(), $image, $name);
+
+                Document::create([
+                    'doc_trid' => $id,
+                    'doc_type' => 'Special External GC Request',
+                    'doc_fullpath' => $path
+                ]);
+            }
         }
     }
 
@@ -69,10 +93,23 @@ class UploadFileHandler
 
     public function download(string $file)
     {
-        if ($this->disk->exists($this->folderName . $file)) {
-            return $this->disk->download($this->folderName . $file);
+        if ($this->disk->exists($this->folder() . $file)) {
+            return $this->disk->download($this->folder() . $file);
         } else {
             return redirect()->back()->with('error', 'File Not Found');
         }
+    }
+    private function getOriginalFileName(Request $request, $image)
+    {
+        $filename = $this->createFileName($request);
+
+        $originalName = $image->getClientOriginalName();
+        $nameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
+
+        //remove special Unicode character (\u{202F})
+        $cleanedFilename = preg_replace('/[^\x20-\x7E]/', '', $nameWithoutExtension);
+        $name = Str::replace(' ', '-', $cleanedFilename);
+
+        return "{$name}-{$filename}";
     }
 }

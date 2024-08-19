@@ -13,13 +13,16 @@ use App\Rules\DenomQty;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SpecialGcRequestController extends Controller
 {
 
-    public function __construct(public SpecialGcPaymentService $specialGcPaymentService){
-        
+    public function __construct(public SpecialGcPaymentService $specialGcPaymentService)
+    {
+
     }
     public function pendingSpecialGc(Request $request)
     {
@@ -122,12 +125,15 @@ class SpecialGcRequestController extends Controller
         ]);
     }
 
-    public function externalPaymentSubmission(Request $request)
+    public function gcPaymentSubmission(Request $request)
     {
-        $this->specialGcPaymentService->externalSubmission($request);
+        $data = $this->specialGcPaymentService->store($request);
+        $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
 
-        return redirect()->back()->with('success', 'Process Success');
+        $pdf->setPaper('A3');
 
+        $stream = base64_encode($pdf->output());
 
+        return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
     }
 }

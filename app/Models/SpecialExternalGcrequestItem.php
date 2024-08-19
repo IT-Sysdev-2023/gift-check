@@ -10,4 +10,6 @@ class SpecialExternalGcrequestItem extends Model
     use HasFactory;
 
     protected $primaryKey = 'specit_id';
+    protected $guarded = [];
+    public $timestamps = false;
 }

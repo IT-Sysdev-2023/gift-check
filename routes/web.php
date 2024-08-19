@@ -7,6 +7,7 @@ use App\Http\Controllers\CustodianController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FadController;
+use App\Http\Controllers\Iad\Dashboard\SpecialExternalGcRequestController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
@@ -111,11 +112,11 @@ Route::prefix('marketing')->group(function () {
             Route::get('requis-pdf', [MarketingController::class, 'requisitionPdf'])->name('requistion.pdf');
         });
         Route::name('pendingRequest.')->group(function () {
-            Route::get('pending-request',[MarketingController::class, 'pendingRequest'])->name('pending.request');
-            Route::post('submit-request',[MarketingController::class, 'submitPendingRequest'])->name('submit.request');
+            Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
+            Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
         });
         Route::name('approvedRequest.')->group(function () {
-            Route::get('approved-request',[MarketingController::class, 'approvedRequest'])->name('approved.request');
+            Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
 
 
@@ -204,25 +205,25 @@ Route::middleware('auth')->group(function () {
 
             });
 
-        Route::prefix('transactions')->name('transactions.')->group(function () {
-            Route::prefix('production-request')->name('production.')->group(function () {
-                Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
-                Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
-                Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
-                Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+            Route::prefix('transactions')->name('transactions.')->group(function () {
+                Route::prefix('production-request')->name('production.')->group(function () {
+                    Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
+                    Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
+                    Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
+                    Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+                });
+
+                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+
+                //special gc payment
+                Route::prefix('special-gc-payment')->name('special.')->group(function () {
+                    Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
+                    Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
+                });
             });
 
-            Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-            Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
-
-            //special gc payment
-            Route::prefix('special-gc-payment')->name('special.')->group(function () {
-                Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('ext');
-                Route::post('external-request', [SpecialGcRequestController::class, 'externalPaymentSubmission'])->name('extSubmission');
-            });
-        });
-
-        Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+            Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
             Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
             Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
@@ -248,12 +249,18 @@ Route::prefix('finance')->group(function () {
         Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.excel');
         Route::get('generate-spgc-ledger', [FinanceController::class, 'generateSpgcPromotionalExcel'])->name('spgc.ledger.start');
         Route::post('approve-request', [FinanceController::class, 'approveRequest'])->name('approve.request');
+        Route::name('pendingGc.')->group(function () {
+            Route::get('pending-list', [FinanceController::class, 'specialGcPending'])->name('pending');
+            Route::get('pending-approval-form', [FinanceController::class, 'SpecialGcApprovalForm'])->name('approval.form');
+        });
     });
 
     Route::get('/download/{filename}', function ($filename) {
         $filePath = storage_path('app/' . $filename);
         return response()->download($filePath);
     })->name('download');
+
+
 });
 
 Route::prefix('custodian')->group(function () {
@@ -275,14 +282,22 @@ Route::prefix('custodian')->group(function () {
     });
 });
 
-Route::prefix('iad')->group(function () {
-    Route::name('iad.')->group(function () {
+Route::middleware('auth')->group(function () {
+    Route::prefix('iad')->name('iad.')->group(function () {
         Route::get('receiving-index', [IadController::class, 'receivingIndex'])->name('receiving');
         Route::get('receiving-setup', [IadController::class, 'setupReceiving'])->name('setup.receiving');
         Route::post('validate-with-range', [IadController::class, 'validateByRange'])->name('validate.range');
         Route::post('delete-scanned-barcode', [IadController::class, 'removeScannedGc'])->name('remove.scanned.gc');
         Route::post('validate-barcode', [IadController::class, 'validateBarcode'])->name('validate.barcode');
         Route::post('submit-setup', [IadController::class, 'submitSetup'])->name('submit.setup');
+
+        Route::prefix('special-external-gc-request')->name('special.external.')->group(function () {
+            Route::get('view-approved-gc', [SpecialExternalGcRequestController::class, 'approvedGc'])->name('approvedGc');
+            Route::get('view-approved-gc-{id}', [SpecialExternalGcRequestController::class, 'viewApprovedGcRecord'])->name('viewApprovedGc');
+
+            Route::post('barcode-submission-{id}', [SpecialExternalGcRequestController::class, 'barcodeSubmission'])->name('barcode');
+            Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
+        });
     });
 });
 

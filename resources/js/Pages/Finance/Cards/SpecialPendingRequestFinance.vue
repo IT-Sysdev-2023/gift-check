@@ -16,15 +16,24 @@
                 <p class="message-text text-white">Pendings</p>
                 <p class="sub-text text-white">All Pending Request</p>
             </div>
-            <a-badge >
-                <a-button >
-                    <template #icon>
-                        <FolderFilled />
+            <a-badge :count="count.pending">
+                <a-popover v-model:open="open" trigger="click">
+                    <template #content>
+                        <a-badge class="m-2" :count="count.internal">
+                            <a-button @click="pendingListLink('internal')" type="primary">Internal</a-button>
+                        </a-badge>
+                        <a-badge class="m-2" :count="count.external">
+                            <a-button @click="pendingListLink('external')" type="primary">External</a-button>
+                        </a-badge>
                     </template>
-                    View
-                </a-button>
+                    <a-button>
+                        <template #icon>
+                            <FolderFilled />
+                        </template>
+                        View
+                    </a-button>
+                </a-popover>
             </a-badge>
-
         </div>
 
         <div class="card" style="background-color: #34B3F1">
@@ -41,7 +50,7 @@
                 <p class="message-text text-white">Approved</p>
                 <p class="sub-text text-white">Approved Gc Request</p>
             </div>
-            <a-badge >
+            <a-badge :count="count.approve">
                 <a-button>
                     <template #icon>
                         <FolderFilled />
@@ -66,7 +75,7 @@
                 <p class="message-text text-white">Cancelled</p>
                 <p class="sub-text text-white">All Cancel Request</p>
             </div>
-            <a-button>
+            <a-button :count="count.cancel">
                 <template #icon>
                     <FolderFilled />
                 </template>
@@ -76,9 +85,18 @@
     </a-card>
 </template>
 <script>
+
 export default {
     props: {
         count: Array,
+    },
+
+    methods:{
+        pendingListLink(type){
+            this.$inertia.get(route('finance.pendingGc.pending'),{
+                type: type
+            });
+        }
     }
 }
 </script>
@@ -94,7 +112,6 @@ export default {
     margin-top: 7px;
     box-sizing: border-box;
     padding: 10px 15px;
-    /* background-color: #ffffff; */
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     position: relative;
     overflow: hidden;

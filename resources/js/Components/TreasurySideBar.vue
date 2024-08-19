@@ -18,8 +18,7 @@ const setActiveTab = computed(() => {
         "transactions",
         "production",
         "adjustment",
-        "reports",
-        "special", //add more key sub-menu
+        "reports", //add more key sub-menu
     ];
     const keysToOpen = [];
 
@@ -201,25 +200,33 @@ const setActiveTab = computed(() => {
                     </span></a-menu-item>
                 <a-menu-item key="menu-item-envelope">Envelope</a-menu-item>
             </a-sub-menu>
-            <a-menu-item key="menu-item-gc-allocation">GC Allocation</a-menu-item>
-            <a-menu-item key="menu-item-gc-releasing-retail-store">GC Releasing (Retail Store)</a-menu-item>
-            <a-menu-item key="menu-item-promo-gc-releasing">Promo GC Releasing</a-menu-item>
-            <a-menu-item key="menu-item-institution-gc-sales">Institution GC Sales</a-menu-item>
-            <a-menu-item key="menu-item-institution-gc-refund">Institution GC Refund</a-menu-item>
-            <a-sub-menu key="special">
-                <template #title>
+            <a-menu-item key="menu-item-gc-allocation"
+                >GC Allocation</a-menu-item
+            >
+            <a-menu-item key="menu-item-gc-releasing-retail-store"
+                >GC Releasing (Retail Store)</a-menu-item
+            >
+            <a-menu-item key="menu-item-promo-gc-releasing"
+                >Promo GC Releasing</a-menu-item
+            >
+            <a-menu-item key="menu-item-institution-gc-sales"
+                >Institution GC Sales</a-menu-item
+            >
+            <a-menu-item key="menu-item-institution-gc-refund"
+                >Institution GC Refund</a-menu-item
+            >
+            <a-menu-item key="treasury.transactions.special.index">
                     <span>
-                        <span>Special GC Payment</span>
-                    </span>
-                </template>
-                <a-menu-item key="treasury.transactions.special.ext">
-                    <span>
-                        <Link :href="route('treasury.transactions.special.ext')">
-                        Special Ext. Gc Payment</Link>
-                    </span></a-menu-item>
-                <a-menu-item key="menu-item-envelope">Special Int. Gc Payment</a-menu-item>
-            </a-sub-menu>
-            <a-menu-item key="menu-item-gc-sales-report-eod">GC Sales Report (EOD)</a-menu-item>
+                        <Link
+                            :href="route('treasury.transactions.special.index')"
+                        >
+                            Special Gc Payment</Link
+                        ></span
+                    ></a-menu-item
+                >
+            <a-menu-item key="menu-item-gc-sales-report-eod"
+                >GC Sales Report (EOD)</a-menu-item
+            >
         </a-sub-menu>
 
         <a-sub-menu key="adjustment">

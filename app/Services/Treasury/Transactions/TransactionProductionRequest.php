@@ -14,7 +14,7 @@ class TransactionProductionRequest extends UploadFileHandler
 	public function __construct()
 	{
 		parent::__construct();
-		$this->folderName = "productionRequestFile/";
+		$this->folderName = "productionRequestFile";
 	}
 
 	private function isAbleToRequest(Request $request)
@@ -34,7 +34,7 @@ class TransactionProductionRequest extends UploadFileHandler
 		$request->validate([
 			'remarks' => 'required',
 			'dateNeeded' => 'required|date',
-			'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048',
+			'file' => 'required|image|mimes:jpeg,png,jpg|max:5048',
 			'denom' => ['required', 'array', new DenomQty()],
 		]);
 

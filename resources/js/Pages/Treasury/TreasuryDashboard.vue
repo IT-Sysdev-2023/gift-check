@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { UserType } from "@/userType";
 import { router } from "@inertiajs/vue3";
-
-const { userType, userRole } = UserType();
 
 defineProps<{
     data?: {

@@ -1,39 +1,24 @@
-
-import { usePage } from '@inertiajs/vue3';
-import { PageProps as InertiaPageProps } from '@inertiajs/core';
-
-export interface User {
-  usertype: string,
-  user_role: number,
-  user_id: number,
-  full_name: string,
-  name: string,
-  email: string,
-  email_verified_at: string
-}
-
-export interface PageProps extends InertiaPageProps  {
-  auth: {
-    user: User;
-  };
-}
+import { usePage } from "@inertiajs/vue3";
+import { PageWithSharedProps } from "@/types";
+import { computed } from "vue";
 
 export function UserType() {
+    const page = usePage<PageWithSharedProps>().props;
 
-  const page = usePage<PageProps>();
-  
-  const user = page.props.auth.user.usertype;
-  const role = page.props.auth.user.user_role;
+    const user = page.auth.user.usertype;
+    const role = page.auth.user.user_role;
 
-  const userType = (userType: string) => {
-    return user === userType;
-  }
+    const userType = (userType: string) => user === userType;
+    const userRole = (userRole: number) => role === userRole;
 
-  const userRole = (userType: number) => {
-    return role === userType;
-  }
-
-
-
-  return { userType, userRole };
+    return {
+      admin: computed(() => userType("1")),
+      treasury: computed(() => (userType("2") || userType("1")) && !userRole(2)),
+      retail: computed(() => (userType("7") || userType("1")) && !userRole(7)),
+      accounting: computed(() => (userType("9") || userType("1")) && !userRole(9)),
+      finance: computed(() => (userType("3") || userType("1")) && !userRole(3)),
+      custodian: computed(() => (userType("4") || userType("1")) && !userRole(4)),
+      marketing: computed(() => (userType("6") || userType("1")) && !userRole(6)),
+      iad: computed(() => (userType("10") || userType("1")) && !userRole(10)),
+    };
 }
