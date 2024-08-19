@@ -245,7 +245,7 @@ export default {
                             description: response.props.flash.description
                         });
 
-                        this.$inertia.get(route('finance.pendingGc.pending'));
+                        this.$inertia.get(route('finance.dashboard'));
                     } else {
                         notification[response.props.flash.type]({
                             message: response.props.flash.msg,
