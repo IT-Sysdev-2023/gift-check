@@ -140,14 +140,17 @@
                             @finish="onFinish"
                         >
                             <a-form-item label="Remarks" name="remarks">
-                                <a-input v-model:value="formState.remarks" />
+                                <a-textarea
+                                    v-model:value="formState.remarks"
+                                    style="width: 400px"
+                                />
                             </a-form-item>
                             <a-form-item
                                 label="Total Gc Scanned"
                                 name="totalGc"
                             >
                                 <a-input-number
-                                    v-model:value="formState.totalGcScanned"
+                                    v-model:value="totalGcScanned"
                                 />
                             </a-form-item>
                             <a-form-item
@@ -155,7 +158,7 @@
                                 name="denomination"
                             >
                                 <a-input-number
-                                    v-model:value="formState.totalDenomination"
+                                    v-model:value="totalDenomination"
                                 />
                             </a-form-item>
 
@@ -189,6 +192,8 @@
                             message: 'Please input the Barcode!',
                         },
                     ]"
+                    :validate-status="barcodeForm.errors.barcode ? 'error' : ''"
+                    :help="barcodeForm.errors.barcode"
                 >
                     <a-input-number
                         v-model:value="barcodeForm.barcode"
@@ -198,7 +203,7 @@
 
                 <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
                     <a-button type="primary" html-type="submit"
-                        >Submit</a-button
+                        >Scan Barcode</a-button
                     >
                 </a-form-item>
             </a-form>
@@ -251,8 +256,6 @@ interface barcodeFormTypes {
 }
 interface formState {
     remarks: string;
-    totalGcScanned: number;
-    totalDenomination: number;
     reviewedBy: string;
 }
 
@@ -261,10 +264,11 @@ const barcodeForm = useForm<barcodeFormTypes>({
 });
 const formState = useForm<formState>({
     remarks: "",
-    totalGcScanned: 0,
-    totalDenomination: 0,
     reviewedBy: "",
 });
+
+const totalDenomination = ref(0);
+const totalGcScanned = ref(0);
 const openScanGc = ref<boolean>(false);
 
 const records = props.data.data;
@@ -291,7 +295,8 @@ const onFinishBarcode = () => {
         onSuccess: ({ props }) => {
             openLeftNotification(props.flash);
             if (props.flash.success) {
-                router.visit(route("iad.dashboard"));
+                totalGcScanned.value = props.flash.countSession;
+                totalDenomination.value = props.flash.denomination;
             }
         },
     });

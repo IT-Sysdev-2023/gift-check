@@ -66,6 +66,9 @@ class SpecialExternalGcRequestController extends Controller
 
     public function barcodeSubmission(Request $request, $id)
     {
+        $request->validate([
+            'barcode' => 'required|not_in:0'
+        ]);
         $gc = SpecialExternalGcrequestEmpAssign::select(
             'spexgcemp_trid',
             'spexgcemp_denom',
@@ -86,6 +89,9 @@ class SpecialExternalGcRequestController extends Controller
                 $q->where('spexgc_status', 'approved');
             })->first();
 
+        if (is_null($gc)) {
+            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Valid!");
+        }
         if ($gc->isEmpty()) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
         }
@@ -116,7 +122,13 @@ class SpecialExternalGcRequestController extends Controller
         }
 
         $request->session()->push($sessionName, $toSession);
-        return redirect()->back()->with('success', "GC Barcode # {$request->barcode} successfully Scanned!");
+
+        return redirect()->back()->with([
+            'success',
+            "GC Barcode # {$request->barcode} successfully Scanned!",
+            'countSession' => $scanGc->count(),
+            'denominationSession' => $scanGc->sum('denom')
+        ]);
 
         //ajax.php search = gcreviewscangc
     }

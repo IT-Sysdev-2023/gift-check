@@ -12,7 +12,13 @@ export type PageProps<
     auth: {
         user: User;
     };
-    flash?: { success: string; error: string; stream: string };
+    flash?: {
+        success: string;
+        error: string;
+        stream: string;
+        countSession: number;
+        denomination: number;
+    };
 };
 
 interface SharedProps extends PageProps {
