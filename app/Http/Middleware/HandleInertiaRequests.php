@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
                     'title' => $request->session()->get('title'),
                     'type' => $request->session()->get('type'),
                     'description' => $request->session()->get('description'),
-                    
+
                     //San Changes
                     'stream' => $request->session()->get('stream'),
                     'session' => $request->session()->get('countSession'),

@@ -83,6 +83,13 @@ class DashboardClass extends DashboardService
                 ->where('spexgc_addemp', 'pending')
                 ->orderByDesc('spexgc_num')
                 ->count(),
+
+            'countApproved' =>   SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+                ->selectFilterApproved()
+                ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
+                ->where('spexgc_status', 'approved')
+                ->where('reqap_approvedtype', 'Special External GC Approved')->count(),
+
         ];
     }
 }

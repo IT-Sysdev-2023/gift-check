@@ -13,6 +13,7 @@
         "laravel/reverb": "@beta",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "milon/barcode": "^11.0",
         "phpoffice/phpspreadsheet": "^2.1",
         "predis/predis": "2.0",
         "spatie/laravel-permission": "^6.7",

@@ -10,7 +10,7 @@
         </a-col>
         <a-col :span="16">
             <a-card>
-                <a-table size="small" :data-source="data" :columns="columns" :pagination="false" />
+                <a-table bordered size="small" :data-source="data" :columns="columns" :pagination="false" />
                 <div class="mt-4" :style="{
                     height: '250px',
                     overflow: 'hidden',

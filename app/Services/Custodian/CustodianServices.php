@@ -2,15 +2,20 @@
 
 namespace App\Services\Custodian;
 
+use App\Helpers\NumberInWordsHelper;
 use App\Http\Resources\CustodianSrrResource;
 use App\Http\Resources\SpecialGcRequestResource;
 use App\Models\BarcodeChecker;
 use App\Models\CustodianSrr;
+use App\Models\Document;
 use App\Models\Gc;
 use App\Models\SpecialExternalGcrequest;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use Illuminate\Support\Facades\Date;
 use App\Services\Custodian\CustodianDbServices;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Number;
+use Milon\Barcode\DNS1D;
 
 class CustodianServices
 {
@@ -198,6 +203,99 @@ class CustodianServices
         $data->transform(function ($item) {
 
             $item->company = $item->specialExternalCustomer->spcus_companyname;
+
+            $item->spexgc_datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();
+            $item->spexgc_dateneed = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
+            $item->reqap_date = Date::parse($item->reqap_date)->toFormattedDateString();
+
+            return $item;
+        });
+
+        return $data;
+    }
+
+    public function setupApprovalSelected($request)
+    {
+
+        $docs =  Document::where('doc_trid', $request->id)
+            ->where('doc_type', 'Special External GC Request')
+            ->first();
+
+        $special = SpecialExternalGcrequest::with('user:user_id,firstname,lastname', 'specialExternalCustomer', 'approvedRequest.user')
+            ->selectFilterSetupApproval()
+            ->withWhereHas('approvedRequest', function ($query) {
+                $query->where('reqap_approvedtype', 'Special External GC Approved');
+            })
+            ->where('spexgc_status', 'approved')
+            ->where('spexgc_id', $request->id)
+            ->first();
+
+        if ($special) {
+            if ($special->spexgc_paymentype == '1') {
+                $special->paymentStatus = 'Cash';
+            } elseif ($special->spexgc_paymentype == '2') {
+                $special->paymentStatus = 'Check';
+            } elseif ($special->spexgc_paymentype == '3') {
+                $special->paymentStatus = 'JV';
+            } elseif ($special->spexgc_paymentype == '4') {
+                $special->paymentStatus = 'AR';
+            } elseif ($special->spexgc_paymentype == '5') {
+                $special->paymentStatus = 'On Account';
+            }
+        }
+
+
+        return (object) [
+            'docs' => $docs,
+            'special' => $special,
+        ];
+    }
+
+    public function setupApprovalBarcodes($request)
+    {
+
+        $data = SpecialExternalGcrequestEmpAssign::select(
+            'spexgcemp_trid',
+            'spexgcemp_denom',
+            'spexgcemp_fname',
+            'spexgcemp_lname',
+            'spexgcemp_mname',
+            'spexgcemp_extname',
+            'voucher',
+            'address',
+            'department',
+            'spexgcemp_barcode'
+        )->where('spexgcemp_trid', $request->id)->get();
+
+        $data->transform(function ($item) {
+            $item->completename = $item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' ' .  $item->spexgcemp_lname . ' ' . $item->spexgcemp_extname;
+            return $item;
+        });
+
+        return $data;
+    }
+
+    public function getSpecialExternalGcRequest($request)
+    {
+        $data = SpecialExternalGcrequestEmpAssign::with(
+            'specialExternalGcRequest:spexgc_id,spexgc_company',
+            'specialExternalGcRequest.specialExternalCustomer:spcus_id,spcus_acctname'
+        );
+
+        $data = match ($request->status) {
+            '1' =>  $data->where('spexgcemp_barcode', $request->barcode)->get(),
+            '2' =>  $data->whereBetween('spexgcemp_barcode', [$request->barcodeStart, $request->barcodeEnd])->get(),
+        };
+
+
+        $data->transform(function ($item) {
+
+            $barcode = new DNS1D();
+
+            $html = $barcode->getBarcodePNG($item->spexgcemp_barcode, 'C128');
+
+            $item->barcode = $html;
+            $item->numWords = Number::spell($item->spexgcemp_denom) . ' pesos only';
 
             return $item;
         });

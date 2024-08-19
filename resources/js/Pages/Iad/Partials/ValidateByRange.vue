@@ -18,7 +18,7 @@
                         <a-typography-text keyboard>Barcode Start:</a-typography-text>
                         <a-form-item has-feedback :help="errors.barcodeStart"
                             :validate-status="form.barcodeStart?.length === 13 ? 'success' : errors.barcodeStart ? 'error' : ''">
-                            <a-input v-model:value="form.barcodeStart" size="large"
+                            <a-input v-model:value="form.barcodeStart" size="large"  @keyup.enter="validateRange"
                                 placeholder="Start of Barcode here.." show-count allow-clear @keypress="handleKeyPress">
                                 <template #prefix>
                                     <PaperClipOutlined />

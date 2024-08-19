@@ -1,5 +1,5 @@
 <template>
-    <a-table :data-source="scannedGc" :columns="columns" size="small">
+    <a-table :data-source="scannedGc" :columns="columns" size="small" bordered>
         <template #bodyCell="{ column, record }">
             <template v-if="column.key == 'remove'">
                 <a-popconfirm :title="'Remove this? '+ record.tval_barcode" ok-text="Yes" cancel-text="No"

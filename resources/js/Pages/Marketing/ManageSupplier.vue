@@ -31,7 +31,7 @@
                 style="width: 300px" @search="onSearch" />
         </div>
 
-        <a-table :dataSource="data.data" :columns="columns" :pagination="false" />
+        <a-table :dataSource="data.data" :columns="columns" :pagination="false"  bordered/>
 
         <pagination class="mt-5" :datarecords="data" />
     </a-card>

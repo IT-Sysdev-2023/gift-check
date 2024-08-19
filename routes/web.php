@@ -114,13 +114,13 @@ Route::prefix('marketing')->group(function () {
         Route::name('pendingRequest.')->group(function () {
             Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
             Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
+            Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
+            Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
         });
         Route::name('approvedRequest.')->group(function () {
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
+            Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
-
-
-
     });
 });
 
@@ -201,8 +201,6 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('get-assign-employee', [SpecialGcRequestController::class, 'getAssignEmployee'])->name('get.assign.employee');
                 Route::post('get-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
-
-
             });
 
             Route::prefix('transactions')->name('transactions.')->group(function () {
@@ -212,7 +210,16 @@ Route::middleware('auth')->group(function () {
                     Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
                     Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
                 });
+            Route::prefix('transactions')->name('transactions.')->group(function () {
+                Route::prefix('production-request')->name('production.')->group(function () {
+                    Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
+                    Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
+                    Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
+                    Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+                });
 
+                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
                 Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
                 Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
 
@@ -278,6 +285,11 @@ Route::prefix('custodian')->group(function () {
 
         Route::name('approved.')->group(function () {
             Route::get('approved-gc-request', [CustodianController::class, 'approvedGcRequest'])->name('request');
+            Route::get('approve-request', [CustodianController::class, 'setupApproval'])->name('setup');
+        });
+
+        Route::name('check.')->group(function () {
+            Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
         });
     });
 });
@@ -313,5 +325,6 @@ Route::prefix('management')->group(function () {
     });
 });
 
+Route::get('generate-barcode', [CustodianController::class, 'generateBarcode'])->name('generaate');
 
 require __DIR__ . '/auth.php';

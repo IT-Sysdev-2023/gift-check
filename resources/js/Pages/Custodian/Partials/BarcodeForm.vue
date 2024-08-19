@@ -1,10 +1,10 @@
 <template>
     <a-card>
         <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
-            <a-descriptions-item label="Date Scanned" class="text-right">{{ date }}</a-descriptions-item>
+            <a-descriptions-item style="width: 50%;" label="Date Scanned" class="text-right">{{ date }}</a-descriptions-item>
         </a-descriptions>
         <a-descriptions size="small" layout="horizontal" bordered>
-            <a-descriptions-item label="Scanned By " class="text-right">{{ $page.props.auth.user.full_name
+            <a-descriptions-item style="width: 50%;" label="Scanned By " class="text-right">{{ $page.props.auth.user.full_name
                 }}</a-descriptions-item>
         </a-descriptions>
 

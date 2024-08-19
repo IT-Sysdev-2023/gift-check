@@ -145,13 +145,30 @@ class SpecialExternalGcrequest extends Model
     public function scopeSelectFilterApproved(Builder $query)
     {
         return $query->select(
-            'spexgc_id',
-            'spexgc_num',
-            'spexgc_datereq',
-            'spexgc_dateneed',
             'reqap_approvedby',
-            'reqap_date',
+            'spexgc_dateneed',
+            'spexgc_datereq',
             'spexgc_company',
+            'spexgc_num',
+            'reqap_date',
+            'spexgc_id',
         );
+    }
+    public function scopeSelectFilterSetupApproval(Builder $query)
+    {
+        return $query->select(
+            'spexgc_payment_arnum',
+            'spexgc_paymentype',
+            'spexgc_dateneed',
+            'spexgc_dateneed',
+            'spexgc_company',
+            'spexgc_payment',
+            'spexgc_datereq',
+            'spexgc_remarks',
+            'spexgc_reqby',
+            'spexgc_num',
+            'spexgc_id',
+        );
+
     }
 }
