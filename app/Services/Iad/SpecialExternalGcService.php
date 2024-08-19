@@ -73,11 +73,8 @@ class SpecialExternalGcService
             ->withWhereHas('specialExternalGcrequest', function ($q) {
                 $q->where('spexgc_status', 'approved');
             })->first();
-
-        if (is_null($gc)) {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Valid!");
-        }
-        if ($gc->isEmpty()) {
+            
+        if (is_null($gc) || $gc->isEmpty()) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
         }
 
