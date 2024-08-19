@@ -5,6 +5,7 @@ namespace App\Services\Documents;
 use App\Models\BudgetRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 
 class UploadFileHandler
@@ -42,6 +43,7 @@ class UploadFileHandler
         }
         return '';
     }
+
     protected function saveFile(Request $request, string $filename)
     {
         if ($request->hasFile('file')) {
@@ -75,4 +77,18 @@ class UploadFileHandler
             return redirect()->back()->with('error', 'File Not Found');
         }
     }
+    public function getOriginalFileName(Request $request, $image)
+    {
+        $filename = $this->createFileName($request);
+
+        $originalName = $image->getClientOriginalName();
+        $nameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
+
+        //remove special Unicode character (\u{202F})
+        $cleanedFilename = preg_replace('/[^\x20-\x7E]/', '', $nameWithoutExtension);
+        $name = Str::replace(' ', '-', $cleanedFilename);
+
+        return "{$name}-{$filename}";
+    } 
+
 }
