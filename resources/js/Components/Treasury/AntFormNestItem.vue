@@ -41,12 +41,25 @@
                 Add Denomination
             </a-button>
         </a-form-item>
-        <span v-if="form.errors.denomination" class="text-red-500">{{ form.errors.denomination  }}</span>
+        <span v-if="form.errors.denomination" class="text-red-500">{{
+            form.errors.denomination
+        }}</span>
+        <a-form-item label="Total:" name="denomTotal">
+            <a-input-number
+                    :value="totalDenomination"
+                    :formatter="
+                        (value) =>
+                            `₱ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    "
+                    :min="0"
+                    style="width: 100%"
+                    readonly
+                />
+        </a-form-item>
     </a-card>
 </template>
 <script lang="ts" setup>
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons-vue";
-
+import { computed } from "vue";
 interface Denom {
     denomination: number;
     qty: number;
@@ -55,6 +68,12 @@ interface Denom {
 const props = defineProps<{
     form: any;
 }>();
+
+const totalDenomination = computed(() => {
+   return props.form.denomination.reduce((acc, item) => {
+        return acc + (item.denomination * item.qty);
+    }, 0);
+});
 
 const removeUser = (item: Denom) => {
     const index = props.form.denomination.indexOf(item);
