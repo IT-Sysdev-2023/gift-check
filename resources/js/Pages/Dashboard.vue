@@ -2,8 +2,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { UserType } from "@/userType";
 
-const { userType, userRole } = UserType();
-
 defineProps<{
     data?: {
         budgetRequest: {
