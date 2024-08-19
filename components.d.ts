@@ -192,6 +192,7 @@ declare module 'vue' {
     PlazaMarcela: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/PlazaMarcela.vue')['default']
     PlusOutlined: typeof import('@ant-design/icons-vue')['PlusOutlined']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
+    PrinterOutlined: typeof import('@ant-design/icons-vue')['PrinterOutlined']
     ProfileOutlined: typeof import('@ant-design/icons-vue')['ProfileOutlined']
     ProgressBar: typeof import('./resources/js/Components/Finance/ProgressBar.vue')['default']
     ProgressBarInner: typeof import('./resources/js/Components/Finance/ProgressBarInner.vue')['default']
