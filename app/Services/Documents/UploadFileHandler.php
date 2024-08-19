@@ -7,7 +7,7 @@ use App\Models\Document;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Str;
+
 
 
 class UploadFileHandler
@@ -101,7 +101,7 @@ class UploadFileHandler
             return redirect()->back()->with('error', 'File Not Found');
         }
     }
-    private function getOriginalFileName(Request $request, $image)
+    public function getOriginalFileName(Request $request, $image)
     {
         $filename = $this->createFileName($request);
 
