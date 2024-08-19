@@ -12,7 +12,7 @@ export type PageProps<
     auth: {
         user: User;
     };
-    flash?: { success: string; error: string };
+    flash?: { success: string; error: string; stream: string };
 };
 
 interface SharedProps extends PageProps {
@@ -40,7 +40,7 @@ export interface FormState {
 
 export interface FormStateGc {
     file: UploadFile | null;
-    prNo: string,
+    prNo: string;
     denom: any[];
     remarks: string;
     dateNeeded: null;

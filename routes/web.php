@@ -7,6 +7,7 @@ use App\Http\Controllers\CustodianController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FadController;
+use App\Http\Controllers\Iad\Dashboard\SpecialExternalGcRequestController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MasterfileController;
 use App\Http\Controllers\ProfileController;
@@ -217,8 +218,8 @@ Route::middleware('auth')->group(function () {
 
                 //special gc payment
                 Route::prefix('special-gc-payment')->name('special.')->group(function () {
-                    Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('ext');
-                    Route::post('external-request', [SpecialGcRequestController::class, 'externalPaymentSubmission'])->name('extSubmission');
+                    Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
+                    Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                 });
             });
 
@@ -281,14 +282,22 @@ Route::prefix('custodian')->group(function () {
     });
 });
 
-Route::prefix('iad')->group(function () {
-    Route::name('iad.')->group(function () {
+Route::middleware('auth')->group(function () {
+    Route::prefix('iad')->name('iad.')->group(function () {
         Route::get('receiving-index', [IadController::class, 'receivingIndex'])->name('receiving');
         Route::get('receiving-setup', [IadController::class, 'setupReceiving'])->name('setup.receiving');
         Route::post('validate-with-range', [IadController::class, 'validateByRange'])->name('validate.range');
         Route::post('delete-scanned-barcode', [IadController::class, 'removeScannedGc'])->name('remove.scanned.gc');
         Route::post('validate-barcode', [IadController::class, 'validateBarcode'])->name('validate.barcode');
         Route::post('submit-setup', [IadController::class, 'submitSetup'])->name('submit.setup');
+
+        Route::prefix('special-external-gc-request')->name('special.external.')->group(function () {
+            Route::get('view-approved-gc', [SpecialExternalGcRequestController::class, 'approvedGc'])->name('approvedGc');
+            Route::get('view-approved-gc-{id}', [SpecialExternalGcRequestController::class, 'viewApprovedGcRecord'])->name('viewApprovedGc');
+
+            Route::post('barcode-submission-{id}', [SpecialExternalGcRequestController::class, 'barcodeSubmission'])->name('barcode');
+            Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
+        });
     });
 });
 

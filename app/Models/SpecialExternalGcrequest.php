@@ -15,13 +15,17 @@ class SpecialExternalGcrequest extends Model
     use HasFactory;
 
     protected $table = 'special_external_gcrequest';
-
+    protected $guarded = [];
+    public $timestamps = false;
     protected $primaryKey = 'spexgc_id';
 
-
-    protected $guarded = [];
-
-    public $timestamps = false;
+    protected function casts(): array
+    {
+        return [
+            'spexgc_dateneed' => 'date',
+            'spexgc_datereq' => 'date'
+        ];
+    }
 
     public function scopeSpexgcStatus(Builder $builder, mixed $request)
     {
@@ -53,7 +57,6 @@ class SpecialExternalGcrequest extends Model
     {
         return $builder->join('approved_request', 'special_external_gcrequest.spexgc_id', '=', 'approved_request.reqap_trid');
     }
-
     public function specialExternalCustomer()
     {
         return $this->belongsTo(SpecialExternalCustomer::class, 'spexgc_company', 'spcus_id');
@@ -66,16 +69,18 @@ class SpecialExternalGcrequest extends Model
     {
         return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
     }
+    public function hasManySpecialExternalGcrequestItems()
+    {
+        return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class, 'spexgc_reqby', 'user_id');
     }
-
     public function preparedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reqap_preparedby', 'user_id');
     }
-
     public function scopeReleasedGc(Builder $builder)
     {
         return $this->with([
@@ -101,9 +106,9 @@ class SpecialExternalGcrequest extends Model
         return $this->hasOne(SpecialExternalBankPaymentInfo::class, 'spexgcbi_trid', 'spexgc_id');
     }
 
-    public function document(): HasOne
+    public function document()
     {
-        return $this->hasOne(Document::class, 'doc_trid', 'spexgc_id');
+        return $this->hasMany(Document::class, 'doc_trid', 'spexgc_id');
     }
     public function specialExternalGcrequestEmpAssign(): HasMany
     {

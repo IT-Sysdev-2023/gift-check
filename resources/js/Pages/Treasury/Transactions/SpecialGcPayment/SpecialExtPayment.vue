@@ -9,6 +9,13 @@
         </a-breadcrumb>
 
         <a-card :title="'Submit ' + title" class="mt-10">
+            <template #extra>
+                <a-switch
+                    v-model:checked="formState.switchGc"
+                    checked-children="Special Int. Gc"
+                    un-checked-children="Special Ext. Gc"
+                />
+            </template>
             <a-form
                 ref="formRef"
                 :model="formState"
@@ -37,7 +44,9 @@
                             />
                         </a-form-item>
                         <a-form-item label="Upload Scan Copy.:" name="upload">
-                            <ant-upload-image @handle-change="handleChange" />
+                            <ant-upload-multi-image
+                                @handle-change="handleChange"
+                            />
                         </a-form-item>
                     </a-col>
                     <a-col :span="8">
@@ -53,21 +62,31 @@
                                 :options="props.options"
                                 @handle-change="handleCustomerChange"
                             />
-                            <span v-if="formState.errors.companyId" class="text-red-500">{{ formState.errors.companyId  }}</span>
+                            <span
+                                v-if="formState.errors.companyId"
+                                class="text-red-500"
+                                >{{ formState.errors.companyId }}</span
+                            >
                         </a-form-item>
                         <a-form-item label="AR no." name="ar">
                             <a-input v-model:value="formState.arNo" />
                         </a-form-item>
-                        <a-form-item label="Payment Type:" :validate-status="getErrorStatus('paymentType.type')"
-                        :help="getErrorMessage('paymentType.type')">
+                        <a-form-item
+                            label="Payment Type:"
+                            :validate-status="
+                                getErrorStatus('paymentType.type')
+                            "
+                            :help="getErrorMessage('paymentType.type')"
+                        >
                             <ant-select
                                 :options="paymentType"
                                 @handle-change="handlePaymentChange"
                             />
                         </a-form-item>
-                        <PaymentType :form="formState" v-if="formState.paymentType.type"/>
-
-                        
+                        <PaymentType
+                            :form="formState"
+                            v-if="formState.paymentType.type"
+                        />
                     </a-col>
                     <a-col :span="8">
                         <a-form-item
@@ -92,20 +111,34 @@
                 </a-row>
             </a-form>
         </a-card>
+        <a-modal
+            v-model:open="openIframe"
+            style="width: 70%; top: 50px"
+            :footer="null"
+            :afterClose="routeToHome"
+        >
+            <iframe
+                class="mt-7"
+                :src="stream"
+                width="100%"
+                height="600px"
+            ></iframe>
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayout.vue";
 import type { UploadChangeParam } from "ant-design-vue";
 import dayjs from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
-import type { UploadFile, SelectProps } from "ant-design-vue";
+import type { SelectProps } from "ant-design-vue";
 import { PageWithSharedProps } from "@/../../resources/js/types/index";
 import { onProgress } from "@/../../resources/js/Mixin/UiUtilities";
+import type { UploadProps } from "ant-design-vue";
 interface FormStateGc {
     trans: string;
-    file: UploadFile | null;
+    file: UploadProps["fileList"];
     companyId: string;
     arNo: number | string;
 
@@ -113,6 +146,7 @@ interface FormStateGc {
     paymentType: any;
     remarks: string;
     dateNeeded: null;
+    switchGc: boolean
 }
 
 const props = defineProps<{
@@ -121,6 +155,7 @@ const props = defineProps<{
     options: any[];
 }>();
 
+// const switchGc = reactive({ state: false });
 const page = usePage<PageWithSharedProps>().props;
 const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
@@ -130,15 +165,18 @@ const formState = useForm<FormStateGc>({
     companyId: "",
     arNo: "",
     dateNeeded: null,
-    file: null,
+    file: [],
     denomination: [],
     paymentType: {
         type: "",
-        amount: 0
+        amount: 0,
     },
     remarks: "",
+    switchGc: false
 });
 const accountName = ref(null);
+const stream = ref(null);
+const openIframe = ref(false);
 const paymentType = ref<SelectProps["options"]>([
     {
         value: "1",
@@ -147,6 +185,7 @@ const paymentType = ref<SelectProps["options"]>([
     {
         value: "2",
         label: "Check",
+        disabled: true,
     },
     {
         value: "3",
@@ -163,16 +202,16 @@ const paymentType = ref<SelectProps["options"]>([
 ]);
 const { openLeftNotification } = onProgress();
 const handleChange = (file: UploadChangeParam) => {
-    formState.file = file.file;
+    formState.file = file.fileList;
 };
 
 const handlePaymentChange = (value: string) => {
-    clearError('paymentType.type');
+    clearError("paymentType.type");
     formState.paymentType.type = value;
 };
 
 const handleCustomerChange = (value: string, acc) => {
-    clearError('companyId');
+    clearError("companyId");
     accountName.value = acc.account_name;
     formState.companyId = value;
 };
@@ -182,19 +221,24 @@ const onSubmit = () => {
         .transform((data) => ({
             ...data,
             dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
-            denomination: data.denomination.filter(item => item.denomination !== 0 && item.qty !== 0),
+            denomination: data.denomination.filter(
+                (item) => item.denomination !== 0 && item.qty !== 0
+            ),
+            file: data.file.map((item) => item.originFileObj),
         }))
-        .post(route("treasury.transactions.special.extSubmission"), {
+        .post(route("treasury.transactions.special.paymentSubmission"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
                 if (props.flash.success) {
-                    router.visit(route("treasury.dashboard"));
+                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                    openIframe.value = true;
                 }
             },
-            onError: (e) =>{
-                console.log(e);
-            }
         });
+};
+
+const routeToHome = () => {
+    router.visit(route("treasury.dashboard"));
 };
 const getErrorStatus = (field: string) => {
     return formState.errors[field] ? "error" : "";
