@@ -43,7 +43,8 @@
                                 @change="clearError('dateNeeded')"
                             />
                         </a-form-item>
-                        <a-form-item label="Upload Scan Copy.:" name="upload">
+                        <a-form-item label="Upload Scan Copy.:" name="upload" :validate-status="getErrorStatus('file')"
+                        :help="getErrorMessage('file')">
                             <ant-upload-multi-image
                                 @handle-change="handleChange"
                             />

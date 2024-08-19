@@ -34,7 +34,7 @@ class TransactionProductionRequest extends UploadFileHandler
 		$request->validate([
 			'remarks' => 'required',
 			'dateNeeded' => 'required|date',
-			'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048',
+			'file' => 'required|image|mimes:jpeg,png,jpg|max:5048',
 			'denom' => ['required', 'array', new DenomQty()],
 		]);
 

@@ -51,7 +51,8 @@
                                 @change="clearError('dateNeeded')"
                             />
                         </a-form-item>
-                        <a-form-item label="Upload Scan Copy.:" name="name">
+                        <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
+                        :help="getErrorMessage('file')">
                             <ant-upload-image @handle-change="handleChange" />
                         </a-form-item>
                         <a-form-item

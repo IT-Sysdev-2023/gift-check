@@ -208,8 +208,9 @@
 
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, router } from "@inertiajs/vue3";
 import { ref } from "vue";
+import { onProgress } from "@/Mixin/UiUtilities";
 
 const props = defineProps<{
     title: string;
@@ -273,12 +274,26 @@ const activeKey = ref("1");
 const scanGc = () => {
     openScanGc.value = true;
 };
-
+const { openLeftNotification } = onProgress();
 const onFinish = () => {
-    formState.post(route("iad.special.external.gcreview", records.spexgc_id));
+    formState.post(route("iad.special.external.gcreview", records.spexgc_id), {
+        onSuccess: ({ props }) => {
+            openLeftNotification(props.flash);
+            if (props.flash.success) {
+                router.visit(route("iad.dashboard"));
+            }
+        },
+    });
 };
 
 const onFinishBarcode = () => {
-    barcodeForm.post(route("iad.special.external.barcode", records.spexgc_id));
+    barcodeForm.post(route("iad.special.external.barcode", records.spexgc_id), {
+        onSuccess: ({ props }) => {
+            openLeftNotification(props.flash);
+            if (props.flash.success) {
+                router.visit(route("iad.dashboard"));
+            }
+        },
+    });
 };
 </script>

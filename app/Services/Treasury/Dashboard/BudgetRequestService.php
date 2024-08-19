@@ -56,7 +56,7 @@ class BudgetRequestService extends UploadFileHandler
 	public function submitBudgetEntry(BudgetRequest $id, Request $request)
 	{
 		$request->validate([
-			'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048'
+			'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
 		]);
 
 		if ($id->br_request_status != 0) {
@@ -96,7 +96,7 @@ class BudgetRequestService extends UploadFileHandler
 			"dateNeeded" => 'required|date',
 			"budget" => 'required|not_in:0',
 			"remarks" => 'required',
-			'file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048'
+			'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
 		]);
 
 		$dept = userDepartment($request->user());

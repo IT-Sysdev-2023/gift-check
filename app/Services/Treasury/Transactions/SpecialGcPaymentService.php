@@ -26,6 +26,7 @@ class SpecialGcPaymentService extends UploadFileHandler
             'denomination' => ['required', 'array', new DenomQty()],
             'dateNeeded' => 'required|date',
             'remarks' => 'required',
+            'file' => 'required',
             'paymentType.type' => 'required',
             'paymentType.amount' => [
                 function ($attribute, $value, $fail) use ($request) {
