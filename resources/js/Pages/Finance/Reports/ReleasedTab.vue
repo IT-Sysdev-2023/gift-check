@@ -38,14 +38,14 @@
         <a-tab-pane key="1" tab="Released Per Customers">
             <p class="text-center underline">Released Report Per Customers Table</p>
             <a-table class="mt-5" size="small" :pagination="false" :data-source="datarecordsReleased.dataCus.data"
-                :columns="datacolumnsReleased.columnsCus">
+                :columns="datacolumnsReleased.columnsCus" bordered >
             </a-table>
             <Pagination :datarecords="datarecordsReleased?.dataCus" class="mt-5" />
         </a-tab-pane>
         <a-tab-pane key="2" tab="Released Per Barcodes">
             <p class="text-center underline">Released Report Per Barcodes Table</p>
             <a-table class="mt-5" size="small" :pagination="false" :data-source="datarecordsReleased.dataBar.data"
-                :columns="datacolumnsReleased.columnsBar">
+                :columns="datacolumnsReleased.columnsBar" bordered>
             </a-table>
             <Pagination :datarecords="datarecordsReleased?.dataBar" class="mt-5" />
         </a-tab-pane>

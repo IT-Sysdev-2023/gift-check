@@ -88,6 +88,7 @@ class ColumnHelper
         [
             'title' => 'Action',
             'key' => 'setup',
+            'align' => 'center'
 
         ],
     ];
@@ -367,6 +368,11 @@ class ColumnHelper
         [
             'title' => 'Approved By',
             'dataIndex' => 'reqap_approvedby',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'setup',
+            'align' => 'center'
         ],
 
     ];

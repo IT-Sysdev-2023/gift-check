@@ -41,7 +41,7 @@
                 <p class="message-text text-white">Approved</p>
                 <p class="sub-text text-white">Approved Gc Request</p>
             </div>
-            <a-badge @click="() => $inertia.get(route('custodian.approved.request'))">
+            <a-badge :count="count.countApproved" @click="() => $inertia.get(route('custodian.approved.request'))">
                 <a-button  size="small">
                     <template #icon>
                         <FolderFilled />
