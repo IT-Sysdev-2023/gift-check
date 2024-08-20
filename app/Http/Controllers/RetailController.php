@@ -39,7 +39,7 @@ class RetailController extends Controller
     {
         $denomination = collect($request->data['quantities'])->filter(function ($item) {
             return $item !== null;
-        }); 
+        });
 
         dd($denomination);
 
