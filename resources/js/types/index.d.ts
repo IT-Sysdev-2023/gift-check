@@ -17,7 +17,7 @@ export type PageProps<
         error: string;
         stream: string;
         countSession: number;
-        denomination: number;
+        denominationSession: number;
     };
 };
 

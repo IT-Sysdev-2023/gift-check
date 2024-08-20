@@ -206,13 +206,12 @@ const setActiveTab = computed(() => {
                 >Institution GC Refund</a-menu-item
             >
             <a-menu-item key="treasury.transactions.special.index">
-                    <span>
+                    
                         <Link
                             :href="route('treasury.transactions.special.index')"
                         >
                             Special Gc Payment</Link
-                        ></span
-                    ></a-menu-item
+                        ></a-menu-item
                 >
             <a-menu-item key="menu-item-gc-sales-report-eod"
                 >GC Sales Report (EOD)</a-menu-item

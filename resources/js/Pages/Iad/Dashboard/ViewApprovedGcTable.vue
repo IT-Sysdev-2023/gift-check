@@ -153,7 +153,8 @@
                                 name="totalGc"
                             >
                                 <a-input-number
-                                    v-model:value="totalGcScanned"
+                                    readonly
+                                    :value="$page.props.flash.countSession"
                                 />
                             </a-form-item>
                             <a-form-item
@@ -161,7 +162,10 @@
                                 name="denomination"
                             >
                                 <a-input-number
-                                    v-model:value="totalDenomination"
+                                    readonly
+                                    :value="
+                                        $page.props.flash.denominationSession
+                                    "
                                 />
                             </a-form-item>
 
@@ -220,6 +224,7 @@ import { useForm, router } from "@inertiajs/vue3";
 import { ref } from "vue";
 import axios from "axios";
 import { onProgress } from "@/Mixin/UiUtilities";
+import { notification } from "ant-design-vue";
 
 const props = defineProps<{
     title: string;
@@ -287,16 +292,18 @@ const reprint = () => {
         })
         .catch((error) => {
             if (error.response && error.response.status === 404) {
-                alert("Pdf Not available");
+                notification.error({
+                    message: "File Not Found",
+                    description: "Pdf is missing on the server!",
+                });
             } else {
-                console.error(error);
-                alert("An error occurred while generating the PDF.");
+                notification.error({
+                    message: "Error Occured!",
+                    description: "An error occurred while generating the PDF.",
+                });
             }
         });
 };
-
-const totalDenomination = ref(0);
-const totalGcScanned = ref(0);
 const openScanGc = ref<boolean>(false);
 
 const records = props.data.data;
@@ -320,12 +327,9 @@ const onFinish = () => {
 
 const onFinishBarcode = () => {
     barcodeForm.post(route("iad.special.external.barcode", records.spexgc_id), {
+        preserveState: false,
         onSuccess: ({ props }) => {
             openLeftNotification(props.flash);
-            if (props.flash.success) {
-                totalGcScanned.value = props.flash.countSession;
-                totalDenomination.value = props.flash.denomination;
-            }
         },
     });
 };

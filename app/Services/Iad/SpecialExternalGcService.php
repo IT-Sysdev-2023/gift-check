@@ -18,7 +18,8 @@ use Rmunate\Utilities\SpellNumber;
 class SpecialExternalGcService extends UploadFileHandler
 {
 
-    public function __construct(){
+    public function __construct()
+    {
         parent::__construct();
         $this->folderName = 'reports/externalReport';
     }
@@ -39,13 +40,18 @@ class SpecialExternalGcService extends UploadFileHandler
                 'spexgc_datereq',
             )
             ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])
-            ->orderBy('spexgc_id')
+            ->orderByDesc('spexgc_id')
             ->paginate(10)
             ->withQueryString();
     }
-    public function viewApprovedGcRecord(SpecialExternalGcrequest $id)
+    public function viewApprovedGcRecord(Request $request, SpecialExternalGcrequest $id)
     {
-       return $id->load(
+        $retrievedSession = collect($request->session()->get('scanReviewGC', []));
+
+        session(['countSession' => $retrievedSession->count()]);
+        session(['denominationSession' => $retrievedSession->sum('denom')]);
+
+        return $id->load(
             'user:user_id,firstname,lastname,usertype',
             'user.accessPage:access_no,title',
             'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
@@ -56,7 +62,8 @@ class SpecialExternalGcService extends UploadFileHandler
         );
     }
 
-    public function barcodeScan(Request $request, $id){
+    public function barcodeScan(Request $request, $id)
+    {
         $request->validate([
             'barcode' => 'required|not_in:0'
         ]);
@@ -80,12 +87,18 @@ class SpecialExternalGcService extends UploadFileHandler
                 $q->where('spexgc_status', 'approved');
             })->first();
 
-        if($error = $this->checkBarcodeError($request, $gc)){
+        if ($error = $this->checkBarcodeError($request, $gc)) {
             return $error;
         }
 
         $sessionName = 'scanReviewGC';
-        $toSession = [
+        $scanGc = collect($request->session()->get($sessionName, []));
+
+        if ($scanGc->contains('barcode', $request->barcode)) {
+            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Scanned!");
+        }
+
+        $request->session()->push($sessionName, [
             "lastname" => $gc->spexgcemp_lname,
             "firstname" => $gc->spexgcemp_fname,
             "middlename" => $gc->spexgcemp_mname,
@@ -94,23 +107,20 @@ class SpecialExternalGcService extends UploadFileHandler
             "barcode" => $gc->spexgcemp_barcode,
             "trid" => $id,
             "gcid" => $gc->spexgcemp_id
-        ];
-        $scanGc = collect($request->session()->get($sessionName, []));
+        ]);
 
-        if ($scanGc->contains('barcode', $request->barcode)) {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Scanned!");
-        }
+        $retrievedSession = collect($request->session()->get($sessionName, []));
 
-        $request->session()->push($sessionName, $toSession);
         return redirect()->back()->with([
-            'success',
-            "GC Barcode # {$request->barcode} successfully Scanned!",
-            'countSession' => $scanGc->count(),
-            'denominationSession' => $scanGc->sum('denom')
+            'success' => "GC Barcode # {$request->barcode} successfully Scanned!",
+            'countSession' => $retrievedSession->count(),
+            'denominationSession' => $retrievedSession->sum('denom')
         ]);
     }
 
-    public function review(Request $request, $id){
+    public function review(Request $request, $id)
+    {
+
         $isExist = ApprovedRequest::where([['reqap_trid', $id], ['reqap_approvedtype', 'special external gc review']])->exists();
         if ($isExist) {
             return redirect()->back()->with('error', 'GC Request already reviewed.');
@@ -154,22 +164,26 @@ class SpecialExternalGcService extends UploadFileHandler
         return redirect()->back()->with('error', 'Please scan the Gc first!');
     }
 
-    public function reprint($id){
-
+    public function reprint($id)
+    {
+        return $this->retrieveFile($this->folderName, "gcrspecial{$id}.pdf");
     }
 
-    private function checkBarcodeError(Request $request, $gc){
+    private function checkBarcodeError(Request $request, $gc)
+    {
         if (is_null($gc) || empty($gc)) {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
-        }
+            if (is_null($gc) || empty($gc)) {
+                return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
+            }
 
-        if (!empty($gc->spexgcemp_review)) {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Reviewed!");
-        }
+            if (!empty($gc->spexgcemp_review)) {
+                return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Reviewed!");
+            }
 
-        if ($gc->specialExternalGcrequest->spexgc_status != 'approved') {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} GC request is still Pending!");
+            if ($gc->specialExternalGcrequest->spexgc_status != 'approved') {
+                return redirect()->back()->with('error', "GC Barcode # {$request->barcode} GC request is still Pending!");
+            }
+            return null;
         }
-        return null;
     }
 }
