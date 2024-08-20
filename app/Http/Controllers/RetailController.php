@@ -10,4 +10,5 @@ class RetailController extends Controller
     {
         return inertia('Retail/RetailDashboard');
     }
+    
 }
