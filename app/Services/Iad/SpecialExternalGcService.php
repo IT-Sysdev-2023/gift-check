@@ -86,11 +86,19 @@ class SpecialExternalGcService extends UploadFileHandler
             ->withWhereHas('specialExternalGcrequest', function ($q) {
                 $q->where('spexgc_status', 'approved');
             })->first();
+
         if ($error = $this->checkBarcodeError($request, $gc)) {
             return $error;
         }
+
         $sessionName = 'scanReviewGC';
-        $toSession = [
+        $scanGc = collect($request->session()->get($sessionName, []));
+
+        if ($scanGc->contains('barcode', $request->barcode)) {
+            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Scanned!");
+        }
+
+        $request->session()->push($sessionName, [
             "lastname" => $gc->spexgcemp_lname,
             "firstname" => $gc->spexgcemp_fname,
             "middlename" => $gc->spexgcemp_mname,
@@ -99,14 +107,7 @@ class SpecialExternalGcService extends UploadFileHandler
             "barcode" => $gc->spexgcemp_barcode,
             "trid" => $id,
             "gcid" => $gc->spexgcemp_id
-        ];
-        $scanGc = collect($request->session()->get($sessionName, []));
-
-        if ($scanGc->contains('barcode', $request->barcode)) {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Scanned!");
-        }
-
-        $request->session()->push($sessionName, $toSession);
+        ]);
 
         $retrievedSession = collect($request->session()->get($sessionName, []));
 
@@ -165,7 +166,7 @@ class SpecialExternalGcService extends UploadFileHandler
 
     public function reprint($id)
     {
-
+        return $this->retrieveFile($this->folderName, "gcrspecial{$id}.pdf");
     }
 
     private function checkBarcodeError(Request $request, $gc)
