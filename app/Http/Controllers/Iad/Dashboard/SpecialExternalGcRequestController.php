@@ -54,7 +54,6 @@ class SpecialExternalGcRequestController extends Controller
     {
         return $this->specialExternalGcService->review($request, $id);
         //ajax.php search = gcreview
-
     }
 
     public function reprint($id)

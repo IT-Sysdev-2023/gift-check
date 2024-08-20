@@ -67,13 +67,7 @@
                             :labelStyle="{ fontWeight: 'bold' }"
                             >{{ records.spexgc_payment }}</a-descriptions-item
                         >
-                        <a-descriptions-item
-                            label="Documents"
-                            :labelStyle="{ fontWeight: 'bold' }"
-                            v-if="records.document"
-                        >
-                            <ant-image-preview :images="records.document" />
-                        </a-descriptions-item>
+                       
                         <a-descriptions-item
                             label="Request Remarks"
                             :labelStyle="{ fontWeight: 'bold' }"
@@ -121,20 +115,33 @@
                             }}</a-descriptions-item
                         >
                         <a-descriptions-item
+                            label="Documents"
+                            :labelStyle="{ fontWeight: 'bold' }"
+                            v-if="records.document"
+                        >
+                            <ant-image-preview :images="records.document" />
+                        </a-descriptions-item>
+                        <a-descriptions-item
                             label="Prepared By"
                             :labelStyle="{ fontWeight: 'bold' }"
                             >{{
                                 records.approvedRequest.user.full_name
                             }}</a-descriptions-item
                         >
+                       
                     </a-descriptions>
-                    <a-space style="float: right">
+                 
+
+                    <a-card class="mt-10">
+                        <a-space style="float: right">
                         <a-button @click="scanGc"> Scan GC</a-button>
                         <a-button @click="reprint"> Reprint Gc</a-button>
                     </a-space>
+                        <a-table :columns="columns" bordered class="mt-10"  :data-source="$page.props.flash.scanGc" :pagination="false">
 
-                    <a-card class="mt-10">
+                        </a-table>
                         <a-form
+                        class="mt-10"
                             :model="formState"
                             name="basic"
                             :label-col="{ span: 8 }"
@@ -142,7 +149,8 @@
                             autocomplete="off"
                             @finish="onFinish"
                         >
-                            <a-form-item label="Remarks" name="remarks">
+                            <a-form-item label="Remarks" name="remarks"  :validate-status="formState.errors.remarks ? 'error' :  ''"
+                            :help="formState.errors.remarks">
                                 <a-textarea
                                     v-model:value="formState.remarks"
                                     style="width: 400px"
@@ -276,6 +284,34 @@ const formState = useForm<formState>({
     reviewedBy: "",
 });
 
+const columns = [
+  {
+    title: 'Lastname',
+    dataIndex: 'lastname',
+  },
+  {
+    title: 'Firstname',
+    dataIndex: 'firstname',
+  },
+  {
+    title: 'Middlename',
+    dataIndex: 'middlename',
+  },
+  {
+    title: 'Ext.',
+    dataIndex: 'extname',
+  },
+  {
+    title: 'Denomination',
+    dataIndex: 'denom',
+  },
+  {
+    title: 'Barcode',
+    dataIndex: 'barcode',
+  },
+];
+
+
 const reprint = () => {
     const url = route("iad.special.external.reprint", {
         id: records.spexgc_id,
@@ -327,9 +363,9 @@ const onFinish = () => {
 
 const onFinishBarcode = () => {
     barcodeForm.post(route("iad.special.external.barcode", records.spexgc_id), {
-        preserveState: false,
         onSuccess: ({ props }) => {
             openLeftNotification(props.flash);
+            openScanGc.value = false;
         },
     });
 };

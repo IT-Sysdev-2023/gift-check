@@ -18,6 +18,7 @@ export type PageProps<
         stream: string;
         countSession: number;
         denominationSession: number;
+        scanGc: any[]
     };
 };
 

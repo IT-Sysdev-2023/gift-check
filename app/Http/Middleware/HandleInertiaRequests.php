@@ -50,11 +50,22 @@ class HandleInertiaRequests extends Middleware
                     'stream' => $request->session()->get('stream'),
                     'countSession' => $request->session()->get('countSession') ?? 0,
                     'denominationSession' => $request->session()->get('denominationSession') ?? 0,
+                    'scanGc' => $request->session()->get('scanGc') ?? [],
                 ];
             },
             'pendingPrRequest' => ProductionRequest::select('pe_id', 'pe_num')
                 ->where([['pe_generate_code', '0'], ['pe_status', '1']])
-                ->get()
+                ->get(),
+            // 'barcodeScan' => function () use ($request){
+            //     return [
+            //         'lname' => $request->session()->get('firstname') ?? 0,
+            //         'fname' => $request->session()->get('lastname') ?? 0,
+            //         'mname' => $request->session()->get('middlename') ?? 0,
+            //         'ext' => $request->session()->get('ext') ?? 0,
+            //         'bcode' => $request->session()->get('barcode') ?? 0,
+            //         'denomination' => $request->session()->get('denomination') ?? 0,
+            //     ];
+            // }
         ];
     }
 }
