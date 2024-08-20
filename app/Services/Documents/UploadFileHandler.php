@@ -75,6 +75,12 @@ class UploadFileHandler
         }
     }
 
+    protected function retrievePdf(){
+        if ($this->disk->exists('file.jpg')) {
+            // ...
+        }
+    }
+
     protected function updateTable(Request $request, BudgetRequest $id, string $filename)
     {
         $res = $id->update([

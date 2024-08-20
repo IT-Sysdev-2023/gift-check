@@ -7,6 +7,7 @@ use App\Models\ApprovedRequest;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
+use App\Services\Documents\UploadFileHandler;
 use App\Services\Iad\IadDashboardService;
 use App\Services\Treasury\ColumnHelper;
 use Illuminate\Http\Request;
@@ -14,8 +15,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Rmunate\Utilities\SpellNumber;
 
-class SpecialExternalGcService
+class SpecialExternalGcService extends UploadFileHandler
 {
+
+    public function __construct(){
+        parent::__construct();
+        $this->folderName = 'reports/externalReport';
+    }
     public function approvedGc(Request $request)
     {
 
@@ -74,16 +80,8 @@ class SpecialExternalGcService
                 $q->where('spexgc_status', 'approved');
             })->first();
             
-        if (is_null($gc) || $gc->isEmpty()) {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
-        }
-
-        if (!empty($gc->spexgcemp_review)) {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Reviewed!");
-        }
-
-        if ($gc->specialExternalGcrequest->spexgc_status != 'approved') {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} GC request is still Pending!");
+        if($error = $this->checkBarcodeError($request, $gc)){
+            return $error;
         }
 
         $sessionName = 'scanReviewGC';
@@ -155,5 +153,24 @@ class SpecialExternalGcService
         }
 
         return redirect()->back()->with('error', 'Please scan the Gc first!');
+    }
+
+    public function reprint($id){
+
+    }
+
+    private function checkBarcodeError(Request $request, $gc){
+        if (is_null($gc) || $gc->isEmpty()) {
+            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
+        }
+
+        if (!empty($gc->spexgcemp_review)) {
+            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Reviewed!");
+        }
+
+        if ($gc->specialExternalGcrequest->spexgc_status != 'approved') {
+            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} GC request is still Pending!");
+        }
+        return null;
     }
 }

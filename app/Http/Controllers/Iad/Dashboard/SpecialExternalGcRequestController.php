@@ -46,7 +46,6 @@ class SpecialExternalGcRequestController extends Controller
     public function barcodeSubmission(Request $request, $id)
     {
         return $this->specialExternalGcService->barcodeScan($request, $id);
-
         //ajax.php search = gcreviewscangc
     }
 
@@ -55,5 +54,10 @@ class SpecialExternalGcRequestController extends Controller
         return $this->specialExternalGcService->review($request, $id);
         //ajax.php search = gcreview
 
+    }
+
+    public function reprint($id){
+
+        return $this->specialExternalGcService->reprint($id);
     }
 }

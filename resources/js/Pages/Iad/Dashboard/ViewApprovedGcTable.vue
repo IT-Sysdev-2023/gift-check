@@ -128,7 +128,10 @@
                             }}</a-descriptions-item
                         >
                     </a-descriptions>
-                    <a-button @click="scanGc"> Scan GC</a-button>
+                    <a-space style="float: right">
+                        <a-button @click="scanGc"> Scan GC</a-button>
+                        <a-button @click="reprint"> Reprint Gc</a-button>
+                    </a-space>
 
                     <a-card class="mt-10">
                         <a-form
@@ -215,6 +218,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useForm, router } from "@inertiajs/vue3";
 import { ref } from "vue";
+import axios from "axios";
 import { onProgress } from "@/Mixin/UiUtilities";
 
 const props = defineProps<{
@@ -266,6 +270,30 @@ const formState = useForm<formState>({
     remarks: "",
     reviewedBy: "",
 });
+
+const reprint = () => {
+    const url = route("iad.special.external.reprint", {
+        id: records.spexgc_id,
+    });
+
+    axios
+        .get(url, { responseType: "blob" })
+        .then((response) => {
+            const file = new Blob([response.data], {
+                type: "application/pdf",
+            });
+            const fileURL = URL.createObjectURL(file);
+            window.open(fileURL, "_blank");
+        })
+        .catch((error) => {
+            if (error.response && error.response.status === 404) {
+                alert("Pdf Not available");
+            } else {
+                console.error(error);
+                alert("An error occurred while generating the PDF.");
+            }
+        });
+};
 
 const totalDenomination = ref(0);
 const totalGcScanned = ref(0);
