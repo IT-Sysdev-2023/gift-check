@@ -85,7 +85,7 @@ export default {
     font-size: 10px;
     letter-spacing: 1px;
     top: -25%;
-    right: -35%;
+    right: -50%;
     position: relative;
 }
 

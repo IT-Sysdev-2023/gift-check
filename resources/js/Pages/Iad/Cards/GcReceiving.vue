@@ -63,7 +63,7 @@
 </template>
 <script setup lang="ts">
 defineProps<{
-    count: array;
+    count: string;
     title: string;
     containerTitle1: string;
     containerTitle2: string;

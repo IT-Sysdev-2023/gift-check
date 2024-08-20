@@ -307,7 +307,7 @@ class FinanceController extends Controller
         $ledgerBudgetNum = LedgerBudget::select('bledger_no')->orderByDesc('bledger_id')->first();
         $nextLedgerBudgetNum = (int) $ledgerBudgetNum->bledger_no + 1;
         $pending = SpecialExternalGcrequest::where('spexgc_id', $id)->where('spexgc_status', 'pending')->exists();
-        $specGet = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', '!=', '0')->orderByDesc('spexgcemp_trid')->first();
+        $specGet = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', '!=', '0')->orderByDesc('spexgcemp_trid')->first()->spexgcemp_barcode + 1;
 
         if ($pending) {
             $cust = ($customer[0]->spexgc_company == 342 || $customer[0]->spexgc_company == 341) ? 'dti' : '';
@@ -357,7 +357,7 @@ class FinanceController extends Controller
                             $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
                             foreach ($data->get() as $item) {
                                 $item->update([
-                                    'spexgcemp_barcode' => $specGet->spexgcemp_barcode++,
+                                    'spexgcemp_barcode' => $specGet++,
                                 ]);
                             }
 
@@ -373,7 +373,7 @@ class FinanceController extends Controller
                                 SpecialExternalGcrequestEmpAssign::create([
                                     'spexgcemp_trid' => $id,
                                     'spexgcemp_denom' => $item->specit_denoms,
-                                    'spexgcemp_barcode' => $specGet->spexgcemp_barcode++
+                                    'spexgcemp_barcode' => $specGet++
                                 ]);
                             }
 

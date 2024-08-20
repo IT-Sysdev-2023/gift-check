@@ -79,7 +79,7 @@ class SpecialExternalGcService extends UploadFileHandler
             ->withWhereHas('specialExternalGcrequest', function ($q) {
                 $q->where('spexgc_status', 'approved');
             })->first();
-            
+
         if($error = $this->checkBarcodeError($request, $gc)){
             return $error;
         }
@@ -102,7 +102,6 @@ class SpecialExternalGcService extends UploadFileHandler
         }
 
         $request->session()->push($sessionName, $toSession);
-
         return redirect()->back()->with([
             'success',
             "GC Barcode # {$request->barcode} successfully Scanned!",
@@ -160,7 +159,7 @@ class SpecialExternalGcService extends UploadFileHandler
     }
 
     private function checkBarcodeError(Request $request, $gc){
-        if (is_null($gc) || $gc->isEmpty()) {
+        if (is_null($gc) || empty($gc)) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
         }
 
