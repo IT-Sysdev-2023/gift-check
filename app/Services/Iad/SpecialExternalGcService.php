@@ -18,7 +18,8 @@ use Rmunate\Utilities\SpellNumber;
 class SpecialExternalGcService extends UploadFileHandler
 {
 
-    public function __construct(){
+    public function __construct()
+    {
         parent::__construct();
         $this->folderName = 'reports/externalReport';
     }
@@ -50,7 +51,7 @@ class SpecialExternalGcService extends UploadFileHandler
         session(['countSession' => $retrievedSession->count()]);
         session(['denominationSession' => $retrievedSession->sum('denom')]);
 
-       return $id->load(
+        return $id->load(
             'user:user_id,firstname,lastname,usertype',
             'user.accessPage:access_no,title',
             'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
@@ -61,7 +62,8 @@ class SpecialExternalGcService extends UploadFileHandler
         );
     }
 
-    public function barcodeScan(Request $request, $id){
+    public function barcodeScan(Request $request, $id)
+    {
         $request->validate([
             'barcode' => 'required|not_in:0'
         ]);
@@ -84,7 +86,7 @@ class SpecialExternalGcService extends UploadFileHandler
             ->withWhereHas('specialExternalGcrequest', function ($q) {
                 $q->where('spexgc_status', 'approved');
             })->first();
-        if($error = $this->checkBarcodeError($request, $gc)){
+        if ($error = $this->checkBarcodeError($request, $gc)) {
             return $error;
         }
         $sessionName = 'scanReviewGC';
@@ -103,10 +105,10 @@ class SpecialExternalGcService extends UploadFileHandler
         if ($scanGc->contains('barcode', $request->barcode)) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Scanned!");
         }
-        
+
         $request->session()->push($sessionName, $toSession);
 
-        $retrievedSession =collect($request->session()->get($sessionName, []));
+        $retrievedSession = collect($request->session()->get($sessionName, []));
 
         return redirect()->back()->with([
             'success' => "GC Barcode # {$request->barcode} successfully Scanned!",
@@ -115,8 +117,9 @@ class SpecialExternalGcService extends UploadFileHandler
         ]);
     }
 
-    public function review(Request $request, $id){
-       
+    public function review(Request $request, $id)
+    {
+
         $isExist = ApprovedRequest::where([['reqap_trid', $id], ['reqap_approvedtype', 'special external gc review']])->exists();
         if ($isExist) {
             return redirect()->back()->with('error', 'GC Request already reviewed.');
@@ -160,23 +163,26 @@ class SpecialExternalGcService extends UploadFileHandler
         return redirect()->back()->with('error', 'Please scan the Gc first!');
     }
 
-    public function reprint($id){
+    public function reprint($id)
+    {
 
     }
 
-    private function checkBarcodeError(Request $request, $gc){
+    private function checkBarcodeError(Request $request, $gc)
+    {
         if (is_null($gc) || empty($gc)) {
-        if (is_null($gc) || empty($gc)) {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
-        }
+            if (is_null($gc) || empty($gc)) {
+                return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
+            }
 
-        if (!empty($gc->spexgcemp_review)) {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Reviewed!");
-        }
+            if (!empty($gc->spexgcemp_review)) {
+                return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Reviewed!");
+            }
 
-        if ($gc->specialExternalGcrequest->spexgc_status != 'approved') {
-            return redirect()->back()->with('error', "GC Barcode # {$request->barcode} GC request is still Pending!");
+            if ($gc->specialExternalGcrequest->spexgc_status != 'approved') {
+                return redirect()->back()->with('error', "GC Barcode # {$request->barcode} GC request is still Pending!");
+            }
+            return null;
         }
-        return null;
     }
 }
