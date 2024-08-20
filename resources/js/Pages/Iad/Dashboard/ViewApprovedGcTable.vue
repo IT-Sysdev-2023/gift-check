@@ -153,7 +153,8 @@
                                 name="totalGc"
                             >
                                 <a-input-number
-                                    v-model:value="totalGcScanned"
+                                    readonly
+                                    :value="$page.props.flash.countSession"
                                 />
                             </a-form-item>
                             <a-form-item
@@ -161,7 +162,8 @@
                                 name="denomination"
                             >
                                 <a-input-number
-                                    v-model:value="totalDenomination"
+                                    readonly
+                                    :value="$page.props.flash.denominationSession"
                                 />
                             </a-form-item>
 
@@ -320,12 +322,9 @@ const onFinish = () => {
 
 const onFinishBarcode = () => {
     barcodeForm.post(route("iad.special.external.barcode", records.spexgc_id), {
+        preserveState: false,
         onSuccess: ({ props }) => {
             openLeftNotification(props.flash);
-            if (props.flash.success) {
-                totalGcScanned.value = props.flash.countSession;
-                totalDenomination.value = props.flash.denomination;
-            }
         },
     });
 };

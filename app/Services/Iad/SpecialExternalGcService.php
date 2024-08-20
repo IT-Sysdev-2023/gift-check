@@ -39,12 +39,17 @@ class SpecialExternalGcService extends UploadFileHandler
                 'spexgc_datereq',
             )
             ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])
-            ->orderBy('spexgc_id')
+            ->orderByDesc('spexgc_id')
             ->paginate(10)
             ->withQueryString();
     }
-    public function viewApprovedGcRecord(SpecialExternalGcrequest $id)
+    public function viewApprovedGcRecord(Request $request, SpecialExternalGcrequest $id)
     {
+        $retrievedSession = collect($request->session()->get('scanReviewGC', []));
+
+        session(['countSession' => $retrievedSession->count()]);
+        session(['denominationSession' => $retrievedSession->sum('denom')]);
+
        return $id->load(
             'user:user_id,firstname,lastname,usertype',
             'user.accessPage:access_no,title',
@@ -79,11 +84,9 @@ class SpecialExternalGcService extends UploadFileHandler
             ->withWhereHas('specialExternalGcrequest', function ($q) {
                 $q->where('spexgc_status', 'approved');
             })->first();
-            
         if($error = $this->checkBarcodeError($request, $gc)){
             return $error;
         }
-
         $sessionName = 'scanReviewGC';
         $toSession = [
             "lastname" => $gc->spexgcemp_lname,
@@ -100,18 +103,20 @@ class SpecialExternalGcService extends UploadFileHandler
         if ($scanGc->contains('barcode', $request->barcode)) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} already Scanned!");
         }
-
+        
         $request->session()->push($sessionName, $toSession);
 
+        $retrievedSession =collect($request->session()->get($sessionName, []));
+
         return redirect()->back()->with([
-            'success',
-            "GC Barcode # {$request->barcode} successfully Scanned!",
-            'countSession' => $scanGc->count(),
-            'denominationSession' => $scanGc->sum('denom')
+            'success' => "GC Barcode # {$request->barcode} successfully Scanned!",
+            'countSession' => $retrievedSession->count(),
+            'denominationSession' => $retrievedSession->sum('denom')
         ]);
     }
 
     public function review(Request $request, $id){
+       
         $isExist = ApprovedRequest::where([['reqap_trid', $id], ['reqap_approvedtype', 'special external gc review']])->exists();
         if ($isExist) {
             return redirect()->back()->with('error', 'GC Request already reviewed.');
@@ -160,7 +165,7 @@ class SpecialExternalGcService extends UploadFileHandler
     }
 
     private function checkBarcodeError(Request $request, $gc){
-        if (is_null($gc) || $gc->isEmpty()) {
+        if (is_null($gc) || empty($gc)) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
         }
 

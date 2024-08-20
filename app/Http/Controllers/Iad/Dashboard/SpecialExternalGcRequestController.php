@@ -33,9 +33,10 @@ class SpecialExternalGcRequestController extends Controller
         ]);
     }
 
-    public function viewApprovedGcRecord(SpecialExternalGcrequest $id)
+    public function viewApprovedGcRecord(Request $request, SpecialExternalGcrequest $id)
     {
-        $record = $this->specialExternalGcService->viewApprovedGcRecord($id);
+        $record = $this->specialExternalGcService->viewApprovedGcRecord($request, $id);
+
         return inertia('Iad/Dashboard/ViewApprovedGcTable', [
             'data' => new SpecialExternalGcRequestResource($record),
             'title' => 'Special External Gc'
@@ -56,7 +57,8 @@ class SpecialExternalGcRequestController extends Controller
 
     }
 
-    public function reprint($id){
+    public function reprint($id)
+    {
 
         return $this->specialExternalGcService->reprint($id);
     }

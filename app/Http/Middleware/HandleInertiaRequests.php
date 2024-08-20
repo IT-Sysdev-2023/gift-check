@@ -48,8 +48,8 @@ class HandleInertiaRequests extends Middleware
 
                     //San Changes
                     'stream' => $request->session()->get('stream'),
-                    'session' => $request->session()->get('countSession'),
-                    'denomination' => $request->session()->get('denominationSession'),
+                    'countSession' => $request->session()->get('countSession') ?? 0,
+                    'denominationSession' => $request->session()->get('denominationSession') ?? 0,
                 ];
             },
             'pendingPrRequest' => ProductionRequest::select('pe_id', 'pe_num')
