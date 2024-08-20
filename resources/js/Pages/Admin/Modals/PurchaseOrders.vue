@@ -1,9 +1,9 @@
 <template>
-    <a-modal style="width: 80%; top: 50px;" :footer="false">
-        <a-card class="mt-7">
+    <a-modal class="text-center" title="Add Purchase Order" style="width: 80%; top: 50px;" :footer="false">
+        <a-card class="mt-4">
             <a-row :gutter="[16, 16]">
                 <a-col :span="9">
-                    <a-form layout="vertical">
+                    <a-form layout="horizontal">
                         <a-form-item label="Requisition No." has-feedback
                             :validate-status="errors.req_no ? 'error' : ''" :help="errors.req_no">
                             <a-input allow-clear v-model:value="form.req_no" placeholder="Enter Here..." />
@@ -40,7 +40,7 @@
                     </a-form>
                 </a-col>
                 <a-col :span="8">
-                    <a-form layout="vertical">
+                    <a-form layout="horizontal">
                         <a-form-item label="Location Code." :validate-status="errors.loc_code ? 'error' : ''"
                             :help="errors.loc_code">
                             <a-input allow-clear v-model:value="form.loc_code" placeholder="Enter Here..." />
@@ -50,7 +50,7 @@
                             <a-date-picker allow-clear style="width: 100%;" @change="purchaseDate"
                                 placeholder="Enter Here..." />
                         </a-form-item>
-                        <a-form-item label="Reference Purchase Order No."
+                        <a-form-item label="Ref Purchase Order No."
                             :validate-status="errors.ref_no ? 'error' : ''" :help="errors.ref_no">
                             <a-input allow-clear v-model:value="form.ref_po_no" placeholder="Enter Here..." />
                         </a-form-item>
@@ -77,37 +77,35 @@
                     </a-form>
                 </a-col>
                 <a-col :span="7">
-                    <a-card>
-                        <a-row :gutter="[16, 16]" v-for="(item, key) in denom" :key="item.denom_id">
-                            <a-col :span="6">
-                                <p class="mt-3 text-right">
-                                    {{ item.denomination }}
-                                </p>
-                            </a-col>
-                            <a-col :span="18">
-                                <a-form-item :validate-status="errors.loc_code ? 'error' : ''" :help="errors.denom">
-                                    <a-input allow-clear v-model:value="form.denom[item.denom_id]"
-                                        placeholder="Enter Here..." />
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                    </a-card>
+                    <a-row :gutter="[16, 16]" v-for="(item, key) in denom" :key="item.denom_id">
+                        <a-col :span="6">
+                            <p class="mt-3 text-right">
+                                {{ item.denomination }}
+                            </p>
+                        </a-col>
+                        <a-col :span="18">
+                            <a-form-item :validate-status="errors.loc_code ? 'error' : ''" :help="errors.denom">
+                                <a-input allow-clear v-model:value="form.denom[item.denom_id]"
+                                    placeholder="Enter Here..." />
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <a-button type="primary" ghost class="mt-5 " block @click="submit">
+                        <template #icon>
+                            <CloudDownloadOutlined />
+                        </template>
+                        Add Purchase Order
+                    </a-button>
                 </a-col>
             </a-row>
-            <div class="flex justify-end">
-                <a-button type="primary" class="mt-5 " @click="submit">
-                    <template #icon>
-                        <CloudDownloadOutlined />
-                    </template>
-                    Add Purchase Order
-                </a-button>
-            </div>
+
         </a-card>
     </a-modal>
 </template>
 <script>
 import { useForm } from '@inertiajs/vue3';
 import pickBy from "lodash/pickBy";
+import { notification } from 'ant-design-vue';
 
 export default {
     props: {
@@ -143,8 +141,12 @@ export default {
             this.form.transform((data) => ({
                 ...pickBy(data)
             })).post(route('admin.submit.po'), {
-                onSuccess: () => {
-
+                onSuccess: (response) => {
+                    this.$emit('close-modal');
+                    notification[response.props.flash.status]({
+                        message: response.props.flash.title,
+                        description: response.props.flash.msg,
+                    });
                 },
                 onError: (errors) => {
                     this.errors = errors
