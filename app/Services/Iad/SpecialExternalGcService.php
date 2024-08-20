@@ -166,6 +166,7 @@ class SpecialExternalGcService extends UploadFileHandler
 
     private function checkBarcodeError(Request $request, $gc){
         if (is_null($gc) || empty($gc)) {
+        if (is_null($gc) || empty($gc)) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Found!");
         }
 
