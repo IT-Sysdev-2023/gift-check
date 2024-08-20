@@ -17,7 +17,7 @@
                         <a-input v-model:value="selectedGcData[0]['dateReq']"></a-input>
                     </a-form-item>
                     <a-form-item label="Requested By">
-                        <a-input v-model:value="selectedGcData[0]['requestedBy']"></a-input>
+                        <a-textarea v-model:value="selectedGcData[0]['requestedBy']"></a-textarea>
                     </a-form-item>
                 </a-card>
             </a-col>
@@ -59,12 +59,11 @@
                         <a-input v-model:value="selectedGcData[0]['spexgc_remarks']"></a-input>
                     </a-form-item>
                     <a-form-item label="Approved By">
-                        <a-input v-model:value="selectedGcData[0]['reqap_approvedby']"></a-input>
+                        <a-textarea v-model:value="selectedGcData[0]['reqap_approvedby']"></a-textarea>
                     </a-form-item>
                 </a-card>
             </a-col>
         </a-row>
-        {{ selectedGcData[0]}}
     </a-modal>
 </template>
 

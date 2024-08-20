@@ -82,7 +82,6 @@ class CustodianController extends Controller
     }
     public function barcodeOrRange(Request $request)
     {
-        // dd($request->all());
         if ($request->status == '1') {
             $request->validate([
                 'barcode' => 'required',
@@ -95,19 +94,29 @@ class CustodianController extends Controller
         }
 
         if ($request->status == '1') {
-            $exist =  SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->where('spexgcemp_barcode', $request->barcode)
-                ->exists();
-
+            // dd();
+            $exist =  SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->where('spexgcemp_barcode', $request->barcode);
         } else {
-            $exist =  SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->whereIn('spexgcemp_barcode', [$request->barcodeStart, $request->barcodeEnd])
-                ->count();
+
+            $exist =  SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)
+                ->whereIn('spexgcemp_barcode', [$request->barcodeStart, $request->barcodeEnd]);
         }
 
+        if ($exist->count() == 2 || $exist->exists()) {
 
-        if ($exist == 2 || $exist) {
-            return inertia('Custodian/Result/GiftCheckGenerateResult', [
-                'record' =>  $this->custodianservices->getSpecialExternalGcRequest($request),
-            ]);
+            if ($exist->where('spexgcemp_review', '*')->exists()) {
+
+                return inertia('Custodian/Result/GiftCheckGenerateResult', [
+                    'record' =>  $this->custodianservices->getSpecialExternalGcRequest($request),
+                ]);
+            } else {
+
+                return back()->with([
+                    'status' => 'error',
+                    'msg' => 'Requisition is not yet approved by IAD',
+                    'title' => 'Error',
+                ]);
+            }
         } else {
             return back()->with([
                 'status' => 'error',

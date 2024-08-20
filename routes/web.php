@@ -203,33 +203,34 @@ Route::middleware('auth')->group(function () {
                 Route::post('get-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
             });
 
-            Route::prefix('transactions')->name('transactions.')->group(function () {
-                Route::prefix('production-request')->name('production.')->group(function () {
-                    Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
-                    Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
-                    Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
-                    Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+           
+                Route::prefix('transactions')->name('transactions.')->group(function () {
+                    Route::prefix('production-request')->name('production.')->group(function () {
+                        Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
+                        Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
+                        Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
+                        Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+                    });
+
+                    Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                    Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+                    Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                    Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+
+                    //special gc payment
+                    Route::prefix('special-gc-payment')->name('special.')->group(function () {
+                        Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
+                        Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
+                    });
                 });
 
-                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
-                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+                Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
-                //special gc payment
-                Route::prefix('special-gc-payment')->name('special.')->group(function () {
-                    Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
-                    Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
-                });
+                Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
+                Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
             });
-
-            Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
-
-            Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
-            Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
         });
     });
-});
 Route::prefix('documents')->group(function () {
     Route::name('start.')->group(function () {
         Route::get('budget-ledger', [DocumentController::class, 'startGeneratingBudgetLedger'])->name('budget.ledger');
@@ -255,7 +256,7 @@ Route::prefix('finance')->group(function () {
             Route::post('pending-approval-form-submit', [FinanceController::class, 'SpecialGcApprovalSubmit'])->name('approval.submit');
         });
         Route::name('approvedGc.')->group(function () {
-            Route::get('approved-special-gc',[FinanceController::class, 'approvedGc'])->name('approved');
+            Route::get('approved-special-gc', [FinanceController::class, 'approvedGc'])->name('approved');
         });
     });
 
@@ -306,6 +307,8 @@ Route::middleware('auth')->group(function () {
 
             Route::post('barcode-submission-{id}', [SpecialExternalGcRequestController::class, 'barcodeSubmission'])->name('barcode');
             Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
+            
+            Route::get('gc-reprint-{id}', [SpecialExternalGcRequestController::class, 'reprint'])->name('reprint');
         });
     });
 });

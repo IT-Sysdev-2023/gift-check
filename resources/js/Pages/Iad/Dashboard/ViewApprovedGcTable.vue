@@ -128,7 +128,10 @@
                             }}</a-descriptions-item
                         >
                     </a-descriptions>
-                    <a-button @click="scanGc"> Scan GC</a-button>
+                    <a-space style="float: right">
+                        <a-button @click="scanGc"> Scan GC</a-button>
+                        <a-button @click="reprint"> Reprint Gc</a-button>
+                    </a-space>
 
                     <a-card class="mt-10">
                         <a-form
@@ -150,7 +153,8 @@
                                 name="totalGc"
                             >
                                 <a-input-number
-                                    v-model:value="totalGcScanned"
+                                    readonly
+                                    :value="$page.props.flash.countSession"
                                 />
                             </a-form-item>
                             <a-form-item
@@ -158,7 +162,10 @@
                                 name="denomination"
                             >
                                 <a-input-number
-                                    v-model:value="totalDenomination"
+                                    readonly
+                                    :value="
+                                        $page.props.flash.denominationSession
+                                    "
                                 />
                             </a-form-item>
 
@@ -215,7 +222,9 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useForm, router } from "@inertiajs/vue3";
 import { ref } from "vue";
+import axios from "axios";
 import { onProgress } from "@/Mixin/UiUtilities";
+import { notification } from "ant-design-vue";
 
 const props = defineProps<{
     title: string;
@@ -267,8 +276,34 @@ const formState = useForm<formState>({
     reviewedBy: "",
 });
 
-const totalDenomination = ref(0);
-const totalGcScanned = ref(0);
+const reprint = () => {
+    const url = route("iad.special.external.reprint", {
+        id: records.spexgc_id,
+    });
+
+    axios
+        .get(url, { responseType: "blob" })
+        .then((response) => {
+            const file = new Blob([response.data], {
+                type: "application/pdf",
+            });
+            const fileURL = URL.createObjectURL(file);
+            window.open(fileURL, "_blank");
+        })
+        .catch((error) => {
+            if (error.response && error.response.status === 404) {
+                notification.error({
+                    message: "File Not Found",
+                    description: "Pdf is missing on the server!",
+                });
+            } else {
+                notification.error({
+                    message: "Error Occured!",
+                    description: "An error occurred while generating the PDF.",
+                });
+            }
+        });
+};
 const openScanGc = ref<boolean>(false);
 
 const records = props.data.data;
@@ -292,12 +327,9 @@ const onFinish = () => {
 
 const onFinishBarcode = () => {
     barcodeForm.post(route("iad.special.external.barcode", records.spexgc_id), {
+        preserveState: false,
         onSuccess: ({ props }) => {
             openLeftNotification(props.flash);
-            if (props.flash.success) {
-                totalGcScanned.value = props.flash.countSession;
-                totalDenomination.value = props.flash.denomination;
-            }
         },
     });
 };

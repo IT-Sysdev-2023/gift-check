@@ -4,7 +4,7 @@
             <InboxOutlined />
             Add Purchase Order
         </a-button>
-        <a-table :data-source="record" :columns="columns" size="small" :pagination="false" :rowKey="record => record.id"
+        <a-table :data-source="record" :columns="columns" bordered size="small" :pagination="false" :rowKey="record => record.id"
             expandable="{ expandedRowRender }">
             <template #expandedRowRender="{ record }">
                 <a-card>
@@ -37,7 +37,7 @@
                             <a-descriptions size="small" layout="horizontal" bordered>
                                 <a-descriptions-item style="width: 50%;" label="Prepare By">{{ record.prep_by }}</a-descriptions-item>
                             </a-descriptions>
-                            <a-table :pagination="false" size="small" class="mt-2" :data-source="record.requis_form_denom" :columns="[
+                            <a-table bordered :pagination="false" size="small" class="mt-2" :data-source="record.requis_form_denom" :columns="[
                                 {
                                     title: 'Fad Item No.',
                                     dataIndex: 'denom_no',
@@ -58,7 +58,7 @@
             </template>
         </a-table>
     </a-card>
-    <purchase-orders :denom="denomination" v-model:open="openmodal"/>
+    <purchase-orders :denom="denomination" v-model:open="openmodal" @close-modal="close"/>
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -78,6 +78,9 @@ export default {
     methods: {
         modal(){
             this.openmodal = true;
+        },
+        close(){
+            this.openmodal = false;
         }
     }
 }

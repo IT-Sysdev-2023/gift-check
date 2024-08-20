@@ -79,14 +79,16 @@ export default {
 .img {
     width: 690px;
     height: 250px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    border: 1px solid #000;
 }
 .barcodeSpan{
     font-size: 10px;
     letter-spacing: 1px;
     top: -25%;
-    right: -35%;
+    right: -50%;
     position: relative;
+
 }
 
 .todaySpan{
@@ -127,7 +129,7 @@ export default {
     height: 30px;
     position: absolute;
     right: -9.7%;
-    top: 50%;
+    top: 49%;
     transform: translate(0, -44%) rotate(-90deg);
     margin-right: 10px;
     /* Optional: to add some spacing from the edge */

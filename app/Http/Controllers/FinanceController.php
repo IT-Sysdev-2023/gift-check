@@ -301,13 +301,13 @@ class FinanceController extends Controller
     {
         $id = $request->formData['id'];
         $totalDenom = $request->data[0]['total'];
-        $reqType = SpecialExternalGcrequest::select('spexgc_type')->where('spexgc_id', $id)->get();
+        $reqType = SpecialExternalGcrequest::select('spexgc_type')->where('spexgc_id', $id)->first();
         $currentbudget = intval($request->currentBudget);
         $customer = SpecialExternalGcrequest::select('spexgc_company')->where('spexgc_id', $id)->get();
         $ledgerBudgetNum = LedgerBudget::select('bledger_no')->orderByDesc('bledger_id')->first();
         $nextLedgerBudgetNum = (int) $ledgerBudgetNum->bledger_no + 1;
         $pending = SpecialExternalGcrequest::where('spexgc_id', $id)->where('spexgc_status', 'pending')->exists();
-        $specGet = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', '!=', '0')->orderByDesc('spexgcemp_trid')->first();
+        $specGet = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', '!=', '0')->orderByDesc('spexgcemp_trid')->first()->spexgcemp_barcode + 1;
 
         if ($pending) {
             $cust = ($customer[0]->spexgc_company == 342 || $customer[0]->spexgc_company == 341) ? 'dti' : '';
@@ -353,14 +353,15 @@ class FinanceController extends Controller
                             'bcredit_amt' => $totalDenom
                         ]);
 
-                        if ($reqType == '2') {
+                        if ($reqType->spexgc_type == '2') {
                             $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
                             foreach ($data->get() as $item) {
                                 $item->update([
-                                    'spexgcemp_barcode' => $specGet->spexgcemp_barcode++,
+                                    'spexgcemp_barcode' => $specGet++,
                                 ]);
                             }
-                        } elseif ($reqType == '1') {
+
+                        } elseif ($reqType->spexgc_type == '1') {
                             $denoms = SpecialExternalGcrequestItem::
                                 select('specit_denoms', 'specit_qty')
                                 ->where('specit_trid', $id)
@@ -372,7 +373,7 @@ class FinanceController extends Controller
                                 SpecialExternalGcrequestEmpAssign::create([
                                     'spexgcemp_trid' => $id,
                                     'spexgcemp_denom' => $item->specit_denoms,
-                                    'spexgcemp_barcode' => $specGet->spexgcemp_barcode++
+                                    'spexgcemp_barcode' => $specGet++
                                 ]);
                             }
 
@@ -422,8 +423,8 @@ class FinanceController extends Controller
             ['spexgc_num', 'dateReq', 'spexgc_dateneed', 'spcus_acctname', 'reqap_date', 'reqap_approvedby', 'View']
         );
 
-        if ($request->id != null) {
-            $selectedData =DB::table('special_external_gcrequest')
+
+        $selectedData = DB::table('special_external_gcrequest')
             ->select(
                 'special_external_gcrequest.spexgc_id',
                 'special_external_gcrequest.spexgc_num',
@@ -452,20 +453,20 @@ class FinanceController extends Controller
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
             ->get();
 
-            $selectedData->transform(function ($item) {
-                $item->dateReq = Date::parse($item->spexgc_datereq)->format('Y-m-d');
-                $item->requestedBy = ucwords($item->reqby);
-                $item->requestApproved = Date::parse($item->reqap_date)->format('Y-m-d');
-                $item->preparedBy =ucwords($item->prepby);
-                return $item;
-            });
+        $selectedData->transform(function ($item) {
+            $item->dateReq = Date::parse($item->spexgc_datereq)->format('Y-m-d');
+            $item->requestedBy = ucwords($item->reqby);
+            $item->requestApproved = Date::parse($item->reqap_date)->format('Y-m-d');
+            $item->preparedBy = ucwords($item->prepby);
+            return $item;
+        });
 
-        }
+
 
         return Inertia::render('Finance/ApprovedGcRequest', [
             'data' => $data,
             'columns' => $columns,
-            'selectedGcData' => $selectedData
+            'selectedGcData' => $selectedData ?? []
         ]);
     }
 
