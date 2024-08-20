@@ -218,6 +218,7 @@ declare module 'vue' {
     RequisitionResult: typeof import('./resources/js/Pages/Marketing/Pdf/RequisitionResult.vue')['default']
     ResetPassword: typeof import('./resources/js/Pages/Auth/ResetPassword.vue')['default']
     ResponsiveNavLink: typeof import('./resources/js/Components/ResponsiveNavLink.vue')['default']
+    RetailDashboard: typeof import('./resources/js/Pages/Retail/RetailDashboard.vue')['default']
     RetailSidebar: typeof import('./resources/js/Components/RetailSidebar.vue')['default']
     RetweetOutlined: typeof import('@ant-design/icons-vue')['RetweetOutlined']
     RollbackOutlined: typeof import('@ant-design/icons-vue')['RollbackOutlined']

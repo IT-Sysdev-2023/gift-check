@@ -12,8 +12,9 @@ class DBTransaction
     public function createPruchaseOrders($request, $denomination)
     {
 
-     return DB::transaction(function () use ($denomination, $request) {
-            RequisitionForm::create([
+   DB::transaction(function () use ($denomination, $request) {
+
+        RequisitionForm::create([
                 'req_no' => $request->req_no,
                 'sup_name' => $request->sup_name,
                 'mop' => $request->mop,
@@ -33,6 +34,7 @@ class DBTransaction
             ]);
 
             foreach ($denomination as $key =>  $quantity) {
+
                 $query = Denomination::where('denom_id', $key)->first();
 
                 RequisitionFormDenomination::create([
@@ -42,5 +44,11 @@ class DBTransaction
                 ]);
             }
         });
+
+        return back()->with([
+            'title' => 'Success',
+            'msg' => 'Successfully Added Po Details',
+            'status' => 'success'
+        ]);
     }
 }
