@@ -159,6 +159,7 @@ declare module 'vue' {
     GroupOutlined: typeof import('@ant-design/icons-vue')['GroupOutlined']
     GuestLayout: typeof import('./resources/js/Layouts/GuestLayout.vue')['default']
     Head: typeof import('@inertiajs/vue3')['Head']
+    HighlightOutlined: typeof import('@ant-design/icons-vue')['HighlightOutlined']
     HomeOutlined: typeof import('@ant-design/icons-vue')['HomeOutlined']
     IadDashboard: typeof import('./resources/js/Pages/Iad/IadDashboard.vue')['default']
     IadSideBar: typeof import('./resources/js/Components/IadSideBar.vue')['default']
