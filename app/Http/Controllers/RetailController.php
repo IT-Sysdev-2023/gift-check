@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
+use App\Models\ApprovedGcrequest;
 use App\Models\Denomination;
+use App\Models\GcRelease;
+use App\Models\StoreReceived;
+use App\Services\RetailStore\RetailServices;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class RetailController extends Controller
 {
+    public function __construct(public RetailServices $retail) {}
     public function index()
     {
         return inertia('Retail/RetailDashboard');
@@ -41,7 +46,21 @@ class RetailController extends Controller
             return $item !== null;
         });
 
-        dd($denomination);
+    }
+    public function approvedGcRequest()
+    {
+        return inertia('Retail/RetailApprovedGcRequest', [
+            'columns' => ColumnHelper::$approved_gc_request,
+            'record' => $this->retail->getDataApproved(),
+        ]);
+    }
+    public function detailsEntry(Request $request)
+    {
 
+        $record = $this->retail->details($request);
+
+        return back()->with([
+            'data' => $record,
+        ]);
     }
 }
