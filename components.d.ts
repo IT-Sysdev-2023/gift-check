@@ -114,6 +114,7 @@ declare module 'vue' {
     CardBadge: typeof import('./resources/js/Components/CardBadge.vue')['default']
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']
     CheckCircleFilled: typeof import('@ant-design/icons-vue')['CheckCircleFilled']
+    CheckOutlined: typeof import('@ant-design/icons-vue')['CheckOutlined']
     ClearOutlined: typeof import('@ant-design/icons-vue')['ClearOutlined']
     CloseCircleFilled: typeof import('@ant-design/icons-vue')['CloseCircleFilled']
     CloseCircleOutlined: typeof import('@ant-design/icons-vue')['CloseCircleOutlined']
