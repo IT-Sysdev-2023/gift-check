@@ -216,6 +216,7 @@ declare module 'vue' {
     Register: typeof import('./resources/js/Pages/Auth/Register.vue')['default']
     ReleasedPromoGc: typeof import('./resources/js/Pages/Marketing/ReleasedPromoGc.vue')['default']
     ReleasedTab: typeof import('./resources/js/Pages/Finance/Reports/ReleasedTab.vue')['default']
+    RequestGc: typeof import('./resources/js/Pages/Retail/RequestGc.vue')['default']
     RequisitionResult: typeof import('./resources/js/Pages/Marketing/Pdf/RequisitionResult.vue')['default']
     ResetPassword: typeof import('./resources/js/Pages/Auth/ResetPassword.vue')['default']
     ResponsiveNavLink: typeof import('./resources/js/Components/ResponsiveNavLink.vue')['default']

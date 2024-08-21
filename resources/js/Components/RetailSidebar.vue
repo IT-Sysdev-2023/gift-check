@@ -35,7 +35,7 @@ const page = usePage<PageWithSharedProps>().props;
                 </span>
             </template>
             <a-menu-item key="BeamAndGoConversion">Beam And Go Conversion</a-menu-item>
-            <a-menu-item key="GCRequest">GC Request</a-menu-item>
+            <a-menu-item @click="() => $inertia.get(route('retailstore.retailstore.gc.request'))" key="GCRequest">GC Request</a-menu-item>
             <a-menu-item key="GCVerification">GC Verification</a-menu-item>
             <a-menu-item key="GCTransfer">GC Transfer</a-menu-item>
             <a-menu-item key="StoreEOD">Store EOD</a-menu-item>
@@ -105,7 +105,7 @@ const page = usePage<PageWithSharedProps>().props;
                 </span>
             </template>
             <a-menu-item key="BeamAndGoConversion">Beam And Go Conversion</a-menu-item>
-            <a-menu-item key="GCRequest">GC Request</a-menu-item>
+            <a-menu-item @click="() => $inertia.get(route('retail.gc.request'))" key="GCRequest">GC Request</a-menu-item>
             <a-menu-item key="GCVerification">GC Verification</a-menu-item>
             <a-menu-item key="GCTransfer">GC Transfer</a-menu-item>
             <a-menu-item key="StoreEOD">Store EOD</a-menu-item>

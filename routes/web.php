@@ -85,6 +85,9 @@ Route::prefix('admin')->group(function () {
     });
 });
 
+
+
+
 //Marketing
 Route::prefix('marketing')->group(function () {
     Route::name('marketing.')->group(function () {
@@ -266,6 +269,14 @@ Route::prefix('finance')->group(function () {
     })->name('download');
 
 
+});
+
+// retailstore
+Route::prefix('retail')->group(function (){
+    Route::name('retail.')->group(function () {
+        Route::get('retailstore-gc-request',[RetailController::class, 'gcRequest'])->name('gc.request');
+        Route::post('retailstore-gc-request-submit',[RetailController::class, 'gcRequestsubmit'])->name('gc.request.submit');
+    });
 });
 
 Route::prefix('custodian')->group(function () {
