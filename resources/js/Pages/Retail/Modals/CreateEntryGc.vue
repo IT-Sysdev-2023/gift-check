@@ -47,7 +47,7 @@
                     <a-table size="small" :data-source="record.release" :columns="columns" bordered>
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key == 'action'">
-                                <a-input-number allow-clear style="width: 100%" />
+                                <a-input-number allow-clear style="width: 100%" @keyup.enter="validate"/>
                             </template>
                         </template>
                     </a-table>
@@ -102,5 +102,9 @@ const columns = ref([
         align: 'center'
     },
 ]);
+
+const validate = () => {
+    $inertia.value.get(route('retail.validate.barcode'), {})
+}
 
 </script>
