@@ -18,6 +18,10 @@ class Gc extends Model
         return $this->belongsTo(Denomination::class, 'denom_id', 'denom_id');
     }
 
+    public function productionRequest(){
+        return $this->belongsTo(ProductionRequest::class, 'pe_entry_gc', 'pe_id');
+    }
+
     public function barcode(){
         return $this->belongsTo(BarcodeChecker::class, 'barcode_no', 'bcheck_barcode');
     }

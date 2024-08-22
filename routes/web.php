@@ -212,16 +212,27 @@ Route::middleware('auth')->group(function () {
                         Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
                     });
 
+                    //Budget Request
                     Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
                     Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
                     Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
                     Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+
+                    //Gc allocation
+                    Route::prefix('gc-allocation')->name('gcallocation.')->group(function () {
+                        Route::get('/', [StoreGcController::class, 'gcAllocation'])->name('index');
+                        Route::post('gc-location-submission', [StoreGcController::class, 'store'])->name('store');
+
+                        Route::get('store-allocation', [StoreGcController::class, 'storeAllocation'])->name('storeAllocation');
+                        Route::get('view-allocated-gc', [StoreGcController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
+                    });
 
                     //special gc payment
                     Route::prefix('special-gc-payment')->name('special.')->group(function () {
                         Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
                         Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                     });
+
                 });
 
                 Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');

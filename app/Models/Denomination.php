@@ -20,4 +20,7 @@ class Denomination extends Model
     {
         return $this->hasMany(TempPromo::class, 'tp_den','denom_id');
     }
+    public function gc(){
+        return $this->hasOne(Gc::class, 'denom_id');
+    }
 }
