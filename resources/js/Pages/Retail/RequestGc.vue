@@ -1,7 +1,12 @@
 <template>
     <a-card title="Store GC Request Form">
         <div class="flex justify-end mb-2">
-            <a-button @click="submitForm" type="primary">
+            <a-button title="Please fill required fields"
+                v-if="(form.dateNeed == '' || form.remarks == '')" @click="submitForm"
+                type="primary" disabled>
+                <CheckOutlined /> Submit Form
+            </a-button>
+            <a-button v-else @click="submitForm" type="primary">
                 <CheckOutlined /> Submit Form
             </a-button>
         </div>
@@ -11,34 +16,37 @@
                     <a-form-item label="">
                         <a-table :dataSource="denoms" :columns="denomColumns" :pagination="false">
                             <template #bodyCell="{ column, record, index }">
-                                <!-- {{record}} -->
                                 <template v-if="column.key === 'qty'">
-                                    <a-input v-model:value="form.quantities[record.denom_id]" @input="updateTotal"></a-input>
+                                    <a-input type="number" v-model:value="form.quantities[record.denom_id]"
+                                        @input="calculateTotal"></a-input>
                                 </template>
                             </template>
                         </a-table>
                         <div class="flex justify-end">
-                            Total: {{ countDenom }}
+                            Total: {{ total }}
                         </div>
                     </a-form-item>
-
                 </a-card>
             </a-col>
+
             <a-col :span="8">
                 <a-card>
                     <a-form-item label="GC Request No">
-                        <a-input></a-input>
+                        <a-input v-model:value="form.requestNumber" readonly></a-input>
                     </a-form-item>
                     <a-form-item label="Retail Store">
-                        <a-input></a-input>
+                        <a-input v-model:value="form.storeName" readonly></a-input>
                     </a-form-item>
                     <a-form-item label="Date Requested">
-                        <a-input></a-input>
+                        <a-input v-model:value="form.dateReq" readonly></a-input>
+                    </a-form-item>
+                    <a-form-item label="Date Needed">
+                        <a-date-picker style="width: 100%;" v-model:value="form.dateNeed" />
+                        <small style="color: red;" v-if="form.dateNeed ==''">*this field is required</small>
                     </a-form-item>
                     <a-form-item label="Upload Doc">
-                        <a-upload-dragger v-model:fileList="fileList" name="file" :multiple="false"
-                            @change="handleChange"
-                            @drop="handleDrop">
+                        <a-upload-dragger name="file" :before-upload="() => false" :max-count="1"
+                            @change="handleImageChange" @drop="handleDrop">
                             <p class="ant-upload-drag-icon">
                                 <inbox-outlined></inbox-outlined>
                             </p>
@@ -46,58 +54,85 @@
                         </a-upload-dragger>
                     </a-form-item>
                     <a-form-item label="Remarks">
-                        <a-input></a-input>
+                        <a-textarea v-model:value="form.remarks"></a-textarea>
+                        <small style="color: red;" v-if="form.remarks ==''">*this field is required</small>
                     </a-form-item>
                     <a-form-item label="Prepared by">
-                        <a-input></a-input>
+                        <a-input v-model:value="form.approvedBy" readonly></a-input>
                     </a-form-item>
                 </a-card>
             </a-col>
             <a-col :span="8">
-                <a-card title="Allocated GC">
-                 {{ $page.props.auth.user.store_assigned}}
-                </a-card>
+                <a-table :dataSource="allocated" :columns="allocatedGcColumns" :pagination="false" bordered>
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'qty'">
+                            <a-input style="width:40px;" :value="record.count" readonly></a-input>
+                        </template>
+                    </template>
+                </a-table>
             </a-col>
         </a-row>
-
     </a-card>
 </template>
 
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import dayjs from 'dayjs';
+import { notification } from 'ant-design-vue';
 
 export default {
     layout: AuthenticatedLayout,
     props: {
         denoms: Array,
-        denomColumns: Array
+        denomColumns: Array,
+        requestno: String,
+        storeName: String,
+        allocatedGcColumns: String,
+        requestNumber: Number,
+        allocated: Object,
     },
     data() {
         return {
+            file: null,
             form: {
+                sgc_id: this.requestno.sgc_id,
                 quantities: [],
-            }
+                requestNumber: this.requestNumber,
+                storeName: this.storeName[0]['store_name'],
+                dateReq: dayjs().format('YYYY-MM-DD'),
+                dateNeed: '',
+                remarks: '',
+                approvedBy: this.$page.props.auth.user.full_name,
+                approvedById: this.$page.props.auth.user.user_id,
+            },
+            total: 0,
         }
     },
-    computed: {
-        countDenom() {
-            return this.denoms.reduce((sum, record, index) => {
-                const qty = parseInt(this.form.quantities[index], 10);
-                const denomination = parseInt(record.denomination, 10);
-                const total = isNaN(qty) || isNaN(denomination) ? 0 : qty * denomination;
-                return sum + total;
-            }, 0);
-        }
-    },
+   
     methods: {
-        updateTotal() {
-            this.$forceUpdate();
+        calculateTotal() {
+            this.total = this.denoms.reduce((sum, denom) => {
+                const qty = this.form.quantities[denom.denom_id] || 0;
+                return sum + (denom.denomination * qty);
+            }, 0);
         },
         submitForm() {
             this.$inertia.post(route('retail.gc.request.submit'), {
-                data: this.form
+                data: this.form,
+                file: this.file,
+            }, {
+                onSuccess: (response) => {
+                    notification[response.props.flash.type]({
+                        message: response.props.flash.msg,
+                        description: response.props.flash.description,
+                    });
+                    this.$inertia.get(route('retail.dashboard'))
+                }
             });
-        }
+        },
+        handleImageChange(document) {
+            this.file = document.file;
+        },
     }
 }
 </script>

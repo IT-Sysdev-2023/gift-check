@@ -14,6 +14,9 @@ class StoreGcrequest extends Model
 
     protected $primaryKey = 'sgc_id';
 
+    protected $guarded = [];
+    public $timestamps = false;
+
     protected function casts(): array
     {
         return [
