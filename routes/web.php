@@ -281,6 +281,9 @@ Route::prefix('retail')->group(function () {
         Route::name('details.')->group(function () {
             Route::get('details-entry', [RetailController::class, 'detailsEntry'])->name('entry');
         });
+        Route::name('validate.')->group(function () {
+            Route::get('validate-barcode', [RetailController::class, 'validateBarcode'])->name('barcode');
+        });
     });
 });
 
