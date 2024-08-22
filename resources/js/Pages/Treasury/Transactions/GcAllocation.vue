@@ -239,9 +239,16 @@ const handleStoreChange = async (
     allDenoms.value = data;
 };
 
-const handleGcTypeChange = (value: number) => {
+const handleGcTypeChange = async (value: number) => {
     clearError(formState, "gcType");
     formState.gcType = value;
+
+    const { data } = await axios.get(
+        route("treasury.transactions.gcallocation.storeAllocation"),
+        { params: { store: formState.store, type: formState.gcType } }
+    );
+    allDenoms.value = data;
+    
 };
 const { openLeftNotification } = onProgress();
 const onSubmit = () => {
@@ -255,7 +262,7 @@ const onSubmit = () => {
         .post(route("treasury.transactions.gcallocation.store"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
-                router.get('iad.dashboard');
+                router.get(route('treasury.dashboard'));
             },
         });
 };

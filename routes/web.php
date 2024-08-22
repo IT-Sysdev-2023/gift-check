@@ -191,6 +191,8 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('reprint/{id}', [StoreGcController::class, 'reprint'])->name('reprint');
                 Route::get('view-cancelled-gc/{id}', [StoreGcController::class, 'viewCancelledGc'])->name('cancelled.gc');
+                
+                Route::get('releasing-entry-{id}', [StoreGcController::class, 'viewReleasingEntry'])->name('releasingEntry');
             });
             Route::prefix('gc-production-request')->name('production.request.')->group(function () {
                 Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');

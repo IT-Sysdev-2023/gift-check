@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Treasury\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovedGcRequestResource;
+use App\Models\ApprovedGcrequest;
+use App\Models\StoreGcrequest;
+use App\Models\StoreRequestItem;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\Denomination;
@@ -28,7 +31,7 @@ class StoreGcController extends Controller
         $record = $this->storeGcRequestService->pendingRequest($request);
 
         return inertia(
-            'Treasury/Dashboard/TableStoreGc',
+            'Treasury/Dashboard/StoreGc/StoreGcTable',
             [
                 'filters' => $request->all('search', 'date'),
                 'title' => 'Pending Request',
@@ -146,11 +149,10 @@ class StoreGcController extends Controller
                         'gc_allocated' => '*'
                     ]);
                 });
-
-                return redirect()->back()->with('success', 'Success mate!');
             });
 
         });
+        return redirect()->back()->with('success', 'Success mate!');
 
 
     }
@@ -189,9 +191,34 @@ class StoreGcController extends Controller
             ]
         ])->select('loc_by', 'loc_barcode_no', 'loc_date', 'loc_gc_type')
             ->where([['loc_store_id', $request->store], ['loc_rel', ''], ['loc_gc_type', $request->type]])
-            ->paginate()
+            ->paginate(5)
             ->withQueryString();
 
         return response()->json($data);
+    }
+
+    public function viewReleasingEntry($id)
+    {
+
+        $agr = ApprovedGcrequest::max('agcr_request_relnum');
+
+        $relnum = $agr ? $agr + 1 : '1';
+
+        $details = StoreGcrequest::with('store:store_id,store_name', 'user:user_id,firstname,lastname')
+            ->select('sgc_id', 'sgc_requested_by', 'sgc_num', 'sgc_date_request', 'sgc_date_needed', 'sgc_file_docno', 'sgc_remarks', 'sgc_store', 'sgc_type')
+            ->where('sgc_id', $id)->first();
+
+        $rgc = StoreRequestItem::leftJoin('denomination', 'store_request_items.sri_items_denomination', '=', 'denomination.denom_id')
+            ->select('store_request_items.sri_items_remain', 'store_request_items.sri_items_denomination', 'denomination.denomination')
+            ->where('sri_items_requestid', $id)
+            ->whereNot('store_request_items.sri_items_remain', 0)
+            ->get();
+
+        return response()->json([
+            'rel_num' => $relnum,
+            'details' => $details,
+            'rgc' => $rgc
+        ]);
+
     }
 }

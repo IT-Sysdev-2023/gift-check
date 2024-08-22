@@ -114,6 +114,11 @@ class ColumnHelper
             'dataIndex' => 'sgc_status',
 
         ],
+        [
+            'title' => 'Action',
+            'dataIndex' => 'action',
+
+        ],
     ];
 
     public static $releasedStoreGcRequest = [
