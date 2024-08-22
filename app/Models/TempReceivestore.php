@@ -12,4 +12,8 @@ class TempReceivestore extends Model
     protected $table= 'temp_receivestore';
 
     protected $primaryKey= 'trec_barcode';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }

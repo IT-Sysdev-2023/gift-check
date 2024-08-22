@@ -9,6 +9,7 @@ use App\Models\GcLocation;
 use App\Models\Store;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
+use App\Models\TempReceivestore;
 use App\Services\Finance\FinanceService;
 use App\Services\RetailStore\RetailServices;
 use Illuminate\Http\Request;
@@ -20,10 +21,9 @@ class RetailController extends Controller
 {
 
     public function __construct(
-        public FinanceService $financeService, public RetailServices $retail
-    ) {
-
-    }
+        public FinanceService $financeService,
+        public RetailServices $retail
+    ) {}
     public function index()
     {
         return inertia('Retail/RetailDashboard');
@@ -59,7 +59,6 @@ class RetailController extends Controller
                 ->where('denom_id', $denom->denom_id)->count();
 
             $denom->count = $allocatedGc;
-
         }
 
 
@@ -86,9 +85,11 @@ class RetailController extends Controller
     {
 
         $storeAssigned = $request->user()->store_assigned;
+
         $penum = StoreGcrequest::where('sgc_store', $storeAssigned)
             ->orderByDesc('sgc_id')
             ->first();
+
         $penumValue = ($penum ? intval($penum->sgc_num) : 0) + 1;
 
         $denomination = collect($request->data['quantities'])->filter(function ($item) {
@@ -116,7 +117,6 @@ class RetailController extends Controller
                     'sri_items_requestid' => $request->data['sgc_id'] + 1,
                 ]);
             }
-
         });
 
         return back()->with([
@@ -124,28 +124,25 @@ class RetailController extends Controller
             'msg' => 'Success!',
             'description' => 'Request Saved!'
         ]);
-
-
     }
 
-    public function approvedGcRequest()
+    public function approvedGcRequest(Request $request)
     {
+        $record = $this->retail->details($request);
+
         return inertia('Retail/RetailApprovedGcRequest', [
             'columns' => ColumnHelper::$approved_gc_request,
             'record' => $this->retail->getDataApproved(),
+            'data' => $record
         ]);
     }
-    public function detailsEntry(Request $request)
+
+    public function validateBarcode(Request $request)
     {
-
-        $record = $this->retail->details($request);
-
-        return back()->with([
-            'data' => $record,
-        ]);
+        return $this->retail->validateBarcode($request);
     }
-    public function validateBarcode()
+    public function removeTemporary(Request $request)
     {
-        return $this->retail->validateBarcode();
+        TempReceivestore::where('trec_by', $request->user()->user_id)->delete();
     }
 }

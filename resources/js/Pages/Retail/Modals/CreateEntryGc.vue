@@ -1,11 +1,11 @@
 <template>
-    <a-modal style="width: 80%; top: 40px" class="text-center" title="Create Entry Store" :footer="null">
+    <a-modal  style="width: 80%; top: 40px" :mask-closable="false" class="text-center" title="Create Entry Store" :footer="null">
         <a-card>
             <a-row :gutter="[16, 16]">
                 <a-col :span="7">
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Gc Receiving No.">Cloud
-                            Database</a-descriptions-item>
+                        <a-descriptions-item style="width: 50%;" label="Gc Receiving No.">{{ record.store
+                            }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date Received">Cloud
@@ -44,13 +44,28 @@
                     </a-descriptions>
                 </a-col>
                 <a-col :span="17">
-                    <a-table size="small" :data-source="record.release" :columns="columns" bordered>
-                        <template #bodyCell="{ column, record }">
-                            <template v-if="column.key == 'action'">
-                                <a-input-number allow-clear style="width: 100%" @keyup.enter="validate"/>
-                            </template>
-                        </template>
-                    </a-table>
+                    <a-descriptions size="small" layout="horizontal" bordered>
+                        <a-descriptions-item style="width: 20%;" label="Domination">
+                            Quantity</a-descriptions-item>
+                        <a-descriptions-item style="width: 20%;" label="Subtotal">Scanned</a-descriptions-item>
+                        <a-descriptions-item>Action</a-descriptions-item>
+                    </a-descriptions>
+                    <div v-for="item in record.release">
+                        <a-descriptions class="mb-1" size="small" layout="horizontal" bordered>
+                            <a-descriptions-item style="width: 20%;" :label="'₱ ' + item[0].denom.toLocaleString()">{{
+                                item[0].quantity }}</a-descriptions-item>
+                            <a-descriptions-item style="width: 20%;" :label="'₱ ' + item[0].sub.toLocaleString()">{{
+                                item[0].scanned }}</a-descriptions-item>
+                            <a-descriptions-item>
+                                <a-button @click="openDrawer(item)" :disabled="item[0].scanned === item[0].quantity">
+                                    <template #icon>
+                                        <FastForwardOutlined />
+                                    </template>
+                                    Scan Gc
+                                </a-button>
+                            </a-descriptions-item>
+                        </a-descriptions>
+                    </div>
                     <a-row :gutter="[16, 16]">
                         <a-col :span="10">
                             <span>
@@ -65,46 +80,38 @@
                 </a-col>
             </a-row>
         </a-card>
+
+        <scan-gc-drawer v-model:open="drawer" @close-drawer="closeDrawer" :record="data" :rec="record.store" />
+
     </a-modal>
+
+
+
+
 </template>
 
 <script setup>
+
 import { ref } from 'vue';
+
 
 defineProps({
     record: Object,
 })
 
-const columns = ref([
-    {
-        title: 'Denomination',
-        dataIndex: 'denom',
-        width: '15%'
-    },
-    {
-        title: 'Qty',
-        dataIndex: 'quantity',
-        width: '15%'
-    },
-    {
-        title: 'Subtotal',
-        dataIndex: 'sub',
-        width: '15%'
-    },
-    {
-        title: 'No. of Scanned',
-        dataIndex: '',
-        width: '20%'
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        align: 'center'
-    },
-]);
 
-const validate = () => {
-    $inertia.value.get(route('retail.validate.barcode'), {})
+const drawer = ref(false)
+
+const data = ref({})
+
+
+const openDrawer = (record) => {
+    drawer.value = true;
+    data.value = record[0];
 }
+const closeDrawer = (record) => {
+    drawer.value = false;
+}
+
 
 </script>

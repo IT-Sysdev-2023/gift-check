@@ -36,4 +36,7 @@ class Gc extends Model
     public function custodianSrrItems(){
         return $this->hasOne(CustodianSrrItem::class, 'cssitem_barcode', 'barcode_no');
     }
+    public function tempreceived(){
+        return $this->hasMany(TempReceivestore::class, 'trec_denid', 'denom_id');
+    }
 }
