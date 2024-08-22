@@ -32,6 +32,7 @@ class RetailController extends Controller
     public function gcRequest(Request $request)
     {
         $storeAssigned = $request->user()->store_assigned;
+
         $requestNum = StoreGcrequest::select('sgc_num', 'sgc_id')->where('sgc_store', $storeAssigned)->orderByDesc('sgc_num')->first();
         $store = Store::where('store_id', $storeAssigned)->get();
 

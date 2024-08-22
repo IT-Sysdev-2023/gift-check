@@ -2,7 +2,7 @@
     <a-card title="Store GC Request Form">
         <div class="flex justify-end mb-2">
             <a-button title="Please fill required fields"
-                v-if="(form.dateNeed == '' || form.remarks == '')" @click="submitForm"
+                v-if="(form.dateNeed == '' || form.remarks == '' || form.quantities.filter((data) => data).length == 0)" @click="submitForm"
                 type="primary" disabled>
                 <CheckOutlined /> Submit Form
             </a-button>
@@ -10,6 +10,7 @@
                 <CheckOutlined /> Submit Form
             </a-button>
         </div>
+       
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <a-card>
@@ -17,8 +18,8 @@
                         <a-table :dataSource="denoms" :columns="denomColumns" :pagination="false">
                             <template #bodyCell="{ column, record, index }">
                                 <template v-if="column.key === 'qty'">
-                                    <a-input type="number" v-model:value="form.quantities[record.denom_id]"
-                                        @input="calculateTotal"></a-input>
+                                    <a-input type="number" v-model:value=" form.quantities[record.denom_id]"
+                                        @change="calculateTotal(record)"></a-input>
                                 </template>
                             </template>
                         </a-table>
@@ -110,7 +111,8 @@ export default {
     },
    
     methods: {
-        calculateTotal() {
+        calculateTotal(data) {
+
             this.total = this.denoms.reduce((sum, denom) => {
                 const qty = this.form.quantities[denom.denom_id] || 0;
                 return sum + (denom.denomination * qty);
