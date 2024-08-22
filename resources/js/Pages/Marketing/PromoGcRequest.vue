@@ -2,7 +2,6 @@
 
     <Head title="Promo GC Request Form" />
     <a-form>
-        <!-- {{ dateneeded }} -->
         <a-card title="Promo GC Request Form"></a-card>
         <a-row :gutter="[16, 16]">
             <a-col :span="12" style="margin-top: 20px;">

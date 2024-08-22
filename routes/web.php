@@ -85,6 +85,9 @@ Route::prefix('admin')->group(function () {
     });
 });
 
+
+
+
 //Marketing
 Route::prefix('marketing')->group(function () {
     Route::name('marketing.')->group(function () {
@@ -203,14 +206,14 @@ Route::middleware('auth')->group(function () {
                 Route::post('get-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
             });
 
-           
-                Route::prefix('transactions')->name('transactions.')->group(function () {
-                    Route::prefix('production-request')->name('production.')->group(function () {
-                        Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
-                        Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
-                        Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
-                        Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
-                    });
+
+            Route::prefix('transactions')->name('transactions.')->group(function () {
+                Route::prefix('production-request')->name('production.')->group(function () {
+                    Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
+                    Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
+                    Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
+                    Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+                });
 
                     //Budget Request
                     Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
@@ -235,13 +238,13 @@ Route::middleware('auth')->group(function () {
 
                 });
 
-                Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+            Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
-                Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
-                Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
-            });
+            Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
+            Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
         });
     });
+});
 Route::prefix('documents')->group(function () {
     Route::name('start.')->group(function () {
         Route::get('budget-ledger', [DocumentController::class, 'startGeneratingBudgetLedger'])->name('budget.ledger');
@@ -275,8 +278,24 @@ Route::prefix('finance')->group(function () {
         $filePath = storage_path('app/' . $filename);
         return response()->download($filePath);
     })->name('download');
+});
 
+// retailstore
+Route::prefix('retail')->group(function () {
+    Route::name('retail.')->group(function () {
+        Route::get('retailstore-gc-request', [RetailController::class, 'gcRequest'])->name('gc.request');
+        Route::post('retailstore-gc-request-submit', [RetailController::class, 'gcRequestsubmit'])->name('gc.request.submit');
 
+        Route::name('approved.')->group(function () {
+            Route::get('approved-gc-request', [RetailController::class, 'approvedGcRequest'])->name('request');
+        });
+        Route::name('details.')->group(function () {
+            Route::get('details-entry', [RetailController::class, 'detailsEntry'])->name('entry');
+        });
+        Route::name('validate.')->group(function () {
+            Route::get('validate-barcode', [RetailController::class, 'validateBarcode'])->name('barcode');
+        });
+    });
 });
 
 Route::prefix('custodian')->group(function () {
@@ -318,7 +337,7 @@ Route::middleware('auth')->group(function () {
 
             Route::post('barcode-submission-{id}', [SpecialExternalGcRequestController::class, 'barcodeSubmission'])->name('barcode');
             Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
-            
+
             Route::get('gc-reprint-{id}', [SpecialExternalGcRequestController::class, 'reprint'])->name('reprint');
         });
     });
