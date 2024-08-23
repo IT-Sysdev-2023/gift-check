@@ -4,13 +4,19 @@ namespace App\Services\RetailStore;
 
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedGcrequest;
+use App\Models\Gc;
 use App\Models\GcRelease;
 use App\Models\StoreGcrequest;
 use App\Models\StoreReceived;
+use App\Models\StoreReceivedGc;
+use App\Models\TempReceivestore;
 use Illuminate\Support\Facades\Date;
+use App\Services\RetailStore\RetailDbServices;
+use Clue\Redis\Protocol\Model\Request;
 
 class RetailServices
 {
+    public function __construct(public RetailDbServices $dbservices) {}
     public function getDataApproved()
     {
         $data = ApprovedGcrequest::select(
@@ -47,41 +53,60 @@ class RetailServices
 
     public function details($request)
     {
+        // dd($request->agc_num);
         $store = StoreReceived::where('srec_store_id', $request->user()->store_assigned)
             ->where('srec_receivingtype', 'treasury releasing')
             ->orderByDesc('srec_recid')
-            ->get();
+            ->first()->srec_recid + 1;
+
+
 
         $approved = ApprovedGcrequest::select('agcr_request_relnum', 'agcr_id', 'agcr_request_id', 'agcr_preparedby', 'agcr_approved_at')
             ->with('storeGcRequest:sgc_id,sgc_num,sgc_num', 'user:user_id,firstname,lastname')
             ->where('agcr_id', $request->agc_num)
             ->get();
 
-        $release = GcRelease::with('gc:denom_id,barcode_no', 'gc.denomination:denom_id,denomination')
+        $release = GcRelease::with(['gc:denom_id,barcode_no', 'gc.denomination:denom_id,denomination', 'store:store_id,store_name'])
             ->where('rel_num', $request->agc_num)
-            ->get();
+            ->get()
+            ->groupBy('gc.denom_id');
 
-        $release->transform(function ($item) use ($request) {
+        $release->map(function ($group) use ($request) {
 
-            $item->denom = $item->gc->denomination->denomination;
+            return $group->map(function ($item) use ($request) {
 
-            $item->quantity = self::getQuantity($request, $item);
+                $count = TempReceivestore::where('trec_denid', $item->gc->denom_id)->where('trec_by', $request->user()->user_id)->count();
 
-            $item->sub = $item->quantity * $item->denom;
+                $item->scanned = $count;
 
-            return $item;
+                $item->denom = $item->gc->denomination->denomination;
 
+                $item->quantity = self::getQuantity($request, $item);
+
+                $item->sub = $item->quantity * $item->denom;
+
+                return $item;
+            });
         });
 
-        $total = NumberHelper::currency($release->sum('sub'));
+        // dd($release->toArray());
+
+
+        $total = 0;
+
+        foreach ($release as $key => $value) {
+            $total += $value[0]->sub;
+        }
+
 
         return (object) [
             'store' => $store,
             'approved' => $approved,
             'release' => $release,
-            'total' => $total,
+            'total' => NumberHelper::currency($total),
         ];
     }
+
     public static function getQuantity($request, $item)
     {
 
@@ -89,16 +114,10 @@ class RetailServices
             $query->where('denom_id', $item->gc->denom_id);
         })->where('rel_num', $request->agc_num)->count();
     }
-<<<<<<< HEAD
-     public function validateBarcode()
-     {
-        
-     }
-=======
 
     public function countGcPendingRequest()
     {
-        $storeId = auth()->user()->store_assigned;
+        $storeId = request()->user()->store_assigned;
         $results = StoreGcrequest::join('stores', 'store_gcrequest.sgc_store', '=', 'stores.store_id')
             ->join('users', 'users.user_id', '=', 'store_gcrequest.sgc_requested_by')
             ->where(function ($query) {
@@ -118,5 +137,67 @@ class RetailServices
 
         return $results;
     }
->>>>>>> bibong-branch
+
+    public function validateBarcode($request)
+    {
+
+        $existInGc = Gc::where('barcode_no', $request->barcode);
+
+        $released = GcRelease::where('re_barcode_no', $request->barcode)
+            ->where('rel_store_id', $request->user()->store_assigned)
+            ->exists();
+
+        $scanned = TempReceivestore::where('trec_barcode', $request->barcode)->where('trec_recnum', $request->recnum)
+            ->exists();
+
+        $received = StoreReceivedGc::where('strec_barcode', $request->barcode)->exists();
+
+        if ($existInGc->exists()) {
+
+            if ($existInGc->first()->denom_id == $request->denom_id) {
+
+                if ($released) {
+                    if (!$scanned) {
+                        if (!$received) {
+
+                            $this->dbservices->temReceivedStoreCreation($request);
+
+                        } else {
+                            return back()->with([
+                                'msg' => 'Barcode Already Received',
+                                'title' => 'Received',
+                                'status' => 'warning',
+                            ]);
+                        }
+                    } else {
+                        return back()->with([
+                            'msg' => 'Barcode Already Scanned',
+                            'title' => 'Scanned',
+                            'status' => 'warning',
+                        ]);
+                    }
+                } else {
+
+                    return back()->with([
+                        'msg' => 'Opps Barcode is Invalid in this Location',
+                        'title' => 'Wrong Denomination',
+                        'status' => 'error',
+                    ]);
+                }
+            } else {
+                return back()->with([
+                    'msg' => 'Opps Its Looks like Denomination mismatch',
+                    'title' => 'Wrong Denomination',
+                    'status' => 'error',
+                ]);
+            }
+        } else {
+
+            return back()->with([
+                'msg' => 'Barcode Dont Exists',
+                'title' => 'Error Not Found',
+                'status' => 'error',
+            ]);
+        }
+    }
 }

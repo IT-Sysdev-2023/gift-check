@@ -191,8 +191,6 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('reprint/{id}', [StoreGcController::class, 'reprint'])->name('reprint');
                 Route::get('view-cancelled-gc/{id}', [StoreGcController::class, 'viewCancelledGc'])->name('cancelled.gc');
-                
-                Route::get('releasing-entry-{id}', [StoreGcController::class, 'viewReleasingEntry'])->name('releasingEntry');
             });
             Route::prefix('gc-production-request')->name('production.request.')->group(function () {
                 Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');
@@ -291,16 +289,14 @@ Route::prefix('retail')->group(function () {
         Route::name('approved.')->group(function () {
             Route::get('approved-gc-request', [RetailController::class, 'approvedGcRequest'])->name('request');
         });
-        Route::name('details.')->group(function () {
-            Route::get('details-entry', [RetailController::class, 'detailsEntry'])->name('entry');
-        });
-<<<<<<< HEAD
         Route::name('validate.')->group(function () {
             Route::get('validate-barcode', [RetailController::class, 'validateBarcode'])->name('barcode');
-=======
+        });
         Route::name('gcrequest.')->group(function () {
             Route::get('pendingList',[RetailController::class, 'pendingGcRequestList'])->name('pending.list');
->>>>>>> bibong-branch
+        });
+        Route::name('manage.')->group(function () {
+            Route::post('remove-temporary', [RetailController::class, 'removeTemporary'])->name('remove');
         });
     });
 });
