@@ -2,7 +2,7 @@
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
-                <store-gc-request-card/>
+                <store-gc-request-card :countGcRequest/>
             </a-col>
             <a-col :span="8">
 
@@ -13,10 +13,11 @@
         </a-row>
     </AuthenticatedLayout>
 </template>
-<script setup lang="ts">
+<script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { ref } from 'vue';
-
-
-
+export default {
+    props: {
+        countGcRequest:Object
+    }
+}
 </script>

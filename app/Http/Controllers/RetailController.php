@@ -20,13 +20,20 @@ class RetailController extends Controller
 {
 
     public function __construct(
-        public FinanceService $financeService, public RetailServices $retail
+        public FinanceService $financeService,
+        public RetailServices $retail
     ) {
 
     }
     public function index()
     {
-        return inertia('Retail/RetailDashboard');
+
+        $gcRequest = [
+            'PendingGcRequest' => $this->retail->countGcPendingRequest()->count()
+        ];
+        return inertia('Retail/RetailDashboard', [
+            'countGcRequest' => $gcRequest
+        ]);
     }
 
     public function gcRequest(Request $request)
@@ -142,6 +149,18 @@ class RetailController extends Controller
 
         return back()->with([
             'data' => $record,
+        ]);
+    }
+
+    public function pendingGcRequestList()
+    {
+        $data = $this->retail->countGcPendingRequest();
+        $columns= ColumnHelper::pendingGcRequest();
+
+
+        return Inertia::render('Retail/GcRequest/Pending', [
+            'data' => $data,
+            'columns' =>$columns
         ]);
     }
 }

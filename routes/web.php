@@ -281,6 +281,9 @@ Route::prefix('retail')->group(function () {
         Route::name('details.')->group(function () {
             Route::get('details-entry', [RetailController::class, 'detailsEntry'])->name('entry');
         });
+        Route::name('gcrequest.')->group(function () {
+            Route::get('pendingList',[RetailController::class, 'pendingGcRequestList'])->name('pending.list');
+        });
     });
 });
 

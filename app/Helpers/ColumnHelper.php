@@ -473,4 +473,40 @@ class ColumnHelper
             'dataIndex' => $column
         ];
     }
+
+    public static function pendingGcRequest()
+    {
+        return [
+            [
+                'title' => 'Request No',
+                'dataIndex' => 'sgc_num',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Date Requested',
+                'dataIndex' => 'dateRequest',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Retail Store',
+                'dataIndex' => 'store_name',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Requested By',
+                'dataIndex' => 'requestedBy',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Date Needed',
+                'dataIndex' => 'dateNeeded',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Action',
+                'dataIndex' => 'action',
+                'align' => 'center'
+            ],
+        ];
+    }
 }
