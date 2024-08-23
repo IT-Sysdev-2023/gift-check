@@ -88,4 +88,8 @@ class RetailServices
             $query->where('denom_id', $item->gc->denom_id);
         })->where('rel_num', $request->agc_num)->count();
     }
+     public function validateBarcode()
+     {
+        
+     }
 }

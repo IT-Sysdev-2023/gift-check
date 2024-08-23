@@ -144,4 +144,8 @@ class RetailController extends Controller
             'data' => $record,
         ]);
     }
+    public function validateBarcode()
+    {
+        return $this->retail->validateBarcode();
+    }
 }

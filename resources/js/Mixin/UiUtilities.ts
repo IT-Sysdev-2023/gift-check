@@ -66,6 +66,20 @@ export function onProgress() {
     return { openNotification, onLoading, openLeftNotification };
 }
 
+export function getError() {
+    const getErrorStatus = (formState: any, field: string) => {
+        return formState.errors[field] ? "error" : "";
+    };
+    const getErrorMessage = (formState: any, field: string) => {
+        return formState.errors[field];
+    };
+    const clearError = (formState: any, field: string) => {
+        formState.errors[field] = null;
+    };
+
+    return { getErrorStatus, getErrorMessage, clearError };
+}
+
 export const onLoading = ref(false);
 
 export function dashboardRoute() {

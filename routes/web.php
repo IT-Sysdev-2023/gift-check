@@ -191,6 +191,8 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('reprint/{id}', [StoreGcController::class, 'reprint'])->name('reprint');
                 Route::get('view-cancelled-gc/{id}', [StoreGcController::class, 'viewCancelledGc'])->name('cancelled.gc');
+                
+                Route::get('releasing-entry-{id}', [StoreGcController::class, 'viewReleasingEntry'])->name('releasingEntry');
             });
             Route::prefix('gc-production-request')->name('production.request.')->group(function () {
                 Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');
@@ -215,17 +217,28 @@ Route::middleware('auth')->group(function () {
                     Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
                 });
 
-                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
-                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+                    //Budget Request
+                    Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                    Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+                    Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                    Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
 
-                //special gc payment
-                Route::prefix('special-gc-payment')->name('special.')->group(function () {
-                    Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
-                    Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
+                    //Gc allocation
+                    Route::prefix('gc-allocation')->name('gcallocation.')->group(function () {
+                        Route::get('/', [StoreGcController::class, 'gcAllocation'])->name('index');
+                        Route::post('gc-location-submission', [StoreGcController::class, 'store'])->name('store');
+
+                        Route::get('store-allocation', [StoreGcController::class, 'storeAllocation'])->name('storeAllocation');
+                        Route::get('view-allocated-gc', [StoreGcController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
+                    });
+
+                    //special gc payment
+                    Route::prefix('special-gc-payment')->name('special.')->group(function () {
+                        Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
+                        Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
+                    });
+
                 });
-            });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
@@ -280,6 +293,9 @@ Route::prefix('retail')->group(function () {
         });
         Route::name('details.')->group(function () {
             Route::get('details-entry', [RetailController::class, 'detailsEntry'])->name('entry');
+        });
+        Route::name('validate.')->group(function () {
+            Route::get('validate-barcode', [RetailController::class, 'validateBarcode'])->name('barcode');
         });
     });
 });
