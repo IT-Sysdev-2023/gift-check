@@ -5,6 +5,7 @@ namespace App\Services\RetailStore;
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedGcrequest;
 use App\Models\GcRelease;
+use App\Models\StoreGcrequest;
 use App\Models\StoreReceived;
 use Illuminate\Support\Facades\Date;
 
@@ -51,7 +52,7 @@ class RetailServices
             ->orderByDesc('srec_recid')
             ->get();
 
-        $approved =  ApprovedGcrequest::select('agcr_request_relnum', 'agcr_id', 'agcr_request_id', 'agcr_preparedby', 'agcr_approved_at')
+        $approved = ApprovedGcrequest::select('agcr_request_relnum', 'agcr_id', 'agcr_request_id', 'agcr_preparedby', 'agcr_approved_at')
             ->with('storeGcRequest:sgc_id,sgc_num,sgc_num', 'user:user_id,firstname,lastname')
             ->where('agcr_id', $request->agc_num)
             ->get();
@@ -88,8 +89,34 @@ class RetailServices
             $query->where('denom_id', $item->gc->denom_id);
         })->where('rel_num', $request->agc_num)->count();
     }
+<<<<<<< HEAD
      public function validateBarcode()
      {
         
      }
+=======
+
+    public function countGcPendingRequest()
+    {
+        $storeId = auth()->user()->store_assigned;
+        $results = StoreGcrequest::join('stores', 'store_gcrequest.sgc_store', '=', 'stores.store_id')
+            ->join('users', 'users.user_id', '=', 'store_gcrequest.sgc_requested_by')
+            ->where(function ($query) {
+                $query->where('store_gcrequest.sgc_status', 0)
+                    ->orWhere('store_gcrequest.sgc_status', 1);
+            })
+            ->where('store_gcrequest.sgc_store', $storeId)
+            ->where('store_gcrequest.sgc_cancel', '')
+            ->get();
+        $results->transform(function ($item) {
+            $item->dateRequest = Date::parse($item->sgc_date_request)->format('M-d-y');
+            $item->dateNeeded = Date::parse($item->sgc_date_needed)->format('M-d-y');
+            $item->requestedBy = $item->firstname . ' ' . $item->lastname;
+
+            return $item;
+        });
+
+        return $results;
+    }
+>>>>>>> bibong-branch
 }
