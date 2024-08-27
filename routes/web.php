@@ -293,11 +293,18 @@ Route::prefix('retail')->group(function () {
         Route::name('approved.')->group(function () {
             Route::get('approved-gc-request', [RetailController::class, 'approvedGcRequest'])->name('request');
         });
-        Route::name('details.')->group(function () {
-            Route::get('details-entry', [RetailController::class, 'detailsEntry'])->name('entry');
-        });
         Route::name('validate.')->group(function () {
             Route::get('validate-barcode', [RetailController::class, 'validateBarcode'])->name('barcode');
+        });
+        Route::name('gcrequest.')->group(function () {
+            Route::get('pendingList',[RetailController::class, 'pendingGcRequestList'])->name('pending.list');
+            Route::get('pendingdetail',[RetailController::class, 'pendingGcRequestdetail'])->name('pending.detail');
+            Route::get('cancel-request',[RetailController::class, 'cancelRequest'])->name('cancel');
+            Route::put('submit-request',[RetailController::class, 'submitRequest'])->name('update');
+        });
+        Route::name('manage.')->group(function () {
+            Route::post('remove-temporary', [RetailController::class, 'removeTemporary'])->name('remove');
+            Route::post('submit-entry', [RetailController::class, 'submitEntry'])->name('submit');
         });
     });
 });
