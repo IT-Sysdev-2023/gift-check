@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DateTimeInterface;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 
 class ApprovedGcrequest extends Model
 {
@@ -19,18 +21,21 @@ class ApprovedGcrequest extends Model
             'agcr_approved_at' => 'date'
         ];
     }
-    
+
 
     // protected function serializeDate(DateTimeInterface $date): string
     // {
     //     return $date->toDayDateTimeString();
     // }
 
-    public function storeGcRequest(){
+    public function storeGcRequest()
+    {
         return $this->belongsTo(StoreGcrequest::class, 'agcr_request_id', 'sgc_id');
     }
-    
-    public function user(){
+
+    public function user()
+    {
         return $this->belongsTo(User::class, 'agcr_preparedby', 'user_id');
     }
+
 }

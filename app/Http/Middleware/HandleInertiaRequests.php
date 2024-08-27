@@ -45,16 +45,28 @@ class HandleInertiaRequests extends Middleware
                     'title' => $request->session()->get('title'),
                     'type' => $request->session()->get('type'),
                     'description' => $request->session()->get('description'),
-                    
+                    'data' => $request->session()->get('data') ?? [],
+
                     //San Changes
                     'stream' => $request->session()->get('stream'),
-                    'session' => $request->session()->get('countSession'),
-                    'denomination' => $request->session()->get('denominationSession'),
+                    'countSession' => $request->session()->get('countSession') ?? 0,
+                    'denominationSession' => $request->session()->get('denominationSession') ?? 0,
+                    'scanGc' => $request->session()->get('scanGc') ?? [],
                 ];
             },
             'pendingPrRequest' => ProductionRequest::select('pe_id', 'pe_num')
                 ->where([['pe_generate_code', '0'], ['pe_status', '1']])
-                ->get()
+                ->get(),
+            // 'barcodeScan' => function () use ($request){
+            //     return [
+            //         'lname' => $request->session()->get('firstname') ?? 0,
+            //         'fname' => $request->session()->get('lastname') ?? 0,
+            //         'mname' => $request->session()->get('middlename') ?? 0,
+            //         'ext' => $request->session()->get('ext') ?? 0,
+            //         'bcode' => $request->session()->get('barcode') ?? 0,
+            //         'denomination' => $request->session()->get('denomination') ?? 0,
+            //     ];
+            // }
         ];
     }
 }

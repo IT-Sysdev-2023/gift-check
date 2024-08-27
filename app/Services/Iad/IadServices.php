@@ -104,7 +104,7 @@ class IadServices
     {
 
         $request->validate([
-            'barcodeStart' => 'bail|lt:barcodeEnd|min:13|max:13',
+            'barcodeStart' => 'bail|lt:barcodeEnd|min:13|max:13|required',
             'barcodeEnd' => 'bail|gt:barcodeStart|min:13|max:13',
         ]);
 
@@ -187,6 +187,7 @@ class IadServices
             $isValidated = CustodianSrrItem::where('cssitem_barcode', $request->barcode)->exists();
 
             if (!$isValidated) {
+                
                 $ifScanned = TempValidation::where('tval_barcode', $request->barcode)->exists();
 
                 if (!$ifScanned) {

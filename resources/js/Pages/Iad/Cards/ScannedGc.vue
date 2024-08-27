@@ -1,5 +1,5 @@
 <template>
-    <a-table :data-source="scannedGc" :columns="columns" size="small">
+    <a-table :data-source="scannedGc" :columns="columns" size="small" bordered>
         <template #bodyCell="{ column, record }">
             <template v-if="column.key == 'remove'">
                 <a-popconfirm :title="'Remove this? '+ record.tval_barcode" ok-text="Yes" cancel-text="No"
@@ -47,11 +47,11 @@ export default {
             this.$inertia.post(route('iad.remove.scanned.gc'), {
                 barcode: barcode
             }, {
-                onSuccess: (reponse) => {
-                    notification[reponse.props.flash.status]({
-                        message: reponse.props.flash.title,
+                onSuccess: (response) => {
+                    notification[response.props.flash.status]({
+                        message: response.props.flash.title,
                         description:
-                            reponse.props.flash.msg,
+                        response.props.flash.msg,
                     });
                 }
             })

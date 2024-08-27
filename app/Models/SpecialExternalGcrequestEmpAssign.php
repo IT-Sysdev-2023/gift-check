@@ -88,7 +88,24 @@ class SpecialExternalGcrequestEmpAssign extends Model
             ], 'LIKE', '%' . $search . '%');
         });
     }
-    public function reverified(){
+    public function scopeWhereFilter($query)
+    {
+        return $query->select(
+            'spexgcemp_extname',
+            'spexgcemp_barcode',
+            'spexgcemp_denom',
+            'spexgcemp_fname',
+            'spexgcemp_lname',
+            'spexgcemp_mname',
+            'department',
+            'voucher',
+            'address',
+            'bunit',
+        );
+    }
+    public function reverified()
+    {
         return $this->belongsTo(StoreVerification::class, 'spexgcemp_barcode', 'vs_barcode');
     }
+  
 }

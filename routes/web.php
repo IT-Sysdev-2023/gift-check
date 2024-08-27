@@ -85,6 +85,9 @@ Route::prefix('admin')->group(function () {
     });
 });
 
+
+
+
 //Marketing
 Route::prefix('marketing')->group(function () {
     Route::name('marketing.')->group(function () {
@@ -114,13 +117,13 @@ Route::prefix('marketing')->group(function () {
         Route::name('pendingRequest.')->group(function () {
             Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
             Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
+            Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
+            Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
         });
         Route::name('approvedRequest.')->group(function () {
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
+            Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
-
-
-
     });
 });
 
@@ -188,6 +191,8 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('reprint/{id}', [StoreGcController::class, 'reprint'])->name('reprint');
                 Route::get('view-cancelled-gc/{id}', [StoreGcController::class, 'viewCancelledGc'])->name('cancelled.gc');
+
+                Route::get('releasing-entry-{id}', [StoreGcController::class, 'viewReleasingEntry'])->name('releasingEntry');
             });
             Route::prefix('gc-production-request')->name('production.request.')->group(function () {
                 Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');
@@ -201,9 +206,8 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('get-assign-employee', [SpecialGcRequestController::class, 'getAssignEmployee'])->name('get.assign.employee');
                 Route::post('get-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
-
-
             });
+
 
             Route::prefix('transactions')->name('transactions.')->group(function () {
                 Route::prefix('production-request')->name('production.')->group(function () {
@@ -213,14 +217,27 @@ Route::middleware('auth')->group(function () {
                     Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
                 });
 
+                //Budget Request
                 Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
                 Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+
+                //Gc allocation
+                Route::prefix('gc-allocation')->name('gcallocation.')->group(function () {
+                    Route::get('/', [StoreGcController::class, 'gcAllocation'])->name('index');
+                    Route::post('gc-location-submission', [StoreGcController::class, 'store'])->name('store');
+
+                    Route::get('store-allocation', [StoreGcController::class, 'storeAllocation'])->name('storeAllocation');
+                    Route::get('view-allocated-gc', [StoreGcController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
+                });
 
                 //special gc payment
                 Route::prefix('special-gc-payment')->name('special.')->group(function () {
                     Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
                     Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                 });
+
             });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
@@ -252,6 +269,10 @@ Route::prefix('finance')->group(function () {
         Route::name('pendingGc.')->group(function () {
             Route::get('pending-list', [FinanceController::class, 'specialGcPending'])->name('pending');
             Route::get('pending-approval-form', [FinanceController::class, 'SpecialGcApprovalForm'])->name('approval.form');
+            Route::post('pending-approval-form-submit', [FinanceController::class, 'SpecialGcApprovalSubmit'])->name('approval.submit');
+        });
+        Route::name('approvedGc.')->group(function () {
+            Route::get('approved-special-gc', [FinanceController::class, 'approvedGc'])->name('approved');
         });
     });
 
@@ -259,8 +280,24 @@ Route::prefix('finance')->group(function () {
         $filePath = storage_path('app/' . $filename);
         return response()->download($filePath);
     })->name('download');
+});
 
+// retailstore
+Route::prefix('retail')->group(function () {
+    Route::name('retail.')->group(function () {
+        Route::get('retailstore-gc-request', [RetailController::class, 'gcRequest'])->name('gc.request');
+        Route::post('retailstore-gc-request-submit', [RetailController::class, 'gcRequestsubmit'])->name('gc.request.submit');
 
+        Route::name('approved.')->group(function () {
+            Route::get('approved-gc-request', [RetailController::class, 'approvedGcRequest'])->name('request');
+        });
+        Route::name('details.')->group(function () {
+            Route::get('details-entry', [RetailController::class, 'detailsEntry'])->name('entry');
+        });
+        Route::name('validate.')->group(function () {
+            Route::get('validate-barcode', [RetailController::class, 'validateBarcode'])->name('barcode');
+        });
+    });
 });
 
 Route::prefix('custodian')->group(function () {
@@ -278,6 +315,11 @@ Route::prefix('custodian')->group(function () {
 
         Route::name('approved.')->group(function () {
             Route::get('approved-gc-request', [CustodianController::class, 'approvedGcRequest'])->name('request');
+            Route::get('approve-request', [CustodianController::class, 'setupApproval'])->name('setup');
+        });
+
+        Route::name('check.')->group(function () {
+            Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
         });
     });
 });
@@ -297,7 +339,8 @@ Route::middleware('auth')->group(function () {
 
             Route::post('barcode-submission-{id}', [SpecialExternalGcRequestController::class, 'barcodeSubmission'])->name('barcode');
             Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
-            Route::get('reprint-gc-{id}', [SpecialExternalGcRequestController::class, 'reprintGc'])->name('reprint-gc');
+
+            Route::get('gc-reprint-{id}', [SpecialExternalGcRequestController::class, 'reprint'])->name('reprint');
         });
     });
 });
@@ -314,5 +357,6 @@ Route::prefix('management')->group(function () {
     });
 });
 
+Route::get('generate-barcode', [CustodianController::class, 'generateBarcode'])->name('generaate');
 
 require __DIR__ . '/auth.php';

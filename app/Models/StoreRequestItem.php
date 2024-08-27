@@ -11,6 +11,9 @@ class StoreRequestItem extends Model
 
     protected $primaryKey = 'sri_id';
 
+    protected $guarded=[];
+    public $timestamps=false;
+
     public function denomination(){
         return $this->hasOne(Denomination::class, 'denom_id', 'sri_items_denomination');
     }

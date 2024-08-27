@@ -21,6 +21,7 @@ const props = defineProps<{
         value: number;
         label: string;
     }[];
+    value: string | undefined;
 }>();
 const options = ref<SelectProps["options"]>(props.options);
 const handleChange = (value: string, acc: any) => {
@@ -30,5 +31,5 @@ const filterOption = (input: string, option: any) => {
     return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 };
 
-const value = ref<string | undefined>(undefined);
+const value = ref<string | undefined>(props.value);
 </script>

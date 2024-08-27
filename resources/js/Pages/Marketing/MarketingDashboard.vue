@@ -267,7 +267,7 @@
                     <a-card class="bg-gray-700 text-white mb-1 text-center">
                         Request for gift cheque printing as per breakdown provided below.
                     </a-card>
-                    <a-table :pagination="false" :data-source="productionReqItems" :columns="columns" />
+                    <a-table bordered :pagination="false" :data-source="productionReqItems" :columns="columns" />
                 </a-card>
             </a-col>
         </a-row>

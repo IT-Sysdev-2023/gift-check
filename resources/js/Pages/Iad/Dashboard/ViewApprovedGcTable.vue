@@ -67,13 +67,7 @@
                             :labelStyle="{ fontWeight: 'bold' }"
                             >{{ records.spexgc_payment }}</a-descriptions-item
                         >
-                        <a-descriptions-item
-                            label="Documents"
-                            :labelStyle="{ fontWeight: 'bold' }"
-                            v-if="records.document"
-                        >
-                            <ant-image-preview :images="records.document" />
-                        </a-descriptions-item>
+                       
                         <a-descriptions-item
                             label="Request Remarks"
                             :labelStyle="{ fontWeight: 'bold' }"
@@ -121,20 +115,37 @@
                             }}</a-descriptions-item
                         >
                         <a-descriptions-item
+                            label="Documents"
+                            :labelStyle="{ fontWeight: 'bold' }"
+                            v-if="records.document"
+                        >
+                            <ant-image-preview :images="records.document" />
+                        </a-descriptions-item>
+                        <a-descriptions-item
                             label="Prepared By"
                             :labelStyle="{ fontWeight: 'bold' }"
                             >{{
                                 records.approvedRequest.user.full_name
                             }}</a-descriptions-item
                         >
+                       
                     </a-descriptions>
                     <a-space style="float: right">
                         <a-button @click="reprintGc"> Reprint GC</a-button>
                         <a-button @click="scanGc"> Scan GC</a-button>
                     </a-space>
+                 
 
                     <a-card class="mt-10">
+                        <a-space style="float: right">
+                        <a-button @click="scanGc"> Scan GC</a-button>
+                        <a-button @click="reprint"> Reprint Gc</a-button>
+                    </a-space>
+                        <a-table :columns="columns" bordered class="mt-10"  :data-source="$page.props.flash.scanGc" :pagination="false">
+
+                        </a-table>
                         <a-form
+                        class="mt-10"
                             :model="formState"
                             name="basic"
                             :label-col="{ span: 8 }"
@@ -142,7 +153,8 @@
                             autocomplete="off"
                             @finish="onFinish"
                         >
-                            <a-form-item label="Remarks" name="remarks">
+                            <a-form-item label="Remarks" name="remarks"  :validate-status="formState.errors.remarks ? 'error' :  ''"
+                            :help="formState.errors.remarks">
                                 <a-textarea
                                     v-model:value="formState.remarks"
                                     style="width: 400px"
@@ -155,6 +167,8 @@
                                 <a-input-number
                                     readonly
                                     v-model:value="totalGcScanned"
+                                    readonly
+                                    :value="$page.props.flash.countSession"
                                 />
                             </a-form-item>
                             <a-form-item
@@ -164,6 +178,10 @@
                                 <a-input-number
                                     readonly
                                     v-model:value="totalDenomination"
+                                    readonly
+                                    :value="
+                                        $page.props.flash.denominationSession
+                                    "
                                 />
                             </a-form-item>
 
@@ -220,7 +238,9 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useForm, router } from "@inertiajs/vue3";
 import { ref } from "vue";
+import axios from "axios";
 import { onProgress } from "@/Mixin/UiUtilities";
+import { notification } from "ant-design-vue";
 
 const props = defineProps<{
     title: string;
@@ -272,8 +292,62 @@ const formState = useForm<formState>({
     reviewedBy: "",
 });
 
-const totalDenomination = ref(0);
-const totalGcScanned = ref(0);
+const columns = [
+  {
+    title: 'Lastname',
+    dataIndex: 'lastname',
+  },
+  {
+    title: 'Firstname',
+    dataIndex: 'firstname',
+  },
+  {
+    title: 'Middlename',
+    dataIndex: 'middlename',
+  },
+  {
+    title: 'Ext.',
+    dataIndex: 'extname',
+  },
+  {
+    title: 'Denomination',
+    dataIndex: 'denom',
+  },
+  {
+    title: 'Barcode',
+    dataIndex: 'barcode',
+  },
+];
+
+
+const reprint = () => {
+    const url = route("iad.special.external.reprint", {
+        id: records.spexgc_id,
+    });
+
+    axios
+        .get(url, { responseType: "blob" })
+        .then((response) => {
+            const file = new Blob([response.data], {
+                type: "application/pdf",
+            });
+            const fileURL = URL.createObjectURL(file);
+            window.open(fileURL, "_blank");
+        })
+        .catch((error) => {
+            if (error.response && error.response.status === 404) {
+                notification.error({
+                    message: "File Not Found",
+                    description: "Pdf is missing on the server!",
+                });
+            } else {
+                notification.error({
+                    message: "Error Occured!",
+                    description: "An error occurred while generating the PDF.",
+                });
+            }
+        });
+};
 const openScanGc = ref<boolean>(false);
 
 const records = props.data.data;
@@ -322,10 +396,7 @@ const onFinishBarcode = () => {
     barcodeForm.post(route("iad.special.external.barcode", records.spexgc_id), {
         onSuccess: ({ props }) => {
             openLeftNotification(props.flash);
-            if (props.flash.success) {
-                totalGcScanned.value = props.flash.countSession;
-                totalDenomination.value = props.flash.denomination;
-            }
+            openScanGc.value = false;
         },
     });
 };

@@ -51,7 +51,7 @@
                 <p class="sub-text text-white">Approved Gc Request</p>
             </div>
             <a-badge :count="count.approve">
-                <a-button>
+                <a-button @click="() => $inertia.get(route('finance.approvedGc.approved'))">
                     <template #icon>
                         <FolderFilled />
                     </template>

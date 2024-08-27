@@ -21,11 +21,20 @@ class StoreGcRequestResource extends JsonResource
             'sgc_date_needed' => $this->sgc_date_needed?->toFormattedDateString(),
             'sgc_remarks' => $this->sgc_remarks,
             'sgc_date_request' => $this->sgc_date_request->toFormattedDateString(),
-            'sgc_status' => $this->sgc_status == '1' ? 'Partial' : 'Closed',
+            'sgc_status' => $this->status($this->sgc_status),
             'store' => $this->whenLoaded('store'),
             'user' => $this->whenLoaded('user'),
             'cancelledStoreGcRequest' => new CancelledStoreGcRequestResource($this->whenLoaded('cancelledStoreGcRequest')),
 
         ];
+    }
+    private function status(string $type)
+    {
+        $transaction = [
+            '1' => 'Partial',
+            '2' => 'Closed',
+        ];
+
+        return $transaction[$type] ?? '';
     }
 }

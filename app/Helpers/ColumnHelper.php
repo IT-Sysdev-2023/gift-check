@@ -88,6 +88,7 @@ class ColumnHelper
         [
             'title' => 'Action',
             'key' => 'setup',
+            'align' => 'center'
 
         ],
     ];
@@ -105,6 +106,45 @@ class ColumnHelper
         [
             'title' => 'Validated',
             'key' => 'valid',
+            'align' => 'center'
+        ],
+    ];
+    public static $approved_gc_request = [
+        [
+            'title' => 'Released No.',
+            'dataIndex' => 'agcr_request_relnum',
+            'width' => '10%',
+            'align' => 'center'
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spgc_date_request',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Retail Store',
+            'dataIndex' => 'storename',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Released by',
+            'dataIndex' => 'fullname',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Date Released',
+            'dataIndex' => 'agcr_date',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'valid',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Status',
+            'key' => 'status',
             'align' => 'center'
         ],
     ];
@@ -367,6 +407,11 @@ class ColumnHelper
         [
             'title' => 'Approved By',
             'dataIndex' => 'reqap_approvedby',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'setup',
+            'align' => 'center'
         ],
 
     ];

@@ -47,7 +47,7 @@ export default {
                 id: data.spexgc_id,
                 gcType: type
             })
-        }
+        },
     }
 
 

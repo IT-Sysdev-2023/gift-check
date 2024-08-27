@@ -12,7 +12,7 @@
                         Pending Special External (GC Holder) List
                     </span>
                 </template>
-                <a-table :data-source="specExRecord.data" :columns="columns" size="small">
+                <a-table :data-source="specExRecord.data" :columns="columns" size="small" bordered>
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.key == 'setup'">
                             <a-button

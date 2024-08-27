@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 
+
 class UploadFileHandler
 {
 
@@ -50,6 +51,7 @@ class UploadFileHandler
         }
         return '';
     }
+
     protected function saveFile(Request $request, string $filename)
     {
         if ($request->hasFile('file')) {
@@ -59,6 +61,7 @@ class UploadFileHandler
 
     protected function saveMultiFiles(Request $request, $id)
     {
+        
         if ($request->hasFile('file')) {
             foreach ($request->file as $image) {
                 $name = $this->getOriginalFileName($request, $image);
@@ -70,6 +73,17 @@ class UploadFileHandler
                     'doc_fullpath' => $path
                 ]);
             }
+        }
+    }
+
+    protected function retrieveFile(string $folder, string $filename)
+    {
+        $file = "{$folder}/{$filename}";
+        if ($this->disk->exists($file)) {
+            $pdf = $this->disk->get($file);
+            return response($pdf, 200)->header('Content-Type', 'application/pdf');
+        } else {
+            return response()->json('File Not Found on the Server', 404);
         }
     }
 
@@ -99,7 +113,7 @@ class UploadFileHandler
             return redirect()->back()->with('error', 'File Not Found');
         }
     }
-    private function getOriginalFileName(Request $request, $image)
+    public function getOriginalFileName(Request $request, $image)
     {
         $filename = $this->createFileName($request);
 

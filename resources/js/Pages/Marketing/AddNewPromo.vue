@@ -47,7 +47,7 @@
       <a-card>
         <a-card title="" :bordered="false">
           <div>
-            <a-table :dataSource="form.data" :columns="form.columns" :pagination="false">
+            <a-table :dataSource="form.data" :columns="form.columns" :pagination="false" bordered>
 
               <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'denom_id'">
@@ -111,7 +111,7 @@
 
   <a-modal v-model:open="scannedbarcodemodal" title="Scanned GC" @ok="handleOk">
 
-    <a-table :dataSource="form.scannedGc" :columns="form.scannedGccolumns">
+    <a-table :dataSource="form.scannedGc" :columns="form.scannedGccolumns" bordered>
       <template #bodyCell="{ column, record }">
         <div v-if="column.dataIndex === 'action'">
           <a-button @click="removeGc(record.tp_barcode)" danger>Remove</a-button>

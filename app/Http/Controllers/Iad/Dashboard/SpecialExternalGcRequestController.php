@@ -8,9 +8,8 @@ use App\Models\ApprovedRequest;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
-use App\Services\Iad\DashboardService;
 use App\Services\Iad\IadDashboardService;
-use App\Services\Iad\IadSpecialExternalService;
+use App\Services\Iad\SpecialExternalGcService;
 use App\Services\Treasury\ColumnHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,13 +19,13 @@ use Rmunate\Utilities\SpellNumber;
 class SpecialExternalGcRequestController extends Controller
 {
 
-    public function __construct(public IadSpecialExternalService $iadSpecialExternalService)
+    public function __construct(public SpecialExternalGcService $specialExternalGcService)
     {
     }
     public function approvedGc(Request $request)
     {
 
-        $data = $this->iadSpecialExternalService->specialExternalGcRequest();
+        $data = $this->specialExternalGcService->approvedGc($request);
         return inertia('Iad/Dashboard/ApprovedGcTable', [
             'data' => SpecialExternalGcRequestResource::collection($data),
             'columns' => ColumnHelper::$approvedGcForReviewed,
@@ -36,7 +35,8 @@ class SpecialExternalGcRequestController extends Controller
 
     public function viewApprovedGcRecord(SpecialExternalGcrequest $id)
     {
-        $record = $this->iadSpecialExternalService->loadApprovedGc($id);
+        $record = $this->specialExternalGcService->viewApprovedGcRecord($request, $id);
+
         return inertia('Iad/Dashboard/ViewApprovedGcTable', [
             'data' => new SpecialExternalGcRequestResource($record),
             'title' => 'Special External Gc'
@@ -46,17 +46,19 @@ class SpecialExternalGcRequestController extends Controller
 
     public function barcodeSubmission(Request $request, $id)
     {
-        return $this->iadSpecialExternalService->barcodeScan($request, $id);
+        return $this->specialExternalGcService->barcodeScan($request, $id);
         //ajax.php search = gcreviewscangc
     }
 
     public function gcReview(Request $request, $id)
     {
-       return $this->iadSpecialExternalService->gcSubmit($request, $id);
+        return $this->specialExternalGcService->review($request, $id);
+        //ajax.php search = gcreview
     }
 
-    public function reprintGc($id){
-        // $pdfContent = Storage
-        // return response($pdfContent, 200)->header('Content-Type', 'application/pdf'); 
+    public function reprint($id)
+    {
+
+        return $this->specialExternalGcService->reprint($id);
     }
 }

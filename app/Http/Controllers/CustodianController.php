@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Custodian\CustodianServices;
 use Illuminate\Http\Request;
 
+
 class CustodianController extends Controller
 {
-    public function __construct(public CustodianServices $custodianservices , public DashboardClass $dashboardClass) {}
+    public function __construct(public CustodianServices $custodianservices, public DashboardClass $dashboardClass) {}
     public function index()
     {
         return inertia('Custodian/CustodianDashboard', [
@@ -70,5 +72,57 @@ class CustodianController extends Controller
             'columns' => ColumnHelper::$approved_gc_column,
             'record' => $this->custodianservices->approvedGcList()
         ]);
+    }
+    public function setupApproval(Request $request)
+    {
+        return inertia('Custodian/SetupApproval', [
+            'record' => $this->custodianservices->setupApprovalSelected($request),
+            'barcodes' => $this->custodianservices->setupApprovalBarcodes($request),
+        ]);
+    }
+    public function barcodeOrRange(Request $request)
+    {
+        if ($request->status == '1') {
+            $request->validate([
+                'barcode' => 'required',
+            ]);
+        } else {
+            $request->validate([
+                'barcodeStart' => 'required|lt:barcodeEnd',
+                'barcodeEnd' => 'gt:barcodeStart',
+            ]);
+        }
+
+        if ($request->status == '1') {
+            // dd();
+            $exist =  SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->where('spexgcemp_barcode', $request->barcode);
+        } else {
+
+            $exist =  SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)
+                ->whereIn('spexgcemp_barcode', [$request->barcodeStart, $request->barcodeEnd]);
+        }
+
+        if ($exist->count() == 2 || $exist->exists()) {
+
+            if ($exist->where('spexgcemp_review', '*')->exists()) {
+
+                return inertia('Custodian/Result/GiftCheckGenerateResult', [
+                    'record' =>  $this->custodianservices->getSpecialExternalGcRequest($request),
+                ]);
+            } else {
+
+                return back()->with([
+                    'status' => 'error',
+                    'msg' => 'Requisition is not yet approved by IAD',
+                    'title' => 'Error',
+                ]);
+            }
+        } else {
+            return back()->with([
+                'status' => 'error',
+                'msg' => 'Ops Barcode Not Found',
+                'title' => 'Error',
+            ]);
+        }
     }
 }
