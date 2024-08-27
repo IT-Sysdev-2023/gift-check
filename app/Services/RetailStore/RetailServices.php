@@ -128,8 +128,8 @@ class RetailServices
             ->where('store_gcrequest.sgc_cancel', '')
             ->get();
         $results->transform(function ($item) {
-            $item->dateRequest = Date::parse($item->sgc_date_request)->format('M-d-y');
-            $item->dateNeeded = Date::parse($item->sgc_date_needed)->format('M-d-y');
+            $item->dateRequest = Date::parse($item->sgc_date_request)->format('F-d-y');
+            $item->dateNeeded = Date::parse($item->sgc_date_needed)->format('F-d-y');
             $item->requestedBy = $item->firstname . ' ' . $item->lastname;
 
             return $item;
