@@ -162,4 +162,9 @@ class RetailController extends Controller
             'columns' =>$columns
         ]);
     }
+
+    public function submitEntry(Request $request)
+    {
+        return $this->retail->submitEntry($request);
+    }
 }

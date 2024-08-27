@@ -11,4 +11,7 @@ class StoreReceived extends Model
     protected $table= 'store_received';
 
     protected $primaryKey= 'srec_id';
+
+    protected $guarded = [];
+    public $timestamps = false;
 }

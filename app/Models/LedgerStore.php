@@ -11,5 +11,8 @@ class LedgerStore extends Model
 
     protected $table = 'ledger_store';
     protected $primaryKey = 'sledger_id';
-    
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }
