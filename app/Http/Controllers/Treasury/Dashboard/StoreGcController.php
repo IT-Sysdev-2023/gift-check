@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovedGcRequestResource;
 use App\Models\ApprovedGcrequest;
 use App\Models\Assignatory;
+use App\Models\GcRelease;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
+use App\Models\TempRelease;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\Denomination;
@@ -253,10 +255,107 @@ class StoreGcController extends Controller
 
     public function scanSingleBarcode(Request $request)
     {
-        $request->validate([
-            "barcode" => 'required|digits:13'
-        ]);
+        // "relno" => 664
+        // "barcode" => 1111212
+        // "denid" => 3
+        // "store_id" => 1
+        // "reqid" => 709
 
-        dd();
+
+        // $request->validate([
+        //     "barcode" => 'required|digits:13'
+        // ]);
+
+
+        $remainGc = StoreRequestItem::where([
+            ['sri_items_denomination', $request->denid],
+            ['sri_items_requestid', $request->reqid]
+        ])
+            ->first('sri_items_remain');
+
+        $scannedGc = TempRelease::where([['temp_relno', $request->reqid], ['temp_rdenom', $request->denid]])->count();
+
+        $barcode = $request->barcode;
+        $relno = $request->relno;
+        $denid = $request->denid;
+        $store_id = $request->store_id;
+        $reqid = $request->reqid;
+        if ($remainGc->sri_items_remain > $scannedGc) {
+
+            //check Barcode existence
+            $whereBarcode = Gc::where('barcode_no', $barcode);
+
+            if ($whereBarcode->exists()) {
+                if ($whereBarcode->where('denom_id', $denid)->exists()) {
+
+                    $check = GcLocation::whereHas('gc', function ($q) use ($denid) {
+                        $q->has('denomination')->where('denom_id', $denid);
+                    })->where([['loc_store_id', $store_id], ['loc_barcode_no', $barcode]])->exists();
+                    //check if allocated to this store
+                    if ($check) {
+                        //check if it is already released 
+                        if (GcRelease::where('re_barcode_no', $barcode)->doesntExist()) {
+
+                            //check if gc already scanned
+                            if(TempRelease::where('temp_rbarcode', $barcode)->doesntExist()){
+
+                                TempRelease::create([
+                                    'temp_rbarcode' => $barcode, 
+									    'temp_rdenom' => $denid, 
+									    'temp_rdate' => now(), 
+									    'temp_relno' => $relno,
+									    'temp_relby' => $request->user()->user_id
+                                ]);
+                            }else{
+                                return response()->json("Barcode Number '.$barcode.' already scanned for released. ", 400);
+                            }
+                        } else {
+                            return response()->json("Barcode Number '.$barcode.' already released.", 400);
+                        }
+                    } else {
+                        return response()->json("Barcode Number '.$barcode.' not found in this location.", 400);
+                    }
+                } else {
+                    return response()->json("Please scan only .. denomination.", 400);
+                }
+            } else {
+                return response()->json("Barcode Number {$barcode} not found.", 400);
+            }
+
+        } else {
+            return response()->json('Number of GC Scanned has reached the maximum number to received.', 400);
+        }
     }
 }
+
+// $query = $link->query(
+// 									"INSERT INTO 
+// 										`temp_release`
+// 									(
+// 									    `temp_rbarcode`, 
+// 									    `temp_rdenom`, 
+// 									    `temp_rdate`, 
+// 									    `temp_relno`,
+// 									    `temp_relby`
+// 									) 
+// 									VALUES 
+// 									(
+// 									    '$barcode',
+// 									    '$denid',
+// 									    NOW(),
+// 									    '$rel_no',
+// 									    '".$_SESSION['gc_id']."'
+// 									)
+// 								");
+
+// 								if($query)
+// 								{								
+// 									$response['stat'] = 1;
+// 									$response['msg'] = $barcode;
+// 									// $response['msg'] = 'Barcode Number '.$barcode.' successfully scanned for release.';
+// 								}
+// 								else
+// 								{
+// 									$response['stat'] = 0;
+// 									$response['msg'] = $link->query;
+// 								}
