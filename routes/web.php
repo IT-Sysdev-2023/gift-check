@@ -294,6 +294,9 @@ Route::prefix('retail')->group(function () {
         });
         Route::name('gcrequest.')->group(function () {
             Route::get('pendingList',[RetailController::class, 'pendingGcRequestList'])->name('pending.list');
+            Route::get('pendingdetail',[RetailController::class, 'pendingGcRequestdetail'])->name('pending.detail');
+            Route::get('cancel-request',[RetailController::class, 'cancelRequest'])->name('cancel');
+            Route::put('submit-request',[RetailController::class, 'submitRequest'])->name('update');
         });
         Route::name('manage.')->group(function () {
             Route::post('remove-temporary', [RetailController::class, 'removeTemporary'])->name('remove');

@@ -470,7 +470,7 @@ class ColumnHelper
     {
         return [
             'title' => $title,
-            'dataIndex' => $column
+            'dataIndex' => $column,
         ];
     }
 
@@ -478,7 +478,7 @@ class ColumnHelper
     {
         return [
             [
-                'title' => 'Request No',
+                'title' => 'Request Number',
                 'dataIndex' => 'sgc_num',
                 'align' => 'center'
             ],
@@ -507,6 +507,22 @@ class ColumnHelper
                 'dataIndex' => 'action',
                 'align' => 'center'
             ],
+        ];
+    }
+
+    public static function pendingGcRequestBarcode()
+    {
+        return [
+            [
+                'title' => 'Denomination',
+                'dataIndex' => 'denomination',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Requested Qty',
+                'dataIndex' => 'sri_items_quantity',
+                'align' => 'center'
+            ]
         ];
     }
 }
