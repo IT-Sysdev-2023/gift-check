@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Treasury\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovedGcRequestResource;
 use App\Models\ApprovedGcrequest;
+use App\Models\Assignatory;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
 use Illuminate\Support\Facades\DB;
@@ -197,7 +198,7 @@ class StoreGcController extends Controller
         return response()->json($data);
     }
 
-    public function viewReleasingEntry($id)
+    public function viewReleasingEntry(Request $request, $id)
     {
 
         $agr = ApprovedGcrequest::max('agcr_request_relnum');
@@ -209,18 +210,53 @@ class StoreGcController extends Controller
             ->where('sgc_id', $id)->first();
 
         $rgc = StoreRequestItem::leftJoin('denomination', 'store_request_items.sri_items_denomination', '=', 'denomination.denom_id')
-            ->select('store_request_items.sri_items_remain', 'store_request_items.sri_items_denomination', 'denomination.denomination')
-            ->where('sri_items_requestid', $id)
+            ->selectRaw("
+            store_request_items.sri_items_remain, 
+            store_request_items.sri_items_denomination, 
+            denomination.denomination, (denomination.denomination * store_request_items.sri_items_remain) AS subtotal,
+            (
+                SELECT COUNT(gc_location.loc_barcode_no) 
+                FROM gc_location
+                INNER JOIN gc ON gc.barcode_no = gc_location.loc_barcode_no
+                WHERE gc_location.loc_rel = ''
+                AND gc.denom_id = store_request_items.sri_items_denomination
+                AND gc_location.loc_store_id = ?
+            ) AS count
+            ", [$details->sgc_store])->where('sri_items_requestid', $id)
             ->whereNot('store_request_items.sri_items_remain', 0)
-            ->get();
+            ->paginate()->withQueryString();
 
-        
-
+        $checkBy = Assignatory::select('assig_position', 'assig_name as label', 'assig_id as value')->where(function ($q) use ($request) {
+            $q->where('assig_dept', $request->user()->usertype)
+                ->orWhere('assig_dept');
+        })->get();
         return response()->json([
             'rel_num' => $relnum,
             'details' => $details,
-            'rgc' => $rgc
+            'rgc' => $rgc,
+            'checkBy' => $checkBy
         ]);
 
+    }
+
+    public function viewAllocatedList(Request $request, $id)
+    {
+        $data = GcLocation::select('loc_barcode_no', 'loc_gc_type')->with('gc:gc_id,denom_id,barcode_no,pe_entry_gc', 'gc.denomination:denom_id,denomination')
+            ->where([['loc_store_id', $id], ['loc_rel', '']])
+            ->filter($request)
+            ->paginate(10)
+            ->withQueryString();
+
+        return response()->json($data);
+
+    }
+
+    public function scanSingleBarcode(Request $request)
+    {
+        $request->validate([
+            "barcode" => 'required|digits:13'
+        ]);
+
+        dd();
     }
 }
