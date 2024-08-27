@@ -10,6 +10,7 @@
             <a-col :span="10">
                 <a-card>
                     <a-form
+                        :model="formState"
                         layout="horizontal"
                         style="max-width: 600px; padding-top: 10px"
                     >
@@ -20,23 +21,23 @@
                             <a-input :value="today" readonly />
                         </a-form-item>
                         <a-form-item label="Upload Document:">
-                            <a-input :value="data.rel_num" />
+                            <ant-upload-image/>
                         </a-form-item>
                         <a-form-item label="Remarks:">
-                            <a-textarea :value="data.rel_num" />
+                            <a-textarea :value="formState.remarks" />
                         </a-form-item>
                         <a-form-item label="Checked By:">
-                            <a-input :value="data.rel_num" readonly />
+                            <ant-select />
                         </a-form-item>
                         <a-form-item label="Released By:">
-                            <a-textarea :value="data.rel_num" readonly />
+                            <a-textarea :value="$page.props.auth.user.full_name" readonly />
                         </a-form-item>
 
                         <a-form-item label="Received By:">
-                            <a-input :value="data.rel_num" readonly />
+                            <a-input :value="$page.props.auth.user.full_name" readonly />
                         </a-form-item>
                         <a-form-item label="Payment Type:">
-                            <a-input :value="data.rel_num" readonly />
+                            <ant-selec/>
                         </a-form-item>
                     </a-form>
                 </a-card>
@@ -96,14 +97,21 @@
 
 <script lang="ts" setup>
 import dayjs from "dayjs";
+import { usePage, useForm } from "@inertiajs/vue3";
 defineProps<{ open: boolean; data: { rel_num: number; details: any } }>();
 const emit = defineEmits<{
     (e: "update:open", value: boolean): void;
 }>();
 
+const formState = useForm({
+    file: null,
+    remarks: '',
+
+})
+
 const handleClose = () => {
     emit("update:open", false);
 };
 
-const today = dayjs();
+const today = dayjs().format('YYYY-MMM-DD HH:mm:ss a');
 </script>

@@ -214,6 +214,8 @@ class StoreGcController extends Controller
             ->whereNot('store_request_items.sri_items_remain', 0)
             ->get();
 
+        
+
         return response()->json([
             'rel_num' => $relnum,
             'details' => $details,
