@@ -1,5 +1,8 @@
 <template>
-    <a-drawer class="custom-class" root-class-name="root-class-name" title="Scan Barcode Drawer" placement="right">
+    <a-drawer class="custom-class" root-class-name="root-class-name" title="Scan Barcode Drawer" placement="right" @close="clear">
+
+        <a-alert v-if="error.status" :message="error.msg" :type="error.status" class="mb-2" show-icon />
+
         <div class="flex justify-center">
             <a-typography-text keyboard>Scan Barcode:</a-typography-text>
         </div>
@@ -20,7 +23,6 @@
             <a-descriptions-item style="width: 50%;" label="Denomination">₱ {{
                 record.gc.denomination.denomination.toLocaleString() }}</a-descriptions-item>
         </a-descriptions>
-        {{ equal }}
     </a-drawer>
 </template>
 
@@ -34,6 +36,7 @@ import { ref } from 'vue';
 const props = defineProps({
     record: Object,
     rec: Number,
+    data: Object
 })
 
 const form = useForm({
@@ -42,7 +45,7 @@ const form = useForm({
 
 const emit = defineEmits(['close-drawer']);
 
-const equal = ref(0);
+const error = ref({});
 
 
 const validate = () => {
@@ -56,16 +59,19 @@ const validate = () => {
 
         onSuccess: (response) => {
 
+            error.value = response.props.flash;
+
             notification[response.props.flash.status]({
                 message: response.props.flash.title,
                 description: response.props.flash.msg,
                 placement: 'topLeft'
             });
+
             if (response.props.flash.status == 'success') {
-                equal.value += 1;
                 form.reset();
             }
-            if(props.record.quantity == equal.value){
+
+            if (props.record.quantity == props.data.release[props.record.gc.denom_id][0].scanned) {
                 emit('close-drawer')
             }
 
@@ -73,6 +79,9 @@ const validate = () => {
 
         preserveState: true,
     })
+}
+const clear = () => {
+    error.value = {}
 }
 
 

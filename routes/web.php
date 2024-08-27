@@ -297,6 +297,7 @@ Route::prefix('retail')->group(function () {
         });
         Route::name('manage.')->group(function () {
             Route::post('remove-temporary', [RetailController::class, 'removeTemporary'])->name('remove');
+            Route::post('submit-entry', [RetailController::class, 'submitEntry'])->name('submit');
         });
     });
 });

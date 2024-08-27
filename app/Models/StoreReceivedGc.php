@@ -14,9 +14,13 @@ class StoreReceivedGc extends Model
 
     protected $primaryKey= 'strec_id';
 
+    protected $guarded = [];
+
+    public $timestamps = false;
+
     public function gcReleased(): BelongsTo
     {
-        return $this->belongsTo(GcRelease::class, 'strec_barcode', 're_barcode_no'); 
+        return $this->belongsTo(GcRelease::class, 'strec_barcode', 're_barcode_no');
         // `gc_release`.`re_barcode_no` = `store_received_gc`.`strec_barcode`
     }
 }

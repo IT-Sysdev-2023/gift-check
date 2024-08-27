@@ -15,6 +15,11 @@ class ApprovedGcrequest extends Model
     protected $table = 'approved_gcrequest';
     protected $primaryKey = 'agcr_id';
 
+
+    protected $guarded = [];
+
+    public $timestamps = false;
+
     protected function casts(): array
     {
         return [
@@ -37,5 +42,4 @@ class ApprovedGcrequest extends Model
     {
         return $this->belongsTo(User::class, 'agcr_preparedby', 'user_id');
     }
-
 }
