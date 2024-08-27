@@ -73,7 +73,7 @@
                                     <a-input v-model:value="form.storeName" readonly></a-input>
                                 </a-form-item>
                                 <a-form-item label="Date Requested">
-                                    <a-date-picker v-model:value="form.dateRequested" />
+                                    <a-input v-model:value="details[0].dateRequest" readonly></a-input>
                                 </a-form-item>
                             </a-card>
                         </a-col>

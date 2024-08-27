@@ -150,7 +150,7 @@ class RetailServices
         })->where('rel_num', $request->agc_num)->count();
     }
 
-    public function countGcPendingRequest()
+    public function GcPendingRequest()
     {
         $storeId = request()->user()->store_assigned;
 
