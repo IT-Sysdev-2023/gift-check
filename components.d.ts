@@ -62,6 +62,7 @@ declare module 'vue' {
     AntSelect: typeof import('./resources/js/Components/AntSelect.vue')['default']
     AntUploadImage: typeof import('./resources/js/Components/AntUploadImage.vue')['default']
     AntUploadMultiImage: typeof import('./resources/js/Components/AntUploadMultiImage.vue')['default']
+    APagination: typeof import('ant-design-vue/es')['Pagination']
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']
     APopover: typeof import('ant-design-vue/es')['Popover']
     AppleOutlined: typeof import('@ant-design/icons-vue')['AppleOutlined']
