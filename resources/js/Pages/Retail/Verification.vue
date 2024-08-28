@@ -1,7 +1,8 @@
 <template>
     <AuthenticatedLayout>
-        <a-row>
+        <a-row :gutter="[16, 16]">
             <a-col :span="10">
+
                 <a-card>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date">{{ dayjs() }}</a-descriptions-item>
@@ -51,6 +52,8 @@
                 </a-button>
             </a-col>
             <a-col :span="14">
+                <!-- {{ success }} -->
+                <a-alert message="Success Tips" class="mb-1" type="success" show-icon />
                 <a-card>
                     <a-steps direction="vertical" style="color: green" :current="data.length - 1" :items="data">
                     </a-steps>
@@ -74,11 +77,13 @@ const form = useForm({
 })
 const props = defineProps({
     data: Object,
+    success: Object,
 })
 
 const optionCustomer = ref([]);
 const viewing = ref([]);
 const isRetrieving = ref(false);
+const status = ref({});
 
 const submit = () => {
     form.transform((data) => ({
@@ -118,8 +123,6 @@ const viewstatus = () => {
         barcode: form.barcode,
 
     }, {
-        onSuccess: () => {
-        },
         preserveState: true
     });
 }
