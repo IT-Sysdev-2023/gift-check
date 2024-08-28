@@ -306,6 +306,12 @@ Route::prefix('retail')->group(function () {
             Route::post('remove-temporary', [RetailController::class, 'removeTemporary'])->name('remove');
             Route::post('submit-entry', [RetailController::class, 'submitEntry'])->name('submit');
         });
+
+        Route::name('verification.')->group(function () {
+            Route::get('verification-index', [RetailController::class, 'verificationIndex'])->name('index');
+            Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
+        });
+
     });
 });
 
@@ -357,6 +363,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('search')->group(function () {
     Route::name('search.')->group(function () {
         Route::get('check-by', [QueryFilterController::class, 'getCheckBy'])->name('checkBy');
+        Route::get('search-customer', [QueryFilterController::class, 'customer'])->name('customer');
     });
 });
 Route::prefix('management')->group(function () {

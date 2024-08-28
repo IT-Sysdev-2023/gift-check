@@ -23,7 +23,7 @@
                 </p>
                 <a-card size=small class=" mb-4">
                     <a-statistic title="Total Denomination" :value="record[0]?.total" :precision="2"
-                        class="demo-class text-center" :value-style="{ color: '#cf1322' }">
+                        class="demo-class text-center" :value-style="{ color: '#399918' }">
                         <template #prefix>
                             <DollarCircleOutlined />
                         </template>

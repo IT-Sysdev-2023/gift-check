@@ -155,8 +155,6 @@ class CustodianServices
             ->where('spexgc_status', 'pending')
             ->get();
 
-
-
         $count = 1;
         $data->transform(function ($item) use (&$count) {
 
@@ -165,6 +163,7 @@ class CustodianServices
                 $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
                 return $subitem;
             });
+            $item->numberinwords = Number::spell($item->spexgc_payment);
 
             $item->total =  $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
 

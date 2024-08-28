@@ -298,6 +298,7 @@ declare module 'vue' {
     UserSwitchOutlined: typeof import('@ant-design/icons-vue')['UserSwitchOutlined']
     ValidateBarcode: typeof import('./resources/js/Pages/Iad/Partials/ValidateBarcode.vue')['default']
     ValidateByRange: typeof import('./resources/js/Pages/Iad/Partials/ValidateByRange.vue')['default']
+    Verification: typeof import('./resources/js/Pages/Retail/Verification.vue')['default']
     VerifyEmail: typeof import('./resources/js/Pages/Auth/VerifyEmail.vue')['default']
     ViewApprovedGcTable: typeof import('./resources/js/Pages/Iad/Dashboard/ViewApprovedGcTable.vue')['default']
     Welcome: typeof import('./resources/js/Pages/Welcome.vue')['default']

@@ -23,4 +23,7 @@ class StoreReceivedGc extends Model
         return $this->belongsTo(GcRelease::class, 'strec_barcode', 're_barcode_no');
         // `gc_release`.`re_barcode_no` = `store_received_gc`.`strec_barcode`
     }
+    public function sales(){
+        return $this->belongsTo(TransactionSale::class, 'strec_barcode',  'sales_barcode');
+    }
 }
