@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
-use App\Models\ApprovedGcrequest;
 use App\Models\Denomination;
 use App\Models\GcLocation;
 use App\Models\Store;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
+use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
+use App\Services\Admin\AdminServices;
 use App\Services\Finance\FinanceService;
 use App\Services\RetailStore\RetailServices;
 use Illuminate\Http\Request;
@@ -22,7 +23,8 @@ class RetailController extends Controller
 
     public function __construct(
         public FinanceService $financeService,
-        public RetailServices $retail
+        public RetailServices $retail,
+        public AdminServices $statusScanner,
     ) {
     }
     public function index()
@@ -91,16 +93,16 @@ class RetailController extends Controller
     public function gcRequestsubmit(Request $request)
     {
         $storeAssigned = $request->user()->store_assigned;
-    
+
         $penum = StoreGcrequest::where('sgc_store', $storeAssigned)
             ->orderByDesc('sgc_id')
             ->first();
         $penumValue = ($penum ? intval($penum->sgc_num) : 0) + 1;
-    
+
         $denomination = collect($request->data['quantities'])->filter(function ($item) {
             return $item !== null;
         });
-    
+
         try {
             DB::transaction(function () use ($request, $penumValue, $denomination, $storeAssigned) {
                 $storeGcrequest = StoreGcrequest::create([
@@ -114,7 +116,7 @@ class RetailController extends Controller
                     'sgc_store' => $storeAssigned,
                     'sgc_type' => 'regular',
                 ]);
-    
+
                 foreach ($denomination as $key => $value) {
                     StoreRequestItem::create([
                         'sri_items_denomination' => $key,
@@ -124,7 +126,7 @@ class RetailController extends Controller
                     ]);
                 }
             });
-    
+
             return back()->with([
                 'type' => 'success',
                 'msg' => 'Success!',
@@ -138,7 +140,7 @@ class RetailController extends Controller
             ]);
         }
     }
-    
+
 
     public function approvedGcRequest(Request $request)
     {
@@ -253,6 +255,23 @@ class RetailController extends Controller
                     ->delete();
             }
         }
+    }
+
+    public function verificationIndex(Request $request)
+    {
+        $data = $this->statusScanner->statusScanned($request);
+
+        return inertia('Retail/Verification', [
+            'data' => $data->steps,
+            'success' => $data->success,
+        ]);
+    }
+
+    public function submitVerify(Request $request)
+    {
+
+       return  $this->retail->submitVerify($request);
+
     }
 
 }

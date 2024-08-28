@@ -4,15 +4,22 @@ namespace App\Services\RetailStore;
 
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedGcrequest;
+use App\Models\AppSetting;
+use App\Models\Customer;
 use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\GcRelease;
+use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerCheck;
 use App\Models\LedgerStore;
+use App\Models\LostGcBarcode;
+use App\Models\PromogcReleased;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Store;
 use App\Models\StoreGcrequest;
 use App\Models\StoreReceived;
 use App\Models\StoreReceivedGc;
+use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
 use Illuminate\Support\Facades\Date;
 use App\Services\RetailStore\RetailDbServices;
@@ -286,5 +293,167 @@ class RetailServices
                 'status' => 'error',
             ]);
         }
+    }
+    public function submitVerify($request)
+    {
+
+
+
+        // // dd($request->all());
+        $revalidate = false;
+
+        $gc = Gc::where('barcode_no', $request->barcode)->where('status', '!=', 'inactive')->exists();
+
+        $inst = InstitutTransactionsItem::where('instituttritems_barcode', $request->barcode)->exists();
+
+        $specgc = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', $request->barcode)->exists();
+
+        $sold = StoreReceivedGc::join('transaction_sales', 'sales_barcode', '=', 'strec_barcode')
+            ->join('transaction_stores', 'trans_sid', '=', 'sales_transaction_id')
+            ->join('stores', 'store_id', '=', 'trans_store')
+            ->where('sales_barcode', $request->barcode)
+            ->where('strec_barcode', $request->barcode)
+            ->where('strec_sold', '*')
+            ->where('strec_return', '')
+            ->exists();
+
+        $bandgo = StoreReceivedGc::where('strec_barcode', $request->barcode)
+            ->where('strec_sold', '')
+            ->where('strec_return', '')
+            ->where('strec_bng_tag', '*')
+            ->exists();
+
+        $promo = PromogcReleased::where('prgcrel_barcode', $request->barcode)->exists();
+
+        $verified = StoreVerification::join('stores', 'store_id', '=', 'vs_store')
+            ->join('users', 'user_id', '=', 'vs_by')
+            ->join('customers', 'cus_id', '=', 'vs_cn')
+            ->where('vs_barcode', $request->barcode)
+            ->orderByDesc('vs_id')
+            ->first();
+
+        $lostgc = LostGcBarcode::join('lost_gc_details', 'lostgcd_id', '=', 'lostgcb_repid')
+            ->where('lostgcb_barcode', $request->barcode)->first();
+
+        $customer = Customer::where('cus_id', $request->customer)->first();
+
+
+
+        if ($gc) {
+
+            if ($inst) {
+
+                $gcFound = true;
+                $gctype = 1;
+            }
+
+            if ($sold) {
+
+                $gcFound = true;
+                $gctype = 1;
+            }
+
+            if ($bandgo) {
+
+                $gcFound = true;
+                $gctype = 6;
+                $bngGC = true;
+            }
+
+            if ($promo) {
+
+                $gcFound = true;
+                $gctype = 6;
+            }
+
+            if ($gcFound) {
+                $tfilext = '.' . self::appSetting('txtfile_extension_internal');
+
+                $denom = Gc::select('denomination')->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+                    ->where('barcode_no', $request->barcode)
+                    ->first()->denomination;
+            }
+        } elseif ($specgc) {
+
+            $special = SpecialExternalGcrequestEmpAssign::join('approved_request', 'reqap_trid', '=', 'spexgcemp_trid')
+                ->where('spexgcemp_barcode', $request->barcode)
+                ->where('reqap_approvedtype', 'special external gc review')
+                ->where('spexgc_status', '!=', 'inactive')
+                ->count();
+
+            if ($special > 0) {
+                // dd();
+                $tfilext = '.' . self::appSetting('txtfile_extension_external');
+
+                $denom = SpecialExternalGcrequestEmpAssign::select('spexgcemp_denom')
+                    ->where('spexgcemp_barcode', $request->barcode)
+                    ->first()->spexgcemp_denom;
+
+                $gcFound = true;
+
+            }else{
+                return back()->with([
+                    'status' => 'error',
+                    'title' => 'Opss Error',
+                    'msg' => 'GC is blocked and not allowed to used.',
+                ]);
+            }
+        }
+
+
+        $data = [
+            'tfilext' => $tfilext,
+            'gctype' => $gctype,
+            'denom' => $denom,
+            'customer' => $customer
+        ];
+
+
+        if ($verified) {
+            $unverified = true;
+        } else {
+            $unverified = false;
+        }
+
+        if (!$request->reprint) {
+            if ($unverified) {
+                //already verified
+            } else {
+                // dd();
+                $verifyGC = true;
+            }
+
+            if ($gctype == 4) {
+                // promotional
+            } else {
+                if (!empty($lostgc) && empty($lostgc->lostgcb_status)) {
+                    //lost gcs
+                } else {
+
+                    if ($verifyGC) {
+
+                        if ($revalidate) {
+
+                            // $this->dbservices->updateRevalidation($request);
+                        } else {
+
+                            // $this->dbservices->storeInStoreVerification($request, $data);
+
+                            if ($request->payment == 'STORE DEPARTMENT') {
+                                // $this->dbservices->createtextfile($request, $data);
+                            };
+                        }
+                    }
+                }
+            }
+        } else {
+
+            // is reprint
+        }
+    }
+
+    public static function appSetting($column)
+    {
+        return AppSetting::where('app_tablename', $column)->first()->app_settingvalue;
     }
 }
