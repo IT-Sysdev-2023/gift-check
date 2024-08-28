@@ -54,7 +54,7 @@ const { highlightText } = highlighten();
 
                 <template v-if="column.dataIndex === 'action'">
                     <a-popconfirm
-                        title="Are you sure delete this task?"
+                        title="Are you sure allocate this request?"
                         ok-text="Yes"
                         cancel-text="No"
                         @confirm="confirm(record)"
@@ -94,7 +94,7 @@ export default {
     },
     data() {
         return {
-            modalData: {},
+            modalData: [],
             openModal: false,
             onLoading: false,
             form: {
@@ -115,9 +115,11 @@ export default {
             if(record.sgc_status != '2'){
                 const {data} = await axios.get(route('treasury.store.gc.releasingEntry', record.sgc_id));
                 this.modalData = data;
-                console.log(data);
                 this.openModal = true;
+            }else{
+                console.log('object');
             }
+
             // this.onLoading = true;
             // try {
             //     const { data } = await axios.get(

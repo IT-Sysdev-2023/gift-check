@@ -28,7 +28,7 @@ class StoreGcRequestResource extends JsonResource
 
         ];
     }
-    private function status(string $type)
+    private function status(string | null $type)
     {
         $transaction = [
             '1' => 'Partial',

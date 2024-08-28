@@ -191,6 +191,10 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('reprint/{id}', [StoreGcController::class, 'reprint'])->name('reprint');
                 Route::get('view-cancelled-gc/{id}', [StoreGcController::class, 'viewCancelledGc'])->name('cancelled.gc');
+
+                Route::get('releasing-entry-{id}', [StoreGcController::class, 'viewReleasingEntry'])->name('releasingEntry');
+                Route::get('view-allocated-gc-{id}', [StoreGcController::class, 'viewAllocatedList'])->name('viewAllocatedList');
+                Route::post('scan-single-barcode', [StoreGcController::class, 'scanSingleBarcode'])->name('scanSingleBarcode');
             });
             Route::prefix('gc-production-request')->name('production.request.')->group(function () {
                 Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');
@@ -215,28 +219,28 @@ Route::middleware('auth')->group(function () {
                     Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
                 });
 
-                    //Budget Request
-                    Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                    Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
-                    Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                    Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+                //Budget Request
+                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
 
-                    //Gc allocation
-                    Route::prefix('gc-allocation')->name('gcallocation.')->group(function () {
-                        Route::get('/', [StoreGcController::class, 'gcAllocation'])->name('index');
-                        Route::post('gc-location-submission', [StoreGcController::class, 'store'])->name('store');
+                //Gc allocation
+                Route::prefix('gc-allocation')->name('gcallocation.')->group(function () {
+                    Route::get('/', [StoreGcController::class, 'gcAllocation'])->name('index');
+                    Route::post('gc-location-submission', [StoreGcController::class, 'store'])->name('store');
 
-                        Route::get('store-allocation', [StoreGcController::class, 'storeAllocation'])->name('storeAllocation');
-                        Route::get('view-allocated-gc', [StoreGcController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
-                    });
-
-                    //special gc payment
-                    Route::prefix('special-gc-payment')->name('special.')->group(function () {
-                        Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
-                        Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
-                    });
-
+                    Route::get('store-allocation', [StoreGcController::class, 'storeAllocation'])->name('storeAllocation');
+                    Route::get('view-allocated-gc', [StoreGcController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
                 });
+
+                //special gc payment
+                Route::prefix('special-gc-payment')->name('special.')->group(function () {
+                    Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
+                    Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
+                });
+
+            });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 

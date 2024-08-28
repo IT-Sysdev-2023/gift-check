@@ -17,4 +17,6 @@ class StoreRequestItem extends Model
     public function denomination(){
         return $this->hasOne(Denomination::class, 'denom_id', 'sri_items_denomination');
     }
+
+   
 }

@@ -33,7 +33,7 @@ class SpecialExternalGcRequestController extends Controller
         ]);
     }
 
-    public function viewApprovedGcRecord(Request $request, SpecialExternalGcrequest $id)
+    public function viewApprovedGcRecord(SpecialExternalGcrequest $id)
     {
         $record = $this->specialExternalGcService->viewApprovedGcRecord($request, $id);
 

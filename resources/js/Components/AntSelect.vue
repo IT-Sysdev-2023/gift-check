@@ -21,7 +21,7 @@ const props = defineProps<{
         value: number;
         label: string;
     }[];
-    value: string | undefined;
+    value?: string | undefined;
 }>();
 const options = ref<SelectProps["options"]>(props.options);
 const handleChange = (value: string, acc: any) => {

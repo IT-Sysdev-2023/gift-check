@@ -29,7 +29,7 @@ class RetailController extends Controller
     {
 
         $gcRequest = [
-            'PendingGcRequest' => $this->retail->countGcPendingRequest()->count()
+            'PendingGcRequest' => $this->retail->GcPendingRequest()->count()
         ];
         return inertia('Retail/RetailDashboard', [
             'countGcRequest' => $gcRequest
@@ -161,10 +161,8 @@ class RetailController extends Controller
     }
     public function pendingGcRequestList()
     {
-        $data = $this->retail->countGcPendingRequest();
+        $data = $this->retail->GcPendingRequest();
         $columns = ColumnHelper::pendingGcRequest();
-
-
         return Inertia::render('Retail/GcRequest/Pending', [
             'data' => $data,
             'columns' => $columns

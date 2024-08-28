@@ -130,6 +130,10 @@
                         >
                        
                     </a-descriptions>
+                    <a-space style="float: right">
+                        <a-button @click="reprintGc"> Reprint GC</a-button>
+                        <a-button @click="scanGc"> Scan GC</a-button>
+                    </a-space>
                  
 
                     <a-card class="mt-10">
@@ -162,6 +166,8 @@
                             >
                                 <a-input-number
                                     readonly
+                                    v-model:value="totalGcScanned"
+                                    readonly
                                     :value="$page.props.flash.countSession"
                                 />
                             </a-form-item>
@@ -170,6 +176,8 @@
                                 name="denomination"
                             >
                                 <a-input-number
+                                    readonly
+                                    v-model:value="totalDenomination"
                                     readonly
                                     :value="
                                         $page.props.flash.denominationSession
@@ -348,6 +356,29 @@ const activeKey = ref("1");
 
 const scanGc = () => {
     openScanGc.value = true;
+};
+const reprintGc = () => {
+    console.log(records.spexgc_id);
+
+    // const url = route("treasury.store.gc.reprint", { id: id });
+
+    // axios
+    //     .get(url, { responseType: "blob" })
+    //     .then((response) => {
+    //         const file = new Blob([response.data], {
+    //             type: "application/pdf",
+    //         });
+    //         const fileURL = URL.createObjectURL(file);
+    //         window.open(fileURL, "_blank");
+    //     })
+    //     .catch((error) => {
+    //         if (error.response && error.response.status === 404) {
+    //             alert("Pdf Not available");
+    //         } else {
+    //             console.error(error);
+    //             alert("An error occurred while generating the PDF.");
+    //         }
+    //     });
 };
 const { openLeftNotification } = onProgress();
 const onFinish = () => {
