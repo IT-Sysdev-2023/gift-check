@@ -226,12 +226,13 @@ class StoreGcController extends Controller
             ) AS count
             ", [$details->sgc_store])->where('sri_items_requestid', $id)
             ->whereNot('store_request_items.sri_items_remain', 0)
-            ->paginate()->withQueryString();
+            ->paginate(3)->withQueryString();
 
         $checkBy = Assignatory::select('assig_position', 'assig_name as label', 'assig_id as value')->where(function ($q) use ($request) {
             $q->where('assig_dept', $request->user()->usertype)
                 ->orWhere('assig_dept');
         })->get();
+
         return response()->json([
             'rel_num' => $relnum,
             'details' => $details,
@@ -253,109 +254,79 @@ class StoreGcController extends Controller
 
     }
 
-    public function scanSingleBarcode(Request $request)
+    public function scanBarcode(Request $request)
     {
-        // "relno" => 664
-        // "barcode" => 1111212
-        // "denid" => 3
-        // "store_id" => 1
-        // "reqid" => 709
+       return $this->storeGcRequestService->scanBarcode($request);
+    }
 
+    public function scanRangeBarcode(Request $request)
+    {
+        $request->validate([
+            'bstart' => 'required',
+            'bend' => 'required',
+            'relid' => 'required',
+            'store_id' => 'required',
+            'reqid' => 'required',
+        ]);
+        $bend = $request->bend;
+        $bstart = $request->bstart;
 
-        // $request->validate([
-        //     "barcode" => 'required|digits:13'
-        // ]);
+        $gcTotal = $bend - $bstart + 1;
 
+        dd($gcTotal);
 
-        $remainGc = StoreRequestItem::where([
-            ['sri_items_denomination', $request->denid],
-            ['sri_items_requestid', $request->reqid]
-        ])
-            ->first('sri_items_remain');
+        $denid = Gc::where('barcode_no', $bstart)->first('denom_id')->denom_id;
 
-        $scannedGc = TempRelease::where([['temp_relno', $request->reqid], ['temp_rdenom', $request->denid]])->count();
+        $remainGc = StoreRequestItem::where([['sri_items_denomination', $denid], ['sri_items_requestid', $request->reqid]])
+            ->first('sri_items_remain')->sri_items_remain;
 
-        $barcode = $request->barcode;
-        $relno = $request->relno;
-        $denid = $request->denid;
-        $store_id = $request->store_id;
-        $reqid = $request->reqid;
-        if ($remainGc->sri_items_remain > $scannedGc) {
+        $scannedGc = TempRelease::where([['temp_relno', $request->relid], ['temp_rdenom', $denid]])
+            ->count();
 
-            //check Barcode existence
-            $whereBarcode = Gc::where('barcode_no', $barcode);
+        $gctotal = $gcTotal + $scannedGc;
 
-            if ($whereBarcode->exists()) {
-                if ($whereBarcode->where('denom_id', $denid)->exists()) {
+        $nums = 0;
 
-                    $check = GcLocation::whereHas('gc', function ($q) use ($denid) {
-                        $q->has('denomination')->where('denom_id', $denid);
-                    })->where([['loc_store_id', $store_id], ['loc_barcode_no', $barcode]])->exists();
-                    //check if allocated to this store
-                    if ($check) {
-                        //check if it is already released 
-                        if (GcRelease::where('re_barcode_no', $barcode)->doesntExist()) {
-
-                            //check if gc already scanned
-                            if(TempRelease::where('temp_rbarcode', $barcode)->doesntExist()){
-
-                                TempRelease::create([
-                                    'temp_rbarcode' => $barcode, 
-									    'temp_rdenom' => $denid, 
-									    'temp_rdate' => now(), 
-									    'temp_relno' => $relno,
-									    'temp_relby' => $request->user()->user_id
-                                ]);
-                            }else{
-                                return response()->json("Barcode Number '.$barcode.' already scanned for released. ", 400);
-                            }
-                        } else {
-                            return response()->json("Barcode Number '.$barcode.' already released.", 400);
-                        }
-                    } else {
-                        return response()->json("Barcode Number '.$barcode.' not found in this location.", 400);
-                    }
-                } else {
-                    return response()->json("Please scan only .. denomination.", 400);
+        if ($gctotal > $remainGc) {
+            return response()->json('Number of GC Scanned has reached the maximum number to received.', 400);
+        } else {
+            foreach (range($bstart, $bend) as $bc) {
+                if (Gc::where('barcode_no', $bc)->doesntExist()) {
+                    return response()->json("Barcode Number {$bc} not found.", 400);
                 }
-            } else {
-                return response()->json("Barcode Number {$barcode} not found.", 400);
+
+                $locationCheck = GcLocation::whereHas('gc', fn($q) => $q->has('denomination')->where('denom_id', $denid))
+                    ->where([['loc_store_id', $request->store_id], ['loc_barcode_no', $bc]])
+                    ->doesntExist();
+
+                if ($locationCheck) {
+                    return response()->json("Barcode Number {$bc} not found in this location.", 400);
+                }
+
+                if (GcRelease::where('re_barcode_no', $bc)->exists()) {
+                    return response()->json("Barcode Number {$bc} already released.", 400);
+                }
+
+                if (TempRelease::where('temp_rbarcode', $bc)->exists()) {
+                    return response()->json("Barcode Number {$bc} already scanned for released. ", 400);
+                } else {
+                    TempRelease::create([
+                        'temp_rbarcode' => $bc,
+                        'temp_rdenom' => $denid,
+                        'temp_rdate' => now(),
+                        'temp_relno' => $request->relid,
+                        'temp_relby' => $request->user()->user_id
+                    ]);
+
+                }
+
+
             }
 
-        } else {
-            return response()->json('Number of GC Scanned has reached the maximum number to received.', 400);
+            return response()->json("GC Barcode #{$bstart} to {$bend} successfully validated.");
         }
+
+
     }
 }
 
-// $query = $link->query(
-// 									"INSERT INTO 
-// 										`temp_release`
-// 									(
-// 									    `temp_rbarcode`, 
-// 									    `temp_rdenom`, 
-// 									    `temp_rdate`, 
-// 									    `temp_relno`,
-// 									    `temp_relby`
-// 									) 
-// 									VALUES 
-// 									(
-// 									    '$barcode',
-// 									    '$denid',
-// 									    NOW(),
-// 									    '$rel_no',
-// 									    '".$_SESSION['gc_id']."'
-// 									)
-// 								");
-
-// 								if($query)
-// 								{								
-// 									$response['stat'] = 1;
-// 									$response['msg'] = $barcode;
-// 									// $response['msg'] = 'Barcode Number '.$barcode.' successfully scanned for release.';
-// 								}
-// 								else
-// 								{
-// 									$response['stat'] = 0;
-// 									$response['msg'] = $link->query;
-// 								}

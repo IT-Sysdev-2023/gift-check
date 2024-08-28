@@ -114,6 +114,7 @@ export default {
         async confirm(record) {
             if(record.sgc_status != '2'){
                 const {data} = await axios.get(route('treasury.store.gc.releasingEntry', record.sgc_id));
+                console.log(data);
                 this.modalData = data;
                 this.openModal = true;
             }else{
