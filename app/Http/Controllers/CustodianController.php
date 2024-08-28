@@ -104,25 +104,18 @@ class CustodianController extends Controller
 
         if ($exist->count() == 2 || $exist->exists()) {
 
-            if ($exist->where('spexgcemp_review', '*')->exists()) {
+            return inertia('Custodian/Result/GiftCheckGenerateResult', [
+                'record' =>  $this->custodianservices->getSpecialExternalGcRequest($request),
+            ]);
 
-                return inertia('Custodian/Result/GiftCheckGenerateResult', [
-                    'record' =>  $this->custodianservices->getSpecialExternalGcRequest($request),
-                ]);
-            } else {
-
-                return back()->with([
-                    'status' => 'error',
-                    'msg' => 'Requisition is not yet approved by IAD',
-                    'title' => 'Error',
-                ]);
-            }
         } else {
+
             return back()->with([
                 'status' => 'error',
                 'msg' => 'Ops Barcode Not Found',
                 'title' => 'Error',
             ]);
+
         }
     }
 }

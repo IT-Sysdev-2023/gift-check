@@ -93,7 +93,7 @@ Route::prefix('marketing')->group(function () {
     Route::name('marketing.')->group(function () {
         Route::name('promo.gc.')->group(function () {
             Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
-            Route::post('', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
+            Route::post('submit-promo-gc-request', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
         });
         Route::name('addPromo.')->group(function () {
             Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
@@ -307,6 +307,12 @@ Route::prefix('retail')->group(function () {
             Route::post('remove-temporary', [RetailController::class, 'removeTemporary'])->name('remove');
             Route::post('submit-entry', [RetailController::class, 'submitEntry'])->name('submit');
         });
+
+        Route::name('verification.')->group(function () {
+            Route::get('verification-index', [RetailController::class, 'verificationIndex'])->name('index');
+            Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
+        });
+
     });
 });
 
@@ -358,6 +364,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('search')->group(function () {
     Route::name('search.')->group(function () {
         Route::get('check-by', [QueryFilterController::class, 'getCheckBy'])->name('checkBy');
+        Route::get('search-customer', [QueryFilterController::class, 'customer'])->name('customer');
     });
 });
 Route::prefix('management')->group(function () {

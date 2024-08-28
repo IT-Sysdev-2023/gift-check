@@ -8,6 +8,7 @@ use App\Models\LedgerCheck;
 use App\Models\LedgerStore;
 use App\Models\StoreReceived;
 use App\Models\StoreReceivedGc;
+use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
 use Illuminate\Support\Facades\DB;
 
@@ -107,5 +108,48 @@ class RetailDbServices
         ApprovedGcrequest::where('agcr_request_relnum', $request->relnum)->update(['agcr_rec' => '1']);
 
         return $this;
+    }
+
+    public function storeInStoreVerification($request, $data)
+    {
+        StoreVerification::create([
+            'vs_barcode' => $request->barcode,
+            'vs_cn' => $request->custid,
+            'vs_by' => $request->user()->user_id,
+            'vs_date' => today(),
+            'vs_time' => now()->format('H:i:s'),
+            'vs_tf' => $request->barcode . $data['tfilext'],
+            'vs_store' => $request->user()->store_assigned,
+            'vs_tf_balance' => $data['denom'],
+            'vs_gctype' => $data['gctype'],
+            'vs_tf_denomination' => $data['denom'],
+            'vs_payto' => $request->payment,
+        ]);
+    }
+
+    public function updateRevalidation($request)
+    {
+        StoreVerification::where('vs_barcode', $request->barcode)->update([
+            'vs_reverifydate' => now(),
+            'vs_reverifyby' => $request->user()->user_id,
+            'vs_tf_eod' => ''
+        ]);
+    }
+    public function createtextfile($request, $data)
+    {
+
+        $filePath = storage_path('app/public/cfstextfiles/'. $request->barcode . $data['tfilext']);
+
+        $content = "000," .$request->customer.",0," .$data['customer']->full_name."\n";
+        $content .= "001,".$data['denom']."\n";
+        $content .= "002,0\n";
+        $content .= "003,0\n";
+        $content .= "004,".$data['denom']."\n";
+        $content .= "005,0\n";
+        $content .= "006,0\n";
+        $content .= "007,0\n";
+
+        file_put_contents($filePath, $content);
+
     }
 }
