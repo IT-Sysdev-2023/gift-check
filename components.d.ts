@@ -51,6 +51,7 @@ declare module 'vue' {
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
     AModal: typeof import('ant-design-vue/es')['Modal']
     AndroidOutlined: typeof import('@ant-design/icons-vue')['AndroidOutlined']
+    AntDescItem: typeof import('./resources/js/Components/AntDescItem.vue')['default']
     AntDescriptionItem: typeof import('./resources/js/Components/AntDescriptionItem.vue')['default']
     AntFloat: typeof import('./resources/js/Components/Treasury/AntFloat.vue')['default']
     AntFormInline: typeof import('./resources/js/Components/Treasury/AntFormInline.vue')['default']
