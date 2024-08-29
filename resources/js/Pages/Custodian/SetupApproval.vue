@@ -61,7 +61,7 @@
                             </p>
                         </a-col>
                         <a-col :span="12">
-                            <a-card v-if="record.docs.doc_fullpath != null">
+                            <a-card v-if="record.docs?.doc_fullpath != null">
                                 <a-image width="100" style="border-radius: 10px;"
                                     :src="'/storage/' + record.docs.doc_fullpath" alt="image" :preview="true" />
                             </a-card>
