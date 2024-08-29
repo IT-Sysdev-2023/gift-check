@@ -159,18 +159,19 @@ class StoreGcRequestService
 
 		//reqid = unique request id,
 		//remainGc = quantity sa denomination
-		//denid = id sa kara denomination like 500 is 3 and 1000 is 5
+		//denid = id sa kara denomination like 500 is 3 and 2000 is 5
 
 		$responses = [];
 
+		//If Range Mode
 		if ($request->scanMode) {
-			foreach (range($request->bstart, $request->bend) as $bc) {
-				$responses[] = $this->validateBarcode($request, $remainGc, $bc, $sessionName);
+			foreach (range($bstart, $bend) as $barcode) {
+				$responses[] = $this->validateBarcode($request, $remainGc, $barcode, $sessionName);
 			}
 		} else {
-			$responses[] = $this->validateBarcode($request, $remainGc, $request->barcode, $sessionName);
+			$responses[] = $this->validateBarcode($request, $remainGc, $barcode, $sessionName);
 		}
-		// Return all responses
+		//get updated array of the session
 		$sessionData = $request->session()->get($sessionName);
 
 		return response()->json(['barcodes' => $responses, 'sessionData' => $sessionData]);
@@ -188,10 +189,7 @@ class StoreGcRequestService
 
 		// $scannedGc = TempRelease::where([['temp_relno', $relno], ['temp_rdenom', $denid]])->count();
 		if ($remainGc->sri_items_remain > $scannedGcSession) {
-			// dd(range($bstart, $bend));
-			//If Range Mode
-
-
+	
 			// Check Barcode existence
 			$whereBarcode = Gc::where('barcode_no', $barcode);
 

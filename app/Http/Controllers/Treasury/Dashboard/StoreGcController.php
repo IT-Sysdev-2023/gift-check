@@ -247,7 +247,7 @@ class StoreGcController extends Controller
         $data = GcLocation::select('loc_barcode_no', 'loc_gc_type')->with('gc:gc_id,denom_id,barcode_no,pe_entry_gc', 'gc.denomination:denom_id,denomination')
             ->where([['loc_store_id', $id], ['loc_rel', '']])
             ->filter($request)
-            ->paginate(10)
+            ->paginate(8)
             ->withQueryString();
 
         return response()->json($data);

@@ -121,9 +121,7 @@
                             ...On Development
                         </a-descriptions-item>
                     </a-descriptions>
-                    <a-button @click="viewAllocatedGc"
-                        >View Allocated GC</a-button
-                    >
+
                     <a-table
                         bordered
                         class="mt-8"
@@ -184,20 +182,19 @@
                             </a-table-summary-row>
                         </template>
                     </a-table>
+
+                    <div class="mb-8 pt-5 text-right space-x-5">
+                        <a-button @click="viewAllocatedGc" type="primary" ghost
+                            >View Allocated GC</a-button
+                        >
+                        <a-button @click="viewAllocatedGc" type="dashed"
+                            >View Scanned Gc</a-button
+                        >
+                    </div>
                     <pagination-axios
                         :datarecords="denominationTableData"
                         @on-pagination="onChangeDenominationPagination"
                     />
-                    <a-space class="mt-5">
-                        <a-button
-                            type="primary"
-                            @click="() => (scanRangeModal = true)"
-                            >Scan Range</a-button
-                        >
-                        <a-button @click="viewAllocatedGc"
-                            >View Scanned Gc</a-button
-                        >
-                    </a-space>
                 </a-card>
             </a-col>
         </a-row>
@@ -211,7 +208,7 @@
         centered
         :footer="null"
     >
-        <div>
+        <div class="mb-8 text-right">
             <a-input-search
                 class="mr-1"
                 v-model:value="searchValue"
@@ -227,16 +224,37 @@
             :data-source="allocatedGcData.data"
         >
             <template #bodyCell="{ column, record }">
+                <template v-if="column.dataIndex">
+                    <span
+                        v-html="
+                            highlightText(record[column.dataIndex], searchValue)
+                        "
+                    >
+                    </span>
+                </template>
                 <template v-if="column.key == 'pro'">
-                    {{ record.gc.pe_entry_gc }}</template
-                >
+                    <span
+                        v-html="
+                            highlightText(record.gc.pe_entry_gc, searchValue)
+                        "
+                    >
+                    </span
+                ></template>
                 <template v-if="column.key == 'type'">
                     {{
                         record.loc_gc_type == 1 ? "Regular" : "Special"
                     }}</template
                 >
                 <template v-if="column.key == 'denom'">
-                    {{ record.gc.denomination.denomination }}
+                    <span
+                        v-html="
+                            highlightText(
+                                record.gc.denomination.denomination,
+                                searchValue
+                            )
+                        "
+                    >
+                    </span>
                 </template>
             </template>
         </a-table>
@@ -349,48 +367,6 @@
             </a-row>
         </a-form>
     </a-modal>
-
-    <!-- Scan Range Modal -->
-    <a-modal
-        v-model:open="scanRangeModal"
-        title="Scan Range Barcode"
-        style="width: 600px"
-        centered
-        @ok="onSubmitRangeBarcode"
-    >
-        <a-form :model="formRangeBc" layout="vertical">
-            <a-row :gutter="[16, 0]" class="mt-8">
-                <a-col :span="12"
-                    ><a-form-item
-                        label="Barcode Start"
-                        :validate-status="errorBarcode ? 'error' : ''"
-                        :help="errorBarcode"
-                    >
-                        <a-input-number
-                            :maxlength="13"
-                            v-model:value="formRangeBc.startBarcode"
-                            style="width: 100%"
-                            @input="() => (errorBarcode = null)"
-                        />
-                    </a-form-item>
-                </a-col>
-                <a-col :span="12">
-                    <a-form-item
-                        label="Barcode End"
-                        :validate-status="errorBarcode ? 'error' : ''"
-                        :help="errorBarcode"
-                    >
-                        <a-input-number
-                            :maxlength="13"
-                            v-model:value="formRangeBc.endBarcode"
-                            style="width: 100%"
-                            @input="() => (errorBarcode = null)"
-                        />
-                    </a-form-item>
-                </a-col>
-            </a-row>
-        </a-form>
-    </a-modal>
 </template>
 
 <script lang="ts" setup>
@@ -401,7 +377,9 @@ import { PageWithSharedProps } from "@/types";
 import { notification } from "ant-design-vue";
 import axios from "axios";
 import type { UploadChangeParam } from "ant-design-vue";
+import { highlighten } from "@/Mixin/UiUtilities";
 
+const { highlightText } = highlighten();
 const props = defineProps<{
     open: boolean;
     data: { rel_num: number; details: any; checkBy: any; rgc: any };
@@ -422,10 +400,6 @@ const formBc = reactive({
     barcode: null,
     startBarcode: null,
     endBarcode: null,
-});
-const formRangeBc = reactive({
-    startBarcode: 0,
-    endBarcode: 0,
 });
 const searchValue = ref<string>("");
 
@@ -467,7 +441,6 @@ const denominationTableData = ref(props.data.rgc);
 const allocatedGcData = ref(null);
 const scanSingleData = ref(null);
 const scanModal = ref(false);
-const scanRangeModal = ref(false);
 const allocatedModal = ref(false);
 const errorBarcode = ref(null);
 const page = usePage<PageWithSharedProps>().props;
@@ -530,36 +503,6 @@ const onSubmitBarcode = async () => {
         });
 };
 
-const onSubmitRangeBarcode = async () => {
-    const store = props.data.details.store.store_id;
-    const relid = props.data.rel_num;
-    const reqid = props.data.details.sgc_id;
-
-    axios
-        .post(route("treasury.store.gc.scanRangeBarcode"), {
-            bstart: formRangeBc.startBarcode,
-            bend: formRangeBc.endBarcode,
-            relid: relid,
-            store_id: store,
-            reqid: reqid,
-        })
-        .then((res) => {
-            notification.success({
-                message: "Scan Success",
-                description: "successfully scanned!",
-            });
-        })
-        .catch((err) => {
-            if (err.response.status === 400) {
-                notification.error({
-                    message: "Scan Failed",
-                    description: err.response.data,
-                });
-            } else {
-                errorBarcode.value = err.response.data.message;
-            }
-        });
-};
 const onChangePagination = async (link) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
