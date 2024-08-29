@@ -470,5 +470,13 @@ class FinanceController extends Controller
         ]);
     }
 
+    public function budgetPendingIndex()
+    {
+        return inertia('Finance/PendingBudgetRequest', [
+            'record' => $this->financeService->pendingBudgetGc(),
+            'columns' => ColumnHelper::$pending_budget_request_columns,
+        ]);
+    }
+
 
 }

@@ -229,6 +229,11 @@ class CustodianServices
             ->where('spexgc_id', $request->id)
             ->first();
 
+
+        if($special){
+            $special->image = $special->approvedRequest->reqap_doc;
+        }
+
         if ($special) {
             if ($special->spexgc_paymentype == '1') {
                 $special->paymentStatus = 'Cash';

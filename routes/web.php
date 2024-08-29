@@ -277,6 +277,11 @@ Route::prefix('finance')->group(function () {
         Route::name('approvedGc.')->group(function () {
             Route::get('approved-special-gc', [FinanceController::class, 'approvedGc'])->name('approved');
         });
+
+        Route::name('budget.')->group(function () {
+            Route::get('budget-pending', [FinanceController::class, 'budgetPendingIndex'])->name('pending');
+        });
+
     });
 
     Route::get('/download/{filename}', function ($filename) {
