@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Treasury\Dashboard;
 
+use App\Helpers\ArrayHelper;
+use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovedGcRequestResource;
 use App\Models\ApprovedGcrequest;
@@ -9,7 +11,7 @@ use App\Models\Assignatory;
 use App\Models\GcRelease;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
-use App\Models\TempRelease;
+use Illuminate\Support\Number;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\Denomination;
@@ -256,77 +258,34 @@ class StoreGcController extends Controller
 
     public function scanBarcode(Request $request)
     {
-       return $this->storeGcRequestService->scanBarcode($request);
+        return $this->storeGcRequestService->scanBarcode($request);
     }
 
-    public function scanRangeBarcode(Request $request)
+    public function viewScannedBarcode(Request $request)
     {
-        $request->validate([
-            'bstart' => 'required',
-            'bend' => 'required',
-            'relid' => 'required',
-            'store_id' => 'required',
-            'reqid' => 'required',
-        ]);
-        $bend = $request->bend;
-        $bstart = $request->bstart;
+        $scannedBc = collect($request->session()->get('scanReviewGC', []));
 
-        $gcTotal = $bend - $bstart + 1;
+        $newArr = collect();
+        $scannedBc->each(function ($item) use (&$newArr) {
 
-        dd($gcTotal);
+            $gc = Gc::where('barcode_no', $item['barcode'])->first(['pe_entry_gc'])->pe_entry_gc;
+            $gcLocation = GcLocation::where('loc_barcode_no', $item['barcode'])->first('loc_gc_type')->loc_gc_type;
+            $denomination = Denomination::where('denom_id', $item['denid'])->first('denomination')->denomination;
 
-        $denid = Gc::where('barcode_no', $bstart)->first('denom_id')->denom_id;
+            $type = $gcLocation == 1 ? 'Regular' : 'Special';
 
-        $remainGc = StoreRequestItem::where([['sri_items_denomination', $denid], ['sri_items_requestid', $request->reqid]])
-            ->first('sri_items_remain')->sri_items_remain;
+            $newArr[] = [
+                'barcode' => $item['barcode'],
+                'pro' => $gc,
+                'denomination' => NumberHelper::currency($denomination),
+                'type' => $type
+            ];
+        });
 
-        $scannedGc = TempRelease::where([['temp_relno', $request->relid], ['temp_rdenom', $denid]])
-            ->count();
-
-        $gctotal = $gcTotal + $scannedGc;
-
-        $nums = 0;
-
-        if ($gctotal > $remainGc) {
-            return response()->json('Number of GC Scanned has reached the maximum number to received.', 400);
-        } else {
-            foreach (range($bstart, $bend) as $bc) {
-                if (Gc::where('barcode_no', $bc)->doesntExist()) {
-                    return response()->json("Barcode Number {$bc} not found.", 400);
-                }
-
-                $locationCheck = GcLocation::whereHas('gc', fn($q) => $q->has('denomination')->where('denom_id', $denid))
-                    ->where([['loc_store_id', $request->store_id], ['loc_barcode_no', $bc]])
-                    ->doesntExist();
-
-                if ($locationCheck) {
-                    return response()->json("Barcode Number {$bc} not found in this location.", 400);
-                }
-
-                if (GcRelease::where('re_barcode_no', $bc)->exists()) {
-                    return response()->json("Barcode Number {$bc} already released.", 400);
-                }
-
-                if (TempRelease::where('temp_rbarcode', $bc)->exists()) {
-                    return response()->json("Barcode Number {$bc} already scanned for released. ", 400);
-                } else {
-                    TempRelease::create([
-                        'temp_rbarcode' => $bc,
-                        'temp_rdenom' => $denid,
-                        'temp_rdate' => now(),
-                        'temp_relno' => $request->relid,
-                        'temp_relby' => $request->user()->user_id
-                    ]);
-
-                }
-
-
-            }
-
-            return response()->json("GC Barcode #{$bstart} to {$bend} successfully validated.");
-        }
-
-
+        // dd(ArrayHelper::paginate($newArr, 2));
+        return response()->json(ArrayHelper::paginate($newArr, 2));
     }
+
+
 }
 

@@ -194,8 +194,8 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('releasing-entry-{id}', [StoreGcController::class, 'viewReleasingEntry'])->name('releasingEntry');
                 Route::get('view-allocated-gc-{id}', [StoreGcController::class, 'viewAllocatedList'])->name('viewAllocatedList');
-                Route::post('scan-single-barcode', [StoreGcController::class, 'scanBarcode'])->name('scanSingleBarcode');
-                Route::post('scan-range-barcode', [StoreGcController::class, 'scanRangeBarcode'])->name('scanRangeBarcode');
+                Route::post('scan-barcode', [StoreGcController::class, 'scanBarcode'])->name('scanBarcode');
+                Route::get('view-scanned-barcode', [StoreGcController::class, 'viewScannedBarcode'])->name('viewScannedBarcode');
             });
             Route::prefix('gc-production-request')->name('production.request.')->group(function () {
                 Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');

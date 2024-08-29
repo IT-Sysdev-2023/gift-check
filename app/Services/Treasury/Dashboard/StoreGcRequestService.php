@@ -213,7 +213,7 @@ class StoreGcRequestService
 								$request->session()->push($sessionName, [
 									'barcode' => $barcode,
 									'denid' => $denid,
-									'created_at' => now(),
+									'created_at' => today()->format('Y-d-m'),
 									'reqid' => $reqid,
 									'temp_relby' => $request->user()->user_id
 								]);
@@ -301,4 +301,74 @@ class StoreGcRequestService
 		];
 		return $types[$rt] ?? null;
 	}
+
+	// public function scanRangeBarcode(Request $request)
+    // {
+    //     $request->validate([
+    //         'bstart' => 'required',
+    //         'bend' => 'required',
+    //         'relid' => 'required',
+    //         'store_id' => 'required',
+    //         'reqid' => 'required',
+    //     ]);
+    //     $bend = $request->bend;
+    //     $bstart = $request->bstart;
+
+    //     $gcTotal = $bend - $bstart + 1;
+
+    //     dd($gcTotal);
+
+    //     $denid = Gc::where('barcode_no', $bstart)->first('denom_id')->denom_id;
+
+    //     $remainGc = StoreRequestItem::where([['sri_items_denomination', $denid], ['sri_items_requestid', $request->reqid]])
+    //         ->first('sri_items_remain')->sri_items_remain;
+
+    //     $scannedGc = TempRelease::where([['temp_relno', $request->relid], ['temp_rdenom', $denid]])
+    //         ->count();
+
+    //     $gctotal = $gcTotal + $scannedGc;
+
+    //     $nums = 0;
+
+    //     if ($gctotal > $remainGc) {
+    //         return response()->json('Number of GC Scanned has reached the maximum number to received.', 400);
+    //     } else {
+    //         foreach (range($bstart, $bend) as $bc) {
+    //             if (Gc::where('barcode_no', $bc)->doesntExist()) {
+    //                 return response()->json("Barcode Number {$bc} not found.", 400);
+    //             }
+
+    //             $locationCheck = GcLocation::whereHas('gc', fn($q) => $q->has('denomination')->where('denom_id', $denid))
+    //                 ->where([['loc_store_id', $request->store_id], ['loc_barcode_no', $bc]])
+    //                 ->doesntExist();
+
+    //             if ($locationCheck) {
+    //                 return response()->json("Barcode Number {$bc} not found in this location.", 400);
+    //             }
+
+    //             if (GcRelease::where('re_barcode_no', $bc)->exists()) {
+    //                 return response()->json("Barcode Number {$bc} already released.", 400);
+    //             }
+
+    //             if (TempRelease::where('temp_rbarcode', $bc)->exists()) {
+    //                 return response()->json("Barcode Number {$bc} already scanned for released. ", 400);
+    //             } else {
+    //                 TempRelease::create([
+    //                     'temp_rbarcode' => $bc,
+    //                     'temp_rdenom' => $denid,
+    //                     'temp_rdate' => now(),
+    //                     'temp_relno' => $request->relid,
+    //                     'temp_relby' => $request->user()->user_id
+    //                 ]);
+
+    //             }
+
+
+    //         }
+
+    //         return response()->json("GC Barcode #{$bstart} to {$bend} successfully validated.");
+    //     }
+
+
+    // }
 }

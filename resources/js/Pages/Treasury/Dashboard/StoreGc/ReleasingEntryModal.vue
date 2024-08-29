@@ -187,7 +187,7 @@
                         <a-button @click="viewAllocatedGc" type="primary" ghost
                             >View Allocated GC</a-button
                         >
-                        <a-button @click="viewAllocatedGc" type="dashed"
+                        <a-button @click="viewScannedGc" type="dashed"
                             >View Scanned Gc</a-button
                         >
                     </div>
@@ -367,6 +367,45 @@
             </a-row>
         </a-form>
     </a-modal>
+
+    <!-- View Scanned Gc -->
+    <a-modal
+        v-model:open="viewScannedModal"
+        title="Scanned Gc"
+        style="width: 800px"
+        centered
+        :footer="null"
+    >
+        <a-table
+            bordered
+            size="small"
+            :pagination="false"
+            :columns="[
+                {
+                    title: 'Barcode #',
+                    dataIndex: 'barcode',
+                },
+                {
+                    title: 'Pro. No.',
+                    dataIndex: 'pro',
+                },
+                {
+                    title: 'Type',
+                    dataIndex: 'type',
+                },
+                {
+                    title: 'Denomination',
+                    dataIndex: 'denomination',
+                },
+            ]"
+            :data-source="scannedGcData?.data"
+        >
+        </a-table>
+        <pagination-axios
+            :datarecords="scannedGcData"
+            @on-pagination="onScannedPagination"
+        />
+    </a-modal>
 </template>
 
 <script lang="ts" setup>
@@ -380,14 +419,18 @@ import type { UploadChangeParam } from "ant-design-vue";
 import { highlighten } from "@/Mixin/UiUtilities";
 
 const { highlightText } = highlighten();
+
+//Props
 const props = defineProps<{
     open: boolean;
     data: { rel_num: number; details: any; checkBy: any; rgc: any };
 }>();
+const page = usePage<PageWithSharedProps>().props;
 const emit = defineEmits<{
     (e: "update:open", value: boolean): void;
 }>();
 
+//Data/Variables
 const formState = useForm({
     file: null,
     remarks: "",
@@ -401,8 +444,6 @@ const formBc = reactive({
     startBarcode: null,
     endBarcode: null,
 });
-const searchValue = ref<string>("");
-
 const paymentType = [
     {
         value: "cash",
@@ -417,7 +458,6 @@ const paymentType = [
         label: "JV",
     },
 ];
-
 const allocatedGcColumn = [
     {
         title: "Barcode #.",
@@ -436,33 +476,39 @@ const allocatedGcColumn = [
         key: "denom",
     },
 ];
+const today = dayjs().format("YYYY-MMM-DD HH:mm:ss a");
+const searchValue = ref<string>("");
 const scanSwitch = ref(false);
 const denominationTableData = ref(props.data.rgc);
 const allocatedGcData = ref(null);
 const scanSingleData = ref(null);
 const scanModal = ref(false);
 const allocatedModal = ref(false);
+const viewScannedModal = ref(false);
 const errorBarcode = ref(null);
-const page = usePage<PageWithSharedProps>().props;
+const scannedGcData = ref(null);
 
-const filterSearch = async () => {
+//Computed
+const totals = computed(() => {
+    let totalBorrow = 0;
+
+    props.data.rgc.data.forEach(({ subtotal }) => {
+        totalBorrow += subtotal;
+    });
+    return totalBorrow;
+});
+
+//Methods
+const viewScannedGc = async () => {
     const { data } = await axios.get(
-        route(
-            "treasury.store.gc.viewAllocatedList",
-            props.data.details.sgc_store
-        ),
-        {
-            params: {
-                search: searchValue.value,
-            },
-        }
+        route("treasury.store.gc.viewScannedBarcode")
     );
-    allocatedGcData.value = data;
+    scannedGcData.value = data;
+    viewScannedModal.value = true;
 };
-
 const onSubmitBarcode = async () => {
     axios
-        .post(route("treasury.store.gc.scanSingleBarcode"), {
+        .post(route("treasury.store.gc.scanBarcode"), {
             scanMode: scanSwitch.value,
             bstart: formBc.startBarcode,
             bend: formBc.endBarcode,
@@ -502,11 +548,22 @@ const onSubmitBarcode = async () => {
             }
         });
 };
-
 const onChangePagination = async (link) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
         allocatedGcData.value = data;
+    }
+};
+const onScannedPagination = async (link) => {
+    if (link.url) {
+        const { data } = await axios.get(
+            `${window.location.origin}/treasury/store-gc/view-scanned-barcode${link.url}`
+        );
+        //to handle single record in table pagination
+        if (data && !Array.isArray(data.data)) {
+            data.data = [Object.values(data.data)[0]];
+        }
+        scannedGcData.value = data;
     }
 };
 const onChangeDenominationPagination = async (link) => {
@@ -522,14 +579,6 @@ const handleScanModal = (record) => {
     scanSingleData.value = record;
     scanModal.value = true;
 };
-const totals = computed(() => {
-    let totalBorrow = 0;
-
-    props.data.rgc.data.forEach(({ subtotal }) => {
-        totalBorrow += subtotal;
-    });
-    return totalBorrow;
-});
 const countScannedBc = (record) => {
     return page.barcodeReviewScan?.allocation?.filter((item) => {
         return (
@@ -538,7 +587,6 @@ const countScannedBc = (record) => {
         );
     }).length;
 };
-
 const viewAllocatedGc = async () => {
     const { data } = await axios.get(
         route(
@@ -549,18 +597,27 @@ const viewAllocatedGc = async () => {
     allocatedGcData.value = data;
     allocatedModal.value = true;
 };
-const handPaymentType = (value: string) => {
-    formState.paymentType = value;
-};
-
-const handleCheckedBy = (value) => {
-    formState.checkedBy = value;
-};
+const handPaymentType = (value: string) => (formState.paymentType = value);
+const handleCheckedBy = (value) => (formState.checkedBy = value);
 const handleDocumentChange = (file: UploadChangeParam) => {
     formState.file = file.file;
 };
-const today = dayjs().format("YYYY-MMM-DD HH:mm:ss a");
+const filterSearch = async () => {
+    const { data } = await axios.get(
+        route(
+            "treasury.store.gc.viewAllocatedList",
+            props.data.details.sgc_store
+        ),
+        {
+            params: {
+                search: searchValue.value,
+            },
+        }
+    );
+    allocatedGcData.value = data;
+};
 
+//Watchers
 watch(
     () => props.data.rgc,
     (newValue) => {
