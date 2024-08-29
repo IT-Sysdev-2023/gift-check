@@ -88,6 +88,7 @@ declare module 'vue' {
     AscTech: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/AscTech.vue')['default']
     ASelect: typeof import('ant-design-vue/es')['Select']
     ASelectOption: typeof import('ant-design-vue/es')['SelectOption']
+    ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
     ASpace: typeof import('ant-design-vue/es')['Space']
     ASpin: typeof import('ant-design-vue/es')['Spin']
     AssignCustomerEmployeeGc: typeof import('./resources/js/Pages/Custodian/Drawer/AssignCustomerEmployeeGc.vue')['default']
