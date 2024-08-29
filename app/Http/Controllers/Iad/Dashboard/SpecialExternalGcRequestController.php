@@ -32,7 +32,7 @@ class SpecialExternalGcRequestController extends Controller
         ]);
     }
 
-    public function viewApprovedGcRecord(SpecialExternalGcrequest $id)
+    public function viewApprovedGcRecord(Request $request,SpecialExternalGcrequest $id)
     {
 
         $gcHolder = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid',$id->spexgc_id)->get();
