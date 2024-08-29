@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
 use App\Helpers\GetVerifiedGc;
+use App\Helpers\NumberHelper;
 use App\Http\Resources\PromoResource;
 use App\Models\ApprovedGcrequest;
 use App\Models\ApprovedProductionRequest;
@@ -92,12 +93,12 @@ class MarketingController extends Controller
     }
 
     public function index(Request $request)
-    {   
+    {
 
-        $promoGcRequest =[
-            'pendingRequest' =>$pendingPromoGcRequest = PromoGcRequest::where('pgcreq_status','pending')->count(),
-            'approvedRequest' =>$pendingPromoGcRequest = PromoGcRequest::where('pgcreq_status','approved')->count(),
-            'cancelledRequest' =>$pendingPromoGcRequest = PromoGcRequest::where('pgcreq_status','cancel')->count(),
+        $promoGcRequest = [
+            'pendingRequest' => $pendingPromoGcRequest = PromoGcRequest::where('pgcreq_status', 'pending')->count(),
+            'approvedRequest' => $pendingPromoGcRequest = PromoGcRequest::where('pgcreq_status', 'approved')->count(),
+            'cancelledRequest' => $pendingPromoGcRequest = PromoGcRequest::where('pgcreq_status', 'cancel')->count(),
         ];
 
 
@@ -112,7 +113,7 @@ class MarketingController extends Controller
 
         $supplier = Supplier::all();
 
-        $checkedBy = Assignatory::where('assig_dept', auth()->user()->usertype)
+        $checkedBy = Assignatory::where('assig_dept', $request->user()->usertype)
             ->orWhere('assig_dept', 1)
             ->get();
 
@@ -159,7 +160,7 @@ class MarketingController extends Controller
     }
     public function promoList(Request $request)
     {
-        $tag = auth()->user()->promo_tag;
+        $tag = $request->user()->promo_tag;
         $data = Promo::with('user:user_id,firstname,lastname,promo_tag')->filter($request->only('search'))
             ->where('promo.promo_tag', $tag)
             ->orderByDesc('promo.promo_id')
@@ -190,9 +191,13 @@ class MarketingController extends Controller
         ]);
     }
 
-    public function promogcrequest()
+    public function promogcrequest(Request $request)
     {
-        $tag = auth()->user()->promo_tag;
+        $tag = $request->user()->promo_tag;
+
+        $denom = Denomination::where('denom_type', 'RSGC')
+            ->where('denom_status', 'active')->get();
+        $denomCol = ColumnHelper::denomCols();
 
         $pgcreq_reqnum = PromoGcRequest::select('pgcreq_reqnum')
             ->where('pgcreq_tagged', '=', $tag)
@@ -205,6 +210,8 @@ class MarketingController extends Controller
 
         return Inertia::render('Marketing/PromoGcRequest', [
             'rfprom_number' => $rfprom_number,
+            'denomination' => $denom,
+            'denomCol' => $denomCol
         ]);
     }
 
@@ -216,7 +223,7 @@ class MarketingController extends Controller
     {
 
 
-        $tag = auth()->user()->promo_tag;
+        $tag = $request->user()->promo_tag;
 
         $query = Gc::join('denomination', 'gc.denom_id', '=', 'denomination.denom_id')
             ->leftJoin('promo_gc_release_to_items', 'prreltoi_barcode', '=', 'barcode_no')
@@ -736,58 +743,72 @@ class MarketingController extends Controller
 
     public function submitPromoGcRequest(Request $request)
     {
-
-        $promoTag = auth()->user()->promo_tag;
-
-        DB::transaction(function () use ($promoTag, $request) {
-            $fileName = [];
-            if ($request->has('fileList') && is_array($request->file('fileList'))) {
-                foreach ($request->file('fileList') as $file) {
-
-                    if ($file) {
-
-                        $fileName = $file['originFileObj']->getClientOriginalName();
-
-                        $file['originFileObj']->move(public_path() . '/uploads/', $fileName);
-                    }
-                }
-            }
-
-            $promoGC = PromoGcRequest::create([
-                'pgcreq_reqnum' => $request->rfprom_number,
-                'pgcreq_reqby' => $request->requestBy,
-                'pgcreq_datereq' => $request->dateR,
-                'pgcreq_dateneeded' => $request->dateN,
-                'pgcreq_status' => 'pending',
-                'pgcreq_remarks' => $request->remarks,
-                'pgcreq_total' => $request->totalDenom,
-                'pgcreq_group' => $request->groups,
-                'pgcreq_tagged' => $promoTag,
-                'pgcreq_doc' => $fileName,
+        if (is_null($request->data['remarks']) || $request->total== 0) {
+            return back()->with([
+                'msg' => "Select",
+                'description' => "Please fill all required fields",
+                'type' => "error",
             ]);
+        } else {
+            $totalrequest = str_replace(',', '', $request->total);
 
-            $keys = range(1, count($request->quantities));
-            $quantityKeys = array_combine($keys, $request->quantities);
+            $num = PromoGcRequest::select('pgcreq_reqnum')->where('pgcreq_tagged', $request->user()->promo_tag)->orderByDesc('pgcreq_reqnum')->first();
 
-            foreach ($quantityKeys as $key => $item) {
+            $relnum = is_null($num) ? 1 : $num->pgcreq_reqnum + 1;
 
-                $qtyItem = $item = '' ? 0 : intval($item);
+            $reqNum = sprintf("%03d", $relnum);
 
-                PromoGcRequestItem::create([
-                    'pgcreqi_trid' => $promoGC['pgcreq_id'],
-                    'pgcreqi_denom' => $key,
-                    'pgcreqi_qty' => $qtyItem,
-                    'pgcreqi_remaining' => $qtyItem,
-                ]);
+            $denomination = collect($request->data['quantities'])->filter(function ($item) {
+                return $item !== null;
+            });
+
+            if ($request->user()->user_id == '8') {
+                $group = $request->user()->usergroup;
+            } else {
+                $group = $request->data['group'];
             }
-        });
+
+            DB::transaction(function () use ($request, $reqNum, $group, $denomination, $totalrequest) {
+                $promo = PromoGcRequest::create([
+                    'pgcreq_reqnum' => $reqNum,
+                    'pgcreq_reqby' => $request->user()->user_id,
+                    'pgcreq_datereq' => now(),
+                    'pgcreq_dateneeded' => Date::parse($request->data['dateneeded'])->format('y-m-d'),
+                    'pgcreq_status' => 'pending',
+                    'pgcreq_remarks' => $request->data['remarks'],
+                    'pgcreq_total' => (float) $totalrequest,
+                    'pgcreq_group' => $group,
+                    'pgcreq_tagged' => $request->user()->promo_tag,
+                    'pgcreq_group_status' => '',
+                    'pgcreq_doc' => ''
+                ]);
+
+                $trid = is_null($promo->pgcreq_id) ? '1' : $promo->pgcreq_id;
+
+                foreach ($denomination as $key => $value) {
+                    PromoGcRequestItem::create([
+                        'pgcreqi_trid' => $trid,
+                        'pgcreqi_denom' => $key,
+                        'pgcreqi_qty' => $value,
+                        'pgcreqi_remaining' => $value
+                    ]);
+                }
+
+            });
+            return back()->with([
+                'msg' => "Success",
+                'description' => "Request Saved",
+                'type' => "success",
+            ]);
+        }
+
     }
 
     public function validateGc(Request $request)
     {
         $barcode = $request->barcode;
         $group = $request->group;
-        $tag = auth()->user()->promo_tag;
+        $tag = $request->user()->promo_tag;
         $promoid = $request->promoNo;
         $gctype = 1;
         $response = ['stat' => 0];
@@ -832,7 +853,7 @@ class MarketingController extends Controller
                     'tp_barcode' => $barcode,
                     'tp_den' => $denom,
                     'tp_promoid' => $promoid,
-                    'tp_by' => auth()->user()->id,
+                    'tp_by' => $request->user()->id,
                     'tp_gctype' => $gctype,
                 ]);
 
@@ -929,7 +950,7 @@ class MarketingController extends Controller
                     'tp_barcode' => $barcode,
                     'tp_den' => $denom[0]->denom_id,
                     'tp_promoid' => $request->promoId,
-                    'tp_by' => auth()->user()->user_id,
+                    'tp_by' => $request->user()->user_id,
                     'tp_gctype' => $request->gctype,
                 ]);
 
@@ -1021,14 +1042,14 @@ class MarketingController extends Controller
     public function newpromo(Request $request)
     {
 
-        $tempbarcodes = TempPromo::where('tp_by', auth()->user()->user_id)->get();
+        $tempbarcodes = TempPromo::where('tp_by', $request->user()->user_id)->get();
 
 
         $data = $request->data;
 
         $response = [];
         // $data = ($request->data);
-        $tag = auth()->user()->promo_tag;
+        $tag = $request->user()->promo_tag;
 
         $notes = $data['details'];
         $promoName = $data['promoName'];
@@ -1081,10 +1102,6 @@ class MarketingController extends Controller
 
     public function gcpromoreleased(Request $request)
     {
-
-
-
-
         $response = [];
         $barcode = $request->data['barcode'];
         $dateReleased = Date::parse($request->data['dateReleased'])->format('Y-m-d');
@@ -1229,7 +1246,7 @@ class MarketingController extends Controller
                         'cledger_type' => 'GCRA',
                         'cledger_desc' => 'GC Requisition Approved',
                         'cdebit_amt' => $reqtotal,
-                        'c_posted_by' => auth()->user()->user_id,
+                        'c_posted_by' => $request->user()->user_id,
                     ]);
 
                     $requisEntry = RequisitionEntry::create([
@@ -1240,7 +1257,7 @@ class MarketingController extends Controller
                         'requis_dept' => $request->data['department'],
                         'requis_rem' => $request->data['remarks'],
                         'repuis_pro_id' => $request->data['id'],
-                        'requis_req_by' => auth()->user()->user_id,
+                        'requis_req_by' => $request->user()->user_id,
                         'requis_checked' => $request->data['checkedBy'],
                         'requis_supplierid' => $request->data['selectedSupplierId'],
                         'requis_ledgeref' => $lnumber,
@@ -1317,7 +1334,7 @@ class MarketingController extends Controller
                                 'cpr_isrequis_cancel' => '1',
                                 'cpr_ldgerid' => $isInserted->bledger_id,
                                 'cpr_at' => now(),
-                                'cpr_by' => auth()->user()->user_id
+                                'cpr_by' => $request->user()->user_id
                             ]);
 
                             if ($cancelled) {
@@ -1355,7 +1372,7 @@ class MarketingController extends Controller
         $productionReqItems = self::productionRequest($data['id']);
 
 
-        $html = (new PdfServices)->getHtml($checkby,  $approveByFirstname ,$approveByLastname ,$dateRequest, $supplier,  $productionReqItems, $requestNo,  $dateNeed);
+        $html = (new PdfServices)->getHtml($checkby, $approveByFirstname, $approveByLastname, $dateRequest, $supplier, $productionReqItems, $requestNo, $dateNeed);
 
         // Create DOMPDF Options and configure them
         $options = new Options();
@@ -1392,7 +1409,7 @@ class MarketingController extends Controller
 
     public function pendingRequest(Request $request)
     {
-        $checkedBy = Assignatory::where('assig_dept', auth()->user()->usertype)
+        $checkedBy = Assignatory::where('assig_dept', $request->user()->usertype)
             ->orWhere('assig_dept', 1)
             ->get();
 
@@ -1510,7 +1527,7 @@ class MarketingController extends Controller
                         'ape_remarks' => $request->data['remarks'],
                         'ape_approved_at' => now(),
                         'ape_file_doc_no' => '',
-                        'ape_preparedby' => auth()->user()->user_id,
+                        'ape_preparedby' => $request->user()->user_id,
                         'ape_ledgernum' => $ledgerNumber
                     ]);
 
@@ -1551,7 +1568,7 @@ class MarketingController extends Controller
                     $insertCancel = CancelledProductionRequest::create([
                         'cpr_pro_id' => $prid,
                         'cpr_at' => now(),
-                        'cpr_by' => auth()->user()->user_id,
+                        'cpr_by' => $request->user()->user_id,
                         'cpr_isrequis_cancel' => '0',
                         'cpr_ldgerid' => ''
                     ]);
@@ -1663,6 +1680,6 @@ class MarketingController extends Controller
         ]);
     }
 
-    
+
 
 }

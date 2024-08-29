@@ -525,4 +525,22 @@ class ColumnHelper
             ]
         ];
     }
+
+    public static function denomCols()
+    {
+        return [
+            [
+                'title' => 'Denomination',
+                'dataIndex' => 'denomination',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Quantity',
+                'dataIndex' => 'qty',
+                'align' => 'center'
+            ],
+        ];
+    }
+
+
 }

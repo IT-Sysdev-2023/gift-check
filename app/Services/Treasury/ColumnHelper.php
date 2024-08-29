@@ -129,13 +129,13 @@ class ColumnHelper
         ],
         [
             'title' => 'Date Requested',
-            'dataIndex' => ['storeGcRequest','sgc_date_request'],
+            'dataIndex' => ['storeGcRequest', 'sgc_date_request'],
             'key' => 'date_requested',
 
         ],
         [
             'title' => 'Retail Store',
-            'dataIndex' =>  ['storeGcRequest','store', 'store_name'],
+            'dataIndex' => ['storeGcRequest', 'store', 'store_name'],
             'key' => 'retail_store'
 
         ],
@@ -174,7 +174,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Retail Store',
-            'dataIndex' =>  ['store', 'store_name'],
+            'dataIndex' => ['store', 'store_name'],
             'key' => 'retail_store'
 
         ],
@@ -215,7 +215,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Date Needed',
-            'dataIndex' =>  'pe_date_needed',
+            'dataIndex' => 'pe_date_needed',
 
         ],
         [
@@ -254,7 +254,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Date Needed',
-            'dataIndex' =>  'spexgc_dateneed',
+            'dataIndex' => 'spexgc_dateneed',
 
         ],
         [
@@ -292,7 +292,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Date Validity',
-            'dataIndex' =>  'spexgc_dateneed',
+            'dataIndex' => 'spexgc_dateneed',
 
         ],
         [
@@ -315,6 +315,50 @@ class ColumnHelper
             'title' => 'Action',
             'dataIndex' => 'action',
 
+        ],
+    ];
+
+    public static $gcHolder = [
+
+        [
+            'title' => 'Barcode',
+            'dataIndex' => 'spexgcemp_barcode',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Denomination',
+            'dataIndex' => 'spexgcemp_denom',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Voucher',
+            'dataIndex' => 'voucher',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Lastname',
+            'dataIndex' => 'spexgcemp_lname',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Firstname',
+            'dataIndex' => 'spexgcemp_fname',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Middlename',
+            'dataIndex' => 'spexgcemp_mname',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Name Ext.',
+            'dataIndex' => 'spexgcemp_extname',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Address',
+            'dataIndex' => 'address',
+            'align' => 'center'
         ],
     ];
 }

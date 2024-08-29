@@ -93,7 +93,7 @@ Route::prefix('marketing')->group(function () {
     Route::name('marketing.')->group(function () {
         Route::name('promo.gc.')->group(function () {
             Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
-            Route::post('', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
+            Route::post('submit-promo-gc-request', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
         });
         Route::name('addPromo.')->group(function () {
             Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
