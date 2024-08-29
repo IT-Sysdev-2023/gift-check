@@ -196,6 +196,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('view-allocated-gc-{id}', [StoreGcController::class, 'viewAllocatedList'])->name('viewAllocatedList');
                 Route::post('scan-barcode', [StoreGcController::class, 'scanBarcode'])->name('scanBarcode');
                 Route::get('view-scanned-barcode', [StoreGcController::class, 'viewScannedBarcode'])->name('viewScannedBarcode');
+                Route::post('submit-releasing-entry', [StoreGcController::class, 'releasingEntrySubmission'])->name('releasingEntrySubmission');
             });
             Route::prefix('gc-production-request')->name('production.request.')->group(function () {
                 Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');

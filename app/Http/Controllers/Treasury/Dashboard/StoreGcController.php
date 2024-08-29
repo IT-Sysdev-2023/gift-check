@@ -235,6 +235,12 @@ class StoreGcController extends Controller
                 ->orWhere('assig_dept');
         })->get();
 
+        $rgc->transform(function ($item) {
+            $item->denomination = NumberHelper::currency($item->denomination);
+            $item->subtotal = NumberHelper::currency($item->subtotal);
+            return $item;
+        });
+
         return response()->json([
             'rel_num' => $relnum,
             'details' => $details,
@@ -251,7 +257,6 @@ class StoreGcController extends Controller
             ->filter($request)
             ->paginate(8)
             ->withQueryString();
-
         return response()->json($data);
 
     }
@@ -263,7 +268,7 @@ class StoreGcController extends Controller
 
     public function viewScannedBarcode(Request $request)
     {
-        $scannedBc = collect($request->session()->get('scanReviewGC', []));
+        $scannedBc = collect($request->session()->get('scanReviewGC', []))->filter(fn ($item) => $item['reqid'] == $request->id);
 
         $newArr = collect();
         $scannedBc->each(function ($item) use (&$newArr) {
@@ -282,8 +287,13 @@ class StoreGcController extends Controller
             ];
         });
 
-        // dd(ArrayHelper::paginate($newArr, 2));
-        return response()->json(ArrayHelper::paginate($newArr, 2));
+        return response()->json(ArrayHelper::paginate($newArr, 5));
+    }
+
+    public function releasingEntrySubmission(Request $request)
+    {
+        // dd($request->all());
+        return $this->storeGcRequestService->releasingEntrySubmit($request);
     }
 
 

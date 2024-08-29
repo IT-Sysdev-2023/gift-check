@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Helpers\NumberHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Denomination extends Model
 {
@@ -12,6 +14,13 @@ class Denomination extends Model
     protected $table = 'denomination';
     protected $primaryKey = 'denom_id';
 
+    protected $appends = ['denomination_format'];
+    public function denominationFormat(): Attribute
+    {
+        return Attribute::make(
+            get: fn(mixed $value, array $attributes) => NumberHelper::currency($attributes['denomination'])
+        );
+    }
     public static function denomation(){
         return self::where([['denom_type', 'RSGC'], ['denom_status', 'active']])
         ->orderBy('denomination')->get();

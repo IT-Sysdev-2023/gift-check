@@ -10,6 +10,7 @@ use App\Models\GcRelease;
 use App\Models\InstitutPayment;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
+use App\Services\Documents\UploadFileHandler;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Gc;
@@ -17,9 +18,14 @@ use App\Models\GcLocation;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
-class StoreGcRequestService
+class StoreGcRequestService extends UploadFileHandler
 {
 
+	public function __construct()
+	{
+		parent::__construct();
+		$this->folderName = 'approvedGCRequest';
+	}
 	public function pendingRequest(Request $request) //tran_release_gc.php
 	{
 		return StoreGcrequest::pendingRequest()->paginate()->withQueryString();
@@ -189,7 +195,7 @@ class StoreGcRequestService
 
 		// $scannedGc = TempRelease::where([['temp_relno', $relno], ['temp_rdenom', $denid]])->count();
 		if ($remainGc->sri_items_remain > $scannedGcSession) {
-	
+
 			// Check Barcode existence
 			$whereBarcode = Gc::where('barcode_no', $barcode);
 
@@ -213,7 +219,7 @@ class StoreGcRequestService
 								$request->session()->push($sessionName, [
 									'barcode' => $barcode,
 									'denid' => $denid,
-									'created_at' => today()->format('Y-d-m'),
+									'created_at' => now()->format('Y-d-m H:i:s'),
 									'reqid' => $reqid,
 									'temp_relby' => $request->user()->user_id
 								]);
@@ -262,6 +268,135 @@ class StoreGcRequestService
 
 	}
 
+	public function releasingEntrySubmit(Request $request)
+	{
+		// dd($request->all());
+		// $request->validate([
+		//     'file' => 'required',
+		//     'remarks' => 'required',
+		//     "receivedBy" => 'required',
+		//     'paymentType.type' => 'required',
+		//     'paymentType.amount' => 'required_if:paymentType.type,cash',
+		//     'paymentType.customer' => 'required_if:paymentType.type,jv',
+		//     "checkedBy" => 'required',
+		//     "rid" => 'required'
+		// ], [
+		//     'paymentType.customer' => 'The customer field is required when payment type is jv.',
+		//     'paymentType.amount' => 'The amount field is required when payment type is cash.',
+		// ]);
+
+		$latestRecord = ApprovedGcrequest::max('agcr_request_relnum');
+		$relid = $latestRecord ? $latestRecord + 1 : 1;
+
+		$scannedBc = collect($request->session()->get('scanReviewGC', []))->filter(function ($item) use ($request) {
+			return $item['reqid'] === $request->rid;
+		});
+
+		$rgc = StoreRequestItem::select('sri_items_remain as qty', 'sri_items_denomination as denom_id')
+			->where('sri_items_requestid', $request->rid)
+			->whereNot('sri_items_remain', 0)
+			->get();
+
+		//check if the denominations gc already scanned
+		$isScanned = $rgc->map(function ($sr) use ($scannedBc) {
+			$s = $scannedBc->where('denid', $sr->denom_id)->count();
+			return $sr->qty === $s;
+		});
+
+		// dd($scannedBc);
+		if ($isScanned->every(fn($n) => $n)) {
+
+			DB::transaction(function () use ($scannedBc, $request, $relid) {
+
+				$scannedBc->each(function ($i) use ($request, $relid) {
+
+					$reqId = $request->rid;
+					GcRelease::create([
+						're_barcode_no' => $i['barcode'],
+						'rel_storegcreq_id' => $reqId,
+						'rel_store_id' => $request->store_id,
+						'rel_num' => $relid,
+						'rel_date' => $i['created_at'],
+						'rel_by' => $request->user()->user_id
+					]);
+
+					$remain = StoreRequestItem::where([['sri_items_requestid', $reqId], ['sri_items_denomination', $i['denid']]])->first('sri_items_remain')->sri_items_remain;
+					$remain--;
+
+					StoreRequestItem::where([['sri_items_denomination', $i['denid']], ['sri_items_requestid', $reqId]])
+						->update([
+							'sri_items_remain' => $remain
+						]);
+
+					GcLocation::where('loc_barcode_no', $i['barcode'])
+						->update(['loc_rel' => '*']);
+				});
+
+				$check = StoreRequestItem::where('sri_items_requestid', $request->rid)->whereNot('sri_items_remain', '0');
+
+
+
+				// if(checkIfPartialWhole($link,$reqId))
+				// 			function checkIfPartialWhole($link,$reqId)
+				// {
+				// 	$status = true;
+				// 	$query = $link->query(
+				// 		"SELECT 
+				// 			`sri_items_remain` 
+				// 		FROM 
+				// 			`store_request_items` 
+				// 		WHERE 
+				// 			`sri_items_remain`!='0'
+				// 		AND
+				// 			`sri_items_requestid`='$reqId'
+				// 	");
+
+				// 	if($query)
+				// 	{
+				// 		while ($row = $query->fetch_object()) {
+				// 			if($row->sri_items_remain>0)
+				// 			{
+				// 				$status = false;
+				// 				break;
+				// 			}
+				// 		}
+				// 		if($status)
+				// 		{
+				// 			return true;
+				// 		}
+				// 		else 
+				// 		{
+				// 			return false;
+				// 		}
+				// 	}
+				// 	else 
+				// 	{
+				// 		echo $link->error;
+				// 	}
+				// }
+			});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		} else {
+			return response()->json('Please scan the Barcode First', 400);
+		}
+
+
+	}
 	private static function getPaymentInfo($header_data, $id)
 	{
 		$paymentInfo = [];
@@ -303,72 +438,72 @@ class StoreGcRequestService
 	}
 
 	// public function scanRangeBarcode(Request $request)
-    // {
-    //     $request->validate([
-    //         'bstart' => 'required',
-    //         'bend' => 'required',
-    //         'relid' => 'required',
-    //         'store_id' => 'required',
-    //         'reqid' => 'required',
-    //     ]);
-    //     $bend = $request->bend;
-    //     $bstart = $request->bstart;
+	// {
+	//     $request->validate([
+	//         'bstart' => 'required',
+	//         'bend' => 'required',
+	//         'relid' => 'required',
+	//         'store_id' => 'required',
+	//         'reqid' => 'required',
+	//     ]);
+	//     $bend = $request->bend;
+	//     $bstart = $request->bstart;
 
-    //     $gcTotal = $bend - $bstart + 1;
+	//     $gcTotal = $bend - $bstart + 1;
 
-    //     dd($gcTotal);
+	//     dd($gcTotal);
 
-    //     $denid = Gc::where('barcode_no', $bstart)->first('denom_id')->denom_id;
+	//     $denid = Gc::where('barcode_no', $bstart)->first('denom_id')->denom_id;
 
-    //     $remainGc = StoreRequestItem::where([['sri_items_denomination', $denid], ['sri_items_requestid', $request->reqid]])
-    //         ->first('sri_items_remain')->sri_items_remain;
+	//     $remainGc = StoreRequestItem::where([['sri_items_denomination', $denid], ['sri_items_requestid', $request->reqid]])
+	//         ->first('sri_items_remain')->sri_items_remain;
 
-    //     $scannedGc = TempRelease::where([['temp_relno', $request->relid], ['temp_rdenom', $denid]])
-    //         ->count();
+	//     $scannedGc = TempRelease::where([['temp_relno', $request->relid], ['temp_rdenom', $denid]])
+	//         ->count();
 
-    //     $gctotal = $gcTotal + $scannedGc;
+	//     $gctotal = $gcTotal + $scannedGc;
 
-    //     $nums = 0;
+	//     $nums = 0;
 
-    //     if ($gctotal > $remainGc) {
-    //         return response()->json('Number of GC Scanned has reached the maximum number to received.', 400);
-    //     } else {
-    //         foreach (range($bstart, $bend) as $bc) {
-    //             if (Gc::where('barcode_no', $bc)->doesntExist()) {
-    //                 return response()->json("Barcode Number {$bc} not found.", 400);
-    //             }
+	//     if ($gctotal > $remainGc) {
+	//         return response()->json('Number of GC Scanned has reached the maximum number to received.', 400);
+	//     } else {
+	//         foreach (range($bstart, $bend) as $bc) {
+	//             if (Gc::where('barcode_no', $bc)->doesntExist()) {
+	//                 return response()->json("Barcode Number {$bc} not found.", 400);
+	//             }
 
-    //             $locationCheck = GcLocation::whereHas('gc', fn($q) => $q->has('denomination')->where('denom_id', $denid))
-    //                 ->where([['loc_store_id', $request->store_id], ['loc_barcode_no', $bc]])
-    //                 ->doesntExist();
+	//             $locationCheck = GcLocation::whereHas('gc', fn($q) => $q->has('denomination')->where('denom_id', $denid))
+	//                 ->where([['loc_store_id', $request->store_id], ['loc_barcode_no', $bc]])
+	//                 ->doesntExist();
 
-    //             if ($locationCheck) {
-    //                 return response()->json("Barcode Number {$bc} not found in this location.", 400);
-    //             }
+	//             if ($locationCheck) {
+	//                 return response()->json("Barcode Number {$bc} not found in this location.", 400);
+	//             }
 
-    //             if (GcRelease::where('re_barcode_no', $bc)->exists()) {
-    //                 return response()->json("Barcode Number {$bc} already released.", 400);
-    //             }
+	//             if (GcRelease::where('re_barcode_no', $bc)->exists()) {
+	//                 return response()->json("Barcode Number {$bc} already released.", 400);
+	//             }
 
-    //             if (TempRelease::where('temp_rbarcode', $bc)->exists()) {
-    //                 return response()->json("Barcode Number {$bc} already scanned for released. ", 400);
-    //             } else {
-    //                 TempRelease::create([
-    //                     'temp_rbarcode' => $bc,
-    //                     'temp_rdenom' => $denid,
-    //                     'temp_rdate' => now(),
-    //                     'temp_relno' => $request->relid,
-    //                     'temp_relby' => $request->user()->user_id
-    //                 ]);
+	//             if (TempRelease::where('temp_rbarcode', $bc)->exists()) {
+	//                 return response()->json("Barcode Number {$bc} already scanned for released. ", 400);
+	//             } else {
+	//                 TempRelease::create([
+	//                     'temp_rbarcode' => $bc,
+	//                     'temp_rdenom' => $denid,
+	//                     'temp_rdate' => now(),
+	//                     'temp_relno' => $request->relid,
+	//                     'temp_relby' => $request->user()->user_id
+	//                 ]);
 
-    //             }
-
-
-    //         }
-
-    //         return response()->json("GC Barcode #{$bstart} to {$bend} successfully validated.");
-    //     }
+	//             }
 
 
-    // }
+	//         }
+
+	//         return response()->json("GC Barcode #{$bstart} to {$bend} successfully validated.");
+	//     }
+
+
+	// }
 }
