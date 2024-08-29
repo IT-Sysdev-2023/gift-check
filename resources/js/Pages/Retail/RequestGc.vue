@@ -10,7 +10,7 @@
                 <CheckOutlined /> Submit Form
             </a-button>
         </div>
-       
+
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <a-card>
@@ -67,7 +67,7 @@
                 <a-table :dataSource="allocated" :columns="allocatedGcColumns" :pagination="false" bordered>
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'qty'">
-                            <a-input style="width:40px;" :value="record.count" readonly></a-input>
+                            <a-input style="width:40px;" :value="record.count"></a-input>
                         </template>
                     </template>
                 </a-table>
@@ -109,7 +109,7 @@ export default {
             total: 0,
         }
     },
-   
+
     methods: {
         calculateTotal(data) {
 
