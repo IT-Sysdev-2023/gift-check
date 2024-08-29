@@ -110,6 +110,7 @@
 
         <scan-gc-drawer v-model:open="drawer" @close-drawer="closeDrawer" :data="record" :record="data"
             :rec="record.store" />
+            {{ record.approved.agcr_request_relnum }}
 
     </a-modal>
 
@@ -129,7 +130,7 @@ const props = defineProps({
 
 const form = useForm({
     recnum: props.record.store,
-    relnum: props.record.approved?.agcr_request_relnum,
+    relnum: props.record.approved.agcr_request_relnum,
     checkby: null,
     total: props.record.total
 })

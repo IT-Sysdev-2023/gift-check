@@ -52,6 +52,7 @@ class RetailDbServices
 
     public function storeIntoStoreReceived($request, $cldgr)
     {
+        // dd($request->all());
         StoreReceived::create([
             'srec_recid' => $request->recnum,
             'srec_rel_id' => $request->relnum,
