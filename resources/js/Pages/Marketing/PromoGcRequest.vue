@@ -15,10 +15,10 @@
                         <a-input style="width: 6rem;" v-model:value="form.rfprom_number" readonly />
                     </a-form-item>
                     <a-form-item label="Date Requested" name="daterequested">
-                        <a-date-picker :value="form.dateReq" readonly />
+                        <a-date-picker :disabled-date="disabledDate" :value="form.dateReq" readonly />
                     </a-form-item>
                     <a-form-item label="Date Needed" name="dateneeded">
-                        <a-date-picker v-model:value="form.dateneeded" />
+                        <a-date-picker v-model:value="form.dateneeded" :disabled-date="disabledDate" />
                     </a-form-item>
                     <a-form-item label="PWP/ Approved Budget Doc:" name="file">
                         <a-upload v-model:file-list="form.fileList" name="file" action="" :headers="headers"
@@ -126,7 +126,10 @@ export default {
                     })
                 }
             })
-        }
+        },
+        disabledDate(current) {
+            return current && current < new Date().setHours(0, 0, 0, 0);
+        },
     }
 };
 </script>

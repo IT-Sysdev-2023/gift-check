@@ -108,9 +108,6 @@ class MarketingController extends Controller
             'cancelledRequest' => ProductionRequest::where('pe_status', '2')->count()
         ];
 
-
-
-
         $supplier = Supplier::all();
 
         $checkedBy = Assignatory::where('assig_dept', $request->user()->usertype)

@@ -13,10 +13,10 @@
             <a-date-picker v-model:value="form.dateCreated" disabled />
           </a-form-item>
           <a-form-item label="Draw Date" name="drawDate">
-            <a-date-picker v-model:value="form.drawDate" />
+            <a-date-picker :disabled-date="disabledDate" v-model:value="form.drawDate" />
           </a-form-item>
           <a-form-item label="Date Notified (Winners)" name="dateNotify">
-            <a-date-picker v-model:value="form.dateNotify" />
+            <a-date-picker :disabled-date="disabledDate" v-model:value="form.dateNotify" />
           </a-form-item>
           <a-form-item label="Expiration Date" name="expiryDate">
             <a-date-picker v-model:value="form.expiryDate" disabled />
@@ -188,6 +188,9 @@ export default {
   },
 
   methods: {
+    disabledDate(current) {
+      return current && current < new Date().setHours(0, 0, 0, 0);
+    },
     async fetch() {
       await axios.get(route('marketing.addPromo.get.denom')).then(response => {
         this.form.data = response.data.data;
@@ -253,7 +256,7 @@ export default {
           message: response.data.response.msg,
           description: response.data.response.description,
         });
-        window.location.href="promo-list";
+        window.location.href = "promo-list";
       })
     }
   },

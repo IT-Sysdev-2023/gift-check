@@ -1,5 +1,6 @@
 <template>
     <AuthenticatedLayout>
+
         <Head :title="title" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
@@ -10,19 +11,11 @@
 
         <a-card :title="'Submit ' + title" class="mt-10">
             <template #extra>
-                <a-switch
-                    v-model:checked="formState.switchGc"
-                    checked-children="Special Int. Gc"
-                    un-checked-children="Special Ext. Gc"
-                />
+                <a-switch v-model:checked="formState.switchGc" checked-children="Special Int. Gc"
+                    un-checked-children="Special Ext. Gc" />
             </template>
-            <a-form
-                ref="formRef"
-                :model="formState"
-                :label-col="{ span: 7 }"
-                :wrapper-col="{ span: 15 }"
-                @finish="onSubmit"
-            >
+            <a-form ref="formRef" :model="formState" :label-col="{ span: 7 }" :wrapper-col="{ span: 15 }"
+                @finish="onSubmit">
                 <a-row>
                     <a-col :span="8">
                         <a-form-item label="Transaction No." name="name">
@@ -31,100 +24,50 @@
                         <a-form-item label="Payment date:" name="dateRequested">
                             <a-input v-model:value="currentDate" readonly />
                         </a-form-item>
-                        <a-form-item
-                            label="Date Needed:"
-                            name="dateNeeded"
-                            has-feedback
-                            :validate-status="getErrorStatus('dateNeeded')"
-                            :help="getErrorMessage('dateNeeded')"
-                        >
-                            <a-date-picker
-                                v-model:value="formState.dateNeeded"
-                                @change="clearError('dateNeeded')"
-                            />
+                        <a-form-item label="Date Needed:" name="dateNeeded" has-feedback
+                            :validate-status="getErrorStatus('dateNeeded')" :help="getErrorMessage('dateNeeded')">
+                            <a-date-picker :disabled-date="disabledDate" v-model:value="formState.dateNeeded"
+                                @change="clearError('dateNeeded')" />
                         </a-form-item>
                         <a-form-item label="Upload Scan Copy.:" name="upload" :validate-status="getErrorStatus('file')"
-                        :help="getErrorMessage('file')">
-                            <ant-upload-multi-image
-                                @handle-change="handleChange"
-                            />
+                            :help="getErrorMessage('file')">
+                            <ant-upload-multi-image @handle-change="handleChange" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="8">
-                        <a-form-item
-                            label="Account Name"
-                            name="account"
-                            v-if="accountName"
-                        >
+                        <a-form-item label="Account Name" name="account" v-if="accountName">
                             <a-input :value="accountName" />
                         </a-form-item>
                         <a-form-item label="Lookup Customer:" name="customer">
-                            <ant-select
-                                :options="props.options"
-                                @handle-change="handleCustomerChange"
-                            />
-                            <span
-                                v-if="formState.errors.companyId"
-                                class="text-red-500"
-                                >{{ formState.errors.companyId }}</span
-                            >
+                            <ant-select :options="props.options" @handle-change="handleCustomerChange" />
+                            <span v-if="formState.errors.companyId" class="text-red-500">{{ formState.errors.companyId
+                                }}</span>
                         </a-form-item>
                         <a-form-item label="AR no." name="ar">
                             <a-input v-model:value="formState.arNo" />
                         </a-form-item>
-                        <a-form-item
-                            label="Payment Type:"
-                            :validate-status="
-                                getErrorStatus('paymentType.type')
-                            "
-                            :help="getErrorMessage('paymentType.type')"
-                        >
-                            <ant-select
-                                :options="paymentType"
-                                @handle-change="handlePaymentChange"
-                            />
+                        <a-form-item label="Payment Type:" :validate-status="getErrorStatus('paymentType.type')
+                            " :help="getErrorMessage('paymentType.type')">
+                            <ant-select :options="paymentType" @handle-change="handlePaymentChange" />
                         </a-form-item>
-                        <PaymentType
-                            :form="formState"
-                            v-if="formState.paymentType.type"
-                        />
+                        <PaymentType :form="formState" v-if="formState.paymentType.type" />
                     </a-col>
                     <a-col :span="8">
-                        <a-form-item
-                            label="Remarks:."
-                            name="name"
-                            has-feedback
-                            :validate-status="getErrorStatus('remarks')"
-                            :help="getErrorMessage('remarks')"
-                        >
-                            <a-textarea
-                                v-model:value="formState.remarks"
-                                @input="clearError('remarks')"
-                            />
+                        <a-form-item label="Remarks:." name="name" has-feedback
+                            :validate-status="getErrorStatus('remarks')" :help="getErrorMessage('remarks')">
+                            <a-textarea v-model:value="formState.remarks" @input="clearError('remarks')" />
                         </a-form-item>
                         <ant-form-nest-item :form="formState" />
-                       
+
                         <a-form-item class="mt-5" style="float: right">
-                            <a-button type="primary" html-type="submit"
-                                >Submit</a-button
-                            >
+                            <a-button type="primary" html-type="submit">Submit</a-button>
                         </a-form-item>
                     </a-col>
                 </a-row>
             </a-form>
         </a-card>
-        <a-modal
-            v-model:open="openIframe"
-            style="width: 70%; top: 50px"
-            :footer="null"
-            :afterClose="routeToHome"
-        >
-            <iframe
-                class="mt-7"
-                :src="stream"
-                width="100%"
-                height="600px"
-            ></iframe>
+        <a-modal v-model:open="openIframe" style="width: 70%; top: 50px" :footer="null" :afterClose="routeToHome">
+            <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
         </a-modal>
     </AuthenticatedLayout>
 </template>
@@ -250,5 +193,9 @@ const getErrorMessage = (field: string) => {
 };
 const clearError = (field: string) => {
     formState.errors[field] = null;
+};
+
+const disabledDate = (current) => {
+    return current && current < new Date().setHours(0, 0, 0, 0);
 };
 </script>
