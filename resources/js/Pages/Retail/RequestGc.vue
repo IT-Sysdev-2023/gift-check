@@ -2,15 +2,15 @@
     <a-card title="Store GC Request Form">
         <div class="flex justify-end mb-2">
             <a-button title="Please fill required fields"
-                v-if="(form.dateNeed == '' || form.remarks == '' || form.quantities.filter((data) => data).length == 0)" @click="submitForm"
-                type="primary" disabled>
+                v-if="(form.dateNeed == '' || form.remarks == '' || form.quantities.filter((data) => data).length == 0)"
+                @click="submitForm" type="primary" disabled>
                 <CheckOutlined /> Submit Form
             </a-button>
             <a-button v-else @click="submitForm" type="primary">
                 <CheckOutlined /> Submit Form
             </a-button>
         </div>
-       
+
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <a-card>
@@ -18,7 +18,7 @@
                         <a-table :dataSource="denoms" :columns="denomColumns" :pagination="false">
                             <template #bodyCell="{ column, record, index }">
                                 <template v-if="column.key === 'qty'">
-                                    <a-input type="number" v-model:value=" form.quantities[record.denom_id]"
+                                    <a-input type="number" v-model:value="form.quantities[record.denom_id]"
                                         @change="calculateTotal(record)"></a-input>
                                 </template>
                             </template>
@@ -42,8 +42,8 @@
                         <a-input v-model:value="form.dateReq" readonly></a-input>
                     </a-form-item>
                     <a-form-item label="Date Needed">
-                        <a-date-picker style="width: 100%;" v-model:value="form.dateNeed" />
-                        <small style="color: red;" v-if="form.dateNeed ==''">*this field is required</small>
+                        <a-date-picker :disabled-date="disabledDate" style="width: 100%;" v-model:value="form.dateNeed" />
+                        <small style="color: red;" v-if="form.dateNeed == ''">*this field is required</small>
                     </a-form-item>
                     <a-form-item label="Upload Doc">
                         <a-upload-dragger name="file" :before-upload="() => false" :max-count="1"
@@ -56,7 +56,7 @@
                     </a-form-item>
                     <a-form-item label="Remarks">
                         <a-textarea v-model:value="form.remarks"></a-textarea>
-                        <small style="color: red;" v-if="form.remarks ==''">*this field is required</small>
+                        <small style="color: red;" v-if="form.remarks == ''">*this field is required</small>
                     </a-form-item>
                     <a-form-item label="Prepared by">
                         <a-input v-model:value="form.approvedBy" readonly></a-input>
@@ -67,7 +67,7 @@
                 <a-table :dataSource="allocated" :columns="allocatedGcColumns" :pagination="false" bordered>
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'qty'">
-                            <a-input style="width:40px;" :value="record.count" readonly></a-input>
+                            <a-input style="width:40px;" :value="record.count"></a-input>
                         </template>
                     </template>
                 </a-table>
@@ -109,8 +109,11 @@ export default {
             total: 0,
         }
     },
-   
+
     methods: {
+        disabledDate(current) {
+            return current && current < new Date().setHours(0, 0, 0, 0);
+        },
         calculateTotal(data) {
 
             this.total = this.denoms.reduce((sum, denom) => {

@@ -93,7 +93,7 @@ Route::prefix('marketing')->group(function () {
     Route::name('marketing.')->group(function () {
         Route::name('promo.gc.')->group(function () {
             Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
-            Route::post('', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
+            Route::post('submit-promo-gc-request', [MarketingController::class, 'submitPromoGcRequest'])->name('submit');
         });
         Route::name('addPromo.')->group(function () {
             Route::get('add-new-promo', [MarketingController::class, 'addnewpromo'])->name('add');
@@ -194,7 +194,8 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('releasing-entry-{id}', [StoreGcController::class, 'viewReleasingEntry'])->name('releasingEntry');
                 Route::get('view-allocated-gc-{id}', [StoreGcController::class, 'viewAllocatedList'])->name('viewAllocatedList');
-                Route::post('scan-single-barcode', [StoreGcController::class, 'scanSingleBarcode'])->name('scanSingleBarcode');
+                Route::post('scan-single-barcode', [StoreGcController::class, 'scanBarcode'])->name('scanSingleBarcode');
+                Route::post('scan-range-barcode', [StoreGcController::class, 'scanRangeBarcode'])->name('scanRangeBarcode');
             });
             Route::prefix('gc-production-request')->name('production.request.')->group(function () {
                 Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');

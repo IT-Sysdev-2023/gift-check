@@ -80,7 +80,7 @@
                         <a-col :span="12">
                             <a-card>
                                 <a-form-item label="Date Needed">
-                                    <a-date-picker v-model:value="form.dateNeed" />
+                                    <a-date-picker :disabled-date="disabledDate" v-model:value="form.dateNeed" />
                                 </a-form-item>
                                 <a-form-item label="Remarks">
                                     <a-input v-model:value="form.sgc_remarks"></a-input>
@@ -155,6 +155,9 @@ export default {
         }
     },
     methods: {
+        disabledDate(current) {
+            return current && current < new Date().setHours(0, 0, 0, 0);
+        },
         toggleState() {
             this.isToggled = !this.isToggled;
         },
@@ -181,14 +184,14 @@ export default {
         update() {
             const quantities = this.denoms.map(record => ({
                 quantity: record.quantity,
-                id: record.denom_id, 
+                id: record.denom_id,
             }));
 
             this.$inertia.put(route('retail.gcrequest.update'), {
                 id: this.details[0].sgc_id,
                 denom: quantities
             })
-            this.isToggled=false
+            this.isToggled = false
         }
     }
 }

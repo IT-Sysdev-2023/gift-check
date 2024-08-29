@@ -24,7 +24,6 @@ class SpecialExternalGcRequestController extends Controller
     }
     public function approvedGc(Request $request)
     {
-
         $data = $this->specialExternalGcService->approvedGc($request);
         return inertia('Iad/Dashboard/ApprovedGcTable', [
             'data' => SpecialExternalGcRequestResource::collection($data),
@@ -33,13 +32,19 @@ class SpecialExternalGcRequestController extends Controller
         ]);
     }
 
-    public function viewApprovedGcRecord(SpecialExternalGcrequest $id)
+    public function viewApprovedGcRecord(Request $request,SpecialExternalGcrequest $id)
     {
+
+        $gcHolder = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid',$id->spexgc_id)->get();
+        $col=ColumnHelper::$gcHolder;
+
         $record = $this->specialExternalGcService->viewApprovedGcRecord($request, $id);
 
         return inertia('Iad/Dashboard/ViewApprovedGcTable', [
             'data' => new SpecialExternalGcRequestResource($record),
-            'title' => 'Special External Gc'
+            'title' => 'Special External Gc',
+            'gcHolder' => $gcHolder,
+            'gcholderCol' =>$col
         ]);
 
     }
