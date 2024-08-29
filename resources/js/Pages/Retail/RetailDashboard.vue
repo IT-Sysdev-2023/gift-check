@@ -2,7 +2,7 @@
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
-                <store-gc-request-card :countGcRequest/>
+                <store-gc-request-card :counts="countGcRequest"/>
             </a-col>
             <a-col :span="8">
 
