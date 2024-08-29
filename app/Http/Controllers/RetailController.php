@@ -262,6 +262,8 @@ class RetailController extends Controller
         return inertia('Retail/Verification', [
             'data' => $data->steps,
             'success' => $data->success,
+            'notfound' => $data->barcodeNotFound,
+            'empty' => $data->empty,
         ]);
     }
 

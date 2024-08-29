@@ -9,7 +9,11 @@ class StoreVerification extends Model
 {
     use HasFactory;
 
-    protected $table= 'store_verification';
+    protected $table = 'store_verification';
 
-    protected $primaryKey= 'vs_id';
+    protected $primaryKey = 'vs_id';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }

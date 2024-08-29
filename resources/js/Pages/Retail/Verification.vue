@@ -1,7 +1,8 @@
 <template>
     <AuthenticatedLayout>
-        <a-row>
+        <a-row :gutter="[16, 16]">
             <a-col :span="10">
+
                 <a-card>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date">{{ dayjs() }}</a-descriptions-item>
@@ -31,8 +32,8 @@
 
                     <a-divider>Verify Barcode</a-divider>
 
-                    <a-input-number v-model:value="form.barcode" @keyup.enter="viewstatus" style="width: 100%;"
-                        size="large" placeholder="Barcode Here" />
+                    <a-input-number v-model:value="form.barcode" @change="viewstatus" @keyup.enter="viewstatus"
+                        style="width: 100%;" size="large" placeholder="Barcode Here" />
 
                     <div class="flex justify-center mt-4">
                         <p>
@@ -43,17 +44,64 @@
                         </p>
                     </div>
                 </a-card>
-                <a-button type="primary" class="mt-1" block @click="submit">
+                <a-button type="primary" class="mt-1" block @click="submit" :loading="form.processing">
                     <template #icon>
                         <FastForwardOutlined />
                     </template>
-                    Submit
+                    {{ form.processing ? 'Verifieng Barcode...' : 'Verify Barcode' }}
                 </a-button>
+                <!-- {{ notif.data }} -->
+                <a-alert v-if="notif.status" :message="notif.title" class="mb-1 mt-2" :type="notif.status" show-icon />
+                <a-card v-if="notif.error == 'lost'" class="mt-5"
+                    style="background-color: rgba(255, 0, 0, 0.1); border: solid 1px rgba(255, 0, 0, 0.6);">
+                    <p class="text-center font-bold">
+                        {{ notif.title }}
+                    </p>
+                    <p>
+                        Issue: Barcode # <span class="font-bold">{{ notif.data.lostgcb_barcode }}</span> was reported as
+                        lost
+                    </p>
+                    <p>
+                        Owner's Name: <span class="font-bold">{{ notif.data.lostgcd_owname }}</span>
+                    </p>
+                    <p>
+                        Address: <span class="font-bold">{{ notif.data.lostgcd_address }}</span>
+                    </p>
+                    <p>
+                        Contact No: <span class="font-bold">{{ notif.data.lostgcd_contactnum }}</span>
+                    </p>
+                    <p>
+                        Date Lost: <span class="font-bold">{{ notif.data.lostgcd_datelost }}</span>
+                    </p>
+                    <p>
+                        Date Reported: <span class="font-bold">{{ notif.data.lostgcd_datereported }}</span>
+                    </p>
+                </a-card>
             </a-col>
             <a-col :span="14">
-                <a-card>
-                    <a-steps direction="vertical" style="color: green" :current="data.length - 1" :items="data">
-                    </a-steps>
+                <!-- {{ skeleton }} -->
+                <!-- {{ success }} -->
+                <a-alert v-if="success" :message="'Barcode # ' + form.barcode + ' found'" class="mb-1" type="success"
+                    show-icon />
+                <a-alert v-if="notfound" :message="'Barcode # ' + form.barcode + '  not found'" class="mb-1"
+                    type="error" show-icon />
+                <a-card v-if="!empty">
+                    <div v-if="skeleton">
+                        <a-skeleton avatar :paragraph="{ rows: 4 }" />
+                    </div>
+                    <div v-else>
+                        <a-steps direction="vertical" style="color: green" :current="data.length - 1" :items="data">
+                        </a-steps>
+
+                    </div>
+                </a-card>
+                <div v-else-if="skeleton">
+                    <a-skeleton avatar :paragraph="{ rows: 4 }" />
+                </div>
+                <a-card v-else>
+                    <!-- <a-alert message="Enter Barcode to Show Gc Status" class="mb-4" type="info" show-icon /> -->
+                    <a-result status="404" title="Enter Barcode" sub-title="In order to show barcode status">
+                    </a-result>
                 </a-card>
             </a-col>
         </a-row>
@@ -64,8 +112,12 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import debounce from 'lodash/debounce';
 import { router, useForm } from '@inertiajs/vue3';
+import { notification } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import { ref } from 'vue';
+import { Empty } from 'ant-design-vue';
+const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
+
 
 const form = useForm({
     payment: null,
@@ -74,16 +126,32 @@ const form = useForm({
 })
 const props = defineProps({
     data: Object,
+    success: Boolean,
+    notfound: Boolean,
+    empty: Boolean,
 })
 
 const optionCustomer = ref([]);
 const viewing = ref([]);
+const notif = ref([]);
 const isRetrieving = ref(false);
+const skeleton = ref(false);
+const status = ref({});
 
 const submit = () => {
     form.transform((data) => ({
         ...data
-    })).post(route('retail.verification.submit'));
+    })).post(route('retail.verification.submit'), {
+        onSuccess: (response) => {
+
+            notif.value = response.props.flash
+
+            notification[response.props.flash.status]({
+                message: response.props.flash.title,
+                description: response.props.flash.msg,
+            });
+        }
+    });
 }
 
 const debounceCustomer = debounce(async function (query) {
@@ -110,15 +178,16 @@ const debounceCustomer = debounce(async function (query) {
     } finally {
         isRetrieving.value = false;
     }
-}, 1000);
+}, 500);
 
 const viewstatus = () => {
-
+    skeleton.value = true;
     router.get(route("retail.verification.index"), {
         barcode: form.barcode,
 
     }, {
         onSuccess: () => {
+            skeleton.value = false;
         },
         preserveState: true
     });
