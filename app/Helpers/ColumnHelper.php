@@ -53,6 +53,40 @@ class ColumnHelper
 
         ],
     ];
+    public static $pending_budget_request_columns = [
+        [
+            'title' => 'BR No.',
+            'dataIndex' => 'br_no',
+
+        ],
+        [
+            'title' => 'Date Request',
+            'dataIndex' => 'req_at',
+
+        ],
+        [
+            'title' => 'Budget Request',
+            'dataIndex' => 'br_request',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'needed',
+
+        ],
+        [
+            'title' => 'Prepare By',
+            'dataIndex' => 'fullname',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'setup',
+            'width'=> '20%',
+            'align' => 'center'
+
+        ],
+    ];
 
     public static $special_gc_request_holder = [
         [
