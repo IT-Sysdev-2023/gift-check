@@ -12,6 +12,8 @@ use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Gc;
+use App\Models\GcLocation;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -108,7 +110,7 @@ class StoreGcRequestService
 		];
 
 		$pdf = Pdf::loadView('pdf.storegc', ['data' => $data]);
-        
+
 		$pdf->setPaper('A3');
 
 		return $pdf->output();
@@ -130,6 +132,136 @@ class StoreGcRequestService
 				return $i;
 			}),
 		];
+	}
+
+	public function scanBarcode(Request $request)
+	{
+		$request->validate([
+			"barcode" => 'required_if:scanMode,false|nullable|digits:13',
+			"bstart" => 'required_if:scanMode,true|nullable|digits:13',
+			"bend" => 'required_if:scanMode,true|nullable|digits:13'
+		]);
+
+		$bstart = $request->bstart;
+		$bend = $request->bend;
+		$barcode = $request->barcode;
+		// $relno = $request->relno;
+		$denid = $request->denid;
+
+		$reqid = $request->reqid;
+
+		$remainGc = StoreRequestItem::where([
+			['sri_items_denomination', $denid],
+			['sri_items_requestid', $reqid]
+		])->first('sri_items_remain');
+
+		$sessionName = 'scanReviewGC';
+
+		//reqid = unique request id,
+		//remainGc = quantity sa denomination
+		//denid = id sa kara denomination like 500 is 3 and 1000 is 5
+
+		$responses = [];
+
+		if ($request->scanMode) {
+			foreach (range($request->bstart, $request->bend) as $bc) {
+				$responses[] = $this->validateBarcode($request, $remainGc, $bc, $sessionName);
+			}
+		} else {
+			$responses[] = $this->validateBarcode($request, $remainGc, $request->barcode, $sessionName);
+		}
+		// Return all responses
+		$sessionData = $request->session()->get($sessionName);
+
+		return response()->json(['barcodes' => $responses, 'sessionData' => $sessionData]);
+	}
+
+	private function validateBarcode(Request $request, $remainGc, int $barcode, $sessionName)
+	{
+		$denid = $request->denid;
+		$reqid = $request->reqid;
+		$store_id = $request->store_id;
+
+		$scannedGcSession = collect($request->session()->get($sessionName, []))->filter(function ($item) use ($reqid, $denid) {
+			return ($item['reqid'] == $reqid) && ($item['denid'] == $denid);
+		})->count();
+
+		// $scannedGc = TempRelease::where([['temp_relno', $relno], ['temp_rdenom', $denid]])->count();
+		if ($remainGc->sri_items_remain > $scannedGcSession) {
+			// dd(range($bstart, $bend));
+			//If Range Mode
+
+
+			// Check Barcode existence
+			$whereBarcode = Gc::where('barcode_no', $barcode);
+
+			if ($whereBarcode->exists()) {
+				if ($whereBarcode->where('denom_id', $denid)->exists()) {
+
+					$locationCheck = GcLocation::whereHas('gc', fn($q) => $q->has('denomination')->where('denom_id', $denid))
+						->where([['loc_store_id', $store_id], ['loc_barcode_no', $barcode]])
+						->exists();
+					// Check if allocated to this store
+					if ($locationCheck) {
+						// Check if it is already released 
+						if (GcRelease::where('re_barcode_no', $barcode)->doesntExist()) {
+							// Check if gc already scanned
+							$isBcExist = collect($request->session()->get($sessionName, []))->filter(function ($item) use ($reqid, $denid, $barcode) {
+								return ($item['reqid'] == $reqid) && ($item['denid'] == $denid) && ($item['barcode'] == $barcode);
+							});
+
+							if ($isBcExist->isEmpty()) {
+
+								$request->session()->push($sessionName, [
+									'barcode' => $barcode,
+									'denid' => $denid,
+									'created_at' => now(),
+									'reqid' => $reqid,
+									'temp_relby' => $request->user()->user_id
+								]);
+								return [
+									'message' => "Barcode Number {$barcode} successfully scanned!",
+									'status' => 200,
+								];
+
+							} else {
+								return [
+									'message' => "Barcode Number {$barcode} already scanned for released.",
+									'status' => 400,
+								];
+							}
+						} else {
+							return [
+								'message' => "Barcode Number {$barcode} already released.",
+								'status' => 400,
+							];
+						}
+					} else {
+						return [
+							'message' => "Barcode Number {$barcode} not found in this location.",
+							'status' => 400,
+						];
+					}
+				} else {
+					return [
+						'message' => "Please scan only with the same denomination.",
+						'status' => 400,
+					];
+				}
+			} else {
+				return [
+					'message' => "Barcode Number {$barcode} not found.",
+					'status' => 400,
+				];
+			}
+
+		} else {
+			return [
+				'message' => "Number of GC Scanned has reached the maximum number to received.",
+				'status' => 400,
+			];
+		}
+
 	}
 
 	private static function getPaymentInfo($header_data, $id)

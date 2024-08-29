@@ -12,13 +12,16 @@ export type PageProps<
     auth: {
         user: User;
     };
+    barcodeReviewScan: {
+        allocation: any[];
+    };
     flash?: {
         success: string;
         error: string;
         stream: string;
         countSession: number;
         denominationSession: number;
-        scanGc: any[]
+        scanGc: any[];
     };
 };
 
