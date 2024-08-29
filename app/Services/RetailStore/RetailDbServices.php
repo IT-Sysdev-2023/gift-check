@@ -161,10 +161,10 @@ class RetailDbServices
     }
     public function createtextfileSecondaryPath($request, $data)
     {
-        $username = 'IT';
+        $user = 'IT';
         $password = 'itsysdev';
 
-        exec('net use C: \\\172.16.43.7\\/username:' . $username . ' ' . $password . ' /');
+        exec('net use \\\\172.16.43.7\\/username:' . $user . ' ' . $password . ' /persistent:no');
 
 
         $filePath = '\\\172.16.43.7\\Gift\\' . $request->barcode . $data['tfilext'];

@@ -44,7 +44,9 @@
                         </p>
                     </div>
                 </a-card>
-                <a-button type="primary" class="mt-1" block @click="submit" :loading="form.processing">
+                <a-button type="primary" class="mt-1" :disabled="(form.barcode == null || form.barcode == '')
+                    || (form.customer == null || form.customer == '')
+                    || (form.payment == null || form.payment == '')" block @click="submit" :loading="form.processing">
                     <template #icon>
                         <FastForwardOutlined />
                     </template>
@@ -79,8 +81,6 @@
                 </a-card>
             </a-col>
             <a-col :span="14">
-                <!-- {{ skeleton }} -->
-                <!-- {{ success }} -->
                 <a-alert v-if="success" :message="'Barcode # ' + form.barcode + ' found'" class="mb-1" type="success"
                     show-icon />
                 <a-alert v-if="notfound" :message="'Barcode # ' + form.barcode + '  not found'" class="mb-1"
@@ -99,7 +99,6 @@
                     <a-skeleton avatar :paragraph="{ rows: 4 }" />
                 </div>
                 <a-card v-else>
-                    <!-- <a-alert message="Enter Barcode to Show Gc Status" class="mb-4" type="info" show-icon /> -->
                     <a-result status="404" title="Enter Barcode" sub-title="In order to show barcode status">
                     </a-result>
                 </a-card>
