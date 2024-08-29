@@ -301,6 +301,7 @@ class RetailServices
         $revalidate = false;
         $bngGC = false;
         $gcFound = false;
+        $verifyGC = false;
 
         $gc = Gc::where('barcode_no', $request->barcode)->where('status', '!=', 'inactive')->exists();
 
@@ -386,7 +387,6 @@ class RetailServices
                 ->count();
 
             if ($special > 0) {
-                // dd();
                 $tfilext = '.' . self::appSetting('txtfile_extension_external');
 
                 $denom = SpecialExternalGcrequestEmpAssign::select('spexgcemp_denom')
@@ -396,6 +396,7 @@ class RetailServices
                 $gcFound = true;
                 $gctype = 3;
             } else {
+
                 return back()->with([
                     'status' => 'error',
                     'title' => 'Opss Error',
@@ -443,57 +444,59 @@ class RetailServices
                 'title' => '400 Invalid'
             ]);
         }
-        // dd(!empty($verifiedQuery));
 
         if (!empty($verifiedQuery)) {
-            // dd();
             $verified = true;
         } else {
-            // dd();
             $verified = false;
         }
 
         if (!$request->reprint) {
-
             if ($verified) {
-                $this->alreadyVerifyGc($request, $verifiedQuery);
+                $this->alreadyVerifyGc($request, $verifiedQuery, $lostgc);
             } else {
-                // dd();
                 $verifyGC = true;
             }
 
             if ($gctype == 4) {
 
-                $this->promotionalServices($request, $verifyGC, $revalidate, $data);
+                $this->promotionalServices($request, $verifyGC, $data, $lostgc);
             } else {
+
                 if (!empty($lostgc) && empty($lostgc->lostgcb_status)) {
-                    //lost gcs
+                    return back()->with([
+                        'msg' => 'GC Barcode # ' . $request->barcode . ' seems lost.',
+                        'title' => 'Lost Gc',
+                        'status' => 'warning',
+                        'error' => 'lost',
+                        'data' => $lostgc
+                    ]);
                 } else {
-                    // dd();
-
                     if ($verifyGC) {
-                        // dd();
-                        if ($revalidate) {
-
-                            // $this->dbservices->updateRevalidation($request);
-                        } else {
-
-                            $result = $this->dbservices->createtextfile($request, $data);
-
-                            if ($result) {
-                                $this->dbservices->createtextfileSecondaryPath($request, $data);
-                            }
+                        $this->dbservices->storeInStoreVerification($request, $data);
+                        $result = $this->dbservices->createtextfile($request, $data);
+                        if ($result) {
+                            $this->dbservices->createtextfileSecondaryPath($request, $data);
                         }
+
+                        return back()->with([
+                            'msg' => 'GC Barcode # ' . $request->barcode . ' verified successfully.',
+                            'title' => 'Success Verified Denomination : ' . $denom ,
+                            'status' => 'success',
+                        ]);
                     }
                 }
             }
         } else {
-
-            // is reprint
+            return back()->with([
+                'msg' => 'GC Barcode # ' . $request->barcode . ' is reprint.',
+                'title' => 'Reprint',
+                'status' => 'warning',
+            ]);
         }
     }
 
-    public  function promotionalServices($request, $verifyGC, $revalidate, $data)
+    public  function promotionalServices($request, $verifyGC, $data, $lostgc)
     {
         $dtrelease = PromogcReleased::where('prgcrel_barcode', $request->barcode)->first()->prgcrel_at;
 
@@ -513,35 +516,37 @@ class RetailServices
         if (!empty($lostgc) && empty($lostgc->lostgcb_status)) {
 
             return back()->with([
-                'status' => 'error',
-                'msg' => 'Sorry the Promo Gift Check is Expired!.',
-                'error' => 'lost',
-                'title' => 'Expired',
-                'data' => $lostgc,
+                'msg' => 'GC Barcode # ' . $request->barcode . ' seems lost.',
+                'title' => 'Lost Gc',
+                'status' => 'warning',
+                'data' => $lostgc
             ]);
         }
         if ($verifyGC) {
 
-            if ($revalidate) {
-            } else {
-                $this->dbservices->storeInStoreVerification($request, $data);
+            $this->dbservices->storeInStoreVerification($request, $data);
 
-                if ($request->payment == 'STORE DEPARTMENT') {
+            if ($request->payment == 'STORE DEPARTMENT') {
 
-                    $result = $this->dbservices->createtextfile($request, $data);
+                $result = $this->dbservices->createtextfile($request, $data);
 
-                    if ($result) {
-                        $this->dbservices->createtextfileSecondaryPath($request, $data);
-                    }
-                };
-            }
+                if ($result) {
+                    $this->dbservices->createtextfileSecondaryPath($request, $data);
+                }
+            };
+
+            return back()->with([
+                'msg' => 'GC Barcode # ' . $request->barcode . ' verified successfully.',
+                'title' => $data->denom,
+                'status' => 'success',
+            ]);
         }
     }
 
-    public function alreadyVerifyGc($request, $data)
+    public function alreadyVerifyGc($request, $data, $lostgc)
     {
+        // dd($data->toArray());
         if ($data->vs_date <= today() && $data->vs_tf_used == '*') {
-
             return back()->with([
                 'msg' => 'GC Barcode # ' . $request->barcode . ' is already verified and used.',
                 'title' => 'Already Verified',
@@ -575,7 +580,47 @@ class RetailServices
                 ]);
             }
 
-            $recent = StoreVerification::select('vs_cn')->where('vs_barcode', $request->barcode)->first();
+            $recent = StoreVerification::select('vs_cn')->where('vs_barcode', $request->barcode)->first()->vs_cn;
+
+            if ($request->customer == $recent) {
+
+                if ($revalidated->trans_datetime == today()) {
+                    //quick check if the gc is reported as lost
+                    if (!empty($lostgc) && empty($lostgc->lostgcb_status)) {
+                        return back()->with([
+                            'msg' => 'GC Barcode # ' . $request->barcode . ' seems lost.',
+                            'title' => 'Lost Gc',
+                            'status' => 'warning',
+                            'data' => $lostgc
+                        ]);
+                    }
+
+                    //revalidated when it is not lost
+                    $this->dbservices->updateRevalidation($request);
+
+                    return back()->with([
+                        'msg' => 'GC Barcode # ' . $request->barcode . ' reverified successfully.',
+                        'title' => 'Success Reverified',
+                        'status' => 'success',
+                    ]);
+                } else {
+                    return back()->with([
+                        'msg' => 'GC Barcode # ' . $request->barcode . ' is already verified.',
+                        'title' => 'Already Verified',
+                        'status' => 'warning',
+                        'error' => 'revalidated',
+                        'data' => $revalidated
+                    ]);
+                };
+            } else {
+                return back()->with([
+                    'msg' => 'Invalid Customer Information',
+                    'title' => 'Its seems like customer didnt match, Customer: ' .  $this->customerName($recent),
+                    'status' => 'error',
+                    'error' => 'invalidcustomer',
+                    'data' => $revalidated,
+                ]);
+            };
         }
     }
 
@@ -588,10 +633,14 @@ class RetailServices
             'reval_revalidated',
             'store_name'
         )->join('transaction_stores', 'trans_sid', '=', 'reval_trans_id')
-            ->where('stores', 'store_id', '=', 'trans_store')
+            ->join('stores', 'store_id', '=', 'trans_store')
             ->where('reval_barcode', $request->barcode)
             ->where('trans_datetime', today())
             ->first();
+    }
+    public function customerName($id)
+    {
+        return Customer::select('cus_fname', 'cus_lname', 'cus_mname', 'cus_name')->where('cus_id', $id)->first()->full_name;
     }
 
     public static function blocked($barcode)
