@@ -11,6 +11,7 @@ use App\Models\StoreReceivedGc;
 use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class RetailDbServices
 {
@@ -114,7 +115,7 @@ class RetailDbServices
     {
         StoreVerification::create([
             'vs_barcode' => $request->barcode,
-            'vs_cn' => $request->custid,
+            'vs_cn' => $request->customer,
             'vs_by' => $request->user()->user_id,
             'vs_date' => today(),
             'vs_time' => now()->format('H:i:s'),
@@ -138,18 +139,44 @@ class RetailDbServices
     public function createtextfile($request, $data)
     {
 
-        $filePath = storage_path('app/public/cfstextfiles/'. $request->barcode . $data['tfilext']);
+        $filePath = storage_path('app/public/cfstextfiles/' . $request->barcode . $data['tfilext']);
 
-        $content = "000," .$request->customer.",0," .$data['customer']->full_name."\n";
-        $content .= "001,".$data['denom']."\n";
+        $content = "000," . $request->customer . ",0," . $data['customer']->full_name . "\n";
+        $content .= "001," . $data['denom'] . "\n";
         $content .= "002,0\n";
         $content .= "003,0\n";
-        $content .= "004,".$data['denom']."\n";
+        $content .= "004," . $data['denom'] . "\n";
+        $content .= "005,0\n";
+        $content .= "006,0\n";
+        $content .= "007,0\n";
+
+        $success = file_put_contents($filePath, $content);
+
+        if ($success) {
+            return true;
+        }
+
+        return false;
+    }
+    public function createtextfileSecondaryPath($request, $data)
+    {
+        $username = 'IT';
+        $password = 'itsysdev';
+
+        exec('net use C: \\\172.16.43.7\\/username:' . $username . ' ' . $password . ' /');
+
+
+        $filePath = '\\\172.16.43.7\\Gift\\' . $request->barcode . $data['tfilext'];
+
+        $content = "000," . $request->customer . ",0," . $data['customer']->full_name . "\n";
+        $content .= "001," . $data['denom'] . "\n";
+        $content .= "002,0\n";
+        $content .= "003,0\n";
+        $content .= "004," . $data['denom'] . "\n";
         $content .= "005,0\n";
         $content .= "006,0\n";
         $content .= "007,0\n";
 
         file_put_contents($filePath, $content);
-
     }
 }
