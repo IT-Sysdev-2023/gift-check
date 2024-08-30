@@ -286,68 +286,7 @@
     </a-modal>
 
     <!-- View Allocated Gc Modal -->
-    <a-modal
-        v-model:open="allocatedModal"
-        title="Allocated Gc"
-        style="width: 1000px"
-        centered
-        :footer="null"
-    >
-        <div class="mb-8 text-right">
-            <a-input-search
-                class="mr-1"
-                v-model:value="searchValue"
-                @change="filterSearch"
-                placeholder="Search here..."
-                style="width: 300px"
-            />
-        </div>
-        <a-table
-            bordered
-            :pagination="false"
-            :columns="allocatedGcColumn"
-            :data-source="allocatedGcData.data"
-        >
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex">
-                    <span
-                        v-html="
-                            highlightText(record[column.dataIndex], searchValue)
-                        "
-                    >
-                    </span>
-                </template>
-                <template v-if="column.key == 'pro'">
-                    <span
-                        v-html="
-                            highlightText(record.gc.pe_entry_gc, searchValue)
-                        "
-                    >
-                    </span
-                ></template>
-                <template v-if="column.key == 'type'">
-                    {{
-                        record.loc_gc_type == 1 ? "Regular" : "Special"
-                    }}</template
-                >
-                <template v-if="column.key == 'denom'">
-                    <span
-                        v-html="
-                            highlightText(
-                                record.gc.denomination.denomination,
-                                searchValue
-                            )
-                        "
-                    >
-                    </span>
-                </template>
-            </template>
-        </a-table>
-        <pagination-axios
-            :datarecords="allocatedGcData"
-            @on-pagination="onChangePagination"
-        />
-    </a-modal>
+     <view-allocated-gc-modal v-model:open="allocatedModal" :allocated-gc-data="allocatedGcData" :store_id="data?.details?.sgc_store"/>
 
     <!-- Scan Modal -->
     <a-modal
@@ -379,7 +318,7 @@
                 label="Denomination"
                 :labelStyle="{ fontWeight: 'bold' }"
             >
-                {{ scanSingleData.denomination }}
+                {{ scanData.denomination }}
             </a-descriptions-item>
             <a-descriptions-item
                 label="Validated By"
@@ -495,15 +434,12 @@
 
 <script lang="ts" setup>
 import dayjs from "dayjs";
-import { useForm, usePage } from "@inertiajs/vue3";
+import { usePage } from "@inertiajs/vue3";
 import { ref, computed, reactive, watch } from "vue";
 import { PageWithSharedProps } from "@/types";
 import { notification } from "ant-design-vue";
 import axios from "axios";
 import type { UploadChangeParam } from "ant-design-vue";
-import { highlighten } from "@/Mixin/UiUtilities";
-
-const { highlightText } = highlighten();
 
 //Props
 const props = defineProps<{
@@ -558,30 +494,11 @@ const paymentTypeOptions = [
         label: "JV",
     },
 ];
-const allocatedGcColumn = [
-    {
-        title: "Barcode #.",
-        dataIndex: "loc_barcode_no",
-    },
-    {
-        title: "Pro #.",
-        key: "pro",
-    },
-    {
-        title: "Type",
-        key: "type",
-    },
-    {
-        title: "Denomination",
-        key: "denom",
-    },
-];
 const today = dayjs().format("YYYY-MMM-DD HH:mm:ss a");
-const searchValue = ref<string>("");
 const scanSwitch = ref(false);
 const denominationTableData = ref(props.data.rgc);
 const allocatedGcData = ref(null);
-const scanSingleData = ref(null);
+const scanData = ref(null);
 const scanModal = ref(false);
 const allocatedModal = ref(false);
 const viewScannedModal = ref(false);
@@ -671,7 +588,7 @@ const onSubmitBarcode = async () => {
             bend: formBc.endBarcode,
             barcode: formBc.barcode,
             relno: props.data.rel_num,
-            denid: scanSingleData.value.sri_items_denomination,
+            denid: scanData.value.sri_items_denomination,
             store_id: props.data.details.store.store_id,
             reqid: props.data.details.sgc_id,
         })
@@ -707,12 +624,6 @@ const onSubmitBarcode = async () => {
             }
         });
 };
-const onChangePagination = async (link) => {
-    if (link.url) {
-        const { data } = await axios.get(link.url);
-        allocatedGcData.value = data;
-    }
-};
 const onScannedPagination = async (link) => {
     if (link.url) {
         const { data } = await axios.get(
@@ -735,7 +646,7 @@ const handleClose = () => {
     emit("update:open", false);
 };
 const handleScanModal = (record) => {
-    scanSingleData.value = record;
+    scanData.value = record;
     scanModal.value = true;
 };
 const countScannedBc = (record) => {
@@ -768,20 +679,6 @@ const handleCustomerOption = (value) =>
     (formState.paymentType.customer = value);
 const handleDocumentChange = (file: UploadChangeParam) => {
     formState.file = file.file;
-};
-const filterSearch = async () => {
-    const { data } = await axios.get(
-        route(
-            "treasury.store.gc.viewAllocatedList",
-            props.data.details.sgc_store
-        ),
-        {
-            params: {
-                search: searchValue.value,
-            },
-        }
-    );
-    allocatedGcData.value = data;
 };
 
 //Watchers
