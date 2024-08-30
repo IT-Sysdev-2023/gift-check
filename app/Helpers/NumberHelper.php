@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use NumberFormatter;
+use Illuminate\Support\Number;
 
 // use PhpOffice\PhpSpreadsheet\Style\NumberFormat\NumberFormatter;
 
@@ -24,8 +25,9 @@ class NumberHelper
     }
     public static function currency(float $amount, $locale = 'en_PH', string $currency = 'PHP')
     {
-        $numberFormatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
-        return $numberFormatter->formatCurrency($amount, $currency);
+        // $numberFormatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
+        // return $numberFormatter->formatCurrency($amount, $currency);
+        return Number::currency($amount, in: $currency, locale: $locale);
     }
 
     public static function percentage($current, $total){

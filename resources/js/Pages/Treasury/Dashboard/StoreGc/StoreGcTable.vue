@@ -114,23 +114,11 @@ export default {
         async confirm(record) {
             if(record.sgc_status != '2'){
                 const {data} = await axios.get(route('treasury.store.gc.releasingEntry', record.sgc_id));
-                console.log(data);
                 this.modalData = data;
                 this.openModal = true;
             }else{
                 console.log('object');
             }
-
-            // this.onLoading = true;
-            // try {
-            //     const { data } = await axios.get(
-            //         route("treasury.store.gc.cancelled.gc", id)
-            //     );
-            //     this.cancelledRecord = data;
-            //     this.openModal = true;
-            // } finally {
-            //     this.onLoading = false;
-            // }
         },
     },
 
