@@ -32,6 +32,7 @@ const handlePreview = async (file: UploadProps["fileList"][number]) => {
         file.name || file.url.substring(file.url.lastIndexOf("/") + 1);
 };
 const emit = defineEmits(['handleChange']);
+
 const handleUploadChange = (info: UploadChangeParam) => {
     emit('handleChange', info);
 };

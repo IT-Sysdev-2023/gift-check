@@ -537,7 +537,7 @@ class RetailServices
 
             return back()->with([
                 'msg' => 'GC Barcode # ' . $request->barcode . ' verified successfully.',
-                'title' => $data->denom,
+                'title' => $data['denom'],
                 'status' => 'success',
             ]);
         }

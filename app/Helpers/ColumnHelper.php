@@ -53,6 +53,35 @@ class ColumnHelper
 
         ],
     ];
+    public static $retail_group_pending_colums = [
+        [
+            'title' => 'RFPROM #',
+            'dataIndex' => 'pgcreq_reqnum',
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'pgcreq_datereq',
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'pgcreq_dateneeded',
+        ],
+        [
+            'title' => 'Total GC',
+            'dataIndex' => 'pgcreq_total',
+        ],
+        [
+            'title' => 'Requested by',
+            'dataIndex' => 'fullname',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'setup',
+            'width' => '15%',
+            'align' => 'center'
+        ],
+
+    ];
     public static $pending_budget_request_columns = [
         [
             'title' => 'BR No.',
@@ -82,7 +111,7 @@ class ColumnHelper
         [
             'title' => 'Action',
             'key' => 'setup',
-            'width'=> '20%',
+            'width' => '20%',
             'align' => 'center'
 
         ],
@@ -575,6 +604,4 @@ class ColumnHelper
             ],
         ];
     }
-
-
 }
