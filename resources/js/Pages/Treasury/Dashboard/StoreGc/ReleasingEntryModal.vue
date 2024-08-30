@@ -288,7 +288,7 @@
     <!-- View Allocated Gc Modal -->
      <view-allocated-gc-modal v-model:open="allocatedModal" :allocated-gc-data="allocatedGcData" :store_id="data?.details?.sgc_store"/>
 
-    <!-- Scan Modal -->
+    <!-- Scan Modal  sadasd-->
     <a-modal
         v-model:open="scanModal"
         title="Scan Gc"
