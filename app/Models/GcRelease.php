@@ -13,6 +13,10 @@ class GcRelease extends Model
     protected $table = 'gc_release';
     protected $primaryKey = 'rel_id';
 
+    protected $guarded = [];
+
+    public $timestamps = false;
+
     public function gc()
     {
         return $this->belongsTo(Gc::class, 're_barcode_no', 'barcode_no');

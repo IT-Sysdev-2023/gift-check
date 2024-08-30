@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\ApprovedGcrequest;
 use App\Models\InstitutEod;
 use App\Models\InstitutTransaction;
 use App\Models\ProductionRequest;
@@ -38,17 +39,25 @@ class DashboardClass extends DashboardService
     public function retailDashboard()
     {
         //
+
+        return [
+            'approved' => ApprovedGcrequest::with('storeGcRequest', 'storeGcRequest.store', 'user')
+                ->whereHas('storeGcRequest', function ($query) {
+                    $query->where('sgc_store', request()->user()->store_assigned);
+                })
+                ->count(),
+        ];
     }
     public function financeDashboard()
     {
-        $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '0')->where('spexgc_addemp','done')->count();
-        $pendingInternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '*')->where('spexgc_addemp','done')->count();
+        $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '0')->where('spexgc_addemp', 'done')->count();
+        $pendingInternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '*')->where('spexgc_addemp', 'done')->count();
 
         return [
             'specialGcRequest' => [
-                'pending' => $pendingExternal+$pendingInternal,
-                'internal' =>$pendingInternal,
-                'external' =>$pendingExternal,
+                'pending' => $pendingExternal + $pendingInternal,
+                'internal' => $pendingInternal,
+                'external' => $pendingExternal,
                 'approve' => SpecialExternalGcrequest::where('spexgc_status', 'approved')->count(),
                 'cancel' => SpecialExternalGcrequest::where('spexgc_status', 'cancelled')->count(),
             ],

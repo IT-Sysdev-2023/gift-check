@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Models\Denomination;
 use App\Models\GcLocation;
@@ -25,14 +26,19 @@ class RetailController extends Controller
         public FinanceService $financeService,
         public RetailServices $retail,
         public AdminServices $statusScanner,
+        public DashboardClass $dashboardClass
     ) {
     }
     public function index()
     {
 
+        $counts = $this->dashboardClass->retailDashboard();
+
         $gcRequest = [
-            'PendingGcRequest' => $this->retail->GcPendingRequest()->count()
+            'PendingGcRequest' => $this->retail->GcPendingRequest()->count(),
+            'approved' =>  $counts['approved'],
         ];
+
         return inertia('Retail/RetailDashboard', [
             'countGcRequest' => $gcRequest
         ]);

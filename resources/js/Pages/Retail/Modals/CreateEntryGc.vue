@@ -110,7 +110,6 @@
 
         <scan-gc-drawer v-model:open="drawer" @close-drawer="closeDrawer" :data="record" :record="data"
             :rec="record.store" />
-            {{ record.approved.agcr_request_relnum }}
 
     </a-modal>
 
@@ -130,7 +129,6 @@ const props = defineProps({
 
 const form = useForm({
     recnum: props.record.store,
-    relnum: props.record.approved.agcr_request_relnum,
     checkby: null,
     total: props.record.total
 })
@@ -150,8 +148,10 @@ const closeDrawer = (record) => {
 }
 
 const submit = () => {
+    alert(props.record.approved?.agcr_request_relnum);
     form.transform((data) => ({
-        ...data
+        ...data,
+        relnum: props.record.approved.agcr_request_relnum
     })).post(route('retail.manage.submit'), {
         onSuccess: (response) => {
             notification[response.props.flash.status]({

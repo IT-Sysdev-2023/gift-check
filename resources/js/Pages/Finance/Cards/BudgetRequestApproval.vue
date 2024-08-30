@@ -1,6 +1,6 @@
 <template>
     <a-card class="bg-card">
-        <a-alert message="Promo Gc Request" show-icon />
+        <a-alert message="Budget Gc Request" show-icon />
         <div class="card" style="background-color: #EE4E4E">
             <svg class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -14,17 +14,16 @@
 
             <div class="message-text-container">
                 <p class="message-text text-white">Pendings</p>
-                <p class="sub-text text-white">All Pending Gc Request</p>
+                <p class="sub-text text-white">All Pending Request</p>
             </div>
-            <a-badge :count="counts.PendingGcRequest">
-                <a-button :disabled="counts.PendingGcRequest == 0" @click="() => $inertia.get(route('retail.gcrequest.pending.list'))">
+            <a-badge :count="count.pending">
+                <a-button @click="() => $inertia.get(route('finance.budget.pending'))">
                     <template #icon>
                         <FolderFilled />
                     </template>
                     View
                 </a-button>
             </a-badge>
-
         </div>
 
         <div class="card" style="background-color: #34B3F1">
@@ -39,10 +38,10 @@
             </div>
             <div class="message-text-container">
                 <p class="message-text text-white">Approved</p>
-                <p class="sub-text text-white">All Approved Gc Request</p>
+                <p class="sub-text text-white">Approved Gc Request</p>
             </div>
-            <a-badge :count="counts.approved" :number-style="{ backgroundColor: '#52c41a' }">
-                <a-button :disabled="counts.approved == 0" @click="() => $inertia.get(route('retail.approved.request'))">
+            <a-badge :count="count.approve">
+                <a-button @click="() => $inertia.get(route('finance.approvedGc.approved'))">
                     <template #icon>
                         <FolderFilled />
                     </template>
@@ -66,7 +65,7 @@
                 <p class="message-text text-white">Cancelled</p>
                 <p class="sub-text text-white">All Cancel Request</p>
             </div>
-            <a-button>
+            <a-button :count="count.cancel">
                 <template #icon>
                     <FolderFilled />
                 </template>
@@ -76,9 +75,18 @@
     </a-card>
 </template>
 <script>
+
 export default {
     props: {
-        counts:Object
+        count: Array,
+    },
+
+    methods: {
+        pendingListLink(type) {
+            this.$inertia.get(route('finance.pendingGc.pending'), {
+                type: type
+            });
+        }
     }
 }
 </script>
@@ -94,7 +102,6 @@ export default {
     margin-top: 7px;
     box-sizing: border-box;
     padding: 10px 15px;
-    /* background-color: #ffffff; */
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     position: relative;
     overflow: hidden;

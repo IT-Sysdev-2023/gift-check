@@ -1,5 +1,5 @@
 <template>
-  
+
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
            <PromoGCCard :count="count"/>
@@ -10,6 +10,7 @@
         </a-col>
         <a-col :span="8">
             <!-- <PromoGCCard/> -->
+             <budget-request-approval :count="count"/>
         </a-col>
     </a-row>
 </template>

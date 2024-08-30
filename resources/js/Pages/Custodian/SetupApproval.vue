@@ -50,15 +50,26 @@
                         </a-descriptions>
                     </span>
                     <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Documents">
-                            <a-empty />
-                        </a-descriptions-item>
-                    </a-descriptions>
-                    <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Remarks">
                             <a-textarea :rows="2" :value="record.special.spexgc_remarks" readonly />
                         </a-descriptions-item>
                     </a-descriptions>
+                    <a-row :gutter="[16, 16]" class="mt-2">
+                        <a-col :span="12">
+                            <p class="flex justify-center items-center mt-7 font-bold " style="height: 90px;">
+                                Documents
+                            </p>
+                        </a-col>
+                        <a-col :span="12">
+                            <a-card v-if="record.docs?.doc_fullpath != null">
+                                <a-image width="100" style="border-radius: 10px;"
+                                    :src="'/storage/' + record.docs.doc_fullpath" alt="image" :preview="true" />
+                            </a-card>
+                            <a-card v-else>
+                                <a-empty />
+                            </a-card>
+                        </a-col>
+                    </a-row>
                     <a-button class="mt-5" block style="background-color: #FC6736; color: white;">
                         <template #icon>
                             <FastForwardOutlined />
@@ -73,17 +84,17 @@
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                                     <a-descriptions-item style="width: 50%;" label="Date Approved">{{
                                         record.special.approved_request.reqap_date
-                                        }}</a-descriptions-item>
+                                    }}</a-descriptions-item>
                                 </a-descriptions>
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                                     <a-descriptions-item style="width: 50%;" label="Chekced By">{{
                                         record.special.approved_request.reqap_checkedby
-                                        }}</a-descriptions-item>
+                                    }}</a-descriptions-item>
                                 </a-descriptions>
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                                     <a-descriptions-item style="width: 50%;" label="Prepared By">{{
                                         record.special.approved_request.reqap_approvedby
-                                        }}</a-descriptions-item>
+                                    }}</a-descriptions-item>
                                 </a-descriptions>
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                                     <a-descriptions-item style="width: 50%;"
@@ -92,7 +103,10 @@
                             </a-col>
                             <a-col :span="12">
                                 <a-typography-text code>Documents:</a-typography-text>
-                                <a-card class="mb-4">
+                                <a-card class="mb-4" v-if="record.special.approved_request.reqap_doc == ''">
+                                    <a-empty class="mt-5" />
+                                </a-card>
+                                <a-card v-else>
                                     <a-empty class="mt-5" />
                                 </a-card>
                                 <a-typography-text code>Remarks:</a-typography-text>
@@ -197,6 +211,7 @@ export default {
     props: {
         record: Object,
         barcodes: Object,
+        docs: Object,
     },
     data() {
         return {

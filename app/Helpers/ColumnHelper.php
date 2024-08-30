@@ -53,6 +53,69 @@ class ColumnHelper
 
         ],
     ];
+    public static $retail_group_pending_colums = [
+        [
+            'title' => 'RFPROM #',
+            'dataIndex' => 'pgcreq_reqnum',
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'pgcreq_datereq',
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'pgcreq_dateneeded',
+        ],
+        [
+            'title' => 'Total GC',
+            'dataIndex' => 'pgcreq_total',
+        ],
+        [
+            'title' => 'Requested by',
+            'dataIndex' => 'fullname',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'setup',
+            'width' => '15%',
+            'align' => 'center'
+        ],
+
+    ];
+    public static $pending_budget_request_columns = [
+        [
+            'title' => 'BR No.',
+            'dataIndex' => 'br_no',
+
+        ],
+        [
+            'title' => 'Date Request',
+            'dataIndex' => 'req_at',
+
+        ],
+        [
+            'title' => 'Budget Request',
+            'dataIndex' => 'br_request',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'needed',
+
+        ],
+        [
+            'title' => 'Prepare By',
+            'dataIndex' => 'fullname',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'setup',
+            'width' => '20%',
+            'align' => 'center'
+
+        ],
+    ];
 
     public static $special_gc_request_holder = [
         [
@@ -541,6 +604,4 @@ class ColumnHelper
             ],
         ];
     }
-
-
 }

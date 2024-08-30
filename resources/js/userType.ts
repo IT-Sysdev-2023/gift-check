@@ -20,5 +20,6 @@ export function UserType() {
       custodian: computed(() => (userType("4") || userType("1")) && !userRole(4)),
       marketing: computed(() => (userType("6") || userType("1")) && !userRole(6)),
       iad: computed(() => (userType("10") || userType("1")) && !userRole(10)),
+      retailgroup: computed(() => (userType("8") || userType("1")) && !userRole(8)),
     };
 }
