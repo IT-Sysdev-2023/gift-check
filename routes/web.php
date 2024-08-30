@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\ProcessFiles;
 use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BudgetAdjustmentController;
@@ -373,6 +374,8 @@ Route::prefix('management')->group(function () {
         Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
     });
 });
+
+Route::get('file-search',[ProcessFiles::class ,'barcodeSearch']);
 
 Route::get('generate-barcode', [CustodianController::class, 'generateBarcode'])->name('generaate');
 

@@ -20,15 +20,6 @@
                     <a-form-item label="Date Needed" name="dateneeded">
                         <a-date-picker v-model:value="form.dateneeded" :disabled-date="disabledDate" />
                     </a-form-item>
-                    <a-form-item label="PWP/ Approved Budget Doc:" name="file">
-                        <a-upload v-model:file-list="form.fileList" name="file" action="" :headers="headers"
-                            @change="handleChange">
-                            <a-button>
-                                <upload-outlined></upload-outlined>
-                                Click to Upload
-                            </a-button>
-                        </a-upload>
-                    </a-form-item>
                     <a-form-item label="Remarks:" name="remarks">
                         <a-textarea v-model:value="form.remarks" allow-clear />
                     </a-form-item>

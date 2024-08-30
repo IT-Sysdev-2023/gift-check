@@ -161,13 +161,13 @@ class RetailDbServices
     }
     public function createtextfileSecondaryPath($request, $data)
     {
-        $username = 'IT';
-        $password = 'itsysdev';
+        $username = 'Kenjey';
+        $password = 'ken';
 
-        exec('net use C: \\\172.16.43.7\\/username:' . $username . ' ' . $password . ' /');
+        exec('net use C: \\\172.16.42.143\\/username:' . $username . ' ' . $password . ' /');
 
 
-        $filePath = '\\\172.16.43.7\\Gift\\' . $request->barcode . $data['tfilext'];
+        $filePath = '\\\172.16.42.143\\Gift\\' . $request->barcode . $data['tfilext'];
 
         $content = "000," . $request->customer . ",0," . $data['customer']->full_name . "\n";
         $content .= "001," . $data['denom'] . "\n";
