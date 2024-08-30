@@ -22,6 +22,7 @@ use App\Http\Controllers\Treasury\Dashboard\BudgetRequestController;
 use App\Http\Controllers\Treasury\Dashboard\GcProductionRequestController;
 use App\Http\Controllers\Treasury\Dashboard\SpecialGcRequestController;
 use App\Http\Controllers\Treasury\Dashboard\StoreGcController;
+use App\Http\Controllers\Treasury\Transactions\PromoGcReleasingController;
 use App\Http\Controllers\Treasury\Transactions\SpecialGcPaymentController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\MainController;
@@ -223,6 +224,11 @@ Route::middleware('auth')->group(function () {
                     Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
                     Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
                     Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+                });
+
+                //Promo Gc Releasing
+                Route::prefix('promo-gc-releasing')->name('promo.gc.releasing.')->group(function () {
+                    Route::get('/', [PromoGcReleasingController::class, 'index'])->name('index');
                 });
 
                 //Budget Request

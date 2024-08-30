@@ -112,8 +112,14 @@ const setActiveTab = computed(() => {
                 <a-menu-item key="menu-item-gc-releasing-retail-store"
                     >GC Releasing (Retail Store)</a-menu-item
                 >
-                <a-menu-item key="menu-item-promo-gc-releasing"
-                    >Promo GC Releasing</a-menu-item
+                <a-menu-item key="treasury.transactions.promo.gc.releasing.index">
+                    <Link
+                        :href="
+                            route('treasury.transactions.promo.gc.releasing.index')
+                        "
+                    >
+                        Promo GC Releasings</Link
+                    ></a-menu-item
                 >
                 <a-menu-item key="menu-item-institution-gc-sales"
                     >Institution GC Sales</a-menu-item
@@ -239,16 +245,24 @@ const setActiveTab = computed(() => {
                 <a-menu-item key="menu-item-envelope">Envelope</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="treasury.transactions.gcallocation.index"
-                ><Link :href="route('treasury.transactions.gcallocation.index')">
+                ><Link
+                    :href="route('treasury.transactions.gcallocation.index')"
+                >
                     GC Allocation</Link
                 ></a-menu-item
             >
             <a-menu-item key="menu-item-gc-releasing-retail-store"
                 >GC Releasing (Retail Store)</a-menu-item
             >
-            <a-menu-item key="menu-item-promo-gc-releasing"
-                >Promo GC Releasing</a-menu-item
-            >
+            <a-menu-item key="treasury.transactions.promo.gc.releasing.index">
+                    <Link
+                        :href="
+                            route('treasury.transactions.promo.gc.releasing.index')
+                        "
+                    >
+                        Promo GC Releasings</Link
+                    ></a-menu-item
+                >
             <a-menu-item key="menu-item-institution-gc-sales"
                 >Institution GC Sales</a-menu-item
             >

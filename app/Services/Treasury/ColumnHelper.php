@@ -361,4 +361,47 @@ class ColumnHelper
             'align' => 'center'
         ],
     ];
+    public static $promoGcReleasing = [
+
+        [
+            'title' => 'RFPROM #',
+            'dataIndex' => 'no',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgcemp_denom',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'voucher',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Total GC',
+            'dataIndex' => 'spexgcemp_lname',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'spexgcemp_fname',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Recommended By',
+            'dataIndex' => 'spexgcemp_mname',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'approved_by',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Status',
+            'dataIndex' => 'status',
+            'align' => 'center'
+        ],
+    ];
 }

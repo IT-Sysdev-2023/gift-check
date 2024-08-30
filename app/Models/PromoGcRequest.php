@@ -22,7 +22,7 @@ class PromoGcRequest extends Model
 
     public function userReqby()
     {
-        return $this->hasOne(User::class, 'user_id', 'pgcreq_reqby');
+        return $this->belongsTo(User::class, 'pgcreq_reqby', 'user_id');
     }
     public function approvedReq()
     {
@@ -33,6 +33,7 @@ class PromoGcRequest extends Model
         );
     }
 
+  
     public function scopeSelectPromoRequest($builder)
     {
         $builder->selectRaw(

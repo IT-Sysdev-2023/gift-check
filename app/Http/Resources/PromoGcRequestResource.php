@@ -20,8 +20,10 @@ class PromoGcRequestResource extends JsonResource
             'req_id' => $this->pgcreq_id,
             'date_needed' => $this->pgcreq_dateneeded,
             'total' => $this->pgcreq_total,
+            'status' => $this->pgcreq_relstatus,
             'user' => $this->whenLoaded('userReqby', fn ($name)=> $name->fullname),
             'approved_by' => $this->approved_by,
+            'approved_request_user' => $this->whenLoaded('approvedReq')
         ];
     }
 }
