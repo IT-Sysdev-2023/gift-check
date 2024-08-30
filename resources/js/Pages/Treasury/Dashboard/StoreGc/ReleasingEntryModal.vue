@@ -20,7 +20,7 @@
                         <a-form-item label="Date Released:">
                             <a-input :value="today" readonly />
                         </a-form-item>
-                        <a-form-item
+                        <!-- <a-form-item
                             label="Upload Document:"
                             :validate-status="errorForm?.file ? 'error' : ''"
                             :help="errorForm?.file"
@@ -28,7 +28,7 @@
                             <ant-upload-image
                                 @handle-change="handleDocumentChange"
                             />
-                        </a-form-item>
+                        </a-form-item> -->
                         <a-form-item
                             label="Remarks:"
                             :validate-status="errorForm?.remarks ? 'error' : ''"
@@ -70,72 +70,14 @@
                                 @input="() => (errorForm.receivedBy = null)"
                             />
                         </a-form-item>
-                        <a-form-item
-                            label="Payment Type:"
-                            :validate-status="
-                                errorForm?.['paymentType.type'] ? 'error' : ''
-                            "
-                            :help="errorForm?.['paymentType.type']"
-                        >
-                            <ant-select
-                                :options="paymentTypeOptions"
-                                @handle-change="handPaymentType"
-                            />
-                        </a-form-item>
-                        <div v-if="formState.paymentType.type === 'check'">
-                            <a-form-item label="Bank Name:" name="bank">
-                                <a-input
-                                    v-model:value="
-                                        formState.paymentType.bankName
-                                    "
-                                />
-                            </a-form-item>
-                            <a-form-item label="Account Number:" name="acc">
-                                <a-input
-                                    v-model:value="
-                                        formState.paymentType.accountNumber
-                                    "
-                                />
-                            </a-form-item>
-                            <a-form-item label="Check Number:" name="check">
-                                <a-input
-                                    v-model:value="
-                                        formState.paymentType.checkNumber
-                                    "
-                                />
-                            </a-form-item>
-                            <a-form-item label="Check Amount:" name="check">
-                                <a-input
-                                    v-model:value="
-                                        formState.paymentType.checkAmount
-                                    "
-                                />
-                            </a-form-item>
-                        </div>
-                        <a-form-item
-                            label="Cash Amount:"
-                            name="amount"
-                            v-else-if="formState.paymentType.type === 'cash'"
-                        >
-                            <ant-input-number
-                                v-model:amount="formState.paymentType.amount"
-                            />
-                        </a-form-item>
-                        <a-form-item
-                            label="Customer:"
-                            :validate-status="
-                                errorForm?.['paymentType.customer']
-                                    ? 'error'
-                                    : ''
-                            "
-                            :help="errorForm?.['paymentType.customer']"
-                            v-else-if="formState.paymentType.type === 'jv'"
-                        >
-                            <ant-select
-                                :options="customerOptions"
-                                @handle-change="handleCustomerOption"
-                            />
-                        </a-form-item>
+                        <check-cash-jv-payment
+                            :formState="formState"
+                            :errorForm="errorForm"
+
+                            @handleCustomerOption="handleCustomerOption"
+                            @handPaymentType="handPaymentType"
+                        />
+                        
                     </a-form>
                 </a-card>
             </a-col>
@@ -286,111 +228,14 @@
     </a-modal>
 
     <!-- View Allocated Gc Modal -->
-     <view-allocated-gc-modal v-model:open="allocatedModal" :allocated-gc-data="allocatedGcData" :store_id="data?.details?.sgc_store"/>
+    <view-allocated-gc-modal
+        v-model:open="allocatedModal"
+        :allocated-gc-data="allocatedGcData"
+        :store_id="data?.details?.sgc_store"
+    />
 
     <!-- Scan Modal  sadasd-->
-    <a-modal
-        v-model:open="scanModal"
-        title="Scan Gc"
-        style="width: 600px"
-        centered
-        @ok="onSubmitBarcode"
-    >
-        <a-descriptions class="mt-5">
-            <a-descriptions-item
-                label="Release No"
-                :span="2"
-                :labelStyle="{ fontWeight: 'bold' }"
-                >{{ data.rel_num }}</a-descriptions-item
-            >
-            <a-descriptions-item
-                label="Date"
-                :labelStyle="{ fontWeight: 'bold' }"
-                >{{ dayjs().format("MMM DD, YYYY") }}</a-descriptions-item
-            >
-            <a-descriptions-item
-                label="Store"
-                :span="2"
-                :labelStyle="{ fontWeight: 'bold' }"
-                >{{ data.details.store.store_name }}</a-descriptions-item
-            >
-            <a-descriptions-item
-                label="Denomination"
-                :labelStyle="{ fontWeight: 'bold' }"
-            >
-                {{ scanData.denomination }}
-            </a-descriptions-item>
-            <a-descriptions-item
-                label="Validated By"
-                :span="2"
-                :labelStyle="{ fontWeight: 'bold' }"
-            >
-                {{ $page.props.auth.user.full_name }}
-            </a-descriptions-item>
-            <a-descriptions-item
-                label="Scan Mode"
-                :labelStyle="{ fontWeight: 'bold' }"
-            >
-                <a-switch
-                    @change="() => (errorBarcode = null)"
-                    v-model:checked="scanSwitch"
-                    checked-children="Range Scan"
-                    un-checked-children="Single Scan"
-                />
-            </a-descriptions-item>
-        </a-descriptions>
-        <a-form :model="formBc" layout="vertical">
-            <!-- //Single Scan -->
-            <a-form-item
-                v-if="!scanSwitch"
-                label="Barcode"
-                :validate-status="errorBarcode?.barcode ? 'error' : ''"
-                :help="errorBarcode?.barcode"
-            >
-                <a-input-number
-                    :maxlength="13"
-                    v-model:value="formBc.barcode"
-                    placeholder="Enter Barcode"
-                    class="w-full h-16 text-3xl pt-4"
-                    @input="() => (errorBarcode = null)"
-                />
-            </a-form-item>
-
-            <!-- //Range Scan -->
-            <a-row :gutter="[16, 0]" class="mt-8" v-else>
-                <a-col :span="12"
-                    ><a-form-item
-                        label="Barcode Start"
-                        :validate-status="errorBarcode?.bstart ? 'error' : ''"
-                        :help="errorBarcode?.bstart"
-                    >
-                        <a-input-number
-                            :maxlength="13"
-                            placeholder="Barcode Start"
-                            v-model:value="formBc.startBarcode"
-                            class="w-full h-16 text-3xl pt-4"
-                            @input="() => (errorBarcode = null)"
-                        />
-                    </a-form-item>
-                </a-col>
-                <a-col :span="12">
-                    <a-form-item
-                        label="Barcode End"
-                        :validate-status="errorBarcode?.bend ? 'error' : ''"
-                        :help="errorBarcode?.bend"
-                    >
-                        <a-input-number
-                            :maxlength="13"
-                            placeholder="Barcode End"
-                            v-model:value="formBc.endBarcode"
-                            class="w-full h-16 text-3xl pt-4"
-                            @input="() => (errorBarcode = null)"
-                        />
-                    </a-form-item>
-                </a-col>
-            </a-row>
-        </a-form>
-    </a-modal>
+    <ScanModal v-model:open="scanModal" :data="data" :scan-data="scanData" />
 
     <!-- View Scanned Gc -->
     <a-modal
@@ -468,41 +313,13 @@ const formState = reactive({
     checkedBy: "",
 });
 
-const formBc = reactive({
-    barcode: null,
-    startBarcode: null,
-    endBarcode: null,
-});
-
-const customerOptions = [
-    {
-        value: "beam and go",
-        label: "Beam and Go",
-    },
-];
-const paymentTypeOptions = [
-    {
-        value: "cash",
-        label: "Cash",
-    },
-    {
-        value: "check",
-        label: "Check",
-    },
-    {
-        value: "jv",
-        label: "JV",
-    },
-];
 const today = dayjs().format("YYYY-MMM-DD HH:mm:ss a");
-const scanSwitch = ref(false);
 const denominationTableData = ref(props.data.rgc);
 const allocatedGcData = ref(null);
 const scanData = ref(null);
 const scanModal = ref(false);
 const allocatedModal = ref(false);
 const viewScannedModal = ref(false);
-const errorBarcode = ref(null);
 const errorForm = ref({
     file: null,
     remarks: "",
@@ -580,50 +397,7 @@ const viewScannedGc = async () => {
     scannedGcData.value = data;
     viewScannedModal.value = true;
 };
-const onSubmitBarcode = async () => {
-    axios
-        .post(route("treasury.store.gc.scanBarcode"), {
-            scanMode: scanSwitch.value,
-            bstart: formBc.startBarcode,
-            bend: formBc.endBarcode,
-            barcode: formBc.barcode,
-            relno: props.data.rel_num,
-            denid: scanData.value.sri_items_denomination,
-            store_id: props.data.details.store.store_id,
-            reqid: props.data.details.sgc_id,
-        })
-        .then((res) => {
-            page.barcodeReviewScan.allocation = res.data.sessionData;
 
-            for (let bc of res.data.barcodes) {
-                if (bc.status === 200) {
-                    notification.success({
-                        message: "Scan Success",
-                        description: bc.message,
-                    });
-                } else {
-                    notification.error({
-                        message: "Scan Failed",
-                        description: bc.message,
-                    });
-                }
-            }
-            formBc.startBarcode = null;
-            formBc.endBarcode = null;
-            formBc.barcode = null;
-            scanModal.value = false;
-        })
-        .catch((err) => {
-            if (err.response.status === 400) {
-                notification.error({
-                    message: "Scan Failed",
-                    description: err.response.data,
-                });
-            } else {
-                errorBarcode.value = err.response.data.errors;
-            }
-        });
-};
 const onScannedPagination = async (link) => {
     if (link.url) {
         const { data } = await axios.get(

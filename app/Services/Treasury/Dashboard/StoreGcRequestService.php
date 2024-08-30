@@ -273,11 +273,18 @@ class StoreGcRequestService extends UploadFileHandler
 	public function releasingEntrySubmit(Request $request)
 	{
 		$request->validate([
-			'file' => 'required',
+			// 'file' => 'required',
 			'remarks' => 'required',
 			"receivedBy" => 'required',
 			'paymentType.type' => 'required',
-			'paymentType.amount' => 'required_if:paymentType.type,cash',
+			// 'paymentType.amount' => 'required_if:paymentType.type,cash',
+			'paymentType.amount' => [
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->input('paymentType.type') == 'cash' && (is_null($value) || $value == 0)) {
+                        $fail('The ' . $attribute . ' is required and cannot be 0 if type is not Cash.');
+                    }
+                },
+            ],
 			'paymentType.customer' => 'required_if:paymentType.type,jv',
 			"checkedBy" => 'required',
 			"rid" => 'required'
@@ -285,7 +292,7 @@ class StoreGcRequestService extends UploadFileHandler
 			'paymentType.customer' => 'The customer field is required when payment type is jv.',
 			'paymentType.amount' => 'The amount field is required when payment type is cash.',
 		]);
-
+		
 		$reqId = $request->rid;
 
 		$latestRecord = ApprovedGcrequest::max('agcr_request_relnum');

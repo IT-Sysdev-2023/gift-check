@@ -137,7 +137,7 @@ const onSubmitBarcode = async () => {
             bend: formBc.endBarcode,
             barcode: formBc.barcode,
             relno: props.data.rel_num,
-            denid: props.scanData.value.sri_items_denomination,
+            denid: props.scanData.sri_items_denomination,
             store_id: props.data.details.store.store_id,
             reqid: props.data.details.sgc_id,
         })
