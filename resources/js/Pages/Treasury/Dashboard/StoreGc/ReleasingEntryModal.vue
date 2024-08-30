@@ -11,8 +11,6 @@
             <a-col :span="10">
                 <a-card>
                     <a-form
-                        :disabled="formState.processing"
-                        :model="formState"
                         layout="horizontal"
                         style="max-width: 600px; padding-top: 10px"
                     >
@@ -22,22 +20,31 @@
                         <a-form-item label="Date Released:">
                             <a-input :value="today" readonly />
                         </a-form-item>
-                        <a-form-item label="Upload Document:">
+                        <a-form-item
+                            label="Upload Document:"
+                            :validate-status="errorForm?.file ? 'error' : ''"
+                            :help="errorForm?.file"
+                        >
                             <ant-upload-image
                                 @handle-change="handleDocumentChange"
                             />
                         </a-form-item>
                         <a-form-item
                             label="Remarks:"
-                            :validate-status="getErrorStatus('remarks')"
-                            :help="getErrorMessage('remarks')"
+                            :validate-status="errorForm?.remarks ? 'error' : ''"
+                            :help="errorForm?.remarks"
                         >
-                            <a-textarea v-model:value="formState.remarks" />
+                            <a-textarea
+                                v-model:value="formState.remarks"
+                                @input="() => (errorForm.remarks = null)"
+                            />
                         </a-form-item>
                         <a-form-item
                             label="Checked By:"
-                            :validate-status="getErrorStatus('checkedBy')"
-                            :help="getErrorMessage('checkedBy')"
+                            :validate-status="
+                                errorForm?.checkedBy ? 'error' : ''
+                            "
+                            :help="errorForm?.checkedBy"
                         >
                             <ant-select
                                 :options="data.checkBy"
@@ -53,17 +60,22 @@
 
                         <a-form-item
                             label="Received By:"
-                            :validate-status="getErrorStatus('receivedBy')"
-                            :help="getErrorMessage('receivedBy')"
+                            :validate-status="
+                                errorForm?.receivedBy ? 'error' : ''
+                            "
+                            :help="errorForm?.receivedBy"
                         >
-                            <a-input v-model:value="formState.receivedBy" />
+                            <a-input
+                                v-model:value="formState.receivedBy"
+                                @input="() => (errorForm.receivedBy = null)"
+                            />
                         </a-form-item>
                         <a-form-item
                             label="Payment Type:"
                             :validate-status="
-                                getErrorStatus('paymentType.type')
+                                errorForm?.['paymentType.type'] ? 'error' : ''
                             "
-                            :help="getErrorMessage('paymentType.type')"
+                            :help="errorForm?.['paymentType.type']"
                         >
                             <ant-select
                                 :options="paymentTypeOptions"
@@ -103,23 +115,20 @@
                         <a-form-item
                             label="Cash Amount:"
                             name="amount"
-                            :validate-status="
-                                getErrorStatus('paymentType.amount')
-                            "
-                            :help="getErrorMessage('paymentType.amount')"
                             v-else-if="formState.paymentType.type === 'cash'"
                         >
                             <ant-input-number
                                 v-model:amount="formState.paymentType.amount"
-                                @clear-error="clearError('paymentType.amount')"
                             />
                         </a-form-item>
                         <a-form-item
                             label="Customer:"
                             :validate-status="
-                                getErrorStatus('paymentType.customer')
+                                errorForm?.['paymentType.customer']
+                                    ? 'error'
+                                    : ''
                             "
-                            :help="getErrorMessage('paymentType.customer')"
+                            :help="errorForm?.['paymentType.customer']"
                             v-else-if="formState.paymentType.type === 'jv'"
                         >
                             <ant-select
@@ -325,7 +334,7 @@
                     <span
                         v-html="
                             highlightText(
-                                record.gc.denomination.denomination_format,
+                                record.gc.denomination.denomination,
                                 searchValue
                             )
                         "
@@ -507,7 +516,7 @@ const emit = defineEmits<{
 }>();
 
 //Data/Variables
-const formState = useForm({
+const formState = reactive({
     file: null,
     remarks: "",
     receivedBy: "",
@@ -577,6 +586,21 @@ const scanModal = ref(false);
 const allocatedModal = ref(false);
 const viewScannedModal = ref(false);
 const errorBarcode = ref(null);
+const errorForm = ref({
+    file: null,
+    remarks: "",
+    receivedBy: "",
+    paymentType: {
+        type: "",
+        amount: 0,
+        bankName: "",
+        accountNumber: "",
+        checkNumber: "",
+        checkAmount: "",
+        customer: "",
+    },
+    checkedBy: "",
+});
 const scannedGcData = ref(null);
 
 //Computed
@@ -612,7 +636,11 @@ const submitForm = () => {
             checkedBy: formState.checkedBy,
         })
         .then((res) => {
-            console.log(res);
+            notification.success({
+                message: "Scan Success",
+                description: res.data,
+            });
+            location.reload();
         })
         .catch((err) => {
             if (err.response.status === 400) {
@@ -621,7 +649,9 @@ const submitForm = () => {
                     description: err.response.data,
                 });
             } else {
-                // errorBarcode.value = err.response.data.errors;
+                // console.log(formState.errors)
+                console.log(err.response.data.errors);
+                errorForm.value = err.response.data.errors;
             }
         });
 };
@@ -661,6 +691,9 @@ const onSubmitBarcode = async () => {
                     });
                 }
             }
+            formBc.startBarcode = null;
+            formBc.endBarcode = null;
+            formBc.barcode = null;
             scanModal.value = false;
         })
         .catch((err) => {
@@ -723,8 +756,14 @@ const viewAllocatedGc = async () => {
     allocatedGcData.value = data;
     allocatedModal.value = true;
 };
-const handPaymentType = (value: string) => (formState.paymentType.type = value);
-const handleCheckedBy = (value) => (formState.checkedBy = value);
+const handPaymentType = (value: string) => {
+    formState.paymentType.type = value;
+    errorForm.value["paymentType.type"] = null;
+};
+const handleCheckedBy = (value) => {
+    formState.checkedBy = value;
+    errorForm.value.checkedBy = null;
+};
 const handleCustomerOption = (value) =>
     (formState.paymentType.customer = value);
 const handleDocumentChange = (file: UploadChangeParam) => {
@@ -743,17 +782,6 @@ const filterSearch = async () => {
         }
     );
     allocatedGcData.value = data;
-};
-
-const getErrorStatus = (field: string) => {
-    return formState.errors[field] ? "error" : "";
-};
-const getErrorMessage = (field: string) => {
-    return formState.errors[field];
-};
-const clearError = (field: string) => {
-    formState.errors[field] = null;
-    // console.log(field)
 };
 
 //Watchers

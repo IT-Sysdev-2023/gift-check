@@ -6,10 +6,12 @@ use App\Helpers\NumberHelper;
 use App\Http\Resources\ApprovedGcRequestResource;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\ApprovedGcrequest;
+use App\Models\Denomination;
 use App\Models\GcRelease;
 use App\Models\InstitutPayment;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
+use Illuminate\Support\Facades\Date;
 use App\Services\Documents\UploadFileHandler;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -219,7 +221,7 @@ class StoreGcRequestService extends UploadFileHandler
 								$request->session()->push($sessionName, [
 									'barcode' => $barcode,
 									'denid' => $denid,
-									'created_at' => now()->format('Y-d-m H:i:s'),
+									'created_at' => now(),
 									'reqid' => $reqid,
 									'temp_relby' => $request->user()->user_id
 								]);
@@ -270,20 +272,21 @@ class StoreGcRequestService extends UploadFileHandler
 
 	public function releasingEntrySubmit(Request $request)
 	{
-		// dd($request->all());
-		// $request->validate([
-		//     'file' => 'required',
-		//     'remarks' => 'required',
-		//     "receivedBy" => 'required',
-		//     'paymentType.type' => 'required',
-		//     'paymentType.amount' => 'required_if:paymentType.type,cash',
-		//     'paymentType.customer' => 'required_if:paymentType.type,jv',
-		//     "checkedBy" => 'required',
-		//     "rid" => 'required'
-		// ], [
-		//     'paymentType.customer' => 'The customer field is required when payment type is jv.',
-		//     'paymentType.amount' => 'The amount field is required when payment type is cash.',
-		// ]);
+		$request->validate([
+			'file' => 'required',
+			'remarks' => 'required',
+			"receivedBy" => 'required',
+			'paymentType.type' => 'required',
+			'paymentType.amount' => 'required_if:paymentType.type,cash',
+			'paymentType.customer' => 'required_if:paymentType.type,jv',
+			"checkedBy" => 'required',
+			"rid" => 'required'
+		], [
+			'paymentType.customer' => 'The customer field is required when payment type is jv.',
+			'paymentType.amount' => 'The amount field is required when payment type is cash.',
+		]);
+
+		$reqId = $request->rid;
 
 		$latestRecord = ApprovedGcrequest::max('agcr_request_relnum');
 		$relid = $latestRecord ? $latestRecord + 1 : 1;
@@ -291,6 +294,30 @@ class StoreGcRequestService extends UploadFileHandler
 		$scannedBc = collect($request->session()->get('scanReviewGC', []))->filter(function ($item) use ($request) {
 			return $item['reqid'] === $request->rid;
 		});
+
+		$bankName = '';
+		$bankAccountNo = '';
+		$checkNum = '';
+		$amount = '';
+		$customerJv = '';
+
+		if ($request->paymentType['type'] === 'check') {
+			$bankName = $request->paymentType['bankName'] ?? '';
+			$bankAccountNo = $request->paymentType['accountNumber'] ?? '';
+			$checkNum = $request->paymentType['checkNumber'] ?? '';
+			$amount = $request->paymentType['checkAmount'] ?? '';
+		}
+
+		if ($request->paymentType['type'] === 'cash') {
+			$amount = $request->paymentType['amount'] ?? '';
+		}
+
+		if ($request->paymentType['type'] === 'jv') {
+			$customerJv = $request->paymentType['customer'] ?? '';
+			$amount = $scannedBc->sum(function ($sr) {
+				return Denomination::where('denom_id', $sr['denid'])->value('denomination');
+			});
+		}
 
 		$rgc = StoreRequestItem::select('sri_items_remain as qty', 'sri_items_denomination as denom_id')
 			->where('sri_items_requestid', $request->rid)
@@ -303,14 +330,12 @@ class StoreGcRequestService extends UploadFileHandler
 			return $sr->qty === $s;
 		});
 
-		// dd($scannedBc);
 		if ($isScanned->every(fn($n) => $n)) {
 
-			DB::transaction(function () use ($scannedBc, $request, $relid) {
+			DB::transaction(function () use ($scannedBc, $request, $relid, $reqId, $bankName, $bankAccountNo, $checkNum, $amount, $customerJv) {
 
-				$scannedBc->each(function ($i) use ($request, $relid) {
+				$scannedBc->each(function ($i) use ($request, $relid, $reqId) {
 
-					$reqId = $request->rid;
 					GcRelease::create([
 						're_barcode_no' => $i['barcode'],
 						'rel_storegcreq_id' => $reqId,
@@ -320,7 +345,7 @@ class StoreGcRequestService extends UploadFileHandler
 						'rel_by' => $request->user()->user_id
 					]);
 
-					$remain = StoreRequestItem::where([['sri_items_requestid', $reqId], ['sri_items_denomination', $i['denid']]])->first('sri_items_remain')->sri_items_remain;
+					$remain = StoreRequestItem::where([['sri_items_requestid', $reqId], ['sri_items_denomination', $i['denid']]])->value('sri_items_remain');
 					$remain--;
 
 					StoreRequestItem::where([['sri_items_denomination', $i['denid']], ['sri_items_requestid', $reqId]])
@@ -332,65 +357,57 @@ class StoreGcRequestService extends UploadFileHandler
 						->update(['loc_rel' => '*']);
 				});
 
-				$check = StoreRequestItem::where('sri_items_requestid', $request->rid)->whereNot('sri_items_remain', '0');
+				$check = StoreRequestItem::where('sri_items_requestid', $reqId)->whereNot('sri_items_remain', '0')->get('sri_items_remain');
 
+				if ($check->every(fn($i) => $i->sri_items_remain < 0)) {
+					$relstat = 2;
+					$count = ApprovedGcrequest::where('agcr_request_id', $reqId)->count();
+					$appreq = $count > 0 ? 3 : 2;
+				} else {
+					$relstat = 1;
+					$appreq = 1;
+				}
 
+				StoreGcrequest::where('sgc_id', $reqId)->update([
+					'sgc_status' => $relstat
+				]);
 
-				// if(checkIfPartialWhole($link,$reqId))
-				// 			function checkIfPartialWhole($link,$reqId)
-				// {
-				// 	$status = true;
-				// 	$query = $link->query(
-				// 		"SELECT 
-				// 			`sri_items_remain` 
-				// 		FROM 
-				// 			`store_request_items` 
-				// 		WHERE 
-				// 			`sri_items_remain`!='0'
-				// 		AND
-				// 			`sri_items_requestid`='$reqId'
-				// 	");
+				$imageName = $this->createFileName($request);
 
-				// 	if($query)
-				// 	{
-				// 		while ($row = $query->fetch_object()) {
-				// 			if($row->sri_items_remain>0)
-				// 			{
-				// 				$status = false;
-				// 				break;
-				// 			}
-				// 		}
-				// 		if($status)
-				// 		{
-				// 			return true;
-				// 		}
-				// 		else 
-				// 		{
-				// 			return false;
-				// 		}
-				// 	}
-				// 	else 
-				// 	{
-				// 		echo $link->error;
-				// 	}
-				// }
+				$latestId = ApprovedGcrequest::create([
+					'agcr_request_id' => $reqId,
+					'agcr_approvedby' => '',
+					'agcr_checkedby' => $request->checkedBy,
+					'agcr_remarks' => $request->remarks,
+					'agcr_approved_at' => now(),
+					'agcr_preparedby' => $request->user()->user_id,
+					'agcr_recby' => $request->receivedBy,
+					'agcr_file_docno' => $imageName,
+					'agcr_stat' => $appreq,
+					'agcr_paymenttype' => $request->paymentType['type'],
+					'agcr_request_relnum' => $relid
+				]);
+
+				$institut = InstitutPayment::max('insp_paymentnum');
+				$paynum = $institut ? $institut + 1 : 1;
+
+				InstitutPayment::create([
+					'insp_trid' => $latestId->agcr_id,
+					'insp_paymentcustomer' => 'stores',
+					'institut_bankname' => $bankName,
+					'institut_bankaccountnum' => $bankAccountNo,
+					'institut_checknumber' => $checkNum,
+					'institut_amountrec' => $amount,
+					'insp_paymentnum' => $paynum,
+					'institut_jvcustomer' => $customerJv
+				]);
+
+				$this->saveFile($request, $imageName);
+
+				$request->session()->forget('scanReviewGC');
+
 			});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+			return response()->json('Successfully Submitted');
 		} else {
 			return response()->json('Please scan the Barcode First', 400);
 		}

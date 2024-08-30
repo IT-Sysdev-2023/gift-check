@@ -11,4 +11,7 @@ class InstitutPayment extends Model
 
     protected $table = 'institut_payment';
     protected $primaryKey = 'insp_id';
+
+    protected $guarded =[];
+    public $timestamps = false;
 }
