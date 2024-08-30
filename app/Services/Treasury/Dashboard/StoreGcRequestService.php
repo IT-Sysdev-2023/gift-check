@@ -6,10 +6,13 @@ use App\Helpers\NumberHelper;
 use App\Http\Resources\ApprovedGcRequestResource;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\ApprovedGcrequest;
+use App\Models\Denomination;
 use App\Models\GcRelease;
 use App\Models\InstitutPayment;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
+use Illuminate\Support\Facades\Date;
+use App\Services\Documents\UploadFileHandler;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Gc;
@@ -17,9 +20,14 @@ use App\Models\GcLocation;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
-class StoreGcRequestService
+class StoreGcRequestService extends UploadFileHandler
 {
 
+	public function __construct()
+	{
+		parent::__construct();
+		$this->folderName = 'approvedGCRequest';
+	}
 	public function pendingRequest(Request $request) //tran_release_gc.php
 	{
 		return StoreGcrequest::pendingRequest()->paginate()->withQueryString();
@@ -159,18 +167,19 @@ class StoreGcRequestService
 
 		//reqid = unique request id,
 		//remainGc = quantity sa denomination
-		//denid = id sa kara denomination like 500 is 3 and 1000 is 5
+		//denid = id sa kara denomination like 500 is 3 and 2000 is 5
 
 		$responses = [];
 
+		//If Range Mode
 		if ($request->scanMode) {
-			foreach (range($request->bstart, $request->bend) as $bc) {
-				$responses[] = $this->validateBarcode($request, $remainGc, $bc, $sessionName);
+			foreach (range($bstart, $bend) as $barcode) {
+				$responses[] = $this->validateBarcode($request, $remainGc, $barcode, $sessionName);
 			}
 		} else {
-			$responses[] = $this->validateBarcode($request, $remainGc, $request->barcode, $sessionName);
+			$responses[] = $this->validateBarcode($request, $remainGc, $barcode, $sessionName);
 		}
-		// Return all responses
+		//get updated array of the session
 		$sessionData = $request->session()->get($sessionName);
 
 		return response()->json(['barcodes' => $responses, 'sessionData' => $sessionData]);
@@ -188,9 +197,6 @@ class StoreGcRequestService
 
 		// $scannedGc = TempRelease::where([['temp_relno', $relno], ['temp_rdenom', $denid]])->count();
 		if ($remainGc->sri_items_remain > $scannedGcSession) {
-			// dd(range($bstart, $bend));
-			//If Range Mode
-
 
 			// Check Barcode existence
 			$whereBarcode = Gc::where('barcode_no', $barcode);
@@ -264,6 +270,150 @@ class StoreGcRequestService
 
 	}
 
+	public function releasingEntrySubmit(Request $request)
+	{
+		$request->validate([
+			'file' => 'required',
+			'remarks' => 'required',
+			"receivedBy" => 'required',
+			'paymentType.type' => 'required',
+			'paymentType.amount' => 'required_if:paymentType.type,cash',
+			'paymentType.customer' => 'required_if:paymentType.type,jv',
+			"checkedBy" => 'required',
+			"rid" => 'required'
+		], [
+			'paymentType.customer' => 'The customer field is required when payment type is jv.',
+			'paymentType.amount' => 'The amount field is required when payment type is cash.',
+		]);
+
+		$reqId = $request->rid;
+
+		$latestRecord = ApprovedGcrequest::max('agcr_request_relnum');
+		$relid = $latestRecord ? $latestRecord + 1 : 1;
+
+		$scannedBc = collect($request->session()->get('scanReviewGC', []))->filter(function ($item) use ($request) {
+			return $item['reqid'] === $request->rid;
+		});
+
+		$bankName = '';
+		$bankAccountNo = '';
+		$checkNum = '';
+		$amount = '';
+		$customerJv = '';
+
+		if ($request->paymentType['type'] === 'check') {
+			$bankName = $request->paymentType['bankName'] ?? '';
+			$bankAccountNo = $request->paymentType['accountNumber'] ?? '';
+			$checkNum = $request->paymentType['checkNumber'] ?? '';
+			$amount = $request->paymentType['checkAmount'] ?? '';
+		}
+
+		if ($request->paymentType['type'] === 'cash') {
+			$amount = $request->paymentType['amount'] ?? '';
+		}
+
+		if ($request->paymentType['type'] === 'jv') {
+			$customerJv = $request->paymentType['customer'] ?? '';
+			$amount = $scannedBc->sum(function ($sr) {
+				return Denomination::where('denom_id', $sr['denid'])->value('denomination');
+			});
+		}
+
+		$rgc = StoreRequestItem::select('sri_items_remain as qty', 'sri_items_denomination as denom_id')
+			->where('sri_items_requestid', $request->rid)
+			->whereNot('sri_items_remain', 0)
+			->get();
+
+		//check if the denominations gc already scanned
+		$isScanned = $rgc->map(function ($sr) use ($scannedBc) {
+			$s = $scannedBc->where('denid', $sr->denom_id)->count();
+			return $sr->qty === $s;
+		});
+
+		if ($isScanned->every(fn($n) => $n)) {
+
+			DB::transaction(function () use ($scannedBc, $request, $relid, $reqId, $bankName, $bankAccountNo, $checkNum, $amount, $customerJv) {
+
+				$scannedBc->each(function ($i) use ($request, $relid, $reqId) {
+
+					GcRelease::create([
+						're_barcode_no' => $i['barcode'],
+						'rel_storegcreq_id' => $reqId,
+						'rel_store_id' => $request->store_id,
+						'rel_num' => $relid,
+						'rel_date' => $i['created_at'],
+						'rel_by' => $request->user()->user_id
+					]);
+
+					$remain = StoreRequestItem::where([['sri_items_requestid', $reqId], ['sri_items_denomination', $i['denid']]])->value('sri_items_remain');
+					$remain--;
+
+					StoreRequestItem::where([['sri_items_denomination', $i['denid']], ['sri_items_requestid', $reqId]])
+						->update([
+							'sri_items_remain' => $remain
+						]);
+
+					GcLocation::where('loc_barcode_no', $i['barcode'])
+						->update(['loc_rel' => '*']);
+				});
+
+				$check = StoreRequestItem::where('sri_items_requestid', $reqId)->whereNot('sri_items_remain', '0')->get('sri_items_remain');
+
+				if ($check->every(fn($i) => $i->sri_items_remain < 0)) {
+					$relstat = 2;
+					$count = ApprovedGcrequest::where('agcr_request_id', $reqId)->count();
+					$appreq = $count > 0 ? 3 : 2;
+				} else {
+					$relstat = 1;
+					$appreq = 1;
+				}
+
+				StoreGcrequest::where('sgc_id', $reqId)->update([
+					'sgc_status' => $relstat
+				]);
+
+				$imageName = $this->createFileName($request);
+
+				$latestId = ApprovedGcrequest::create([
+					'agcr_request_id' => $reqId,
+					'agcr_approvedby' => '',
+					'agcr_checkedby' => $request->checkedBy,
+					'agcr_remarks' => $request->remarks,
+					'agcr_approved_at' => now(),
+					'agcr_preparedby' => $request->user()->user_id,
+					'agcr_recby' => $request->receivedBy,
+					'agcr_file_docno' => $imageName,
+					'agcr_stat' => $appreq,
+					'agcr_paymenttype' => $request->paymentType['type'],
+					'agcr_request_relnum' => $relid
+				]);
+
+				$institut = InstitutPayment::max('insp_paymentnum');
+				$paynum = $institut ? $institut + 1 : 1;
+
+				InstitutPayment::create([
+					'insp_trid' => $latestId->agcr_id,
+					'insp_paymentcustomer' => 'stores',
+					'institut_bankname' => $bankName,
+					'institut_bankaccountnum' => $bankAccountNo,
+					'institut_checknumber' => $checkNum,
+					'institut_amountrec' => $amount,
+					'insp_paymentnum' => $paynum,
+					'institut_jvcustomer' => $customerJv
+				]);
+
+				$this->saveFile($request, $imageName);
+
+				$request->session()->forget('scanReviewGC');
+
+			});
+			return response()->json('Successfully Submitted');
+		} else {
+			return response()->json('Please scan the Barcode First', 400);
+		}
+
+
+	}
 	private static function getPaymentInfo($header_data, $id)
 	{
 		$paymentInfo = [];
@@ -303,4 +453,74 @@ class StoreGcRequestService
 		];
 		return $types[$rt] ?? null;
 	}
+
+	// public function scanRangeBarcode(Request $request)
+	// {
+	//     $request->validate([
+	//         'bstart' => 'required',
+	//         'bend' => 'required',
+	//         'relid' => 'required',
+	//         'store_id' => 'required',
+	//         'reqid' => 'required',
+	//     ]);
+	//     $bend = $request->bend;
+	//     $bstart = $request->bstart;
+
+	//     $gcTotal = $bend - $bstart + 1;
+
+	//     dd($gcTotal);
+
+	//     $denid = Gc::where('barcode_no', $bstart)->first('denom_id')->denom_id;
+
+	//     $remainGc = StoreRequestItem::where([['sri_items_denomination', $denid], ['sri_items_requestid', $request->reqid]])
+	//         ->first('sri_items_remain')->sri_items_remain;
+
+	//     $scannedGc = TempRelease::where([['temp_relno', $request->relid], ['temp_rdenom', $denid]])
+	//         ->count();
+
+	//     $gctotal = $gcTotal + $scannedGc;
+
+	//     $nums = 0;
+
+	//     if ($gctotal > $remainGc) {
+	//         return response()->json('Number of GC Scanned has reached the maximum number to received.', 400);
+	//     } else {
+	//         foreach (range($bstart, $bend) as $bc) {
+	//             if (Gc::where('barcode_no', $bc)->doesntExist()) {
+	//                 return response()->json("Barcode Number {$bc} not found.", 400);
+	//             }
+
+	//             $locationCheck = GcLocation::whereHas('gc', fn($q) => $q->has('denomination')->where('denom_id', $denid))
+	//                 ->where([['loc_store_id', $request->store_id], ['loc_barcode_no', $bc]])
+	//                 ->doesntExist();
+
+	//             if ($locationCheck) {
+	//                 return response()->json("Barcode Number {$bc} not found in this location.", 400);
+	//             }
+
+	//             if (GcRelease::where('re_barcode_no', $bc)->exists()) {
+	//                 return response()->json("Barcode Number {$bc} already released.", 400);
+	//             }
+
+	//             if (TempRelease::where('temp_rbarcode', $bc)->exists()) {
+	//                 return response()->json("Barcode Number {$bc} already scanned for released. ", 400);
+	//             } else {
+	//                 TempRelease::create([
+	//                     'temp_rbarcode' => $bc,
+	//                     'temp_rdenom' => $denid,
+	//                     'temp_rdate' => now(),
+	//                     'temp_relno' => $request->relid,
+	//                     'temp_relby' => $request->user()->user_id
+	//                 ]);
+
+	//             }
+
+
+	//         }
+
+	//         return response()->json("GC Barcode #{$bstart} to {$bend} successfully validated.");
+	//     }
+
+
+	// }
 }

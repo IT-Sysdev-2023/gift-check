@@ -260,6 +260,7 @@ declare module 'vue' {
     SaveOutlined: typeof import('@ant-design/icons-vue')['SaveOutlined']
     ScanGcDrawer: typeof import('./resources/js/Pages/Retail/Drawer/ScanGcDrawer.vue')['default']
     ScanGcStatuses: typeof import('./resources/js/Pages/Admin/ScanGcStatuses.vue')['default']
+    ScanModal: typeof import('./resources/js/Components/Treasury/ScanModal.vue')['default']
     ScannedGc: typeof import('./resources/js/Pages/Iad/Cards/ScannedGc.vue')['default']
     ScreenVille: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ScreenVille.vue')['default']
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
@@ -309,6 +310,7 @@ declare module 'vue' {
     ValidateByRange: typeof import('./resources/js/Pages/Iad/Partials/ValidateByRange.vue')['default']
     Verification: typeof import('./resources/js/Pages/Retail/Verification.vue')['default']
     VerifyEmail: typeof import('./resources/js/Pages/Auth/VerifyEmail.vue')['default']
+    ViewAllocatedGcModal: typeof import('./resources/js/Components/Treasury/ViewAllocatedGcModal.vue')['default']
     ViewApprovedGcTable: typeof import('./resources/js/Pages/Iad/Dashboard/ViewApprovedGcTable.vue')['default']
     Welcome: typeof import('./resources/js/Pages/Welcome.vue')['default']
   }
