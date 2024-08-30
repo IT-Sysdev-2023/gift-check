@@ -185,7 +185,6 @@ declare module 'vue' {
     LikeOutlined: typeof import('@ant-design/icons-vue')['LikeOutlined']
     LineChartOutlined: typeof import('@ant-design/icons-vue')['LineChartOutlined']
     Link: typeof import('@inertiajs/vue3')['Link']
-    LoadingOutlined: typeof import('@ant-design/icons-vue')['LoadingOutlined']
     LockOutlined: typeof import('@ant-design/icons-vue')['LockOutlined']
     Login: typeof import('./resources/js/Pages/Login.vue')['default']
     LoginX: typeof import('./resources/js/Pages/Auth/LoginX.vue')['default']

@@ -43,7 +43,7 @@ class ProcessFiles extends Command
                     ->update(['vs_tf_used' => '*']);
                }
             }
-            // sleep(5);
+            sleep(1);
         }
     }
 
