@@ -16,6 +16,7 @@ use App\Http\Controllers\IadController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\RetailController;
 use App\Http\Controllers\QueryFilterController;
+use App\Http\Controllers\RetailGroupController;
 use App\Http\Controllers\Treasury\Dashboard\BudgetRequestController;
 use App\Http\Controllers\Treasury\Dashboard\GcProductionRequestController;
 use App\Http\Controllers\Treasury\Dashboard\SpecialGcRequestController;
@@ -50,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard');
 
     Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard');
+    Route::get('retailgroup-dashboard', [RetailGroupController::class, 'index'])->name('retailgroup.dashboard');
 
     Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
 
@@ -58,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard');
 
     Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
+
 
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
 
@@ -318,6 +321,17 @@ Route::prefix('retail')->group(function () {
             Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
         });
 
+    });
+});
+Route::prefix('retailgroup')->group(function () {
+    Route::name('retailgroup.')->group(function () {
+        Route::get('pending-gc-request', [RetailGroupController::class, 'pendingGcRequest'])->name('pending');
+
+        Route::name('recommendation.')->group(function () {
+            Route::get('setup', [RetailGroupController::class, 'setup'])->name('setup');
+
+
+        });
     });
 });
 

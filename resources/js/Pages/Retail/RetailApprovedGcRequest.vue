@@ -1,7 +1,19 @@
 <template>
     <AuthenticatedLayout>
+        <a-breadcrumb separator="">
+            <a-breadcrumb-item href="">Dashboard</a-breadcrumb-item>
+            <a-breadcrumb-separator />
+            <a-breadcrumb-item>Setup Approved Gc Request</a-breadcrumb-item>
+        </a-breadcrumb>
+        <div class="flex justify-end mb-3">
+            <a-button @click="() => $inertia.get(route('retail.dashboard'))">
+                <template #icon>
+                    <RollbackOutlined />
+                </template>
+                Back to Dashboard
+            </a-button>
+        </div>
         <a-table size="small" :data-source="record.data" bordered :columns="columns" :pagination=false>
-
             <template #bodyCell="{ column, record }">
                 <template v-if="column.key == 'status'">
                     <div v-if="record.agcr_rec == 0">
