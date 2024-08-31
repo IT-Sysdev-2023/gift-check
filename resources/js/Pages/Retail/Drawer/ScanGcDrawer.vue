@@ -67,9 +67,9 @@ const validate = () => {
                 placement: 'topLeft'
             });
 
-            if (response.props.flash.status == 'success') {
-                form.reset();
-            }
+            // if (response.props.flash.status == 'success') {
+            //     form.reset();
+            // }
 
             if (props.record.quantity == props.data.release[props.record.gc.denom_id][0].scanned) {
                 emit('close-drawer')

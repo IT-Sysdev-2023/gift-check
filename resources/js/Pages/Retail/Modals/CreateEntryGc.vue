@@ -148,7 +148,6 @@ const closeDrawer = (record) => {
 }
 
 const submit = () => {
-    alert(props.record.approved?.agcr_request_relnum);
     form.transform((data) => ({
         ...data,
         relnum: props.record.approved.agcr_request_relnum
