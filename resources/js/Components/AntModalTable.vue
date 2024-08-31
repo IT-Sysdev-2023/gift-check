@@ -7,7 +7,12 @@
         maskClosable
         @cancel="handleClose"
     >
-        <a-table bordered :columns="columns" :data-source="data.data" :pagination="false">
+        <a-table
+            bordered
+            :columns="columns"
+            :data-source="data.data"
+            :pagination="false"
+        >
             <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'fullname'">
                     {{ record.user.full_name }}
@@ -23,16 +28,21 @@
                 </template>
             </template>
         </a-table>
-        <pagination class="mt-5" :datarecords="data" />
+        <pagination-axios
+            class="mt-5"
+            :datarecords="data"
+            @on-pagination="onChangePagination"
+        />
     </a-modal>
 </template>
 
 <script lang="ts" setup>
+import axios from "axios";
 const props = defineProps<{
     title: string;
     open: boolean;
     data: {
-        data: any[]
+        data: any[];
     };
     columns: {
         title: string;
@@ -41,6 +51,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{
     (e: "update:open", value: boolean): void;
+    (e: "handlePagination", link): void;
 }>();
 
 const handleClose = () => {
@@ -48,5 +59,8 @@ const handleClose = () => {
 };
 const getValue = (record, index) => {
     return index.reduce((acc, index) => acc[index], record);
+};
+const onChangePagination = async (link) => {
+    emit("handlePagination", link);
 };
 </script>

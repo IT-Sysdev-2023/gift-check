@@ -159,6 +159,7 @@
             title="Allocated Gc"
             :columns="columns"
             :data="allocatedData"
+            @handle-pagination="onChangePagination"
         />
     </AuthenticatedLayout>
 </template>
@@ -248,7 +249,6 @@ const handleGcTypeChange = async (value: number) => {
         { params: { store: formState.store, type: formState.gcType } }
     );
     allDenoms.value = data;
-    
 };
 const { openLeftNotification } = onProgress();
 const onSubmit = () => {
@@ -262,7 +262,7 @@ const onSubmit = () => {
         .post(route("treasury.transactions.gcallocation.store"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
-                router.get(route('treasury.dashboard'));
+                router.get(route("treasury.dashboard"));
             },
         });
 };
@@ -280,6 +280,11 @@ const viewAllocatedGc = async () => {
     allocatedData.value = data;
     openModal.value = true;
 };
-
+const onChangePagination = async (link) => {
+    if (link.url) {
+        const { data } = await axios.get(link.url);
+        allocatedData.value = data;
+    }
+};
 const { getErrorMessage, getErrorStatus, clearError } = getError();
 </script>
