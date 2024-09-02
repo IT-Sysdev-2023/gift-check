@@ -1,6 +1,6 @@
 <template>
-    <a-tabs v-model:activeKey="activeKey" type="card">
-        <a-tab-pane>
+    <a-tabs v-model:activeKey="activeKey" type="card" @change="handleChange">
+        <a-tab-pane key="1">
             <template #tab>
                 <span>
                     <CheckCircleFilled />
@@ -60,7 +60,7 @@ export default {
             form: {
                 search: ''
             },
-            activeKey: this.activeKey,
+            activeKey: this.activeKey ?? '1',
         }
     },
     methods: {
@@ -70,6 +70,11 @@ export default {
                 activeKey: '2',
 
             })
+        },
+        handleChange(key) {
+            if(key == 1){
+                this.$inertia.get(route('finance.pen.promo.request'))
+            }
         }
     },
 

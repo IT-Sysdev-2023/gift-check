@@ -42,8 +42,11 @@ class RetailGroupServices extends UploadFileHandler
 
         $data->transform(function ($item) {
             $item->fullname = $item->userReqby->full_name;
+            $item->needed = Date::parse($item->pgcreq_dateneeded)->toFormattedDateString();
+            $item->req = Date::parse($item->pgcreq_datereq)->toFormattedDateString();
             return $item;
         });
+
 
         return $data;
     }
@@ -92,7 +95,7 @@ class RetailGroupServices extends UploadFileHandler
             ->where('reqap_trid', $request->id)
             ->where('reqap_approvedtype', 'promo gc preapproved')
             ->first();
-            
+
         if ($data) {
             // dd(Date::parse($data->reqap_date));
             $data->time = Date::parse($data->reqap_date)->format('H:i:s');

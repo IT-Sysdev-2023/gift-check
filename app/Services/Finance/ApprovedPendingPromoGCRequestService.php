@@ -4,16 +4,24 @@ namespace App\Services\Finance;
 
 use App\Helpers\ColumnHelper;
 use App\Helpers\NumberHelper;
+use App\Http\Requests\PromoForApprovalRequest;
 use App\Http\Resources\PromoGcDetailResource;
 use App\Http\Resources\PromoGcRequestResource;
 use App\Models\ApprovedRequest;
 use App\Models\LedgerBudget;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
+use App\Services\Documents\UploadFileHandler;
 use Illuminate\Support\Facades\DB;
 
-class ApprovedPendingPromoGCRequestService
+class ApprovedPendingPromoGCRequestService extends UploadFileHandler
 {
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->folderName = "finance";
+    }
     public function pendingPromoGCRequestIndex($request)
     {
         return inertia('Finance/PendingPromoGcRequest', [
@@ -85,8 +93,8 @@ class ApprovedPendingPromoGCRequestService
 
         $data->transform(function ($item) {
             $item->subt = $item->denomination->denomination * $item->pgcreqi_qty;
-            $item->subtotal = NumberHelper::currency($item->denomination->denomination * $item->pgcreqi_qty);
-            $item->denomination->denomination = NumberHelper::currency($item->denomination->denomination);
+            $item->subtotal = NumberHelper::formatterFloat($item->denomination->denomination * $item->pgcreqi_qty);
+            $item->denomination->denomination = NumberHelper::formatterFloat($item->denomination->denomination);
             return $item;
         });
         return (object)[
@@ -95,9 +103,8 @@ class ApprovedPendingPromoGCRequestService
         ];
     }
 
-    public function approveRequest($request)
+    public function approveRequest(PromoForApprovalRequest $request)
     {
-
         $request->validated();
 
         $id = $request->reqid;
@@ -108,16 +115,22 @@ class ApprovedPendingPromoGCRequestService
                 'pgcreq_status' => 'approved'
             ]);
 
-            ApprovedRequest::create([
+            $file = $this->createFileName($request);
+
+            $wasCreated = ApprovedRequest::create([
                 'reqap_trid' => $id,
                 'reqap_approvedtype' => 'promo gc approved',
                 'reqap_remarks' => $request->remarks,
-                'reqap_doc' => $request->docs ?? '',
+                'reqap_doc' => $file ?? '',
                 'reqap_checkedby' => $request->checkby,
                 'reqap_approvedby' => $request->appby,
                 'reqap_date' => today(),
                 'reqap_preparedby' => $request->user()->user_id,
             ]);
+
+            if ($wasCreated->wasRecentlyCreated) {
+                $this->saveFile($request, $file);
+            }
 
             $getDenom = self::getDenomination($id);
 
@@ -134,8 +147,10 @@ class ApprovedPendingPromoGCRequestService
             ]);
         });
 
-        return response()->json([
-            'success' => 'Approved Request Successfully'
+        return redirect()->route('finance.dashboard')->with([
+            'msg' => 'Successfully form submitted',
+            'title' => 'Success',
+            'status' => 'success'
         ]);
     }
 

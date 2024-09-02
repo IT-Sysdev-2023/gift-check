@@ -5,64 +5,61 @@
                 <a-form layout="vertical">
                     <a-form-item>
                         <a-descriptions size="small" bordered>
-                            <a-descriptions-item label="Prepared By:" class="text-end">{{
+                            <a-descriptions-item style="width: 50%;" label="Prepared By:" class="text-end">{{
                                 $page.props.auth.user.full_name
                             }}</a-descriptions-item>
                         </a-descriptions>
                         <a-descriptions size="small" bordered>
-                            <a-descriptions-item label="Date Approved/Cancel:" class="text-end">{{ details.data[0].today
+                            <a-descriptions-item style="width: 50%;" label="Date Approved/Cancel:" class="text-end">{{
+                                details.data[0].today
                                 }}</a-descriptions-item>
                         </a-descriptions>
                     </a-form-item>
 
-                    <a-form-item label="Request Status">
-                        <a-select v-model:value="form.status" ref="select" placeholder="Select Status">
+                    <a-form-item label="Request Status" has-feedback :validate-status="errors.status ? 'error' : ''"
+                        :help="errors.status">
+                        <a-select v-model:value="form.status" ref="select" placeholder="Select Status"
+                            @change="() => errors.status = null">
                             <a-select-option :value="1">Approved</a-select-option>
                             <a-select-option :value="2">Cancel</a-select-option>
                         </a-select>
-                        <Errors v-if="errors.status" :errors="errors.status[0]" />
                     </a-form-item>
                     <a-row :gutter="[16, 16]">
                         <a-col :span="12">
-                            <a-form-item label="Check By:">
-                                <a-select ref="select" v-model:value="form.checkby" placeholder="Select Checked by">
+                            <a-form-item label="Check By:" has-feedback :validate-status="errors.checkby ? 'error' : ''"
+                                :help="errors.checkby">
+                                <a-select ref="select" v-model:value="form.checkby" placeholder="Select Checked by"
+                                    @change="() => errors.checkby = null">
                                     <a-select-option v-for="item in cdata" :value="item.assig_id">{{ item.assig_name
                                         }}</a-select-option>
                                 </a-select>
-                                <Errors v-if="errors.checkby" :errors="errors.checkby[0]" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="12">
-                            <a-form-item label="Approved By:">
-                                <a-select ref="select" v-model:value="form.appby" placeholder="Select Approved By">
+                            <a-form-item label="Approved By:" has-feedback
+                                :validate-status="errors.appby ? 'error' : ''" :help="errors.appby">
+                                <a-select ref="select" v-model:value="form.appby" placeholder="Select Approved By"
+                                    @change="() => errors.appby = null">
                                     <a-select-option v-for="item in cdata" :value="item.assig_id">{{ item.assig_name
                                         }}</a-select-option>
                                 </a-select>
-                                <Errors v-if="errors.appby" :errors="errors.appby[0]" />
                             </a-form-item>
                         </a-col>
                     </a-row>
-                    <a-form-item>
-                        <a-textarea v-model:value="form.remarks" placeholder="Enter remarks" :rows="2" />
-                        <Errors v-if="errors.remarks" :errors="errors.remarks[0]" />
+                    <a-form-item has-feedback :help="errors.remarks" :validate-status="errors.remarks ? 'error' : ''">
+                        <a-textarea v-model:value="form.remarks" placeholder="Enter remarks" :rows="2"
+                            @change="() => errors.remarks = null" />
                     </a-form-item>
+                    <a-divider>
+                        <a-typography-text code>upload image</a-typography-text>
+                    </a-divider>
+                    <div class="flex justify-center">
+                        <a-form-item>
+                            <ant-upload-image @handle-change="handleImageChange" />
+                        </a-form-item>
+                    </div>
                     <a-form-item>
-                        <a-upload-dragger name="file" accept="image/png, image/jpeg" @change="handleChange"
-                            :before-upload="() => false" list-type="picture" :max-count="1">
-                            <p class="ant-upload-drag-icon">
-                                <inbox-outlined></inbox-outlined>
-                            </p>
-                            <p class="ant-upload-text">Click or drag file to this area to upload</p>
-                            <p class="ant-upload-hint">
-                                Support for a single or bulk upload. Strictly prohibit from uploading company data or
-                                other
-                                band files
-                            </p>
-                        </a-upload-dragger>
-                        <Errors v-if="errors.docs" :errors="errors.docs[0]" />
-                    </a-form-item>
-                    <a-form-item>
-                        <a-button type="primary" block @click="approve" :loading="isSubmitting">
+                        <a-button type="primary" block @click="approve" :loading="form.processing">
                             <template #icon>
                                 <TagsFilled />
                             </template>
@@ -88,49 +85,49 @@
                 </div>
                 <div class="mt-2">
                     <a-descriptions size="small" bordered>
-                        <a-descriptions-item label="RFPROM" span class="text-end">{{ details.data[0].pgcreq_reqnum
+                        <a-descriptions-item label="RFPROM" span style="width: 50%;">{{ details.data[0].pgcreq_reqnum
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
-                        <a-descriptions-item label="Department" class="text-end">{{ details.data[0].title
+                        <a-descriptions-item label="Department" style="width: 50%;">{{ details.data[0].title
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
-                        <a-descriptions-item label="Retail Group" class="text-end">Group {{
+                        <a-descriptions-item label="Retail Group" style="width: 50%;">Group {{
                             details.data[0].pgcreq_group
                         }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
-                        <a-descriptions-item label="Date Requested" class="text-end">{{
+                        <a-descriptions-item label="Date Requested" style="width: 50%;">{{
                             details.data[0].pgcreq_datereq
                         }}
                         </a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
-                        <a-descriptions-item label="Time Requested:" class="text-end">{{ details.data[0].time_req
+                        <a-descriptions-item label="Time Requested:" style="width: 50%;">{{ details.data[0].time_req
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
-                        <a-descriptions-item label="Date Needed" class="text-end">{{ details.data[0].dateneeded
+                        <a-descriptions-item label="Date Needed" style="width: 50%;">{{ details.data[0].dateneeded
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
-                        <a-descriptions-item label="Total GC Budget:" class="text-end">{{ details.data[0].total
+                        <a-descriptions-item label="Total GC Budget:" style="width: 50%;">{{ details.data[0].total
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
-                        <a-descriptions-item label="Remarks:" class="text-end">{{ details.data[0].remarks }}
+                        <a-descriptions-item label="Remarks:" style="width: 50%;">{{ details.data[0].remarks }}
                         </a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
-                        <a-descriptions-item label="Requested by:" class="text-end">{{ details.data[0].fullname
+                        <a-descriptions-item label="Requested by:" style="width: 50%;">{{ details.data[0].fullname
                             }}</a-descriptions-item>
                     </a-descriptions>
                 </div>
             </a-card>
-            {{ id }}
+
             <a-card class="mt-2">
-                <a-table size="small" :pagination="false" class="mt-1" :columns="[
+                <a-table size="small" bordered :pagination="false" class="mt-1" :columns="[
                     {
                         title: 'Denomination',
                         dataIndex: 'denomination',
@@ -169,6 +166,7 @@
 import axios from 'axios';
 import pickBy from "lodash/pickBy";
 import { notification } from 'ant-design-vue';
+import { useForm } from '@inertiajs/vue3';
 export default {
     props: {
         details: Object,
@@ -179,15 +177,14 @@ export default {
         return {
             cdata: [],
             errors: {},
-            isSubmitting: false,
-            form: {
+            form: useForm({
                 appby: null,
                 checkby: null,
                 status: null,
                 remarks: null,
                 reqid: this.reqid,
-                docs: null,
-            }
+                file: null,
+            })
         }
     },
     created() {
@@ -201,31 +198,31 @@ export default {
                 })
         },
         approve() {
-            this.isSubmitting = true;
-            axios.post(route('finance.approve.request'), {
-                ...pickBy(this.form)
-            }).then(response => {
-                notification['success']({
-                    message: 'Success',
-                    description:
-                        response.data.success,
-                });
-                setTimeout(() => {
-                    window.location.href = '/finance/pen-promo-request'
-                }, 4000);
-            }).catch(e => {
-                notification['error']({
-                    message: 'Error',
-                    description:
-                        'Opps Something went wrong check the fields',
-                });
-                this.errors = e.response.data.errors;
-                this.isSubmitting = false;
-            });
+            this.form.transform((data) => ({
+                ...pickBy(data)
+            })).post(route('finance.approve.request'), {
+
+                onSuccess: (res) => {
+                    notification[res.props.flash.status]({
+                        message: res.props.flash.title,
+                        description: res.props.flash.msg,
+                    });
+                },
+
+                onError: (e) => {
+                    this.errors = e;
+
+                    notification['error']({
+                        message: 'Required',
+                        description: 'Some fields are I miss you',
+                    });
+                }
+            })
         },
-        handleChange(data) {
-            this.form.docs = data.file;
+        handleImageChange(file) {
+            this.form.file = file.file;
         }
+
     },
 }
 </script>

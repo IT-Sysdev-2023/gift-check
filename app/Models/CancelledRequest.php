@@ -11,4 +11,8 @@ class CancelledRequest extends Model
 
     protected $table = 'cancelled_request';
     protected $primaryKey = 'reqcan_id';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }

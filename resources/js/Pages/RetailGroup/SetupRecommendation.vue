@@ -3,7 +3,7 @@
         <div class="mb-3 flex justify-end">
             <a-button @click="() => $inertia.get(route('retailgroup.pending'))">
                 <RollbackOutlined />
-                Back to the ball game
+                Back to the Setup
             </a-button>
         </div>
         <a-card>
@@ -45,7 +45,7 @@
                                     <a-form-item has-feedback :validate-status="error?.status ? 'error' : ''"
                                         :help="error.status">
                                         <a-select ref="select" v-model:value="form.status" style="width: 100%"
-                                            @focus="focus" @change="handleChange">
+                                            @focus="focus" @change="() => error.status = null">
                                             <a-select-option value="1">Approved</a-select-option>
                                             <a-select-option value="2">Cancel</a-select-option>
                                         </a-select>
@@ -53,8 +53,8 @@
                                     <p class="ml-2 mt-2 font-bold">Remarks</p>
                                     <a-form-item has-feedback :validate-status="error?.remarks ? 'error' : ''"
                                         :help="error.remarks">
-                                        <a-textarea :rows="2" v-model:value="form.remarks"
-                                            placeholder="Enter Remarks" />
+                                        <a-textarea :rows="2" @change="() => error.remarks = null"
+                                            v-model:value="form.remarks" placeholder="Enter Remarks" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="12">
@@ -69,8 +69,12 @@
                                         :value="$page.props.auth.user.full_name" readonly class="text-center" />
 
                                 </a-col>
-                                <ant-upload-image class="ml-2" @handleChange="imageHandler" />
-
+                                <a-divider>
+                                    <a-typography-text code>upload image</a-typography-text>
+                                </a-divider>
+                                <div class="flex justify-center" style="width: 100%;">
+                                    <ant-upload-image class="ml-2" @handleChange="imageHandler" />
+                                </div>
                             </a-row>
                         </div>
 
@@ -164,18 +168,16 @@ const submit = () => {
     })).post(route('retailgroup.recommendation.submit'), {
         onError: (e) => {
             error.value = e;
-
             notification['error']({
                 message: 'Error',
                 description:
                     'Something missing from the field',
             });
         },
-        onSuccess: () => {
-            notification['success']({
-                message: 'Success',
-                description:
-                    'Submitted Successfully waiting for approval',
+        onSuccess: (res) => {
+            notification[res.props.flash.status]({
+                message: res.props.flash.title,
+                description: res.props.flash.msg,
             });
         }
     })

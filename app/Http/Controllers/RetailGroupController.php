@@ -43,9 +43,23 @@ class RetailGroupController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
-            return $this->retailgroup->updatePromoGcRequest($request)
+            $this->retailgroup->updatePromoGcRequest($request)
                 ->insertIntoApprovedRequest($request)
                 ->insertIntoPromoLedger($request);
         });
+
+        if ($request->status == '1') {
+            return back()->with([
+                'msg' => 'Successfully submitted and waiting for approval',
+                'title' => 'Success',
+                'status' => 'success',
+            ]);
+        } else {
+            return redirect()->route('retailgroup.pending')->with([
+                'msg' => 'Cancelled Recommendation Successfully',
+                'title' => 'Success',
+                'status' => 'success',
+            ]);
+        }
     }
 }
