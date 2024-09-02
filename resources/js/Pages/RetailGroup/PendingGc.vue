@@ -31,7 +31,7 @@
                     </template>
                     <template v-if="column.key == 'setup'">
                         <span v-if="record.pgcreq_group_status == ''">
-                            <a-button block
+                            <a-button block type="primary"
                                 @click="() => $inertia.get(route('retailgroup.recommendation.setup'), { id: record.pgcreq_id })">
                                 <template #icon>
                                     <FastForwardOutlined />
