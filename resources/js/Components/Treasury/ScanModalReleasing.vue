@@ -78,7 +78,6 @@ import { ref, watch, reactive } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { PageWithSharedProps } from "@/../../resources/js/types";
 import { notification } from "ant-design-vue";
-import dayjs from 'dayjs'
 
 const props = defineProps<{
     open: boolean;
