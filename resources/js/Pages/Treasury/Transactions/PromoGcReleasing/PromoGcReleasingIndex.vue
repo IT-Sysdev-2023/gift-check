@@ -11,7 +11,6 @@ const { highlightText } = highlighten();
 // };
 </script>
 <template>
-
     <Head :title="title" />
     <a-breadcrumb style="margin: 15px 0">
         <a-breadcrumb-item>
@@ -20,30 +19,52 @@ const { highlightText } = highlighten();
         <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
     </a-breadcrumb>
     <a-card>
-
         <div class="flex justify-between mb-5">
             <div>
                 <a-range-picker v-model:value="form.date" />
             </div>
             <div>
-                <a-input-search class="mr-1" v-model:value="form.search" placeholder="Search here..."
-                    style="width: 300px" />
-               
+                <a-input-search
+                    class="mr-1"
+                    v-model:value="form.search"
+                    placeholder="Search here..."
+                    style="width: 300px"
+                />
             </div>
         </div>
-        <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false">
+        <a-table
+            :data-source="data.data"
+            :columns="columns"
+            bordered
+            size="small"
+            :pagination="false"
+        >
             <template #title>
                 <a-typography-title :level="4">{{ title }}</a-typography-title>
             </template>
             <template #bodyCell="{ column, record }">
+                <template v-if="column.key">
+                    <span>
+                        <!-- for the dynamic implementation of object properties, just add a key in column-->
+                        {{ getValue(record, column.dataIndex) }}
+                    </span>
+                </template>
                 <template v-if="column.dataIndex">
-                    <span v-html="highlightText(record[column.dataIndex], form.search)
-                        ">
+                    <span
+                        v-html="
+                            highlightText(record[column.dataIndex], form.search)
+                        "
+                    >
                     </span>
                 </template>
 
                 <template v-if="column.dataIndex === 'action'">
-                    <a-button type="primary" size="small" @click="viewRecord(record.id)">
+                    <a-button
+                        type="primary"
+                        size="small"
+                        :disabled="record.status === 'closed'"
+                        @click="viewRecord(record.id)"
+                    >
                         <template #icon>
                             <FileSearchOutlined />
                         </template>
@@ -52,8 +73,8 @@ const { highlightText } = highlighten();
                 </template>
             </template>
         </a-table>
-    
-        <!-- <pagination-resource class="mt-5" :datarecords="data" /> -->
+
+        <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
 </template>
 <script>
@@ -105,11 +126,18 @@ export default {
         },
 
         start() {
-            this.$inertia.get(route('start.budget.ledger'), {
-                date: this.filters.date ? [dayjs(this.filters.date[0]).format('YYYY-MM-DD'), dayjs(this.filters.date[1]).format('YYYY-MM-DD')]
-                    : []
+            this.$inertia.get(route("start.budget.ledger"), {
+                date: this.filters.date
+                    ? [
+                          dayjs(this.filters.date[0]).format("YYYY-MM-DD"),
+                          dayjs(this.filters.date[1]).format("YYYY-MM-DD"),
+                      ]
+                    : [],
             });
-        }
+        },
+        getValue(record, dataIndex) {
+            return dataIndex.reduce((acc, index) => acc[index], record);
+        },
     },
 
     watch: {
@@ -130,6 +158,5 @@ export default {
             }, 150),
         },
     },
-  
 };
 </script>

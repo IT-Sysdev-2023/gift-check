@@ -225,6 +225,7 @@ declare module 'vue' {
     PromoForApproval: typeof import('./resources/js/Pages/Finance/Cards/PromoForApproval.vue')['default']
     PromoGCCard: typeof import('./resources/js/Pages/Finance/Cards/PromoGCCard.vue')['default']
     PromoGcReleasingIndex: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/PromoGcReleasingIndex.vue')['default']
+    PromoGcReleasingModal: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/Components/PromoGcReleasingModal.vue')['default']
     PromoGcRequest: typeof import('./resources/js/Pages/Marketing/PromoGcRequest.vue')['default']
     PromoGcRequestCard: typeof import('./resources/js/Pages/RetailGroup/Cards/PromoGcRequestCard.vue')['default']
     PromoList: typeof import('./resources/js/Pages/Marketing/PromoList.vue')['default']

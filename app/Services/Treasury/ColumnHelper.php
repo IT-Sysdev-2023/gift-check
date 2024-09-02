@@ -365,42 +365,48 @@ class ColumnHelper
 
         [
             'title' => 'RFPROM #',
-            'dataIndex' => 'no',
+            'dataIndex' => 'req_no',
             'align' => 'center'
         ],
         [
             'title' => 'Date Requested',
-            'dataIndex' => 'spexgcemp_denom',
+            'dataIndex' => 'date_req',
             'align' => 'center'
         ],
         [
             'title' => 'Date Needed',
-            'dataIndex' => 'voucher',
+            'dataIndex' => 'date_needed',
             'align' => 'center'
         ],
         [
             'title' => 'Total GC',
-            'dataIndex' => 'spexgcemp_lname',
+            'dataIndex' => 'total',
             'align' => 'center'
         ],
         [
             'title' => 'Requested By',
-            'dataIndex' => 'spexgcemp_fname',
+            'dataIndex' => 'user',
             'align' => 'center'
         ],
         [
             'title' => 'Recommended By',
-            'dataIndex' => 'spexgcemp_mname',
+            'dataIndex' => ['approved_request_user','user','full_name'],
+            'key' => 'recommended',
             'align' => 'center'
         ],
         [
             'title' => 'Approved By',
-            'dataIndex' => 'approved_by',
+            'dataIndex' => 'approved_by_type',
             'align' => 'center'
         ],
         [
             'title' => 'Status',
             'dataIndex' => 'status',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Action',
+            'dataIndex' => 'action',
             'align' => 'center'
         ],
     ];

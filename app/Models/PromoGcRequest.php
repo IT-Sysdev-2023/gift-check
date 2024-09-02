@@ -10,16 +10,15 @@ class PromoGcRequest extends Model
     use HasFactory;
 
     protected $table = 'promo_gc_request';
-
     protected $primaryKey = 'pgcreq_id';
-
     public $timestamps = false;
-
-
     protected $guarded = [];
-
-
-
+    public function casts(): array{
+        return [
+            'pgcreq_datereq' => 'datetime',
+            'pgcreq_dateneeded' => 'date'
+        ];
+    }
     public function userReqby()
     {
         return $this->belongsTo(User::class, 'pgcreq_reqby', 'user_id');
