@@ -8,6 +8,7 @@ use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\PromoLedger;
 use App\Services\Documents\UploadFileHandler;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
 
 class RetailGroupServices extends UploadFileHandler
@@ -91,8 +92,9 @@ class RetailGroupServices extends UploadFileHandler
             ->where('reqap_trid', $request->id)
             ->where('reqap_approvedtype', 'promo gc preapproved')
             ->first();
-
+            
         if ($data) {
+            // dd(Date::parse($data->reqap_date));
             $data->time = Date::parse($data->reqap_date)->format('H:i:s');
             $data->fullname = $data->user->full_name;
         }
@@ -139,6 +141,7 @@ class RetailGroupServices extends UploadFileHandler
 
     public function insertIntoApprovedRequest($request)
     {
+        // dd(now());
         $file = $this->createFileName($request);
 
         if ($request->status == '1') {
@@ -149,7 +152,7 @@ class RetailGroupServices extends UploadFileHandler
                 'reqap_remarks' => $request->remarks,
                 'reqap_doc' => $file ?? '',
                 'reqap_preparedby' => $request->user()->user_id,
-                'reqap_date' => now(),
+                'reqap_date' => Carbon::now(),
             ]);
 
             if ($wasCreated->wasRecentlyCreated) {
@@ -163,7 +166,7 @@ class RetailGroupServices extends UploadFileHandler
                 'reqcan_remarks' => $request->remarks,
                 'reqcan_doc' => $request->docs ?? '',
                 'reqcan_preparedby' =>  $request->user()->user_id,
-                'reqcan_date' => now(),
+                'reqcan_date' => Carbon::now(),
             ]);
 
             if ($wasCancelled->wasRecentlyCreated) {

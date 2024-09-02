@@ -19,7 +19,7 @@ class ApprovedRequest extends Model
     protected function casts(): array
     {
         return [
-            'reqap_date' => 'date'
+            'reqap_date' => 'datetime'
         ];
     }
 

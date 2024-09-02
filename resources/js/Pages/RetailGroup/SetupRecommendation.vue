@@ -94,7 +94,7 @@
                             <a-descriptions layout="horizontal" size="small" bordered>
                                 <a-descriptions-item style="width: 50%;" label="Docs">
                                     <span v-if="approved.reqap_doc != ''">
-                                        <a-image :src="'/storage/approveddocs/'+ approved.reqap_doc">
+                                        <a-image :src="'/storage/approveddocs/' + approved.reqap_doc">
                                         </a-image>
                                     </span>
                                     <span v-else>
@@ -137,6 +137,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useForm } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
 import { ref } from 'vue';
+import { notification } from 'ant-design-vue';
+
 const props = defineProps({
     record: Object,
     denom: Object,
@@ -161,8 +163,20 @@ const submit = () => {
         ...data
     })).post(route('retailgroup.recommendation.submit'), {
         onError: (e) => {
-            console.log(e)
             error.value = e;
+
+            notification['error']({
+                message: 'Error',
+                description:
+                    'Something missing from the field',
+            });
+        },
+        onSuccess: () => {
+            notification['success']({
+                message: 'Success',
+                description:
+                    'Submitted Successfully waiting for approval',
+            });
         }
     })
 }
