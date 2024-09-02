@@ -16,7 +16,7 @@
                 <p class="message-text text-white">Pendings</p>
                 <p class="sub-text text-white">All Pending Gc Request</p>
             </div>
-            <a-badge >
+            <a-badge :count="counts.pending">
                 <a-button
                     @click="() => $inertia.get(route('retailgroup.pending'))">
                     <template #icon>
@@ -43,7 +43,7 @@
                 <p class="sub-text text-white">All Approved Gc Request</p>
             </div>
             <a-badge >
-                <a-button
+                <a-button disabled
                     @click="() => $inertia.get(route('retail.approved.request'))">
                     <template #icon>
                         <FolderFilled />
@@ -68,7 +68,7 @@
                 <p class="message-text text-white">Cancelled</p>
                 <p class="sub-text text-white">All Cancel Request</p>
             </div>
-            <a-button>
+            <a-button disabled>
                 <template #icon>
                     <FolderFilled />
                 </template>
@@ -80,7 +80,7 @@
 <script>
 export default {
     props: {
-        // counts: Object
+        counts: Object
     }
 }
 </script>

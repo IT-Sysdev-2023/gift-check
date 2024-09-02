@@ -75,9 +75,15 @@ class ColumnHelper
             'dataIndex' => 'fullname',
         ],
         [
+            'title' => 'Status',
+            'key' => 'status',
+            'width' => '10%',
+            'align' => 'center'
+        ],
+        [
             'title' => 'Action',
             'key' => 'setup',
-            'width' => '15%',
+            'width' => '12%',
             'align' => 'center'
         ],
 
