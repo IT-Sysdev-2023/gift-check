@@ -21,6 +21,8 @@ class PromoGcRequestResource extends JsonResource
 
         return [
             'req_no' => $this->pgcreq_reqnum,
+            'document' => $this->pgcreq_doc,
+            'remarks' => $this->pgcreq_remarks,
             'date_req' => $this->pgcreq_datereq->toDayDateTimeString(),
             'req_id' => $this->pgcreq_id,
             'date_needed' => $this->pgcreq_dateneeded->toFormattedDateString(),

@@ -63,7 +63,7 @@ const { highlightText } = highlighten();
                         type="primary"
                         size="small"
                         :disabled="record.status === 'closed'"
-                        @click="viewRecord(record.id)"
+                        @click="viewRecord(record)"
                     >
                         <template #icon>
                             <FileSearchOutlined />
@@ -76,6 +76,9 @@ const { highlightText } = highlighten();
 
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
+
+
+    <promo-gc-releasing-modal v-model:open="showModal" :data="modalData" :denominations="denominationList"/>
 </template>
 <script>
 import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayout.vue";
@@ -96,6 +99,8 @@ export default {
     },
     data() {
         return {
+            modalData: {},
+            denominationList: {},
             descriptionRecord: [],
             showModal: false,
             form: {
@@ -114,15 +119,13 @@ export default {
         },
     },
     methods: {
-        async viewRecord($id) {
-            try {
-                const { data } = await axios.get(
-                    route("treasury.view.approved.budget.ledger", $id)
-                );
-                this.descriptionRecord = data;
-            } finally {
-                this.showModal = true;
-            }
+        async viewRecord(record) {
+            this.modalData = record
+            const { data } = await axios.get(
+                route("treasury.transactions.promo.gc.releasing.denominationList", record.req_id)
+            );
+            this.denominationList = data;
+            this.showModal = true;
         },
 
         start() {

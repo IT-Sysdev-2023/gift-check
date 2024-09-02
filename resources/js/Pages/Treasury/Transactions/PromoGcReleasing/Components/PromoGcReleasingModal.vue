@@ -15,7 +15,7 @@
                         style="max-width: 600px; padding-top: 10px"
                     >
                         <a-form-item label="GC Releasing No.:">
-                            <a-input :value="data.rel_num" readonly />
+                            <!-- <a-input :value="data.rel_num" readonly /> -->
                         </a-form-item>
                         <a-form-item label="Date Released:">
                             <a-input :value="today" readonly />
@@ -25,10 +25,7 @@
                             :validate-status="errorForm?.remarks ? 'error' : ''"
                             :help="errorForm?.remarks"
                         >
-                            <a-textarea
-                                v-model:value="formState.remarks"
-                                @input="() => (errorForm.remarks = null)"
-                            />
+                            <a-textarea v-model:value="formState.remarks" />
                         </a-form-item>
                         <a-form-item
                             label="Checked By:"
@@ -37,17 +34,17 @@
                             "
                             :help="errorForm?.checkedBy"
                         >
-                            <ant-select
+                            <!-- <ant-select
                                 :options="data.checkBy"
                                 @handle-change="handleCheckedBy"
-                            />
+                            /> -->
                         </a-form-item>
-                        <a-form-item label="Released By:">
+                        <!-- <a-form-item label="Released By:">
                             <a-input
                                 :value="$page.props.auth.user.full_name"
                                 readonly
                             />
-                        </a-form-item>
+                        </a-form-item> -->
 
                         <a-form-item
                             label="Received By:"
@@ -56,19 +53,14 @@
                             "
                             :help="errorForm?.receivedBy"
                         >
-                            <a-input
-                                v-model:value="formState.receivedBy"
-                                @input="() => (errorForm.receivedBy = null)"
-                            />
+                            <a-input v-model:value="formState.receivedBy" />
                         </a-form-item>
                         <check-cash-jv-payment
                             :formState="formState"
                             :errorForm="errorForm"
-
                             @handleCustomerOption="handleCustomerOption"
                             @handPaymentType="handPaymentType"
                         />
-                        
                     </a-form>
                 </a-card>
             </a-col>
@@ -76,112 +68,68 @@
                 <a-card>
                     <a-descriptions title="More Details">
                         <a-descriptions-item
-                            label="Store"
+                            label="Promo GC Req #"
                             :labelStyle="{ fontWeight: 'bold' }"
-                            >{{
-                                data.details.store.store_name
-                            }}</a-descriptions-item
                         >
+                            {{ data.req_no }}
+                        </a-descriptions-item>
                         <a-descriptions-item
-                            label="Date Requested"
+                            label="Time & Date Requested"
                             :labelStyle="{ fontWeight: 'bold' }"
-                            >{{
-                                dayjs(data.details.sgc_date_request).format(
-                                    "MMM DD YYYY"
-                                )
-                            }}</a-descriptions-item
+                            :span="2"
                         >
+                            {{ data.date_req }}
+                        </a-descriptions-item>
                         <a-descriptions-item
                             label="Date Needed"
                             :labelStyle="{ fontWeight: 'bold' }"
-                            >{{
-                                dayjs(data.details.sgc_date_needed).format(
-                                    "MMM DD YYYY"
-                                )
-                            }}</a-descriptions-item
                         >
+                            {{ data.date_needed }}
+                        </a-descriptions-item>
+
                         <a-descriptions-item
-                            label="GC Request No"
+                            v-if="data.document"
+                            label="Document"
                             :labelStyle="{ fontWeight: 'bold' }"
                         >
-                            {{ data.details.sgc_num }}
-                        </a-descriptions-item>
-                        <a-descriptions-item
-                            label="Document"
-                            v-if="data.details.sgc_file_docno"
-                        >
-                            ...On Development
+                            {{ data.document }}
                         </a-descriptions-item>
                         <a-descriptions-item
                             label="Remarks"
                             :labelStyle="{ fontWeight: 'bold' }"
-                            >{{ data.details.sgc_remarks }}</a-descriptions-item
                         >
-                        <a-descriptions-item
-                            label="Requested By"
-                            :labelStyle="{ fontWeight: 'bold' }"
-                        >
-                            {{ data.details.user.full_name }}
+                            {{ data.remarks }}
                         </a-descriptions-item>
                         <a-descriptions-item
-                            label="Time Requested"
+                            label="Requested by"
                             :labelStyle="{ fontWeight: 'bold' }"
                         >
-                            {{
-                                dayjs(data.details.sgc_date_request).format(
-                                    "HH:mm:ss a"
-                                )
-                            }}
-                        </a-descriptions-item>
-                        <a-descriptions-item
-                            label="Company Req.:"
-                            v-if="data.details.sgc_type === 'special internal'"
-                        >
-                            ...On Development
+                            {{ data.user }}
                         </a-descriptions-item>
                     </a-descriptions>
-                    <div class="mb-8 pt-5 text-right space-x-5">
+                    <!-- <div class="mb-8 pt-5 text-right space-x-5">
                         <a-button @click="viewAllocatedGc" type="primary" ghost
                             >View Allocated GC</a-button
                         >
                         <a-button @click="viewScannedGc" type="dashed"
                             >View Scanned Gc</a-button
                         >
-                    </div>
+                    </div> -->
                     <a-table
                         bordered
                         class="mt-8"
                         size="small"
                         :pagination="false"
                         :data-source="denominationTableData.data"
-                        :columns="[
-                            {
-                                title: 'Denomination',
-                                dataIndex: 'denomination',
-                            },
-                            {
-                                title: 'Requested Gc',
-                                dataIndex: 'sri_items_remain',
-                            },
-                            {
-                                title: 'Subtotal',
-                                dataIndex: 'subtotal',
-                            },
-                            {
-                                title: 'Allocated Gc',
-                                dataIndex: 'count',
-                            },
-                            {
-                                title: 'Action',
-                                key: 'action',
-                            },
-                            {
-                                title: 'Scanned Gc',
-                                key: 'scan',
-                            },
-                        ]"
+                        :columns="denominationColumns"
                     >
                         <template #bodyCell="{ column, record }">
+                            <template v-if="column.key == 'subtotal'">
+                                ₱{{ record.subtotal }}
+                            </template>
+                            <template v-if="column.key == 'reqgc'">
+                                {{ record.pgcreqi_remaining }} pc/s
+                            </template>
                             <template v-if="column.key == 'action'">
                                 <a-button
                                     type="primary"
@@ -192,7 +140,7 @@
                             </template>
                             <template v-if="column.key == 'scan'">
                                 {{ countScannedBc(record) }}
-                                <!-- {{ $page.props.barcodeReviewScan?.allocation }} -->
+                                
                             </template>
                         </template>
                         <template #summary>
@@ -218,15 +166,8 @@
         </a-row>
     </a-modal>
 
-    <!-- View Allocated Gc Modal -->
-    <view-allocated-gc-modal
-        v-model:open="allocatedModal"
-        :allocated-gc-data="allocatedGcData"
-        :store_id="data?.details?.sgc_store"
-    />
-
-    <!-- Scan Modal  sadasd-->
-    <ScanModal v-model:open="scanModal" :data="data" :scan-data="scanData" />
+    <!-- Scan Modal  -->
+    <ScanModalReleasing v-model:open="scanModal" :data="data" :scan-data="scanData" />
 
     <!-- View Scanned Gc -->
     <a-modal
@@ -236,7 +177,7 @@
         centered
         :footer="null"
     >
-        <a-table
+        <!-- <a-table
             bordered
             size="small"
             :pagination="false"
@@ -259,8 +200,8 @@
                 },
             ]"
             :data-source="scannedGcData?.data"
-        >
-        </a-table>
+        > -->
+        <!-- </a-table> -->
         <pagination-axios
             :datarecords="scannedGcData"
             @on-pagination="onScannedPagination"
@@ -272,15 +213,20 @@
 import dayjs from "dayjs";
 import { usePage } from "@inertiajs/vue3";
 import { ref, computed, reactive, watch } from "vue";
-import { PageWithSharedProps } from "@/../../resources/js/types";
+import {
+    PageWithSharedProps,
+    PaginationTypes,
+} from "@/../../resources/js/types";
 import { notification } from "ant-design-vue";
 import axios from "axios";
+
 import type { UploadChangeParam } from "ant-design-vue";
 
 //Props
 const props = defineProps<{
     open: boolean;
-    data: { rel_num: number; details: any; checkBy: any; rgc: any };
+    data: any;
+    denominations: PaginationTypes;
 }>();
 const page = usePage<PageWithSharedProps>().props;
 const emit = defineEmits<{
@@ -305,7 +251,7 @@ const formState = reactive({
 });
 
 const today = dayjs().format("YYYY-MMM-DD HH:mm:ss a");
-const denominationTableData = ref(props.data.rgc);
+const denominationTableData = ref(props.denominations);
 const allocatedGcData = ref(null);
 const scanData = ref(null);
 const scanModal = ref(false);
@@ -331,9 +277,8 @@ const scannedGcData = ref(null);
 //Computed
 const totals = computed(() => {
     let totalBorrow = 0;
-
-    props.data.rgc.data.forEach(({ subtotal }) => {
-        const floatAmount = parseFloat(subtotal.replace(/[₱,]/g, ""));
+    denominationTableData.value.data.forEach(({ subtotal }) => {
+        const floatAmount = subtotal;
         totalBorrow += floatAmount;
     });
     //format with sign
@@ -344,49 +289,69 @@ const totals = computed(() => {
 });
 
 //Methods
-
+const denominationColumns = [
+    {
+        title: "Denomination",
+        dataIndex: "denomination",
+    },
+    {
+        title: "Requested Gc",
+        key: "reqgc",
+    },
+    {
+        title: "Subtotal",
+        key: "subtotal",
+    },
+    {
+        title: "Action",
+        key: "action",
+    },
+    {
+        title: "Scanned Gc",
+        key: "scan",
+    },
+];
 const submitForm = () => {
-    const rid = props.data.details.sgc_id;
-    const store_id = props.data.details.store.store_id;
-    //released = current user
-
-    axios
-        .post(route("treasury.store.gc.releasingEntrySubmission"), {
-            rid: rid,
-            store_id: store_id,
-            file: formState.file,
-            remarks: formState.remarks,
-            receivedBy: formState.receivedBy,
-            paymentType: formState.paymentType,
-            checkedBy: formState.checkedBy,
-        })
-        .then((res) => {
-            notification.success({
-                message: "Scan Success",
-                description: res.data,
-            });
-            location.reload();
-        })
-        .catch((err) => {
-            if (err.response.status === 400) {
-                notification.error({
-                    message: "Submission Failed",
-                    description: err.response.data,
-                });
-            } else {
-                // console.log(formState.errors)
-                console.log(err.response.data.errors);
-                errorForm.value = err.response.data.errors;
-            }
-        });
-};
-const viewScannedGc = async () => {
-    const { data } = await axios.get(
-        route("treasury.store.gc.viewScannedBarcode"),
-        { params: { id: props.data.details.sgc_id } }
-    );
-    scannedGcData.value = data;
-    viewScannedModal.value = true;
+    //     const rid = props.data.details.sgc_id;
+    //     const store_id = props.data.details.store.store_id;
+    //     //released = current user
+    //     axios
+    //         .post(route("treasury.store.gc.releasingEntrySubmission"), {
+    //             rid: rid,
+    //             store_id: store_id,
+    //             file: formState.file,
+    //             remarks: formState.remarks,
+    //             receivedBy: formState.receivedBy,
+    //             paymentType: formState.paymentType,
+    //             checkedBy: formState.checkedBy,
+    //         })
+    //         .then((res) => {
+    //             notification.success({
+    //                 message: "Scan Success",
+    //                 description: res.data,
+    //             });
+    //             location.reload();
+    //         })
+    //         .catch((err) => {
+    //             if (err.response.status === 400) {
+    //                 notification.error({
+    //                     message: "Submission Failed",
+    //                     description: err.response.data,
+    //                 });
+    //             } else {
+    //                 // console.log(formState.errors)
+    //                 console.log(err.response.data.errors);
+    //                 errorForm.value = err.response.data.errors;
+    //             }
+    //         });
+    // };
+    // const viewScannedGc = async () => {
+    //     const { data } = await axios.get(
+    //         route("treasury.store.gc.viewScannedBarcode"),
+    //         { params: { id: props.data.details.sgc_id } }
+    //     );
+    //     scannedGcData.value = data;
+    //     viewScannedModal.value = true;
 };
 
 const onScannedPagination = async (link) => {
@@ -404,7 +369,7 @@ const onScannedPagination = async (link) => {
 const onChangeDenominationPagination = async (link) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
-        denominationTableData.value = data.rgc;
+        denominationTableData.value = data;
     }
 };
 const handleClose = () => {
@@ -417,38 +382,38 @@ const handleScanModal = (record) => {
 const countScannedBc = (record) => {
     return page.barcodeReviewScan?.allocation?.filter((item) => {
         return (
-            record.sri_items_denomination == item.denid &&
-            item.reqid == props.data.details.sgc_id
+            record.pgcreqi_denom == item.denomid &&
+            item.reqid == props.data.req_id
         );
     }).length;
 };
-const viewAllocatedGc = async () => {
-    const { data } = await axios.get(
-        route(
-            "treasury.store.gc.viewAllocatedList",
-            props.data.details.sgc_store
-        )
-    );
-    allocatedGcData.value = data;
-    allocatedModal.value = true;
-};
+// const viewAllocatedGc = async () => {
+//     const { data } = await axios.get(
+//         route(
+//             "treasury.store.gc.viewAllocatedList",
+//             props.data.details.sgc_store
+//         )
+//     );
+//     allocatedGcData.value = data;
+//     allocatedModal.value = true;
+// };
 const handPaymentType = (value: string) => {
     formState.paymentType.type = value;
     errorForm.value["paymentType.type"] = null;
 };
 const handleCheckedBy = (value) => {
     formState.checkedBy = value;
-    errorForm.value.checkedBy = null;
+    // errorForm.value.checkedBy = null;
 };
 const handleCustomerOption = (value) =>
     (formState.paymentType.customer = value);
 const handleDocumentChange = (file: UploadChangeParam) => {
-    formState.file = file.file;
+    // formState.file = file.file;
 };
 
 //Watchers
 watch(
-    () => props.data.rgc,
+    () => props.denominations,
     (newValue) => {
         if (newValue) {
             denominationTableData.value = newValue;

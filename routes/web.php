@@ -229,6 +229,10 @@ Route::middleware('auth')->group(function () {
                 //Promo Gc Releasing
                 Route::prefix('promo-gc-releasing')->name('promo.gc.releasing.')->group(function () {
                     Route::get('/', [PromoGcReleasingController::class, 'index'])->name('index');
+
+
+                    Route::get('promo-gc-request-{id}', [PromoGcReleasingController::class, 'denominationList'])->name('denominationList');
+                    Route::post('scan-barcode', [PromoGcReleasingController::class, 'scanBarcode'])->name('scanBarcode');
                 });
 
                 //Budget Request
