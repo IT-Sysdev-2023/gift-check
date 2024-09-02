@@ -9,7 +9,11 @@ class PromoLedger extends Model
 {
     use HasFactory;
 
-    protected $table= 'promo_ledger';
+    protected $table = 'promo_ledger';
 
-    protected $primaryKey= 'promled_id';
+    protected $primaryKey = 'promled_id';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }

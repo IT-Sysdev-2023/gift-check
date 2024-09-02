@@ -88,4 +88,9 @@ class PromoGcRequest extends Model
             'pgcreq_remarks'
         );
     }
+
+    public function promoitems()
+    {
+        return $this->hasMany(PromoGcRequestItem::class, 'pgcreqi_trid', 'pgcreq_id');
+    }
 }
