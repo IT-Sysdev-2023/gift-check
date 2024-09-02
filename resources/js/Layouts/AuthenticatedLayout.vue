@@ -7,6 +7,7 @@ import { computed } from "vue";
 import IadSideBar from "@/Components/IadSideBar.vue";
 import AdminSidebar from "@/Components/AdminSidebar.vue";
 import RetailSidebar from "@/Components/RetailSidebar.vue";
+import { theme } from "ant-design-vue";
 
 const page = usePage<PageWithSharedProps>().props;
 const {
@@ -33,7 +34,7 @@ const dashboardRoute = computed(() => {
 
 <template>
     <div>
-        <a-layout style="min-height: 100vh">
+        <a-layout style="min-height: 100vh"  class="dark-layout">
             <a-layout-sider v-model:collapsed="collapsed" collapsible width="250px">
                 <div class="logo" />
                 <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
@@ -130,11 +131,12 @@ const dashboardRoute = computed(() => {
                         </p>
                     </a-layout-header>
                     <a-layout-content :style="{
-                        margin: '24px 16px',
                         padding: '24px',
                         background: '#fff',
                         minHeight: '280px',
-                    }">
+                        color: 'green'
+
+                    }" >
                         <slot />
                     </a-layout-content>
                 </a-layout>
@@ -158,4 +160,6 @@ const dashboardRoute = computed(() => {
 [data-theme="dark"] .site-layout .site-layout-background {
     background: #141414;
 }
+
+
 </style>

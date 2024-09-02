@@ -60,11 +60,11 @@ class ColumnHelper
         ],
         [
             'title' => 'Date Requested',
-            'dataIndex' => 'pgcreq_datereq',
+            'dataIndex' => 'req',
         ],
         [
             'title' => 'Date Needed',
-            'dataIndex' => 'pgcreq_dateneeded',
+            'dataIndex' => 'needed',
         ],
         [
             'title' => 'Total GC',
@@ -75,9 +75,15 @@ class ColumnHelper
             'dataIndex' => 'fullname',
         ],
         [
+            'title' => 'Status',
+            'key' => 'status',
+            'width' => '10%',
+            'align' => 'center'
+        ],
+        [
             'title' => 'Action',
             'key' => 'setup',
-            'width' => '15%',
+            'width' => '12%',
             'align' => 'center'
         ],
 

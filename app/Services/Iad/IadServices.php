@@ -187,7 +187,7 @@ class IadServices
             $isValidated = CustodianSrrItem::where('cssitem_barcode', $request->barcode)->exists();
 
             if (!$isValidated) {
-                
+
                 $ifScanned = TempValidation::where('tval_barcode', $request->barcode)->exists();
 
                 if (!$ifScanned) {
@@ -249,7 +249,7 @@ class IadServices
 
         if ($create) {
             TempValidation::truncate();
-
+            
             return redirect()->route('iad.dashboard')->with([
                 'status' => 'success',
                 'title' => 'Success',

@@ -48,6 +48,19 @@ class DashboardClass extends DashboardService
                 ->count(),
         ];
     }
+    public function retailGroupDashboard()
+    {
+
+        return [
+            'pending' => PromoGcRequest::with('userReqby:user_id,firstname,lastname')
+                ->where('pgcreq_group', request()->user()->usergroup)
+                ->where('pgcreq_status', 'pending')
+                ->where(function ($q) {
+                    $q->where('pgcreq_group_status', '')
+                        ->orWhere('pgcreq_group_status', 'approved');
+                })->count()
+        ];
+    }
     public function financeDashboard()
     {
         $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '0')->where('spexgc_addemp', 'done')->count();

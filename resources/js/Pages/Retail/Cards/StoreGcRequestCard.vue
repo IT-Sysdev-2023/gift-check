@@ -42,7 +42,7 @@
                 <p class="sub-text text-white">All Approved Gc Request</p>
             </div>
             <a-badge :count="counts.approved" :number-style="{ backgroundColor: '#52c41a' }">
-                <a-button :disabled="counts.approved == 0" @click="() => $inertia.get(route('retail.approved.request'))">
+                <a-button :disabled="counts.approved == 0"  @click="() => $inertia.get(route('retail.approved.request'))">
                     <template #icon>
                         <FolderFilled />
                     </template>

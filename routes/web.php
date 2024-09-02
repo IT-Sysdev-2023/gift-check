@@ -338,11 +338,9 @@ Route::prefix('retail')->group(function () {
 Route::prefix('retailgroup')->group(function () {
     Route::name('retailgroup.')->group(function () {
         Route::get('pending-gc-request', [RetailGroupController::class, 'pendingGcRequest'])->name('pending');
-
         Route::name('recommendation.')->group(function () {
             Route::get('setup', [RetailGroupController::class, 'setup'])->name('setup');
-
-
+            Route::post('submit', [RetailGroupController::class, 'submitPendingRequest'])->name('submit');
         });
     });
 });
