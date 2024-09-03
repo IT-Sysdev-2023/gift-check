@@ -42,27 +42,4 @@ class TransactionsController extends Controller
     }
 
     //Production Requests
-    public function giftCheck()
-    {
-
-        $denomination = Denomination::select('denomination', 'denom_id')->where([['denom_type', 'RSGC'], ['denom_status', 'active']])->get();
-        $latestRecord = ProductionRequest::max('pe_num');
-        $increment = $latestRecord ? $latestRecord + 1 : 1;
-
-        return inertia('Treasury/Transactions/GiftCheck', [
-            'title' => 'Gift Check',
-            'denomination' => DenominationResource::collection($denomination),
-            'prNo' => NumberHelper::leadingZero($increment),
-            'remainingBudget' => LedgerBudget::currentBudget(),
-        ]);
-    }
-    public function giftCheckStore(Request $request)
-    {
-        return $this->transactionProductionRequest->storeGc($request);
-    }
-    public function acceptProductionRequest(Request $request, $id)
-    {
-        $this->regularGcProcessService->approveProductionRequest($request, $id);
-        return redirect()->back()->with('success', 'Successfully Processed!');
-    }
 }

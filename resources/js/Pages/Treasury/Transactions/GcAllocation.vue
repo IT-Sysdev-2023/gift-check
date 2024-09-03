@@ -307,7 +307,6 @@ const handleStoreChange = async (
 
 const forAllocationPagination = async(link) => {
     if (link.url) {
-        // console.log(link.url)
         const { data } = await axios.get(link.url);
         forAllocationData.value = data;
     }
