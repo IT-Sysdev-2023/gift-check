@@ -24,6 +24,7 @@ class ApprovedPendingPromoGCRequestService extends UploadFileHandler
     }
     public function pendingPromoGCRequestIndex($request)
     {
+        // dd();
         return inertia('Finance/PendingPromoGcRequest', [
             'data' => self::getPromoRequest($request),
             'columns' => ColumnHelper::app_pend_request_columns(true),
@@ -36,6 +37,7 @@ class ApprovedPendingPromoGCRequestService extends UploadFileHandler
 
     public static function getPromoRequest($request)
     {
+        // dd();
         $data = PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
             ->selectPromoRequest()
             ->whereFilterForPending()

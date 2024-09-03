@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\ApprovedGcrequest;
+use App\Models\BudgetRequest;
 use App\Models\InstitutEod;
 use App\Models\InstitutTransaction;
 use App\Models\ProductionRequest;
@@ -73,6 +74,10 @@ class DashboardClass extends DashboardService
                 'external' => $pendingExternal,
                 'approve' => SpecialExternalGcrequest::where('spexgc_status', 'approved')->count(),
                 'cancel' => SpecialExternalGcrequest::where('spexgc_status', 'cancelled')->count(),
+            ],
+            'budgetRequest' => [
+                'pending' => BudgetRequest::where('br_request_status', '0')
+                ->count(),
             ],
 
             'appPromoCount' => PromoGcRequest::with('userReqby')

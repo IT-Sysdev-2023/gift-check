@@ -115,6 +115,8 @@ export default {
                         message: response.props.flash.msg,
                         description: response.props.flash.description,
                     })
+
+                this.$inertia.get(route('marketing.promo.gc.request'));
                 }
             })
         },

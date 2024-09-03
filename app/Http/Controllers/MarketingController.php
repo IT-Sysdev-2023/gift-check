@@ -4,22 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
 use App\Helpers\GetVerifiedGc;
-use App\Helpers\NumberHelper;
 use App\Http\Resources\PromoResource;
-use App\Models\ApprovedGcrequest;
 use App\Models\ApprovedProductionRequest;
 use App\Models\Assignatory;
-use App\Models\BudgetRequest;
 use App\Models\CancelledProductionRequest;
 use App\Models\Gc;
-use App\Models\GcRelease;
-use App\Models\InstitutCustomer;
 use App\Models\InstitutPayment;
-use App\Models\InstitutTransaction;
-use App\Models\InstitutTransactionsItem;
 use App\Models\Promo;
-use App\Models\RequisitionFormDenomination;
-use App\Models\Store;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\User;
 use App\Models\Denomination;
@@ -28,38 +19,36 @@ use App\Models\LedgerCheck;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
 use App\Models\TempPromo;
-
 use App\Models\PromoGc;
 use App\Models\PromogcReleased;
 use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\RequisitionEntry;
-use App\Models\RequisitionForm;
-use App\Models\SpecialExternalGcrequest;
-use App\Models\SpecialExternalGcrequestItem;
-
 use App\Models\Supplier;
 use App\Models\StoreVerification;
 use App\Models\TransactionSale;
 use App\Models\TransactionStore;
 use App\Services\Marketing\PdfServices;
+use App\Services\Marketing\MarketingServices;
 use Carbon\Carbon;
-use GuzzleHttp\Psr7\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use Response;
+
 
 use function Pest\Laravel\json;
 
 class MarketingController extends Controller
 {
+    public function __construct(public MarketingServices $marketing)
+    {
+
+    }
     public static function productionRequest($id)
     {
         $productionReqItems = ProductionRequestItem::join(
@@ -95,42 +84,15 @@ class MarketingController extends Controller
     public function index(Request $request)
     {
 
-        $promoGcRequest = [
-            'pendingRequest' => $pendingPromoGcRequest = PromoGcRequest::where('pgcreq_status', 'pending')->count(),
-            'approvedRequest' => $pendingPromoGcRequest = PromoGcRequest::where('pgcreq_status', 'approved')->count(),
-            'cancelledRequest' => $pendingPromoGcRequest = PromoGcRequest::where('pgcreq_status', 'cancel')->count(),
-        ];
-
-
-        $gcProductionRequest = [
-            'pendingRequest' => ProductionRequest::where('pe_status', '0')->count(),
-            'approvedRequest' => ProductionRequest::where('pe_status', '1')->count(),
-            'cancelledRequest' => ProductionRequest::where('pe_status', '2')->count()
-        ];
-
+        $promoGcRequest = $this->marketing->promoGcRequest();
+        $gcProductionRequest = $this->marketing->productionRequest();
         $supplier = Supplier::all();
-
-        $checkedBy = Assignatory::where('assig_dept', $request->user()->usertype)
-            ->orWhere('assig_dept', 1)
-            ->get();
-
-        $budgetRow = LedgerBudget::where('bcus_guide', '!=', 'dti')
-            ->selectRaw('SUM(bdebit_amt) as total_debit, SUM(bcredit_amt) as total_credit')
-            ->first();
-        $debit = $budgetRow->total_debit;
-        $credit = $budgetRow->total_credit;
-        $budget = $debit - $credit;
-        $currentBudget = number_format($budget, 2);
-
-
+        $checkedBy = $this->marketing->checkedBy();
+        $currentBudget = $this->marketing->currentBudget();
         $requestNum = ProductionRequest::where('pe_generate_code', 1)
             ->where('pe_requisition', 0)
             ->where('pe_status', 1)->get();
-
-
         $productionReqItems = self::productionRequest($request->data);
-
-
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Denomination', 'Qty', 'Barcode No. Start', 'Barcode No. End'],
@@ -140,9 +102,6 @@ class MarketingController extends Controller
         $query = RequisitionEntry::orderByDesc('requis_erno')->first();
         $getRequestNo = intval($query->requis_erno) + 1;
         $getRequestNo = sprintf('%04d', $getRequestNo);
-
-
-
         return Inertia::render(('Marketing/MarketingDashboard'), [
             'getRequestNo' => $getRequestNo,
             'ReqNum' => $requestNum,
@@ -163,7 +122,6 @@ class MarketingController extends Controller
             ->orderByDesc('promo.promo_id')
             ->paginate(10)->withQueryString();
 
-        //Table Columns
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Promo No', 'Promo Name', 'Date Notified', 'Expiration Date', 'Group', 'Created By', 'View'],
@@ -740,7 +698,7 @@ class MarketingController extends Controller
 
     public function submitPromoGcRequest(Request $request)
     {
-        if (is_null($request->data['remarks']) || $request->total== 0) {
+        if (is_null($request->data['remarks']) || $request->total == 0) {
             return back()->with([
                 'msg' => "Select",
                 'description' => "Please fill all required fields",
@@ -1589,77 +1547,14 @@ class MarketingController extends Controller
 
     public function approvedRequest(Request $request)
     {
-
-
-        $query = ProductionRequest::join('approved_production_request', 'production_request.pe_id', '=', 'approved_production_request.ape_pro_request_id')
-            ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
-            ->where('pe_status', '1')
-            ->whereAny(['pe_num'], 'LIKE', '%' . $request->search . '%')
-            ->orderByDesc('pe_id')
-            ->get();
-        $query->transform(function ($item) {
-            $item->Reqprepared = ucwords($item->firstname . ' ' . $item->lastname);
-            $item->dateReq = Date::parse($item->pe_date_request)->format('Y-m-d');
-            $item->dateNeed = Date::parse($item->pe_date_needed)->format('Y-m-d');
-            $item->ape_approved_at = Date::parse($item->ape_approved_at)->format('Y-m-d');
-            return $item;
-        });
+        $query = $this->marketing->approvedProductionRequest($request);
 
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['PR No.', 'Date Request', 'Date Needed', '	Requested By', 'Date Approved', '	Approved By', ''],
             ['pe_num', 'dateReq', 'dateNeed', 'Reqprepared', 'ape_approved_at', 'ape_approved_by', 'View']
         );
-
-
-        $selectedData = collect([
-            ProductionRequest::select(
-                'production_request.pe_id',
-                'production_request.pe_num',
-                'production_request.pe_requested_by',
-                'production_request.pe_date_request',
-                'production_request.pe_date_needed',
-                'production_request.pe_file_docno',
-                'production_request.pe_remarks',
-                'production_request.pe_generate_code',
-                'production_request.pe_requisition',
-                'approved_production_request.ape_approved_by',
-                'approved_production_request.ape_remarks',
-                'approved_production_request.ape_approved_at',
-                'approved_production_request.ape_preparedby',
-                'approved_production_request.ape_checked_by',
-                'requestby.firstname as frequest',
-                'requestby.lastname as lrequest',
-                'approvedby.firstname as fapproved',
-                'approvedby.lastname as lapproved',
-                'production_request.pe_type',
-                'production_request.pe_group'
-            )
-                ->join('approved_production_request', 'production_request.pe_id', '=', 'approved_production_request.ape_pro_request_id')
-                ->join('users as requestby', 'requestby.user_id', '=', 'production_request.pe_requested_by')
-                ->join('users as approvedby', 'approvedby.user_id', '=', 'approved_production_request.ape_preparedby')
-                ->when($request->id ?? null, function ($query) use ($request) {
-                    $query->where('production_request.pe_id', $request->id);
-                })
-                ->when($request->id === null, function ($item) use ($query) {
-                    $item->where('production_request.pe_id', $query->first()->pe_id);
-                })
-                ->first()
-        ]);
-
-
-        $selectedData = $selectedData->transform(function ($item) {
-            $item->DateRequested = Date::parse($item->pe_date_request)->format('Y-F-d') ?? null;
-            $item->DateNeeded = Date::parse($item->pe_date_needed)->format('Y-F-d');
-            $item->DateApproved = Date::parse($item->ape_approved_at)->format('Y-F-d');
-            $item->aprrovedPreparedBy = ucwords($item->fapproved . ' ' . $item->lapproved);
-            $item->RequestPreparedby = ucwords($item->frequest . ' ' . $item->lrequest);
-
-            return $item;
-        })->first();
-
-
-
+        $selectedData = $this->marketing->approveProductionRequestSelectedData($request, $query);
 
         $productionBarcode = self::productionRequest($request->id);
         $barcodeColumns = array_map(
@@ -1677,6 +1572,25 @@ class MarketingController extends Controller
         ]);
     }
 
+    public function promoPendinglist()
+    {
+        $data = $this->marketing->promoGcrequestPendingList();
 
+        $columns = ColumnHelper::promopendinglistcols();
+
+        return Inertia::render('Marketing/PromoGCRequest/PendingList', [
+            'data' => $data,
+            'columns' => $columns
+        ]);
+    }
+
+    public function selectedPromoPendingRequest(Request $request)
+    {
+        $data = $this->marketing->selectedPromoPendingRequest($request);
+       
+        return Inertia::render('Marketing/PromoGCRequest/PendingGcRequestView',[
+            'data' =>$data
+        ]);
+    }
 
 }

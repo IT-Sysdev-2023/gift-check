@@ -4,7 +4,7 @@
             <a-table size="small" :data-source="record.data" :columns="columns" :pagination="false">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key == 'setup'">
-                        <a-button>
+                        <a-button @click="() => $inertia.get(route('finance.budget.setup'), {id: record.br_id})">
                             <template #icon>
                                 <FastForwardOutlined />
                             </template>

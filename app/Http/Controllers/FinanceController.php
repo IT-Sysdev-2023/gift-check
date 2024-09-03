@@ -9,6 +9,7 @@ use App\Http\Resources\BudgetLedgerResource;
 use App\Http\Resources\SpgcLedgerResource;
 use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
+use App\Models\BudgetRequest;
 use App\Models\LedgerBudget;
 use App\Models\LedgerSpgc;
 use App\Models\SpecialExternalGcrequest;
@@ -37,8 +38,7 @@ class FinanceController extends Controller
         public ApprovedReleasedPdfExcelService $appRelPdfExcelService,
         public DashboardClass $dashboardClass,
         public FinanceService $financeService
-    ) {
-    }
+    ) {}
 
     public function index()
     {
@@ -109,7 +109,6 @@ class FinanceController extends Controller
             $dataCus = ApprovedReleasedReportService::approvedReleasedGenerate($request->all());
             $dataBar = ApprovedReleasedReportService::approvedReleasedBarGenerate($request->all());
             return $this->appRelPdfExcelService->approvedReleasedSpgcExcelWriteResult($request->dateRange, $dataCus, $dataBar, $request->approvedType);
-
         }
     }
     public function releasedSpgcPdfExcelFunction(Request $request)
@@ -135,7 +134,6 @@ class FinanceController extends Controller
         return Inertia::render('Finance/Results/SpgcLedgerResult', [
             'filePath' => $save,
         ]);
-
     }
     public function pendingPromoRequest(Request $request)
     {
@@ -170,7 +168,6 @@ class FinanceController extends Controller
 
                 $subitem->subtotal = (float) $subitem->specit_denoms * (float) $subitem->specit_qty;
                 return $subitem;
-
             });
 
             $item->total = $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
@@ -197,7 +194,6 @@ class FinanceController extends Controller
 
                 $subitem->subtotal = (float) $subitem->specit_denoms * (float) $subitem->specit_qty;
                 return $subitem;
-
             });
 
             $item->total = $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
@@ -273,7 +269,6 @@ class FinanceController extends Controller
 
                 $subitem->subtotal = (float) $subitem->specit_denoms * (float) $subitem->specit_qty;
                 return $subitem;
-
             });
 
             $item->total = $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
@@ -294,7 +289,6 @@ class FinanceController extends Controller
             'gcHolder' => $gcHolder,
             'columns' => ColumnHelper::getColumns($columns),
         ]);
-
     }
 
     public function SpecialGcApprovalSubmit(Request $request)
@@ -360,10 +354,8 @@ class FinanceController extends Controller
                                     'spexgcemp_barcode' => $specGet++,
                                 ]);
                             }
-
                         } elseif ($reqType->spexgc_type == '1') {
-                            $denoms = SpecialExternalGcrequestItem::
-                                select('specit_denoms', 'specit_qty')
+                            $denoms = SpecialExternalGcrequestItem::select('specit_denoms', 'specit_qty')
                                 ->where('specit_trid', $id)
                                 ->orderBy('specit_id');
 
@@ -376,7 +368,6 @@ class FinanceController extends Controller
                                     'spexgcemp_barcode' => $specGet++
                                 ]);
                             }
-
                         } else {
                             return back()->with([
                                 'type' => 'error',
@@ -391,7 +382,6 @@ class FinanceController extends Controller
                         'description' => 'Request approved successfuly.'
                     ]);
                 }
-
             }
         } else {
             return back()->with([
@@ -478,5 +468,20 @@ class FinanceController extends Controller
         ]);
     }
 
+    public function setupBudget(Request $request)
+    {
 
+        $data = $this->financeService->budgetRequest($request);
+
+        return inertia('Finance/SetupBudgetRequest', [
+            'record' => $data->record,
+            'preapp' => $data->preapp,
+            'assigny' => $data->assigny,
+        ]);
+    }
+
+    public function submitBudget(Request $request)
+    {
+        return $this->financeService->submitBudget($request);
+    }
 }
