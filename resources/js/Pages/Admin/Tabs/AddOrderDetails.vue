@@ -1,7 +1,7 @@
 <template>
     <a-card class="mt-4">
         <a-row :gutter="[16, 16]">
-            <a-col :span="9">
+            <a-col :span="8">
                 <strong>Requisition No.</strong>
                 <a-form-item label="" has-feedback :validate-status="errors.req_no ? 'error' : ''"
                     :help="errors.req_no">
@@ -73,11 +73,6 @@
                     <a-input allow-clear @click="() => errors.dep_code = null" v-model:value="form.dep_code"
                         placeholder="Enter Here..." />
                 </a-form-item>
-                <strong>Remarks</strong>
-                <a-form-item has-feedback :validate-status="errors.remarks ? 'error' : ''" :help="errors.remarks">
-                    <a-input allow-clear @click="() => errors.remarks = null" v-model:value="form.remarks"
-                        placeholder="Enter Here..." />
-                </a-form-item>
                 <strong>Prepare By.</strong>
                 <a-form-item has-feedback :validate-status="errors.prep_by ? 'error' : ''" :help="errors.prep_by">
                     <a-input allow-clear @click="() => errors.prep_by = null" v-model:value="form.prep_by"
@@ -90,16 +85,20 @@
                 </a-form-item>
                 <strong> Srr Type</strong>
                 <a-form-item has-feedback :validate-status="errors.srr_type ? 'error' : ''" :help="errors.srr_type">
-                    <!-- <a-input allow-clear @click="() => errors.ssr_type = null" v-model:value="form.srr_type"
-                        placeholder="Enter Here..." /> -->
-                    <a-select ref="select" allow-clear @click="() => errors.ssr_type = null" placeholder="Select Srr Type" v-model:value="form.srr_type">
+                    <a-select ref="select" allow-clear @click="() => errors.ssr_type = null"
+                        placeholder="Select Srr Type" v-model:value="form.srr_type">
                         <a-select-option value="WHOLE">WHOLE</a-select-option>
                         <a-select-option value="PARTIAL">PARTIAL</a-select-option>
                         <a-select-option value="FINAL">FINAL</a-select-option>
                     </a-select>
                 </a-form-item>
+                <strong>Remarks</strong>
+                <a-form-item has-feedback :validate-status="errors.remarks ? 'error' : ''" :help="errors.remarks">
+                    <a-textarea allow-clear @click="() => errors.remarks = null" v-model:value="form.remarks"
+                        placeholder="Remarks" :rows="3" />
+                </a-form-item>
             </a-col>
-            <a-col :span="7">
+            <a-col :span="8">
                 <div class="text-center mt-3 animate-pulse">
                     <strong>
                         Denomation Needed
