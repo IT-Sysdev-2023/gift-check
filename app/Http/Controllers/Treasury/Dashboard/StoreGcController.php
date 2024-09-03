@@ -6,6 +6,7 @@ use App\Helpers\ArrayHelper;
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovedGcRequestResource;
+use App\Http\Resources\GcResource;
 use App\Models\ApprovedGcrequest;
 use App\Models\Assignatory;
 use App\Models\GcRelease;
@@ -268,7 +269,7 @@ class StoreGcController extends Controller
 
     public function viewScannedBarcode(Request $request)
     {
-        $scannedBc = collect($request->session()->get('scanReviewGC', []))->filter(fn ($item) => $item['reqid'] == $request->id);
+        $scannedBc = collect($request->session()->get('scanReviewGC', []))->filter(fn($item) => $item['reqid'] == $request->id);
 
         $newArr = collect();
         $scannedBc->each(function ($item) use (&$newArr) {
@@ -294,6 +295,33 @@ class StoreGcController extends Controller
     {
         // dd($request->all());
         return $this->storeGcRequestService->releasingEntrySubmit($request);
+    }
+
+    public function viewForAllocationGc(Request $request)
+    {
+        $record = Gc::with([
+            'denomination:denom_id,denomination',
+            'custodianSrrItems' => fn($q) =>
+                $q->select('cssitem_barcode', 'cssitem_recnum')
+                    ->with([
+                        'custodiaSsr' => fn($query) =>
+                            $query->select('csrr_id', 'csrr_prepared_by', 'csrr_datetime')
+                                ->with('user:user_id,firstname,lastname')
+                    ])
+        ])
+            ->select('denom_id', 'barcode_no')
+            ->where([['gc_validated', '*'], ['gc_allocated', ''], ['gc_ispromo', ''], ['gc_treasury_release', '']])
+            ->paginate()
+            ->withQueryString();
+
+
+            return response()->json([
+                'data' => GcResource::collection($record->items()),
+                'from' => $record->firstItem(),
+                'to' => $record->lastItem(),
+                'total' => $record->total(),
+                'links' => $record->linkCollection(),
+            ]);
     }
 
 

@@ -15,6 +15,12 @@ class CustodianSrr extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+    protected function casts(): array
+    {
+        return [
+            'csrr_datetime' => 'datetime'
+        ];
+    }
 
     public function user()
     {

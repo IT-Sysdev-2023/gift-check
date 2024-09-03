@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Helpers\NumberHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class DenominationResource extends JsonResource
+class CustodianSrrItemsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +15,9 @@ class DenominationResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->denom_id,
-            'denomination' => NumberHelper::currency($this->denomination),
-            'denomination_format' => $this->denomination_format
+            'cssitem_barcode' => $this->cssitem_barcode , 
+            'cssitem_recnum' => $this->cssitem_recnum,
+            'custodiaSsr' => new CustodianSrrResource($this->whenLoaded('custodiaSsr'))
         ];
     }
 }

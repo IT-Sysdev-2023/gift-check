@@ -249,6 +249,7 @@ Route::middleware('auth')->group(function () {
 
                     Route::get('store-allocation', [StoreGcController::class, 'storeAllocation'])->name('storeAllocation');
                     Route::get('view-allocated-gc', [StoreGcController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
+                    Route::get('view-gc-for-allocation', [StoreGcController::class, 'viewForAllocationGc'])->name('forallocation');
                 });
 
                 //special gc payment
