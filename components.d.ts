@@ -19,6 +19,7 @@ declare module 'vue' {
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     ADatePicker: typeof import('ant-design-vue/es')['DatePicker']
     AddNewPromo: typeof import('./resources/js/Pages/Marketing/AddNewPromo.vue')['default']
+    AddOrderDetails: typeof import('./resources/js/Pages/Admin/Tabs/AddOrderDetails.vue')['default']
     ADescriptions: typeof import('ant-design-vue/es')['Descriptions']
     ADescriptionsItem: typeof import('ant-design-vue/es')['DescriptionsItem']
     ADivider: typeof import('ant-design-vue/es')['Divider']
