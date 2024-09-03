@@ -125,7 +125,7 @@ class StoreGcController extends Controller
 
         $checkBy = Assignatory::select('assig_position', 'assig_name as label', 'assig_id as value')->where(function ($q) use ($request) {
             $q->where('assig_dept', $request->user()->usertype)
-                ->orWhere('assig_dept');
+                ->orWhere('assig_dept','1');
         })->get();
 
         $rgc->transform(function ($item) {

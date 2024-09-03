@@ -5,18 +5,27 @@ namespace App\Http\Controllers\Treasury\Transactions;
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PromoGcRequestResource;
+use App\Models\Assignatory;
 use App\Models\CustodianSrrItem;
+use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\GcLocation;
 use App\Models\PromoGcReleaseToDetail;
 use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
+use App\Services\Treasury\Transactions\PromoGcReleasingService;
+use Illuminate\Support\Facades\DB;
 use App\Services\Treasury\ColumnHelper;
 use Illuminate\Http\Request;
 
 class PromoGcReleasingController extends Controller
 {
+    private string $sessionName;
+    public function __construct(public PromoGcReleasingService $promoGcReleasingService)
+    {
+        $this->sessionName = 'scannedPromo';
+    }
     public function index(Request $request)
     {
         $records = PromoGcRequest::select('pgcreq_reqby', 'pgcreq_reqnum', 'pgcreq_remarks', 'pgcreq_doc', 'pgcreq_datereq', 'pgcreq_id', 'pgcreq_dateneeded', 'pgcreq_total', 'pgcreq_relstatus')
@@ -40,14 +49,21 @@ class PromoGcReleasingController extends Controller
         ]);
     }
 
-    public function denominationList($id)
+    public function denominationList(Request $request, $id)
     {
+        // dd($id);
         $data = PromoGcRequestItem::
             join('denomination', 'denomination.denom_id', '=', 'promo_gc_request_items.pgcreqi_denom')
             ->selectRaw("pgcreqi_denom, pgcreqi_qty,pgcreqi_trid, pgcreqi_remaining,pgcreqi_denom, denomination.denomination, (denomination.denomination * pgcreqi_remaining) AS subtotal")
             ->where([['pgcreqi_trid', $id], ['pgcreqi_remaining', '>', 0]])->paginate(5)->withQueryString();
 
-        return response()->json($data);
+        $assignatories = Assignatory::assignatories($request);
+
+        return response()->json([
+            'denomination' => $data,
+            'promo_releasing_no' => PromoGcReleaseToDetail::getMax(),
+            'assignatories' => $assignatories
+        ]);
     }
 
     public function scanBarcode(Request $request)
@@ -69,7 +85,7 @@ class PromoGcReleasingController extends Controller
         $barcode = $request->barcode;
         $reqid = $request->reqid;
 
-        $sessionName = 'scannedPromo';
+        $sessionName = $this->sessionName;
         $r = PromoGcReleaseToDetail::max('prrelto_relnumber');
         $relNum = $r ? $r + 1 : 1;
 
@@ -209,7 +225,14 @@ class PromoGcReleasingController extends Controller
         }
     }
 
-    public function viewScannedBarcode(){
+    public function viewScannedBarcode()
+    {
+
+    }
+
+    public function formSubmission(Request $request)
+    {
+        return $this->promoGcReleasingService->submit($request);
         
     }
 }

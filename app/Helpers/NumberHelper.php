@@ -38,4 +38,5 @@ class NumberHelper
     public static function leadingZero(int $num, string $format = "%04d"){
         return sprintf($format, $num);
     }
+
 }

@@ -4,11 +4,6 @@ import { ref } from "vue";
 
 const { highlightText } = highlighten();
 
-// const currentTab = ref("Description");
-
-// const tabs = {
-//     Description,
-// };
 </script>
 <template>
     <Head :title="title" />
@@ -124,6 +119,7 @@ export default {
             const { data } = await axios.get(
                 route("treasury.transactions.promo.gc.releasing.denominationList", record.req_id)
             );
+            // console.log(data);
             this.denominationList = data;
             this.showModal = true;
         },

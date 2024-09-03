@@ -15,49 +15,69 @@
                         style="max-width: 600px; padding-top: 10px"
                     >
                         <a-form-item label="GC Releasing No.:">
-                            <!-- <a-input :value="data.rel_num" readonly /> -->
+                            <a-input
+                                :value="denominations.promo_releasing_no"
+                                readonly
+                            />
                         </a-form-item>
                         <a-form-item label="Date Released:">
                             <a-input :value="today" readonly />
                         </a-form-item>
+                        <a-form-item label="Upload Document">
+                            <ant-upload-image
+                                @handle-change="handleDocumentChange"
+                            />
+                        </a-form-item>
                         <a-form-item
                             label="Remarks:"
-                            :validate-status="errorForm?.remarks ? 'error' : ''"
-                            :help="errorForm?.remarks"
+                            :validate-status="formState.errors?.remarks ? 'error' : ''"
+                            :help="formState.errors?.remarks"
                         >
                             <a-textarea v-model:value="formState.remarks" />
                         </a-form-item>
                         <a-form-item
                             label="Checked By:"
                             :validate-status="
-                                errorForm?.checkedBy ? 'error' : ''
+                                formState.errors?.checkedBy ? 'error' : ''
                             "
-                            :help="errorForm?.checkedBy"
+                            :help="formState.errors?.checkedBy"
                         >
-                            <!-- <ant-select
-                                :options="data.checkBy"
+                            <ant-select
+                                :options="denominations.assignatories"
                                 @handle-change="handleCheckedBy"
-                            /> -->
+                            />
                         </a-form-item>
-                        <!-- <a-form-item label="Released By:">
+                        <a-form-item
+                            label="Approved By:"
+                            :validate-status="
+                                formState.errors?.approvedBy ? 'error' : ''
+                            "
+                            :help="formState.errors?.approvedBy"
+                        >
+                            <ant-select
+                                :options="denominations.assignatories"
+                                @handle-change="handleApprovedBy"
+                            />
+                        </a-form-item>
+                        <a-form-item label="Released By:">
                             <a-input
                                 :value="$page.props.auth.user.full_name"
                                 readonly
                             />
-                        </a-form-item> -->
+                        </a-form-item>
 
                         <a-form-item
                             label="Received By:"
                             :validate-status="
-                                errorForm?.receivedBy ? 'error' : ''
+                                formState.errors?.receivedBy ? 'error' : ''
                             "
-                            :help="errorForm?.receivedBy"
+                            :help="formState.errors?.receivedBy"
                         >
                             <a-input v-model:value="formState.receivedBy" />
                         </a-form-item>
                         <check-cash-jv-payment
                             :formState="formState"
-                            :errorForm="errorForm"
+                            :errorForm="formState.errors"
                             @handleCustomerOption="handleCustomerOption"
                             @handPaymentType="handPaymentType"
                         />
@@ -108,9 +128,6 @@
                         </a-descriptions-item>
                     </a-descriptions>
                     <div class="mb-8 pt-5 text-right space-x-5">
-                        <!-- <a-button @click="viewAllocatedGc" type="primary" ghost
-                            >View Allocated GC</a-button
-                        > -->
                         <a-button @click="viewScannedGc" type="dashed"
                             >View Scanned Gc</a-button
                         >
@@ -140,7 +157,6 @@
                             </template>
                             <template v-if="column.key == 'scan'">
                                 {{ countScannedBc(record).length }}
-                                
                             </template>
                         </template>
                         <template #summary>
@@ -167,7 +183,11 @@
     </a-modal>
 
     <!-- Scan Modal  -->
-    <ScanModalReleasing v-model:open="scanModal" :data="data" :scan-data="scanData" />
+    <ScanModalReleasing
+        v-model:open="scanModal"
+        :data="data"
+        :scan-data="scanData"
+    />
 
     <!-- View Scanned Gc -->
     <a-modal
@@ -219,6 +239,7 @@ import {
 } from "@/../../resources/js/types";
 import { notification } from "ant-design-vue";
 import axios from "axios";
+import { router, useForm } from "@inertiajs/vue3";
 
 import type { UploadChangeParam } from "ant-design-vue";
 
@@ -226,7 +247,11 @@ import type { UploadChangeParam } from "ant-design-vue";
 const props = defineProps<{
     open: boolean;
     data: any;
-    denominations: PaginationTypes;
+    denominations: {
+        assignatories: any[];
+        promo_releasing_no: string;
+        denomination: PaginationTypes;
+    };
 }>();
 const page = usePage<PageWithSharedProps>().props;
 const emit = defineEmits<{
@@ -234,7 +259,7 @@ const emit = defineEmits<{
 }>();
 
 //Data/Variables
-const formState = reactive({
+const formState = useForm({
     file: null,
     remarks: "",
     receivedBy: "",
@@ -248,30 +273,14 @@ const formState = reactive({
         customer: "",
     },
     checkedBy: "",
+    approvedBy: "",
 });
-
+const releasingNo = ref("");
 const today = dayjs().format("YYYY-MMM-DD HH:mm:ss a");
-const denominationTableData = ref(props.denominations);
-const allocatedGcData = ref(null);
+const denominationTableData = ref(props.denominations.denomination);
 const scanData = ref(null);
 const scanModal = ref(false);
-const allocatedModal = ref(false);
 const viewScannedModal = ref(false);
-const errorForm = ref({
-    file: null,
-    remarks: "",
-    receivedBy: "",
-    paymentType: {
-        type: "",
-        amount: 0,
-        bankName: "",
-        accountNumber: "",
-        checkNumber: "",
-        checkAmount: "",
-        customer: "",
-    },
-    checkedBy: "",
-});
 const scannedGcData = ref(null);
 
 //Computed
@@ -312,46 +321,37 @@ const denominationColumns = [
     },
 ];
 const submitForm = () => {
-    //     const rid = props.data.details.sgc_id;
-    //     const store_id = props.data.details.store.store_id;
-    //     //released = current user
-    //     axios
-    //         .post(route("treasury.store.gc.releasingEntrySubmission"), {
-    //             rid: rid,
-    //             store_id: store_id,
-    //             file: formState.file,
-    //             remarks: formState.remarks,
-    //             receivedBy: formState.receivedBy,
-    //             paymentType: formState.paymentType,
-    //             checkedBy: formState.checkedBy,
-    //         })
-    //         .then((res) => {
-    //             notification.success({
-    //                 message: "Scan Success",
-    //                 description: res.data,
-    //             });
-    //             location.reload();
-    //         })
-    //         .catch((err) => {
-    //             if (err.response.status === 400) {
-    //                 notification.error({
-    //                     message: "Submission Failed",
-    //                     description: err.response.data,
-    //                 });
-    //             } else {
-    //                 // console.log(formState.errors)
-    //                 console.log(err.response.data.errors);
-    //                 errorForm.value = err.response.data.errors;
-    //             }
-    //         });
-    };
-    const viewScannedGc = async () => {
-        // const { data } = await axios.get(
-        //     route("treasury.transactions.promo.gc.releasing.viewScannedBarcode"),
-        //     { params: { id: props.data.details.sgc_id } }
-        // );
-        // scannedGcData.value = data;
-        viewScannedModal.value = true;
+    //released = current user
+    formState
+        .transform((data) => ({
+            ...data,
+            rid: props.data.req_id,
+        }))
+        .post(route("treasury.transactions.promo.gc.releasing.submission"), {
+            onSuccess: (e) => {
+                if(e.props.flash.success){
+                    notification.success({
+                        message: "Success mate!",
+                        description: e.props.flash.success,
+                    });
+                    location.reload();
+                }
+                if(e.props.flash.error){
+                    notification.error({
+                        message: "Submission Failed",
+                        description: e.props.flash.error,
+                    });
+                }
+            },
+        });
+};
+const viewScannedGc = async () => {
+    // const { data } = await axios.get(
+    //     route("treasury.transactions.promo.gc.releasing.viewScannedBarcode"),
+    //     { params: { id: props.data.details.sgc_id } }
+    // );
+    // scannedGcData.value = data;
+    viewScannedModal.value = true;
 };
 
 const onScannedPagination = async (link) => {
@@ -387,28 +387,22 @@ const countScannedBc = (record) => {
         );
     });
 };
-// const viewAllocatedGc = async () => {
-//     const { data } = await axios.get(
-//         route(
-//             "treasury.store.gc.viewAllocatedList",
-//             props.data.details.sgc_store
-//         )
-//     );
-//     allocatedGcData.value = data;
-//     allocatedModal.value = true;
-// };
 const handPaymentType = (value: string) => {
     formState.paymentType.type = value;
-    errorForm.value["paymentType.type"] = null;
+    formState.errors["paymentType.type"] = null;
 };
-const handleCheckedBy = (value) => {
+const handleCheckedBy = (value, name) => {
     formState.checkedBy = value;
-    // errorForm.value.checkedBy = null;
+    formState.errors.checkedBy = null;
+};
+const handleApprovedBy = (value) => {
+    formState.approvedBy = value;
+    formState.errors.checkedBy = null;
 };
 const handleCustomerOption = (value) =>
     (formState.paymentType.customer = value);
 const handleDocumentChange = (file: UploadChangeParam) => {
-    // formState.file = file.file;
+    formState.file = file.file;
 };
 
 //Watchers
@@ -416,7 +410,8 @@ watch(
     () => props.denominations,
     (newValue) => {
         if (newValue) {
-            denominationTableData.value = newValue;
+            releasingNo.value = newValue.promo_releasing_no;
+            denominationTableData.value = newValue.denomination;
         }
     },
     { immediate: true }

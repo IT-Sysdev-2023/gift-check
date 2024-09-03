@@ -11,7 +11,8 @@ class PromoGcReleaseToItem extends Model
 
     protected $primaryKey = 'prreltoi_id';
 
-
+    protected $guarded = [];
+    public $timestamps = false;
     public function iadBarcode()
     {
         return $this->belongsTo(CustodianSrrItem::class, 'prreltoi_barcode', 'cssitem_barcode');

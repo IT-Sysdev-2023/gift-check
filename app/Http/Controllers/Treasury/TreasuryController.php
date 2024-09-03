@@ -13,6 +13,7 @@ use App\Http\Resources\GcLedgerResource;
 use App\Http\Resources\ProductionRequestResource;
 use App\Http\Resources\SpecialExternalGcRequestResource;
 use App\Http\Resources\StoreGcRequestResource;
+use App\Models\Assignatory;
 use App\Models\BudgetRequest;
 use App\Models\LedgerBudget;
 use App\Models\SpecialExternalCustomer;
@@ -60,5 +61,4 @@ class TreasuryController extends Controller
             'columns' => \App\Helpers\ColumnHelper::$gc_ledger_columns,
         ]);
     }
-    
 }

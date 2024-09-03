@@ -11,4 +11,7 @@ class ApprovedPromorequest extends Model
 
     protected $table = 'approved_promorequest';
     protected $primaryKey = 'apr_id';
+
+    protected $guarded = [];
+    public $timestamps = false;
 }
