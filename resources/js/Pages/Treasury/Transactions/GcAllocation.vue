@@ -119,6 +119,12 @@
                                             </a-space>
                                         </template>
                                     </a-alert>
+                                    <a-button
+                                        class="mt-5 float-right"
+                                        @click="viewGcAllocation"
+                                    >
+                                        View Gc For Allocation
+                                    </a-button>
                                 </a-card>
                             </a-col>
                             <a-col :span="12">
@@ -161,6 +167,55 @@
             :data="allocatedData"
             @handle-pagination="onChangePagination"
         />
+
+        <a-modal
+            v-model:open="gcAllocationModal"
+            title="Scanned Gc"
+            style="width: 1000px"
+            centered
+            :footer="null"
+        >
+            <a-table
+                bordered
+                size="small"
+                :pagination="false"
+                :columns="[
+                    {
+                        title: 'GC Barcode #',
+                        dataIndex: 'barcode_no',
+                    },
+                    {
+                        title: 'Denomination',
+                        key: 'denom',
+                    },
+                    {
+                        title: 'Date Validated',
+                        key: 'date',
+                    },
+                    {
+                        title: 'Validate By',
+                        key: 'validate',
+                    },
+                ]"
+                :data-source="forAllocationData.data"
+            >
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.key == 'denom'">
+                        {{ record.denomination.denomination_format }}
+                    </template>
+                    <template v-if="column.key == 'date'">
+                        {{ record.custodianSrrItems.custodiaSsr?.date_rec }}
+                    </template>
+                    <template v-if="column.key == 'validate'">
+                        {{ record.custodianSrrItems.custodiaSsr?.user?.full_name }}
+                    </template>
+                </template>
+            </a-table>
+            <pagination-axios
+            :datarecords="forAllocationData"
+            @on-pagination="forAllocationPagination"
+        />
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 
@@ -185,6 +240,8 @@ const allDenoms = ref(null);
 const currentDate = dayjs().format("MMM DD, YYYY");
 const openModal = ref(false);
 
+const forAllocationData = ref<any>([]);
+const gcAllocationModal = ref<boolean>(false);
 const formState = useForm<{
     store: number;
     gcType: number;
@@ -225,6 +282,14 @@ const columns = [
     },
 ];
 
+const viewGcAllocation = async () => {
+    const {data} = await axios.get(
+        route("treasury.transactions.gcallocation.forallocation")
+    );
+    forAllocationData.value = data;
+    gcAllocationModal.value = true;
+    console.log(data);
+};
 const handleStoreChange = async (
     value: number,
     obj: { value: number; label: string }
@@ -239,6 +304,14 @@ const handleStoreChange = async (
     );
     allDenoms.value = data;
 };
+
+const forAllocationPagination = async(link) => {
+    if (link.url) {
+        // console.log(link.url)
+        const { data } = await axios.get(link.url);
+        forAllocationData.value = data;
+    }
+}
 
 const handleGcTypeChange = async (value: number) => {
     clearError(formState, "gcType");

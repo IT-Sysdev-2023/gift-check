@@ -107,14 +107,14 @@
                             {{ data.user }}
                         </a-descriptions-item>
                     </a-descriptions>
-                    <!-- <div class="mb-8 pt-5 text-right space-x-5">
-                        <a-button @click="viewAllocatedGc" type="primary" ghost
+                    <div class="mb-8 pt-5 text-right space-x-5">
+                        <!-- <a-button @click="viewAllocatedGc" type="primary" ghost
                             >View Allocated GC</a-button
-                        >
+                        > -->
                         <a-button @click="viewScannedGc" type="dashed"
                             >View Scanned Gc</a-button
                         >
-                    </div> -->
+                    </div>
                     <a-table
                         bordered
                         class="mt-8"
@@ -139,7 +139,7 @@
                                 >
                             </template>
                             <template v-if="column.key == 'scan'">
-                                {{ countScannedBc(record) }}
+                                {{ countScannedBc(record).length }}
                                 
                             </template>
                         </template>
@@ -177,7 +177,7 @@
         centered
         :footer="null"
     >
-        <!-- <a-table
+        <a-table
             bordered
             size="small"
             :pagination="false"
@@ -188,24 +188,24 @@
                 },
                 {
                     title: 'Pro. No.',
-                    dataIndex: 'pro',
+                    dataIndex: 'productionnum',
                 },
                 {
                     title: 'Type',
-                    dataIndex: 'type',
+                    dataIndex: 'promo',
                 },
                 {
                     title: 'Denomination',
                     dataIndex: 'denomination',
                 },
             ]"
-            :data-source="scannedGcData?.data"
-        > -->
-        <!-- </a-table> -->
-        <pagination-axios
+            :data-source="$page.props.barcodeReviewScan.allocation"
+        >
+        </a-table>
+        <!-- <pagination-axios
             :datarecords="scannedGcData"
             @on-pagination="onScannedPagination"
-        />
+        /> -->
     </a-modal>
 </template>
 
@@ -344,14 +344,14 @@ const submitForm = () => {
     //                 errorForm.value = err.response.data.errors;
     //             }
     //         });
-    // };
-    // const viewScannedGc = async () => {
-    //     const { data } = await axios.get(
-    //         route("treasury.store.gc.viewScannedBarcode"),
-    //         { params: { id: props.data.details.sgc_id } }
-    //     );
-    //     scannedGcData.value = data;
-    //     viewScannedModal.value = true;
+    };
+    const viewScannedGc = async () => {
+        // const { data } = await axios.get(
+        //     route("treasury.transactions.promo.gc.releasing.viewScannedBarcode"),
+        //     { params: { id: props.data.details.sgc_id } }
+        // );
+        // scannedGcData.value = data;
+        viewScannedModal.value = true;
 };
 
 const onScannedPagination = async (link) => {
@@ -385,7 +385,7 @@ const countScannedBc = (record) => {
             record.pgcreqi_denom == item.denomid &&
             item.reqid == props.data.req_id
         );
-    }).length;
+    });
 };
 // const viewAllocatedGc = async () => {
 //     const { data } = await axios.get(

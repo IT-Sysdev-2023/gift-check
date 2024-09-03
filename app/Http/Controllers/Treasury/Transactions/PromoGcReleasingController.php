@@ -208,4 +208,8 @@ class PromoGcReleasingController extends Controller
             ];
         }
     }
+
+    public function viewScannedBarcode(){
+        
+    }
 }

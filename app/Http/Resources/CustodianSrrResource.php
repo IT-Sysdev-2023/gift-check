@@ -16,11 +16,12 @@ class CustodianSrrResource extends JsonResource
     {
         return [
             'rec_no' => sprintf('%03d',  $this->csrr_id),
-            'date_rec' => $this->csrr_datetime,
+            'date_rec' => $this->csrr_datetime->toDayDateTimeString(),
             'e_reqno' => $this->requis_erno,
             'supname' => $this->gcs_companyname,
-            'recby' => $this->user->full_name,
+            'recby' => $this->user?->full_name,
             'rectype' => $this->csrr_receivetype,
+            'user' => $this->whenLoaded('user')
         ];
     }
 }
