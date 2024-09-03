@@ -12,12 +12,13 @@
                 <ExclamationCircleFilled />
             </div>
 
+
             <div class="message-text-container">
                 <p class="message-text text-white">Pendings</p>
                 <p class="sub-text text-white">All Pending Request</p>
             </div>
-            <a-badge :count="count.pending">
-                <a-button @click="() => $inertia.get(route('finance.budget.pending'))">
+            <a-badge :count="count.budgetRequest.pending">
+                <a-button :disabled="count.budgetRequest.pending >= 0" @click="() => $inertia.get(route('finance.budget.pending'))">
                     <template #icon>
                         <FolderFilled />
                     </template>
@@ -41,7 +42,7 @@
                 <p class="sub-text text-white">Approved Gc Request</p>
             </div>
             <a-badge :count="count.approve">
-                <a-button @click="() => $inertia.get(route('finance.approvedGc.approved'))">
+                <a-button @click="() => ''">
                     <template #icon>
                         <FolderFilled />
                     </template>

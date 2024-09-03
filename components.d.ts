@@ -271,6 +271,8 @@ declare module 'vue' {
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
     SettingOutlined: typeof import('@ant-design/icons-vue')['SettingOutlined']
     SetupApproval: typeof import('./resources/js/Pages/Custodian/SetupApproval.vue')['default']
+    SetupBudgetRequest: typeof import('./resources/js/Pages/Finance/SetupBudgetRequest.vue')['default']
+    SetupBudgetRequestForm: typeof import('./resources/js/Pages/Finance/Forms/SetupBudgetRequestForm.vue')['default']
     SetupDetails: typeof import('./resources/js/Pages/Iad/Cards/SetupDetails.vue')['default']
     SetupReceiving: typeof import('./resources/js/Pages/Iad/SetupReceiving.vue')['default']
     SetupRecommendation: typeof import('./resources/js/Pages/RetailGroup/SetupRecommendation.vue')['default']

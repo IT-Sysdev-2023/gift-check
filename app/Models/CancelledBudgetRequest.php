@@ -13,6 +13,12 @@ class CancelledBudgetRequest extends Model
     protected $table = 'cancelled_budget_request';
     protected $primaryKey = 'cdreq_id';
 
+
+    protected $guarded = [];
+
+    public $timestamps = false;
+
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'cdreq_by', 'user_id');

@@ -298,6 +298,8 @@ Route::prefix('finance')->group(function () {
 
         Route::name('budget.')->group(function () {
             Route::get('budget-pending', [FinanceController::class, 'budgetPendingIndex'])->name('pending');
+            Route::get('budget-setup', [FinanceController::class, 'setupBudget'])->name('setup');
+            Route::post('budget-submit', [FinanceController::class, 'submitBudget'])->name('submit');
         });
 
     });
