@@ -610,4 +610,39 @@ class ColumnHelper
             ],
         ];
     }
+    public static function promopendinglistcols()
+    {
+        return [
+            [
+                'title' => 'RFPROM',
+                'dataIndex' => 'pgcreq_reqnum',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Date Requested',
+                'dataIndex' => 'dateRequested',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Date Needed',
+                'dataIndex' => 'dateNeeded',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Total GC',
+                'dataIndex' => 'pgcreq_total',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'Requested By',
+                'dataIndex' => 'RequestedBy',
+                'align' => 'center'
+            ],
+            [
+                'title' => 'View',
+                'dataIndex' => 'view',
+                'align' => 'center'
+            ],
+        ];
+    }
 }
