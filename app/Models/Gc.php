@@ -43,4 +43,13 @@ class Gc extends Model
     public function tempreceived(){
         return $this->hasMany(TempReceivestore::class, 'trec_denid', 'denom_id');
     }
+    public function promoGcReleasedToItems(){
+        return $this->belongsTo(PromoGcReleaseToItem::class, 'barcode_no', 'prreltoi_barcode');
+    }
+    public function gcLocation(){
+        return $this->belongsTo(GcLocation::class, 'barcode_no', 'loc_barcode_no');
+    }
+    public function institutTransactionsItem(){
+        return $this->belongsTo(InstitutTransactionsItem::class, 'barcode_no', 'instituttritems_barcode');
+    }
 }

@@ -260,6 +260,8 @@ Route::middleware('auth')->group(function () {
                 //Institution GC Sales
                 Route::prefix('institution-gc-sales')->name('institution.gc.sales.')->group(function () {
                     Route::get('/', [InstitutionGcSalesController::class, 'index'])->name('index');
+
+                    Route::get('scan-barcode', [InstitutionGcSalesController::class, 'scanBarcode'])->name('scan');
                 });
 
 

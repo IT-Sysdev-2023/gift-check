@@ -55,7 +55,9 @@
                         </a-form-item>
 
                         <a-form-item label="Upload Document:" name="up">
-                            <ant-upload-image />
+                            <ant-upload-image
+                                @handle-change="handleDocumentChange"
+                            />
                         </a-form-item>
                     </a-col>
                     <a-col :span="14">
@@ -73,7 +75,7 @@
                                 >
                                     <ant-select
                                         :options="customer"
-                                        @handle-change="handleCheckedBy"
+                                        @handle-change="handleCustomer"
                                     />
                                 </a-form-item>
                                 <a-form-item
@@ -88,14 +90,14 @@
                                 >
                                     <ant-select
                                         :options="paymentFund"
-                                        @handle-change="handleCheckedBy"
+                                        @handle-change="handlePaymentFund"
                                     />
                                 </a-form-item>
                                 <a-form-item
                                     label="Total Denomination:"
                                     name="den"
                                 >
-                                    <ant-input-number :amount="0" disabled/>
+                                    <ant-input-number :amount="0" disabled />
                                 </a-form-item>
                                 <institution-select
                                     :formState="formState"
@@ -104,8 +106,7 @@
                                 />
                             </a-col>
                             <a-col :span="12">
-                                <a-button>Scan Gc By Range</a-button>
-                                <a-button>Scan Gc By Barcode</a-button>
+                                <a-button @click="scanBarcode">Scan Barcode</a-button>
                                 <a-table
                                     class="mt-5"
                                     bordered
@@ -123,6 +124,8 @@
                 </a-row>
             </a-form>
         </a-card>
+
+        <scan-modal-institution v-model:open="openScanModal"/>
     </AuthenticatedLayout>
 </template>
 
@@ -144,10 +147,9 @@ const props = defineProps<{
 
 const allocatedData = ref([]);
 const currentDate = ref(dayjs());
-const openModal = ref(false);
 
 const forAllocationData = ref<any>([]);
-const gcAllocationModal = ref<boolean>(false);
+const openScanModal = ref<boolean>(false);
 
 const tableColumns = [
     {
@@ -164,9 +166,12 @@ const tableColumns = [
     },
 ];
 const formState = useForm({
+    file: null,
     receivedBy: "",
     checkedBy: "",
     remarks: "",
+    customer: "",
+    paymentFund: "",
     paymentType: {
         type: "",
         customer: "",
@@ -176,12 +181,15 @@ const formState = useForm({
         amount: "",
         change: "",
 
-        totalAmountReceived: '',
-        cash: '',
+        totalAmountReceived: "",
+        cash: "",
 
-        supDocu: ''
+        supDocu: "",
     },
 });
+const scanBarcode = () => {
+    openScanModal.value = true;
+}
 
 const handlePaymentType = (value) => {
     formState.paymentType.type = value;
@@ -193,10 +201,19 @@ const forAllocationPagination = async (link) => {
         forAllocationData.value = data;
     }
 };
+const handleDocumentChange = (file) => {
+    formState.file = file.file;
+};
 
+const handleCustomer = (value) => {
+    formState.customer = value;
+};
 const handleCheckedBy = (value) => {
     formState.checkedBy = value;
 };
+const handlePaymentFund = (value) => {
+    formState.paymentFund = value;
+}
 const onChangePagination = async (link) => {
     if (link.url) {
         const { data } = await axios.get(link.url);

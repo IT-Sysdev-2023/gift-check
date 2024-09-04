@@ -277,6 +277,7 @@ declare module 'vue' {
     ScanGcDrawer: typeof import('./resources/js/Pages/Retail/Drawer/ScanGcDrawer.vue')['default']
     ScanGcStatuses: typeof import('./resources/js/Pages/Admin/ScanGcStatuses.vue')['default']
     ScanModal: typeof import('./resources/js/Components/Treasury/ScanModal.vue')['default']
+    ScanModalInstitution: typeof import('./resources/js/Components/Treasury/ScanModalInstitution.vue')['default']
     ScanModalReleasing: typeof import('./resources/js/Components/Treasury/ScanModalReleasing.vue')['default']
     ScannedGc: typeof import('./resources/js/Pages/Iad/Cards/ScannedGc.vue')['default']
     ScreenVille: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ScreenVille.vue')['default']

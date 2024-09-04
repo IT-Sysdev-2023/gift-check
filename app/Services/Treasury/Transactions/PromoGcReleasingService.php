@@ -100,6 +100,7 @@ class PromoGcReleasingService extends UploadFileHandler
             'paymentType.checkNumber' => 'The Check Number field is required when payment type is check.',
             'paymentType.checkAmount' => 'The Amount field is required when payment type is check.',
         ]);
+        
         $scannedBc = collect($request->session()->get('scannedPromo', []))->where('reqid', $request->rid);
 
         $ap = ApprovedPromorequest::max('apr_request_relnum');
