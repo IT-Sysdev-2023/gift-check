@@ -112,10 +112,14 @@ const setActiveTab = computed(() => {
                 <a-menu-item key="menu-item-gc-releasing-retail-store"
                     >GC Releasing (Retail Store)</a-menu-item
                 >
-                <a-menu-item key="treasury.transactions.promo.gc.releasing.index">
+                <a-menu-item
+                    key="treasury.transactions.promo.gc.releasing.index"
+                >
                     <Link
                         :href="
-                            route('treasury.transactions.promo.gc.releasing.index')
+                            route(
+                                'treasury.transactions.promo.gc.releasing.index'
+                            )
                         "
                     >
                         Promo GC Releasings</Link
@@ -255,16 +259,22 @@ const setActiveTab = computed(() => {
                 >GC Releasing (Retail Store)</a-menu-item
             >
             <a-menu-item key="treasury.transactions.promo.gc.releasing.index">
-                    <Link
-                        :href="
-                            route('treasury.transactions.promo.gc.releasing.index')
-                        "
-                    >
-                        Promo GC Releasings</Link
-                    ></a-menu-item
+                <Link
+                    :href="
+                        route('treasury.transactions.promo.gc.releasing.index')
+                    "
                 >
-            <a-menu-item key="menu-item-institution-gc-sales"
-                >Institution GC Sales</a-menu-item
+                    Promo GC Releasings</Link
+                ></a-menu-item
+            >
+            <a-menu-item key="treasury.transactions.institution.gc.sales.index">
+                <Link
+                    :href="
+                        route('treasury.transactions.institution.gc.sales.index')
+                    "
+                >
+                    Institution GC Sales
+                </Link></a-menu-item
             >
             <a-menu-item key="menu-item-institution-gc-refund"
                 >Institution GC Refund</a-menu-item

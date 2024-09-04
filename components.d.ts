@@ -188,6 +188,8 @@ declare module 'vue' {
     InfoCircleOutlined: typeof import('@ant-design/icons-vue')['InfoCircleOutlined']
     InputError: typeof import('./resources/js/Components/InputError.vue')['default']
     InputLabel: typeof import('./resources/js/Components/InputLabel.vue')['default']
+    InstitutionSalesIndex: typeof import('./resources/js/Pages/Treasury/Transactions/InstitutionGcSales/InstitutionSalesIndex.vue')['default']
+    InstitutionSelect: typeof import('./resources/js/Components/Treasury/InstitutionSelect.vue')['default']
     IslandCityMall: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/IslandCityMall.vue')['default']
     KeyOutlined: typeof import('@ant-design/icons-vue')['KeyOutlined']
     Ledgerx: typeof import('./resources/js/Pages/Ledgerx.vue')['default']

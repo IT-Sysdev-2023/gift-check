@@ -23,6 +23,7 @@ use App\Http\Controllers\Treasury\Dashboard\GcProductionRequestController;
 use App\Http\Controllers\Treasury\Dashboard\SpecialGcRequestController;
 use App\Http\Controllers\Treasury\Dashboard\StoreGcController;
 use App\Http\Controllers\Treasury\Transactions\GcAllocationController;
+use App\Http\Controllers\Treasury\Transactions\InstitutionGcSalesController;
 use App\Http\Controllers\Treasury\Transactions\ProductionRequestController;
 use App\Http\Controllers\Treasury\Transactions\PromoGcReleasingController;
 use App\Http\Controllers\Treasury\Transactions\SpecialGcPaymentController;
@@ -131,9 +132,9 @@ Route::prefix('marketing')->group(function () {
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
-        Route::name('promoGcRequest.')->group(function (){
-            Route::get('promo-pending-list',[MarketingController::class, 'promoPendinglist'])->name('pending.list');
-            Route::get('selected-promo-pending-request',[MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
+        Route::name('promoGcRequest.')->group(function () {
+            Route::get('promo-pending-list', [MarketingController::class, 'promoPendinglist'])->name('pending.list');
+            Route::get('selected-promo-pending-request', [MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
         });
     });
 });
@@ -221,11 +222,29 @@ Route::middleware('auth')->group(function () {
 
 
             Route::prefix('transactions')->name('transactions.')->group(function () {
+
+                //Budget Request
+                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+
+                //Production Request
                 Route::prefix('production-request')->name('production.')->group(function () {
                     Route::get('gift-check', [ProductionRequestController::class, 'giftCheck'])->name('gc');
                     Route::post('store-gift-check', [ProductionRequestController::class, 'giftCheckStore'])->name('gcSubmit');
                     Route::get('envelope', [ProductionRequestController::class, 'envelope'])->name('envelope');
                     Route::get('accept-production-request-{id}', [ProductionRequestController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+                });
+
+                //Gc allocation
+                Route::prefix('gc-allocation')->name('gcallocation.')->group(function () {
+                    Route::get('/', [GcAllocationController::class, 'gcAllocation'])->name('index');
+                    Route::post('gc-location-submission', [GcAllocationController::class, 'store'])->name('store');
+
+                    Route::get('store-allocation', [GcAllocationController::class, 'storeAllocation'])->name('storeAllocation');
+                    Route::get('view-allocated-gc', [GcAllocationController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
+                    Route::get('view-gc-for-allocation', [GcAllocationController::class, 'viewForAllocationGc'])->name('forallocation');
                 });
 
                 //Promo Gc Releasing
@@ -238,21 +257,12 @@ Route::middleware('auth')->group(function () {
                     Route::post('form-submission', [PromoGcReleasingController::class, 'formSubmission'])->name('submission');
                 });
 
-                //Budget Request
-                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
-                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
-
-                //Gc allocation
-                Route::prefix('gc-allocation')->name('gcallocation.')->group(function () {
-                    Route::get('/', [GcAllocationController::class, 'gcAllocation'])->name('index');
-                    Route::post('gc-location-submission', [GcAllocationController::class, 'store'])->name('store');
-
-                    Route::get('store-allocation', [GcAllocationController::class, 'storeAllocation'])->name('storeAllocation');
-                    Route::get('view-allocated-gc', [GcAllocationController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
-                    Route::get('view-gc-for-allocation', [GcAllocationController::class, 'viewForAllocationGc'])->name('forallocation');
+                //Institution GC Sales
+                Route::prefix('institution-gc-sales')->name('institution.gc.sales.')->group(function () {
+                    Route::get('/', [InstitutionGcSalesController::class, 'index'])->name('index');
                 });
+
+
 
                 //special gc payment
                 Route::prefix('special-gc-payment')->name('special.')->group(function () {
@@ -324,10 +334,10 @@ Route::prefix('retail')->group(function () {
             Route::get('validate-barcode', [RetailController::class, 'validateBarcode'])->name('barcode');
         });
         Route::name('gcrequest.')->group(function () {
-            Route::get('pendingList',[RetailController::class, 'pendingGcRequestList'])->name('pending.list');
-            Route::get('pendingdetail',[RetailController::class, 'pendingGcRequestdetail'])->name('pending.detail');
-            Route::get('cancel-request',[RetailController::class, 'cancelRequest'])->name('cancel');
-            Route::put('submit-request',[RetailController::class, 'submitRequest'])->name('update');
+            Route::get('pendingList', [RetailController::class, 'pendingGcRequestList'])->name('pending.list');
+            Route::get('pendingdetail', [RetailController::class, 'pendingGcRequestdetail'])->name('pending.detail');
+            Route::get('cancel-request', [RetailController::class, 'cancelRequest'])->name('cancel');
+            Route::put('submit-request', [RetailController::class, 'submitRequest'])->name('update');
         });
         Route::name('manage.')->group(function () {
             Route::post('remove-temporary', [RetailController::class, 'removeTemporary'])->name('remove');
@@ -409,7 +419,7 @@ Route::prefix('management')->group(function () {
     });
 });
 
-Route::get('file-search',[ProcessFiles::class ,'barcodeSearch']);
+Route::get('file-search', [ProcessFiles::class, 'barcodeSearch']);
 
 Route::get('generate-barcode', [CustodianController::class, 'generateBarcode'])->name('generaate');
 
