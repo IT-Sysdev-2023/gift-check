@@ -12,6 +12,10 @@ class ApprovedBudgetRequest extends Model
     protected $table = 'approved_budget_request';
     protected $primaryKey = 'abr_id';
 
+    protected $guarded = [];
+
+    public $timestamps = false;
+
     protected function casts(): array
     {
         return [

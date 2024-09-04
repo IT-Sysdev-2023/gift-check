@@ -50,6 +50,7 @@ class AdminController extends Controller
     {
         return inertia('Admin/PurchaseOrderDetails', [
             'denomination' => $this->adminservices->denomination(),
+            'supplier' => $this->adminservices->supplier(),
             'columns' => ColumnHelper::$purchase_details_columns,
             'record' => $this->adminservices->purchaseOrderDetails(),
         ]);

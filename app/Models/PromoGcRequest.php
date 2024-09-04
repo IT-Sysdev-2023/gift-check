@@ -10,19 +10,18 @@ class PromoGcRequest extends Model
     use HasFactory;
 
     protected $table = 'promo_gc_request';
-
     protected $primaryKey = 'pgcreq_id';
-
     public $timestamps = false;
-
-
     protected $guarded = [];
-
-
-
+    public function casts(): array{
+        return [
+            'pgcreq_datereq' => 'datetime',
+            'pgcreq_dateneeded' => 'date'
+        ];
+    }
     public function userReqby()
     {
-        return $this->hasOne(User::class, 'user_id', 'pgcreq_reqby');
+        return $this->belongsTo(User::class, 'pgcreq_reqby', 'user_id');
     }
     public function approvedReq()
     {
@@ -33,6 +32,7 @@ class PromoGcRequest extends Model
         );
     }
 
+  
     public function scopeSelectPromoRequest($builder)
     {
         $builder->selectRaw(
@@ -87,5 +87,10 @@ class PromoGcRequest extends Model
             'pgcreq_total',
             'pgcreq_remarks'
         );
+    }
+
+    public function promoitems()
+    {
+        return $this->hasMany(PromoGcRequestItem::class, 'pgcreqi_trid', 'pgcreq_id');
     }
 }

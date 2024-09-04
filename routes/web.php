@@ -22,6 +22,9 @@ use App\Http\Controllers\Treasury\Dashboard\BudgetRequestController;
 use App\Http\Controllers\Treasury\Dashboard\GcProductionRequestController;
 use App\Http\Controllers\Treasury\Dashboard\SpecialGcRequestController;
 use App\Http\Controllers\Treasury\Dashboard\StoreGcController;
+use App\Http\Controllers\Treasury\Transactions\GcAllocationController;
+use App\Http\Controllers\Treasury\Transactions\ProductionRequestController;
+use App\Http\Controllers\Treasury\Transactions\PromoGcReleasingController;
 use App\Http\Controllers\Treasury\Transactions\SpecialGcPaymentController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\MainController;
@@ -219,10 +222,19 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('transactions')->name('transactions.')->group(function () {
                 Route::prefix('production-request')->name('production.')->group(function () {
-                    Route::get('gift-check', [TransactionsController::class, 'giftCheck'])->name('gc');
-                    Route::post('store-gift-check', [TransactionsController::class, 'giftCheckStore'])->name('gcSubmit');
-                    Route::get('envelope', [TransactionsController::class, 'envelope'])->name('envelope');
-                    Route::get('accept-production-request-{id}', [TransactionsController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+                    Route::get('gift-check', [ProductionRequestController::class, 'giftCheck'])->name('gc');
+                    Route::post('store-gift-check', [ProductionRequestController::class, 'giftCheckStore'])->name('gcSubmit');
+                    Route::get('envelope', [ProductionRequestController::class, 'envelope'])->name('envelope');
+                    Route::get('accept-production-request-{id}', [ProductionRequestController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+                });
+
+                //Promo Gc Releasing
+                Route::prefix('promo-gc-releasing')->name('promo.gc.releasing.')->group(function () {
+                    Route::get('/', [PromoGcReleasingController::class, 'index'])->name('index');
+
+                    Route::get('promo-gc-request-{id}', [PromoGcReleasingController::class, 'denominationList'])->name('denominationList');
+                    Route::post('scan-barcode', [PromoGcReleasingController::class, 'scanBarcode'])->name('scanBarcode');
+                    Route::get('scan-barcode', [PromoGcReleasingController::class, 'viewScannedBarcode'])->name('viewScannedBarcode');
                 });
 
                 //Budget Request
@@ -233,11 +245,12 @@ Route::middleware('auth')->group(function () {
 
                 //Gc allocation
                 Route::prefix('gc-allocation')->name('gcallocation.')->group(function () {
-                    Route::get('/', [StoreGcController::class, 'gcAllocation'])->name('index');
-                    Route::post('gc-location-submission', [StoreGcController::class, 'store'])->name('store');
+                    Route::get('/', [GcAllocationController::class, 'gcAllocation'])->name('index');
+                    Route::post('gc-location-submission', [GcAllocationController::class, 'store'])->name('store');
 
-                    Route::get('store-allocation', [StoreGcController::class, 'storeAllocation'])->name('storeAllocation');
-                    Route::get('view-allocated-gc', [StoreGcController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
+                    Route::get('store-allocation', [GcAllocationController::class, 'storeAllocation'])->name('storeAllocation');
+                    Route::get('view-allocated-gc', [GcAllocationController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
+                    Route::get('view-gc-for-allocation', [GcAllocationController::class, 'viewForAllocationGc'])->name('forallocation');
                 });
 
                 //special gc payment
@@ -285,6 +298,8 @@ Route::prefix('finance')->group(function () {
 
         Route::name('budget.')->group(function () {
             Route::get('budget-pending', [FinanceController::class, 'budgetPendingIndex'])->name('pending');
+            Route::get('budget-setup', [FinanceController::class, 'setupBudget'])->name('setup');
+            Route::post('budget-submit', [FinanceController::class, 'submitBudget'])->name('submit');
         });
 
     });
@@ -328,11 +343,9 @@ Route::prefix('retail')->group(function () {
 Route::prefix('retailgroup')->group(function () {
     Route::name('retailgroup.')->group(function () {
         Route::get('pending-gc-request', [RetailGroupController::class, 'pendingGcRequest'])->name('pending');
-
         Route::name('recommendation.')->group(function () {
             Route::get('setup', [RetailGroupController::class, 'setup'])->name('setup');
-
-
+            Route::post('submit', [RetailGroupController::class, 'submitPendingRequest'])->name('submit');
         });
     });
 });
