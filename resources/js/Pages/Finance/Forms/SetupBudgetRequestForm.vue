@@ -68,7 +68,7 @@
     </a-row>
 </template>
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import { router, useForm } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
 import { ref } from 'vue';
 import { notification } from 'ant-design-vue';
@@ -102,6 +102,10 @@ const submit = () => {
                 message: res.props.flash.title,
                 description: res.props.flash.msg,
             });
+
+            if(res.props.flash.status == 'success'){
+                router.visit(route('finance.dashboard'))
+            }
         },
         onError: (err) => {
             errors.value = err;
