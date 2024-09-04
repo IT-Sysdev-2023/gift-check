@@ -16,6 +16,7 @@ class ApprovedPendingPromoGCRequestService
 {
     public function pendingPromoGCRequestIndex($request)
     {
+        // dd();
         return inertia('Finance/PendingPromoGcRequest', [
             'data' => self::getPromoRequest($request),
             'columns' => ColumnHelper::app_pend_request_columns(true),
@@ -28,6 +29,7 @@ class ApprovedPendingPromoGCRequestService
 
     public static function getPromoRequest($request)
     {
+        // dd();
         $data = PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
             ->selectPromoRequest()
             ->whereFilterForPending()
@@ -85,8 +87,8 @@ class ApprovedPendingPromoGCRequestService
 
         $data->transform(function ($item) {
             $item->subt = $item->denomination->denomination * $item->pgcreqi_qty;
-            $item->subtotal = NumberHelper::currency($item->denomination->denomination * $item->pgcreqi_qty);
-            $item->denomination->denomination = NumberHelper::currency($item->denomination->denomination);
+            $item->subtotal = NumberHelper::formatterFloat($item->denomination->denomination * $item->pgcreqi_qty);
+            $item->denomination->denomination = NumberHelper::formatterFloat($item->denomination->denomination);
             return $item;
         });
         return (object)[

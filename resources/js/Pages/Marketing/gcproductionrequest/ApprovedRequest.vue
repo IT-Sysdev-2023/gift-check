@@ -5,13 +5,14 @@
             placeholder="Enter PR Number" enter-button @search="onSearch" />
         </div>
 
-        <a-table :dataSource="data" :columns="columns">
+        <a-table :dataSource="data.data" :columns="columns" :pagination="false">
             <template v-slot:bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'View'">
                     <a-button type="primary" @click="getSelectedData(record.pe_id)"><PicLeftOutlined />View</a-button>
                 </template>
             </template>
         </a-table>
+        <pagination class="mt-5" :datarecords="data" />
     </a-card>
 
 
@@ -70,6 +71,7 @@
 </template>
 
 <script>
+import Pagination from "@/Components/Pagination.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {PicLeftOutlined} from '@ant-design/icons-vue';
 export default {

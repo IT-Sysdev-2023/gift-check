@@ -119,14 +119,11 @@ const dashboardRoute = computed(() => {
                                 @click="() => (collapsed = !collapsed)" />
                         </p>
                         <p>
-                            <Link class="text-white mr-5" :href="route(dashboardRoute)">
+                            <Link class="text-white " :href="route(dashboardRoute)">
                             <HomeOutlined />
                             Home
                             </Link>
-                            <Link class="text-white mr-5" :href="route('logout')" method="post" as="button">
-                            <LogoutOutlined />
-                            Logout
-                            </Link>
+                            <a-button class="text-white" type="ghost" @click="() => $inertia.post(route('logout'))"><PoweroffOutlined />Logout</a-button>
                         </p>
                     </a-layout-header>
                     <a-layout-content :style="{

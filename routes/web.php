@@ -128,6 +128,10 @@ Route::prefix('marketing')->group(function () {
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
+        Route::name('promoGcRequest.')->group(function (){
+            Route::get('promo-pending-list',[MarketingController::class, 'promoPendinglist'])->name('pending.list');
+            Route::get('selected-promo-pending-request',[MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
+        });
     });
 });
 
@@ -152,10 +156,6 @@ Route::get('get-store-sales-details', [MarketingController::class, 'getStoreSale
 Route::get('get-transaction-pos-detail', [MarketingController::class, 'getTransactionPOSdetail'])->name('get.transaction.pos.detail');
 Route::get('get-view-barcode-details', [MarketingController::class, 'getBarcodeDetails'])->name('get.sub.barcode.details');
 Route::get('view-treasury-sales', [MarketingController::class, 'viewTreasurySales'])->name('view.treasury.sales');
-
-
-
-
 Route::get('sales/treasury-sales', [MarketingController::class, 'treasurySales'])->name('sales.treasury.sales');
 Route::get('sales/store-sales', [MarketingController::class, 'storeSales'])->name('sales.store.sales');
 Route::get('verified-gc-alturas-mall', [MarketingController::class, 'verifiedGc_Amall'])->name('verified.gc.alturas.mall');
