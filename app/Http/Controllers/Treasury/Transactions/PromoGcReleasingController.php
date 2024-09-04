@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Treasury\Transactions;
 
+use App\Helpers\ArrayHelper;
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PromoGcRequestResource;
@@ -225,9 +226,29 @@ class PromoGcReleasingController extends Controller
         }
     }
 
-    public function viewScannedBarcode()
+    public function viewScannedBarcode(Request $request)
     {
+        $scannedBc = collect($request->session()->get($this->sessionName, []))->where('reqid', $request->id);
 
+        $newArr = collect();
+        $scannedBc->each(function ($item) use (&$newArr) {
+
+            $gc = Gc::where('barcode_no', $item['barcode'])->value('pe_entry_gc');
+
+            $gcLocation = GcLocation::where('loc_barcode_no', $item['barcode'])->value('loc_gc_type');
+            $denomination = Denomination::where('denom_id', $item['denomid'])->value('denomination');
+
+            $type = $gcLocation == 1 ? 'Regular' : 'Special';
+
+            $newArr[] = [
+                'barcode' => $item['barcode'],
+                'pro' => $gc,
+                'denomination' => NumberHelper::currency($denomination),
+                'type' => $type
+            ];
+        });
+
+        return response()->json(ArrayHelper::paginate($newArr, 5));
     }
 
     public function formSubmission(Request $request)

@@ -33,7 +33,7 @@
                             :validate-status="formState.errors?.remarks ? 'error' : ''"
                             :help="formState.errors?.remarks"
                         >
-                            <a-textarea v-model:value="formState.remarks" />
+                            <a-textarea v-model:value="formState.remarks" @input="() => formState.errors.remarks = null"/>
                         </a-form-item>
                         <a-form-item
                             label="Checked By:"
@@ -73,7 +73,7 @@
                             "
                             :help="formState.errors?.receivedBy"
                         >
-                            <a-input v-model:value="formState.receivedBy" />
+                            <a-input v-model:value="formState.receivedBy" @input="() => formState.errors.receivedBy = null"/>
                         </a-form-item>
                         <check-cash-jv-payment
                             :formState="formState"
@@ -192,7 +192,7 @@
     <!-- View Scanned Gc -->
     <a-modal
         v-model:open="viewScannedModal"
-        title="Scanned Gc"
+        title="Promo Scanned Gc"
         style="width: 800px"
         centered
         :footer="null"
@@ -208,39 +208,38 @@
                 },
                 {
                     title: 'Pro. No.',
-                    dataIndex: 'productionnum',
+                    dataIndex: 'pro',
                 },
                 {
                     title: 'Type',
-                    dataIndex: 'promo',
+                    dataIndex: 'type',
                 },
                 {
                     title: 'Denomination',
                     dataIndex: 'denomination',
                 },
             ]"
-            :data-source="$page.props.barcodeReviewScan.allocation"
+            :data-source="scannedGcData.data"
         >
         </a-table>
-        <!-- <pagination-axios
+        <pagination-axios
             :datarecords="scannedGcData"
             @on-pagination="onScannedPagination"
-        /> -->
+        />
     </a-modal>
 </template>
 
 <script lang="ts" setup>
 import dayjs from "dayjs";
 import { usePage } from "@inertiajs/vue3";
-import { ref, computed, reactive, watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import {
     PageWithSharedProps,
     PaginationTypes,
 } from "@/../../resources/js/types";
 import { notification } from "ant-design-vue";
 import axios from "axios";
-import { router, useForm } from "@inertiajs/vue3";
-
+import { useForm } from "@inertiajs/vue3";
 import type { UploadChangeParam } from "ant-design-vue";
 
 //Props
@@ -321,7 +320,6 @@ const denominationColumns = [
     },
 ];
 const submitForm = () => {
-    //released = current user
     formState
         .transform((data) => ({
             ...data,
@@ -346,18 +344,18 @@ const submitForm = () => {
         });
 };
 const viewScannedGc = async () => {
-    // const { data } = await axios.get(
-    //     route("treasury.transactions.promo.gc.releasing.viewScannedBarcode"),
-    //     { params: { id: props.data.details.sgc_id } }
-    // );
-    // scannedGcData.value = data;
+    const { data } = await axios.get(
+        route("treasury.transactions.promo.gc.releasing.viewScannedBarcode"),
+        { params: { id: props.data.req_id } }
+    );
+    scannedGcData.value = data;
     viewScannedModal.value = true;
 };
 
 const onScannedPagination = async (link) => {
     if (link.url) {
         const { data } = await axios.get(
-            `${window.location.origin}/treasury/store-gc/view-scanned-barcode${link.url}`
+            `${window.location.origin}/treasury/transactions/promo-gc-releasing${link.url}`
         );
         //to handle single record in table pagination
         if (data && !Array.isArray(data.data)) {
@@ -380,7 +378,7 @@ const handleScanModal = (record) => {
     scanModal.value = true;
 };
 const countScannedBc = (record) => {
-    return page.barcodeReviewScan?.allocation?.filter((item) => {
+    return page.barcodeReviewScan?.promo?.filter((item) => {
         return (
             record.pgcreqi_denom == item.denomid &&
             item.reqid == props.data.req_id
@@ -391,13 +389,13 @@ const handPaymentType = (value: string) => {
     formState.paymentType.type = value;
     formState.errors["paymentType.type"] = null;
 };
-const handleCheckedBy = (value, name) => {
+const handleCheckedBy = (value) => {
     formState.checkedBy = value;
     formState.errors.checkedBy = null;
 };
 const handleApprovedBy = (value) => {
     formState.approvedBy = value;
-    formState.errors.checkedBy = null;
+    formState.errors.approvedBy = null;
 };
 const handleCustomerOption = (value) =>
     (formState.paymentType.customer = value);

@@ -108,7 +108,7 @@ const onSubmitBarcode = async () => {
             denom_id: props.scanData.pgcreqi_denom
         })
         .then((res) => {
-            page.barcodeReviewScan.allocation = res.data.sessionData;
+            page.barcodeReviewScan.promo = res.data.sessionData;
 
             for (let bc of res.data.barcodes) {
                 if (bc.status === 200) {

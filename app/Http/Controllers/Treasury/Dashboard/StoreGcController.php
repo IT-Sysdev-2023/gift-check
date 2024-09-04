@@ -161,14 +161,14 @@ class StoreGcController extends Controller
 
     public function viewScannedBarcode(Request $request)
     {
-        $scannedBc = collect($request->session()->get('scanReviewGC', []))->filter(fn($item) => $item['reqid'] == $request->id);
+        $scannedBc = collect($request->session()->get('scanReviewGC', []))->where('reqid', $request->id);
 
         $newArr = collect();
         $scannedBc->each(function ($item) use (&$newArr) {
 
-            $gc = Gc::where('barcode_no', $item['barcode'])->first(['pe_entry_gc'])->pe_entry_gc;
-            $gcLocation = GcLocation::where('loc_barcode_no', $item['barcode'])->first('loc_gc_type')->loc_gc_type;
-            $denomination = Denomination::where('denom_id', $item['denid'])->first('denomination')->denomination;
+            $gc = Gc::where('barcode_no', $item['barcode'])->value('pe_entry_gc');
+            $gcLocation = GcLocation::where('loc_barcode_no', $item['barcode'])->value('loc_gc_type');
+            $denomination = Denomination::where('denom_id', $item['denid'])->value('denomination');
 
             $type = $gcLocation == 1 ? 'Regular' : 'Special';
 
