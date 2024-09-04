@@ -216,6 +216,7 @@ declare module 'vue' {
     PicRightOutlined: typeof import('@ant-design/icons-vue')['PicRightOutlined']
     PlazaMarcela: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/PlazaMarcela.vue')['default']
     PlusOutlined: typeof import('@ant-design/icons-vue')['PlusOutlined']
+    PoweroffOutlined: typeof import('@ant-design/icons-vue')['PoweroffOutlined']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
     PrinterOutlined: typeof import('@ant-design/icons-vue')['PrinterOutlined']
     ProfileOutlined: typeof import('@ant-design/icons-vue')['ProfileOutlined']
