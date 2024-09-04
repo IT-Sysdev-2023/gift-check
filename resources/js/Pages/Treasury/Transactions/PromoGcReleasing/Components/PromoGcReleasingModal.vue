@@ -156,7 +156,7 @@
                                 >
                             </template>
                             <template v-if="column.key == 'scan'">
-                                {{ countScannedBc(record).length }}
+                                {{ countScannedBc(record) }}
                             </template>
                         </template>
                         <template #summary>
@@ -208,31 +208,31 @@
                 },
                 {
                     title: 'Pro. No.',
-                    dataIndex: 'pro',
+                    dataIndex: 'productionnum',
                 },
                 {
                     title: 'Type',
-                    dataIndex: 'type',
+                    dataIndex: 'promo',
                 },
                 {
                     title: 'Denomination',
                     dataIndex: 'denomination',
                 },
             ]"
-            :data-source="scannedGcData.data"
+            :data-source="scannedGcData"
         >
         </a-table>
-        <pagination-axios
+        <!-- <pagination-axios
             :datarecords="scannedGcData"
             @on-pagination="onScannedPagination"
-        />
+        /> -->
     </a-modal>
 </template>
 
 <script lang="ts" setup>
 import dayjs from "dayjs";
 import { usePage } from "@inertiajs/vue3";
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import {
     PageWithSharedProps,
     PaginationTypes,
@@ -343,27 +343,16 @@ const submitForm = () => {
             },
         });
 };
-const viewScannedGc = async () => {
-    const { data } = await axios.get(
-        route("treasury.transactions.promo.gc.releasing.viewScannedBarcode"),
-        { params: { id: props.data.req_id } }
-    );
+const viewScannedGc = () => {
+    const data =  page.barcodeReviewScan?.promo?.filter((item) => {
+        return (
+            item.reqid == props.data.req_id
+        );
+    });
     scannedGcData.value = data;
     viewScannedModal.value = true;
 };
 
-const onScannedPagination = async (link) => {
-    if (link.url) {
-        const { data } = await axios.get(
-            `${window.location.origin}/treasury/transactions/promo-gc-releasing${link.url}`
-        );
-        //to handle single record in table pagination
-        if (data && !Array.isArray(data.data)) {
-            data.data = [Object.values(data.data)[0]];
-        }
-        scannedGcData.value = data;
-    }
-};
 const onChangeDenominationPagination = async (link) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
@@ -383,7 +372,7 @@ const countScannedBc = (record) => {
             record.pgcreqi_denom == item.denomid &&
             item.reqid == props.data.req_id
         );
-    });
+    }).length;
 };
 const handPaymentType = (value: string) => {
     formState.paymentType.type = value;

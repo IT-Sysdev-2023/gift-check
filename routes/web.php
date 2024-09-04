@@ -234,7 +234,6 @@ Route::middleware('auth')->group(function () {
 
                     Route::get('promo-gc-request-{id}', [PromoGcReleasingController::class, 'denominationList'])->name('denominationList');
                     Route::post('scan-barcode', [PromoGcReleasingController::class, 'scanBarcode'])->name('scanBarcode');
-                    Route::get('scan-barcode', [PromoGcReleasingController::class, 'viewScannedBarcode'])->name('viewScannedBarcode');
 
                     Route::post('form-submission', [PromoGcReleasingController::class, 'formSubmission'])->name('submission');
                 });
