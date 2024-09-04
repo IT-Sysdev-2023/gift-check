@@ -18,7 +18,7 @@
                 <p class="sub-text text-white">All Pending Request</p>
             </div>
             <a-badge :count="count.budgetRequest.pending">
-                <a-button :disabled="count.budgetRequest.pending >= 0" @click="() => $inertia.get(route('finance.budget.pending'))">
+                <a-button :disabled="count.budgetRequest.pending <= 0" @click="() => $inertia.get(route('finance.budget.pending'))">
                     <template #icon>
                         <FolderFilled />
                     </template>
