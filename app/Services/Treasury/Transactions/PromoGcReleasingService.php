@@ -40,7 +40,8 @@ class PromoGcReleasingService extends UploadFileHandler
             ->orderByDesc('pgcreq_id')->paginate()->withQueryString();
     }
 
-    public function denominations(Request $request, $id){
+    public function denominations(Request $request, $id)
+    {
         $data = PromoGcRequestItem::
             join('denomination', 'denomination.denom_id', '=', 'promo_gc_request_items.pgcreqi_denom')
             ->selectRaw("pgcreqi_denom, pgcreqi_qty,pgcreqi_trid, pgcreqi_remaining,pgcreqi_denom, denomination.denomination, (denomination.denomination * pgcreqi_remaining) AS subtotal")
@@ -55,7 +56,8 @@ class PromoGcReleasingService extends UploadFileHandler
         ];
     }
 
-    public function barcodeScanning(Request $request){
+    public function barcodeScanning(Request $request)
+    {
         $request->validate([
             "barcode" => 'required_if:scanMode,false|nullable|digits:13',
             "bstart" => 'required_if:scanMode,true|nullable|digits:13',
@@ -81,11 +83,22 @@ class PromoGcReleasingService extends UploadFileHandler
                 },
             ],
             'paymentType.customer' => 'required_if:paymentType.type,jv',
+
+            'paymentType.bankName' => 'required_if:paymentType.type,check',
+            'paymentType.accountNumber' => 'required_if:paymentType.type,check',
+            'paymentType.checkNumber' => 'required_if:paymentType.type,check',
+            'paymentType.checkAmount' => 'required_if:paymentType.type,check',
+
             "checkedBy" => 'required',
             'approvedBy' => 'required',
         ], [
             'paymentType.customer' => 'The customer field is required when payment type is jv.',
             'paymentType.amount' => 'The amount field is required when payment type is cash.',
+
+            'paymentType.bankName' => 'The Bank name field is required when payment type is check.',
+            'paymentType.accountNumber' => 'The Accunt Number name field is required when payment type is check.',
+            'paymentType.checkNumber' => 'The Check Number field is required when payment type is check.',
+            'paymentType.checkAmount' => 'The Amount field is required when payment type is check.',
         ]);
         $scannedBc = collect($request->session()->get('scannedPromo', []))->where('reqid', $request->rid);
 
@@ -205,6 +218,8 @@ class PromoGcReleasingService extends UploadFileHandler
                 //baw nganong gi upload balik ang image, ni gibase rani sa daan code 
                 $this->folderName = 'approvedGCRequest';
                 $this->saveFile($request, $filename);
+
+                $request->session()->forget($this->sessionName);
             });
             return redirect()->back()->with('success', 'Successfully Submitted');
         } else {

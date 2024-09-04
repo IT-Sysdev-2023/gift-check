@@ -21,7 +21,7 @@
                         <a-row>
                             <a-col :span="12">
                                 <a-form-item label="Gc Releasing #:">
-                                    <a-input :value="currentDate" readonly />
+                                    <a-input :value="releasingNo" readonly />
                                 </a-form-item>
                             </a-col>
                             <a-col :span="12">
@@ -46,7 +46,7 @@
                             :help="getErrorMessage(formState, 'checkedBy')"
                         >
                             <ant-select
-                                :options="stores"
+                                :options="checkBy"
                                 @handle-change="handleCheckedBy"
                             />
                         </a-form-item>
@@ -72,7 +72,7 @@
                                     "
                                 >
                                     <ant-select
-                                        :options="stores"
+                                        :options="customer"
                                         @handle-change="handleCheckedBy"
                                     />
                                 </a-form-item>
@@ -87,7 +87,7 @@
                                     "
                                 >
                                     <ant-select
-                                        :options="stores"
+                                        :options="paymentFund"
                                         @handle-change="handleCheckedBy"
                                     />
                                 </a-form-item>
@@ -95,9 +95,13 @@
                                     label="Total Denomination:"
                                     name="den"
                                 >
-                                    <ant-input-number />
+                                    <ant-input-number :amount="0" disabled/>
                                 </a-form-item>
-                                <institution-select :formState="formState" />
+                                <institution-select
+                                    :formState="formState"
+                                    :errorForm="formState.errors"
+                                    @handPaymentType="handlePaymentType"
+                                />
                             </a-col>
                             <a-col :span="12">
                                 <a-button>Scan Gc By Range</a-button>
@@ -106,20 +110,7 @@
                                     class="mt-5"
                                     bordered
                                     size="small"
-                                    :columns="[
-                                        {
-                                            title: 'Denomination',
-                                            dataIndex: 'denom',
-                                        },
-                                        {
-                                            title: 'Barcode',
-                                            dataIndex: 'barcode',
-                                        },
-                                        {
-                                            title: 'Remove',
-                                            dataIndex: 'remove',
-                                        },
-                                    ]"
+                                    :columns="tableColumns"
                                 ></a-table>
                                 <a-form-item class="mt-5">
                                     <a-button type="primary" html-type="submit"
@@ -132,65 +123,6 @@
                 </a-row>
             </a-form>
         </a-card>
-        <ant-modal-table
-            v-model:open="openModal"
-            title="Allocated Gc"
-            :columns="columns"
-            :data="allocatedData"
-            @handle-pagination="onChangePagination"
-        />
-
-        <a-modal
-            v-model:open="gcAllocationModal"
-            title="Scanned Gc"
-            style="width: 1000px"
-            centered
-            :footer="null"
-        >
-            <a-table
-                bordered
-                size="small"
-                :pagination="false"
-                :columns="[
-                    {
-                        title: 'GC Barcode #',
-                        dataIndex: 'barcode_no',
-                    },
-                    {
-                        title: 'Denomination',
-                        key: 'denom',
-                    },
-                    {
-                        title: 'Date Validated',
-                        key: 'date',
-                    },
-                    {
-                        title: 'Validate By',
-                        key: 'validate',
-                    },
-                ]"
-                :data-source="forAllocationData.data"
-            >
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.key == 'denom'">
-                        {{ record.denomination.denomination_format }}
-                    </template>
-                    <template v-if="column.key == 'date'">
-                        {{ record.custodianSrrItems.custodiaSsr?.date_rec }}
-                    </template>
-                    <template v-if="column.key == 'validate'">
-                        {{
-                            record.custodianSrrItems.custodiaSsr?.user
-                                ?.full_name
-                        }}
-                    </template>
-                </template>
-            </a-table>
-            <pagination-axios
-                :datarecords="forAllocationData"
-                @on-pagination="forAllocationPagination"
-            />
-        </a-modal>
     </AuthenticatedLayout>
 </template>
 
@@ -204,9 +136,10 @@ import { getError, onProgress } from "@/../../resources/js/Mixin/UiUtilities";
 
 const props = defineProps<{
     title: string;
-    stores: { value: number; label: string }[];
-    gcTypes: { value: number; label: string }[];
-    denoms: any[];
+    customer: { label: string; value: number; date: string }[];
+    paymentFund: { label: string; value: number; date: string }[];
+    checkBy: { label: string; value: number; date: string }[];
+    releasingNo: number;
 }>();
 
 const allocatedData = ref([]);
@@ -216,30 +149,18 @@ const openModal = ref(false);
 const forAllocationData = ref<any>([]);
 const gcAllocationModal = ref<boolean>(false);
 
-const columns = [
+const tableColumns = [
     {
-        title: "GC Barcode No",
-        dataIndex: "loc_barcode_no",
+        title: "Denomination",
+        dataIndex: "denom",
     },
     {
-        title: "Date Allocated",
-        dataIndex: "loc_date",
+        title: "Barcode",
+        dataIndex: "barcode",
     },
     {
-        title: "Allocated By",
-        key: "fullname",
-    },
-    {
-        title: "GC Type",
-        key: "gctype",
-    },
-    {
-        title: "Production #",
-        key: "productionrequest",
-    },
-    {
-        title: "Denom",
-        key: "denom",
+        title: "Remove",
+        dataIndex: "remove",
     },
 ];
 const formState = useForm({
@@ -252,10 +173,19 @@ const formState = useForm({
         bankName: "",
         accountNumber: "",
         checkNumber: "",
-        checkAmount: "",
         amount: "",
+        change: "",
+
+        totalAmountReceived: '',
+        cash: '',
+
+        supDocu: ''
     },
 });
+
+const handlePaymentType = (value) => {
+    formState.paymentType.type = value;
+};
 
 const forAllocationPagination = async (link) => {
     if (link.url) {

@@ -11,16 +11,44 @@
     </a-form-item>
 
     <div v-if="formState.paymentType.type === 'check'">
-        <a-form-item label="Bank Name:" name="bank">
+        <a-form-item
+            label="Bank Name:"
+            name="bank"
+            :validate-status="
+                errorForm?.['paymentType.bankName'] ? 'error' : ''
+            "
+            :help="errorForm?.['paymentType.bankName']"
+        >
             <a-input v-model:value="formState.paymentType.bankName" />
         </a-form-item>
-        <a-form-item label="Account Number:" name="acc">
+        <a-form-item
+            label="Account Number:"
+            name="acc"
+            :validate-status="
+                errorForm?.['paymentType.accountNumber'] ? 'error' : ''
+            "
+            :help="errorForm?.['paymentType.accountNumber']"
+        >
             <a-input v-model:value="formState.paymentType.accountNumber" />
         </a-form-item>
-        <a-form-item label="Check Number:" name="check">
+        <a-form-item
+            label="Check Number:"
+            name="check"
+            :validate-status="
+                errorForm?.['paymentType.checkNumber'] ? 'error' : ''
+            "
+            :help="errorForm?.['paymentType.checkNumber']"
+        >
             <a-input v-model:value="formState.paymentType.checkNumber" />
         </a-form-item>
-        <a-form-item label="Check Amount:" name="check">
+        <a-form-item
+            label="Check Amount:"
+            name="check"
+            :validate-status="
+                errorForm?.['paymentType.checkAmount'] ? 'error' : ''
+            "
+            :help="errorForm?.['paymentType.checkAmount']"
+        >
             <a-input v-model:value="formState.paymentType.checkAmount" />
         </a-form-item>
     </div>
