@@ -96,7 +96,6 @@
                     <!-- {{barcode}} -->
                     <a-form-item label="">
                         <a-table bordered :dataSource="denoms" :columns="denomColumns" :pagination="false">
-
                             <template #bodyCell="{ column, record }">
                                 <template v-if="column.dataIndex === 'qty'">
                                     <a-input v-model:value="record.quantity"></a-input>
