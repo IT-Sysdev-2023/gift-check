@@ -5,23 +5,28 @@
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
                 <a-card>
-                    <a-alert :message="isLoading ? 'Scanning Barcode....': 'Scan Barcode here'" type="info" show-icon >
-
-                    </a-alert>
+                    <strong class="ml-1">
+                        Scan Barcode Here:
+                    </strong>
                     <a-input showCount @change="removeSpaces" placeholder="Enter Barcode No" size="large"
                         @keyup.enter="viewStatus1" v-model:value="form.barcode" />
                 </a-card>
                 <div v-if="isFetching">
                     <a-card class="mt-3" v-if="success">
-                        <a-timeline>
-                            <a-timeline-item>{{ transType }}</a-timeline-item>
-                        </a-timeline>
+                        <a-typography-title class="text-center" :level="4">{{ transType }}</a-typography-title>
                     </a-card>
                 </div>
             </a-col>
             <a-col :span="14">
                 <div v-if="isFetching">
                     <div v-if="statusBarcode" class="mb-2">
+                        <a-alert message="Not Found!" class="mb-2" type="error" show-icon>
+                            <template #description>
+                                <p>
+                                    Barcode # <strong>{{ form.barcode }}</strong> not found or Do not Exists
+                                </p>
+                            </template>
+                        </a-alert>
                         <a-result status="404" title="Oppss 404" sub-title="Barcode not found">
                             <template #extra>
                                 <a-typography-text code>Please Scan Another Barcode!</a-typography-text>
@@ -29,8 +34,13 @@
                         </a-result>
                     </div>
                     <div v-else-if="success">
-                        <a-alert message="Success!" class="mb-2" description="Barcode found!" type="success"
-                            show-icon />
+                        <a-alert message="Success!" class="mb-2" type="success" show-icon>
+                            <template #description>
+                                <p>
+                                    Barcode # <strong>{{ form.barcode }}</strong> found
+                                </p>
+                            </template>
+                        </a-alert>
                     </div>
                     <div v-else-if="empty">
                         <a-result title="Status result here" sub-title="This where the status headed">

@@ -14,5 +14,6 @@ trait DashboardRoutesTrait
         '8' => 'retailgroup.dashboard',
         '9' => 'accounting.dashboard',
         '10' => 'iad.dashboard',
+        '12' => 'eod.dashboard',
     ];
 }

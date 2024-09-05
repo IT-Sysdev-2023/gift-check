@@ -40,6 +40,53 @@ class ColumnHelper
         ],
     ];
 
+    public static $eod_columns = [
+        [
+            'title' => 'Barcode ',
+            'dataIndex' => 'vs_barcode',
+
+        ],
+        [
+            'title' => 'Denomination',
+            'dataIndex' => 'vs_tf_denomination',
+
+        ],
+        [
+            'title' => 'Store',
+            'dataIndex' => 'store_name',
+
+        ],
+        [
+            'title' => 'Gc Type',
+            'dataIndex' => 'gctype',
+
+        ],
+        [
+            'title' => 'Date',
+            'dataIndex' => 'vs_date',
+
+        ],
+        [
+            'title' => 'Time',
+            'dataIndex' => 'vs_time',
+
+        ],
+        [
+            'title' => 'Verify by',
+            'dataIndex' => 'fullname',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'cus_fname',
+
+        ],
+        [
+            'title' => 'Status',
+            'key' => 'status',
+
+        ],
+    ];
     public static $get_denom_columns = [
         [
             'title' => 'Denomination',

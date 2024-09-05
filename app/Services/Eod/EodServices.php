@@ -1,0 +1,380 @@
+<?php
+
+namespace App\Services\Eod;
+
+use App\Models\Store;
+use App\Models\StoreEod;
+use App\Models\StoreEodItem;
+use App\Models\StoreEodTextfileTransaction;
+use App\Models\StoreVerification;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+
+use function Sodium\compare;
+
+class EodServices
+{
+
+    public function getVerifiedFromStore()
+    {
+
+        $eod = StoreVerification::selectFilter()->join('users', 'user_id', '=', 'vs_by')
+            ->join('customers', 'cus_id', '=', 'vs_cn')
+            ->join('stores', 'store_id', '=', 'vs_store')
+            ->join('gc_type', 'gc_type_id', '=', 'vs_gctype')
+            ->where('vs_tf_used', '')
+            ->where('vs_tf_eod', '')
+            ->where(function ($q) {
+                $q->whereDate('vs_reverifydate', today())
+                    ->orWhereDate('vs_date', '<=', today());
+            })
+            ->orderByDesc('vs_id')
+            ->paginate(10)->withQueryString();
+
+        $eod->transform(function ($item) {
+            $item->dateFmatted = Date::parse($item->vs_date)->toFormattedDateString();
+            $item->fullname = $item->firstname . ' ' . $item->lastname;
+            return $item;
+        });
+
+
+        return $eod;
+    }
+
+    public function processEod($request, $id)
+    {
+
+        $wholesaletime = now()->format('H:i');
+
+        $user = 'IT';
+        $password = 'itsysdev';
+
+        exec('net use \\\172.16.43.7\Gift\\\\ /user:' . $user . ' ' . $password . ' /persistent:no');
+
+
+        $store = StoreVerification::select(
+            'username',
+            'vs_tf',
+            'vs_barcode',
+            'vs_tf_denomination',
+            'vs_tf_balance',
+            'vs_tf_used',
+            'vs_tf_eod',
+            'vs_tf_eod2',
+            'vs_store',
+            'vs_payto'
+        )->join('users', 'user_id', '=', 'vs_by')->where('vs_tf_used', '')
+            ->where('vs_tf_eod', '')
+            ->where(function ($q) {
+                $q->whereDate('vs_reverifydate', today())
+                    ->orWhereDate('vs_date', '<=', today());
+            })
+            ->orderByDesc('vs_id')
+            ->get();
+
+            $rss = [];
+
+        if (!$store) {
+
+            return back()->with([
+                'status' => 'error',
+                'msg' => 'Opps Something went wrong',
+            ]);
+
+        } else {
+
+            if ($store->count() == 0) {
+                return back()->with([
+                    'status' => 'error',
+                    'msg' => 'No TextFile Exists'
+                ]);
+            }
+
+            $ip = '\\\172.16.43.7\Gift\\';
+
+            $quickCheck = collect(File::files($ip));
+
+            // dd($quickCheck->toArray());
+
+            $txtfiles_temp = collect();
+
+            $notFoundGC = [];
+
+            $error = false;
+
+            $store->each(function ($item) use ($quickCheck, $ip, &$txtfiles_temp, &$notFoundGC, &$error) {
+
+                $res = $quickCheck->contains(function ($value, int $key) use ($item) {
+                    return $value->getFilename() == $item->vs_tf;
+                });
+
+                if ($res) {
+                    // dd();
+
+                    $txtfiles_temp[] =  [
+                        'ver_barcode'        => $item->vs_barcode,
+                        'ver_textfilename'     => $item->vs_tf,
+                        'ver_denom'         => $item->vs_tf_denomination,
+                        'ver_balance'         => $item->vs_tf_balance,
+                        'ver_used'            => $item->vs_tf_used,
+                        'ver_eod1'            => $item->vs_tf_eod,
+                        'txtfile_ip'        => $ip,
+                        'payto'                => $item->vs_payto
+                    ];
+                } else {
+                    if ($item->vs_payto == 'WHOLESALE') {
+                        $txtfiles_temp[] =  [
+                            'ver_barcode'        => $item->vs_barcode,
+                            'ver_textfilename'     => $item->vs_tf,
+                            'ver_denom'         => $item->vs_tf_denomination,
+                            'ver_balance'         => $item->vs_tf_balance,
+                            'ver_used'            => $item->vs_tf_used,
+                            'ver_eod1'            => $item->vs_tf_eod,
+                            'txtfile_ip'        => $ip,
+                            'payto'                => $item->vs_payto
+                        ];
+                    } else {
+                        $notFoundGC[] = $item->vs_tf;
+                        $error = true;
+                    }
+                }
+            });
+
+
+            if ($error) {
+                return back()->with([
+                    'title' => 'Error',
+                    'msg' => 'Opss there are some barcodes not found',
+                    'status' => 'error',
+                    'data' => $notFoundGC,
+                ]);
+            }
+
+            $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss) {
+
+                if ($item['payto'] == 'WHOLESALE') {
+
+                    DB::transaction(function () use ($item, $id,  $wholesaletime) {
+
+                        $this->updateStoreVerWholeSale($item);
+
+                        $this->storeVerificationTextFile($item, $id, $wholesaletime);
+
+                        $this->storeEodItem($item, $id);
+                    });
+                    
+                } else {
+
+                    $file = $item['txtfile_ip'] . '\\' . $item['ver_textfilename'];
+                    $text = File::get($file);
+
+                    if (!File::exists($file)) {
+                        $rss[] = [
+                            'error' =>  'GC Barcode # ' . $item['ver_textfilename'] . ' missing.',
+                            'status' => 'error'
+                        ];
+                    }
+
+                    $temp = explode(".", $file);
+
+                    $extension = end($temp);
+
+                    $allowedExts = collect([
+                        'igc',
+                        'egc',
+                    ]);
+
+                    if (!$allowedExts->contains($extension)) {
+
+                        $rss[] = [
+                            'msg' => 'GC Barcode # '.$item['ver_textfilename'].' file extension is not allowed.',
+                            'status' => 'error'
+                        ];
+                    }
+
+                    $text = File::get($file);
+
+                    $exp = explode("\n", $text);
+
+                    $pc = '';
+                    $am = '';
+                    $amount = 0;
+
+                    $exprn = [];
+
+                    foreach ($exp as $key => $line) {
+
+                        $exprn[] = explode(",", $line);
+
+                        if ($key == 2) {
+                            $pc = $exprn[1][1];
+                        }
+
+                        if ($key == 3) {
+                            $am = $exprn[1][1];
+                        }
+
+                        if ($key == 4) {
+                            $amount = $exprn[1][1];
+
+                            if ($amount < $item['ver_denom']) {
+
+                                $used = true;
+
+                                $success = $this->updateStoreVerification($item, $pc, $am, $amount);
+
+                                if ($success) {
+                                    $this->updateStoreVerificationEod($item);
+                                }
+                            }
+                        }
+
+                        if ($key > 7) {
+                            if ($key !== '') {
+                                $if8key = $exprn[$key];
+                                $this->storeEodTransaction($item, $if8key, $id);
+                            }
+                        }
+                    }
+
+                    $success = $this->updateStoreVerificationEod($item);
+
+                    if (!$success) {
+                        return '';
+                    }
+
+
+                    $fileArchive = 'C:\laragon\www\gift-check\storage\app\public\archives';
+
+
+                    if (File::exists($file . '.bak')) {
+                        $copy = File::copy($file, $fileArchive . '\\' . $item['ver_textfilename'] . '.bak');
+
+                        if ($copy) {
+
+                            $deleted = File::delete($file . '.bak');
+
+                            if (!$deleted) {
+
+                                $rss[] = [
+                                    'msg' => 'Error On Deleting' . $item['ver_textfilename'] . 'textfile',
+                                    'status' => 'error'
+                                ];
+                            }
+                        } else {
+
+                            $rss[] = [
+                                'msg' => 'Error On Copying' . $item['ver_textfilename'] . 'textfile',
+                                'status' => 'error'
+                            ];
+                        }
+                    }
+
+                    if (File::copy($file, $fileArchive . '\\' . $item['ver_textfilename'])) {
+                        $deleted =  File::delete($file);
+
+                        if (!$deleted) {
+                            $rss[] = [
+                                'msg' => 'Error On Deleting' . $item['ver_textfilename'] . 'textfile',
+                                'status' => 'error'
+                            ];
+                        }
+                    } else {
+                        $rss[] = [
+                            'msg' => 'Error On Copying' . $item['ver_textfilename'] . 'textfile',
+                            'status' => 'error'
+                        ];
+                    }
+                }
+            });
+        }
+        if ($rss) {
+            return back()->with([
+                'status' => 'error',
+                'title' => 'Error',
+                'data' => $rss,
+            ]);
+        } else {
+            return back()->with([
+                'status' => 'success',
+                'title' => 'Success',
+                'msg' => 'Success Process Eod'
+            ]);
+        }
+    }
+    private function storeEodTransaction($item, $exprn, $id)
+    {
+        StoreEodTextfileTransaction::create([
+            'seodtt_eod_id' => $id,
+            'seodtt_barcode' => $item['ver_barcode'],
+            'seodtt_line' => $exprn[0],
+            'seodtt_creditlimit' => $exprn[1],
+            'seodtt_credpuramt' => $exprn[2],
+            'seodtt_addonamt' => $exprn[3],
+            'seodtt_balance' => $exprn[4],
+            'seodtt_transno' => $exprn[5],
+            'seodtt_timetrnx' => $exprn[6],
+            'seodtt_bu' => $exprn[7],
+            'seodtt_terminalno' => $exprn[8],
+            'seodtt_ackslipno' => $exprn[9],
+            'seodtt_crditpurchaseamt' => $exprn[10],
+        ]);
+    }
+    private function updateStoreVerification($item, $pc, $am, $amount)
+    {
+        StoreVerification::where('vs_barcode', $item['ver_barcode'])->update([
+            'vs_tf_used' => '*',
+            'vs_tf_balance' => $amount,
+            'vs_tf_purchasecredit' => $pc,
+            'vs_tf_addon_amt' => $am,
+        ]);
+        return true;
+    }
+
+    private function updateStoreVerWholeSale($item)
+    {
+        StoreVerification::where('vs_barcode', $item['ver_barcode'])->update([
+            'vs_tf_used' => '*',
+            'vs_tf_balance' => '0',
+            'vs_tf_purchasecredit' => $item['ver_denom'],
+            'vs_tf_eod' => '1',
+        ]);
+    }
+    private function storeVerificationTextFile($item, $id, $wholesaletime)
+    {
+        StoreEodTextfileTransaction::create([
+            'seodtt_eod_id' => $id,
+            'seodtt_barcode' => $item['ver_barcode'],
+            'seodtt_line' => '000',
+            'seodtt_creditlimit' => $item['ver_denom'],
+            'seodtt_credpuramt' => $item['ver_denom'],
+            'seodtt_addonamt' => '0',
+            'seodtt_balance' => '0',
+            'seodtt_transno' => '0',
+            'seodtt_timetrnx' => $wholesaletime,
+            'seodtt_bu' => '',
+            'seodtt_terminalno' => 'WHOLESALE',
+            'seodtt_ackslipno' => '0',
+            'seodtt_crditpurchaseamt' => $item['ver_denom'],
+        ]);
+    }
+
+    private function storeEodItem($item, $id)
+    {
+        StoreEodItem::create([
+            'st_eod_barcode' => $item['ver_barcode'],
+            'st_eod_trid' => $id,
+        ]);
+    }
+
+    private function updateStoreVerificationEod($item)
+    {
+        StoreVerification::where('vs_barcode', $item['ver_barcode'])->update([
+            'vs_tf_eod' => '1',
+        ]);
+
+        return true;
+    }
+}

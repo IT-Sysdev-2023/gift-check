@@ -12,4 +12,9 @@ class StoreEod extends Model
     protected $table= 'store_eod';
 
     protected $primaryKey= 'steod_id';
+
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }
