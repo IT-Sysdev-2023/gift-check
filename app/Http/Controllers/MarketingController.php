@@ -1587,10 +1587,37 @@ class MarketingController extends Controller
     public function selectedPromoPendingRequest(Request $request)
     {
         $data = $this->marketing->selectedPromoPendingRequest($request);
-       
-        return Inertia::render('Marketing/PromoGCRequest/PendingGcRequestView',[
-            'data' =>$data
+
+        $denom = Denomination::where('denom_type', 'RSGC')
+            ->where('denom_status', 'active')->get();
+
+
+        $denomCol = ColumnHelper::denomCols();
+
+        $denomQty = PromoGcRequestItem::where('pgcreqi_trid', $request->id)->get();
+        $denom->transform(function ($item) use ($denomQty) {
+            foreach ($denomQty as $denom) {
+                if ($denom->pgcreqi_denom == $item->denom_id) {
+                    $item->qty = $denom->pgcreqi_qty;
+                }
+
+            }
+
+            return $item;
+
+        });
+
+        return Inertia::render('Marketing/PromoGCRequest/PendingGcRequestView', [
+            'data' => $data,
+            'denom' => $denom,
+            'columns' => $denomCol,
+            'denomQty' => $denomQty
         ]);
     }
 
+    public function submitUpdate(Request $request)
+    {
+        
+        dd($request->all());
+    }
 }
