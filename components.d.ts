@@ -133,6 +133,7 @@ declare module 'vue' {
     ClockCircleOutlined: typeof import('@ant-design/icons-vue')['ClockCircleOutlined']
     CloseCircleFilled: typeof import('@ant-design/icons-vue')['CloseCircleFilled']
     CloseCircleOutlined: typeof import('@ant-design/icons-vue')['CloseCircleOutlined']
+    CloseOutlined: typeof import('@ant-design/icons-vue')['CloseOutlined']
     CloudDownloadOutlined: typeof import('@ant-design/icons-vue')['CloudDownloadOutlined']
     Colonade_colon: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/Colonade_colon.vue')['default']
     ColonadeMandaue: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ColonadeMandaue.vue')['default']

@@ -87,3 +87,10 @@ export function dashboardRoute() {
     const res = webRoute?.split(".")[0];
     return res + ".dashboard";
 }
+
+export function currency(num: number) {
+    return new Intl.NumberFormat("en-PH", {
+        style: "currency",
+        currency: "PHP",
+    }).format(num);
+}

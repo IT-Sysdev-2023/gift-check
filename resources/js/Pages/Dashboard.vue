@@ -51,20 +51,20 @@ defineProps<{
                 <div class="overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <a-row style="background-color: white; padding:30px; margin-bottom: 30px" justify="center" >
-                            <a-col :span="12">
+                            <a-col :span="24">
                                 <a-statistic
                                     title="Current Budget"
                                     :value="data?.budget"
                                     style="margin-right: 50px"
                                 />
                             </a-col>
-                            <a-col :span="12">
+                            <!-- <a-col :span="12">
                                 <a-statistic
                                     title="Abog sa Kalibotan"
                                     :precision="2"
                                     :value="112893"
                                 />
-                            </a-col>
+                            </a-col> -->
                         </a-row>
                         <a-row :gutter="16">
                             <Card

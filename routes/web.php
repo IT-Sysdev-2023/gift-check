@@ -262,6 +262,7 @@ Route::middleware('auth')->group(function () {
                     Route::get('/', [InstitutionGcSalesController::class, 'index'])->name('index');
 
                     Route::get('scan-barcode', [InstitutionGcSalesController::class, 'scanBarcode'])->name('scan');
+                    Route::put('remove-barcode-{barcode}', [InstitutionGcSalesController::class, 'removeBarcode'])->name('removeBarcode');
                 });
 
 

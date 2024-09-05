@@ -7,13 +7,22 @@ use Illuminate\Pagination\Paginator;
 class ArrayHelper
 {
     public static function paginate($items, $perPage = 15, $page = null, $options = [])
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+{
+    $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
 
-        $items = $items instanceof Collection ? $items : Collection::make($items);
+    // Convert items to a collection if it's not already
+    $items = $items instanceof Collection ? $items : Collection::make($items);
 
-        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
-    }
+    // Get the current page items
+    $currentPageItems = $items->forPage($page, $perPage);
+
+    // Reindex the items to ensure they are sequential (starting from 0)
+    $currentPageItems = $currentPageItems->values();
+
+    // Return the paginated data
+    return new LengthAwarePaginator($currentPageItems, $items->count(), $perPage, $page, $options);
+}
+
     public static function paginateCollection(Collection $collection, $perPage = 15, $page = null, $options = [])
     {
         $page = $page ?: (LengthAwarePaginator::resolveCurrentPage() ?: 1);
