@@ -29,17 +29,13 @@ class EodController extends Controller
 
     public function processEod(Request $request)
     {
-        // $storeod = StoreEod::create([
-        //     'steod_by' => $request->user()->user_id,
-        //     'steod_datetime' => now()
-        // ]);
-        $storeod = StoreEod::first();
-        // $storeod = [
-        //     'id' => '1'
-        // ];
+        $storeod = StoreEod::create([
+            'steod_by' => $request->user()->user_id,
+            'steod_datetime' => now()
+        ]);
 
-        // if ($storeod->wasRecentlyCreated) {
-            return $this->eodServices->processEod($request, $storeod->stoed_id);
-        // }
+        if ($storeod->wasRecentlyCreated) {
+            return $this->eodServices->processEod($request, $storeod->steod_id);
+        }
     }
 }
