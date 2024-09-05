@@ -31,20 +31,22 @@
                         </a-form-item> -->
                         <a-form-item
                             label="Remarks:"
-                            :validate-status="errorForm?.remarks ? 'error' : ''"
-                            :help="errorForm?.remarks"
+                            :validate-status="
+                                formState.errors?.remarks ? 'error' : ''
+                            "
+                            :help="formState.errors?.remarks"
                         >
                             <a-textarea
                                 v-model:value="formState.remarks"
-                                @input="() => (errorForm.remarks = null)"
+                                @input="() => (formState.errors.remarks = null)"
                             />
                         </a-form-item>
                         <a-form-item
                             label="Checked By:"
                             :validate-status="
-                                errorForm?.checkedBy ? 'error' : ''
+                                formState.errors?.checkedBy ? 'error' : ''
                             "
-                            :help="errorForm?.checkedBy"
+                            :help="formState.errors?.checkedBy"
                         >
                             <ant-select
                                 :options="data.checkBy"
@@ -61,23 +63,23 @@
                         <a-form-item
                             label="Received By:"
                             :validate-status="
-                                errorForm?.receivedBy ? 'error' : ''
+                                formState.errors?.receivedBy ? 'error' : ''
                             "
-                            :help="errorForm?.receivedBy"
+                            :help="formState.errors?.receivedBy"
                         >
                             <a-input
                                 v-model:value="formState.receivedBy"
-                                @input="() => (errorForm.receivedBy = null)"
+                                @input="
+                                    () => (formState.errors.receivedBy = null)
+                                "
                             />
                         </a-form-item>
                         <check-cash-jv-payment
                             :formState="formState"
-                            :errorForm="errorForm"
-
+                            :errorForm="formState.errors"
                             @handleCustomerOption="handleCustomerOption"
                             @handPaymentType="handPaymentType"
                         />
-                        
                     </a-form>
                 </a-card>
             </a-col>
@@ -275,15 +277,25 @@
             @on-pagination="onScannedPagination"
         />
     </a-modal>
+
+    <a-modal
+        v-model:open="openIframe"
+        style="width: 70%; top: 50px"
+        :footer="null"
+        :afterClose="routeToHome"
+    >
+        <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
+    </a-modal>
 </template>
 
 <script lang="ts" setup>
 import dayjs from "dayjs";
-import { usePage } from "@inertiajs/vue3";
+import { usePage, useForm, router } from "@inertiajs/vue3";
 import { ref, computed, reactive, watch } from "vue";
 import { PageWithSharedProps } from "@/types";
 import { notification } from "ant-design-vue";
 import axios from "axios";
+import { onProgress } from "@/Mixin/UiUtilities";
 import type { UploadChangeParam } from "ant-design-vue";
 
 //Props
@@ -297,7 +309,7 @@ const emit = defineEmits<{
 }>();
 
 //Data/Variables
-const formState = reactive({
+const formState = useForm({
     file: null,
     remarks: "",
     receivedBy: "",
@@ -312,8 +324,11 @@ const formState = reactive({
     },
     checkedBy: "",
 });
-
+const { openLeftNotification } = onProgress();
 const today = dayjs().format("YYYY-MMM-DD HH:mm:ss a");
+
+const stream = ref(null);
+const openIframe = ref(false);
 const denominationTableData = ref(props.data.rgc);
 const allocatedGcData = ref(null);
 const scanData = ref(null);
@@ -358,37 +373,29 @@ const submitForm = () => {
     const rid = props.data.details.sgc_id;
     const store_id = props.data.details.store.store_id;
     //released = current user
-
-    axios
-        .post(route("treasury.store.gc.releasingEntrySubmission"), {
+    formState
+        .transform((data) => ({
+            ...data,
+            rel_num: props.data.rel_num,
             rid: rid,
             store_id: store_id,
-            file: formState.file,
-            remarks: formState.remarks,
-            receivedBy: formState.receivedBy,
-            paymentType: formState.paymentType,
-            checkedBy: formState.checkedBy,
-        })
-        .then((res) => {
-            notification.success({
-                message: "Scan Success",
-                description: res.data,
-            });
-            location.reload();
-        })
-        .catch((err) => {
-            if (err.response.status === 400) {
-                notification.error({
-                    message: "Submission Failed",
-                    description: err.response.data,
-                });
-            } else {
-                // console.log(formState.errors)
-                console.log(err.response.data.errors);
-                errorForm.value = err.response.data.errors;
-            }
+        }))
+        .post(route("treasury.store.gc.releasingEntrySubmission"), {
+            preserveState: true,
+            onSuccess: ({ props }) => {
+                openLeftNotification(props.flash);
+                if (props.flash.success) {
+                    handleClose();
+                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                    openIframe.value = true;
+                }
+            },
         });
 };
+const routeToHome = () => {
+    router.visit(route("treasury.dashboard"));
+};
+
 const viewScannedGc = async () => {
     const { data } = await axios.get(
         route("treasury.store.gc.viewScannedBarcode"),
@@ -443,11 +450,11 @@ const viewAllocatedGc = async () => {
 };
 const handPaymentType = (value: string) => {
     formState.paymentType.type = value;
-    errorForm.value["paymentType.type"] = null;
+    formState.errors["paymentType.type"] = null;
 };
 const handleCheckedBy = (value) => {
     formState.checkedBy = value;
-    errorForm.value.checkedBy = null;
+    formState.clearErrors("checkedBy");
 };
 const handleCustomerOption = (value) =>
     (formState.paymentType.customer = value);

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Treasury\Transactions;
+use App\Models\InstitutTransaction;
 use Illuminate\Http\Request;
 use App\Models\Gc;
 class InstitutionGcSalesService
@@ -106,5 +107,10 @@ class InstitutionGcSalesService
 
         $request->session()->put($this->sessionName, $filtered);
         return redirect()->back()->with('success', "Barcode {$barcode} successfully deleted!");
+    }
+    public function store(Request $request){
+        $relnum = InstitutTransaction::where('institutr_trtype', 'sales')->max('institutr_trnum');
+        $relnumber = $relnum ? $relnum + 1 : 1;
+        dd($relnumber); //releaseTreasuryCustomer ajax
     }
 }

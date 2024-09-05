@@ -58,4 +58,8 @@ class InstitutionGcSalesController extends Controller
     public function removeBarcode(Request $request, $barcode){
         return $this->institutionGcSalesService->destroyBarcode($request, $barcode);
     }
+
+    public function formSubmission(Request $request){
+        return $this->institutionGcSalesService->store($request);
+    }
 }

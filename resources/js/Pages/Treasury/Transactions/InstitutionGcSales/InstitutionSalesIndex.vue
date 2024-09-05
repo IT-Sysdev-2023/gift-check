@@ -14,6 +14,7 @@
                 ref="formRef"
                 :model="formState"
                 :wrapper-col="{ span: 20 }"
+                @finish="onSubmit"
             >
                 <!-- @finish="onSubmit" -->
                 <a-row>
@@ -175,7 +176,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router, useForm } from "@inertiajs/vue3";
 import { ref, computed, watch } from "vue";
 import dayjs from "dayjs";
-import axios from "axios";
 import { getError, onProgress, currency } from "@/Mixin/UiUtilities";
 
 const props = defineProps<{
@@ -233,6 +233,10 @@ const formState = useForm({
 });
 
 const { openLeftNotification } = onProgress();
+
+const onSubmit = () =>{
+    formState.post(route('treasury.transactions.institution.gc.sales.submission'))
+}
 const removeBarcode = (bc) => {
     barcodeRemoveLoading.value = {
         ...barcodeRemoveLoading.value,

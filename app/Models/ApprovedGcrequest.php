@@ -42,4 +42,8 @@ class ApprovedGcrequest extends Model
     {
         return $this->belongsTo(User::class, 'agcr_preparedby', 'user_id');
     }
+
+    public function userCheckedBy(){
+        return $this->belongsTo(User::class, 'agcr_checkedby', 'user_id');
+    }
 }

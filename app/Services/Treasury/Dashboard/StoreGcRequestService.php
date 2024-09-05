@@ -273,6 +273,7 @@ class StoreGcRequestService extends UploadFileHandler
 
 	public function releasingEntrySubmit(Request $request)
 	{
+		
 		$request->validate([
 			// 'file' => 'required',
 			'remarks' => 'required',
@@ -415,9 +416,13 @@ class StoreGcRequestService extends UploadFileHandler
 				$request->session()->forget('scanReviewGC');
 
 			});
-			return response()->json('Successfully Submitted');
+			
+			return $this->generatePdf($request->rel_num);
+			// return redirect()->back()->with('success','Successfully Submitted');
+			
+			
 		} else {
-			return response()->json('Please scan the Barcode First', 400);
+			return redirect()->back()->with('error','Please scan the Barcode First');
 		}
 
 
@@ -461,74 +466,73 @@ class StoreGcRequestService extends UploadFileHandler
 		];
 		return $types[$rt] ?? null;
 	}
+	private static function generatePdf($id){
 
-	// public function scanRangeBarcode(Request $request)
-	// {
-	//     $request->validate([
-	//         'bstart' => 'required',
-	//         'bend' => 'required',
-	//         'relid' => 'required',
-	//         'store_id' => 'required',
-	//         'reqid' => 'required',
-	//     ]);
-	//     $bend = $request->bend;
-	//     $bstart = $request->bstart;
+		if (!GcRelease::where('rel_num', $id)->exists()) {
+			return response()->json(['error' => 'Pdf Not available'], 404);
+		}
 
-	//     $gcTotal = $bend - $bstart + 1;
+		$total_gc = GcRelease::selectRaw('IFNULL(SUM(denomination.denomination), 0.00) as total, IFNULL(COUNT(gc_release.re_barcode_no), 0) as cnt')
+			->joinGcDenomination()
+			->where('gc_release.rel_num', $id)
+			->first();
 
-	//     dd($gcTotal);
+		$header_data = new ApprovedGcRequestResource(ApprovedGcrequest::where('agcr_request_relnum', $id)
+			->with([
+				'userCheckedBy:user_id,firstname,lastname',
+				'storeGcRequest:sgc_id,sgc_store',
+				'storeGcRequest.store:store_id,store_name',
+				'user:user_id,firstname,lastname'
+			])
+			->first());
 
-	//     $denid = Gc::where('barcode_no', $bstart)->first('denom_id')->denom_id;
+		// dd($header_data->);
 
-	//     $remainGc = StoreRequestItem::where([['sri_items_denomination', $denid], ['sri_items_requestid', $request->reqid]])
-	//         ->first('sri_items_remain')->sri_items_remain;
+		$gcgroup = GcRelease::select('denomination.denomination', 'gc_release.re_barcode_no', 'gc_release.rel_id', 'denomination.denom_id')
+			->joinGcDenomination()
+			->where('rel_num', $id)
+			->get();
 
-	//     $scannedGc = TempRelease::where([['temp_relno', $request->relid], ['temp_rdenom', $denid]])
-	//         ->count();
+		$data = [
+			//Header
+			'company' => [
+				'name' => Str::upper('ALTURAS GROUP OF COMPANIES'),
+				'department' => Str::title('Head Office - Treasury Department'),
+				'report' => 'GC Releasing Report',
+				'location' => 'AGC Head Office',
+			],
 
-	//     $gctotal = $gcTotal + $scannedGc;
+			//SubHeader
+			'gc_rel_no' => $id,
+			'store' => $header_data->storeGcRequest?->store?->store_name,
+			'date_released' => $header_data->agcr_approved_at->toFormattedDateString(),
 
-	//     $nums = 0;
+			//Data/ Barcodes
+			'barcode' => $gcgroup->groupBy('denomination')->map(fn($d) => $d->sortBy('denom_id')),
 
-	//     if ($gctotal > $remainGc) {
-	//         return response()->json('Number of GC Scanned has reached the maximum number to received.', 400);
-	//     } else {
-	//         foreach (range($bstart, $bend) as $bc) {
-	//             if (Gc::where('barcode_no', $bc)->doesntExist()) {
-	//                 return response()->json("Barcode Number {$bc} not found.", 400);
-	//             }
+			//Subfooter
+			'summary' => [
+				'releasing_type' => self::releasingType($header_data->agcr_stat),
+				'total_no_of_gc' => NumberHelper::format($total_gc->cnt),
+				'total_gc_amount' => NumberHelper::format($total_gc->total),
+			],
 
-	//             $locationCheck = GcLocation::whereHas('gc', fn($q) => $q->has('denomination')->where('denom_id', $denid))
-	//                 ->where([['loc_store_id', $request->store_id], ['loc_barcode_no', $bc]])
-	//                 ->doesntExist();
+			//Signatures
+			'signatures' => [
+				'received_by' => $header_data->agcr_recby,
+				'released_by' => Str::upper($header_data->user->fullname),
+				'checked_by' => Str::upper($header_data->userCheckedBy->fullname),
+			],
 
-	//             if ($locationCheck) {
-	//                 return response()->json("Barcode Number {$bc} not found in this location.", 400);
-	//             }
+		];
+		
+        $pdf = Pdf::loadView('pdf.storegc', ['data' => $data]);
 
-	//             if (GcRelease::where('re_barcode_no', $bc)->exists()) {
-	//                 return response()->json("Barcode Number {$bc} already released.", 400);
-	//             }
+        $pdf->setPaper('A3');
 
-	//             if (TempRelease::where('temp_rbarcode', $bc)->exists()) {
-	//                 return response()->json("Barcode Number {$bc} already scanned for released. ", 400);
-	//             } else {
-	//                 TempRelease::create([
-	//                     'temp_rbarcode' => $bc,
-	//                     'temp_rdenom' => $denid,
-	//                     'temp_rdate' => now(),
-	//                     'temp_relno' => $request->relid,
-	//                     'temp_relby' => $request->user()->user_id
-	//                 ]);
+        $stream = base64_encode($pdf->output());
 
-	//             }
+        return redirect()->back()->with(['stream' => $stream, 'success' => 'Submission success']);
+	}
 
-
-	//         }
-
-	//         return response()->json("GC Barcode #{$bstart} to {$bend} successfully validated.");
-	//     }
-
-
-	// }
 }
