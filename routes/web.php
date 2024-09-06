@@ -7,6 +7,7 @@ use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\CustodianController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EodController;
 use App\Http\Controllers\FadController;
 use App\Http\Controllers\Iad\Dashboard\SpecialExternalGcRequestController;
 use App\Http\Controllers\MarketingController;
@@ -65,6 +66,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard');
 
     Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
+
+    Route::get('eod-dashboard', [EodController::class, 'index'])->name('eod.dashboard');
 
 
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
@@ -264,6 +267,9 @@ Route::middleware('auth')->group(function () {
                     Route::get('/', [InstitutionGcSalesController::class, 'index'])->name('index');
 
                     Route::get('scan-barcode', [InstitutionGcSalesController::class, 'scanBarcode'])->name('scan');
+                    Route::put('remove-barcode-{barcode}', [InstitutionGcSalesController::class, 'removeBarcode'])->name('removeBarcode');
+
+                    Route::post('form-submission', [InstitutionGcSalesController::class, 'formSubmission'])->name('submission');
                 });
 
 
@@ -286,6 +292,13 @@ Route::middleware('auth')->group(function () {
 Route::prefix('documents')->group(function () {
     Route::name('start.')->group(function () {
         Route::get('budget-ledger', [DocumentController::class, 'startGeneratingBudgetLedger'])->name('budget.ledger');
+    });
+});
+
+Route::prefix('eod')->group(function () {
+    Route::name('eod.')->group(function () {
+        Route::get('eod-verified-gc', [EodController::class, 'eodVerifiedGc'])->name('verified.gc');
+        Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
     });
 });
 

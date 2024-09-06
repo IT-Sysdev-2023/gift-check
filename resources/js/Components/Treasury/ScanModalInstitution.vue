@@ -98,7 +98,6 @@ const formBc = useForm({
     startBarcode: null,
     endBarcode: null,
 });
-
 const scanSwitch = ref(false);
 const errorBarcode = ref(null);
 const { openLeftNotification } = onProgress();
@@ -106,12 +105,26 @@ const onSubmitBarcode = async () => {
     formBc
         .transform((data) => ({
             ...data,
-            switch: scanSwitch.value,
+            switchMode: scanSwitch.value,
         }))
         .get(route("treasury.transactions.institution.gc.sales.scan"), {
             preserveState: true,
             onSuccess: ({ props }) => {
+                for (let bc of props.flash.scanGc) {
+                    if (bc.status === 200) {
+                        notification.success({
+                            message: "Scan Success",
+                            description: bc.success,
+                        });
+                    } else {
+                        notification.error({
+                            message: "Scan Failed",
+                            description: bc.error,
+                        });
+                    }
+                }
                 openLeftNotification(props.flash);
+                emit("update:open", false);
             },
         });
 };

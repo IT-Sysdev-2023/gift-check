@@ -32,9 +32,10 @@ class ApprovedGcRequestResource extends JsonResource
             //         'sgc_date_request' => $s->sgc_date_request
             //     ];
             // }
+            'checkedBy' => $this->whenLoaded('userCheckedBy'),
             'user' => $this->whenLoaded('user'),
-            'store_name' => $this->whenLoaded('storeGcRequest', fn ($q) => optional($this->storeGcRequest->store)->store_name), 
-           
+            'store_name' => $this->whenLoaded('storeGcRequest', fn($q) => optional($this->storeGcRequest->store)->store_name),
+
         ];
     }
 }

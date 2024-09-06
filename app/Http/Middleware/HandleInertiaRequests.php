@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\ArrayHelper;
 use App\Models\ProductionRequest;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -63,7 +64,7 @@ class HandleInertiaRequests extends Middleware
             'barcodeReviewScan' => function () use ($request) {
                 return [
                     'allocation' => $request->session()->get('scanReviewGC') ?? [],
-                    'promo' => $request->session()->get('scannedPromo') ?? []
+                    'promo' => $request->session()->get('scannedPromo') ?? [],
                 ];
             }
         ];

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class StoreVerification extends Model
 {
@@ -16,4 +17,40 @@ class StoreVerification extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    protected function casts(): array{
+        return [
+            'vs_reverifydate' => 'date',
+            'vs_date' => 'date'
+        ];
+    }
+
+    public function user(){
+        $this->belongsTo(User::class, 'vs_by', 'user_id')->withDefault();
+    }
+    public function customer(){
+        $this->belongsTo(Customer::class, 'vs_cn', 'cus_id');
+    }
+    public function type(){
+        $this->belongsTo(GcType::class, 'vs_gctype', 'gc_type_id');
+    }
+    public function store(){
+        $this->belongsTo(Store::class, 'vs_store', 'store_id');
+    }
+    public function scopeSelectFilter($query){
+
+        $query->select(
+            'vs_barcode',
+            'vs_tf_denomination',
+            'firstname',
+            'lastname',
+            'store_name',
+            'vs_time',
+            'vs_date',
+            'vs_reverifydate',
+            'cus_fname',
+            'gctype',
+        );
+
+    }
 }

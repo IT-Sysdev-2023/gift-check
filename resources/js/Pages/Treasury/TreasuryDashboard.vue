@@ -79,7 +79,7 @@ const specialGcPending = () => routeTo("special.gc", "pending")
                             "
                             justify="center"
                         >
-                            <a-col :span="12">
+                            <a-col :span="24">
                                 <a-statistic
                                     title="Current Budget"
                                     :value="data?.budget"
@@ -90,13 +90,13 @@ const specialGcPending = () => routeTo("special.gc", "pending")
                                     </template>
                                 </a-statistic>
                             </a-col>
-                            <a-col :span="12">
+                            <!-- <a-col :span="12">
                                 <a-statistic
                                     title="Abog sa Kalibotan"
                                     :precision="2"
                                     :value="112893"
                                 />
-                            </a-col>
+                            </a-col> -->
                         </a-row>
                         <a-row :gutter="16">
                             <Card

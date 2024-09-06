@@ -4,6 +4,7 @@ namespace App\Services\Admin;
 
 use App\Models\Denomination;
 use App\Models\Gc;
+use App\Models\InstitutTransactionsItem;
 use App\Models\PromoGcReleaseToItem;
 use App\Models\RequisitionForm;
 use App\Models\RequisitionFormDenomination;
@@ -38,6 +39,7 @@ class AdminServices
         $regular = new Gc();
         $special = new SpecialExternalGcrequestEmpAssign();
         $promo = new PromoGcReleaseToItem();
+        $inst = new InstitutTransactionsItem();
         $barcodeNotFound = false;
         $empty = false;
         $steps = [];
@@ -48,6 +50,7 @@ class AdminServices
         if (
             $regular->where('barcode_no', $request->barcode)->exists()
             && !$regular->whereHas('barcodePromo', fn($query) => $query->where('barcode_no', $request->barcode))->exists()
+            && !$regular->whereHas('barcodeInst', fn($query) => $query->where('barcode_no', $request->barcode))->exists()
         ) {
 
             $transType = 'Reqular Gift Check';
@@ -57,9 +60,13 @@ class AdminServices
             $transType = 'Special Gift Check';
             $steps = self::specialStatus($special, $request);
             $success = true;
-        } elseif (PromoGcReleaseToItem::where('prreltoi_barcode', $request->barcode)->exists()) {
+        } elseif ($promo->where('prreltoi_barcode', $request->barcode)->exists()) {
             $transType = 'Promo Gift Check';
             $steps = self::promoStatus($promo, $request);
+            $success = true;
+        } elseif ($inst->where('instituttritems_barcode', $request->barcode)->exists()) {
+            $transType = 'Institutional Gift Check';
+            $steps = self::institutionStatus($inst, $request);
             $success = true;
         } elseif (empty($request->barcode)) {
             $empty = true;
@@ -446,14 +453,94 @@ class AdminServices
             ]);
         }
 
+        return $steps;
+    }
+
+    public static function institutionStatus($step3, $request)
+    {
+
+        $steps = collect([
+            [
+                'title' => 'Treasury',
+                'status' => 'finish',
+                'description' => 'Request Submitted'
+            ],
+            [
+                'title' => 'Marketing',
+                'status' => 'finish',
+                'description' => 'Request Approved'
+            ],
+            [
+                'title' => 'FAD',
+                'status' => 'finish',
+                'description' => 'Scanned By FAD'
+            ],
+            [
+                'title' => 'IAD',
+                'status' => 'finish',
+                'description' => 'Scanned By IAD'
+            ],
+        ]);
+
+        $q2 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'instituttritems_barcode')->where('vs_barcode', $request->barcode);
+
+        $vs_date = $q2->first()->vs_date ?? null;
+        $rev_date = $q2->first()->vs_reverifydate ?? null;
+        $vs_pay = $q2->first()->vs_payto ?? null;
 
 
+        if ($step3->whereHas('reverified', fn($query) => $query->where('vs_barcode', $request->barcode))->exists()) {
+
+            $steps->push((object) [
+                'title' => 'Verification',
+                'description' => 'Verified By CFS ' . ' at ' . Date::parse($vs_date)->toFormattedDateString(),
+            ]);
+        } else {
+            $steps->push((object) [
+                'status' => 'error',
+                'title' => 'Verification',
+                'description' => 'Not yet Verified By CFS',
+
+            ]);
+        }
+
+        $isRevDateExists = $q2->where('instituttritems_barcode', $request->barcode)->where('vs_reverifydate', $rev_date)->exists();
+
+        $isRevDateNull = $q2->where('instituttritems_barcode', $request->barcode)->where('vs_reverifydate', null)->exists();
+
+        if ($isRevDateNull) {
+            //no result here..
+        } elseif ($isRevDateExists) {
+
+            $steps->push((object) [
+                'title' => 'Reverification',
+                'description' => 'Reverified By CFS at ' . Date::parse($rev_date)->toFormattedDateString(),
+            ]);
+        } else {
+            //no result here..
+        }
+
+
+        $q3 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'instituttritems_barcode')->where('vs_barcode', $request->barcode);
+        if ($q3->where('vs_tf_used', '*')->exists()) {
+            $steps->push((object) [
+                'status' => 'finish',
+                'title' => 'Redeemption',
+                'description' => 'Redeemed by Customer at ' . $vs_pay,
+            ]);
+        } else {
+            $steps->push((object) [
+                'status' => 'error',
+                'title' => 'Redeemption',
+                'description' => 'Not yet Redeem',
+            ]);
+        }
 
         return $steps;
     }
 
     public function supplier()
     {
-       return Supplier::all();
+        return Supplier::all();
     }
 }

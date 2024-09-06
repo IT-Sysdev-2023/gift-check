@@ -9,5 +9,10 @@ class StoreEodTextfileTransaction extends Model
 {
     use HasFactory;
 
-    protected $primaryKey ='seodtt_id';
+    protected $primaryKey = 'seodtt_id';
+
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }

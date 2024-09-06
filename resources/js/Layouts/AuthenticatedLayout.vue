@@ -20,6 +20,7 @@ const {
     custodian,
     marketing,
     retailgroup,
+    eod,
 } = UserType();
 
 const collapsed = ref<boolean>(false);
@@ -93,6 +94,7 @@ const dashboardRoute = computed(() => {
                     <CustodianSideBar v-if="custodian" />
                     <MarketingSideBar v-if="marketing" />
                     <IadSideBar v-if="iad" />
+                    <eod-sidebar v-if="eod" />
 
                     <RetailGroupSidebar v-if="retailgroup" />
 
