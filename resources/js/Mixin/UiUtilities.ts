@@ -48,10 +48,10 @@ export function onProgress() {
             });
         }
     };
-    const openLeftNotification = (page: { success: string; error: string }) => {
+    const openLeftNotification = (page: { success: string; error: string }, success = "Request Submitted") => {
         if (page.success) {
             notification.success({
-                message: "Request Submitted",
+                message: success,
                 description: page.success,
             });
         }

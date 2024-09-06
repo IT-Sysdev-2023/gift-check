@@ -35,8 +35,20 @@
                             </a-col>
                         </a-row>
 
-                        <a-form-item label="Received By:" name="rec">
-                            <a-input v-model:value="formState.receivedBy" />
+                        <a-form-item
+                            label="Received By:"
+                            name="rec"
+                            :validate-status="
+                                getErrorStatus(formState, 'receivedBy')
+                            "
+                            :help="getErrorMessage(formState, 'receivedBy')"
+                        >
+                            <a-input
+                                v-model:value="formState.receivedBy"
+                                @input="
+                                    () => formState.clearErrors('receivedBy')
+                                "
+                            />
                         </a-form-item>
                         <a-form-item
                             label="Check By:"
@@ -51,8 +63,18 @@
                                 @handle-change="handleCheckedBy"
                             />
                         </a-form-item>
-                        <a-form-item label="Remarks:" name="re">
-                            <a-textarea v-model:value="formState.remarks" />
+                        <a-form-item
+                            label="Remarks:"
+                            name="re"
+                            :validate-status="
+                                getErrorStatus(formState, 'remarks')
+                            "
+                            :help="getErrorMessage(formState, 'remarks')"
+                        >
+                            <a-textarea
+                                v-model:value="formState.remarks"
+                                @input="() => formState.clearErrors('remarks')"
+                            />
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -91,7 +113,7 @@
 
                                 <institution-select
                                     :formState="formState"
-                                    :errorForm="formState.errors"
+                                    :total="totalScannedDenomination"
                                     @handPaymentType="handlePaymentType"
                                 />
                                 <a-form-item label="Upload Document:" name="up">
@@ -102,7 +124,10 @@
                             </a-col>
                             <a-col :span="14">
                                 <a-flex justify="space-between" align="center">
-                                    <a-button @click="scanBarcode" type="primary" ghost
+                                    <a-button
+                                        @click="scanBarcode"
+                                        type="primary"
+                                        ghost
                                         >Scan Barcode</a-button
                                     >
                                     <a-form-item
@@ -223,9 +248,8 @@ const formState = useForm({
         accountNumber: "",
         checkNumber: "",
         amount: "",
-        change: "",
+        // change: "",
 
-        totalAmountReceived: "",
         cash: "",
 
         supDocu: "",
@@ -234,9 +258,18 @@ const formState = useForm({
 
 const { openLeftNotification } = onProgress();
 
-const onSubmit = () =>{
-    formState.post(route('treasury.transactions.institution.gc.sales.submission'))
-}
+const onSubmit = () => {
+    formState
+        .transform((data) => ({
+            ...data,
+            totalDenomination: props.totalScannedDenomination,
+        }))
+        .post(route("treasury.transactions.institution.gc.sales.submission"), {
+            onSuccess: ({ props }) => {
+                openLeftNotification(props.flash);
+            },
+        });
+};
 const removeBarcode = (bc) => {
     barcodeRemoveLoading.value = {
         ...barcodeRemoveLoading.value,
@@ -248,7 +281,11 @@ const removeBarcode = (bc) => {
         {
             preserveScroll: true,
             onSuccess: ({ props }) => {
-                openLeftNotification(props.flash);
+                openLeftNotification(props.flash, "Barcode Deleted");
+                barcodeRemoveLoading.value = {
+                    ...barcodeRemoveLoading.value,
+                    [bc]: false,
+                };
             },
         }
     );
