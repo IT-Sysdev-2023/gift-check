@@ -5,7 +5,7 @@
         <a-card title="Promo GC Request Form"></a-card>
         <div class="flex justify-end mt-2">
             <a-button type="primary" @click="submit">
-                Submit Promo Request
+                Submit Promo Requestfgffftt
             </a-button>
         </div>
         <a-row :gutter="[16, 16]">
@@ -91,7 +91,6 @@ export default {
 
             },
             totalValue: 0,
-            denominations: [100, 500, 1000, 2000, 5000],
             headers: {},
         };
     },
@@ -116,7 +115,9 @@ export default {
                         description: response.props.flash.description,
                     })
 
-                this.$inertia.get(route('marketing.promo.gc.request'));
+                    if (response.props.flash.type == 'success') {
+                        this.$inertia.get(route('marketing.dashboard'));
+                    }
                 }
             })
         },
