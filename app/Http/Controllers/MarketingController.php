@@ -145,7 +145,7 @@ class MarketingController extends Controller
             'promoId' => $promoNum
         ]);
     }
-
+                                                                                                                                                
     public function promogcrequest(Request $request)
     {
         $tag = $request->user()->promo_tag;

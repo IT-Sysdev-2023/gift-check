@@ -474,10 +474,10 @@ class RetailServices
                 } else {
                     if ($verifyGC) {
                         $this->dbservices->storeInStoreVerification($request, $data);
-                        $result = $this->dbservices->createtextfile($request, $data);
-                        if ($result) {
-                            $this->dbservices->createtextfileSecondaryPath($request, $data);
-                        }
+                         $this->dbservices->createtextfile($request, $data);
+                        // if ($result) {
+                        //     $this->dbservices->createtextfileSecondaryPath($request, $data);
+                        // }
 
                         return back()->with([
                             'msg' => 'GC Barcode # ' . $request->barcode . ' verified successfully.',
