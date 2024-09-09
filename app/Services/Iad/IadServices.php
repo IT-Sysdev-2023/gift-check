@@ -2,14 +2,20 @@
 
 namespace App\Services\Iad;
 
+use App\Models\ApprovedRequest;
 use App\Models\CustodianSrr;
 use App\Models\CustodianSrrItem;
 use App\Models\Denomination;
+use App\Models\Document;
 use App\Models\Gc;
 use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
 use App\Models\RequisitionForm;
+use App\Models\SpecialExternalGcrequest;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\TempValidation;
+use App\Models\User;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class IadServices
@@ -249,7 +255,7 @@ class IadServices
 
         if ($create) {
             TempValidation::truncate();
-            
+
             return redirect()->route('iad.dashboard')->with([
                 'status' => 'success',
                 'title' => 'Success',
@@ -262,5 +268,93 @@ class IadServices
                 'msg' => 'Opss Something Went Wrong!',
             ]);
         }
+    }
+    public function getReviewedGc()
+    {
+        $data = SpecialExternalGcrequest::select(
+            'spexgc_id',
+            'spexgc_num',
+            'spexgc_datereq',
+            'reqap_approvedby',
+            'reqap_date',
+            'spcus_acctname',
+            'spcus_companyname',
+            'reqap_trid',
+        )->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+            ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
+            ->where('spexgc_reviewed', 'reviewed')
+            ->where('reqap_approvedtype', 'Special External GC Approved')
+            ->orderByDesc('spexgc_num')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+
+            $app = ApprovedRequest::select('reqap_date', 'firstname', 'lastname')
+                ->join('users', 'user_id', '=', 'reqap_preparedby')
+                ->where('reqap_trid', $item->reqap_trid)
+                ->where('reqap_approvedtype', 'special external gc review')
+                ->first();
+
+            $fname =  empty($app->firstname) ? null : $app->firstname;
+            $lname =  empty($app->lastname) ? null : $app->lastname;
+            $dateRev = empty($app->reqap_date) ? null :  Date::parse($app->reqap_date)->toFormattedDateString();
+
+            $item->reqdate = Date::parse($item->spexgc_datereq)->toFormattedDateString();
+            $item->appdate = Date::parse($item->reqap_date)->toFormattedDateString();
+            $item->fullname =  $fname  . ' , ' . $lname;
+            $item->revdate =  $dateRev;
+
+            return $item;
+        });
+
+        return $data;
+    }
+
+    public function getReviewedDetails($id)
+    {
+        $data = SpecialExternalGcrequest::select(
+            'spexgc_datereq',
+            'spexgc_dateneed',
+            'spexgc_remarks',
+            'spexgc_payment',
+            'spexgc_paymentype',
+            'spexgc_id',
+            'spexgc_company',
+            'spexgc_reqby',
+        )->with(
+            'user:user_id,firstname,lastname',
+            'specialExternalCustomer:spcus_id,spcus_companyname',
+            'approvedRequest',
+            'preparedBy',
+            'approvedRequest.user:user_id,firstname,lastname'
+        )->leftJoin('special_external_bank_payment_info', 'spexgcbi_trid', '=', 'spexgc_id')
+            ->whereHas('approvedRequest', fn($query) => $query->where('reqap_approvedtype', 'Special External GC Approved'))
+            ->where('spexgc_status', 'approved')
+            ->where('spexgc_id', $id)
+            ->first();
+
+        return $data;
+    }
+
+    public function getDocuments($id)
+    {
+
+        return  Document::where('doc_trid', $id)
+            ->where('doc_type', 'Special External GC Request')
+            ->value('doc_fullpath');
+    }
+
+    public function specialBarcodes($id)
+    {
+        return SpecialExternalGcrequestEmpAssign::select(
+            'spexgcemp_trid',
+            'spexgcemp_denom',
+            'spexgcemp_fname',
+            'spexgcemp_lname',
+            'spexgcemp_mname',
+            'spexgcemp_extname',
+            'spexgcemp_barcode',
+        )->where('spexgcemp_trid', $id)->get();
     }
 }

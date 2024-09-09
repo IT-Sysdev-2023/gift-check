@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class IadController extends Controller
 {
-    public function __construct(public IadServices $iadServices , public DashboardClass $dashboardClass) {}
+    public function __construct(public IadServices $iadServices, public DashboardClass $dashboardClass) {}
 
     public function index()
     {
@@ -63,13 +63,29 @@ class IadController extends Controller
     }
     public function validateBarcode(Request $request)
     {
-       return $this->iadServices->validateBarcodeFunction($request);
-
+        return $this->iadServices->validateBarcodeFunction($request);
     }
 
     public function submitSetup(Request $request)
     {
 
         return $this->iadServices->submitSetupFunction($request);
+    }
+
+    public function reviewedGcIndex()
+    {
+        return inertia('Iad/ReviewedGc', [
+            'record' => $this->iadServices->getReviewedGc(),
+            'columns' => ColumnHelper::$review_gc_columns,
+        ]);
+    }
+
+    public function reviewDetails($id)
+    {
+        return inertia('Iad/ReviewDetails', [
+            'record' => $this->iadServices->getReviewedDetails($id),
+            'document' => $this->iadServices->getDocuments($id),
+            'barcodes' => $this->iadServices->specialBarcodes($id),
+        ]);
     }
 }

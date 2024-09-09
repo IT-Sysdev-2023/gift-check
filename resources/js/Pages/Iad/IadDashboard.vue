@@ -3,18 +3,18 @@
 
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
-            <a-col :span="12">
+            <a-col :span="8">
                 <GcReceiving
                     title="Special External Gc Request"
-                    containerTitle1="Approved Gc For Review"
+                    containerTitle1="Approved Gc"
                     containerTitle2="Reviewed GC"
                     containerDesc1="For receving gift cheque"
                     containerDesc2="Received Gift Check"
                     @container1-event="approvedGcForReview"
                 />
-                <p>TOTal Approved GC : {{ approvedGc }}</p>
+                <!-- <p>TOTal Approved GC : {{ approvedGc }}</p> -->
             </a-col>
-            <a-col :span="12">
+            <a-col :span="8">
                 <GcReceiving
                     title="Internal GC"
                     containerTitle1="GC Receiving"

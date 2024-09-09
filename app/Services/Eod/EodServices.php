@@ -74,7 +74,7 @@ class EodServices
             ->orderByDesc('vs_id')
             ->get();
 
-            $rss = [];
+        $rss = [];
 
         if (!$store) {
 
@@ -82,7 +82,6 @@ class EodServices
                 'status' => 'error',
                 'msg' => 'Opps Something went wrong',
             ]);
-
         } else {
 
             if ($store->count() == 0) {
@@ -163,8 +162,8 @@ class EodServices
                         $this->storeVerificationTextFile($item, $id, $wholesaletime);
 
                         $this->storeEodItem($item, $id);
+
                     });
-                    
                 } else {
 
                     $file = $item['txtfile_ip'] . '\\' . $item['ver_textfilename'];
@@ -189,7 +188,7 @@ class EodServices
                     if (!$allowedExts->contains($extension)) {
 
                         $rss[] = [
-                            'msg' => 'GC Barcode # '.$item['ver_textfilename'].' file extension is not allowed.',
+                            'msg' => 'GC Barcode # ' . $item['ver_textfilename'] . ' file extension is not allowed.',
                             'status' => 'error'
                         ];
                     }
@@ -203,24 +202,24 @@ class EodServices
                     $amount = 0;
 
                     $exprn = [];
+                    // dd($exp);
 
                     foreach ($exp as $key => $line) {
 
                         $exprn[] = explode(",", $line);
 
                         if ($key == 2) {
-                            $pc = $exprn[1][1];
+                            $pc = $exprn[$key][1];
                         }
 
                         if ($key == 3) {
-                            $am = $exprn[1][1];
+                            $am = $exprn[$key][1];
                         }
 
                         if ($key == 4) {
-                            $amount = $exprn[1][1];
+                            $amount = $exprn[$key][1];
 
                             if ($amount < $item['ver_denom']) {
-
                                 $used = true;
 
                                 $success = $this->updateStoreVerification($item, $pc, $am, $amount);
@@ -238,6 +237,7 @@ class EodServices
                             }
                         }
                     }
+        
 
                     $success = $this->updateStoreVerificationEod($item);
 
@@ -376,5 +376,23 @@ class EodServices
         ]);
 
         return true;
+    }
+
+    public function getEodList()
+    {
+
+        $data = StoreEod::select('steod_id', 'steod_by', 'steod_storeid', 'steod_datetime')
+            ->with('user:user_id,firstname,lastname', 'store:store_id,store_name')
+            ->orderByDesc('steod_datetime')->paginate(10)->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->storename = $item->store->store_name ?? null;
+            $item->fullname = $item->user->fullname;
+            $item->date =  Date::parse($item->steod_datetime)->toFormattedDateString();
+            $item->time =  Date::parse($item->steod_datetime)->format('h:i A');
+            return $item;
+        });
+
+        return $data;
     }
 }

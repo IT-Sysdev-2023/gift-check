@@ -28,7 +28,7 @@ const page = usePage<PageWithSharedProps>().props;
         </a-menu-item>
     </a-sub-menu>
 
-    <a-menu v-else>
+    <div v-else>
         <a-menu-item key="iad">
             <QrcodeOutlined />
             <span>
@@ -36,5 +36,5 @@ const page = usePage<PageWithSharedProps>().props;
                 </Link>
             </span>
         </a-menu-item>
-    </a-menu>
+    </div>
 </template>
