@@ -145,7 +145,7 @@ class MarketingController extends Controller
             'promoId' => $promoNum
         ]);
     }
-                                                                                                                                                
+
     public function promogcrequest(Request $request)
     {
         $tag = $request->user()->promo_tag;
@@ -1617,7 +1617,54 @@ class MarketingController extends Controller
 
     public function submitUpdate(Request $request)
     {
-        
-        dd($request->all());
+        $inserted = DB::transaction(function () use ($request) {
+            PromoGcRequest::where('pgcreq_id', $request->reqnum)
+                ->update([
+                    'pgcreq_dateneeded' => Date::parse($request->dateNeed)->format('Y-m-d'),
+                    'pgcreq_remarks' => $request->remarks,
+                    'pgcreq_group' => $request->group,
+                ]);
+            $filteredArray = array_filter($request->denom, function ($item) {
+                return isset($item['quantity']);
+            });
+            foreach ($filteredArray as $key => $value) {  
+                
+                $promoGcRequestItem = PromoGcRequestItem::where('pgcreqi_trid', $request->reqnum)
+                    ->where('pgcreqi_denom', $value['id']);
+                if ($promoGcRequestItem->exists()) {
+                    $promoGcRequestItem->update([
+                        'pgcreqi_qty' => $value['quantity'],
+                        'pgcreqi_remaining' => $value['quantity']
+                    ]);
+                } else {
+                    PromoGcRequestItem::create([
+                        'pgcreqi_trid' => $request->reqnum,
+                        'pgcreqi_denom' => $value['id'],
+                        'pgcreqi_qty' => $value['quantity'],
+                        'pgcreqi_remaining' => $value['quantity']
+                    ]);
+                }
+                if($value['quantity'] == 0){
+                    PromoGcRequestItem::where('pgcreqi_trid', $request->reqnum)
+                    ->where('pgcreqi_denom', $value['id'])->delete();
+                }
+            }
+            return true;
+        });
+
+        if ($inserted) {
+            return back()->with([
+                'msg' => "Nice!",
+                'description' => "Promo GC Request Successfully Updated",
+                'type' => "success",
+            ]);
+        } else {
+            return back()->with([
+                'msg' => "Opps!",
+                'description' => "Something Went Wrong",
+                'type' => "error",
+            ]);
+        }
+
     }
 }

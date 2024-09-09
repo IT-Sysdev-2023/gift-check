@@ -7,6 +7,7 @@ use App\Http\Requests\PurchaseOrderRequest;
 use App\Models\Gc;
 use App\Models\PromoGcReleaseToItem;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\User;
 use App\Services\Admin\AdminServices;
 use App\Services\Admin\DBTransaction;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,7 +21,10 @@ class AdminController extends Controller
 
     public function index()
     {
-        return inertia('Admin/AdminDashboard');
+        $users=User::count();
+        return inertia('Admin/AdminDashboard',[
+            'users' => $users
+        ]);
     }
     //
     public function statusScanner(Request $request)

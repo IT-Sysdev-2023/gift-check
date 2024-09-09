@@ -49,6 +49,10 @@ Route::get('/not-found', function () {
     return 'Empty';
 })->name('not.found');
 
+Route::fallback(function () {
+   return view('notFound');
+});
+
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
 //Dashboards
@@ -136,10 +140,10 @@ Route::prefix('marketing')->group(function () {
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
-        Route::name('promoGcRequest.')->group(function (){
-            Route::get('promo-pending-list',[MarketingController::class, 'promoPendinglist'])->name('pending.list');
-            Route::get('selected-promo-pending-request',[MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
-            Route::post('submit',[MarketingController::class, 'submitUpdate'])->name('submit');
+        Route::name('promoGcRequest.')->group(function () {
+            Route::get('promo-pending-list', [MarketingController::class, 'promoPendinglist'])->name('pending.list');
+            Route::get('selected-promo-pending-request', [MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
+            Route::post('submit', [MarketingController::class, 'submitUpdate'])->name('submit');
         });
     });
 });
