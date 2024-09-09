@@ -10,4 +10,6 @@ class Store extends Model
     use HasFactory;
 
     protected $primaryKey = 'store_id';
+
+
 }

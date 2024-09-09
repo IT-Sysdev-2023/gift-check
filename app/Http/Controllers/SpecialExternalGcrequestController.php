@@ -13,19 +13,22 @@ class SpecialExternalGcrequestController extends Controller
      */
     public function index() //for the <a href="#/special-external-request-approved/"> Approved GC
     {
-        $approvedGc = SpecialExternalGcRequestService::approvedGc(); 
-        
+        $approvedGc = SpecialExternalGcRequestService::approvedGc();
+
 
         return $approvedGc;
     }
-    
-    
+
+
+
+
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function viewApprovedGcRecord()
     {
         //
+        dd();
     }
 
     /**

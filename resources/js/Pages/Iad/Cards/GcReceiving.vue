@@ -51,7 +51,7 @@
                 <p class="sub-text text-white">{{ containerDesc2 }}</p>
             </div>
             <a-badge>
-                <a-button>
+                <a-button @click="() => $inertia.visit(route('iad.reviewed.gc.special.review'))">
                     <template #icon>
                         <FolderFilled />
                     </template>
