@@ -334,6 +334,7 @@ declare module 'vue' {
     UsergroupAddOutlined: typeof import('@ant-design/icons-vue')['UsergroupAddOutlined']
     UsergroupDeleteOutlined: typeof import('@ant-design/icons-vue')['UsergroupDeleteOutlined']
     UserOutlined: typeof import('@ant-design/icons-vue')['UserOutlined']
+    Users: typeof import('./resources/js/Pages/Admin/Masterfile/Users.vue')['default']
     UserSwitchOutlined: typeof import('@ant-design/icons-vue')['UserSwitchOutlined']
     ValidateBarcode: typeof import('./resources/js/Pages/Iad/Partials/ValidateBarcode.vue')['default']
     ValidateByRange: typeof import('./resources/js/Pages/Iad/Partials/ValidateByRange.vue')['default']
