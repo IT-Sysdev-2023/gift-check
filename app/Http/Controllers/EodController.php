@@ -38,4 +38,11 @@ class EodController extends Controller
             return $this->eodServices->processEod($request, $storeod->steod_id);
         }
     }
+
+    public function list()
+    {
+        return inertia('Eod/ListOfEod',[
+            'record' => $this->eodServices->getEodList(),
+        ]);
+    }
 }

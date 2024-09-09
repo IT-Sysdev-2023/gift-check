@@ -14,4 +14,9 @@ class InstitutPayment extends Model
 
     protected $guarded =[];
     public $timestamps = false;
+
+    public static function paymentNumber(){
+        $ip = InstitutPayment::max('insp_paymentnum');
+        return $ip ? $ip + 1 : 1;
+    }
 }

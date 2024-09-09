@@ -100,6 +100,49 @@ class ColumnHelper
 
         ],
     ];
+    public static $review_gc_columns = [
+        [
+            'title' => 'RFSEGC',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'reqdate',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'spcus_companyname',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => 'appdate',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'reqap_approvedby',
+
+        ],
+        [
+            'title' => 'Date Reviewed',
+            'dataIndex' => 'revdate',
+
+        ],
+        [
+            'title' => 'Reviewed By',
+            'dataIndex' => 'fullname',
+
+        ],
+        [
+            'title' => 'Details',
+            'key' => 'details',
+            'align' => 'center'
+
+        ],
+    ];
     public static $retail_group_pending_colums = [
         [
             'title' => 'RFPROM #',

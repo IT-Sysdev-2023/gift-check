@@ -136,10 +136,10 @@ Route::prefix('marketing')->group(function () {
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
-        Route::name('promoGcRequest.')->group(function (){
-            Route::get('promo-pending-list',[MarketingController::class, 'promoPendinglist'])->name('pending.list');
-            Route::get('selected-promo-pending-request',[MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
-            Route::post('submit',[MarketingController::class, 'submitUpdate'])->name('submit');
+        Route::name('promoGcRequest.')->group(function () {
+            Route::get('promo-pending-list', [MarketingController::class, 'promoPendinglist'])->name('pending.list');
+            Route::get('selected-promo-pending-request', [MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
+            Route::post('submit', [MarketingController::class, 'submitUpdate'])->name('submit');
         });
     });
 });
@@ -279,7 +279,6 @@ Route::middleware('auth')->group(function () {
                     Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
                     Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                 });
-
             });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
@@ -299,6 +298,7 @@ Route::prefix('eod')->group(function () {
     Route::name('eod.')->group(function () {
         Route::get('eod-verified-gc', [EodController::class, 'eodVerifiedGc'])->name('verified.gc');
         Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
+        Route::get('list', [EodController::class, 'list'])->name('list');
     });
 });
 
@@ -329,7 +329,6 @@ Route::prefix('finance')->group(function () {
             Route::get('budget-setup', [FinanceController::class, 'setupBudget'])->name('setup');
             Route::post('budget-submit', [FinanceController::class, 'submitBudget'])->name('submit');
         });
-
     });
 
     Route::get('/download/{filename}', function ($filename) {
@@ -365,7 +364,6 @@ Route::prefix('retail')->group(function () {
             Route::get('verification-index', [RetailController::class, 'verificationIndex'])->name('index');
             Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
         });
-
     });
 });
 Route::prefix('retailgroup')->group(function () {
@@ -419,6 +417,11 @@ Route::middleware('auth')->group(function () {
             Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
 
             Route::get('gc-reprint-{id}', [SpecialExternalGcRequestController::class, 'reprint'])->name('reprint');
+        });
+
+        Route::prefix('reviewed-gc')->name('reviewed.gc.')->group(function () {
+            Route::get('review-index', [IadController::class, 'reviewedGcIndex'])->name('special.review');
+            Route::get('review-datails-{id}', [IadController::class, 'reviewDetails'])->name('details');
         });
     });
 });

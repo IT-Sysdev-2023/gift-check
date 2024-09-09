@@ -17,4 +17,12 @@ class StoreEod extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public function store(){
+        return $this->belongsTo(Store::class, 'steod_storeid', 'store_id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'steod_by', 'user_id');
+    }
 }
