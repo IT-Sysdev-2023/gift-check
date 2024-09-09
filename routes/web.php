@@ -49,6 +49,10 @@ Route::get('/not-found', function () {
     return 'Empty';
 })->name('not.found');
 
+Route::fallback(function () {
+   return view('notFound');
+});
+
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
 //Dashboards

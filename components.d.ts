@@ -215,6 +215,7 @@ declare module 'vue' {
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     NotFoundResult: typeof import('./resources/js/Pages/Iad/Components/NotFoundResult.vue')['default']
+    NotFount: typeof import('./resources/js/Pages/NotFount.vue')['default']
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
     PaginationAxios: typeof import('./resources/js/Components/PaginationAxios.vue')['default']
     PaginationResource: typeof import('./resources/js/Components/PaginationResource.vue')['default']
