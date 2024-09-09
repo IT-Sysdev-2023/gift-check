@@ -273,6 +273,8 @@ declare module 'vue' {
     ReviewedDetailsCard: typeof import('./resources/js/Pages/Iad/Cards/ReviewedDetailsCard.vue')['default']
     ReviewedGc: typeof import('./resources/js/Pages/Iad/ReviewedGc.vue')['default']
     RollbackOutlined: typeof import('@ant-design/icons-vue')['RollbackOutlined']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     Sale_storeSales: typeof import('./resources/js/Pages/Marketing/Sale_storeSales.vue')['default']
     Sale_treasurySales: typeof import('./resources/js/Pages/Marketing/Sale_treasurySales.vue')['default']
     SaveOutlined: typeof import('@ant-design/icons-vue')['SaveOutlined']
