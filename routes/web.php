@@ -50,7 +50,7 @@ Route::get('/not-found', function () {
 })->name('not.found');
 
 Route::fallback(function () {
-   return view('notFound');
+    return view('notFound');
 });
 
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -98,6 +98,10 @@ Route::prefix('admin')->group(function () {
         Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
         Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
         Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
+        Route::name('masterfile.')->group(function () {
+            Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
+            Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
+        });
     });
 });
 
