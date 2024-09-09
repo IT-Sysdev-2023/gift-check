@@ -9,7 +9,7 @@
                     </span>
                 </template>
                 <a-card>
-                    <reviewed-details-card :record="record" :doc="document"/>
+                    <reviewed-details-card :record="record" :doc="document" :approved="approved"/>
                 </a-card>
             </a-tab-pane>
             <a-tab-pane key="2">
@@ -20,7 +20,7 @@
                     </span>
                 </template>
                 <a-card>
-
+                    <reviewed-barcodes :barcodes="barcodes"/>
                 </a-card>
             </a-tab-pane>
         </a-tabs>
@@ -32,7 +32,8 @@ import { ref } from 'vue';
 defineProps({
     record: Object,
     barcodes: Object,
-    document: Object
+    document: Object,
+    approved: Object
 })
 
 const activeKey = ref('1');

@@ -16,9 +16,9 @@ class IadController extends Controller
     public function index()
     {
         // numRowsWhereTwo($link,'special_external_gcrequest','spexgc_id','spexgc_status','spexgc_reviewed','approved','')
-        $approvedGc = SpecialExternalGcrequest::where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])->count();
+
         return inertia('Iad/IadDashboard', [
-            'approvedGc' => $approvedGc
+            'count' => $this->dashboardClass->iadDashboard()
         ]);
     }
 
@@ -86,6 +86,7 @@ class IadController extends Controller
             'record' => $this->iadServices->getReviewedDetails($id),
             'document' => $this->iadServices->getDocuments($id),
             'barcodes' => $this->iadServices->specialBarcodes($id),
+            'approved' => $this->iadServices->approvedRequest($id),
         ]);
     }
 }

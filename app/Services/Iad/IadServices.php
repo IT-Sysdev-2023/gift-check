@@ -326,8 +326,7 @@ class IadServices
             'user:user_id,firstname,lastname',
             'specialExternalCustomer:spcus_id,spcus_companyname',
             'approvedRequest',
-            'preparedBy',
-            'approvedRequest.user:user_id,firstname,lastname'
+            'approvedRequest1.user:user_id,firstname,lastname'
         )->leftJoin('special_external_bank_payment_info', 'spexgcbi_trid', '=', 'spexgc_id')
             ->whereHas('approvedRequest', fn($query) => $query->where('reqap_approvedtype', 'Special External GC Approved'))
             ->where('spexgc_status', 'approved')
@@ -356,5 +355,17 @@ class IadServices
             'spexgcemp_extname',
             'spexgcemp_barcode',
         )->where('spexgcemp_trid', $id)->get();
+    }
+
+    public function approvedRequest($id)
+    {
+
+
+        return ApprovedRequest::select('reqap_date', 'reqap_id', 'reqap_preparedby','reqap_remarks')
+            ->with('user:user_id,lastname,firstname')
+            ->where('reqap_trid', $id)
+            ->where('reqap_approvedtype', 'special external gc review')
+            ->first();
+
     }
 }

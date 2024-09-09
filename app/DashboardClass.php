@@ -77,7 +77,7 @@ class DashboardClass extends DashboardService
             ],
             'budgetRequest' => [
                 'pending' => BudgetRequest::where('br_request_status', '0')
-                ->count(),
+                    ->count(),
             ],
 
             'appPromoCount' => PromoGcRequest::with('userReqby')
@@ -99,6 +99,11 @@ class DashboardClass extends DashboardService
     {
         return [
             'countReceiving' => RequisitionForm::where('used', null)->count(),
+            'reviewedCount' =>  SpecialExternalGcrequest::join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+                ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
+                ->where('spexgc_reviewed', 'reviewed')
+                ->where('reqap_approvedtype', 'Special External GC Approved')->count(),
+            'approvedgc' => SpecialExternalGcrequest::where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])->count(),
         ];
     }
     public function custodianDashboard()
