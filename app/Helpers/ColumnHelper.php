@@ -100,6 +100,44 @@ class ColumnHelper
 
         ],
     ];
+    public static $received_gc_index_columns = [
+        [
+            'title' => 'Receiving #',
+            'dataIndex' => 'recnumber',
+
+        ],
+        [
+            'title' => 'Date Received',
+            'dataIndex' => 'date',
+
+        ],
+        [
+            'title' => 'E Requisition #',
+            'dataIndex' => 'requisno',
+
+        ],
+        [
+            'title' => 'Supplier Name',
+            'dataIndex' => 'companyname',
+
+        ],
+        [
+            'title' => 'Received By',
+            'dataIndex' => 'fullname',
+
+        ],
+        [
+            'title' => 'Received Type',
+            'dataIndex' => 'csrr_receivetype',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
+            'align' => 'center'
+
+        ],
+    ];
     public static $review_gc_columns = [
         [
             'title' => 'RFSEGC',

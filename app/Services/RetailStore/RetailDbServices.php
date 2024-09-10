@@ -10,6 +10,7 @@ use App\Models\StoreReceived;
 use App\Models\StoreReceivedGc;
 use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
+use App\Models\TransactionRevalidation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
@@ -114,7 +115,7 @@ class RetailDbServices
 
     public function storeInStoreVerification($request, $data)
     {
-        StoreVerification::create([
+       return StoreVerification::create([
             'vs_barcode' => $request->barcode,
             'vs_cn' => $request->customer,
             'vs_by' => $request->user()->user_id,
@@ -136,6 +137,15 @@ class RetailDbServices
             'vs_reverifyby' => $request->user()->user_id,
             'vs_tf_eod' => ''
         ]);
+    }
+
+    public function updateRevalidationTransaction($request)
+    {
+
+        TransactionRevalidation::where('reval_barcode', $request->barcode)->update([
+            'reval_revalidated' => '1',
+        ]);
+
     }
     public function createtextfile($request, $data)
     {

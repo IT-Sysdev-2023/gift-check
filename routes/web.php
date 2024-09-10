@@ -412,6 +412,7 @@ Route::middleware('auth')->group(function () {
         Route::post('delete-scanned-barcode', [IadController::class, 'removeScannedGc'])->name('remove.scanned.gc');
         Route::post('validate-barcode', [IadController::class, 'validateBarcode'])->name('validate.barcode');
         Route::post('submit-setup', [IadController::class, 'submitSetup'])->name('submit.setup');
+        Route::get('received-gc',  [IadController::class, 'receivedGc'])->name('view.received');
 
         Route::prefix('special-external-gc-request')->name('special.external.')->group(function () {
             Route::get('view-approved-gc', [SpecialExternalGcRequestController::class, 'approvedGc'])->name('approvedGc');
