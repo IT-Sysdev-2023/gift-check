@@ -24,14 +24,13 @@ use App\Models\TempReceivestore;
 use App\Models\TransactionRevalidation;
 use Illuminate\Support\Facades\Date;
 use App\Services\RetailStore\RetailDbServices;
-use Clue\Redis\Protocol\Model\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class RetailServices
 {
-    public function __construct(public RetailDbServices $dbservices)
-    {
-    }
+    public function __construct(public RetailDbServices $dbservices) {}
     public function getDataApproved()
     {
         $data = ApprovedGcrequest::select(
@@ -667,5 +666,52 @@ class RetailServices
     public static function appSetting($column)
     {
         return AppSetting::where('app_tablename', $column)->first()->app_settingvalue;
+    }
+
+    public function availableGcList(Request $request)
+    {
+        $denom = Denomination::where('denom_status', 'active')->get();
+
+        $gc = StoreReceivedGc::where('strec_storeid', $request->user()->store_assigned)
+            ->when($request->id !== null, function ($query) use ($request) {
+                return $query->where('strec_denom', $request->id);
+            })
+            ->when($request->barcode !== null, function ($query) use ($request) {
+                return $query->where('strec_barcode', $request->barcode);
+            })
+            ->join('denomination', 'denomination.denom_id', '=', 'store_received_gc.strec_denom')
+            ->where('denomination.denom_status', 'active')
+            ->paginate(10)
+            ->withQueryString();
+
+
+        return Inertia::render('Retail/AvailableGcTable', [
+            'denom' => $denom,
+            'gc' => $gc
+        ]);
+    }
+
+    public function getAvailableGC()
+    {
+        $counts = [];
+        $denoms = Denomination::where('denom_type', 'RSGC')
+            ->where('denom_status', 'active')
+            ->get();
+
+        foreach ($denoms as $denom) {
+            $availableGcCount = StoreReceivedGc::where('strec_storeid', request()->user()->store_assigned)
+                ->where('strec_denom', $denom->denom_id)
+                ->where('strec_sold', '')
+                ->where('strec_transfer_out', '')
+                ->where('strec_bng_tag', '')
+                ->count();
+            $counts[$denom->denom_id] = $availableGcCount;
+        }
+        foreach ($denoms as $denom) {
+            $denom->count = $counts[$denom->denom_id] ?? 0;
+        }
+
+
+        return $denoms;
     }
 }
