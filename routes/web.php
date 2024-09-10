@@ -372,6 +372,7 @@ Route::prefix('retail')->group(function () {
             Route::get('verification-index', [RetailController::class, 'verificationIndex'])->name('index');
             Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
         });
+        Route::get('AvailableGc',[RetailController::class, 'availableGcList'])->name('availableGcList');
     });
 });
 Route::prefix('retailgroup')->group(function () {
