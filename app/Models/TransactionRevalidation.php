@@ -12,4 +12,8 @@ class TransactionRevalidation extends Model
     protected $table= 'transaction_revalidation';
 
     protected $primaryKey= 'reval_id';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }

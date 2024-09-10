@@ -68,7 +68,7 @@ class IadController extends Controller
 
     public function submitSetup(Request $request)
     {
-
+        // dd();
         return $this->iadServices->submitSetupFunction($request);
     }
 
@@ -87,6 +87,15 @@ class IadController extends Controller
             'document' => $this->iadServices->getDocuments($id),
             'barcodes' => $this->iadServices->specialBarcodes($id),
             'approved' => $this->iadServices->approvedRequest($id),
+        ]);
+    }
+
+    public  function receivedGc()
+    {
+        // dd(1);
+        return inertia('Iad/ReceivedGcIndex', [
+            'record' => $this->iadServices->getReceivedGc(),
+            'columns' => ColumnHelper::$received_gc_index_columns,
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Iad;
 
+use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
 use App\Models\CustodianSrr;
 use App\Models\CustodianSrrItem;
@@ -234,9 +235,10 @@ class IadServices
     }
     public function submitSetupFunction($request)
     {
-
-        $request->validate([
+// dd($request->all());
+       $request->validate([
             'select' => 'required',
+            'scanned' => 'required',
         ]);
 
         $create =  DB::transaction(function () use ($request) {
@@ -359,13 +361,34 @@ class IadServices
 
     public function approvedRequest($id)
     {
-
-
-        return ApprovedRequest::select('reqap_date', 'reqap_id', 'reqap_preparedby','reqap_remarks')
+        return ApprovedRequest::select('reqap_date', 'reqap_id', 'reqap_preparedby', 'reqap_remarks')
             ->with('user:user_id,lastname,firstname')
             ->where('reqap_trid', $id)
             ->where('reqap_approvedtype', 'special external gc review')
             ->first();
+    }
 
+    public function getReceivedGc()
+    {
+        $data = CustodianSrr::select('csrr_id', 'csrr_receivetype', 'csrr_datetime','csrr_prepared_by','csrr_requisition')
+            ->with(
+                'user:user_id,firstname,lastname',
+                'requisition:requis_id,requis_supplierid,requis_erno',
+                'requisition.supplier:gcs_id,gcs_companyname'
+            )
+            ->orderByDesc('csrr_id')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->recnumber = NumberHelper::leadingZero($item->csrr_id, '%03d');
+            $item->requisno = $item->requisition->requis_erno;
+            $item->date = Date::parse($item->csrr_datetime)->toFormattedDateString();
+            $item->companyname = $item->requisition->supplier->gcs_companyname;
+            $item->fullname = $item->user->full_name ?? null;
+            return $item;
+        });
+
+        return $data;
     }
 }

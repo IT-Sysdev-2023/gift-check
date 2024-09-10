@@ -53,11 +53,11 @@
                     {{ form.processing ? 'Verifieng Barcode...' : 'Verify Barcode' }}
                 </a-button>
                 <!-- {{ notif.data }} -->
-                <a-alert v-if="notif.status" :message="notif.title" class="mb-1 mt-2" :type="notif.status" show-icon />
+                <a-alert v-if="notif.status" :message="notif.msg" class="mb-1 mt-2" :type="notif.status" show-icon />
                 <a-card v-if="notif.error == 'lost'" class="mt-5"
                     style="background-color: rgba(255, 0, 0, 0.1); border: solid 1px rgba(255, 0, 0, 0.6);">
                     <p class="text-center font-bold">
-                        {{ notif.title }}
+                        {{ notif.msg }}
                     </p>
                     <p>
                         Issue: Barcode # <span class="font-bold">{{ notif.data.lostgcb_barcode }}</span> was reported as

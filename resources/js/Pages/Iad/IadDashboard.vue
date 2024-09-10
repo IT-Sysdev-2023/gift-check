@@ -19,14 +19,14 @@
             <a-col :span="8">
                 <GcReceiving
                     :countPending="count.countReceiving"
-                    :recrev="count.reviewedCount"
+                    :recrev="count.receivedcount"
                     title="Internal GC"
                     containerTitle1="GC Receiving"
                     containerTitle2="GC Received"
                     containerDesc1="For receving gift cheque"
                     containerDesc2="Received Gift Check"
                     @container1-event="gcReceiving"
-
+                    @container2-event="gcReceived"
                 />
             </a-col>
         </a-row>
@@ -48,5 +48,8 @@ const gcReceiving = () => {
 
 const gcReviewed = () => {
     router.get(route("iad.reviewed.gc.special.review"));
+};
+const gcReceived = () => {
+    router.get(route("iad.view.received"));
 };
 </script>

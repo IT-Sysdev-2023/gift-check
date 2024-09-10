@@ -7,8 +7,9 @@
             </a-button>
         </div>
         <a-row :gutter="[16, 16]">
-
             <a-col :span="10">
+                <a-alert v-if="errors.scanned" :message="errors.scanned" type="error" show-icon class="mb-2"/>
+
                 <a-descriptions size="small" class="mb-0 text-center" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="Received No.">{{ recnum }}</a-descriptions-item>
                 </a-descriptions>
