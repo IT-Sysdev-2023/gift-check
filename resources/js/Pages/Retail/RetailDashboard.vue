@@ -8,7 +8,7 @@
                 <AvailableGc :availableGc/>
             </a-col>
             <a-col :span="8">
-                {{ availableGc }}
+
             </a-col>
         </a-row>
     </AuthenticatedLayout>

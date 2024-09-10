@@ -1,7 +1,7 @@
 <template>
     <div>
         <a-card title="Available GC">
-            <a-table bordered :dataSource="availableGc" :columns="columns" :pagination="false" />
+            <a-table size="small" bordered :dataSource="availableGc" :columns="columns" :pagination="false" />
             <div>
                 <div class="flex justify-end mt-2">
                     <a-button @click="() => $inertia.get(route('retail.availableGcList'))" type="primary">
