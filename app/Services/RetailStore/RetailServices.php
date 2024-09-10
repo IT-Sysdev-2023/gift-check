@@ -29,7 +29,9 @@ use Illuminate\Support\Facades\DB;
 
 class RetailServices
 {
-    public function __construct(public RetailDbServices $dbservices) {}
+    public function __construct(public RetailDbServices $dbservices)
+    {
+    }
     public function getDataApproved()
     {
         $data = ApprovedGcrequest::select(
@@ -260,15 +262,15 @@ class RetailServices
 
         $storeName = Store::where('store_id', $request->user()->store_assigned)->first()->store_name;
 
-        $data = (object)[
-            'cledger_no' => str_pad((int)$lnumber + 1, strlen($lnumber), '0', STR_PAD_LEFT),
-            'sledger_no' => str_pad((int)$sledger_no + 1, strlen($sledger_no), '0', STR_PAD_LEFT),
+        $data = (object) [
+            'cledger_no' => str_pad((int) $lnumber + 1, strlen($lnumber), '0', STR_PAD_LEFT),
+            'sledger_no' => str_pad((int) $sledger_no + 1, strlen($sledger_no), '0', STR_PAD_LEFT),
             'storename' => $storeName,
             'recnumid' => $lastIdRecnum,
             'gcs' => $gcs,
         ];
 
-        $transaction =  DB::transaction(function () use ($request, $data) {
+        $transaction = DB::transaction(function () use ($request, $data) {
 
             $this->dbservices
                 ->storeIntoLedgerCheck($request, $data)
@@ -474,14 +476,14 @@ class RetailServices
                 } else {
                     if ($verifyGC) {
                         $this->dbservices->storeInStoreVerification($request, $data);
-                         $this->dbservices->createtextfile($request, $data);
+                        $this->dbservices->createtextfile($request, $data);
                         // if ($result) {
                         //     $this->dbservices->createtextfileSecondaryPath($request, $data);
                         // }
 
                         return back()->with([
                             'msg' => 'GC Barcode # ' . $request->barcode . ' verified successfully.',
-                            'title' => 'Success Verified Denomination : ' . $denom ,
+                            'title' => 'Success Verified Denomination : ' . $denom,
                             'status' => 'success',
                         ]);
                     }
@@ -496,7 +498,7 @@ class RetailServices
         }
     }
 
-    public  function promotionalServices($request, $verifyGC, $data, $lostgc)
+    public function promotionalServices($request, $verifyGC, $data, $lostgc)
     {
         $dtrelease = PromogcReleased::where('prgcrel_barcode', $request->barcode)->first()->prgcrel_at;
 
@@ -511,7 +513,8 @@ class RetailServices
                 'msg' => 'Sorry the Promo Gift Check is Expired!.',
                 'title' => 'Expired'
             ]);
-        };
+        }
+        ;
 
         if (!empty($lostgc) && empty($lostgc->lostgcb_status)) {
 
@@ -533,7 +536,8 @@ class RetailServices
                 if ($result) {
                     $this->dbservices->createtextfileSecondaryPath($request, $data);
                 }
-            };
+            }
+            ;
 
             return back()->with([
                 'msg' => 'GC Barcode # ' . $request->barcode . ' verified successfully.',
@@ -611,16 +615,18 @@ class RetailServices
                         'error' => 'revalidated',
                         'data' => $revalidated
                     ]);
-                };
+                }
+                ;
             } else {
                 return back()->with([
                     'msg' => 'Invalid Customer Information',
-                    'title' => 'Its seems like customer didnt match, Customer: ' .  $this->customerName($recent),
+                    'title' => 'Its seems like customer didnt match, Customer: ' . $this->customerName($recent),
                     'status' => 'error',
                     'error' => 'invalidcustomer',
                     'data' => $revalidated,
                 ]);
-            };
+            }
+            ;
         }
     }
 
@@ -661,4 +667,31 @@ class RetailServices
     {
         return AppSetting::where('app_tablename', $column)->first()->app_settingvalue;
     }
+
+    public function getAvailableGC()
+    {
+        $counts = [];
+        $denoms = Denomination::where('denom_type', 'RSGC')
+            ->where('denom_status', 'active')
+            ->get();
+
+        foreach ($denoms as $denom) {
+            $availableGcCount = StoreReceivedGc::where('strec_storeid', request()->user()->store_assigned)
+                ->where('strec_denom', $denom->denom_id)
+                ->where('strec_sold', '')
+                ->where('strec_transfer_out', '')
+                ->where('strec_bng_tag', '')
+                ->count();
+            $counts[$denom->denom_id] = $availableGcCount;
+        }
+        foreach ($denoms as $denom) {
+            $denom->count = $counts[$denom->denom_id] ?? 0; 
+        }
+
+        
+       return $denoms;
+    }
+
+
+
 }
