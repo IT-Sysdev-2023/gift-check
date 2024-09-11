@@ -58,26 +58,25 @@ Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.da
 //Dashboards
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard');
+    Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard')->middleware('userType:treasury');
 
-    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard');
-    Route::get('retailgroup-dashboard', [RetailGroupController::class, 'index'])->name('retailgroup.dashboard');
+    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard')->middleware('userType:retail');
+    
+    Route::get('retailgroup-dashboard', [RetailGroupController::class, 'index'])->name('retailgroup.dashboard')->middleware('userType:retailgroup');
 
-    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
+    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard')->middleware('userType:accounting');
 
-    Route::get('finance-dashboard', [FinanceController::class, 'index'])->name('finance.dashboard');
+    Route::get('finance-dashboard', [FinanceController::class, 'index'])->name('finance.dashboard')->middleware('userType:finance');
 
-    Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard');
+    Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard')->middleware('userType:iad');
 
-    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
+    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard')->middleware('userType:custodian');
 
-    Route::get('eod-dashboard', [EodController::class, 'index'])->name('eod.dashboard');
+    Route::get('eod-dashboard', [EodController::class, 'index'])->name('eod.dashboard')->middleware('userType:eod');
 
+    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing');
 
-    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
-
-
-    Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard')->middleware('userType:admin');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -191,7 +190,7 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 
 
 //Treasury
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'userType:treasury'])->group(function () {
     Route::prefix('treasury')->group(function () {
         Route::name('treasury.')->group(function () {
             Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
@@ -343,7 +342,7 @@ Route::prefix('finance')->group(function () {
         $filePath = storage_path('app/' . $filename);
         return response()->download($filePath);
     })->name('download');
-});
+})->middleware('userType:finance');
 
 // retailstore
 Route::prefix('retail')->group(function () {
@@ -372,7 +371,7 @@ Route::prefix('retail')->group(function () {
             Route::get('verification-index', [RetailController::class, 'verificationIndex'])->name('index');
             Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
         });
-        Route::get('AvailableGc',[RetailController::class, 'availableGcList'])->name('availableGcList');
+        Route::get('AvailableGc', [RetailController::class, 'availableGcList'])->name('availableGcList');
     });
 });
 Route::prefix('retailgroup')->group(function () {
@@ -417,7 +416,7 @@ Route::middleware('auth')->group(function () {
         Route::post('delete-scanned-barcode', [IadController::class, 'removeScannedGc'])->name('remove.scanned.gc');
         Route::post('validate-barcode', [IadController::class, 'validateBarcode'])->name('validate.barcode');
         Route::post('submit-setup', [IadController::class, 'submitSetup'])->name('submit.setup');
-        Route::get('received-gc',  [IadController::class, 'receivedGc'])->name('view.received');
+        Route::get('received-gc', [IadController::class, 'receivedGc'])->name('view.received');
 
         Route::prefix('special-external-gc-request')->name('special.external.')->group(function () {
             Route::get('view-approved-gc', [SpecialExternalGcRequestController::class, 'approvedGc'])->name('approvedGc');
