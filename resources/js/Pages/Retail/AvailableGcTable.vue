@@ -8,7 +8,7 @@
                             <a-col :span="row" v-for="(item, index) in denom" :key="index">
                                 <a-button type="primary" @click="denomId(item.denom_id)" class="mx-2">{{
                                     item.denomination
-                                }}</a-button>
+                                    }}</a-button>
                             </a-col>
                         </a-row>
                     </a-card>
@@ -16,13 +16,23 @@
                 <a-col :span="8">
                     <div>
                         <div class="flex justify-end ml-2">
-                            <a-input-search show-count type="number" placeholder="Search Barcode" style="width: 100%" @search="onSearch" />
+                            <a-input-search show-count type="number" placeholder="Search Barcode" style="width: 100%"
+                                @search="onSearch" />
                         </div>
                     </div>
                 </a-col>
             </a-row>
             <a-card>
-                <a-table bordered :pagination="false" size="small" :dataSource="gc.data" :columns="columns" />
+                <a-table bordered :pagination="false" size="small" :dataSource="gc.data" :columns="columns">
+                    <template v-slot:bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'strec_barcode'">
+                            <BarcodeOutlined /> {{record.strec_barcode}}
+                        </template>
+                        <template v-if="column.dataIndex === 'denomination'">
+                            <a-tag color="#87d068">{{ record.denomination }}</a-tag>
+                        </template>
+                    </template>
+                </a-table>
                 <Pagination :datarecords="gc" class="mt-4" />
             </a-card>
         </a-card>
@@ -53,7 +63,7 @@ export default {
                 },
                 {
                     title: 'Request No.',
-                    dataIndex: 'strec_id',
+                    dataIndex: 'sgc_num',
                 },
             ],
         }
