@@ -59,7 +59,7 @@ class UploadFileHandler
         }
     }
 
-    protected function saveMultiFiles(Request $request, $id)
+    protected function saveMultiFiles(Request $request, $id, callable $callback)
     {
         
         if ($request->hasFile('file')) {
@@ -67,11 +67,7 @@ class UploadFileHandler
                 $name = $this->getOriginalFileName($request, $image);
                 $path = $this->disk->putFileAs($this->folder(), $image, $name);
 
-                Document::create([
-                    'doc_trid' => $id,
-                    'doc_type' => 'Special External GC Request',
-                    'doc_fullpath' => $path
-                ]);
+                $callback($id, $path, $image, $name);
             }
         }
     }

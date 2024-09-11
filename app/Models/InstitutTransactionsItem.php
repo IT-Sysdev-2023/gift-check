@@ -10,7 +10,8 @@ class InstitutTransactionsItem extends Model
     use HasFactory;
 
     protected $primaryKey = 'instituttritems_id';
-
+    protected $guarded = [];
+    public $timestamps = false;
     public function reverified(){
         return $this->belongsTo(StoreVerification::class, 'instituttritems_barcode', 'vs_barcode');
     }

@@ -3,6 +3,7 @@
 namespace App\Services\Treasury\Transactions;
 
 use App\Helpers\NumberHelper;
+use App\Models\Document;
 use App\Models\SpecialExternalCustomer;
 use App\Services\Documents\UploadFileHandler;
 use Illuminate\Http\Request;
@@ -48,7 +49,13 @@ class SpecialGcPaymentService extends UploadFileHandler
             $listOfDenom = $this->denominationStore($request, $latestId);
 
             //save scan image uploaded
-            $this->saveMultiFiles($request, $latestId);
+            $this->saveMultiFiles($request, $latestId, function ($id, $path) {
+                Document::create([
+                    'doc_trid' => $id,
+                    'doc_type' => 'Special External GC Request',
+                    'doc_fullpath' => $path
+                ]);
+            });
 
             return $this->dataForPdf($request, $listOfDenom);
         });
