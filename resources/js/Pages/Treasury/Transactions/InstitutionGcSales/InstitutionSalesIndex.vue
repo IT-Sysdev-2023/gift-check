@@ -272,7 +272,7 @@ const onSubmit = () => {
         }))
         .post(route("treasury.transactions.institution.gc.sales.submission"), {
             onSuccess: ({ props }) => {
-                openLeftNotification(props.flash);
+                openLeftNotification(props.flash, 'Institution Gc Sales');
                 if(props.flash.success){
                     stream.value = `data:application/pdf;base64,${props.flash.stream}`;
                     openIframe.value = true;

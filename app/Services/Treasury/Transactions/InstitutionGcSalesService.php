@@ -276,7 +276,7 @@ class InstitutionGcSalesService extends UploadFileHandler
 
                 $stream = base64_encode($pdf->output());
 
-                return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
+                return redirect()->back()->with(['stream' => $stream, 'success' => 'Submission success']);
             } else {
                 return redirect()->back()->with('error', 'Customer doesnt exist!');
             }
