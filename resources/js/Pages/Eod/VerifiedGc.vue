@@ -22,10 +22,8 @@
                     </a-collapse-panel>
                 </a-collapse>
             </div>
-
-
             <div class="flex justify-end">
-                <a-button class="mb-3" @click="submit">
+                <a-button class="mb-3" @click="submit" v-if="record.data.length">
                     <template #icon>
                         <SettingOutlined />
                     </template>

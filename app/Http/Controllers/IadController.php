@@ -11,14 +11,14 @@ use Illuminate\Http\Request;
 
 class IadController extends Controller
 {
-    public function __construct(public IadServices $iadServices , public DashboardClass $dashboardClass) {}
+    public function __construct(public IadServices $iadServices, public DashboardClass $dashboardClass) {}
 
     public function index()
     {
         // numRowsWhereTwo($link,'special_external_gcrequest','spexgc_id','spexgc_status','spexgc_reviewed','approved','')
-        $approvedGc = SpecialExternalGcrequest::where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])->count();
+
         return inertia('Iad/IadDashboard', [
-            'approvedGc' => $approvedGc
+            'count' => $this->dashboardClass->iadDashboard()
         ]);
     }
 
@@ -63,13 +63,39 @@ class IadController extends Controller
     }
     public function validateBarcode(Request $request)
     {
-       return $this->iadServices->validateBarcodeFunction($request);
-
+        return $this->iadServices->validateBarcodeFunction($request);
     }
 
     public function submitSetup(Request $request)
     {
-
+        // dd();
         return $this->iadServices->submitSetupFunction($request);
+    }
+
+    public function reviewedGcIndex()
+    {
+        return inertia('Iad/ReviewedGc', [
+            'record' => $this->iadServices->getReviewedGc(),
+            'columns' => ColumnHelper::$review_gc_columns,
+        ]);
+    }
+
+    public function reviewDetails($id)
+    {
+        return inertia('Iad/ReviewDetails', [
+            'record' => $this->iadServices->getReviewedDetails($id),
+            'document' => $this->iadServices->getDocuments($id),
+            'barcodes' => $this->iadServices->specialBarcodes($id),
+            'approved' => $this->iadServices->approvedRequest($id),
+        ]);
+    }
+
+    public  function receivedGc()
+    {
+        // dd(1);
+        return inertia('Iad/ReceivedGcIndex', [
+            'record' => $this->iadServices->getReceivedGc(),
+            'columns' => ColumnHelper::$received_gc_index_columns,
+        ]);
     }
 }

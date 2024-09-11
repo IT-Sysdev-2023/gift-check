@@ -7,6 +7,7 @@ use App\Http\Requests\PurchaseOrderRequest;
 use App\Models\Gc;
 use App\Models\PromoGcReleaseToItem;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\User;
 use App\Services\Admin\AdminServices;
 use App\Services\Admin\DBTransaction;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,11 +17,16 @@ use Inertia\Inertia;
 
 class AdminController extends Controller
 {
-    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction) {}
+    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction)
+    {
+    }
 
     public function index()
     {
-        return inertia('Admin/AdminDashboard');
+        $users = User::count();
+        return inertia('Admin/AdminDashboard', [
+            'users' => $users
+        ]);
     }
     //
     public function statusScanner(Request $request)
@@ -42,7 +48,9 @@ class AdminController extends Controller
     {
         return Inertia::render('Admin/ScanGcStatuses');
     }
-    public function barcodeStatus() {}
+    public function barcodeStatus()
+    {
+    }
 
 
 
@@ -63,4 +71,55 @@ class AdminController extends Controller
 
         return $this->dBTransaction->createPruchaseOrders($request, $denomination);
     }
+
+    public function userlist()
+    {
+
+        $users = User::select(
+            'users.user_id',
+            'users.emp_id',
+            'users.username',
+            'users.firstname',
+            'users.lastname',
+            'users.login',
+            'users.user_status',
+            'users.date_created',
+            'access_page.title',
+            'stores.store_name'
+        )
+            ->join('access_page', 'users.usertype', '=', 'access_page.access_no')
+            ->leftJoin('stores', 'users.store_assigned', '=', 'stores.store_id')
+            ->orderByDesc('users.user_id')
+            ->Paginate(10)
+            ->withQueryString();
+        $users->transform(function ($item) {
+
+            $item->status = $item->user_status == 'active' ? true : false;
+            return $item;
+        });
+
+        return Inertia::render('Admin/Masterfile/Users', [
+            'users' => $users
+        ]);
+    }
+
+    public function updateStatus(Request $request)
+    {
+  
+        $user = User::where('user_id',$request->id)->first();
+
+        if ($user) {
+            User::where('user_id',$request->id)
+            ->update([
+                'user_status' => $user['user_status'] == 'active' ? 'inactive' : 'active'
+            ]);
+
+            return back()->with([
+                'type' => 'success',
+                'msg' => 'Updated',
+                'description' => 'Status updated successfully'
+            ]);
+        }
+    }
+
 }

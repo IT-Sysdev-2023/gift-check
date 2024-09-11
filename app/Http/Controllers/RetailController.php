@@ -8,6 +8,7 @@ use App\Models\Denomination;
 use App\Models\GcLocation;
 use App\Models\Store;
 use App\Models\StoreGcrequest;
+use App\Models\StoreReceivedGc;
 use App\Models\StoreRequestItem;
 use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
@@ -36,11 +37,14 @@ class RetailController extends Controller
 
         $gcRequest = [
             'PendingGcRequest' => $this->retail->GcPendingRequest()->count(),
-            'approved' =>  $counts['approved'],
+            'approved' => $counts['approved'],
         ];
 
+        $getAvailableGc = $this->retail->getAvailableGC();
+
         return inertia('Retail/RetailDashboard', [
-            'countGcRequest' => $gcRequest
+            'countGcRequest' => $gcRequest,
+            'availableGc' => $getAvailableGc
         ]);
     }
 
@@ -276,8 +280,35 @@ class RetailController extends Controller
     public function submitVerify(Request $request)
     {
 
-       return  $this->retail->submitVerify($request);
+        return $this->retail->submitVerify($request);
 
+    }
+    public function availableGcList(Request $request)
+    {
+        $denom = Denomination::where('denom_status', 'active')->get();
+
+        $gc = StoreReceivedGc::where('strec_storeid', $request->user()->store_assigned)
+            ->when($request->id !== null, function ($query) use ($request) {
+                return $query->where('strec_denom', $request->id);
+            })
+            ->when($request->barcode !== null, function ($query) use ($request) {
+                return $query->where('strec_barcode', $request->barcode);
+            })
+            ->join('gc_release', 'gc_release.re_barcode_no', '=', 'store_received_gc.strec_barcode')
+            ->join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'gc_release.rel_storegcreq_id')
+            ->join('denomination', 'store_received_gc.strec_denom', '=', 'denomination.denom_id')
+            ->leftJoin('transaction_refund', 'transaction_refund.refund_barcode', '=', 'store_received_gc.strec_barcode')
+            ->leftJoin('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_refund.refund_trans_id')
+            ->where('store_received_gc.strec_sold', '')
+            ->where('store_received_gc.strec_transfer_out', '')
+            ->where('store_received_gc.strec_bng_tag', '')
+            ->orderByDesc('transaction_refund.refund_id')
+            ->paginate(10)
+            ->withQueryString();
+        return Inertia::render('Retail/AvailableGcTable', [
+            'denom' => $denom,
+            'gc' => $gc
+        ]);
     }
 
 }

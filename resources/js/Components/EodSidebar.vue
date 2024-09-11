@@ -5,15 +5,19 @@ import { usePage } from "@inertiajs/vue3";
 const page = usePage<PageWithSharedProps>().props;
 </script>
 <template>
-    <a-menu-item key="customerSetup">
+    <a-menu-item key="eod.dashboard">
         <DashboardOutlined />
-        <span>Dashboard</span>
+        <span>
+            <Link :href="route('eod.dashboard')">
+            Dashboard
+            </Link>
+        </span>
     </a-menu-item>
     <a-menu-item key="customerSetup">
         <BankOutlined />
         <span>
             <Link :href="route('eod.verified.gc')">
-                Store Eod
+            Store Eod
             </Link>
         </span>
     </a-menu-item>

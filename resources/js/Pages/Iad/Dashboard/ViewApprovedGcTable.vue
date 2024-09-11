@@ -62,8 +62,7 @@
                             }}</a-descriptions-item>
                         <a-descriptions-item label="Documents" :labelStyle="{ fontWeight: 'bold' }"
                             v-if="records.document">
-                            {{ records.document }}
-                            <ant-image-preview :images="records.document" />
+                            <ant-image-preview :images="records?.document" />
                         </a-descriptions-item>
                         <a-descriptions-item label="Prepared By" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.approvedRequest.user.full_name

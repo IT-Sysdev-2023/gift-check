@@ -49,6 +49,10 @@ Route::get('/not-found', function () {
     return 'Empty';
 })->name('not.found');
 
+Route::fallback(function () {
+    return view('notFound');
+});
+
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
 //Dashboards
@@ -94,6 +98,10 @@ Route::prefix('admin')->group(function () {
         Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
         Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
         Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
+        Route::name('masterfile.')->group(function () {
+            Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
+            Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
+        });
     });
 });
 
@@ -136,10 +144,10 @@ Route::prefix('marketing')->group(function () {
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
-        Route::name('promoGcRequest.')->group(function (){
-            Route::get('promo-pending-list',[MarketingController::class, 'promoPendinglist'])->name('pending.list');
-            Route::get('selected-promo-pending-request',[MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
-            Route::post('submit',[MarketingController::class, 'submitUpdate'])->name('submit');
+        Route::name('promoGcRequest.')->group(function () {
+            Route::get('promo-pending-list', [MarketingController::class, 'promoPendinglist'])->name('pending.list');
+            Route::get('selected-promo-pending-request', [MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
+            Route::post('submit', [MarketingController::class, 'submitUpdate'])->name('submit');
         });
     });
 });
@@ -279,7 +287,6 @@ Route::middleware('auth')->group(function () {
                     Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
                     Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                 });
-
             });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
@@ -299,6 +306,7 @@ Route::prefix('eod')->group(function () {
     Route::name('eod.')->group(function () {
         Route::get('eod-verified-gc', [EodController::class, 'eodVerifiedGc'])->name('verified.gc');
         Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
+        Route::get('list', [EodController::class, 'list'])->name('list');
     });
 });
 
@@ -329,7 +337,6 @@ Route::prefix('finance')->group(function () {
             Route::get('budget-setup', [FinanceController::class, 'setupBudget'])->name('setup');
             Route::post('budget-submit', [FinanceController::class, 'submitBudget'])->name('submit');
         });
-
     });
 
     Route::get('/download/{filename}', function ($filename) {
@@ -365,7 +372,7 @@ Route::prefix('retail')->group(function () {
             Route::get('verification-index', [RetailController::class, 'verificationIndex'])->name('index');
             Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
         });
-
+        Route::get('AvailableGc',[RetailController::class, 'availableGcList'])->name('availableGcList');
     });
 });
 Route::prefix('retailgroup')->group(function () {
@@ -410,6 +417,7 @@ Route::middleware('auth')->group(function () {
         Route::post('delete-scanned-barcode', [IadController::class, 'removeScannedGc'])->name('remove.scanned.gc');
         Route::post('validate-barcode', [IadController::class, 'validateBarcode'])->name('validate.barcode');
         Route::post('submit-setup', [IadController::class, 'submitSetup'])->name('submit.setup');
+        Route::get('received-gc',  [IadController::class, 'receivedGc'])->name('view.received');
 
         Route::prefix('special-external-gc-request')->name('special.external.')->group(function () {
             Route::get('view-approved-gc', [SpecialExternalGcRequestController::class, 'approvedGc'])->name('approvedGc');
@@ -419,6 +427,11 @@ Route::middleware('auth')->group(function () {
             Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
 
             Route::get('gc-reprint-{id}', [SpecialExternalGcRequestController::class, 'reprint'])->name('reprint');
+        });
+
+        Route::prefix('reviewed-gc')->name('reviewed.gc.')->group(function () {
+            Route::get('review-index', [IadController::class, 'reviewedGcIndex'])->name('special.review');
+            Route::get('review-datails-{id}', [IadController::class, 'reviewDetails'])->name('details');
         });
     });
 });
