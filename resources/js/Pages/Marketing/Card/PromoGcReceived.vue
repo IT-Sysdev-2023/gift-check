@@ -1,10 +1,10 @@
 <template>
     <a-card title="GC Production Request">
         <div class="cards">
-            <div class="card red" :class="{ 'cursor-pointer': gcProductionRequest.pendingRequest >= 1 }"
-                @click="gcProductionRequest.pendingRequest >= 1 ? $inertia.get(route('marketing.pendingRequest.pending.request')) : null">
+            <div class="card red">
                 <a-row class="w-full">
-                    <a-col :span="4"></a-col>
+                    <a-col :span="4">
+                    </a-col>
                     <a-col :span="12">
                         <div class="flex justify-end">
                             <p class="tip">Pending Request</p>
@@ -12,15 +12,15 @@
                     </a-col>
                     <a-col :span="6">
                         <div class="flex justify-end">
-                            <p class="tip">{{ gcProductionRequest.pendingRequest }}</p>
+                            <p class="tip">3</p>
                         </div>
                     </a-col>
                 </a-row>
             </div>
-            <div class="card blue" :class="{ 'cursor-pointer': gcProductionRequest.approvedRequest >= 1 }"
-                @click="gcProductionRequest.approvedRequest >= 1 ? $inertia.get(route('marketing.approvedRequest.approved.request')) : null">
+            <div class="card blue">
                 <a-row class="w-full">
-                    <a-col :span="4"></a-col>
+                    <a-col :span="4">
+                    </a-col>
                     <a-col :span="12">
                         <div class="flex justify-end">
                             <p class="tip">Approved Request</p>
@@ -28,7 +28,7 @@
                     </a-col>
                     <a-col :span="6">
                         <div class="flex justify-end">
-                            <p class="tip">{{ gcProductionRequest.approvedRequest }}</p>
+                            <p class="tip">6</p>
                         </div>
                     </a-col>
                 </a-row>
@@ -44,7 +44,7 @@
                     </a-col>
                     <a-col :span="6">
                         <div class="flex justify-end">
-                            <p class="tip">{{ gcProductionRequest.cancelledRequest }}</p>
+                            <p class="tip">5</p>
                         </div>
                     </a-col>
                 </a-row>
@@ -53,15 +53,11 @@
     </a-card>
 </template>
 
-
 <script>
 export default {
-    props: {
-        gcProductionRequest: Object
-    }
+
 }
 </script>
-
 
 <style scoped>
 .cards {

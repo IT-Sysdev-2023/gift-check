@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: typeof import('ant-design-vue/es')['Alert']
+    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
@@ -248,6 +249,7 @@ declare module 'vue' {
     ProgressHeader: typeof import('./resources/js/Components/Finance/ProgressHeader.vue')['default']
     PromoForApproval: typeof import('./resources/js/Pages/Finance/Cards/PromoForApproval.vue')['default']
     PromoGCCard: typeof import('./resources/js/Pages/Finance/Cards/PromoGCCard.vue')['default']
+    PromoGcReceived: typeof import('./resources/js/Pages/Marketing/Card/PromoGcReceived.vue')['default']
     PromoGcReleasingIndex: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/PromoGcReleasingIndex.vue')['default']
     PromoGcReleasingModal: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/Components/PromoGcReleasingModal.vue')['default']
     PromoGcReq: typeof import('./resources/js/Pages/Marketing/Card/PromoGcReq.vue')['default']
@@ -304,6 +306,7 @@ declare module 'vue' {
     SetupRecommendation: typeof import('./resources/js/Pages/RetailGroup/SetupRecommendation.vue')['default']
     SmileTwoTone: typeof import('@ant-design/icons-vue')['SmileTwoTone']
     SpecialExGcRequest: typeof import('./resources/js/Pages/Iad/Cards/SpecialExGcRequest.vue')['default']
+    SpecialExternalGc: typeof import('./resources/js/Pages/Marketing/Card/SpecialExternalGc.vue')['default']
     SpecialExternalGcRequest: typeof import('./resources/js/Pages/Custodian/Cards/SpecialExternalGcRequest.vue')['default']
     SpecialExtPayment: typeof import('./resources/js/Pages/Treasury/Transactions/SpecialGcPayment/SpecialExtPayment.vue')['default']
     SpecialGcApprovalForm: typeof import('./resources/js/Pages/Finance/SpecialGcApprovalForm.vue')['default']
