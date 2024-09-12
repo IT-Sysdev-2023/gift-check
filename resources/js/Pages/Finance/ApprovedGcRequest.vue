@@ -1,14 +1,21 @@
 <template>
-    <a-table :dataSource="data" :columns="columns">
-        <template v-slot:bodyCell="{ column, record }">
-            <template v-if="column.dataIndex === 'View'">
-                <a-button type="primary" @click="approvedSpexGcDetails(record)">
-                    <PicLeftOutlined />View
-                </a-button>
+    <a-card>
+        <div class="flex justify-end">
+            <a-button @click="() => $inertia.visit(route('finance.dashboard'))" class="mb-2">
+                <RollbackOutlined />
+                Back to Dashboard
+            </a-button>
+        </div>
+        <a-table :dataSource="data" :columns="columns" bordered size="small">
+            <template v-slot:bodyCell="{ column, record }">
+                <template v-if="column.dataIndex === 'View'">
+                    <a-button type="primary" @click="approvedSpexGcDetails(record)">
+                        <PicLeftOutlined />View
+                    </a-button>
+                </template>
             </template>
-        </template>
-    </a-table>
-
+        </a-table>
+    </a-card>
     <a-modal v-model:open="open" width="95%" style="top: 65px;" title="Approved Special External Gc" @ok="handleOk">
         <a-row :gutter="[16, 16]">
             <a-col :span="6">
@@ -76,7 +83,7 @@ export default {
     props: {
         data: Object,
         columns: Object,
-        selectedGcData:Object
+        selectedGcData: Object
     },
     data() {
         return {
@@ -87,9 +94,9 @@ export default {
     methods: {
         approvedSpexGcDetails(data) {
             this.open = true;
-            this.$inertia.get(route('finance.approvedGc.approved'),{
+            this.$inertia.get(route('finance.approvedGc.approved'), {
                 id: data.spexgc_id
-            },{
+            }, {
                 preserveState: true
             })
         }

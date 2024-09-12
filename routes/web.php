@@ -329,6 +329,8 @@ Route::prefix('finance')->group(function () {
             Route::get('budget-pending', [FinanceController::class, 'budgetPendingIndex'])->name('pending');
             Route::get('budget-setup', [FinanceController::class, 'setupBudget'])->name('setup');
             Route::post('budget-submit', [FinanceController::class, 'submitBudget'])->name('submit');
+            Route::get('approved-budget', [FinanceController::class, 'approvedBudget'])->name('approved');
+            Route::get('approved-budget-details-{id}', [FinanceController::class, 'approvedBudgetDetails'])->name('approved.details');
         });
     });
 
@@ -438,7 +440,6 @@ Route::prefix('search')->group(function () {
 });
 Route::prefix('management')->group(function () {
     Route::name('manager.')->group(function () {
-        Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
         Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
     });
 });

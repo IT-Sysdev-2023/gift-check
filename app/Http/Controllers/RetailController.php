@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Models\Assignatory;
 use App\Models\Denomination;
 use App\Models\GcLocation;
 use App\Models\Store;
@@ -154,12 +155,15 @@ class RetailController extends Controller
 
     public function approvedGcRequest(Request $request)
     {
+        $checkedBy = Assignatory::get();
+
         $record = $this->retail->details($request);
 
         return inertia('Retail/RetailApprovedGcRequest', [
             'columns' => ColumnHelper::$approved_gc_request,
             'record' => $this->retail->getDataApproved(),
-            'data' => $record
+            'data' => $record,
+            'assign' => $checkedBy
         ]);
     }
 

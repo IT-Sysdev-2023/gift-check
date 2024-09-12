@@ -1,16 +1,28 @@
 <template>
-
+    <a-row class="mb-4" :gutter="[16, 16]">
+        <a-col :span="8">
+            <budget-statistics :title="'Current Budget'" :count="count.budgetCounts.curBudget"/>
+        </a-col>
+        <a-col :span="8">
+            <budget-statistics :title="'Special Gc (Promotional)'" :count="count.budgetCounts.spgc"/>
+        </a-col>
+        <a-col :span="8">
+            <budget-statistics :title="'DTI GC'" :count="count.budgetCounts.dti"/>
+        </a-col>
+    </a-row>
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
-           <PromoGCCard :count="count"/>
+            <!-- <promo-gc-card :count="count"/> -->
+            <promo-gc-card :count="count" />
         </a-col>
         <a-col :span="8">
-            <special-pending-request-finance :count="count.specialGcRequest" :pendingExGcRequest :columns :pendingInGcRequest :currentbudget/>
+            <special-pending-request-finance :count="count.specialGcRequest" :pendingExGcRequest :columns
+                :pendingInGcRequest :currentbudget />
             <!-- <PromoGCCard/> -->
         </a-col>
         <a-col :span="8">
             <!-- <PromoGCCard/> -->
-             <budget-request-approval :count="count"/>
+            <budget-request-approval :count="count" />
         </a-col>
     </a-row>
 </template>
@@ -20,11 +32,10 @@ export default {
     layout: Authenticatedlayout,
     props: {
         count: Array,
-        pendingExGcRequest:Object,
-        pendingInGcRequest:Object,
-        columns:Object,
-        currentbudget:Object,
+        pendingExGcRequest: Object,
+        pendingInGcRequest: Object,
+        columns: Object,
+        currentbudget: Object,
     }
 };
 </script>
-

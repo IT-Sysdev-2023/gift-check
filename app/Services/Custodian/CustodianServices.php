@@ -97,22 +97,22 @@ class CustodianServices
                 'bcheck_date' => now(),
             ]);
 
-            return response()->json([
-                'msg' => 'Scan Successfully',
+            return redirect()->back()->with([
+                'title' => 'Scan Successfully',
                 'status' => 'success',
-                'desc' => 'The Barcode ' . $request->barcode . ' Scanned Successfully',
+                'msg' => 'The Barcode ' . $request->barcode . ' Scanned Successfully',
             ]);
         } elseif ($isInBc) {
-            return response()->json([
-                'msg' => 'Already Scanned',
+            return redirect()->back()->with([
+                'title' => 'Already Scanned',
                 'status' => 'warning',
-                'desc' => 'The Barcode ' . $request->barcode . ' is Already Scanned By ' . $scanby->scannedBy->full_name,
+                'msg' => 'The Barcode ' . $request->barcode . ' is Already Scanned By ' . $scanby->scannedBy->full_name,
             ]);
         } else {
-            return response()->json([
-                'msg' => '404 not Found!',
+            return redirect()->back()->with([
+                'title' => '404 not Found!',
                 'status' => 'error',
-                'desc' => 'Oppss! The Barcode ' . $request->barcode . ' not found',
+                'msg' => 'Oppss! The Barcode ' . $request->barcode . ' not found',
             ]);
         }
     }
