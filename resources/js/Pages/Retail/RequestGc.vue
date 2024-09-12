@@ -45,7 +45,7 @@
                         <a-date-picker :disabled-date="disabledDate" style="width: 100%;" v-model:value="form.dateNeed" />
                         <small style="color: red;" v-if="form.dateNeed == ''">*this field is required</small>
                     </a-form-item>
-                    <a-form-item label="Upload Doc">
+                    <!-- <a-form-item label="Upload Doc">
                         <a-upload-dragger name="file" :before-upload="() => false" :max-count="1"
                             @change="handleImageChange" @drop="handleDrop">
                             <p class="ant-upload-drag-icon">
@@ -53,7 +53,7 @@
                             </p>
                             <p class="ant-upload-text">Click or drag file to this area to upload</p>
                         </a-upload-dragger>
-                    </a-form-item>
+                    </a-form-item> -->
                     <a-form-item label="Remarks">
                         <a-textarea v-model:value="form.remarks"></a-textarea>
                         <small style="color: red;" v-if="form.remarks == ''">*this field is required</small>

@@ -31,6 +31,7 @@ use App\Models\TransactionSale;
 use App\Models\TransactionStore;
 use App\Services\Marketing\PdfServices;
 use App\Services\Marketing\MarketingServices;
+use App\Services\Treasury\RegularGcProcessService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -45,8 +46,10 @@ use function Pest\Laravel\json;
 
 class MarketingController extends Controller
 {
-    public function __construct(public MarketingServices $marketing)
-    {
+    public function __construct(
+        public MarketingServices $marketing,
+        public RegularGcProcessService $RegularGc
+    ) {
 
     }
     public static function productionRequest($id)
@@ -1417,14 +1420,12 @@ class MarketingController extends Controller
         );
 
 
-
-
-
+        
         return Inertia::render('Marketing/gcproductionrequest/PendingRequest', [
             'data' => $pendingRequests,
             'columns' => ColumnHelper::getColumns($columns),
             'barcodes' => $productionBarcode,
-            'barcodeColumns' => $barcodeColumns,
+            'barcodeColumns' =>ColumnHelper::getColumns($barcodeColumns),
             'checkedBy' => $checkedBy
 
         ]);
@@ -1432,8 +1433,8 @@ class MarketingController extends Controller
 
     public function submitPendingRequest(Request $request)
     {
-        $prid = $request->data['id'];
 
+        $prid = $request->data['id'];
         if ($request->data['status'] == '1') {
             if ($request->data['status'] == null || $request->data['remarks'] == null || $request->data['checkedBy'] == null || $request->data['preparedById'] == null) {
                 return back()->with([
@@ -1495,6 +1496,7 @@ class MarketingController extends Controller
                                 ]);
 
                             if ($isApproved) {
+                                $this->RegularGc->approveProductionRequest($request, $prid);
                                 return back()->with([
                                     'type' => 'success',
                                     'msg' => 'Success!',
@@ -1627,8 +1629,8 @@ class MarketingController extends Controller
             $filteredArray = array_filter($request->denom, function ($item) {
                 return isset($item['quantity']);
             });
-            foreach ($filteredArray as $key => $value) {  
-                
+            foreach ($filteredArray as $key => $value) {
+
                 $promoGcRequestItem = PromoGcRequestItem::where('pgcreqi_trid', $request->reqnum)
                     ->where('pgcreqi_denom', $value['id']);
                 if ($promoGcRequestItem->exists()) {
@@ -1644,9 +1646,9 @@ class MarketingController extends Controller
                         'pgcreqi_remaining' => $value['quantity']
                     ]);
                 }
-                if($value['quantity'] == 0){
+                if ($value['quantity'] == 0) {
                     PromoGcRequestItem::where('pgcreqi_trid', $request->reqnum)
-                    ->where('pgcreqi_denom', $value['id'])->delete();
+                        ->where('pgcreqi_denom', $value['id'])->delete();
                 }
             }
             return true;

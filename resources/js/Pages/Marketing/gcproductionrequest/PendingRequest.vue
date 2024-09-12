@@ -80,6 +80,9 @@
                         <a-form-item label="Date Needed">
                             <a-input v-model:value="form.dateNeeded" readonly />
                         </a-form-item>
+                        <a-form-item label="Requested Document">
+                            <a-image style="height: 100px;" :src="'/storage/productionRequestFile/' + data[0].pe_file_docno"></a-image>
+                        </a-form-item>
                         <a-form-item label="Remarks">
                             <a-input v-model:value="form.remarks" readonly />
                         </a-form-item>
@@ -168,20 +171,23 @@ export default {
                 data: this.form
             }, {
                 onSuccess: (response) => {
-                console.log(response);
+                    console.log(response);
                     if (response.props.flash.type == 'success') {
                         notification[response.props.flash.type]({
                             message: response.props.flash.msg,
                             description: response.props.flash.description,
                         });
-                        this.$inertia.get(route('marketing.dashboard'))
+                        // this.$inertia.get(route('marketing.dashboard'))
+                        window.location.href ='/marketing-dashboard'
                     } else {
                         notification[response.props.flash.type]({
                             message: response.props.flash.msg,
                             description: response.props.flash.description,
                         });
                     }
-                }
+
+                },
+                preserveState: true
             })
         },
         closeModal() {
