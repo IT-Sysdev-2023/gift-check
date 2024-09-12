@@ -42,7 +42,7 @@
         </a-col>
         <a-col :span="12">
             <strong class="ml-1">
-                Request Status
+                Date Approved/Cancel
             </strong>
             <a-form-item>
                 <a-input class="text-center" style="font-weight: 600; letter-spacing: -.1px;" readonly

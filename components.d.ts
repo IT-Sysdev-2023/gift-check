@@ -260,6 +260,7 @@ declare module 'vue' {
     PurchaseOrders: typeof import('./resources/js/Pages/Admin/Modals/PurchaseOrders.vue')['default']
     QrcodeOutlined: typeof import('@ant-design/icons-vue')['QrcodeOutlined']
     ReceivedGc: typeof import('./resources/js/Pages/Custodian/ReceivedGc.vue')['default']
+    ReceivedGcDetailsDrawer: typeof import('./resources/js/Pages/Iad/Drawer/ReceivedGcDetailsDrawer.vue')['default']
     ReceivedGcIndex: typeof import('./resources/js/Pages/Iad/ReceivedGcIndex.vue')['default']
     ReconciliationOutlined: typeof import('@ant-design/icons-vue')['ReconciliationOutlined']
     Register: typeof import('./resources/js/Pages/Auth/Register.vue')['default']

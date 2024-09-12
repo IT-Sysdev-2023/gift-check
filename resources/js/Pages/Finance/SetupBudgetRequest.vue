@@ -55,11 +55,11 @@
                         <a-descriptions-item style="width: 50%;" label="Requested By">{{ record.user.full_name
                             }}</a-descriptions-item>
                     </a-descriptions>
-
+                    <!-- {{ record.br_file_docno }} -->
                     <a-descriptions v-if="record.br_file_docno != ''" layout="horizontal" size="small" class="mt-1"
                         bordered>
                         <a-descriptions-item style="width: 50%;" label="Document">
-                            <a-image :src="'storage/' + record.br_file_docno">
+                            <a-image style="height: 100px;" :src="'/storage/BudgetRequestScanCopy/' + record.br_file_docno">
                             </a-image>
                         </a-descriptions-item>
                     </a-descriptions>

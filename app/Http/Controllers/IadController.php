@@ -98,4 +98,11 @@ class IadController extends Controller
             'columns' => ColumnHelper::$received_gc_index_columns,
         ]);
     }
+
+    public function receivedGcDetails($id)
+    {
+        return response()->json([
+            'record' => $this->iadServices->getReceivedDetails($id),
+        ]);
+    }
 }
