@@ -55,9 +55,9 @@ class FinanceService extends UploadFileHandler
             ->first();
 
         if ($budget) {
-            $budget->time = Date::parse($budget->br_requested_at)->format('H:i:s');
+            $budget->time = Date::parse($budget->br_requested_at)->format('h:i');
             $budget->reqdate = Date::parse($budget->br_requested_at)->toFormattedDateString();
-            $budget->needed = Date::parse($budget->br_requested_at)->toFormattedDateString();
+            $budget->needed = Date::parse($budget->br_requested_needed)->toFormattedDateString();
         }
 
         $preApproved = PromogcPreapproved::with('user:user_id,firstname,lastname')->where('prapp_reqid', $request->id)->get();

@@ -1,20 +1,29 @@
 <?php
 
 namespace App\Services\Treasury\Transactions;
+use App\Helpers\NumberHelper;
+use App\Models\Assignatory;
+use App\Models\Document;
 use App\Models\InstitutCustomer;
 use App\Models\InstitutPayment;
 use App\Models\InstitutTransaction;
 use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
+use App\Models\PaymentFund;
+use App\Services\Documents\UploadFileHandler;
 use Illuminate\Http\Request;
 use App\Models\Gc;
+use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
-class InstitutionGcSalesService
+class InstitutionGcSalesService extends UploadFileHandler
 {
     private string $sessionName;
     public function __construct()
     {
+        parent::__construct();
         $this->sessionName = 'scanForReleasedCustomerGC';
+        $this->folderName = 'institutionDocs';
     }
     public function barcodeScanning(Request $request)
     {
@@ -115,46 +124,36 @@ class InstitutionGcSalesService
     }
     public function store(Request $request)
     {
-        // dd($request->all());
-        // $request->validate([
-        //     // 'file' => 'required',
-        //     'remarks' => 'required',
-        //     "receivedBy" => 'required',
-        //     "checkedBy" => 'required',
+        $request->validate([
+            // 'file' => 'required',
+            'remarks' => 'required',
+            "receivedBy" => 'required',
+            "checkedBy" => 'required',
 
-        //     'customer' => 'required',
-        //     'paymentFund' => 'required',
+            'customer' => 'required',
+            'paymentFund' => 'required',
 
-        //     'paymentType.type' => 'required',
+            'paymentType.type' => 'required',
 
-        //     // 'paymentType.amount' => [
-        //     //     function ($attribute, $value, $fail) use ($request) {
+            'paymentType.amount' => [
+                'required_if:paymentType.type,cash,cashcheck,ar',
+                'min:1',
+                'gte:totalDenomination',
+                'nullable',
+            ],
 
-        //     //         $total = $request->input('totalDenomination');
-        //     //         if (($request->input('paymentType.type') == 'cash' || $request->input('paymentType.type') == 'cashcheck' || $request->input('paymentType.type') == 'ar') && (is_null($value) || $value == 0)) {
-        //     //             $fail('The ' . $attribute . ' is required and cannot be 0');
-        //     //         }
-        //     //     },
-        //     // ],
-        //     'paymentType.amount' => [
-        //         'required_if:paymentType.type,cash,cashcheck,ar',
-        //         'min:1',
-        //         'gt:totalDenomination',
-        //         'nullable',
-        //     ],
+            'paymentType.bankName' => 'required_if:paymentType.type,check,cashcheck',
+            'paymentType.accountNumber' => 'required_if:paymentType.type,check,cashcheck',
+            'paymentType.checkNumber' => 'required_if:paymentType.type,check,cashcheck',
+            'paymentType.cash' => 'required_if:paymentType.type,cashcheck',
+            'paymentType.supDocu' => 'required_if:paymentType.type,gad',
 
-        //     'paymentType.bankName' => 'required_if:paymentType.type,check,cashcheck',
-        //     'paymentType.accountNumber' => 'required_if:paymentType.type,check,cashcheck',
-        //     'paymentType.checkNumber' => 'required_if:paymentType.type,check,cashcheck',
-        //     'paymentType.cash' => 'required_if:paymentType.type,cashcheck',
-        //     'paymentType.supDocu' => 'required_if:paymentType.type,gad',
-
-        // ], [
-        //     'paymentType.bankName' => 'The Bank name field is required',
-        //     'paymentType.accountNumber' => 'The Account Number name field is required',
-        //     'paymentType.checkNumber' => 'The Check Number field is required.',
-        //     'paymentType.checkAmount' => 'The Amount field is required.',
-        // ]);
+        ], [
+            'paymentType.bankName' => 'The Bank name field is required',
+            'paymentType.accountNumber' => 'The Account Number name field is required',
+            'paymentType.checkNumber' => 'The Check Number field is required.',
+            'paymentType.checkAmount' => 'The Amount field is required.',
+        ]);
 
 
         $bankName = '';
@@ -196,8 +195,8 @@ class InstitutionGcSalesService
         }
 
         $customerid = $request->customer;
-        $relnum = InstitutTransaction::where('institutr_trtype', 'sales')->max('institutr_trnum');
-        $relnumber = $relnum ? $relnum + 1 : 1;
+        $relnumlatest = InstitutTransaction::where('institutr_trtype', 'sales')->max('institutr_trnum');
+        $relnum = $relnumlatest ? $relnumlatest + 1 : 1;
 
         if (collect($request->session()->get($this->sessionName))->isNotEmpty()) {
             if (InstitutCustomer::where('ins_id', $customerid)->exists()) {
@@ -251,17 +250,33 @@ class InstitutionGcSalesService
 
                     $q = LedgerBudget::max('bledger_no');
                     $lnum = $q ? $q + 1 : 1;
-                    
+
                     LedgerBudget::create([
-                        'bledger_no' => $lnum, 
+                        'bledger_no' => $lnum,
                         'bledger_trid' => $insertedRecord->institutr_id,
-                        'bledger_datetime' => now(), 
-                        'bledger_type' => 'GCRELINS', 
+                        'bledger_datetime' => now(),
+                        'bledger_type' => 'GCRELINS',
                         'bdebit_amt' => $request->totalDenomination
                     ]);
 
+                    $this->saveMultiFiles($request, $insertedRecord->institutr_id, function ($id, $path) {
+                        Document::create([
+                            'doc_trid' => $id,
+                            'doc_type' => 'Institution GC',
+                            'doc_fullpath' => $path
+                        ]);
+                    });
                 });
 
+                $data = $this->dataForPdf($request, $change, $totalamtrec);
+                $request->session()->forget($this->sessionName);
+                $pdf = Pdf::loadView('pdf.institution', ['data' => $data]);
+
+                $pdf->setPaper('A3');
+
+                $stream = base64_encode($pdf->output());
+
+                return redirect()->back()->with(['stream' => $stream, 'success' => 'Submission success']);
             } else {
                 return redirect()->back()->with('error', 'Customer doesnt exist!');
             }
@@ -269,7 +284,48 @@ class InstitutionGcSalesService
             return redirect()->back()->with('error', 'Please Scan a Barcode First!');
         }
 
+    }
 
-        // dd($relnumber); //releaseTreasuryCustomer ajax
+    public function dataForPdf($request, $change, $cash)
+    {
+
+        $barcode = collect($request->session()->get($this->sessionName, []));
+        $gr = $barcode->groupBy(fn($item) => $item['denomination'])->sortKeys();
+
+        return [
+            //Header
+            'company' => [
+                'name' => Str::upper('ALTURAS GROUP OF COMPANIES'),
+                'department' => Str::title('Head Office - Treasury Department'),
+                'report' => 'Institution GC Releasing Report',
+            ],
+
+            //SubHeader
+            'subheader' => [
+                'gc_rel_no' => $request->releasingNo,
+                'date_released' => today()->toFormattedDateString(),
+                'customer' => InstitutCustomer::find($request->customer)->ins_name,
+            ],
+
+            //Barcodes
+            'barcode' => $gr,
+
+            //Subfooter
+            'summary' => [
+                'total_no_of_gc' => $barcode->count(),
+                'payment_type' => Str::title($request->paymentType['type']),
+                'cash_received' => NumberHelper::format($cash),
+                'total_gc_amount' => NumberHelper::format($request->totalDenomination),
+                'change' => NumberHelper::format($change),
+                'paymentFund' => PaymentFund::find($request->paymentFund)->pay_desc,
+            ],
+
+            //Signatures
+            'signatures' => [
+                'prepared_released_by' => Str::upper($request->user()->full_name),
+                'checked_by' => Str::upper(Assignatory::find($request->checkedBy)->assig_name),
+                'received_by' => Str::upper($request->receivedBy),
+            ],
+        ];
     }
 }

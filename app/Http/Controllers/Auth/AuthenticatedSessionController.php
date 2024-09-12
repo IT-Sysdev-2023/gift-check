@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
         $user_role = Auth::user()->user_role;
 
         if ($this->roleDashboardRoutes[$usertype] ) { //&& $usertype != $user_role
-            return redirect()->intended(route($this->roleDashboardRoutes[$usertype], absolute: false));
+            return redirect()->intended(route("{$this->roleDashboardRoutes[$usertype]}.dashboard", absolute: false));
 
         }else{
             return abort(404, 'Usertype Not Found');

@@ -235,8 +235,8 @@ class IadServices
     }
     public function submitSetupFunction($request)
     {
-// dd($request->all());
-       $request->validate([
+        // dd($request->all());
+        $request->validate([
             'select' => 'required',
             'scanned' => 'required',
         ]);
@@ -370,7 +370,7 @@ class IadServices
 
     public function getReceivedGc()
     {
-        $data = CustodianSrr::select('csrr_id', 'csrr_receivetype', 'csrr_datetime','csrr_prepared_by','csrr_requisition')
+        $data = CustodianSrr::select('csrr_id', 'csrr_receivetype', 'csrr_datetime', 'csrr_prepared_by', 'csrr_requisition')
             ->with(
                 'user:user_id,firstname,lastname',
                 'requisition:requis_id,requis_supplierid,requis_erno',
@@ -390,5 +390,45 @@ class IadServices
         });
 
         return $data;
+    }
+
+    public function getReceivedDetails($id)
+    {
+        $data = CustodianSrrItem::select('cssitem_barcode', 'denomination')
+            ->join('gc', 'barcode_no', '=', 'cssitem_barcode')
+            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+            ->where('cssitem_recnum', $id);
+
+        $denom = $data->get()->groupBy('denomination');
+
+
+        $denomData = $denom->map(function ($group) {
+            return $group->count();
+        });
+
+        return (object)[
+            'total' => $data->count(),
+            'record' => $data->get(),
+            'denom' =>  $denomData
+        ];
+    }
+
+    public function getReceivedDetailsView()
+    {
+
+        //         $select = 'COUNT(custodian_srr_items.cssitem_barcode) as cnt,
+        //         denomination.denomination';
+        // $where = 'custodian_srr_items.cssitem_recnum='.$id.'
+        //             GROUP BY
+        //                 denomination.denomination';
+        // $join = 'INNER JOIN
+        //             gc
+        //         ON
+        //             gc.barcode_no = custodian_srr_items.cssitem_barcode
+        //         INNER JOIN
+        //             denomination
+        //         ON
+        //             denomination.denom_id = gc.denom_id';
+        // $limit = '';
     }
 }

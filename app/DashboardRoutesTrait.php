@@ -5,15 +5,15 @@ namespace App;
 trait DashboardRoutesTrait
 {
     protected $roleDashboardRoutes = [
-        '1' => 'admin.dashboard',
-        '2' => 'treasury.dashboard',
-        '3' => 'finance.dashboard',
-        '4' => 'custodian.dashboard',
-        '6' => 'marketing.dashboard',
-        '7' => 'retail.dashboard',
-        '8' => 'retailgroup.dashboard',
-        '9' => 'accounting.dashboard',
-        '10' => 'iad.dashboard',
-        '12' => 'eod.dashboard',
+        '1' => 'admin',
+        '2' => 'treasury',
+        '3' => 'finance',
+        '4' => 'custodian',
+        '6' => 'marketing',
+        '7' => 'retail',
+        '8' => 'retailgroup',
+        '9' => 'accounting',
+        '10' => 'iad',
+        '12' => 'eod',
     ];
 }
