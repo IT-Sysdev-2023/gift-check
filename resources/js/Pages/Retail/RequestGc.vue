@@ -67,7 +67,7 @@
                 <a-table :dataSource="allocated" :columns="allocatedGcColumns" :pagination="false" bordered>
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'qty'">
-                            <a-input style="width:40px;" :value="record.count"></a-input>
+                            <a-input :value="record.count"></a-input>
                         </template>
                     </template>
                 </a-table>
