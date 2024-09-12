@@ -106,7 +106,7 @@ class UploadFileHandler
         if ($this->disk->exists($this->folder() . $file)) {
             return $this->disk->download($this->folder() . $file);
         } else {
-            return redirect()->back()->with('error', 'File Not Found');
+            return response()->json(['error' => 'File Not Found'], 404);
         }
     }
     public function getOriginalFileName(Request $request, $image)

@@ -9,10 +9,16 @@ use App\Models\Gc;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
+use App\Services\Documents\UploadFileHandler;
 use Illuminate\Http\Request;
 
-class GcProductionRequestService
+class GcProductionRequestService extends UploadFileHandler
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->folderName = 'approvedProductionRequest';
+    }
     public function pendingRequest() //pending_production_request.php
     {
 
@@ -92,8 +98,11 @@ class GcProductionRequestService
     }
     public function viewBarcodeGenerated(string $id)
     {
-        $gc = Gc::with('denomination')->where([['pe_entry_gc', $id], ['gc_validated', '']])->get();
+        $gc = Gc::select('denom_id', 'barcode_no')->with('denomination:denom_id,denomination')
+            ->where([['pe_entry_gc', $id], ['gc_validated', '']])->get();
+
         $gcv = Gc::select('barcode_no', 'denom_id')
+            ->has('custodianSrrItems.custodiaSsr')
             ->with([
                 'denomination:denom_id,denomination',
                 'custodianSrrItems.custodiaSsr:csrr_id,csrr_datetime'
@@ -125,5 +134,14 @@ class GcProductionRequestService
                     'supplier:gcs_id,gcs_companyname,gcs_contactperson,gcs_contactnumber,gcs_address'
                 ])
             ->where('repuis_pro_id', $id)->first();
+    }
+
+    public function downloadFile(string $file)
+    {
+        return $this->download($file);
+    }
+    public function reprint($id){
+        $folder = "reports/marketing";
+        return $this->retrieveFile($folder, "requis{$id}.pdf");
     }
 }

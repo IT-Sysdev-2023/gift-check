@@ -217,6 +217,8 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 Route::get('view-approved-request/{id}', [GcProductionRequestController::class, 'viewApprovedProduction'])->name('view.approved');
                 Route::get('view-barcode-generated/{id}', [GcProductionRequestController::class, 'viewBarcodeGenerate'])->name('view.barcode');
                 Route::get('view-requisition/{id}', [GcProductionRequestController::class, 'viewRequisition'])->name('requisition');
+                Route::get('download-{file}', [GcProductionRequestController::class, 'download'])->name('download.document');
+                Route::get('reprint-{id}', [GcProductionRequestController::class, 'reprintRequest'])->name('reprint');
             });
             Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
                 Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('pending');

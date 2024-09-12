@@ -53,4 +53,12 @@ class GcProductionRequestController extends Controller
         $record = $this->gcProductionRequestService->viewRequisition($id);
         return response()->json($record);
     }
+
+    public function download(string $file){
+
+        return $this->gcProductionRequestService->downloadFile($file);
+    }
+    public function reprintRequest($id){
+        return $this->gcProductionRequestService->reprint($id);
+    }
 }
