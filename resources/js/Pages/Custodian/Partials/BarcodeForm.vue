@@ -1,10 +1,12 @@
 <template>
     <a-card>
         <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
-            <a-descriptions-item style="width: 50%;" label="Date Scanned" class="text-right">{{ date }}</a-descriptions-item>
+            <a-descriptions-item style="width: 50%;" label="Date Scanned" class="text-right">{{ date
+                }}</a-descriptions-item>
         </a-descriptions>
         <a-descriptions size="small" layout="horizontal" bordered>
-            <a-descriptions-item style="width: 50%;" label="Scanned By " class="text-right">{{ $page.props.auth.user.full_name
+            <a-descriptions-item style="width: 50%;" label="Scanned By " class="text-right">{{
+                $page.props.auth.user.full_name
                 }}</a-descriptions-item>
         </a-descriptions>
 
@@ -15,7 +17,7 @@
         <a-button block class="mt-2" type="primary" @click="submit"
             :disabled="form.barcode === null || form.barcode === ''">Submit</a-button>
 
-        <a-alert v-if="status.status" class="mt-2" :message="status.desc" :type="status.status" show-icon />
+        <a-alert v-if="status.status" class="mt-2" :message="status.msg" :type="status.status" show-icon />
 
     </a-card>
 </template>
@@ -39,15 +41,25 @@ export default {
     },
     methods: {
         submit() {
-            axios.post(route('custodian.scan.barcode'), { ...pickBy(this.form) })
-                .then(response => {
-                    notification[response.data.status]({
-                        message: response.data.msg,
-                        description: response.data.desc,
+            this.$inertia.post(route('custodian.scan.barcode'), { ...pickBy(this.form) }, {
+                onSuccess: (res) => {
+                    notification[res.props.flash.status]({
+                        message: res.props.flash.title,
+                        description: res.props.flash.msg,
                     });
 
-                    this.status = response.data
-                });
+                    this.status = res.props.flash
+                }
+                // onSuccess: (response) => {
+                //     notification[response.data.status]({
+                //         message: response.data.msg,
+                //         description: response.data.desc,
+                //     });
+
+                //     this.status = response.data
+                // });
+            })
+
         },
         handleKeyPress(event) {
             const charCode = event.which ? event.which : event.keyCode;

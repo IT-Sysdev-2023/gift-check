@@ -4,6 +4,7 @@
         <a-breadcrumb-item>Barcode Checker</a-breadcrumb-item>
     </a-breadcrumb>
     <a-row :gutter="[16, 16]">
+        <!-- {{regular}} -->
         <a-col :span="8">
             <BarcodeForm :date="date" />
             <Statistics :counts="count" class="mt-5" />
@@ -60,9 +61,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 export default {
     layout: AuthenticatedLayout,
     props: {
+        regular: Number,
         data: Object,
         columns: Array,
-        count: Array,
+        count: Object,
         date: String,
         search: Object,
     },

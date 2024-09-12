@@ -43,8 +43,15 @@
                     <span>
                         <a-typography-text keyboard>Check By</a-typography-text>
                     </span>
-                    <a-input v-model:value="form.checkby" allow-clear>
-                    </a-input>
+                    <!-- {{assign}} -->
+                    <a-select style="width: 100%;" placeholder="Select Assignatory" v-model:value="form.checkby"
+                        allow-clear>
+                        <a-select-item v-for="name in assign" :value="name.assig_name">
+                            {{ name.assig_name }}
+                        </a-select-item>
+                    </a-select>
+                    <!-- <a-input v-model:value="form.checkby" allow-clear>
+                    </a-input> -->
                 </a-col>
                 <a-col :span="17">
                     <a-descriptions size="small" layout="horizontal" bordered>
@@ -83,27 +90,50 @@
                             <a-input class="text-center" size="large" readonly :value="record.totscanned" />
                         </a-col>
                     </a-row>
-
                 </a-col>
             </a-row>
-
             <div class="flex justify-end">
-                <a-button  class="mr-1">
-                    <template #icon>
-                        <KeyOutlined />
+                <a-popconfirm title="Managers Key" v-model:open="isManKey" @cancel="cancel" :show-cancel="false">
+                    <template #description>
+
+                        <a-alert v-if="response.status" :message="response.msg" :type="response.status" show-icon />
+                        <a-form name="basic" class="mt-5" autocomplete="off" @finish="onFinish"
+                            @finishFailed="onFinishFailed">
+                            <a-form-item label="Username" name="username"
+                                :validate-status="error.username ? 'error' : ''" has-feedback :help="error.username">
+                                <a-input v-model:value="formKey.username" @keyup.enter="submitKey" />
+                            </a-form-item>
+                            <a-form-item label="Password" name="password"
+                                :validate-status="error.password ? 'error' : ''" has-feedback :help="error.password">
+                                <a-input-password v-model:value="formKey.password" @keyup.enter="submitKey" />
+                            </a-form-item>
+                        </a-form>
                     </template>
-                    Manager's Key
-                </a-button>
-                <a-button type="primary"  @click="submit" :disabled="(form.checkby == null || form.checkby == '') || (record.totquant !== record.totscanned)"
-                   >
+                    <template #okButton>
+                        <a-button type="primary" size="small" @click="submitKey" :loading="isSubmitting">
+                            <template #icon>
+                                <LockOutlined />
+                            </template>
+                            Continue?
+                        </a-button>
+                    </template>
+                    <a-button class="mb-2 mr-1" @click="openSisame">
+                        <template #icon>
+                            <FastForwardOutlined />
+                        </template>
+                        Manager's Key
+                    </a-button>
+                </a-popconfirm>
+                <a-button type="primary" @click="submit"
+                    :disabled="(form.checkby == null || form.checkby == '') || (record.totquant !== record.totscanned) || granted">
                     <template #icon>
                         <StepForwardOutlined />
                     </template>
                     Submit Entry Store
                 </a-button>
             </div>
-            <p v-if="(form.checkby == null || form.checkby == '') || (record.totquant !== record.totscanned)" class="text-end mt-2 animate-pulse"
-                style="color:  red ; font-size: 12px;">
+            <p v-if="(form.checkby == null || form.checkby == '') || (record.totquant !== record.totscanned) || granted"
+                class="text-end mt-2 animate-pulse" style="color:  red ; font-size: 12px;">
                 Note: *please fill all the requirements to enable submit
             </p>
         </a-card>
@@ -121,10 +151,12 @@ import { useForm } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
 import { ref } from 'vue';
 import { notification } from 'ant-design-vue';
+import pickBy from "lodash/pickBy";
 
 
 const props = defineProps({
     record: Object,
+    assign: Object
 })
 
 const form = useForm({
@@ -134,6 +166,7 @@ const form = useForm({
 })
 
 const drawer = ref(false)
+const isManKey = ref(false)
 
 const data = ref({})
 
@@ -147,6 +180,48 @@ const closeDrawer = (record) => {
     drawer.value = false;
 }
 
+const formKey = useForm({
+    username: null,
+    password: null,
+});
+
+const isSubmitting = ref(false);
+const error = ref({});
+const response = ref({});
+const granted = ref(true);
+const openSisame = () => {
+    isManKey.value = true;
+}
+const submitKey = () => {
+    isSubmitting.value = true;
+    axios.post(route('manager.managers.key'), {
+        ...pickBy(formKey)
+    }).then(res => {
+        response.value = res.data;
+        notification[res.data.status]({
+            message: res.data.title,
+            description: res.data.msg,
+        });
+        if (res.data.status == 'success') {
+            granted.value = false;
+            isSubmitting.value = false;
+            isManKey.value = false;
+        }
+        if (res.data.status == 'error') {
+            isSubmitting.value = false;
+        }
+    }).catch(errors => {
+        if (errors.response && errors.response.status === 422) {
+            error.value = errors.response.data.errors;
+        } else {
+            console.error('Error:', errors.message);
+        }
+
+        isSubmitting.value = false;
+    })
+
+}
+
 const submit = () => {
     form.transform((data) => ({
         ...data,
@@ -157,7 +232,7 @@ const submit = () => {
                 message: response.props.flash.title,
                 description: response.props.flash.msg,
             });
-            if(response.props.flash.status == 'success'){
+            if (response.props.flash.status == 'success') {
                 emit('close-modal')
             }
         },

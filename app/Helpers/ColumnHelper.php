@@ -100,6 +100,44 @@ class ColumnHelper
 
         ],
     ];
+    public static $approved_budget_request = [
+        [
+            'title' => 'Br No',
+            'dataIndex' => 'br_no',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'requestDate',
+
+        ],
+        [
+            'title' => 'Budget Requested',
+            'dataIndex' => 'budgetReq',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'dataIndex' => 'fullname',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => 'approvedAt',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'abr_approved_by',
+
+        ],
+        [
+            'title' => 'View',
+            'key' => 'viewing',
+            'align' => 'center'
+
+        ],
+    ];
     public static $received_gc_index_columns = [
         [
             'title' => 'Receiving #',
