@@ -220,8 +220,7 @@ class EodServices
                             $amount = $exprn[$key][1];
 
                             if ($amount < $item['ver_denom']) {
-                                $used = true;
-
+                
                                 $success = $this->updateStoreVerification($item, $pc, $am, $amount);
 
                                 if ($success) {
@@ -237,7 +236,7 @@ class EodServices
                             }
                         }
                     }
-        
+
 
                     $success = $this->updateStoreVerificationEod($item);
 

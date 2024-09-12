@@ -55,7 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard')->middleware('userType:treasury');
 
     Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard')->middleware('userType:retail');
-    
+
     Route::get('retailgroup-dashboard', [RetailGroupController::class, 'index'])->name('retailgroup.dashboard')->middleware('userType:retailgroup');
 
     Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard')->middleware('userType:accounting');
@@ -383,7 +383,7 @@ Route::prefix('custodian')->group(function () {
 
         Route::get('barcode-checker', [CustodianController::class, 'barcodeCheckerIndex'])->name('barcode.checker');
         Route::post('scan-barcode', [CustodianController::class, 'scanBarcode'])->name('scan.barcode');
-        Route::get('received-gc', [CustodianController::class, 'receivedGcIndex'])->name('received.gc');
+        Route::get('received-gc-barcode', [CustodianController::class, 'receivedGcIndex'])->name('received.gc');
 
         Route::name('pendings.')->group(function () {
             Route::get('pending-holder-entry', [CustodianController::class, 'pendingHolderEntry'])->name('holder.entry');
@@ -410,7 +410,8 @@ Route::middleware('auth')->group(function () {
         Route::post('delete-scanned-barcode', [IadController::class, 'removeScannedGc'])->name('remove.scanned.gc');
         Route::post('validate-barcode', [IadController::class, 'validateBarcode'])->name('validate.barcode');
         Route::post('submit-setup', [IadController::class, 'submitSetup'])->name('submit.setup');
-        Route::get('received-gc', [IadController::class, 'receivedGc'])->name('view.received');
+        Route::get('received-gc-view',  [IadController::class, 'receivedGc'])->name('view.received');
+        Route::get('received-gc-view-details-{id}',  [IadController::class, 'receivedGcDetails'])->name('details.view');
 
         Route::prefix('special-external-gc-request')->name('special.external.')->group(function () {
             Route::get('view-approved-gc', [SpecialExternalGcRequestController::class, 'approvedGc'])->name('approvedGc');
