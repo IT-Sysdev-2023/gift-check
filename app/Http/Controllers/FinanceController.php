@@ -484,4 +484,16 @@ class FinanceController extends Controller
     {
         return $this->financeService->submitBudget($request);
     }
+
+    public function approvedBudget()
+    {
+        return inertia('Finance/ApprovedBudget', [
+            'record' => $this->financeService->getApprovedBudget(),
+            'columns' => ColumnHelper::$approved_budget_request,
+        ]);
+    }
+    public function approvedBudgetDetails($id)
+    {
+        return $this->financeService->getApprovedBudgetDetails($id);
+    }
 }

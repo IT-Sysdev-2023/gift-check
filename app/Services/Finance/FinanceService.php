@@ -21,7 +21,6 @@ class FinanceService extends UploadFileHandler
         parent::__construct();
 
         $this->folderName = "financeUpload";
-
     }
 
     public function uploadFileHandler($request)
@@ -55,9 +54,9 @@ class FinanceService extends UploadFileHandler
             ->first();
 
         if ($budget) {
-            $budget->time = Date::parse($budget->br_requested_at)->format('H:i:s');
+            $budget->time = Date::parse($budget->br_requested_at)->format('h:i');
             $budget->reqdate = Date::parse($budget->br_requested_at)->toFormattedDateString();
-            $budget->needed = Date::parse($budget->br_requested_at)->toFormattedDateString();
+            $budget->needed = Date::parse($budget->br_requested_needed)->toFormattedDateString();
         }
 
         $preApproved = PromogcPreapproved::with('user:user_id,firstname,lastname')->where('prapp_reqid', $request->id)->get();
@@ -103,7 +102,7 @@ class FinanceService extends UploadFileHandler
 
         DB::transaction(function () use ($request, $ledger) {
 
-           $file = $this->createFileName($request);
+            $file = $this->createFileName($request);
 
             LedgerBudget::create([
                 'bledger_no' => NumberHelper::leadingZero($ledger, "%013d"),
@@ -141,7 +140,6 @@ class FinanceService extends UploadFileHandler
                         'msg' => 'Budget Request Successfully Approved!',
                         'status' => 'success',
                     ]);
-
                 } else {
                     return back()->with([
                         'title' => 'Warning',
@@ -180,7 +178,6 @@ class FinanceService extends UploadFileHandler
                     'msg' => 'Budget Request Cancelled',
                     'status' => 'success',
                 ]);
-
             } else {
                 return back()->with([
                     'title' => 'Warning',
@@ -189,5 +186,56 @@ class FinanceService extends UploadFileHandler
                 ]);
             }
         });
+    }
+
+    public function getApprovedBudget()
+    {
+        $data = BudgetRequest::select(
+            'br_id',
+            'br_request',
+            'br_requested_at',
+            'br_no',
+            'abr_approved_by',
+            'abr_approved_at',
+            'br_requested_by',
+            'br_request_status',
+        )
+            ->with('user:user_id,firstname,lastname')
+            ->leftJoin('approved_budget_request', 'abr_budget_request_id', '=', 'br_id')
+            ->where('br_request_status', '1')
+            ->orderByDesc('br_no')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->fullname = $item->user->full_name;
+            $item->requestDate = Date::parse($item->br_requested_at)->toFormattedDateString();
+            $item->approvedAt = Date::parse($item->abr_approved_at)->toFormattedDateString();
+            $item->budgetReq = NumberHelper::currency($item->br_request);
+            return $item;
+        });
+
+        return $data;
+    }
+
+    public function getApprovedBudgetDetails($id)
+    {
+
+        $data = BudgetRequest::with('user:user_id,firstname,lastname')
+            ->selectFilter()
+            ->where('br_request_status', '1')
+            ->leftJoin('approved_budget_request', 'abr_budget_request_id', '=', 'br_id')
+            ->leftJoin('users', 'user_id', '=', 'abr_prepared_by')
+            ->where('br_id', $id)->first();
+
+            if($data){
+                $data->apreqat = Date::parse($data->abr_approved_at)->toFormattedDateString();
+                $data->needed = Date::parse($data->br_requested_needed)->toFormattedDateString();
+                $data->reqat = Date::parse($data->br_requested_at)->toFormattedDateString();
+                $data->time = Date::parse($data->br_requested_at)->format('h:i');
+                $data->budgetReq = NumberHelper::currency($data->br_request);
+            }
+
+        return $data;
     }
 }

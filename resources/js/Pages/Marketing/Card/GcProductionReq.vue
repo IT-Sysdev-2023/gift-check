@@ -1,12 +1,12 @@
 <template>
     <a-card title="GC Production Request">
         <div class="cards">
-            <div class="card red"  @click="() => $inertia.get(route('marketing.pendingRequest.pending.request'))">
+            <div class="card red" :class="{ 'cursor-pointer': gcProductionRequest.pendingRequest >= 1 }"
+                @click="gcProductionRequest.pendingRequest >= 1 ? $inertia.get(route('marketing.pendingRequest.pending.request')) : null">
                 <a-row class="w-full">
-                    <a-col :span="4">
-                    </a-col>
+                    <a-col :span="4"></a-col>
                     <a-col :span="12">
-                        <div  class="flex justify-end">
+                        <div class="flex justify-end">
                             <p class="tip">Pending Request</p>
                         </div>
                     </a-col>
@@ -17,10 +17,10 @@
                     </a-col>
                 </a-row>
             </div>
-            <div class="card blue"  @click="() => $inertia.get(route('marketing.approvedRequest.approved.request'))">
+            <div class="card blue" :class="{ 'cursor-pointer': gcProductionRequest.approvedRequest >= 1 }"
+                @click="gcProductionRequest.approvedRequest >= 1 ? $inertia.get(route('marketing.approvedRequest.approved.request')) : null">
                 <a-row class="w-full">
-                    <a-col :span="4">
-                    </a-col>
+                    <a-col :span="4"></a-col>
                     <a-col :span="12">
                         <div class="flex justify-end">
                             <p class="tip">Approved Request</p>

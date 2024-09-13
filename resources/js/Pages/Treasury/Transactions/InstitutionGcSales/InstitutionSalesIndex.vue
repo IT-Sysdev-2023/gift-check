@@ -35,8 +35,20 @@
                             </a-col>
                         </a-row>
 
-                        <a-form-item label="Received By:" name="rec">
-                            <a-input v-model:value="formState.receivedBy" />
+                        <a-form-item
+                            label="Received By:"
+                            name="rec"
+                            :validate-status="
+                                getErrorStatus(formState, 'receivedBy')
+                            "
+                            :help="getErrorMessage(formState, 'receivedBy')"
+                        >
+                            <a-input
+                                v-model:value="formState.receivedBy"
+                                @input="
+                                    () => formState.clearErrors('receivedBy')
+                                "
+                            />
                         </a-form-item>
                         <a-form-item
                             label="Check By:"
@@ -51,8 +63,18 @@
                                 @handle-change="handleCheckedBy"
                             />
                         </a-form-item>
-                        <a-form-item label="Remarks:" name="re">
-                            <a-textarea v-model:value="formState.remarks" />
+                        <a-form-item
+                            label="Remarks:"
+                            name="re"
+                            :validate-status="
+                                getErrorStatus(formState, 'remarks')
+                            "
+                            :help="getErrorMessage(formState, 'remarks')"
+                        >
+                            <a-textarea
+                                v-model:value="formState.remarks"
+                                @input="() => formState.clearErrors('remarks')"
+                            />
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -62,10 +84,10 @@
                                     label="Customer:"
                                     name="cus"
                                     :validate-status="
-                                        getErrorStatus(formState, 'checkedBy')
+                                        getErrorStatus(formState, 'customer')
                                     "
                                     :help="
-                                        getErrorMessage(formState, 'checkedBy')
+                                        getErrorMessage(formState, 'customer')
                                     "
                                 >
                                     <ant-select
@@ -77,10 +99,10 @@
                                     label="Payment Fund:"
                                     name="fund"
                                     :validate-status="
-                                        getErrorStatus(formState, 'checkedBy')
+                                        getErrorStatus(formState, 'paymentFund')
                                     "
                                     :help="
-                                        getErrorMessage(formState, 'checkedBy')
+                                        getErrorMessage(formState, 'paymentFund')
                                     "
                                 >
                                     <ant-select
@@ -91,18 +113,19 @@
 
                                 <institution-select
                                     :formState="formState"
-                                    :errorForm="formState.errors"
+                                    :total="totalScannedDenomination"
                                     @handPaymentType="handlePaymentType"
                                 />
                                 <a-form-item label="Upload Document:" name="up">
-                                    <ant-upload-image
-                                        @handle-change="handleDocumentChange"
-                                    />
+                                    <ant-upload-multi-image @handle-change="handleDocumentChange"/>
                                 </a-form-item>
                             </a-col>
                             <a-col :span="14">
                                 <a-flex justify="space-between" align="center">
-                                    <a-button @click="scanBarcode" type="primary" ghost
+                                    <a-button
+                                        @click="scanBarcode"
+                                        type="primary"
+                                        ghost
                                         >Scan Barcode</a-button
                                     >
                                     <a-form-item
@@ -168,13 +191,21 @@
         </a-card>
 
         <scan-modal-institution v-model:open="openScanModal" />
+        <a-modal
+        v-model:open="openIframe"
+        style="width: 70%; top: 50px"
+        :footer="null"
+        :afterClose="() => router.get(route('treasury.dashboard'))"
+    >
+        <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
+    </a-modal>
     </AuthenticatedLayout>
 </template>
 
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router, useForm } from "@inertiajs/vue3";
-import { ref, computed, watch } from "vue";
+import { ref } from "vue";
 import dayjs from "dayjs";
 import { getError, onProgress, currency } from "@/Mixin/UiUtilities";
 
@@ -192,7 +223,8 @@ const props = defineProps<{
 
 const barcodeRemoveLoading = ref({});
 const currentDate = ref(dayjs());
-
+const openIframe = ref(false);
+const stream = ref(null);
 const openScanModal = ref<boolean>(false);
 
 const tableColumns = [
@@ -223,20 +255,31 @@ const formState = useForm({
         accountNumber: "",
         checkNumber: "",
         amount: "",
-        change: "",
-
-        totalAmountReceived: "",
         cash: "",
-
         supDocu: "",
     },
 });
 
 const { openLeftNotification } = onProgress();
 
-const onSubmit = () =>{
-    formState.post(route('treasury.transactions.institution.gc.sales.submission'))
-}
+const onSubmit = () => {
+    formState
+        .transform((data) => ({
+            ...data,
+            releasingNo: props.releasingNo,
+            file: data.file?.map((item) => item.originFileObj),
+            totalDenomination: props.totalScannedDenomination,
+        }))
+        .post(route("treasury.transactions.institution.gc.sales.submission"), {
+            onSuccess: ({ props }) => {
+                openLeftNotification(props.flash, 'Institution Gc Sales');
+                if(props.flash.success){
+                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                    openIframe.value = true;
+                }
+            },
+        });
+};
 const removeBarcode = (bc) => {
     barcodeRemoveLoading.value = {
         ...barcodeRemoveLoading.value,
@@ -248,7 +291,11 @@ const removeBarcode = (bc) => {
         {
             preserveScroll: true,
             onSuccess: ({ props }) => {
-                openLeftNotification(props.flash);
+                openLeftNotification(props.flash, "Barcode Deleted");
+                barcodeRemoveLoading.value = {
+                    ...barcodeRemoveLoading.value,
+                    [bc]: false,
+                };
             },
         }
     );
@@ -259,6 +306,7 @@ const scanBarcode = () => {
 
 const handlePaymentType = (value) => {
     formState.paymentType.type = value;
+    formState.errors['paymentType.type'] = null;
 };
 
 const onPaginate = async (link) => {
@@ -274,17 +322,20 @@ const onPaginate = async (link) => {
     }
 };
 const handleDocumentChange = (file) => {
-    formState.file = file.file;
+    formState.file = file.fileList;
 };
 
 const handleCustomer = (value) => {
     formState.customer = value;
+    formState.clearErrors('customer');
 };
 const handleCheckedBy = (value) => {
     formState.checkedBy = value;
+    formState.clearErrors('checkedBy');
 };
 const handlePaymentFund = (value) => {
     formState.paymentFund = value;
+    formState.clearErrors('paymentFund');
 };
 const { getErrorMessage, getErrorStatus, clearError } = getError();
 </script>

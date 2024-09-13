@@ -10,4 +10,8 @@ class InstitutTransaction extends Model
     use HasFactory;
 
     protected $primaryKey = 'institutr_id';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }

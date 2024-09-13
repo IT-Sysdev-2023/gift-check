@@ -100,6 +100,125 @@ class ColumnHelper
 
         ],
     ];
+    public static $approved_budget_request = [
+        [
+            'title' => 'Br No',
+            'dataIndex' => 'br_no',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'requestDate',
+
+        ],
+        [
+            'title' => 'Budget Requested',
+            'dataIndex' => 'budgetReq',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'dataIndex' => 'fullname',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => 'approvedAt',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'abr_approved_by',
+
+        ],
+        [
+            'title' => 'View',
+            'key' => 'viewing',
+            'align' => 'center'
+
+        ],
+    ];
+    public static $received_gc_index_columns = [
+        [
+            'title' => 'Receiving #',
+            'dataIndex' => 'recnumber',
+
+        ],
+        [
+            'title' => 'Date Received',
+            'dataIndex' => 'date',
+
+        ],
+        [
+            'title' => 'E Requisition #',
+            'dataIndex' => 'requisno',
+
+        ],
+        [
+            'title' => 'Supplier Name',
+            'dataIndex' => 'companyname',
+
+        ],
+        [
+            'title' => 'Received By',
+            'dataIndex' => 'fullname',
+
+        ],
+        [
+            'title' => 'Received Type',
+            'dataIndex' => 'csrr_receivetype',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
+            'align' => 'center'
+
+        ],
+    ];
+    public static $review_gc_columns = [
+        [
+            'title' => 'RFSEGC',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'reqdate',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'spcus_companyname',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => 'appdate',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'reqap_approvedby',
+
+        ],
+        [
+            'title' => 'Date Reviewed',
+            'dataIndex' => 'revdate',
+
+        ],
+        [
+            'title' => 'Reviewed By',
+            'dataIndex' => 'fullname',
+
+        ],
+        [
+            'title' => 'Details',
+            'key' => 'details',
+            'align' => 'center'
+
+        ],
+    ];
     public static $retail_group_pending_colums = [
         [
             'title' => 'RFPROM #',

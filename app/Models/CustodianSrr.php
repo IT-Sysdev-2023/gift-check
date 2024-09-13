@@ -26,4 +26,8 @@ class CustodianSrr extends Model
     {
         return $this->belongsTo(User::class, 'csrr_prepared_by', 'user_id');
     }
+    public function requisition()
+    {
+        return $this->belongsTo(RequisitionEntry::class, 'csrr_requisition', 'requis_id');
+    }
 }

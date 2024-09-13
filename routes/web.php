@@ -27,14 +27,8 @@ use App\Http\Controllers\Treasury\Transactions\GcAllocationController;
 use App\Http\Controllers\Treasury\Transactions\InstitutionGcSalesController;
 use App\Http\Controllers\Treasury\Transactions\ProductionRequestController;
 use App\Http\Controllers\Treasury\Transactions\PromoGcReleasingController;
-use App\Http\Controllers\Treasury\Transactions\SpecialGcPaymentController;
 use App\Http\Controllers\Treasury\TransactionsController;
-use App\Http\Controllers\Treasury\MainController;
 use App\Http\Controllers\Treasury\TreasuryController;
-use App\Http\Middleware\UserTypeRoute;
-use App\Services\Treasury\Dashboard\BudgetRequestService;
-use App\Services\Treasury\Dashboard\StoreGcRequestService;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -49,31 +43,34 @@ Route::get('/not-found', function () {
     return 'Empty';
 })->name('not.found');
 
+Route::fallback(function () {
+    return view('notFound');
+});
+
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
 //Dashboards
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard');
+    Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard')->middleware('userType:treasury');
 
-    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard');
-    Route::get('retailgroup-dashboard', [RetailGroupController::class, 'index'])->name('retailgroup.dashboard');
+    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard')->middleware('userType:retail');
 
-    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
+    Route::get('retailgroup-dashboard', [RetailGroupController::class, 'index'])->name('retailgroup.dashboard')->middleware('userType:retailgroup');
 
-    Route::get('finance-dashboard', [FinanceController::class, 'index'])->name('finance.dashboard');
+    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard')->middleware('userType:accounting');
 
-    Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard');
+    Route::get('finance-dashboard', [FinanceController::class, 'index'])->name('finance.dashboard')->middleware('userType:finance');
 
-    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
+    Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard')->middleware('userType:iad');
 
-    Route::get('eod-dashboard', [EodController::class, 'index'])->name('eod.dashboard');
+    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard')->middleware('userType:custodian');
 
+    Route::get('eod-dashboard', [EodController::class, 'index'])->name('eod.dashboard')->middleware('userType:eod');
 
-    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
+    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing');
 
-
-    Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard')->middleware('userType:admin');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -94,6 +91,11 @@ Route::prefix('admin')->group(function () {
         Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
         Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
         Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
+        Route::name('masterfile.')->group(function () {
+            Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
+            Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
+        });
+        Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
     });
 });
 
@@ -129,17 +131,14 @@ Route::prefix('marketing')->group(function () {
         Route::name('pendingRequest.')->group(function () {
             Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
             Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
-            Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
-            Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
         });
         Route::name('approvedRequest.')->group(function () {
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
-            Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
-        Route::name('promoGcRequest.')->group(function (){
-            Route::get('promo-pending-list',[MarketingController::class, 'promoPendinglist'])->name('pending.list');
-            Route::get('selected-promo-pending-request',[MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
-            Route::post('submit',[MarketingController::class, 'submitUpdate'])->name('submit');
+        Route::name('promoGcRequest.')->group(function () {
+            Route::get('promo-pending-list', [MarketingController::class, 'promoPendinglist'])->name('pending.list');
+            Route::get('selected-promo-pending-request', [MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
+            Route::post('submit', [MarketingController::class, 'submitUpdate'])->name('submit');
         });
     });
 });
@@ -183,7 +182,7 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 
 
 //Treasury
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'userType:treasury'])->group(function () {
     Route::prefix('treasury')->group(function () {
         Route::name('treasury.')->group(function () {
             Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
@@ -216,6 +215,8 @@ Route::middleware('auth')->group(function () {
                 Route::get('view-approved-request/{id}', [GcProductionRequestController::class, 'viewApprovedProduction'])->name('view.approved');
                 Route::get('view-barcode-generated/{id}', [GcProductionRequestController::class, 'viewBarcodeGenerate'])->name('view.barcode');
                 Route::get('view-requisition/{id}', [GcProductionRequestController::class, 'viewRequisition'])->name('requisition');
+                Route::get('download-{file}', [GcProductionRequestController::class, 'download'])->name('download.document');
+                Route::get('reprint-{id}', [GcProductionRequestController::class, 'reprintRequest'])->name('reprint');
             });
             Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
                 Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('pending');
@@ -279,7 +280,6 @@ Route::middleware('auth')->group(function () {
                     Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
                     Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                 });
-
             });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
@@ -299,6 +299,7 @@ Route::prefix('eod')->group(function () {
     Route::name('eod.')->group(function () {
         Route::get('eod-verified-gc', [EodController::class, 'eodVerifiedGc'])->name('verified.gc');
         Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
+        Route::get('list', [EodController::class, 'list'])->name('list');
     });
 });
 
@@ -328,15 +329,16 @@ Route::prefix('finance')->group(function () {
             Route::get('budget-pending', [FinanceController::class, 'budgetPendingIndex'])->name('pending');
             Route::get('budget-setup', [FinanceController::class, 'setupBudget'])->name('setup');
             Route::post('budget-submit', [FinanceController::class, 'submitBudget'])->name('submit');
+            Route::get('approved-budget', [FinanceController::class, 'approvedBudget'])->name('approved');
+            Route::get('approved-budget-details-{id}', [FinanceController::class, 'approvedBudgetDetails'])->name('approved.details');
         });
-
     });
 
     Route::get('/download/{filename}', function ($filename) {
         $filePath = storage_path('app/' . $filename);
         return response()->download($filePath);
     })->name('download');
-});
+})->middleware('userType:finance');
 
 // retailstore
 Route::prefix('retail')->group(function () {
@@ -365,7 +367,7 @@ Route::prefix('retail')->group(function () {
             Route::get('verification-index', [RetailController::class, 'verificationIndex'])->name('index');
             Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
         });
-
+        Route::get('AvailableGc', [RetailController::class, 'availableGcList'])->name('availableGcList');
     });
 });
 Route::prefix('retailgroup')->group(function () {
@@ -383,7 +385,7 @@ Route::prefix('custodian')->group(function () {
 
         Route::get('barcode-checker', [CustodianController::class, 'barcodeCheckerIndex'])->name('barcode.checker');
         Route::post('scan-barcode', [CustodianController::class, 'scanBarcode'])->name('scan.barcode');
-        Route::get('received-gc', [CustodianController::class, 'receivedGcIndex'])->name('received.gc');
+        Route::get('received-gc-barcode', [CustodianController::class, 'receivedGcIndex'])->name('received.gc');
 
         Route::name('pendings.')->group(function () {
             Route::get('pending-holder-entry', [CustodianController::class, 'pendingHolderEntry'])->name('holder.entry');
@@ -410,6 +412,8 @@ Route::middleware('auth')->group(function () {
         Route::post('delete-scanned-barcode', [IadController::class, 'removeScannedGc'])->name('remove.scanned.gc');
         Route::post('validate-barcode', [IadController::class, 'validateBarcode'])->name('validate.barcode');
         Route::post('submit-setup', [IadController::class, 'submitSetup'])->name('submit.setup');
+        Route::get('received-gc-view',  [IadController::class, 'receivedGc'])->name('view.received');
+        Route::get('received-gc-view-details-{id}',  [IadController::class, 'receivedGcDetails'])->name('details.view');
 
         Route::prefix('special-external-gc-request')->name('special.external.')->group(function () {
             Route::get('view-approved-gc', [SpecialExternalGcRequestController::class, 'approvedGc'])->name('approvedGc');
@@ -419,6 +423,11 @@ Route::middleware('auth')->group(function () {
             Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
 
             Route::get('gc-reprint-{id}', [SpecialExternalGcRequestController::class, 'reprint'])->name('reprint');
+        });
+
+        Route::prefix('reviewed-gc')->name('reviewed.gc.')->group(function () {
+            Route::get('review-index', [IadController::class, 'reviewedGcIndex'])->name('special.review');
+            Route::get('review-datails-{id}', [IadController::class, 'reviewDetails'])->name('details');
         });
     });
 });
@@ -431,7 +440,6 @@ Route::prefix('search')->group(function () {
 });
 Route::prefix('management')->group(function () {
     Route::name('manager.')->group(function () {
-        Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
         Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
     });
 });

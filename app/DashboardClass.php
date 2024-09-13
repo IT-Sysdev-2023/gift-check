@@ -4,8 +4,11 @@ namespace App;
 
 use App\Models\ApprovedGcrequest;
 use App\Models\BudgetRequest;
+use App\Models\CustodianSrr;
 use App\Models\InstitutEod;
 use App\Models\InstitutTransaction;
+use App\Models\LedgerBudget;
+use App\Models\LedgerSpgc;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcReleaseToDetail;
 use App\Models\PromoGcRequest;
@@ -67,6 +70,35 @@ class DashboardClass extends DashboardService
         $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '0')->where('spexgc_addemp', 'done')->count();
         $pendingInternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '*')->where('spexgc_addemp', 'done')->count();
 
+        $curBudget = LedgerBudget::where('bcus_guide', '!=', 'dti')->get();
+
+        $dtiBudget = LedgerBudget::where('bcus_guide', 'dti')->get();
+
+        $ledgerSpgc = LedgerSpgc::get();
+
+        // dd($dtiBudget->toArray());
+
+        $debitTotal = $curBudget->sum('bdebit_amt');
+        $creditTotal = $curBudget->sum('bcredit_amt');
+
+        $dtiDebitTotal = $dtiBudget->sum('bdebit_amt');
+        $dtiCreditTotal = $dtiBudget->sum('bcredit_amt');
+
+        $spgcDebitTotal = $ledgerSpgc->sum('spgcledger_debit');
+        $spgcreditTotal = $ledgerSpgc->sum('spgcledger_credit');
+
+        // $query = "SELECT SUM(spgcledger_debit),SUM(spgcledger_credit) FROM ledger_spgc";
+
+		// $query = $link->query($query) or die('unable to query');
+		// $budget_row		= $query->fetch_array();
+		// $debit 	= $budget_row['SUM(spgcledger_debit)'];
+		// $credit = $budget_row['SUM(spgcledger_credit)'];
+
+		// $budget = $debit - $credit;
+
+		// return $budget;
+
+
         return [
             'specialGcRequest' => [
                 'pending' => $pendingExternal + $pendingInternal,
@@ -77,7 +109,14 @@ class DashboardClass extends DashboardService
             ],
             'budgetRequest' => [
                 'pending' => BudgetRequest::where('br_request_status', '0')
-                ->count(),
+                    ->count(),
+                'approved' => BudgetRequest::where('br_request_status', '1')
+                    ->count(),
+            ],
+            'budgetCounts' => [
+                'curBudget' => $debitTotal - $creditTotal,
+                'dti' => $dtiDebitTotal - $dtiCreditTotal ,
+                'spgc' => $spgcDebitTotal - $spgcreditTotal ,
             ],
 
             'appPromoCount' => PromoGcRequest::with('userReqby')
@@ -90,6 +129,21 @@ class DashboardClass extends DashboardService
                 ->count(),
 
         ];
+
+        //     function currentBudget($link)
+        // {
+        // 	$query = "SELECT SUM(bdebit_amt),SUM(bcredit_amt) FROM ledger_budget WHERE bcus_guide != 'dti'";
+
+        // 	$query = $link->query($query) or die('unable to query');
+        // 	$budget_row		= $query->fetch_array();
+        // 	$debit 	= $budget_row['SUM(bdebit_amt)'];
+        // 	$credit = $budget_row['SUM(bcredit_amt)'];
+
+        // 	$budget = $debit - $credit;
+
+        // 	return $budget;
+        // }
+
     }
     public function marketingDashboard()
     {
@@ -99,6 +153,15 @@ class DashboardClass extends DashboardService
     {
         return [
             'countReceiving' => RequisitionForm::where('used', null)->count(),
+
+            'reviewedCount' =>  SpecialExternalGcrequest::join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+                ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
+                ->where('spexgc_reviewed', 'reviewed')
+                ->where('reqap_approvedtype', 'Special External GC Approved')->count(),
+
+            'approvedgc' => SpecialExternalGcrequest::where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])->count(),
+
+            'receivedcount' => CustodianSrr::count()
         ];
     }
     public function custodianDashboard()

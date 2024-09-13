@@ -54,7 +54,7 @@ const dashboardRoute = computed(() => {
                                         width: 80px;
                                         border-radius: 50%;
                                     "
-                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiKgCygEhMX5cH4hBwMR8YCz3NMfmJ3JdGcw&s"
+                                    src="https://media.themoviedb.org/t/p/w500/3z8iHWk3yi0ViLWY2uE4608b3Ds.jpg"
                                     alt="usersimage" />
                             </div>
                             <div v-else>
@@ -65,7 +65,7 @@ const dashboardRoute = computed(() => {
                                         object-fit: cover;
                                         object-position: center;
                                     "
-                                src="/images/statue.PNG"
+                                src="https://avatars.githubusercontent.com/u/463230?v=4"
                                     alt="usersimage" />
                             </div>
                         </div>

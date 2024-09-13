@@ -77,10 +77,10 @@ class SpecialExternalGcrequest extends Model
     {
         return $this->belongsTo(User::class, 'spexgc_reqby', 'user_id');
     }
-    public function preparedBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'reqap_preparedby', 'user_id');
-    }
+    // public function preparedBy(): BelongsTo
+    // {
+    //     return $this->belongsTo(User::class, 'reqap_preparedby', 'user_id');
+    // }
     public function scopeReleasedGc(Builder $builder)
     {
         return $this->with([
@@ -99,6 +99,10 @@ class SpecialExternalGcrequest extends Model
     public function approvedRequest()
     {
         return $this->belongsTo(ApprovedRequest::class, 'spexgc_id', 'reqap_trid');
+    }
+    public function approvedRequest1()
+    {
+        return $this->hasOne(ApprovedRequest::class, 'reqap_trid', 'spexgc_id');
     }
 
     public function specialExternalBankPaymentInfo(): HasOne

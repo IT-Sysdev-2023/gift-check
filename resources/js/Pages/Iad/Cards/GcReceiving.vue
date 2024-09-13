@@ -1,7 +1,7 @@
 <template>
     <a-card class="bg-card">
         <a-alert :message="title" show-icon />
-        <div class="card" style="background-color: #fd9b63">
+        <div class="card" style="background-color: #FF4C4C">
             <svg
                 class="wave"
                 viewBox="0 0 1440 320"
@@ -21,7 +21,8 @@
                 <p class="message-text text-white">{{ containerTitle1 }}</p>
                 <p class="sub-text text-white">{{ containerDesc1 }}</p>
             </div>
-            <a-badge>
+
+            <a-badge :overflow-count="999" :number-style="{ backgroundColor: '#FF5B22' }" :count="countPending">
                 <a-button @click="$emit('container1-event')">
                     <template #icon>
                         <FolderFilled />
@@ -50,8 +51,8 @@
                 <p class="message-text text-white">{{ containerTitle2 }}</p>
                 <p class="sub-text text-white">{{ containerDesc2 }}</p>
             </div>
-            <a-badge>
-                <a-button>
+            <a-badge :overflow-count="999" :count="recrev" :number-style="{ backgroundColor: '#52c41a' }" >
+                <a-button  @click="$emit('container2-event')">
                     <template #icon>
                         <FolderFilled />
                     </template>
@@ -63,7 +64,8 @@
 </template>
 <script setup lang="ts">
 defineProps<{
-    count: string;
+    countPending: number;
+    recrev: number;
     title: string;
     containerTitle1: string;
     containerTitle2: string;

@@ -22,6 +22,12 @@ const emit = defineEmits<{
 
 const internalValue = ref(props.amount);
 
+// Watch for changes in props.amount and update internalValue
+watch(() => props.amount, (newValue) => {
+    internalValue.value = newValue;
+});
+
+// Watch for changes in internalValue and emit updates
 watch(internalValue, (newValue) => {
     emit('update:amount', newValue);
 });
@@ -30,10 +36,8 @@ const formatter = (value: number) =>
     `₱ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
 const handleError = () => {
-   emit('clearError')
+    emit('clearError');
 }
-
 </script>
 
 <style lang="scss" scoped></style>
-

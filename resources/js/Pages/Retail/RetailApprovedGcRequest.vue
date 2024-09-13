@@ -37,7 +37,7 @@
         </a-table>
         <pagination class="mt-6" :datarecords="record" />
 
-        <create-entry-gc v-model:open="open" :record="data" @close-modal="close" />
+        <create-entry-gc v-model:open="open" :record="data" @close-modal="close" :assign="assign" />
 
     </AuthenticatedLayout>
 </template>
@@ -47,27 +47,29 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { ref, createVNode } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { onBeforeMount } from 'vue';
+import { notification } from 'ant-design-vue';
 
 
 const open = ref(false);
 
-const form = useForm({
+const formAgc = useForm({
     agc_num: null,
 });
+
 
 defineProps({
     record: Object,
     data: Object,
     columns: String,
+    assign: Object
 });
-
 
 
 const openModal = (agc_num) => {
 
-    form.agc_num = agc_num;
+    formAgc.agc_num = agc_num;
 
-    form.get(route('retail.approved.request'), {
+    formAgc.get(route('retail.approved.request'), {
         onSuccess: () => {
             open.value = true;
         },
