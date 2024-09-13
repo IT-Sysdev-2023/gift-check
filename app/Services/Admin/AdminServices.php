@@ -11,6 +11,7 @@ use App\Models\RequisitionFormDenomination;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\StoreVerification;
 use App\Models\Supplier;
+use App\Models\TransactionStore;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Http\Request;
 
@@ -547,8 +548,9 @@ class AdminServices
 
     public function getEodDateRange()
     {
-       $data = StoreVerification::where('vs_tf_eod', '1')->limit(10)->get();
+        //    $data = StoreVerification::where('vs_tf_eod', '1')->limit(10)->get();
+        $data =  TransactionStore::where('trans_yreport', '!=', '0')->where('trans_eos', '!=', '0')->limit(10)->get();
 
-       dd($data->toArray());
+        dd($data->toArray());
     }
 }
