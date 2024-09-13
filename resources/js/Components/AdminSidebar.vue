@@ -23,6 +23,10 @@
         <UserOutlined />
         <span> <Link :href="route('admin.status.scanner')"> Status Scanner</Link></span>
     </a-menu-item>
+    <a-menu-item key="eod-scanner">
+        <UserOutlined />
+        <span> <Link :href="route('admin.eod.reports')"> Eod Reports Nga gipabuhat ni Mars</Link></span>
+    </a-menu-item>
     <a-menu-item key="purchase.order.details">
         <UserOutlined />
         <span> <Link :href="route('admin.purchase.order.details')"> Purchase Order Details</Link></span>

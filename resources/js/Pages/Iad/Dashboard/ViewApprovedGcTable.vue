@@ -26,7 +26,7 @@
                             records.spexgc_dateneed }}
                         </a-descriptions-item>
                         <a-descriptions-item label="Customer" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.specialExternalCustomer.spcus_acctname
+                            records.specialExternalCustomer?.spcus_acctname
                             }}
                         </a-descriptions-item>
                         <a-descriptions-item label="Total Denomination" :labelStyle="{ fontWeight: 'bold' }">{{
@@ -48,24 +48,29 @@
                         <a-descriptions-item label="Date Approved" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.approvedRequest.reqap_date
                             }}</a-descriptions-item>
-                        <a-descriptions-item label="Approved Document" v-if="records.approvedRequest.reqap_doc">
-                            <ant-image-preview :images="records.approvedRequest.reqap_doc" />
-                        </a-descriptions-item>
+                            <a-descriptions-item label="Date Approved" :labelStyle="{ fontWeight: 'bold' }">{{
+                           records?.approvedRequest.reqap_doc
+                            }}</a-descriptions-item>
+                            ddadasd
+                            <!-- {{ records?.approvedRequest }} -->
+                        <!-- <a-descriptions-item label="Approved Document" v-if="records?.approvedRequest?.reqap_doc">
+                            <ant-image-preview :images="records?.approvedRequest?.reqap_doc" />
+                        </a-descriptions-item> -->
                         <a-descriptions-item label="Approved Remarks" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.approvedRequest.reqap_remarks
+                            records.approvedRequest?.reqap_remarks
                             }}</a-descriptions-item>
                         <a-descriptions-item label="Checked By" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.approvedRequest.reqap_checkedby
+                            records.approvedRequest?.reqap_checkedby
                             }}</a-descriptions-item>
                         <a-descriptions-item label="Approved By" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.approvedRequest.reqap_approvedby
+                            records.approvedRequest?.reqap_approvedby
                             }}</a-descriptions-item>
                         <a-descriptions-item label="Documents" :labelStyle="{ fontWeight: 'bold' }"
                             v-if="records.document">
                             <ant-image-preview :images="records?.document" />
                         </a-descriptions-item>
                         <a-descriptions-item label="Prepared By" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.approvedRequest.user.full_name
+                            records.approvedRequest?.user?.full_name
                             }}</a-descriptions-item>
 
                     </a-descriptions>
@@ -76,10 +81,10 @@
                             <a-button @click="scanGc"> Scan GC</a-button>
                             <a-button @click="reprint"> Reprint Gc</a-button>
                         </a-space>
-                        <a-table :columns="columns" bordered class="mt-10" :data-source="$page.props.flash.scanGc"
+                        <!-- <a-table :columns="columns" bordered class="mt-10" :data-source="$page.props.flash.scanGc"
                             :pagination="false">
 
-                        </a-table>
+                        </a-table> -->
                         <a-form class="mt-10" :model="formState" name="basic" :label-col="{ span: 8 }"
                             :wrapper-col="{ span: 16 }" autocomplete="off" @finish="onFinish">
                             <a-form-item label="Remarks" name="remarks"
@@ -102,7 +107,7 @@
                     </a-card>
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="GC Holder" force-render >
-                    <a-table :dataSource="gcHolder" :columns="gcholderCol" :pagination="false"/>
+                    <!-- <a-table :dataSource="gcHolder" :columns="gcholderCol" :pagination="false"/> -->
                 </a-tab-pane>
             </a-tabs>
         </a-card>
