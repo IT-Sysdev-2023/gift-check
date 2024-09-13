@@ -8,7 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: typeof import('ant-design-vue/es')['Alert']
-    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
@@ -157,6 +156,7 @@ declare module 'vue' {
     Edit: typeof import('./resources/js/Pages/Profile/Edit.vue')['default']
     EodDashboard: typeof import('./resources/js/Pages/Eod/EodDashboard.vue')['default']
     EodList: typeof import('./resources/js/Pages/Eod/Cards/EodList.vue')['default']
+    EodReports: typeof import('./resources/js/Pages/Admin/EodReports.vue')['default']
     EodSidebar: typeof import('./resources/js/Components/EodSidebar.vue')['default']
     Errors: typeof import('./resources/js/Pages/Finance/Cards/Errors.vue')['default']
     ExclamationCircleFilled: typeof import('@ant-design/icons-vue')['ExclamationCircleFilled']

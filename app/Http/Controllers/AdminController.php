@@ -122,4 +122,10 @@ class AdminController extends Controller
         }
     }
 
+    public function eodReports()
+    {
+        return inertia('Admin/EodReports', [
+            'record' => $this->adminservices->getEodDateRange()
+        ]);
+    }
 }

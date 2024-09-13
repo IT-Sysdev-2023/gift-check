@@ -95,6 +95,7 @@ Route::prefix('admin')->group(function () {
             Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
             Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
         });
+        Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
     });
 });
 
