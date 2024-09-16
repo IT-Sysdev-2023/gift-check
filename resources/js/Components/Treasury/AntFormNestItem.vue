@@ -88,8 +88,4 @@ const addDenom = () => {
         id: Date.now(),
     });
 };
-// const onFinish = (values) => {
-//     console.log("Received values of form:", values);
-//     console.log("dynamicValidateForm.users:", props.form.denomination);
-// };
 </script>

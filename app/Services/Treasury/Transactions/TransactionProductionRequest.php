@@ -1,13 +1,17 @@
 <?php
 namespace App\Services\Treasury\Transactions;
 
+use App\Helpers\NumberHelper;
+use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
 use App\Rules\DenomQty;
 use App\Services\Documents\UploadFileHandler;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Date;
 
 class TransactionProductionRequest extends UploadFileHandler
 {
@@ -27,6 +31,7 @@ class TransactionProductionRequest extends UploadFileHandler
 	}
 	public function storeGc(Request $request)
 	{
+
 		if ($this->isAbleToRequest($request)) {
 			return redirect()->back()->with('error', 'You have pending production request');
 		}
@@ -34,14 +39,15 @@ class TransactionProductionRequest extends UploadFileHandler
 		$request->validate([
 			'remarks' => 'required',
 			'dateNeeded' => 'required|date',
-			'file' => 'required|image|mimes:jpeg,png,jpg|max:5048',
+			// 'file' => 'required|image|mimes:jpeg,png,jpg|max:5048',
 			'denom' => ['required', 'array', new DenomQty()],
 		]);
 
 		$filename = $this->createFileName($request);
 
 		try {
-			DB::transaction(function () use ($request, $filename) {
+			$denom = collect($request->denom)->filter(fn($val) => isset ($val['qty']) && $val['qty'] > 0);
+			DB::transaction(function () use ($request, $filename, $denom) {
 
 				$pr = ProductionRequest::create([
 					'pe_num' => $request->prNo,
@@ -53,8 +59,6 @@ class TransactionProductionRequest extends UploadFileHandler
 					'pe_type' => userDepartment($request->user()),
 					'pe_group' => 0
 				]);
-
-				$denom = collect($request->denom)->filter(fn($val) => isset ($val['qty']) && $val['qty'] > 0);
 
 				$denom->each(function ($value) use ($pr) {
 					ProductionRequestItem::create([
@@ -69,10 +73,34 @@ class TransactionProductionRequest extends UploadFileHandler
 
 			$this->saveFile($request, $filename);
 
-			return redirect()->back()->with('success', 'SuccessFully Requested');
+			return $this->generatePdf($request, $denom);
 
 		} catch (\Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong!');
 		}
+	}
+
+	public function generatePdf(Request $request, Collection $denom){
+
+		$denomination = $denom->map(function ($item) {
+			return array_merge($item, ['denomination' => NumberHelper::format($item['denomination'])]);
+		});		
+
+		$data = [
+			'pr' => $request->prNo,
+			'budget' => NumberHelper::format(LedgerBudget::budget()),
+			'dateRequested' => today()->toFormattedDateString(),
+			'dateNeeded' => Date::parse($request->dateNeeded)->toFormattedDateString(),
+			'remarks' => $request->remarks,
+			'barcode' => $denomination,
+			'preparedBy' => $request->user()->full_name
+		];
+		$pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
+
+        $pdf->setPaper('A3');
+
+        $stream = base64_encode($pdf->output());
+
+        return redirect()->back()->with(['stream' => $stream, 'success' => 'SuccessFully Requested']);
 	}
 }

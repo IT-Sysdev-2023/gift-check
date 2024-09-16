@@ -31,17 +31,17 @@ class SpecialGcPaymentService extends UploadFileHandler
             'paymentType.type' => 'required',
             'paymentType.amount' => [
                 function ($attribute, $value, $fail) use ($request) {
-                    if ($request->input('paymentType.type') != 2 && (is_null($value) || $value == 0)) {
+                    if ($request->input('paymentType.type') != 2 && (is_null($value) || $value == 0 || ($value < $request->input('total')))) {
                         $fail('The ' . $attribute . ' is required and cannot be 0 if type is not 2.');
                     }
                 },
             ]
+           
         ], [
             'paymentType.type' => 'The payment type field is required.',
             'paymentType.amount' => 'The selected payment amount is required.'
 
         ]);
-
         return DB::transaction(function () use ($request) {
 
             $latestId = $this->segStore($request);
@@ -112,7 +112,7 @@ class SpecialGcPaymentService extends UploadFileHandler
             'company' => [
                 'name' => Str::upper('ALTURAS GROUP OF COMPANIES'),
                 'department' => Str::title('Head Office - Treasury Department'),
-                'report' => 'Institution GC Releasing Report',
+                'report' => 'Special GC Releasing Report',
             ],
 
             //SubHeader

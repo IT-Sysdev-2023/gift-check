@@ -217,6 +217,10 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 Route::get('view-requisition/{id}', [GcProductionRequestController::class, 'viewRequisition'])->name('requisition');
                 Route::get('download-{file}', [GcProductionRequestController::class, 'download'])->name('download.document');
                 Route::get('reprint-{id}', [GcProductionRequestController::class, 'reprintRequest'])->name('reprint');
+
+                Route::get('pending', [GcProductionRequestController::class, 'pending'])->name('pending');
+                Route::post('submit-pending-request', [GcProductionRequestController::class, 'pendingSubmission'])->name('pendingSubmission');
+
             });
             Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
                 Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('pending');

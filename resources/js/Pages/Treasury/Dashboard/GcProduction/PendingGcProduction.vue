@@ -34,7 +34,7 @@
                 <a-row>
                     <a-col :span="10">
                         <a-form-item ref="name" label="PR No." name="name">
-                            <a-input :value="formState.prNo" readonly />
+                            <a-input :value="record.data.pe_num" readonly />
                         </a-form-item>
                         <a-form-item label="Date Requested:" name="name">
                             <a-input v-model:value="currentDate" readonly />
@@ -52,10 +52,21 @@
                                 @change="clearError('dateNeeded')"
                             />
                         </a-form-item>
-                        <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
-                            :help="getErrorMessage('file')">
+                        <a-form-item
+                            label="Upload Scan Copy.:"
+                            name="name"
+                            :validate-status="getErrorStatus('file')"
+                            :help="getErrorMessage('file')"
+                        >
                             <ant-upload-image @handle-change="handleChange" />
-                        </a-form-item> -->
+                        </a-form-item>
+                        <a-form-item
+                            label="Uploaded image preview:"
+                            v-if="record.data.pe_file_docno"
+                        >
+                            <ant-image-preview  :images="imagePreview"/>
+                        </a-form-item>
+
                         <a-form-item
                             label="Remarks:."
                             name="name"
@@ -79,26 +90,12 @@
                                     <span>Quantity</span>
                                 </a-col>
                             </a-row>
-                            <a-row
-                                :gutter="16"
-                                class="mt-5"
-                                v-for="(item, index) of formState.denom"
-                                :key="index"
-                            >
+                            <a-row :gutter="16" class="mt-5" v-for="(item, index) of formState.denom" :key="index">
                                 <a-col :span="12">
-                                    <a-input
-                                        :value="item.denomination"
-                                        readonly
-                                        class="text-end"
-                                    />
+                                    <a-input :value="item.denomination_format" readonly class="text-end" />
                                 </a-col>
                                 <a-col :span="12" style="text-align: center">
-                                    <a-input-number
-                                        id="inputNumber"
-                                        v-model:value="item.qty"
-                                        placeholder="0"
-                                        :min="0"
-                                    >
+                                    <a-input-number id="inputNumber" v-model:value="item.qty" placeholder="0" :min="0">
                                         <template #upIcon>
                                             <ArrowUpOutlined />
                                         </template>
@@ -108,10 +105,7 @@
                                     </a-input-number>
                                 </a-col>
                             </a-row>
-                            <div
-                                class="mt-5 text-red-500 text-center"
-                                v-if="formState.errors.denom"
-                            >
+                            <div class="mt-5 text-red-500 text-center" v-if="formState.errors.denom">
                                 {{ formState.errors.denom }}
                             </div>
                         </a-card>
@@ -125,19 +119,6 @@
                 </a-row>
             </a-form>
         </a-card>
-        <a-modal
-            v-model:open="openIframe"
-            style="width: 70%; top: 50px"
-            :footer="null"
-            :afterClose="closeIframe"
-        >
-            <iframe
-                class="mt-7"
-                :src="stream"
-                width="100%"
-                height="600px"
-            ></iframe>
-        </a-modal>
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
@@ -151,58 +132,64 @@ import { onProgress } from "@/Mixin/UiUtilities";
 
 const props = defineProps<{
     title?: string;
-    prNo: string;
+    record: {data: any};
     denomination: {
-        data: any[];
+        data: {
+            id: number,
+            denomination: number,
+            denomination_format: string,
+            qty: number
+        }[]
     };
     remainingBudget: string;
 }>();
 
-const stream = ref(null);
-const openIframe = ref(false);
 const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
 
-const formState = useForm<FormStateGc>({
+const formState = useForm({
+    reqid: props.record.data.pe_id,
     denom: [...props.denomination.data],
-    prNo: props.prNo,
     file: null,
-    remarks: "",
-    dateNeeded: null,
+    remarks: props.record.data.pe_remarks,
+    dateNeeded: dayjs(props.record.data.pe_date_needed),
 });
 
+const imagePreview = [
+    {
+        uid: props.record.data.pe_id,
+        name: props.record.data.pe_file_docno,
+        url: '/storage/productionRequestFile/' + props.record.data.pe_file_docno,
+    }
+]
 const { openLeftNotification } = onProgress();
 const handleChange = (file: UploadChangeParam) => {
     formState.file = file.file;
 };
 
-const closeIframe = () =>{
-    router.visit(route('treasury.dashboard'));
-}
 const onSubmit = () => {
     formState
         .transform((data) => ({
             ...data,
             dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
         }))
-        .post(route("treasury.transactions.production.gcSubmit"), {
+        .post(route("treasury.production.request.pendingSubmission"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
                 if (props.flash.success) {
-                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
-                    openIframe.value = true;
+                    router.visit(route('treasury.dashboard'));
                 }
             },
         });
 };
 const getErrorStatus = (field: string) => {
-    return formState.errors[field] ? "error" : "";
+    // return formState.errors[field] ? "error" : "";
 };
 const getErrorMessage = (field: string) => {
-    return formState.errors[field];
+    // return formState.errors[field];
 };
 const clearError = (field: string) => {
-    formState.errors[field] = null;
+    // formState.errors[field] = null;
 };
 
 const disabledDate = (current) => {

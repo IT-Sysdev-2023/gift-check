@@ -34,6 +34,7 @@
                             :help="getErrorMessage('dateNeeded')"
                         >
                             <a-date-picker
+                                :disabled-date="disabledDate"
                                 v-model:value="formState.dateNeeded"
                                 @change="clearError('dateNeeded')"
                             />
@@ -58,10 +59,10 @@
                                 @change="clearError('budget')"
                             />
                         </a-form-item>
-                        <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
+                        <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                         :help="getErrorMessage('file')">
                             <ant-upload-image @handle-change="handleChange" />
-                        </a-form-item>
+                        </a-form-item> -->
                         <a-form-item
                             label="Remarks:."
                             name="name"
@@ -105,10 +106,9 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import type { UploadChangeParam } from "ant-design-vue";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import type { UploadFile } from "ant-design-vue";
 import { PageWithSharedProps } from "@/types/index";
@@ -129,7 +129,10 @@ const props = defineProps<{
 
 const page = usePage<PageWithSharedProps>().props;
 const currentDate = dayjs().format("MMM DD, YYYY");
-
+const disabledDate = (current: Dayjs) => {
+    // Can not select days before today and today
+    return current && current < dayjs().startOf("day");
+};
 const formState = useForm<FormStateGc>({
     br: props.br,
     dateNeeded: null,

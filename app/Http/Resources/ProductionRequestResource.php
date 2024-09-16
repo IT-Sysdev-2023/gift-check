@@ -23,7 +23,8 @@ class ProductionRequestResource extends JsonResource
 
             'pe_requested_by' => $this->pe_requested_by,
             'pe_file_docno' => $this->pe_file_docno,
-            'pe_remarks' =>$this->pe_remarks,
+            
+            'pe_remarks' => $this->pe_remarks,
             'pe_generate_code' => $this->pe_generate_code,
             'pe_requisition' => $this->pe_requisition,
             'pe_type' => $this->pe_type,

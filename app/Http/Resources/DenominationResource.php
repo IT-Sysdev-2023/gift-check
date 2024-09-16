@@ -17,8 +17,10 @@ class DenominationResource extends JsonResource
     {
         return [
             'id' => $this->denom_id,
-            'denomination' => NumberHelper::currency($this->denomination),
-            'denomination_format' => $this->denomination_format
+            'denomination' => $this->denomination,
+            'denomination_format' => $this->denomination_format,
+
+            'qty' => $this->whenLoaded('productionRequestItems', fn($q) => $q->pe_items_quantity)
         ];
     }
 }

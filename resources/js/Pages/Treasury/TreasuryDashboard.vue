@@ -51,10 +51,12 @@ const storeGcReleased = () => routeTo("store.gc", "released");
 const storeGcCancelled = () => routeTo("store.gc", "cancelled");
 
 // GC Production request handlers
+const pendingProductionRequest = () => routeTo("production.request", 'pending')
 const approvedProductionRequest = () => routeTo("production.request", "approved");
 
 //Special GC Requesh
-const specialGcPending = () => routeTo("special.gc", "pending")
+const specialGcPending = () => routeTo("special.gc", "pending");
+
 </script>
 
 <template>
@@ -126,6 +128,7 @@ const specialGcPending = () => routeTo("special.gc", "pending")
                                 :pending="data?.gcProductionRequest.pending"
                                 :approved="data?.gcProductionRequest.approved"
                                 :cancelled="data?.gcProductionRequest.cancelled"
+                                 @pending-event="pendingProductionRequest"
                                  @approved-event="approvedProductionRequest"
                             />
                             <Card

@@ -19,7 +19,7 @@
                 <a-row>
                     <a-col :span="10">
                         <a-form-item label="Date Allocated:" name="name">
-                            <a-input v-model:value="currentDate" readonly />
+                            <a-input :value="currentDate" readonly />
                         </a-form-item>
                         <a-form-item
                             label="Store:"
@@ -93,6 +93,9 @@
                                 >{{ formState.errors.denomination }}</span
                             >
                         </a-card>
+                        <a-form-item label="Allocated By:" name="name" class="mt-5">
+                            <a-input :value="$page.props.auth.user.full_name" readonly />
+                        </a-form-item>
 
                         <a-form-item class="text-end mt-5">
                             <a-button type="primary" html-type="submit"
