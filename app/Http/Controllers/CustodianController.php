@@ -6,6 +6,7 @@ use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Custodian\CustodianServices;
+use App\Services\Custodian\ReprintPdf;
 use Illuminate\Http\Request;
 
 
@@ -80,6 +81,7 @@ class CustodianController extends Controller
             'barcodes' => $this->custodianservices->setupApprovalBarcodes($request),
         ]);
     }
+
     public function barcodeOrRange(Request $request)
     {
         if ($request->status == '1') {
@@ -117,5 +119,10 @@ class CustodianController extends Controller
             ]);
 
         }
+    }
+
+    public function reprintRequest($id)
+    {
+        return (new ReprintPdf)->reprintRequestService($id);
     }
 }

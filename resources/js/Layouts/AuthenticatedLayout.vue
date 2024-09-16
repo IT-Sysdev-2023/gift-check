@@ -54,7 +54,7 @@ const dashboardRoute = computed(() => {
                                         width: 80px;
                                         border-radius: 50%;
                                     "
-                                    src="https://media.themoviedb.org/t/p/w500/3z8iHWk3yi0ViLWY2uE4608b3Ds.jpg"
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRec9vI42pnTjYGIpgq9sIzCFrlkZPmRkTCOw&s"
                                     alt="usersimage" />
                             </div>
                             <div v-else>

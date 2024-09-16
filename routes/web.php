@@ -140,11 +140,17 @@ Route::prefix('marketing')->group(function () {
             Route::get('selected-promo-pending-request', [MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
             Route::post('submit', [MarketingController::class, 'submitUpdate'])->name('submit');
         });
+        Route::name('manage-supplier.')->group(function () {
+            Route::get('manage-supplier', [MarketingController::class, 'manageSupplier'])->name('manage.supplier');
+            Route::get('add-supplier', [MarketingController::class, 'addSupplier'])->name('add.supplier');
+            Route::get('status-supplier', [MarketingController::class, 'statusSupplier'])->name('status.supplier');
+        });
     });
 });
 
+
+
 Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
-Route::get('manage-supplier', [MarketingController::class, 'manageSupplier'])->name('manage.supplier');
 Route::get('sales-treasury-sales', [MarketingController::class, 'treasurySales'])->name('marketing.sales.treasury.sales');
 Route::get('sales-store-sales', [MarketingController::class, 'storeSales'])->name('sales.store.sales');
 Route::get('verified-gc-alturas-mall', [MarketingController::class, 'verifiedGc_Amall'])->name('verified.gc.alturas.mall');
@@ -327,6 +333,7 @@ Route::prefix('finance')->group(function () {
         });
         Route::name('approvedGc.')->group(function () {
             Route::get('approved-special-gc', [FinanceController::class, 'approvedGc'])->name('approved');
+            Route::get('selected-special-gc', [FinanceController::class, 'selectedapprovedGc'])->name('selected.approved');
         });
 
         Route::name('budget.')->group(function () {
@@ -399,7 +406,8 @@ Route::prefix('custodian')->group(function () {
 
         Route::name('approved.')->group(function () {
             Route::get('approved-gc-request', [CustodianController::class, 'approvedGcRequest'])->name('request');
-            Route::get('approve-request', [CustodianController::class, 'setupApproval'])->name('setup');
+            Route::get('approve-request-special', [CustodianController::class, 'setupApproval'])->name('setup');
+            Route::get('reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request');
         });
 
         Route::name('check.')->group(function () {
@@ -416,8 +424,8 @@ Route::middleware('auth')->group(function () {
         Route::post('delete-scanned-barcode', [IadController::class, 'removeScannedGc'])->name('remove.scanned.gc');
         Route::post('validate-barcode', [IadController::class, 'validateBarcode'])->name('validate.barcode');
         Route::post('submit-setup', [IadController::class, 'submitSetup'])->name('submit.setup');
-        Route::get('received-gc-view',  [IadController::class, 'receivedGc'])->name('view.received');
-        Route::get('received-gc-view-details-{id}',  [IadController::class, 'receivedGcDetails'])->name('details.view');
+        Route::get('received-gc-view', [IadController::class, 'receivedGc'])->name('view.received');
+        Route::get('received-gc-view-details-{id}', [IadController::class, 'receivedGcDetails'])->name('details.view');
 
         Route::prefix('special-external-gc-request')->name('special.external.')->group(function () {
             Route::get('view-approved-gc', [SpecialExternalGcRequestController::class, 'approvedGc'])->name('approvedGc');
