@@ -60,12 +60,15 @@ class LedgerBudget extends Model
         return $this->belongsTo(ApprovedGcrequest::class, 'bledger_trid', 'agcr_id');
     }
 
-    public static function currentBudget()
+    public static function budget()
     {
         $query = self::select(DB::raw('SUM(bdebit_amt) as debit'), DB::raw('SUM(bcredit_amt) as credit'))
             ->whereNot('bcus_guide', 'dti')->first();
 
-        $budget = bcsub($query->debit, $query->credit, 2);
-        return NumberHelper::currency((float) $budget);
+        return bcsub($query->debit, $query->credit, 2);
+    }
+    public static function currentBudget()
+    {
+        return NumberHelper::currency((float) self::budget());
     }
 }

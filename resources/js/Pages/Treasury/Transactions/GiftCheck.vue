@@ -1,6 +1,5 @@
 <template>
     <AuthenticatedLayout>
-
         <Head :title="title" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
@@ -11,16 +10,27 @@
         <a-card>
             <a-row>
                 <a-col :span="12">
-                    <a-statistic title="Prepaired By" :value="$page.props.auth.user.full_name" />
+                    <a-statistic
+                        title="Prepaired By"
+                        :value="$page.props.auth.user.full_name"
+                    />
                 </a-col>
                 <a-col :span="12">
-                    <a-statistic title="Current Budget" :value="remainingBudget" />
+                    <a-statistic
+                        title="Current Budget"
+                        :value="remainingBudget"
+                    />
                 </a-col>
             </a-row>
         </a-card>
         <a-card title="Submit a Gift Check" class="mt-10">
-            <a-form ref="formRef" :model="formState" :label-col="{ span: 8 }" :wrapper-col="{ span: 12 }"
-                @finish="onSubmit">
+            <a-form
+                ref="formRef"
+                :model="formState"
+                :label-col="{ span: 8 }"
+                :wrapper-col="{ span: 12 }"
+                @finish="onSubmit"
+            >
                 <a-row>
                     <a-col :span="10">
                         <a-form-item ref="name" label="PR No." name="name">
@@ -29,17 +39,34 @@
                         <a-form-item label="Date Requested:" name="name">
                             <a-input v-model:value="currentDate" readonly />
                         </a-form-item>
-                        <a-form-item label="Date Needed:" name="name" has-feedback
-                            :validate-status="getErrorStatus('dateNeeded')" :help="getErrorMessage('dateNeeded')">
-                            <a-date-picker :disabled-date="disabledDate" v-model:value="formState.dateNeeded" @change="clearError('dateNeeded')" />
+                        <a-form-item
+                            label="Date Needed:"
+                            name="name"
+                            has-feedback
+                            :validate-status="getErrorStatus('dateNeeded')"
+                            :help="getErrorMessage('dateNeeded')"
+                        >
+                            <a-date-picker
+                                :disabled-date="disabledDate"
+                                v-model:value="formState.dateNeeded"
+                                @change="clearError('dateNeeded')"
+                            />
                         </a-form-item>
                         <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                             :help="getErrorMessage('file')">
                             <ant-upload-image @handle-change="handleChange" />
                         </a-form-item> -->
-                        <a-form-item label="Remarks:." name="name" has-feedback
-                            :validate-status="getErrorStatus('remarks')" :help="getErrorMessage('remarks')">
-                            <a-textarea v-model:value="formState.remarks" @input="clearError('remarks')" />
+                        <a-form-item
+                            label="Remarks:."
+                            name="name"
+                            has-feedback
+                            :validate-status="getErrorStatus('remarks')"
+                            :help="getErrorMessage('remarks')"
+                        >
+                            <a-textarea
+                                v-model:value="formState.remarks"
+                                @input="clearError('remarks')"
+                            />
                         </a-form-item>
                     </a-col>
                     <a-col :span="14">
@@ -52,12 +79,26 @@
                                     <span>Quantity</span>
                                 </a-col>
                             </a-row>
-                            <a-row :gutter="16" class="mt-5" v-for="(item, index) of formState.denom" :key="index">
+                            <a-row
+                                :gutter="16"
+                                class="mt-5"
+                                v-for="(item, index) of formState.denom"
+                                :key="index"
+                            >
                                 <a-col :span="12">
-                                    <a-input :value="item.denomination" readonly class="text-end" />
+                                    <a-input
+                                        :value="item.denomination"
+                                        readonly
+                                        class="text-end"
+                                    />
                                 </a-col>
                                 <a-col :span="12" style="text-align: center">
-                                    <a-input-number id="inputNumber" v-model:value="item.qty" placeholder="0" :min="0">
+                                    <a-input-number
+                                        id="inputNumber"
+                                        v-model:value="item.qty"
+                                        placeholder="0"
+                                        :min="0"
+                                    >
                                         <template #upIcon>
                                             <ArrowUpOutlined />
                                         </template>
@@ -67,18 +108,36 @@
                                     </a-input-number>
                                 </a-col>
                             </a-row>
-                            <div class="mt-5 text-red-500 text-center" v-if="formState.errors.denom">
+                            <div
+                                class="mt-5 text-red-500 text-center"
+                                v-if="formState.errors.denom"
+                            >
                                 {{ formState.errors.denom }}
                             </div>
                         </a-card>
 
                         <a-form-item class="text-end mt-5">
-                            <a-button type="primary" html-type="submit">Submit</a-button>
+                            <a-button type="primary" html-type="submit"
+                                >Submit</a-button
+                            >
                         </a-form-item>
                     </a-col>
                 </a-row>
             </a-form>
         </a-card>
+        <a-modal
+            v-model:open="openIframe"
+            style="width: 70%; top: 50px"
+            :footer="null"
+            :afterClose="() => route('treasury.dashboard')"
+        >
+            <iframe
+                class="mt-7"
+                :src="stream"
+                width="100%"
+                height="600px"
+            ></iframe>
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
@@ -99,6 +158,8 @@ const props = defineProps<{
     remainingBudget: string;
 }>();
 
+const stream = ref(null);
+const openIframe = ref(false);
 const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
 
@@ -125,7 +186,8 @@ const onSubmit = () => {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
                 if (props.flash.success) {
-                    router.visit(route('treasury.dashboard'));
+                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                    openIframe.value = true;
                 }
             },
         });
