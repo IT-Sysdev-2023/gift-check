@@ -1,5 +1,5 @@
 <template>
-    <a-descriptions title="User Info" layout="vertical" bordered size="small">
+    <a-descriptions title="User Info" bordered size="small">
         <a-descriptions-item label="BR No.">{{
             data.br_no
         }}</a-descriptions-item>
@@ -26,7 +26,7 @@
             data.prepared_by.full_name
         }}</a-descriptions-item>
     </a-descriptions>
-    <a-descriptions layout="vertical" bordered style="margin-top: 20px">
+    <a-descriptions bordered style="margin-top: 20px">
         <a-descriptions-item label="Date Approved">{{
             data.abr.approved_at
         }}</a-descriptions-item>

@@ -51,7 +51,7 @@ const { highlightText } = highlighten();
                         {{ getValue(record, column.dataIndex) }}
                     </span>
                 </template>
-
+                
                 <template v-if="column.dataIndex === 'action'">
                     <a-popconfirm
                         title="Are you sure allocate this request?"

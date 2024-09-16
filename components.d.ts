@@ -257,6 +257,7 @@ declare module 'vue' {
     ReleasedPromoGc: typeof import('./resources/js/Pages/Marketing/ReleasedPromoGc.vue')['default']
     ReleasedTab: typeof import('./resources/js/Pages/Finance/Reports/ReleasedTab.vue')['default']
     ReleasingEntryModal: typeof import('./resources/js/Pages/Treasury/Dashboard/StoreGc/ReleasingEntryModal.vue')['default']
+    ReprintRequestResult: typeof import('./resources/js/Pages/Custodian/Result/ReprintRequestResult.vue')['default']
     RequestGc: typeof import('./resources/js/Pages/Retail/RequestGc.vue')['default']
     RequisitionResult: typeof import('./resources/js/Pages/Marketing/Pdf/RequisitionResult.vue')['default']
     ResetPassword: typeof import('./resources/js/Pages/Auth/ResetPassword.vue')['default']

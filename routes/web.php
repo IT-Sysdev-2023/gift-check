@@ -406,7 +406,8 @@ Route::prefix('custodian')->group(function () {
 
         Route::name('approved.')->group(function () {
             Route::get('approved-gc-request', [CustodianController::class, 'approvedGcRequest'])->name('request');
-            Route::get('approve-request', [CustodianController::class, 'setupApproval'])->name('setup');
+            Route::get('approve-request-special', [CustodianController::class, 'setupApproval'])->name('setup');
+            Route::get('reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request');
         });
 
         Route::name('check.')->group(function () {

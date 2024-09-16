@@ -89,8 +89,8 @@ class ColumnHelper
         ],
         [
             'title' => 'Requested By',
-            // 'dataIndex' => ['store', 'store_name'],
-            // 'key' => 'requested_by',
+            'dataIndex' => ['store', 'store_name'],
+            'key' => 'requested_by',
 
         ],
         [
@@ -112,7 +112,6 @@ class ColumnHelper
         [
             'title' => 'Request Status',
             'dataIndex' => 'sgc_status',
-
         ],
         [
             'title' => 'Action',
