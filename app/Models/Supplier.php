@@ -11,4 +11,8 @@ class Supplier extends Model
     protected $table= 'supplier';
 
     protected $primaryKey= 'gcs_id';
+
+    protected $guarded = [];
+
+    public $timestamps= false;
 }

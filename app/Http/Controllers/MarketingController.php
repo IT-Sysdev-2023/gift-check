@@ -89,7 +89,7 @@ class MarketingController extends Controller
 
         $promoGcRequest = $this->marketing->promoGcRequest();
         $gcProductionRequest = $this->marketing->productionRequest();
-        $supplier = Supplier::all();
+        $supplier = Supplier::where('gcs_status',1)->get();
         $checkedBy = $this->marketing->checkedBy();
         $currentBudget = $this->marketing->currentBudget();
         $requestNum = ProductionRequest::where('pe_generate_code', 1)
@@ -1420,12 +1420,12 @@ class MarketingController extends Controller
         );
 
 
-        
+
         return Inertia::render('Marketing/gcproductionrequest/PendingRequest', [
             'data' => $pendingRequests,
             'columns' => ColumnHelper::getColumns($columns),
             'barcodes' => $productionBarcode,
-            'barcodeColumns' =>ColumnHelper::getColumns($barcodeColumns),
+            'barcodeColumns' => ColumnHelper::getColumns($barcodeColumns),
             'checkedBy' => $checkedBy
 
         ]);
@@ -1667,6 +1667,48 @@ class MarketingController extends Controller
                 'type' => "error",
             ]);
         }
+
+    }
+
+    public function addSupplier(Request $request)
+    {
+        $inserted = Supplier::create([
+            'gcs_companyname' => $request->data['gcs_companyname'],
+            'gcs_accountname' => $request->data['gcs_accountname'],
+            'gcs_contactperson' => $request->data['gcs_contactperson'],
+            'gcs_contactnumber' => $request->data['gcs_contactnumber'],
+            'gcs_address' => $request->data['gcs_address'],
+            'gcs_status' => '1',
+        ]);
+
+        if ($inserted) {
+            return back()->with([
+                'msg' => "Success!",
+                'description' => "New Supplier Added ",
+                'type' => "success",
+            ]);
+        } else {
+            return back()->with([
+                'msg' => "Opps!",
+                'description' => "Something went wrong!",
+                'type' => "error",
+            ]);
+        }
+    }
+
+    public function statusSupplier(Request $request)
+    {
+        $status = Supplier::where('gcs_id', $request->id)->first();
+        Supplier::where('gcs_id', $request->id)
+            ->update([
+                'gcs_status' => $status->gcs_status == 0 ? 1 : 0
+            ]);
+
+        return back()->with([
+            'msg' => "Status",
+            'description' => "Status updated",
+            'type' => "success",
+        ]);
 
     }
 }

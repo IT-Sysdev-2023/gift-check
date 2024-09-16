@@ -76,7 +76,7 @@ const currentActiveMenu = [route().current().split(".")[1]];
             <a-menu-item key="manageSupplier">
                 <UsergroupAddOutlined />
                 <span>
-                    <Link :href="route('manage.supplier')">Manage Supplier</Link>
+                    <Link :href="route('marketing.manage-supplier.manage.supplier')">Manage Supplier</Link>
                 </span>
             </a-menu-item>
             <a-sub-menu key="sales">
@@ -195,7 +195,7 @@ const currentActiveMenu = [route().current().split(".")[1]];
             <a-menu-item key="manageSupplier">
                 <UsergroupAddOutlined />
                 <span>
-                    <Link :href="route('manage.supplier')">Manage Supplier</Link>
+                    <Link :href="route('marketing.manage-supplier.manage.supplier')">Manage Supplier</Link>
                 </span>
             </a-menu-item>
             <a-sub-menu key="sales">
