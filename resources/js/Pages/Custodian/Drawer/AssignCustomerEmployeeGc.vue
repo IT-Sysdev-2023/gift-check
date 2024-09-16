@@ -174,10 +174,8 @@ export default {
         disableAssign() {
             return (this.form.lastname == null ||
                 this.form.firstname == null ||
-                this.form.suffix == null ||
                 this.form.voucher == null ||
                 this.form.business == null ||
-                this.form.middlename == null ||
                 this.form.address == null) ? true : false;
 
         }
