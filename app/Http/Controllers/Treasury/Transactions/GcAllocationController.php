@@ -43,6 +43,7 @@ class GcAllocationController extends Controller
     }
     public function store(Request $request)
     {
+
         $request->validate([
             'store' => 'not_in:0',
             'gcType' => 'not_in:0',
@@ -122,6 +123,7 @@ class GcAllocationController extends Controller
             ]
         ])->select('loc_by', 'loc_barcode_no', 'loc_date', 'loc_gc_type')
             ->where([['loc_store_id', $request->store], ['loc_rel', ''], ['loc_gc_type', $request->type]])
+            ->filterDenomination($request)
             ->paginate(5)
             ->withQueryString();
 
@@ -142,6 +144,7 @@ class GcAllocationController extends Controller
         ])
             ->select('denom_id', 'barcode_no')
             ->where([['gc_validated', '*'], ['gc_allocated', ''], ['gc_ispromo', ''], ['gc_treasury_release', '']])
+            ->filterDenomination($request)
             ->paginate()
             ->withQueryString();
 
