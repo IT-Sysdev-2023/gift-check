@@ -112,7 +112,6 @@ class ColumnHelper
         [
             'title' => 'Request Status',
             'dataIndex' => 'sgc_status',
-
         ],
         [
             'title' => 'Action',
