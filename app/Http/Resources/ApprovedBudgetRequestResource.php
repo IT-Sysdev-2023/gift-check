@@ -19,7 +19,7 @@ class ApprovedBudgetRequestResource extends JsonResource
             'id' => $this->id,
             'approved_by' => $this->abr_approved_by,
             'approved_at' => $this->abr_approved_at->toFormattedDateString(),
-            'file_doc_no' => $this->abr_file_doc_no,
+            'file_doc_no' => "storage/approvedBudgetRequest/$this->abr_file_doc_no",
             'checked_by' => $this->abr_checked_by,
             'budget_remark' => $this->approved_budget_remark,
             'user_prepared_by' => $this->user
