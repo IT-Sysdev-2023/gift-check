@@ -251,6 +251,7 @@ declare module 'vue' {
     ProgressBarInner: typeof import('./resources/js/Components/Finance/ProgressBarInner.vue')['default']
     ProgressHeader: typeof import('./resources/js/Components/Finance/ProgressHeader.vue')['default']
     PromoForApproval: typeof import('./resources/js/Pages/Finance/Cards/PromoForApproval.vue')['default']
+    PromoGcCard: typeof import('./resources/js/Pages/Finance/Cards/PromoGcCard.vue')['default']
     PromoGCCard: typeof import('./resources/js/Pages/Finance/Cards/PromoGCCard.vue')['default']
     PromoGcReceived: typeof import('./resources/js/Pages/Marketing/Card/PromoGcReceived.vue')['default']
     PromoGcReleasingIndex: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/PromoGcReleasingIndex.vue')['default']
