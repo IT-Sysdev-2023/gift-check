@@ -129,7 +129,7 @@
             v-model:open="openIframe"
             style="width: 70%; top: 50px"
             :footer="null"
-            :afterClose="() => route('treasury.dashboard')"
+            :afterClose="closeIframe"
         >
             <iframe
                 class="mt-7"
@@ -176,6 +176,9 @@ const handleChange = (file: UploadChangeParam) => {
     formState.file = file.file;
 };
 
+const closeIframe = () =>{
+    router.visit(route('treasury.dashboard'));
+}
 const onSubmit = () => {
     formState
         .transform((data) => ({
