@@ -16,7 +16,7 @@
                 <p class="message-text text-white">Pendings</p>
                 <p class="sub-text text-white">All Pending Request</p>
             </div>
-            <a-badge :count="count.pending">
+            <a-badge :count="count.internal + count.external">
                 <a-popover v-model:open="open" trigger="click">
                     <template #content>
                         <a-badge class="m-2" :count="count.internal">
@@ -26,7 +26,7 @@
                             <a-button @click="pendingListLink('external')" type="primary">External</a-button>
                         </a-badge>
                     </template>
-                    <a-button>
+                    <a-button  :disabled="count.internal <= 0 || count.external <= 0">
                         <template #icon>
                             <FolderFilled />
                         </template>
@@ -50,7 +50,7 @@
                 <p class="message-text text-white">Approved</p>
                 <p class="sub-text text-white">Approved Gc Request</p>
             </div>
-            <a-badge :count="count.approve">
+            <a-badge :count="count.approve" :overflow-count="999">
                 <a-button @click="() => $inertia.get(route('finance.approvedGc.approved'))">
                     <template #icon>
                         <FolderFilled />

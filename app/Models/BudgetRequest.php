@@ -16,13 +16,14 @@ class BudgetRequest extends Model
     protected $guarded = [];
     public $timestamps = false;
 
-    protected function casts():array{
+    protected function casts(): array
+    {
         return [
             'br_requested_at' => 'datetime',
             'br_requested_needed' => 'datetime',
         ];
     }
-    
+
     public function scopeFilter(Builder $builder, $filter)
     {
         return $builder->when($filter['date'] ?? null, function ($query, $date) {
@@ -33,18 +34,18 @@ class BudgetRequest extends Model
                 'br_no',
                 'br_requested_at',
             ], 'LIKE', '%' . $search . '%')
-            ->orWhereHas('approvedBudgetRequest', function (Builder $query) use ($search) {
-                $query->whereAny([
-                    'abr_approved_by',
-                    'abr_approved_at'
-                ], 'LIKE', '%' . $search . '%');
-            })
-            ->orWhereHas('user', function (Builder $query) use ($search) {
-                $query->whereAny([
-                    'firstname',
-                    'lastname'
-                ], 'LIKE', '%' . $search . '%');
-            });
+                ->orWhereHas('approvedBudgetRequest', function (Builder $query) use ($search) {
+                    $query->whereAny([
+                        'abr_approved_by',
+                        'abr_approved_at'
+                    ], 'LIKE', '%' . $search . '%');
+                })
+                ->orWhereHas('user', function (Builder $query) use ($search) {
+                    $query->whereAny([
+                        'firstname',
+                        'lastname'
+                    ], 'LIKE', '%' . $search . '%');
+                });
         });
     }
     public function user(): BelongsTo
@@ -59,4 +60,26 @@ class BudgetRequest extends Model
     {
         return $this->belongsTo(ApprovedBudgetRequest::class, 'br_id', 'abr_budget_request_id');
     }
+    public function scopeSelectFilter($query)
+    {
+        $query->select(
+            'br_id',
+            'br_request',
+            'br_requested_at',
+            'br_requested_by',
+            'br_no',
+            'br_file_docno',
+            'br_remarks',
+            'br_requested_needed',
+            'firstname',
+            'lastname',
+            'abr_approved_by',
+            'abr_approved_at',
+            'abr_file_doc_no',
+            'abr_checked_by',
+            'abr_checked_by',
+            'approved_budget_remark'
+        );
+    }
+
 }

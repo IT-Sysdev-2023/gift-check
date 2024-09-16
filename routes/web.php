@@ -95,6 +95,7 @@ Route::prefix('admin')->group(function () {
             Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
             Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
         });
+        Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
     });
 });
 
@@ -130,11 +131,8 @@ Route::prefix('marketing')->group(function () {
         Route::name('pendingRequest.')->group(function () {
             Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
             Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
-            Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
-            Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
         });
         Route::name('approvedRequest.')->group(function () {
-            Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
             Route::get('approved-request', [MarketingController::class, 'approvedRequest'])->name('approved.request');
         });
         Route::name('promoGcRequest.')->group(function () {
@@ -335,6 +333,8 @@ Route::prefix('finance')->group(function () {
             Route::get('budget-pending', [FinanceController::class, 'budgetPendingIndex'])->name('pending');
             Route::get('budget-setup', [FinanceController::class, 'setupBudget'])->name('setup');
             Route::post('budget-submit', [FinanceController::class, 'submitBudget'])->name('submit');
+            Route::get('approved-budget', [FinanceController::class, 'approvedBudget'])->name('approved');
+            Route::get('approved-budget-details-{id}', [FinanceController::class, 'approvedBudgetDetails'])->name('approved.details');
         });
     });
 
@@ -444,7 +444,6 @@ Route::prefix('search')->group(function () {
 });
 Route::prefix('management')->group(function () {
     Route::name('manager.')->group(function () {
-        Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
         Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
     });
 });

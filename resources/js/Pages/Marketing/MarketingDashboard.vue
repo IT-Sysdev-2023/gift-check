@@ -5,7 +5,8 @@
             <GcProductionReq :gcProductionRequest />
         </a-col>
         <a-col :span="8">
-
+            <SpecialExternalGc/>
+            <PromoGcReceived/>
         </a-col>
         <a-col :span="8">
             <div class="mb-2">
@@ -142,6 +143,8 @@ import GcPromoReq from "./Card/PromoGcReq.vue";
 import BudgetRequest from "../Treasury/Transactions/BudgetRequest.vue";
 import BudgetReq from "./Card/PromoGcReq.vue";
 import PromoGcReq from "./Card/PromoGcReq.vue";
+import SpecialExternalGc from "./Card/SpecialExternalGc.vue";
+import PromoGcReceived from "./Card/PromoGcReceived.vue";
 
 export default {
     layout: Authenticatedlayout,
