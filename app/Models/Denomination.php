@@ -32,4 +32,8 @@ class Denomination extends Model
     public function gc(){
         return $this->hasOne(Gc::class, 'denom_id');
     }
+
+    public function productionRequestItems(){
+        return $this->hasOne(ProductionRequestItem::class, 'pe_items_denomination', 'denom_id');
+    }
 }

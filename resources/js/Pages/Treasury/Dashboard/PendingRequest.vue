@@ -48,6 +48,7 @@
                                     :wrapper-col="{ span: 16 }"
                                 >
                                     <a-date-picker
+                                    :disabled-date="disabledDate"
                                         v-model:value="formState.dateNeeded"
                                     />
                                 </a-form-item>
@@ -120,6 +121,8 @@
                                 </a-tag>
                             </a-space>
                         </a-form-item>
+
+                       
                         <a-form-item
                             label="Upload Scan Copy"
                             :validate-status="
@@ -127,25 +130,7 @@
                             "
                             :help="formState.errors.file"
                         >
-                            <a-upload-dragger
-                                accept="image/png, image/jpeg"
-                                v-model:file-list="fileList"
-                                @change="handleChange"
-                                name="file"
-                                :before-upload="() => false"
-                                list-type="picture"
-                                :max-count="1"
-                            >
-                                <p class="ant-upload-drag-icon">
-                                    <inbox-outlined></inbox-outlined>
-                                </p>
-                                <p class="ant-upload-text">
-                                    Click or drag image to this area to upload
-                                </p>
-                                <p class="ant-upload-hint">
-                                    png, jpg, jpeg images only are allowed
-                                </p>
-                            </a-upload-dragger>
+                        <ant-upload-image @handleChange="handleChange"/>
                         </a-form-item>
 
                         <a-form-item :wrapper-col="{ offset: 22, span: 20 }">
@@ -178,7 +163,7 @@
 import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayout.vue";
 import { ref } from "vue";
 import type { UploadChangeParam, UploadProps } from "ant-design-vue";
-import { usePage, useForm } from "@inertiajs/vue3";
+import { usePage, useForm, router } from "@inertiajs/vue3";
 import dayjs, { Dayjs } from "dayjs";
 import {
     PageProps,
@@ -222,7 +207,10 @@ const formState = useForm<FormState>({
     group: props.data.br_group,
     file: null,
 });
-
+const disabledDate = (current: Dayjs) => {
+  // Can not select days before today and today
+  return current && current < dayjs().startOf('day');
+};
 const handleChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };
@@ -242,6 +230,7 @@ const onFinish = (values: any) => {
             preserveScroll: true,
             onSuccess: (pages: { props: FlashProps }) => {
                 openNotification(pages.props.flash);
+                router.get(route('treasury.dashboard'));
             },
         });
 };

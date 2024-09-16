@@ -1,6 +1,5 @@
 <template>
     <AuthenticatedLayout>
-
         <Head :title="title" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
@@ -11,35 +10,74 @@
         <a-card>
             <a-row>
                 <a-col :span="12">
-                    <a-statistic title="Prepaired By" :value="$page.props.auth.user.full_name" />
+                    <a-statistic
+                        title="Prepaired By"
+                        :value="$page.props.auth.user.full_name"
+                    />
                 </a-col>
                 <a-col :span="12">
-                    <a-statistic title="Current Budget" :value="remainingBudget" />
+                    <a-statistic
+                        title="Current Budget"
+                        :value="remainingBudget"
+                    />
                 </a-col>
             </a-row>
         </a-card>
         <a-card title="Submit a Gift Check" class="mt-10">
-            <a-form ref="formRef" :model="formState" :label-col="{ span: 8 }" :wrapper-col="{ span: 12 }"
-                @finish="onSubmit">
+            <a-form
+                ref="formRef"
+                :model="formState"
+                :label-col="{ span: 8 }"
+                :wrapper-col="{ span: 12 }"
+                @finish="onSubmit"
+            >
                 <a-row>
                     <a-col :span="10">
                         <a-form-item ref="name" label="PR No." name="name">
-                            <a-input :value="formState.prNo" readonly />
+                            <a-input :value="record.data.pe_num" readonly />
                         </a-form-item>
                         <a-form-item label="Date Requested:" name="name">
                             <a-input v-model:value="currentDate" readonly />
                         </a-form-item>
-                        <a-form-item label="Date Needed:" name="name" has-feedback
-                            :validate-status="getErrorStatus('dateNeeded')" :help="getErrorMessage('dateNeeded')">
-                            <a-date-picker :disabled-date="disabledDate" v-model:value="formState.dateNeeded" @change="clearError('dateNeeded')" />
+                        <a-form-item
+                            label="Date Needed:"
+                            name="name"
+                            has-feedback
+                            :validate-status="getErrorStatus('dateNeeded')"
+                            :help="getErrorMessage('dateNeeded')"
+                        >
+                            <a-date-picker
+                                :disabled-date="disabledDate"
+                                v-model:value="formState.dateNeeded"
+                                @change="clearError('dateNeeded')"
+                            />
                         </a-form-item>
-                        <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
-                            :help="getErrorMessage('file')">
+                        <a-form-item
+                            label="Upload Scan Copy.:"
+                            name="name"
+                            :validate-status="getErrorStatus('file')"
+                            :help="getErrorMessage('file')"
+                        >
                             <ant-upload-image @handle-change="handleChange" />
-                        </a-form-item> -->
-                        <a-form-item label="Remarks:." name="name" has-feedback
-                            :validate-status="getErrorStatus('remarks')" :help="getErrorMessage('remarks')">
-                            <a-textarea v-model:value="formState.remarks" @input="clearError('remarks')" />
+                        </a-form-item>
+                        <a-form-item
+                            label="Uploaded image preview:"
+                            v-if="record.data.pe_file_docno"
+                        >
+                            <ant-image-preview  :images="imagePreview"/>
+                        </a-form-item>
+
+                        <a-form-item
+                            label="Remarks:."
+                            name="name"
+                            has-feedback
+                            :validate-status="getErrorStatus('remarks')"
+                            :help="getErrorMessage('remarks')"
+                        >
+                            <a-textarea
+                                v-model:value="formState.remarks"
+                                @input="clearError('remarks')"
+                            />
                         </a-form-item>
                     </a-col>
                     <a-col :span="14">
@@ -54,7 +92,7 @@
                             </a-row>
                             <a-row :gutter="16" class="mt-5" v-for="(item, index) of formState.denom" :key="index">
                                 <a-col :span="12">
-                                    <a-input :value="item.denomination" readonly class="text-end" />
+                                    <a-input :value="item.denomination_format" readonly class="text-end" />
                                 </a-col>
                                 <a-col :span="12" style="text-align: center">
                                     <a-input-number id="inputNumber" v-model:value="item.qty" placeholder="0" :min="0">
@@ -73,7 +111,9 @@
                         </a-card>
 
                         <a-form-item class="text-end mt-5">
-                            <a-button type="primary" html-type="submit">Submit</a-button>
+                            <a-button type="primary" html-type="submit"
+                                >Submit</a-button
+                            >
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -92,9 +132,14 @@ import { onProgress } from "@/Mixin/UiUtilities";
 
 const props = defineProps<{
     title?: string;
-    prNo: string;
+    record: {data: any};
     denomination: {
-        data: any[];
+        data: {
+            id: number,
+            denomination: number,
+            denomination_format: string,
+            qty: number
+        }[]
     };
     remainingBudget: string;
 }>();
@@ -102,14 +147,21 @@ const props = defineProps<{
 const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
 
-const formState = useForm<FormStateGc>({
+const formState = useForm({
+    reqid: props.record.data.pe_id,
     denom: [...props.denomination.data],
-    prNo: props.prNo,
     file: null,
-    remarks: "",
-    dateNeeded: null,
+    remarks: props.record.data.pe_remarks,
+    dateNeeded: dayjs(props.record.data.pe_date_needed),
 });
 
+const imagePreview = [
+    {
+        uid: props.record.data.pe_id,
+        name: props.record.data.pe_file_docno,
+        url: '/storage/productionRequestFile/' + props.record.data.pe_file_docno,
+    }
+]
 const { openLeftNotification } = onProgress();
 const handleChange = (file: UploadChangeParam) => {
     formState.file = file.file;
@@ -121,7 +173,7 @@ const onSubmit = () => {
             ...data,
             dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
         }))
-        .post(route("treasury.transactions.production.gcSubmit"), {
+        .post(route("treasury.production.request.pendingSubmission"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
                 if (props.flash.success) {
@@ -131,13 +183,13 @@ const onSubmit = () => {
         });
 };
 const getErrorStatus = (field: string) => {
-    return formState.errors[field] ? "error" : "";
+    // return formState.errors[field] ? "error" : "";
 };
 const getErrorMessage = (field: string) => {
-    return formState.errors[field];
+    // return formState.errors[field];
 };
 const clearError = (field: string) => {
-    formState.errors[field] = null;
+    // formState.errors[field] = null;
 };
 
 const disabledDate = (current) => {

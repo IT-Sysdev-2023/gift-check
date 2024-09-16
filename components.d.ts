@@ -229,6 +229,7 @@ declare module 'vue' {
     PendingBudgetRequest: typeof import('./resources/js/Pages/Finance/PendingBudgetRequest.vue')['default']
     PendingGc: typeof import('./resources/js/Pages/RetailGroup/PendingGc.vue')['default']
     PendingGcDescription: typeof import('./resources/js/Pages/RetailGroup/Description/PendingGcDescription.vue')['default']
+    PendingGcProduction: typeof import('./resources/js/Pages/Treasury/Dashboard/GcProduction/PendingGcProduction.vue')['default']
     PendingGcRequestView: typeof import('./resources/js/Pages/Marketing/PromoGCRequest/PendingGcRequestView.vue')['default']
     PendingList: typeof import('./resources/js/Pages/Marketing/PromoGCRequest/PendingList.vue')['default']
     PendingPromoGcRequest: typeof import('./resources/js/Pages/Finance/PendingPromoGcRequest.vue')['default']

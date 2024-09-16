@@ -11,6 +11,8 @@ use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
 use App\Services\Documents\UploadFileHandler;
 use Illuminate\Http\Request;
+use App\Rules\DenomQty;
+use Illuminate\Support\Facades\DB;
 
 class GcProductionRequestService extends UploadFileHandler
 {
@@ -140,8 +142,73 @@ class GcProductionRequestService extends UploadFileHandler
     {
         return $this->download($file);
     }
-    public function reprint($id){
+    public function reprint($id)
+    {
         $folder = "reports/marketing";
         return $this->retrieveFile($folder, "requis{$id}.pdf");
+    }
+
+    public function pendingSubmit(Request $request)
+    {
+
+        $request->validate([
+            'dateNeeded' => 'required',
+            'remarks' => 'required',
+            'denom' => ['required', 'array', new DenomQty()],
+        ]);
+
+        DB::transaction(function () use ($request) {
+
+            $file = $this->createFileName($request);
+
+            ProductionRequest::where([['pe_id', $request->reqid], ['pe_status', '0']])->update([
+                'pe_requested_by' => $request->user()->user_id,
+                'pe_remarks' => $request->remarks,
+                'pe_date_needed' => $request->dateNeeded,
+                'pe_file_docno' => $file,
+                'pe_group' => 0
+            ]);
+
+            $pr = ProductionRequest::orderByDesc('pe_id')->value('pe_status');
+            if ($pr == 0) {
+                $denoms = collect($request->denom);
+                $denoms->each(function ($item) use ($request) {
+
+                    if (!is_null($item['qty']) || $item['qty'] != 0) {
+                        $pri = ProductionRequestItem::where([['pe_items_denomination', $item['id']], ['pe_items_request_id', $request->reqid]])->exists();
+                        if ($pri) {
+                            ProductionRequestItem::where([['pe_items_denomination', $item['id']], ['pe_items_request_id', $request->reqid]])->update([
+                                'pe_items_quantity' => $item['qty'],
+                                'pe_items_remain' => $item['qty']
+                            ]);
+                        } else {
+
+                            ProductionRequestItem::insert([
+                                'pe_items_id' => null,
+                                'pe_items_denomination' => $item['id'],
+                                'pe_items_quantity' => $item['qty'],
+                                'pe_items_remain' => $item['qty'],
+                                'pe_items_request_id' => $request->reqid
+                            ]);
+                        }
+                    } else {
+                        $hasProd = ProductionRequestItem::where([['pe_items_denomination', $item['id']], ['pe_items_request_id', $request->reqid]]);
+                        if ($hasProd->exists()) {
+                            $hasProd->delete();
+                        }
+                    }
+
+                });
+
+                $this->folderName = 'productionRequestFile';
+                $this->saveFile($request, $file);
+
+            } else {
+                return redirect()->back()->with('error', 'Production request already approved/cancelled.');
+            }
+            
+            return redirect()->back()->with('success', 'Success mate!.');
+
+        });
     }
 }
