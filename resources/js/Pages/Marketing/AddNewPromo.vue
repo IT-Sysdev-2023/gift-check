@@ -68,7 +68,7 @@
                   <span>Please Select Promo Group</span>
                 </template>
                 <a-button disabled type="primary" ghost>
-                  <PlusOutlined /> Add GC
+                  <PlusOutlined /> Scan GC
                 </a-button>
               </a-tooltip>
             </div>
