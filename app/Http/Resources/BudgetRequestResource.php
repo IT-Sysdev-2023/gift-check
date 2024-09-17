@@ -21,7 +21,7 @@ class BudgetRequestResource extends JsonResource
             'br_requested_at' => $this->br_requested_at->toFormattedDateString(),
             'br_requested_at_time' => $this->br_requested_at->format('g:i A'),
             'br_no' => $this->br_no,
-            'br_file_docno' => $this->br_file_docno,
+            'br_file_docno' => "storage/budgetRequestScanCopy/$this->br_file_docno",
             'br_remarks' => $this->br_remarks,
             'br_requested_needed' => $this->br_requested_needed->toFormattedDateString(),
             'prepared_by' => $this->user,

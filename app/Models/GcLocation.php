@@ -33,6 +33,16 @@ class GcLocation extends Model
             });
         });
     }
+    public function scopeFilterDenomination(Builder $builder, $filter)
+    {
+        return $builder->when($filter['search'] ?? null, function ($query, $search) {
+            $query->whereHas('gc.denomination', function (Builder $query) use ($search) {
+                $query->whereAny([
+                    'denomination',
+                ], 'LIKE', '%' . $search . '%');
+            });
+        });
+    }
     public function user()
     {
         return $this->belongsTo(User::class, 'loc_by', 'user_id');

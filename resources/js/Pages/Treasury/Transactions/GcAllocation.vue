@@ -34,7 +34,7 @@
                                 @handle-change="handleStoreChange"
                             />
                         </a-form-item>
-                        <a-form-item
+                        <!-- <a-form-item
                             label="GC Type:"
                             name="gctype"
                             :validate-status="
@@ -47,7 +47,7 @@
                                 :options="gcTypes"
                                 @handle-change="handleGcTypeChange"
                             />
-                        </a-form-item>
+                        </a-form-item> -->
 
                         <a-card>
                             <a-row :gutter="16" class="text-center">
@@ -93,8 +93,15 @@
                                 >{{ formState.errors.denomination }}</span
                             >
                         </a-card>
-                        <a-form-item label="Allocated By:" name="name" class="mt-5">
-                            <a-input :value="$page.props.auth.user.full_name" readonly />
+                        <a-form-item
+                            label="Allocated By:"
+                            name="name"
+                            class="mt-5"
+                        >
+                            <a-input
+                                :value="$page.props.auth.user.full_name"
+                                readonly
+                            />
                         </a-form-item>
 
                         <a-form-item class="text-end mt-5">
@@ -168,6 +175,8 @@
             title="Allocated Gc"
             :columns="columns"
             :data="allocatedData"
+            :denoms="allDenoms"
+            @handle-tab-change="handleTabChange"
             @handle-pagination="onChangePagination"
         />
 
@@ -178,6 +187,14 @@
             centered
             :footer="null"
         >
+            <a-tabs v-model:activeKey="activeScannedKey" @change="viewGcAllocationTab">
+                <a-tab-pane key="all" tab="All" force-render></a-tab-pane>
+                <a-tab-pane
+                    v-for="denom of denoms"
+                    :key="denom.denomination"
+                    :tab="denom.denomination_format"
+                ></a-tab-pane>
+            </a-tabs>
             <a-table
                 bordered
                 size="small"
@@ -210,14 +227,17 @@
                         {{ record.custodianSrrItems.custodiaSsr?.date_rec }}
                     </template>
                     <template v-if="column.key == 'validate'">
-                        {{ record.custodianSrrItems.custodiaSsr?.user?.full_name }}
+                        {{
+                            record.custodianSrrItems.custodiaSsr?.user
+                                ?.full_name
+                        }}
                     </template>
                 </template>
             </a-table>
             <pagination-axios
-            :datarecords="forAllocationData"
-            @on-pagination="forAllocationPagination"
-        />
+                :datarecords="forAllocationData"
+                @on-pagination="forAllocationPagination"
+            />
         </a-modal>
     </AuthenticatedLayout>
 </template>
@@ -237,6 +257,7 @@ const props = defineProps<{
     denoms: any[];
 }>();
 
+const activeScannedKey = ref("all");
 const allocatedData = ref([]);
 const allocatedGc = ref(null);
 const allDenoms = ref(null);
@@ -286,13 +307,14 @@ const columns = [
 ];
 
 const viewGcAllocation = async () => {
-    const {data} = await axios.get(
+    const { data } = await axios.get(
         route("treasury.transactions.gcallocation.forallocation")
     );
     forAllocationData.value = data;
     gcAllocationModal.value = true;
-    console.log(data);
 };
+
+
 const handleStoreChange = async (
     value: number,
     obj: { value: number; label: string }
@@ -308,12 +330,12 @@ const handleStoreChange = async (
     allDenoms.value = data;
 };
 
-const forAllocationPagination = async(link) => {
+const forAllocationPagination = async (link) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
         forAllocationData.value = data;
     }
-}
+};
 
 const handleGcTypeChange = async (value: number) => {
     clearError(formState, "gcType");
@@ -325,6 +347,7 @@ const handleGcTypeChange = async (value: number) => {
     );
     allDenoms.value = data;
 };
+
 const { openLeftNotification } = onProgress();
 const onSubmit = () => {
     formState
@@ -354,6 +377,32 @@ const viewAllocatedGc = async () => {
     );
     allocatedData.value = data;
     openModal.value = true;
+};
+const handleTabChange = async (value) => {
+    const text = value == "all" ? "" : value;
+    const { data } = await axios.get(
+        route("treasury.transactions.gcallocation.viewAllocatedGc"),
+        {
+            params: {
+                store: formState.store,
+                type: formState.gcType,
+                search: text,
+            },
+        }
+    );
+    allocatedData.value = data;
+};
+const viewGcAllocationTab = async (value) => {
+    const text = value == "all" ? "" : value;
+    const { data } = await axios.get(
+        route("treasury.transactions.gcallocation.forallocation"),
+        {
+            params: {
+                search: text,
+            },
+        }
+    );
+    forAllocationData.value = data;
 };
 const onChangePagination = async (link) => {
     if (link.url) {

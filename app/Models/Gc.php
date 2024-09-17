@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Gc extends Model
 {
@@ -13,6 +14,17 @@ class Gc extends Model
     protected $primaryKey = 'gc_id';
     public $timestamps = false;
     protected $guarded = [];
+
+    public function scopeFilterDenomination(Builder $builder, $filter)
+    {
+        return $builder->when($filter['search'] ?? null, function ($query, $search) {
+            $query->whereHas('denomination', function (Builder $query) use ($search) {
+                $query->whereAny([
+                    'denomination',
+                ], 'LIKE', '%' . $search . '%');
+            });
+        });
+    }
 
     public function denomination(){
         return $this->belongsTo(Denomination::class, 'denom_id', 'denom_id');

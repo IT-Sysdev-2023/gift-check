@@ -67,11 +67,9 @@
                             "
                             :help="formState.errors?.receivedBy"
                         >
-                            <a-input
-                                v-model:value="formState.receivedBy"
-                                @input="
-                                    () => (formState.errors.receivedBy = null)
-                                "
+                            <ant-select
+                                :options="data.checkBy"
+                                @handle-change="handleReceivedBy"
                             />
                         </a-form-item>
                         <check-cash-jv-payment
@@ -456,6 +454,10 @@ const handleCheckedBy = (value) => {
     formState.checkedBy = value;
     formState.clearErrors("checkedBy");
 };
+const handleReceivedBy = (value) => {
+    formState.receivedBy = value;
+    formState.clearErrors("receivedBy");
+}
 const handleCustomerOption = (value) =>
     (formState.paymentType.customer = value);
 const handleDocumentChange = (file: UploadChangeParam) => {
