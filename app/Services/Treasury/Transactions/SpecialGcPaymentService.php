@@ -20,6 +20,21 @@ class SpecialGcPaymentService extends UploadFileHandler
         parent::__construct();
         $this->folderName = 'externalDocs';
     }
+
+    public function pending(){
+        return SpecialExternalGcrequest::with(
+            'user:user_id,firstname,lastname',
+            'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty',
+            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname'
+        )
+            ->select('spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq', 'spexgc_company', 'spexgc_reqby')
+            ->where([
+                ['special_external_gcrequest.spexgc_status', 'pending'],
+                ['special_external_gcrequest.spexgc_promo', '0']
+            ])
+            ->paginate()
+            ->withQueryString();
+    }
     public function store(Request $request)
     {
         $request->validate([

@@ -26,20 +26,7 @@ class SpecialGcRequestController extends Controller
     }
     public function pendingSpecialGc(Request $request)
     {
-        $record = SpecialExternalGcrequest::with(
-            'user:user_id,firstname,lastname',
-            'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty',
-            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname'
-        )
-            ->select('spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq', 'spexgc_company', 'spexgc_reqby')
-            ->where([
-                ['special_external_gcrequest.spexgc_status', 'pending'],
-                ['special_external_gcrequest.spexgc_promo', '0']
-            ])
-            ->paginate()
-            ->withQueryString();
-
-        // dd(SpecialExternalGcRequestResource::collection($record)->toArray(request()));
+        $record = $this->specialGcPaymentService->pending();
 
         return inertia(
             'Treasury/Dashboard/SpecialGcTable',
@@ -118,9 +105,13 @@ class SpecialGcRequestController extends Controller
     {
         $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
 
+        $transNo = $transactionNumber ?
+            NumberHelper::leadingZero($transactionNumber + 1, "%03d")
+            : '0001';
+
         return inertia('Treasury/Transactions/SpecialGcPayment/SpecialExtPayment', [
             'title' => 'Special External Gc Payment',
-            'trans' => $transactionNumber ? NumberHelper::leadingZero($transactionNumber + 1, "%03d") : '0001',
+            'trans' => $transNo,
             'options' => self::options()
         ]);
     }
@@ -128,6 +119,7 @@ class SpecialGcRequestController extends Controller
     public function gcPaymentSubmission(Request $request)
     {
         $data = $this->specialGcPaymentService->store($request);
+        
         $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
 
         $pdf->setPaper('A3');

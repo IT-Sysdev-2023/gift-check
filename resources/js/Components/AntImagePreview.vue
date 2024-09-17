@@ -14,12 +14,13 @@
             :footer="null"
             @cancel="handleCancel"
         >
-            <img alt="example" style="width: 100%" :src="previewImage" />
+            <img alt="example" style="width: 100%" :src="previewImage" @error="imageFallback" />
         </a-modal>
     </div>
 </template>
 <script setup lang="ts">
 import type { UploadProps, UploadChangeParam } from "ant-design-vue";
+import { imageFallback } from "@/Mixin/UiUtilities";
 import { ref } from "vue";
 
 const props = defineProps<{ images: any[] }>();

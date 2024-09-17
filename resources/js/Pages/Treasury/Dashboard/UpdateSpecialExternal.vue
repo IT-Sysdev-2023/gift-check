@@ -129,12 +129,8 @@ const handleUploadChange = (info: UploadChangeParam) => {
                         </a-form-item>
                         <a-form-item label="Uploaded Document">
                             <a-space wrap class="ml-2">
-                                <a-button type="primary" v-if="page.document">
-                                    <template #icon>
-                                        <DownloadOutlined />
-                                    </template>
-                                    Download
-                                </a-button>
+                                <ant-image-preview :images="page?.document" v-if="page.document"/>
+                               
                                 <a-tag color="error" v-else>
                                     <template #icon>
                                         <close-circle-outlined />

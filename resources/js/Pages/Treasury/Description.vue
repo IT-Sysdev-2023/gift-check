@@ -1,5 +1,5 @@
 <template>
-    <a-descriptions title="User Info" bordered size="small">
+    <a-descriptions title="Approved Budget Request Info" bordered>
         <a-descriptions-item label="BR No.">{{
             data.br_no
         }}</a-descriptions-item>
