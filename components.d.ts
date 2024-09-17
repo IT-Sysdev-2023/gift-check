@@ -84,10 +84,7 @@ declare module 'vue' {
     ARadio: typeof import('ant-design-vue/es')['Radio']
     ARadioGroup: typeof import('ant-design-vue/es')['RadioGroup']
     ARangePicker: typeof import('ant-design-vue/es')['RangePicker']
-<<<<<<< HEAD
-=======
     AreaChartOutlined: typeof import('@ant-design/icons-vue')['AreaChartOutlined']
->>>>>>> bibong-branch
     AResult: typeof import('ant-design-vue/es')['Result']
     ARow: typeof import('ant-design-vue/es')['Row']
     ArrowDownOutlined: typeof import('@ant-design/icons-vue')['ArrowDownOutlined']
@@ -168,17 +165,11 @@ declare module 'vue' {
     ExclamationCircleFilled: typeof import('@ant-design/icons-vue')['ExclamationCircleFilled']
     ExclamationCircleOutlined: typeof import('@ant-design/icons-vue')['ExclamationCircleOutlined']
     EyeFilled: typeof import('@ant-design/icons-vue')['EyeFilled']
-<<<<<<< HEAD
-    FarmersMarket: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/FarmersMarket.vue')['default']
-    FastForwardOutlined: typeof import('@ant-design/icons-vue')['FastForwardOutlined']
-    FileDoneOutlined: typeof import('@ant-design/icons-vue')['FileDoneOutlined']
-=======
     EyeOutlined: typeof import('@ant-design/icons-vue')['EyeOutlined']
     FarmersMarket: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/FarmersMarket.vue')['default']
     FastForwardOutlined: typeof import('@ant-design/icons-vue')['FastForwardOutlined']
     FileDoneOutlined: typeof import('@ant-design/icons-vue')['FileDoneOutlined']
     FileExcelOutlined: typeof import('@ant-design/icons-vue')['FileExcelOutlined']
->>>>>>> bibong-branch
     FileOutlined: typeof import('@ant-design/icons-vue')['FileOutlined']
     FileProtectOutlined: typeof import('@ant-design/icons-vue')['FileProtectOutlined']
     FileSearchOutlined: typeof import('@ant-design/icons-vue')['FileSearchOutlined']
@@ -255,11 +246,8 @@ declare module 'vue' {
     PoweroffOutlined: typeof import('@ant-design/icons-vue')['PoweroffOutlined']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
     PrinterFilled: typeof import('@ant-design/icons-vue')['PrinterFilled']
-<<<<<<< HEAD
-=======
     PrinterOutlined: typeof import('@ant-design/icons-vue')['PrinterOutlined']
     ProfileOutlined: typeof import('@ant-design/icons-vue')['ProfileOutlined']
->>>>>>> bibong-branch
     ProgressBar: typeof import('./resources/js/Components/Finance/ProgressBar.vue')['default']
     ProgressBarInner: typeof import('./resources/js/Components/Finance/ProgressBarInner.vue')['default']
     ProgressHeader: typeof import('./resources/js/Components/Finance/ProgressHeader.vue')['default']
