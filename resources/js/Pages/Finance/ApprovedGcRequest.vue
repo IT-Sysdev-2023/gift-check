@@ -130,7 +130,6 @@ export default {
                     id: data.spexgc_id
                 }
             }).then((response) => {
-                console.log(response.data.barcodes);
                 this.open = true;
                 this.selectedData = response.data.data[0];
                 this.barcode = response.data.barcodes;
