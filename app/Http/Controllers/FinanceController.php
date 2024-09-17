@@ -403,15 +403,15 @@ class FinanceController extends Controller
             ->orderByDesc('spexgc_id')
             ->get();
         $data->transform(function ($item) {
-
-            $item->dateReq = Date::parse($item->spexgc_datereq)->format('Y-m-d');
+            $item->dateValid = Date::parse($item->spexgc_dateneed)->format('F d Y');
+            $item->dateReq = Date::parse($item->spexgc_datereq)->format('F d Y');
             return $item;
         });
 
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['RFSEGC #', 'DATE REQUESTED', 'DATE VALIDITY', 'CUSTOMER', 'DATE APPROVED', 'APPROVED BY'],
-            ['spexgc_num', 'dateReq', 'spexgc_dateneed', 'spcus_acctname', 'reqap_date', 'reqap_approvedby', 'View']
+            ['spexgc_num', 'dateReq', 'dateValid', 'spcus_acctname', 'reqap_date', 'reqap_approvedby', 'View']
         );
 
 
