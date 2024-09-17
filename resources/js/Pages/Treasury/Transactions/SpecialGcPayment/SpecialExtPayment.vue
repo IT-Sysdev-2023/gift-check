@@ -192,7 +192,6 @@ const paymentType = ref<SelectProps["options"]>([
     {
         value: "2",
         label: "Check",
-        disabled: true,
     },
     {
         value: "3",

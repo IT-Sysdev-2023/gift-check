@@ -37,12 +37,19 @@ class SpecialGcPaymentService extends UploadFileHandler
     }
     public function store(Request $request)
     {
+        
         $request->validate([
             'companyId' => 'required|exists:special_external_customer,spcus_id',
             'denomination' => ['required', 'array', new DenomQty()],
             'dateNeeded' => 'required|date',
             'remarks' => 'required',
             'file' => 'required',
+
+            //Check PaymentType
+            'paymentType.bankName' => 'required_if:paymentType.type,2',
+            'paymentType.accountNumber' => 'required_if:paymentType.type,2',
+            'paymentType.checkNumber' => 'required_if:paymentType.type,2',
+            
             'paymentType.type' => 'required',
             'paymentType.amount' => [
                 function ($attribute, $value, $fail) use ($request) {
