@@ -137,6 +137,8 @@ Route::prefix('marketing')->group(function () {
         });
         Route::name('promoGcRequest.')->group(function () {
             Route::get('promo-pending-list', [MarketingController::class, 'promoPendinglist'])->name('pending.list');
+            Route::get('promo-approved-list', [MarketingController::class, 'promoApprovedlist'])->name('approved.list');
+            Route::get('selected-approved', [MarketingController::class, 'selectedApproved'])->name('selected.approved');
             Route::get('selected-promo-pending-request', [MarketingController::class, 'selectedPromoPendingRequest'])->name('pending.selected');
             Route::post('submit', [MarketingController::class, 'submitUpdate'])->name('submit');
         });

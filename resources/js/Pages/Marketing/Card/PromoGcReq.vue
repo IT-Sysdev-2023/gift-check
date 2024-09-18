@@ -18,20 +18,22 @@
                 </a-row>
             </div>
             <div class="card blue">
-                <a-row class="w-full">
-                    <a-col :span="4">
-                    </a-col>
-                    <a-col :span="12">
-                        <div class="flex justify-end">
-                            <p class="tip">Approved Request</p>
-                        </div>
-                    </a-col>
-                    <a-col :span="6">
-                        <div class="flex justify-end">
-                            <p class="tip">{{ countPromoGcRequest.approvedRequest }}</p>
-                        </div>
-                    </a-col>
-                </a-row>
+                <div @click="() => $inertia.get(route('marketing.promoGcRequest.approved.list'))" class="card blue">
+                    <a-row class="w-full">
+                        <a-col :span="4">
+                        </a-col>
+                        <a-col :span="12">
+                            <div class="flex justify-end">
+                                <p class="tip">Approved Request</p>
+                            </div>
+                        </a-col>
+                        <a-col :span="6">
+                            <div class="flex justify-end">
+                                <p class="tip">{{ countPromoGcRequest.approvedRequest }}</p>
+                            </div>
+                        </a-col>
+                    </a-row>
+                </div>
             </div>
             <div class="card black">
                 <a-row class="w-full">
