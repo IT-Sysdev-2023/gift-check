@@ -245,9 +245,6 @@ const onSubmit = () => {
             },
         });
 };
-const totalDenomination = computed(() => {
-    return;
-});
 const routeToHome = () => {
     router.visit(route("treasury.dashboard"));
 };

@@ -2,39 +2,33 @@
     <a-form
         layout="inline"
         :model="formState"
-        style="margin-top: 10px;"
+        style="margin-top: 10px"
         @finish="handleFinish"
         @finishFailed="handleFinishFailed"
     >
         <a-form-item>
-            <a-input
-                v-model:value="formState.firstname"
-                placeholder="Firstname"
-            >
+            <a-input v-model:value="formState.spexgcemp_fname" placeholder="Firstname">
                 <template #prefix
                     ><UserOutlined style="color: rgba(0, 0, 0, 0.25)"
                 /></template>
             </a-input>
         </a-form-item>
         <a-form-item>
-            <a-input v-model:value="formState.lastname" placeholder="Lastname">
+            <a-input v-model:value="formState.spexgcemp_lname" placeholder="Lastname">
                 <template #prefix
                     ><UserOutlined style="color: rgba(0, 0, 0, 0.25)"
                 /></template>
             </a-input>
         </a-form-item>
         <a-form-item>
-            <a-input
-                v-model:value="formState.middlename"
-                placeholder="Middle Name"
-            >
+            <a-input v-model:value="formState.spexgcemp_mname" placeholder="Middle Name">
                 <template #prefix
                     ><UserOutlined style="color: rgba(0, 0, 0, 0.25)"
                 /></template>
             </a-input>
         </a-form-item>
         <a-form-item>
-            <a-input v-model:value="formState.nameext" placeholder="Name Ext.">
+            <a-input v-model:value="formState.spexgcemp_extname" placeholder="Name Ext.">
                 <template #prefix
                     ><UserOutlined style="color: rgba(0, 0, 0, 0.25)"
                 /></template>
@@ -44,12 +38,7 @@
             <a-button
                 type="primary"
                 html-type="submit"
-                :disabled="
-                    formState.firstname === '' ||
-                    formState.lastname === '' ||
-                    formState.middlename === '' ||
-                    formState.nameext === ''
-                "
+                :disabled="formState.spexgcemp_fname === '' || formState.spexgcemp_lname === ''"
             >
                 Submit
             </a-button>
@@ -57,46 +46,83 @@
     </a-form>
     <a-table
         class="mt-10"
-        :columns="props.data.columns"
-        :data-source="data.data"
+        :columns="columns"
+        :data-source="data[denomInfo.denomination]"
         bordered
     />
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import type { UnwrapRef } from "vue";
 import type { FormProps } from "ant-design-vue";
-import axios from 'axios';
+import { notification } from "ant-design-vue";
+import axios from "axios";
 
 interface FormState {
-    firstname: string;
-    lastname: string;
-    middlename: string;
-    nameext: string;
+    spexgcemp_fname: string;
+    spexgcemp_lname: string;
+    spexgcemp_mname: string;
+    spexgcemp_extname: string;
+    spexgcemp_denom: number
 }
-const formState: UnwrapRef<FormState> = reactive({
-    firstname: "",
-    lastname: "",
-    middlename: "",
-    nameext: "",
-});
+
 
 const props = defineProps<{
     data: any;
+    denomInfo: {
+        denomination: number;
+        qty: number;
+        primary_id: number;
+    };
 }>();
-const handleFinish: FormProps["onFinish"] = async(values) => {
-    console.log(values, formState);
-    const res = await axios.post(route('treasury.special.gc.add.assign.employee'), formState);
-    console.log(res)
+
+const formState: UnwrapRef<FormState> = reactive({
+    spexgcemp_fname: "",
+    spexgcemp_lname: "",
+    spexgcemp_mname: "",
+    spexgcemp_extname: "",
+    spexgcemp_denom: props.denomInfo.denomination
+});
+
+const columns = [
+    {
+        title: "Last Name",
+        dataIndex: "spexgcemp_lname",
+    },
+    {
+        title: "First Name",
+        dataIndex: "spexgcemp_fname",
+    },
+    {
+        title: "Middle Name",
+        dataIndex: "spexgcemp_mname",
+    },
+    {
+        title: "Name Ext.",
+        dataIndex: "spexgcemp_extname",
+    },
+];
+
+const handleFinish: FormProps["onFinish"] = async (values) => {
+    // props.denomInfo.qty
+    if (props.data[props.denomInfo.denomination].length >= props.denomInfo.qty ) {
+        notification.error({
+            message: "Error!",
+            description: "Maximum quantity has been reach!",
+        });
+    } else {
+        props.data[props.denomInfo.denomination].push({ ...formState });
+    }
 };
 const handleFinishFailed: FormProps["onFinishFailed"] = (errors) => {
     console.log(errors);
 };
 </script>
+
 <style scoped>
 .mt-10 >>> .ant-table-thead > tr > th {
-  background-color: #1890ff; /* Your desired background color */
-  font-weight: 500;
-  color: white;
+    background-color: #1890ff; /* Your desired background color */
+    font-weight: 500;
+    color: white;
 }
 </style>

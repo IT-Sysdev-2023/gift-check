@@ -61,6 +61,7 @@ class SpecialExternalGcrequest extends Model
     {
         return $this->belongsTo(SpecialExternalCustomer::class, 'spexgc_company', 'spcus_id');
     }
+
     public function specialExternalGcrequestItems()
     {
         return $this->hasOne(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');

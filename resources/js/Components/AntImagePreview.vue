@@ -5,7 +5,7 @@
             :before-upload="() => false"
             list-type="picture-card"
             @preview="handlePreview"
-            :remove="false"
+            :remove="() => false"
         >
         </a-upload>
         <a-modal
