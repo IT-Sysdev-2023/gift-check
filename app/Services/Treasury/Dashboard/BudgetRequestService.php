@@ -2,12 +2,13 @@
 
 namespace App\Services\Treasury\Dashboard;
 
+use App\Helpers\NumberHelper;
 use App\Models\LedgerBudget;
 use App\Services\Documents\UploadFileHandler;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Date;
 use App\Http\Resources\BudgetRequestResource;
 use App\Models\BudgetRequest;
-use App\Services\Treasury\ColumnHelper;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class BudgetRequestService extends UploadFileHandler
@@ -81,21 +82,9 @@ class BudgetRequestService extends UploadFileHandler
 
 	public function budgetRequestSubmission(Request $request)
 	{
-		$ableToRequest = BudgetRequest::whereRelation('user', 'usertype', $request->user()->usertype)
-			->where('br_request_status', 0)
-			->count();
-
-		if ($ableToRequest) {
-			return redirect()->back()->with('error', 'You have pending budget request');
+		if($this->validateField($request)){
+				return redirect()->back()->with('error', 'You have pending budget request');
 		}
-
-		$request->validate([
-			"br" => 'required',
-			"dateNeeded" => 'required|date',
-			"budget" => 'required|not_in:0',
-			"remarks" => 'required',
-			// 'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
-		]);
 
 		$dept = userDepartment($request->user());
 
@@ -116,8 +105,52 @@ class BudgetRequestService extends UploadFileHandler
 
 		if ($insertData->wasRecentlyCreated) {
 			$this->saveFile($request, $filename);
-			return redirect()->back()->with('success', 'SuccessFully Submitted');
+
+			$stream = $this->generatePdf($request);
+			return redirect()->back()->with(['stream' => $stream, 'success' => 'SuccessFully Submitted!']);
 		}
 		return redirect()->back()->with('error', 'Something went wrong, please try again later');
+	}
+
+	private function validateField(Request $request)
+	{
+		$request->validate([
+			"br" => 'required',
+			"dateNeeded" => 'required|date',
+			"budget" => 'required|not_in:0',
+			"remarks" => 'required',
+			// 'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
+		]);
+		return BudgetRequest::whereRelation('user', 'usertype', $request->user()->usertype)
+			->where('br_request_status', 0)
+			->count();
+	}
+
+	private function generatePdf(Request $request)
+	{
+		$data = [
+			'pr' => $request->br,
+			'budget' => NumberHelper::format(LedgerBudget::budget()),
+			'dateRequested' => today()->toFormattedDateString(),
+			'dateNeeded' => Date::parse($request->dateNeeded)->toFormattedDateString(),
+			'remarks' => $request->remarks,
+
+			'subtitle' => 'Resolving Budget Entry Form',
+
+			'budgetRequested' => $request->budget,
+			//signatures
+			'preparedBy' => [
+				'name' => $request->user()->full_name,
+				'position' => 'Sr Cash Clerk'
+			]
+		];
+		$pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
+		// $pdf->setPaper('A3');
+
+		//store pdf in storage
+		$this->folderName = 'generatedTreasuryPdf/BudgetRequest';
+		$this->savePdfFile($request,$request->br, $pdf->output());
+
+		return base64_encode($pdf->output());
 	}
 }

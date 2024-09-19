@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Production Request Form</title>
+    <title>{{$data['subtitle']}}</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -18,7 +18,7 @@
                 
             </div>
         </header>
-        <h4 class="subtitle">Production Request Form</h4>
+        <h4 class="subtitle">{{$data['subtitle']}}</h4>
         <section class="form-info">
             <table>
                 <tr>
@@ -34,16 +34,23 @@
                     <td>{{$data['dateNeeded']}}</td>
                 </tr>
                 <tr>
-                    <td><strong>Budget</strong></td>
+                    <td><strong>Current Budget</strong></td>
                     <td>{{$data['budget']}}</td>
                 </tr>
                 <tr>
                     <td><strong>Remarks</strong></td>
                     <td>{{$data['remarks']}}</td>
                 </tr>
+                @if(!empty($data['budgetRequested']))
+                <tr>
+                    <td><strong>Budget Requested</strong></td>
+                    <td>{{$data['budgetRequested']}}</td>
+                </tr>
+                @endif
             </table>
         </section>
         
+        @if(!empty($data['barcode']) && is_array($data['barcode']))
         <section class="table-section">
             <table class="denomination-table">
                 <thead>
@@ -64,12 +71,13 @@
                 </tbody>
             </table>
         </section>
+        @endif
 
         <section class="signatures clearfix">
             <p>Prepared by:</p>
             <div class="signature-block">
-                <h3 style="text-decoration: underline;">{{ $data['preparedBy']}}</h3>
-                <p>Sr Cash Clerk</p>
+                <h3 style="text-decoration: underline;">{{ $data['preparedBy']['name']}}</h3>
+                <p>{{$data['preparedBy']['position']}}</p>
             </div>
         </section>
         
@@ -87,11 +95,16 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5;
+    background-color: white;
+    position: relative;
+    min-height: 100%;
+    padding-bottom: 100px; /* Adjust this to the height of the footer */
+    box-sizing: border-box;
 }
 
 .container {
-    width: 800px;
+    width: 100%;
+    max-width: 870px; /* Adjust this to fit better within the A4 dimensions */
     margin: 20px auto;
     background-color: white;
     padding: 20px;
@@ -111,7 +124,9 @@ header {
 }
 .company-logo img {
     padding-right: 20px;
-    width: 100px;
+    max-width: 100px;
+    width: 100%; /* Ensure it scales properly */
+    height: auto;
     margin-bottom: 10px;
 }
 
@@ -179,10 +194,17 @@ header {
 }
 
 footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px; /* Adjust based on your footer content */
     text-align: center;
-    font-size: 12px;
+    font-size: 15px; /* Adjust the font size to fit */
     color: #666;
-    margin-top: 40px;
+    background-color: white;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 </style>

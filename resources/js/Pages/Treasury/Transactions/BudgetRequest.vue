@@ -103,11 +103,25 @@
                 </a-row>
             </a-form>
         </a-card>
+        <a-modal
+            v-model:open="openIframe"
+            style="width: 70%; top: 50px"
+            :footer="null"
+            :afterClose="closeIframe"
+        >
+            <iframe
+                class="mt-7"
+                :src="stream"
+                width="100%"
+                height="600px"
+            ></iframe>
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import type { UploadChangeParam } from "ant-design-vue";
+import { ref } from "vue";
 import dayjs, { Dayjs } from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import type { UploadFile } from "ant-design-vue";
@@ -141,6 +155,8 @@ const formState = useForm<FormStateGc>({
     remarks: "",
 });
 
+const stream = ref(null);
+const openIframe = ref(false);
 const { openLeftNotification } = onProgress();
 const handleChange = (file: UploadChangeParam) => {
     formState.file = file.file;
@@ -156,10 +172,14 @@ const onSubmit = () => {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
                 if (props.flash.success) {
-                    router.visit(route("treasury.dashboard"));
+                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                    openIframe.value = true;
                 }
             },
         });
+};
+const closeIframe = () => {
+    router.visit(route("treasury.dashboard"));
 };
 const getErrorStatus = (field: string) => {
     return formState.errors[field] ? "error" : "";

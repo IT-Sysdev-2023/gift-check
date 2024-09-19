@@ -61,7 +61,7 @@ class UploadFileHandler
 
     protected function saveMultiFiles(Request $request, $id, callable $callback)
     {
-        
+
         if ($request->hasFile('file')) {
             foreach ($request->file as $image) {
                 $name = $this->getOriginalFileName($request, $image);
@@ -70,6 +70,12 @@ class UploadFileHandler
                 $callback($id, $path, $image, $name);
             }
         }
+    }
+
+    protected function savePdfFile(Request $request, $identifier, $pdf)
+    {
+        $filename = "{$request->user()->user_id}-{$identifier}-" . now()->format('Y-m-d-His') . ".pdf";
+        return $this->disk->put("{$this->folder()}{$filename}", $pdf);
     }
 
     protected function retrieveFile(string $folder, string $filename)
