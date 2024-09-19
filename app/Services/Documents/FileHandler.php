@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 
 
-class UploadFileHandler
+class FileHandler
 {
 
     protected string $folderName = '';
