@@ -40,7 +40,28 @@ class SpecialGcPaymentService extends UploadFileHandler
     }
     public function store(Request $request)
     {
+<<<<<<< HEAD
         $this->validateField($request);
+=======
+        $request->validate([
+            'companyId' => 'required|exists:special_external_customer,spcus_id',
+            'denomination' => ['required', 'array', new DenomQty()],
+            'dateNeeded' => 'required|date',
+            'remarks' => 'required',
+            'file' => 'required',
+            'paymentType.type' => 'required',
+            'paymentType.amount' => [
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->input('paymentType.type') != 2 && (is_null($value) || $value == 0 || ($value < $request->input('total')))) {
+                        $fail('The ' . $attribute . ' is required and cannot be 0 if type is not 2.');
+                    }
+                },
+            ]
+
+        ], [
+            'paymentType.type' => 'The payment type field is required.',
+            'paymentType.amount' => 'The selected payment amount is required.'
+>>>>>>> kenji
 
         return DB::transaction(function () use ($request) {
 
@@ -182,6 +203,7 @@ class SpecialGcPaymentService extends UploadFileHandler
     private function segStore(Request $request)
     {
         $gcPayment = $request->switchGc;
+        
         $q = SpecialExternalGcrequest::create([
             'spexgc_num' => $request->trans,
             'spexgc_reqby' => $request->user()->user_id,
@@ -246,6 +268,7 @@ class SpecialGcPaymentService extends UploadFileHandler
             'receivedBy' => $request->user()->full_name
         ];
     }
+<<<<<<< HEAD
 
     private function validateField(Request $request)
     {
@@ -277,3 +300,6 @@ class SpecialGcPaymentService extends UploadFileHandler
         ]);
     }
 }
+=======
+}
+>>>>>>> kenji

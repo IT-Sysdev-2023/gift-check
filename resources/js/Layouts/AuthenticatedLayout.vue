@@ -65,7 +65,7 @@ const dashboardRoute = computed(() => {
                                         object-fit: cover;
                                         object-position: center;
                                     "
-                                src="https://avatars.githubusercontent.com/u/463230?v=4"
+                                src="https://avatars.githubusercontent.com/u/823566?v=4"
                                     alt="usersimage" />
                             </div>
                         </div>
