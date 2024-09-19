@@ -32,6 +32,7 @@ defineProps<{
         };
         eod: number;
         budget: number;
+        institutionGcSales: number
     };
 }>();
 
@@ -56,6 +57,8 @@ const approvedProductionRequest = () => routeTo("production.request", "approved"
 
 //Special GC Requesh
 const specialGcPending = () => routeTo("special.gc", "pending");
+
+const institutionGc = () => routeTo("transactions.institution.gc.sales", "transaction"); 
 
 </script>
 
@@ -171,8 +174,9 @@ const specialGcPending = () => routeTo("special.gc", "pending");
                             <Card title="Institution GC Sales">
                                 <template #badge>
                                     <CardBadge
-                                        :count="data?.adjustment.budget"
+                                        :count="data?.institutionGcSales"
                                         title="Transactions"
+                                        @event="institutionGc"
                                     />
                                 </template>
                             </Card>

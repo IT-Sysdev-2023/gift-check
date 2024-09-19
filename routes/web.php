@@ -4,6 +4,7 @@ use App\Console\Commands\ProcessFiles;
 use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BudgetAdjustmentController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CustodianController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DocumentController;
@@ -228,7 +229,6 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
 
                 Route::get('pending', [GcProductionRequestController::class, 'pending'])->name('pending');
                 Route::post('submit-pending-request', [GcProductionRequestController::class, 'pendingSubmission'])->name('pendingSubmission');
-
             });
             Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
                 Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('pending');
@@ -237,8 +237,6 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
             });
-
-
             Route::prefix('transactions')->name('transactions.')->group(function () {
 
                 //Budget Request
@@ -278,14 +276,13 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 //Institution GC Sales
                 Route::prefix('institution-gc-sales')->name('institution.gc.sales.')->group(function () {
                     Route::get('/', [InstitutionGcSalesController::class, 'index'])->name('index');
+                    Route::get('view-trasactions', [InstitutionGcSalesController::class, 'viewTransaction'])->name('transaction');
 
                     Route::get('scan-barcode', [InstitutionGcSalesController::class, 'scanBarcode'])->name('scan');
                     Route::put('remove-barcode-{barcode}', [InstitutionGcSalesController::class, 'removeBarcode'])->name('removeBarcode');
 
                     Route::post('form-submission', [InstitutionGcSalesController::class, 'formSubmission'])->name('submission');
                 });
-
-
 
                 //special gc payment
                 Route::prefix('special-gc-payment')->name('special.')->group(function () {
@@ -455,6 +452,14 @@ Route::prefix('search')->group(function () {
 Route::prefix('management')->group(function () {
     Route::name('manager.')->group(function () {
         Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
+    });
+});
+Route::prefix('coupon')->group(function () {
+    Route::name('treasury.')->group(function () {
+        Route::name('coupon.')->group(function () {
+            Route::get('coupon-transaction', [CouponController::class, 'couponIndex'])->name('transactions.special.index');
+            Route::post('coupon-submit', [CouponController::class, 'submit'])->name('submit');
+        });
     });
 });
 

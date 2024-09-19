@@ -261,9 +261,6 @@ export default {
     }
   },
 
-
-
-
   beforeUnmount() {
     axios.post(route('marketing.addPromo.truncategcpromovalidation'));
   },

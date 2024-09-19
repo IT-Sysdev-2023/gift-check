@@ -105,7 +105,7 @@ class AdminController extends Controller
 
     public function updateStatus(Request $request)
     {
-  
+
         $user = User::where('user_id',$request->id)->first();
 
         if ($user) {
@@ -122,10 +122,11 @@ class AdminController extends Controller
         }
     }
 
-    public function eodReports()
+    public function eodReports(Request $request)
     {
         return inertia('Admin/EodReports', [
-            'record' => $this->adminservices->getEodDateRange()
+            'record' => $this->adminservices->getEodDateRange($request),
+            'stores' => $this->adminservices->stores(),
         ]);
     }
 }
