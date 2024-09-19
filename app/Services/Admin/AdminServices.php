@@ -9,6 +9,7 @@ use App\Models\PromoGcReleaseToItem;
 use App\Models\RequisitionForm;
 use App\Models\RequisitionFormDenomination;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\Store;
 use App\Models\StoreVerification;
 use App\Models\Supplier;
 use App\Models\TransactionStore;
@@ -545,12 +546,28 @@ class AdminServices
     {
         return Supplier::all();
     }
-
-    public function getEodDateRange()
+    public function stores()
     {
-        //    $data = StoreVerification::where('vs_tf_eod', '1')->limit(10)->get();
-        $data =  TransactionStore::where('trans_yreport', '!=', '0')->where('trans_eos', '!=', '0')->limit(10)->get();
+        return Store::select('store_id', 'store_name', 'store_status')
+            ->where('store_status', 'active')
+            ->get();
+    }
 
-        dd($data->toArray());
+    public function getEodDateRange($request)
+    {
+        $con = is_array($request->date) ? 1 : 2;
+
+        $data =  TransactionStore::join('stores', 'store_id', '=', 'trans_store')
+            ->join('store_staff', 'ss_id', '=', 'trans_cashier')
+            ->where('trans_yreport', '!=', '0')
+            ->where('trans_store', $request->store)
+            ->where('trans_eos', '!=', '');
+
+        $data = match ($con) {
+            1 => $data->whereBetween('trans_datetime', [$request->date[0], $request->date[1]]),
+            2 => $data->whereDate('trans_datetime', $request->date),
+        };
+
+        return $data->paginate(10)->withQueryString();
     }
 }

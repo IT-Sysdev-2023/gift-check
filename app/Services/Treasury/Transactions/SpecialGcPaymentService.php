@@ -36,7 +36,7 @@ class SpecialGcPaymentService extends UploadFileHandler
                     }
                 },
             ]
-           
+
         ], [
             'paymentType.type' => 'The payment type field is required.',
             'paymentType.amount' => 'The selected payment amount is required.'
@@ -65,6 +65,7 @@ class SpecialGcPaymentService extends UploadFileHandler
     private function segStore(Request $request)
     {
         $gcPayment = $request->switchGc;
+        
         $q = SpecialExternalGcrequest::create([
             'spexgc_num' => $request->trans,
             'spexgc_reqby' => $request->user()->user_id,

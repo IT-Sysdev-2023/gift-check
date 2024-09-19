@@ -4,6 +4,7 @@ use App\Console\Commands\ProcessFiles;
 use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BudgetAdjustmentController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CustodianController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DocumentController;
@@ -220,7 +221,6 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
 
                 Route::get('pending', [GcProductionRequestController::class, 'pending'])->name('pending');
                 Route::post('submit-pending-request', [GcProductionRequestController::class, 'pendingSubmission'])->name('pendingSubmission');
-
             });
             Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
                 Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('pending');
@@ -446,6 +446,14 @@ Route::prefix('search')->group(function () {
 Route::prefix('management')->group(function () {
     Route::name('manager.')->group(function () {
         Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
+    });
+});
+Route::prefix('coupon')->group(function () {
+    Route::name('treasury.')->group(function () {
+        Route::name('coupon.')->group(function () {
+            Route::get('coupon-transaction', [CouponController::class, 'couponIndex'])->name('transactions.special.index');
+            Route::post('coupon-submit', [CouponController::class, 'submit'])->name('submit');
+        });
     });
 });
 

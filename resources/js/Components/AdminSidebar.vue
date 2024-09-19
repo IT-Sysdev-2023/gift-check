@@ -25,7 +25,7 @@
     </a-menu-item>
     <a-menu-item key="eod-scanner">
         <UserOutlined />
-        <span> <Link :href="route('admin.eod.reports')"> Eod Reports Nga gipabuhat ni Mars</Link></span>
+        <span> <Link :href="route('admin.eod.reports')"> Eod Reports</Link></span>
     </a-menu-item>
     <a-menu-item key="purchase.order.details">
         <UserOutlined />
