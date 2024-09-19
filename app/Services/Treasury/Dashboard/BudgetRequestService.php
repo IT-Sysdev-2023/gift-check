@@ -63,10 +63,22 @@ class BudgetRequestService extends UploadFileHandler
 		if ($id->br_request_status != 0) {
 			return redirect()->back()->with('error', 'Budget request already approved/cancelled.');
 		}
-		$filename = $this->handleUpload($request);
-		$this->updateTable($request, $id, $filename);
+		$filename = $this->replaceFile($request);
+		
+		$res = $id->update([
+            'br_requested_by' => $request->updatedById,
+            'br_request' => $request->budget,
+            'br_remarks' => $request->remarks,
+            'br_requested_needed' => $request->dateNeeded,
+            'br_file_docno' => $filename,
+            'br_group' => $request->group ?? 0,
+        ]);
 
-		return redirect()->back()->with('success', 'Budget request Successfully submitted.');
+        if ($res) {
+			return redirect()->back()->with('success', 'Budget request Successfully submitted.');
+        } else {
+			return redirect()->back()->with('error', 'Something went wrong while updating..');
+        }
 	}
 	public function downloadDocument($file)
 	{
@@ -153,4 +165,6 @@ class BudgetRequestService extends UploadFileHandler
 
 		return base64_encode($pdf->output());
 	}
+
+	
 }

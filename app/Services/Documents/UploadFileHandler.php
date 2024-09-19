@@ -25,7 +25,7 @@ class UploadFileHandler
         return "$this->folderName/";
     }
 
-    protected function handleUpload(Request $request)
+    protected function replaceFile(Request $request)
     {
         if ($request->hasFile('file')) {
 
@@ -72,7 +72,7 @@ class UploadFileHandler
         }
     }
 
-    protected function savePdfFile(Request $request, $identifier, $pdf)
+    protected function savePdfFile(Request $request, string | int $identifier, $pdf)
     {
         $filename = "{$request->user()->user_id}-{$identifier}-" . now()->format('Y-m-d-His') . ".pdf";
         return $this->disk->put("{$this->folder()}{$filename}", $pdf);
@@ -88,25 +88,7 @@ class UploadFileHandler
             return response()->json('File Not Found on the Server', 404);
         }
     }
-
-    protected function updateTable(Request $request, BudgetRequest $id, string $filename)
-    {
-        $res = $id->update([
-            'br_requested_by' => $request->updatedById,
-            'br_request' => $request->budget,
-            'br_remarks' => $request->remarks,
-            'br_requested_needed' => $request->dateNeeded,
-            'br_file_docno' => $filename,
-            'br_group' => $request->group ?? 0,
-        ]);
-
-        if ($res) {
-            session()->flash('success', 'Update Successfully');
-        } else {
-            session()->flash('error', 'Something went wrong while updating..');
-        }
-    }
-
+    
     public function download(string $file)
     {
         if ($this->disk->exists($this->folder() . $file)) {
