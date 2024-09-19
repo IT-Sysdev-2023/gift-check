@@ -252,6 +252,7 @@ class SpecialGcPaymentService extends UploadFileHandler
         ];
     }
 
+
     private function validateField(Request $request)
     {
         $request->validate([
