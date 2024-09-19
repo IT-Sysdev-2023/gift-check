@@ -50,7 +50,7 @@
             </table>
         </section>
         
-        @if(!empty($data['barcode']) && is_array($data['barcode']))
+        @if(!empty($data['barcode']))
         <section class="table-section">
             <table class="denomination-table">
                 <thead>
