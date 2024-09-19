@@ -235,8 +235,6 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
             });
-
-
             Route::prefix('transactions')->name('transactions.')->group(function () {
 
                 //Budget Request
@@ -276,14 +274,13 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 //Institution GC Sales
                 Route::prefix('institution-gc-sales')->name('institution.gc.sales.')->group(function () {
                     Route::get('/', [InstitutionGcSalesController::class, 'index'])->name('index');
+                    Route::get('view-trasactions', [InstitutionGcSalesController::class, 'viewTransaction'])->name('transaction');
 
                     Route::get('scan-barcode', [InstitutionGcSalesController::class, 'scanBarcode'])->name('scan');
                     Route::put('remove-barcode-{barcode}', [InstitutionGcSalesController::class, 'removeBarcode'])->name('removeBarcode');
 
                     Route::post('form-submission', [InstitutionGcSalesController::class, 'formSubmission'])->name('submission');
                 });
-
-
 
                 //special gc payment
                 Route::prefix('special-gc-payment')->name('special.')->group(function () {

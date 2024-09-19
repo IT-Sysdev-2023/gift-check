@@ -64,7 +64,6 @@ class SpecialGcPaymentService extends UploadFileHandler
 
     public function updateSpecial(Request $request)
     {
-        // dd($request->all());
         $request->validate([
             'dateValidity' => 'required',
             'remarks' => 'required',
