@@ -40,6 +40,7 @@ class SpecialGcPaymentService extends UploadFileHandler
     }
     public function store(Request $request)
     {
+<<<<<<< HEAD
         $this->validateField($request);
 =======
         $request->validate([
@@ -267,6 +268,7 @@ class SpecialGcPaymentService extends UploadFileHandler
             'receivedBy' => $request->user()->full_name
         ];
     }
+<<<<<<< HEAD
 
 
     private function validateField(Request $request)

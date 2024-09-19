@@ -96,76 +96,79 @@ class SpecialGcRequestController extends Controller
     //     return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
     // }
 
-    // private function options()
-    // {
-    //     return SpecialExternalCustomer::has('user')
-    //         ->select('spcus_id as value', 'spcus_by', 'spcus_companyname as label', 'spcus_acctname as account_name')
-    //         ->where('spcus_type', 2)
-    //         ->orderByDesc('spcus_id')
-    //         ->get();
-    // }
+    private function options()
+    {
+        return SpecialExternalCustomer::has('user')
+            ->select('spcus_id as value', 'spcus_by', 'spcus_companyname as label', 'spcus_acctname as account_name')
+            ->where('spcus_type', 2)
+            ->orderByDesc('spcus_id')
+            ->get();
+    }
+<<<<<<< HEAD
+=======
 
-    // public function getAssignEmployee(Request $request)
-    // {
-    //     //in Development
-    //     $record = SpecialExternalGcrequestEmpAssign::select(
-    //         'spexgcemp_fname as fname',
-    //         'spexgcemp_lname as lname',
-    //         'spexgcemp_mname as mname',
-    //         'spexgcemp_extname as xname'
-    //     )->where('spexgcemp_trid', $request->id)->get();
+    public function getAssignEmployee(Request $request)
+    {
+        //in Development
+        $record = SpecialExternalGcrequestEmpAssign::select(
+            'spexgcemp_fname as fname',
+            'spexgcemp_lname as lname',
+            'spexgcemp_mname as mname',
+            'spexgcemp_extname as xname'
+        )->where('spexgcemp_trid', $request->id)->get();
 
-    //     dd($request->id);
-    //     return response()->json([
-    //         'data' => $record,
-    //         'columns' => [
-    //             [
-    //                 'title' => 'Last Name',
-    //                 'dataIndex' => 'lname',
-    //             ],
-    //             [
-    //                 'title' => 'First Name',
-    //                 'dataIndex' => 'fname',
-    //             ],
-    //             [
-    //                 'title' => 'Middle Name',
-    //                 'dataIndex' => 'mname',
-    //             ],
-    //             [
-    //                 'title' => 'Name Ext.',
-    //                 'dataIndex' => 'xname',
-    //             ],
-    //         ]
-    //     ]);
-    // }
+        dd($request->id);
+        return response()->json([
+            'data' => $record,
+            'columns' => [
+                [
+                    'title' => 'Last Name',
+                    'dataIndex' => 'lname',
+                ],
+                [
+                    'title' => 'First Name',
+                    'dataIndex' => 'fname',
+                ],
+                [
+                    'title' => 'Middle Name',
+                    'dataIndex' => 'mname',
+                ],
+                [
+                    'title' => 'Name Ext.',
+                    'dataIndex' => 'xname',
+                ],
+            ]
+        ]);
+    }
 
-    // public function addAssignEmployee(Request $request)
-    // {
-    //     dd($request->all());
-    // }
+    public function addAssignEmployee(Request $request)
+    {
+        dd($request->all());
+    }
 
-    // //Special Gc Payment
-    // public function specialExternalPayment()
-    // {
-    //     $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
+    //Special Gc Payment
+    public function specialExternalPayment()
+    {
+        $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
 
-    //     return inertia('Treasury/Transactions/SpecialGcPayment/SpecialExtPayment', [
-    //         'title' => 'Special External Gc Payment',
-    //         'trans' => $transactionNumber ? NumberHelper::leadingZero($transactionNumber + 1, "%03d") : '0001',
-    //         'options' => self::options()
-    //     ]);
-    // }
+        return inertia('Treasury/Transactions/SpecialGcPayment/SpecialExtPayment', [
+            'title' => 'Special External Gc Payment',
+            'trans' => $transactionNumber ? NumberHelper::leadingZero($transactionNumber + 1, "%03d") : '0001',
+            'options' => self::options()
+        ]);
+    }
 
-    // public function gcPaymentSubmission(Request $request)
-    // {
-    //     $data = $this->specialGcPaymentService->store($request);
+    public function gcPaymentSubmission(Request $request)
+    {
+        $data = $this->specialGcPaymentService->store($request);
         
-    //     $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
+        $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
 
-    //     $pdf->setPaper('A3');
+        $pdf->setPaper('A3');
 
-    //     $stream = base64_encode($pdf->output());
+        $stream = base64_encode($pdf->output());
 
-    //     return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
-    // }
+        return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
+    }
+>>>>>>> kenji
 }
