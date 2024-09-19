@@ -94,7 +94,7 @@ class BudgetRequestService extends UploadFileHandler
 			"dateNeeded" => 'required|date',
 			"budget" => 'required|not_in:0',
 			"remarks" => 'required',
-			'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
+			// 'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
 		]);
 
 		$dept = userDepartment($request->user());
