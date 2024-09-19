@@ -7,7 +7,7 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+## About Gift Check
 
 Gif Check is a web application with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling.
 
