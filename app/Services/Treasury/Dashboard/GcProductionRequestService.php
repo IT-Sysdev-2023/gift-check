@@ -9,12 +9,12 @@ use App\Models\Gc;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use App\Rules\DenomQty;
 use Illuminate\Support\Facades\DB;
 
-class GcProductionRequestService extends UploadFileHandler
+class GcProductionRequestService extends FileHandler
 {
     public function __construct()
     {

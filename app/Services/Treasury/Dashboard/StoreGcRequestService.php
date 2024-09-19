@@ -12,7 +12,7 @@ use App\Models\InstitutPayment;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
 use Illuminate\Support\Facades\Date;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Gc;
@@ -20,7 +20,7 @@ use App\Models\GcLocation;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
-class StoreGcRequestService extends UploadFileHandler
+class StoreGcRequestService extends FileHandler
 {
 
 	public function __construct()

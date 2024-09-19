@@ -7,7 +7,7 @@ use App\Models\ApprovedRequest;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use App\Services\Iad\IadDashboardService;
 use App\Services\Treasury\ColumnHelper;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Rmunate\Utilities\SpellNumber;
 
-class SpecialExternalGcService extends UploadFileHandler
+class SpecialExternalGcService extends FileHandler
 {
 
     public function __construct()

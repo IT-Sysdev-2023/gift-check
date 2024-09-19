@@ -11,10 +11,10 @@ use App\Models\ApprovedRequest;
 use App\Models\LedgerBudget;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Support\Facades\DB;
 
-class ApprovedPendingPromoGCRequestService extends UploadFileHandler
+class ApprovedPendingPromoGCRequestService extends FileHandler
 {
     public function __construct()
     {

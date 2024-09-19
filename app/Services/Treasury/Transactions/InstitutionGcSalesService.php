@@ -11,13 +11,13 @@ use App\Models\InstitutTransaction;
 use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
 use App\Models\PaymentFund;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use App\Models\Gc;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
-class InstitutionGcSalesService extends UploadFileHandler
+class InstitutionGcSalesService extends FileHandler
 {
     private string $sessionName;
     public function __construct()

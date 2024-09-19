@@ -9,12 +9,12 @@ use App\Models\BudgetRequest;
 use App\Models\CancelledBudgetRequest;
 use App\Models\LedgerBudget;
 use App\Models\PromogcPreapproved;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Faker\Core\Number;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
-class FinanceService extends UploadFileHandler
+class FinanceService extends FileHandler
 {
     public function __construct()
     {
