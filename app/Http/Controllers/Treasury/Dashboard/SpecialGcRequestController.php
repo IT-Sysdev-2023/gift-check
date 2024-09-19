@@ -77,7 +77,7 @@ class SpecialGcRequestController extends Controller
             : '0001';
 
         return inertia('Treasury/Transactions/SpecialGcPayment/SpecialExtPayment', [
-            'title' => 'Special External Gc Payment',
+            'title' => 'Gc Payment',
             'trans' => $transNo,
             'options' => self::options()
         ]);

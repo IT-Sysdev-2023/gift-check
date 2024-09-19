@@ -409,4 +409,50 @@ class ColumnHelper
             'align' => 'center'
         ],
     ];
+
+    public static $institution_gc_sales = [
+        [
+            'title' => 'Transaction No.',
+            'dataIndex' => 'institutrTrnum',
+
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Date',
+            'dataIndex' => 'date',
+
+        ],
+        [
+            'title' => 'Time',
+            'dataIndex' => 'time',
+
+        ],
+        [
+            'title' => 'Gc (pcs)',
+            'dataIndex' => ['abr', 'approved_at'],
+            'key' => 'date_approved'
+
+        ],
+        [
+            'title' => 'Total Denom',
+            'dataIndex' => ['abr', 'approved_by'],
+            'key' => 'approved_by',
+
+        ],
+        [
+            'title' => 'Payment Type',
+            'dataIndex' => ['abr', 'approved_by'],
+            'key' => 'approved_by',
+
+        ],
+        [
+            'title' => 'Actions',
+            'dataIndex' => 'action'
+
+        ],
+    ];
 }

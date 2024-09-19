@@ -31,15 +31,22 @@
                 </a-button>
             </div>
         </div>
-        <!-- <a-table
+        <a-table
             :data-source="data.data"
             :columns="columns"
             bordered
             size="small"
             :pagination="false"
         >
-        </a-table> -->
-        <!-- <pagination class="mt-5" :datarecords="data" /> -->
+
+        <template #bodyCell="{ column, record }">
+                <template v-if="column.key === 'customer'">
+                    {{ record.institucustomer?.ins_name }}
+                </template>
+               
+            </template>
+        </a-table>
+        <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
 </template>
 <script>
