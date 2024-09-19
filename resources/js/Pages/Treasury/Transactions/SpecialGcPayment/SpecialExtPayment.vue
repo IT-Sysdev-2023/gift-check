@@ -7,6 +7,7 @@
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ titleGc }}</a-breadcrumb-item>
         </a-breadcrumb>
+        
 
         <a-card :title="'Submit ' + titleGc" class="mt-10">
             <template #extra>
