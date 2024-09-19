@@ -49,10 +49,11 @@ class SpecialGcPaymentService extends UploadFileHandler
             $listOfDenom = $this->denominationStore($request, $latestId);
 
             //save scan image uploaded
-            $this->saveMultiFiles($request, $latestId, function ($id, $path) {
+            $this->saveMultiFiles($request, $latestId, function ($id, $path) use ($request) {
+                $gcMode = $request->switchGc ? 'Special Internal GC Request' : 'Special External GC Request';
                 Document::create([
                     'doc_trid' => $id,
-                    'doc_type' => 'Special External GC Request',
+                    'doc_type' => $gcMode,
                     'doc_fullpath' => $path
                 ]);
             });
@@ -181,8 +182,10 @@ class SpecialGcPaymentService extends UploadFileHandler
 
     private function segStore(Request $request)
     {
+        //external = false
+        //internal = true
         $gcPayment = $request->switchGc;
-        
+
         $q = SpecialExternalGcrequest::create([
             'spexgc_num' => $request->trans,
             'spexgc_reqby' => $request->user()->user_id,
@@ -219,6 +222,7 @@ class SpecialGcPaymentService extends UploadFileHandler
 
     private function dataForPdf(Request $request, $listOfDenom)
     {
+        $gcMode = $request->switchGc ? 'Special Internal Request Report' : 'Special External Request Report';
         $company = SpecialExternalCustomer::select('spcus_companyname', 'spcus_acctname')->find($request->companyId);
 
         $amount = $listOfDenom->map(function ($item) {
@@ -230,7 +234,7 @@ class SpecialGcPaymentService extends UploadFileHandler
             'company' => [
                 'name' => Str::upper('ALTURAS GROUP OF COMPANIES'),
                 'department' => Str::title('Head Office - Treasury Department'),
-                'report' => 'Special GC Request Report',
+                'report' => $gcMode,
             ],
 
             //SubHeader

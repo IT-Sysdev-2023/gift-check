@@ -286,8 +286,8 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
 
                 //special gc payment
                 Route::prefix('special-gc-payment')->name('special.')->group(function () {
-                    Route::get('external', [SpecialGcRequestController::class, 'specialExternalPayment'])->name('index');
-                    Route::post('external-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
+                    Route::get('/', [SpecialGcRequestController::class, 'specialGcPayment'])->name('index');
+                    Route::post('submission-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                 });
             });
 

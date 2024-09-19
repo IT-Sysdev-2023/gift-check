@@ -68,7 +68,7 @@ class SpecialGcRequestController extends Controller
     }
 
     //Special Gc Payment
-    public function specialExternalPayment()
+    public function specialGcPayment()
     {
         $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
 
