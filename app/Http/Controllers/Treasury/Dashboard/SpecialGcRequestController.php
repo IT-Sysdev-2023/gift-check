@@ -71,10 +71,13 @@ class SpecialGcRequestController extends Controller
     public function specialGcPayment()
     {
         $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
+    // public function specialExternalPayment()
+    // {
+    //     $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
 
-        $transNo = $transactionNumber ?
-            NumberHelper::leadingZero($transactionNumber + 1, "%03d")
-            : '0001';
+    //     $transNo = $transactionNumber ?
+    //         NumberHelper::leadingZero($transactionNumber + 1, "%03d")
+    //         : '0001';
 
         return inertia('Treasury/Transactions/SpecialGcPayment/SpecialExtPayment', [
             'title' => 'Gc Payment',
@@ -82,19 +85,25 @@ class SpecialGcRequestController extends Controller
             'options' => self::options()
         ]);
     }
+    //     return inertia('Treasury/Transactions/SpecialGcPayment/SpecialExtPayment', [
+    //         'title' => 'Special External Gc Payment',
+    //         'trans' => $transNo,
+    //         'options' => self::options()
+    //     ]);
+    // }
 
-    public function gcPaymentSubmission(Request $request)
-    {
-        $data = $this->specialGcPaymentService->store($request);
+    // public function gcPaymentSubmission(Request $request)
+    // {
+    //     $data = $this->specialGcPaymentService->store($request);
 
-        $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
+    //     $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
 
-        $pdf->setPaper('A3');
+    //     $pdf->setPaper('A3');
 
-        $stream = base64_encode($pdf->output());
+    //     $stream = base64_encode($pdf->output());
 
-        return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
-    }
+    //     return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
+    // }
 
     private function options()
     {
