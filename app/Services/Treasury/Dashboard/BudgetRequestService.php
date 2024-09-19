@@ -4,14 +4,14 @@ namespace App\Services\Treasury\Dashboard;
 
 use App\Helpers\NumberHelper;
 use App\Models\LedgerBudget;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Support\Facades\Date;
 use App\Http\Resources\BudgetRequestResource;
 use App\Models\BudgetRequest;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
-class BudgetRequestService extends UploadFileHandler
+class BudgetRequestService extends FileHandler
 {
 
 	public function __construct()

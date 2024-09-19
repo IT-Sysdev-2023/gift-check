@@ -6,14 +6,14 @@ use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
 use App\Rules\DenomQty;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Date;
 
-class TransactionProductionRequest extends UploadFileHandler
+class TransactionProductionRequest extends FileHandler
 {
 	public function __construct()
 	{

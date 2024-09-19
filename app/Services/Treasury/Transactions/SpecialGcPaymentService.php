@@ -5,7 +5,7 @@ namespace App\Services\Treasury\Transactions;
 use App\Helpers\NumberHelper;
 use App\Models\Document;
 use App\Models\SpecialExternalCustomer;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalBankPaymentInfo;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\SpecialExternalGcrequest;
 use Illuminate\Support\Str;
 
-class SpecialGcPaymentService extends UploadFileHandler
+class SpecialGcPaymentService extends FileHandler
 {
     public function __construct()
     {
