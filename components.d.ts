@@ -299,6 +299,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     Sale_storeSales: typeof import('./resources/js/Pages/Marketing/Sale_storeSales.vue')['default']
     Sale_treasurySales: typeof import('./resources/js/Pages/Marketing/Sale_treasurySales.vue')['default']
+    Sample: typeof import('./resources/js/Pages/Sample.vue')['default']
     SaveOutlined: typeof import('@ant-design/icons-vue')['SaveOutlined']
     ScanGcDrawer: typeof import('./resources/js/Pages/Retail/Drawer/ScanGcDrawer.vue')['default']
     ScanGcStatuses: typeof import('./resources/js/Pages/Admin/ScanGcStatuses.vue')['default']
