@@ -231,6 +231,7 @@ declare module 'vue' {
     PaginationSmall: typeof import('./resources/js/Components/PaginationSmall.vue')['default']
     PaperClipOutlined: typeof import('@ant-design/icons-vue')['PaperClipOutlined']
     PaymentType: typeof import('./resources/js/Components/Treasury/PaymentType.vue')['default']
+    PdfResult: typeof import('./resources/js/Pages/Admin/Results/PdfResult.vue')['default']
     Pending: typeof import('./resources/js/Pages/Retail/GcRequest/Pending.vue')['default']
     PendingBudgetRequest: typeof import('./resources/js/Pages/Finance/PendingBudgetRequest.vue')['default']
     PendingGc: typeof import('./resources/js/Pages/RetailGroup/PendingGc.vue')['default']
