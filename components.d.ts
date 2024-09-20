@@ -305,6 +305,7 @@ declare module 'vue' {
     ScanModalReleasing: typeof import('./resources/js/Components/Treasury/ScanModalReleasing.vue')['default']
     ScannedGc: typeof import('./resources/js/Pages/Iad/Cards/ScannedGc.vue')['default']
     ScreenVille: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ScreenVille.vue')['default']
+    SearchEmployee: typeof import('./resources/js/Pages/SearchEmployee.vue')['default']
     SearchOutlined: typeof import('@ant-design/icons-vue')['SearchOutlined']
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
     SettingOutlined: typeof import('@ant-design/icons-vue')['SettingOutlined']

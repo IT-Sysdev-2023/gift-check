@@ -30,6 +30,8 @@ use App\Http\Controllers\Treasury\Transactions\ProductionRequestController;
 use App\Http\Controllers\Treasury\Transactions\PromoGcReleasingController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\TreasuryController;
+use App\Http\Controllers\UserDetailsController;
+use App\Models\UserDetails;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -49,6 +51,9 @@ Route::fallback(function () {
 });
 
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+Route::get('employee', [UserDetailsController::class, 'index']);
+Route::get('get-employee', [UserDetailsController::class, 'getEmp'])->name('get.employee');
+Route::post('add-employee-{id}', [UserDetailsController::class, 'addEmp'])->name('add.employee');
 
 //Dashboards
 Route::middleware(['auth'])->group(function () {
