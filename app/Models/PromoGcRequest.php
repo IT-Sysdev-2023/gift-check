@@ -13,7 +13,8 @@ class PromoGcRequest extends Model
     protected $primaryKey = 'pgcreq_id';
     public $timestamps = false;
     protected $guarded = [];
-    public function casts(): array{
+    public function casts(): array
+    {
         return [
             'pgcreq_datereq' => 'datetime',
             'pgcreq_dateneeded' => 'date'
@@ -32,7 +33,7 @@ class PromoGcRequest extends Model
         );
     }
 
-  
+
     public function scopeSelectPromoRequest($builder)
     {
         $builder->selectRaw(
@@ -61,7 +62,8 @@ class PromoGcRequest extends Model
     public function scopeWhereFilterForPending($query)
     {
         return $query->where('pgcreq_group', '!=', '')
-            ->where('pgcreq_group_status', 'approved')
+            ->where('pgcreq_group_status', '')
+            ->orWhere('pgcreq_group_status', 'approved')
             ->where('pgcreq_status', 'pending');
     }
 
@@ -85,7 +87,8 @@ class PromoGcRequest extends Model
             'pgcreq_dateneeded',
             'pgcreq_group',
             'pgcreq_total',
-            'pgcreq_remarks'
+            'pgcreq_remarks',
+            'pgcreq_group_status'
         );
     }
 

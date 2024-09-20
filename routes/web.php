@@ -92,11 +92,14 @@ Route::prefix('admin')->group(function () {
         Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
         Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
         Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
+
         Route::name('masterfile.')->group(function () {
             Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
             Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
         });
+
         Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
+        Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');
     });
 });
 

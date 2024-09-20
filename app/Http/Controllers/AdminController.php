@@ -129,4 +129,9 @@ class AdminController extends Controller
             'stores' => $this->adminservices->stores(),
         ]);
     }
+
+    public function generateReports(Request $request)
+    {
+        return $this->adminservices->generateReportPdf($request);
+    }
 }
