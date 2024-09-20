@@ -26,4 +26,8 @@ class InstitutTransaction extends Model
     public function institutCustomer(){
         return $this->belongsTo(InstitutCustomer::class, 'institutr_cusid', 'ins_id');
     }
+
+    public function institutTransactionItem(){
+        return $this->hasMany(InstitutTransactionsItem::class, 'instituttritems_trid', 'institutr_id');
+    }
 }

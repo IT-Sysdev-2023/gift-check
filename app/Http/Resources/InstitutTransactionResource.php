@@ -17,9 +17,14 @@ class InstitutTransactionResource extends JsonResource
         return [
             'institutrTrnum' => $this->institutr_trnum,
             'institucustomer' => $this->whenLoaded('institutCustomer'),
+            'denomTotal' => $this->whenLoaded('institutTransactionItem', function ($q){
+                return $q->sum(function ($item) {
+                    return $item->gc->denomination->denomination;
+                });
+            }),
+            'institutTransactionItem' => $this->institut_transaction_item_count ,
             'date' => $this->institutr_date->toFormattedDateString(),
             'time' => $this->institutr_date->format('H:i:s A'),
-
         ];
     }
 }

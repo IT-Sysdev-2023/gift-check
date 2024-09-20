@@ -50,12 +50,37 @@ class InstitutionGcSalesController extends Controller
         return $this->institutionGcSalesService->store($request);
     }
 
-    public function viewTransaction()
+    public function viewTransaction(Request $request)
     {
 
         $data = InstitutTransaction::select('institutr_cusid', 'institutr_id', 'institutr_trnum', 'institutr_paymenttype', 'institutr_receivedby', 'institutr_date')
-            ->with('institutCustomer:ins_id,ins_name')->orderByDesc('institutr_trnum')->paginate()->withQueryString();
-            return inertia('Treasury/Dashboard/InstitutionGcSales', [
+            ->with(['institutCustomer:ins_id,ins_name', 'institutTransactionItem.gc.denomination'])
+            ->withCount('institutTransactionItem')
+            // ->withSum('institutTransactionItem.gc as total_denomination', 'gc.denomination.denomination')
+            ->orderByDesc('institutr_trnum')->limit(10)->get();
+            // ->paginate()
+            // ->withQueryString();
+
+
+        dd(InstitutTransactionResource::collection($data)->toArray($request));
+        //   dd($data);
+        // $table = 'institut_transactions_items';
+        // $select = "IFNULL(SUM(denomination.denomination),0) as sum";
+        // $where = "institut_transactions_items.instituttritems_trid='$tr->institutr_id'";
+        // $join = 'INNER JOIN
+        //         gc
+        //     ON	
+        //         gc.barcode_no = institut_transactions_items.instituttritems_barcode
+        //     INNER JOIN
+        //         denomination
+        //     ON
+        //         denomination.denom_id = gc.denom_id
+        // ';
+        // $limit = '';
+        // $sum = getSelectedData($link,$table,$select,$where,$join,$limit);
+        // echo number_format($sum->sum,2);
+
+        return inertia('Treasury/Dashboard/InstitutionGcSales', [
             'title' => 'Institution Gc Sales Transactions',
             'data' => InstitutTransactionResource::collection($data),
             'columns' => ColumnHelper::$institution_gc_sales

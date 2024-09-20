@@ -433,8 +433,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Gc (pcs)',
-            'dataIndex' => ['abr', 'approved_at'],
-            'key' => 'date_approved'
+            'dataIndex' => 'institutTransactionItem',
 
         ],
         [
