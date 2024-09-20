@@ -454,4 +454,27 @@ class ColumnHelper
 
         ],
     ];
+    public static $eodList = [
+      
+        [
+            'title' => 'Date',
+            'key' => 'ieod_date',
+
+        ],
+        [
+            'title' => 'EOD Number',
+            'dataIndex' => 'ieod_num',
+
+        ],
+        [
+            'title' => 'EOD By',
+            'key' => 'eodBy',
+
+        ],
+        [
+            'title' => 'Actions',
+            'dataIndex' => 'action',
+            'width' => '200px'
+        ],
+    ];
 }

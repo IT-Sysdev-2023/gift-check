@@ -59,7 +59,7 @@ const approvedProductionRequest = () => routeTo("production.request", "approved"
 const specialGcPending = () => routeTo("special.gc", "pending");
 
 const institutionGc = () => routeTo("transactions.institution.gc.sales", "transaction"); 
-
+const eodList = () => routeTo("eod", "eodList");
 </script>
 
 <template>
@@ -185,6 +185,7 @@ const institutionGc = () => routeTo("transactions.institution.gc.sales", "transa
                                     <CardBadge
                                         :count="data?.eod"
                                         title="Eod List"
+                                        @event="eodList"
                                     />
                                 </template>
                             </Card>

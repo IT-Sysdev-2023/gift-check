@@ -296,6 +296,12 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 });
             });
 
+            //Treasury
+            Route::prefix('treasury-eod')->name('eod.')->group(function () {
+                Route::get('/', [EodController::class, 'eodList'])->name('eodList');
+                // Route::get('generate-pdf', [EodController::class, 'generatePdf'])->name('pdf');
+            });
+
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
             Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
@@ -314,6 +320,8 @@ Route::prefix('eod')->group(function () {
         Route::get('eod-verified-gc', [EodController::class, 'eodVerifiedGc'])->name('verified.gc');
         Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
         Route::get('list', [EodController::class, 'list'])->name('list');
+
+
     });
 });
 
