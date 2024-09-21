@@ -5,8 +5,11 @@ use App\Models\Assignatory;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcRequest;
+use App\Models\Supplier;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Storage;
 
 class MarketingServices
 {
@@ -177,6 +180,39 @@ class MarketingServices
 
         return $data;
     }
+
+
+
+    public function generatepdfrequisition($request)
+    {
+
+        $supplier = Supplier::where('gcs_id', $request->data['selectedSupplierId'])->first();
+        $data = [
+            'reqNum' => $request->data['productionReqNum'],
+            'dateReq' => Date::parse($request->data['dateRequested'])->format('F d Y'),
+            'dateNeed' => Date::parse($request->data['dateNeeded'])->format('F d Y'),
+            'approvedBy' => strtoupper($request->data['approvedBy']),
+            'checkedBy' => strtoupper($request->data['checkedBy'])
+        ];
+
+        $pdf = Pdf::loadView('pdf/eRequisitionform', [
+            'data' => $data,
+            'barcodes' => $request->denom,
+            'supplier' => $supplier
+        ])->setPaper('A4');
+
+        $fileName = $request->data['productionReqNum'] . '.pdf';
+
+      
+        $storeSuccess = Storage::disk('public')->put('e-requisitionform/' . $fileName, $pdf->output());
+
+        if ($storeSuccess) {
+            return $pdf; 
+        } else {
+            return false; 
+        }
+    }
+
 
 
 }

@@ -177,7 +177,7 @@ const handleChange = (file: UploadChangeParam) => {
 };
 
 const closeIframe = () =>{
-    router.visit(route('treasury.dashboard'));
+    // router.visit(route('treasury.dashboard'));
 }
 const onSubmit = () => {
     formState

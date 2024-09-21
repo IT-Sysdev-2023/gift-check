@@ -80,9 +80,6 @@
                         <a-form-item label="Date Needed">
                             <a-input v-model:value="form.dateNeeded" readonly />
                         </a-form-item>
-                        <a-form-item label="Requested Document">
-                            <a-image style="height: 100px;" :src="'/storage/productionRequestFile/' + data[0].pe_file_docno"></a-image>
-                        </a-form-item>
                         <a-form-item label="Remarks">
                             <a-input v-model:value="form.remarks" readonly />
                         </a-form-item>
@@ -104,6 +101,12 @@
             </a-button>
         </template>
     </a-modal>
+
+    <a-modal v-model:open="openIframe" style="width: 70%; top: 50px" :footer="null">
+        <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
+    </a-modal>
+
+
 </template>
 
 <script>
@@ -123,9 +126,11 @@ export default {
     },
     data() {
         return {
+            stream: null,
+            openIframe: false,
             open: false,
             form: {
-                id: this.data[0].pe_id,
+                id: this.data[0]?.pe_id,
                 pe_no: '',
                 department: '',
                 dateRequested: '',
@@ -161,24 +166,22 @@ export default {
             this.form.total = data.total;
             this.form.dateneed = data.dateneed;
             this.$inertia.get(route('marketing.pendingRequest.pending.request'), {
-                id: data.pe_id
+                id: data?.pe_id
             }, {
                 preserveState: true
             })
         },
         submitReqForm() {
             this.$inertia.post(route('marketing.pendingRequest.submit.request'), {
-                data: this.form
+                data: this.form,
+                barcode: this.barcodes
             }, {
                 onSuccess: (response) => {
-                    console.log(response);
                     if (response.props.flash.type == 'success') {
-                        notification[response.props.flash.type]({
-                            message: response.props.flash.msg,
-                            description: response.props.flash.description,
-                        });
-                        // this.$inertia.get(route('marketing.dashboard'))
-                        window.location.href ='/marketing-dashboard'
+                        this.open = false;
+                        this.stream = `data:application/pdf;base64,${response.props.flash.stream}`;
+                        this.openIframe = true;
+
                     } else {
                         notification[response.props.flash.type]({
                             message: response.props.flash.msg,
@@ -193,7 +196,6 @@ export default {
         closeModal() {
             this.open = false;
         },
-
     }
 }
 </script>
