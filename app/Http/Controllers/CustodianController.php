@@ -125,4 +125,10 @@ class CustodianController extends Controller
     {
         return (new ReprintPdf)->reprintRequestService($id);
     }
+
+    public function textFileUploader()
+    {
+        dd();
+        return inertia('Custodian/TexfileUploader');
+    }
 }

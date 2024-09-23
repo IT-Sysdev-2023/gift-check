@@ -13,7 +13,7 @@
             </a-table>
             <div>
                 <div class="flex justify-end mt-2">
-                    <a-button @click="() => $inertia.get(route('retail.availableGcList'))" type="primary">
+                    <a-button size="small" @click="() => $inertia.get(route('retail.availableGcList'))" type="primary">
                         <SearchOutlined />View Available GC
                     </a-button>
                 </div>

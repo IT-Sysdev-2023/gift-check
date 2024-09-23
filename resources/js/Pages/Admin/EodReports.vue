@@ -21,11 +21,12 @@
                             <a-select-option v-for="store in stores" v-model:value="store.store_id">{{ store.store_name
                                 }}</a-select-option>
                         </a-select>
+                        
                     </a-space>
                 </a-col>
                 <a-col :span="8">
                     <div class="flex justify-end">
-                        <a-button>
+                        <a-button @click="generate">
                             <template #icon>
                                 <PrinterOutlined />
                             </template>
@@ -34,8 +35,11 @@
                     </div>
                 </a-col>
             </a-row>
+
             <a-table bordered :data-source="record.data" :pagination="false" :columns="columns" size="small"></a-table>
+
             <pagination :datarecords="record" class="mt-5"/>
+
         </a-card>
     </AuthenticatedLayout>
 </template>
@@ -117,6 +121,13 @@ const columns = ref([
         key: 'address',
     },
 
-])
+]);
+
+const generate = () => {
+    router.get(route('admin.generate'), {
+        date: dt.value,
+        store: st.value,
+    })
+}
 
 </script>

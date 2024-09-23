@@ -13,14 +13,17 @@ use App\Models\Store;
 use App\Models\StoreVerification;
 use App\Models\Supplier;
 use App\Models\TransactionStore;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminServices
 {
     public function purchaseOrderDetails()
     {
-        $collect = RequisitionForm::with('requisFormDenom')->get();
+        $collect = RequisitionForm::with('requisFormDenom')->paginate(10)->withQueryString();
 
         $collect->transform(function ($item) {
             $item->trans_date = Date::parse($item->trans_date)->toFormattedDateString();
@@ -569,5 +572,304 @@ class AdminServices
         };
 
         return $data->paginate(10)->withQueryString();
+    }
+
+    public function generateReportPdf($request)
+    {
+
+        $html = $this->htmlStructure($request);
+
+        $options = new Options();
+
+        $options->set('isHtml5ParserEnabled', true);
+
+        $dompdf = new Dompdf($options);
+
+        $dompdf->loadHtml($html);
+
+        $dompdf->setPaper('letter', 'portrait');
+
+        $dompdf->render();
+
+        $output = $dompdf->output();
+
+        $stream = base64_encode($output);
+
+        $filename = 'Reprint Generated Pdf Report' . '.pdf';
+
+        $filePathName = storage_path('app/' . $filename);
+
+
+        if (!file_exists(dirname($filePathName))) {
+            mkdir(dirname($filePathName), 0755, true);
+        }
+
+        Storage::put($filename, $output);
+
+        $filePath = route('download', ['filename' => $filename]);
+
+        return inertia('Admin/Results/PdfResult', [
+            'filePath' => $filePath,
+            'stream' => $stream,
+        ]);
+    }
+
+
+    public function dataReports($request)
+    {
+        $con = is_array($request->date) ? 1 : 2;
+
+        $data =  TransactionStore::join('stores', 'store_id', '=', 'trans_store')
+            ->join('store_staff', 'ss_id', '=', 'trans_cashier')
+            ->where('trans_yreport', '!=', '0')
+            ->where('trans_store', $request->store)
+            ->where('trans_eos', '!=', '');
+
+        $data = match ($con) {
+            1 => $data->whereBetween('trans_datetime', [$request->date[0], $request->date[1]]),
+            2 => $data->whereDate('trans_datetime', $request->date),
+        };
+
+        return $data->get();
+    }
+
+    public function htmlStructure($request)
+    {
+        //<div></div>
+
+        $data = $this->dataReports($request);
+        // dd($data->toArray());
+
+        $storename = Store::where('store_id', $request->store)->value('store_name');
+
+        $html = '<html><body style="font-family: "Courier New", Courier, monospace; font-size: 15px;">';
+        $html .= '<div style="text-align:center; text-transform: uppercase">' . $storename . '</div>';
+        $html .= '<div style="text-align:center; font-size: 10px">Owned & Managed by ASC</div>';
+        $html .= '<div style="font-size: 11px; margin-top: 10px;">Date Print: ' . now()->format('M d, Y') . ' </div>';
+        $html .= '<hr/>';
+        $html .= '<div style="text-align:center; font-weight: 500; letter-spacing: 1px;">GC Cashier Accountability Report</div>';
+        $html .= '<hr/>';
+
+        //Cash Side ====>
+
+        $html .= '<div style="font-size: 11px; margin-left: 1px; margin-top: 15px; margin-bottom: 3px; font-weight: bold;">Cash</div>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">GC Sales</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: left;">GC Sales</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: left; font-weight: bold;">Total</td>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+
+        //Cards Side =======>
+
+        $html .= '<div style="font-size: 11px; margin-left: 1px; font-weight: bold; margin-top: 15px">Cards</div>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: left;">Total</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: right;">0.00</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        //Ar Side
+
+        $html .= '<div style="font-size: 11px; margin-left: 1px; font-weight: bold; margin-top: 15px">AR</div>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: left;">Total</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: right;">0.00</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: left;">GC Refund</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: right;">0.00</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px; margin-bottom: 15px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: left;">Total Refund Charge</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: right;">0.00</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        //Total
+
+        $html .= '<hr/>';
+        $html .= '<table width="100%" style="border-collapse: collapse;">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; font-weight: bold;  text-align: left;">Total</td>';
+        $html .= '<td style="font-size: 11px; width: 50%;  text-align: right;">0.00</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+        $html .= '<hr/>';
+
+        //Discount
+
+
+        $html .= '<div style="font-size: 11px; margin-left: 1px; margin-top: 15px; font-weight: bold;">Discount</div>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">Document Discount</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">Line Discount</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">Ar Discount</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left; font-weight: bold">Total</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: center;">0</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 10px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">Total Refund Subtotal Discount</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">Total Refund Line Discount</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">No of Paying Customers</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">No of Transactions </td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">Items Sold</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">Total Number of Voided</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">Total Voided Amount </td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">Beginning Txnno</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+        $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
+        $html .= '<tr>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: left;">Ending Txnno</td>';
+        $html .= '<td style="font-size: 11px; width: 50%; text-align: right;">0</td>';
+        $html .= '</tr>';
+        $html .= '</table>';
+
+
+        $html .= '</body></html>';
+
+
+        return $html;
+    }
+
+    public function getCash()
+    {
+        // function getTransactionsByModeAndStoreTotalEOS($link, $store, $cashier, $mode)
+        // {
+        //     $query = $link->query(
+        //         "SELECT
+		// 		transaction_stores.trans_datetime,
+		// 		SUM(transaction_payment.payment_amountdue) as cash,
+		// 		COUNT(transaction_stores.trans_sid) as cnt
+		// 	FROM
+		// 		transaction_stores
+		// 	INNER JOIN
+		// 		transaction_payment
+		// 	ON
+		// 		transaction_payment.payment_trans_num = transaction_stores.trans_sid
+		// 	WHERE
+		// 		transaction_stores.trans_cashier='$cashier'
+		// 	AND
+		// 		transaction_stores.trans_store='$store'
+		// 	AND
+		// 		DATE(transaction_stores.trans_datetime) <= CURDATE()
+		// 	AND
+		// 		transaction_stores.trans_type='$mode'
+		// 	AND
+		// 		transaction_stores.trans_eos=''
+		// "
+        //     );
+        //     if ($query) {
+        //         $row = $query->fetch_object();
+        //         return $row;
+        //     } else {
+        //         return $link->error;
+        //     }
+        // }
     }
 }

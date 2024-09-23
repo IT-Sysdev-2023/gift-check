@@ -486,6 +486,7 @@ class RetailServices
 
                 $enddt = Date::parse($dtrelease)->addDays($days)->format('Y-m-d');
 
+
                 if ($enddt > today()) {
 
                     return back()->with([
@@ -561,7 +562,13 @@ class RetailServices
                     }
 
                     if ($request->payment != 'WHOLESALE') {
-                        $this->dbservices->createtextfile($request, $data);
+
+                       $success =  $this->dbservices->createtextfile($request, $data);
+
+                       if($success){
+                        $this->dbservices->createtextfileSecondaryPath($request, $data);
+                       }
+
                     }
 
                     if ($isRevalidateGC) {

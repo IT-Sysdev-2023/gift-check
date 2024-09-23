@@ -97,11 +97,15 @@ Route::prefix('admin')->group(function () {
         Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
         Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
         Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
+        Route::get('edit-po-{id}', [AdminController::class, 'editPoDetails'])->name('edit.po');
+
         Route::name('masterfile.')->group(function () {
             Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
             Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
         });
+
         Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
+        Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');
     });
 });
 
@@ -425,6 +429,7 @@ Route::prefix('custodian')->group(function () {
         Route::name('check.')->group(function () {
             Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
         });
+        Route::post('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
     });
 });
 

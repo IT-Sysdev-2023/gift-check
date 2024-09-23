@@ -24,12 +24,15 @@ class IadServices
     public function __construct(public IadDbServices $iadDbServices) {}
     public function gcReceivingIndex()
     {
-        return RequisitionForm::where('used', null)->get();
+        return RequisitionForm::where('used', null)
+        ->orderByDesc('id')
+        ->get();
     }
 
 
     public function setupReceivingtxt($request)
     {
+        // dd();
         $isEntry = RequisitionEntry::where('requis_erno', $request->requisId)->exists();
 
         $requisform = RequisitionForm::with('requisFormDenom')->where('req_no', $request->requisId)->first();
@@ -57,9 +60,12 @@ class IadServices
 
     public function getDenomination($denom, $request)
     {
+        // dd($denom);
 
 
         $requisProId = self::getRequistionNo($request->requisId) ?? null;
+
+        // dd(1);
 
 
         $data =  Denomination::select('denomination', 'denom_fad_item_number', 'denom_code', 'denom_id')

@@ -615,6 +615,11 @@ class ColumnHelper
             'dataIndex' => 'pay_terms',
             'align' => 'center'
         ],
+        [
+            'title' => 'Action.',
+            'key' => 'action',
+            'align' => 'center'
+        ],
 
 
     ];

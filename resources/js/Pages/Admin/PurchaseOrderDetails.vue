@@ -8,7 +8,7 @@
                 </span>
             </template>
             <a-card>
-                <a-table :data-source="record" :columns="columns" bordered size="small" :pagination="false"
+                <a-table :data-source="record.data" :columns="columns" bordered size="small" :pagination="false"
                     :rowKey="record => record.id" expandable="{ expandedRowRender }">
                     <template #expandedRowRender="{ record }">
                         <a-card>
@@ -17,17 +17,17 @@
                                     <a-descriptions size="small" layout="horizontal" bordered>
                                         <a-descriptions-item style="width: 50%;" label="Reference Purchase Order No.">{{
                                             record.ref_po_no
-                                            }}</a-descriptions-item>
+                                        }}</a-descriptions-item>
                                     </a-descriptions>
                                     <a-descriptions size="small" layout="horizontal" bordered>
                                         <a-descriptions-item style="width: 50%;" label="Deparment Code">{{
                                             record.dep_code
-                                            }}</a-descriptions-item>
+                                        }}</a-descriptions-item>
                                     </a-descriptions>
                                     <a-descriptions size="small" layout="horizontal" bordered>
                                         <a-descriptions-item style="width: 50%;" label="Location Code.">{{
                                             record.loc_code
-                                            }}</a-descriptions-item>
+                                        }}</a-descriptions-item>
                                     </a-descriptions>
                                     <a-descriptions size="small" layout="horizontal" bordered>
                                         <a-descriptions-item style="width: 50%;" label="Receiving No.">{{ record.rec_no
@@ -66,27 +66,42 @@
                                     </a-table>
                                 </a-col>
                             </a-row>
+
                         </a-card>
                     </template>
                     <template #expandColumnTitle>
                         <span style="color: #179BAE">Details</span>
                     </template>
+
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'action'">
+                            <a-button @click="edit(record.id)">
+                                <ImportOutlined />
+                                Edit
+                            </a-button>
+                        </template>
+                    </template>
                 </a-table>
+                <pagination class="mt-5" :datarecords="record" />
             </a-card>
         </a-tab-pane>
         <a-tab-pane key="2">
             <template #tab>
                 <span>
                     <android-outlined />
-                   Add Purchase Order Form
+                    Add Purchase Order Form
                 </span>
             </template>
-            <add-order-details :denom="denomination" :supplier="supplier"/>
+            <add-order-details :denom="denomination" :supplier="supplier" />
         </a-tab-pane>
     </a-tabs>
+
+    <purchase-order-drawer :open="editDrawer" @close-drawer="onClose" :data="selectedData" :denom="denomination"/>
+
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import axios from 'axios';
 
 export default {
     layout: AuthenticatedLayout,
@@ -100,12 +115,24 @@ export default {
         return {
             openmodal: false,
             activeKey: '1',
+            editDrawer: false,
+            selectedData: {},
         }
     },
     methods: {
         modal() {
             this.openmodal = true;
         },
+        edit(id) {
+            axios.get(route('admin.edit.po', id)).then(res => {
+                this.editDrawer = true;
+                this.selectedData = res.data;
+
+            });
+        },
+        onClose() {
+            this.editDrawer = false;
+        }
 
     }
 }

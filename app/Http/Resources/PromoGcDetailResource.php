@@ -19,6 +19,7 @@ class PromoGcDetailResource extends JsonResource
 
         return [
             'pgcreq_reqnum' => $this->pgcreq_reqnum,
+            'pgcreq_group_status' => $this->pgcreq_group_status,
             'pgcreq_datereq' => Date::parse($this->pgcreq_datereq)->toFormattedDateString(),
             'today' => now()->toFormattedDateString(),
             'time_req' => $this->pgcreq_datereq ? Date::parse($this->pgcreq_datereq)->format('H:i:s') : null,
