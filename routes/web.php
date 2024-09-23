@@ -286,6 +286,7 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                     Route::put('remove-barcode-{barcode}', [InstitutionGcSalesController::class, 'removeBarcode'])->name('removeBarcode');
 
                     Route::post('form-submission', [InstitutionGcSalesController::class, 'formSubmission'])->name('submission');
+                    Route::get('view-transaction-details-{id}', [InstitutionGcSalesController::class, 'transactionDetails'])->name('transactionDetails');
                 });
 
                 //special gc payment

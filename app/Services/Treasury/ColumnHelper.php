@@ -433,24 +433,22 @@ class ColumnHelper
         ],
         [
             'title' => 'Gc (pcs)',
-            'dataIndex' => 'institutTransactionItem',
+            'dataIndex' => 'institutTransactionItemCount',
 
         ],
         [
             'title' => 'Total Denom',
-            'dataIndex' => ['abr', 'approved_by'],
-            'key' => 'approved_by',
+            'key' => 'totalDenom',
 
         ],
         [
             'title' => 'Payment Type',
-            'dataIndex' => ['abr', 'approved_by'],
-            'key' => 'approved_by',
+            'dataIndex' => 'institutr_paymenttype',
 
         ],
         [
             'title' => 'Actions',
-            'dataIndex' => 'action'
+            'key' => 'action'
 
         ],
     ];

@@ -22,7 +22,9 @@ class InstitutTransaction extends Model
 
 
     public $timestamps = false;
-
+    public function institutPayment(){
+        return $this->belongsTo(InstitutPayment::class, 'institutr_id', 'insp_trid');
+    }
     public function institutCustomer(){
         return $this->belongsTo(InstitutCustomer::class, 'institutr_cusid', 'ins_id');
     }
@@ -30,4 +32,18 @@ class InstitutTransaction extends Model
     public function institutTransactionItem(){
         return $this->hasMany(InstitutTransactionsItem::class, 'instituttritems_trid', 'institutr_id');
     }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'institutr_trby', 'user_id');
+    }
+
+    public function document()
+    {
+        return $this->belongsTo(Document::class, 'institutr_id', 'doc_trid');
+    }
+
+    // public function gc()
+    // {
+    //     return $this->hasMany(Gc::class, 'barcode_no', 'instituttritems_barcode');
+    // }
 }
