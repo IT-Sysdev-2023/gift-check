@@ -226,6 +226,8 @@ declare module 'vue' {
     MenuUnfoldOutlined: typeof import('@ant-design/icons-vue')['MenuUnfoldOutlined']
     MinusCircleOutlined: typeof import('@ant-design/icons-vue')['MinusCircleOutlined']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
+    MoneyCollectOutlined: typeof import('@ant-design/icons-vue')['MoneyCollectOutlined']
+    MonitorOutlined: typeof import('@ant-design/icons-vue')['MonitorOutlined']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     NotFoundResult: typeof import('./resources/js/Pages/Iad/Components/NotFoundResult.vue')['default']
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
