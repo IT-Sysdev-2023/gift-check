@@ -31,7 +31,7 @@ class RetailController extends Controller
         public DashboardClass $dashboardClass
     ) {
     }
-    public function index()
+    public function index(Request $request)
     {
 
         $counts = $this->dashboardClass->retailDashboard();
@@ -43,6 +43,15 @@ class RetailController extends Controller
 
         $getAvailableGc = $this->retail->getAvailableGC();
 
+        // $soldGc = StoreReceivedGc::where('strec_storeid', $request->user()->store_assigned)
+        //     ->whereNotNull('strec_sold') 
+        //     ->join('denomination', 'denomination.denom_id', '=', 'store_received_gc.strec_denom')
+        //     ->get();
+
+
+        // dd($soldGc->toArray());
+
+        
         return inertia('Retail/RetailDashboard', [
             'countGcRequest' => $gcRequest,
             'availableGc' => $getAvailableGc

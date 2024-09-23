@@ -562,7 +562,13 @@ class RetailServices
                     }
 
                     if ($request->payment != 'WHOLESALE') {
-                        $this->dbservices->createtextfile($request, $data);
+
+                       $success =  $this->dbservices->createtextfile($request, $data);
+
+                       if($success){
+                        $this->dbservices->createtextfileSecondaryPath($request, $data);
+                       }
+
                     }
 
                     if ($isRevalidateGC) {
