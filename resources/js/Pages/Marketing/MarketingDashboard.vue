@@ -1,12 +1,12 @@
 <template>
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
-            <PromoGcReq class="mb-2" :countPromoGcRequest/>
+            <PromoGcReq class="mb-2" :countPromoGcRequest />
             <GcProductionReq :gcProductionRequest />
         </a-col>
         <a-col :span="8">
-            <SpecialExternalGc/>
-            <PromoGcReceived/>
+            <SpecialExternalGc />
+            <PromoGcReceived />
         </a-col>
         <a-col :span="8">
             <div class="mb-2">
@@ -107,7 +107,7 @@
         </a-row>
         <template #footer>
             <a-button type="default" @click="closeModal">Cancel</a-button>
-            <a-button type="primary" @click="submitReqForm" :disabled="isSubmitDisabled">
+            <a-button type="primary" @click="submitReqForm">
                 Submit
             </a-button>
         </template>
@@ -127,6 +127,11 @@
         <template #footer>
             <a-button type="default" @click="requestListModal = false">Cancel</a-button>
         </template>
+    </a-modal>
+
+
+    <a-modal v-model:open="openIframe" style="width: 70%; top: 50px" :footer="null">
+        <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
     </a-modal>
 
 
@@ -163,6 +168,8 @@ export default {
 
     data() {
         return {
+            stream: null,
+            openIframe: false,
             requestListModal: false,
             open: false,
             form: {
@@ -222,11 +229,9 @@ export default {
             }, {
                 onSuccess: (response) => {
                     if (response.props.flash.type == 'success') {
-                        notification[response.props.flash.type]({
-                            message: response.props.flash.msg,
-                            description: response.props.flash.description,
-                        });
-                        this.$inertia.get(route('marketing.dashboard'))
+                        this.open = false;
+                        this.stream = `data:application/pdf;base64,${response.props.flash.stream}`;
+                        this.openIframe = true;
                     } else {
                         notification[response.props.flash.type]({
                             message: response.props.flash.msg,

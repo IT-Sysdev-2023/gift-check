@@ -163,9 +163,10 @@ class SpecialExternalGcService extends FileHandler
                     return redirect()->back()->with('error', 'Request already reviewed');
                 }
             });
+        }else{            
+            return redirect()->back()->with('error', 'Please scan the Gc first!');
         }
 
-        return redirect()->back()->with('error', 'Please scan the Gc first!');
     }
 
     public function reprint($id)

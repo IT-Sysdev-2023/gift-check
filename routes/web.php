@@ -30,6 +30,8 @@ use App\Http\Controllers\Treasury\Transactions\ProductionRequestController;
 use App\Http\Controllers\Treasury\Transactions\PromoGcReleasingController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\TreasuryController;
+use App\Http\Controllers\UserDetailsController;
+use App\Models\UserDetails;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -49,6 +51,9 @@ Route::fallback(function () {
 });
 
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+Route::get('employee', [UserDetailsController::class, 'index']);
+Route::get('get-employee', [UserDetailsController::class, 'getEmp'])->name('get.employee');
+Route::post('add-employee-{id}', [UserDetailsController::class, 'addEmp'])->name('add.employee');
 
 //Dashboards
 Route::middleware(['auth'])->group(function () {
@@ -131,7 +136,6 @@ Route::prefix('marketing')->group(function () {
         });
         Route::name('requisition.')->group(function () {
             Route::post('submit-requisition-form', [MarketingController::class, 'submitReqForm'])->name('submit.form');
-            Route::get('requis-pdf', [MarketingController::class, 'requisitionPdf'])->name('requistion.pdf');
         });
         Route::name('pendingRequest.')->group(function () {
             Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
@@ -295,6 +299,12 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 });
             });
 
+            //Treasury
+            Route::prefix('treasury-eod')->name('eod.')->group(function () {
+                Route::get('/', [EodController::class, 'eodList'])->name('eodList');
+                Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
+            });
+
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
             Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
@@ -313,6 +323,8 @@ Route::prefix('eod')->group(function () {
         Route::get('eod-verified-gc', [EodController::class, 'eodVerifiedGc'])->name('verified.gc');
         Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
         Route::get('list', [EodController::class, 'list'])->name('list');
+
+
     });
 });
 

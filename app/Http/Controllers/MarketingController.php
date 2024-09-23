@@ -33,6 +33,7 @@ use App\Models\TransactionStore;
 use App\Services\Marketing\PdfServices;
 use App\Services\Marketing\MarketingServices;
 use App\Services\Treasury\RegularGcProcessService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -41,7 +42,7 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-
+use Illuminate\View\View;
 
 use function Pest\Laravel\json;
 
@@ -1167,7 +1168,6 @@ class MarketingController extends Controller
     {
         if ($request->data['finalize'] == 1) {
 
-
             if (
                 $request->data['id'] == null ||
                 $request->data['requestNo'] == null ||
@@ -1230,16 +1230,19 @@ class MarketingController extends Controller
                 });
 
                 if ($inserted) {
-                    $pdf = $this->requisitionPdf($request->data);
 
-                    ProductionRequest::where('pe_id', $request->data['id'])
-                        ->update([
-                            'pe_requisition' => '1'
+                    $pdfgenerated = $this->marketing->generatepdfrequisition($request);
+                    if ($pdfgenerated) {
+                        ProductionRequest::where('pe_id', $request->data['id'])
+                            ->update([
+                                'pe_requisition' => '1'
+                            ]);
+
+                        return redirect()->back()->with([
+                            'type' => 'success',
+                            'stream' => base64_encode($pdfgenerated->output())
                         ]);
-
-                    return Inertia::render('Marketing/Pdf/RequisitionResult', [
-                        'filePath' => $pdf,
-                    ]);
+                    }
                 }
             }
         } elseif ($request->data['finalize'] == 3) {
@@ -1312,60 +1315,7 @@ class MarketingController extends Controller
         }
     }
 
-    public function requisitionPdf($data)
-    {
-
-
-        $checkby = $data['checkedBy'];
-        $approveBy = User::where('user_id', $data['approvedById'])->get();
-        $approveByFirstname = $approveBy[0]->firstname;
-        $approveByLastname = $approveBy[0]->lastname;
-        $requestNo = $data['requestNo'];
-        $dateReq = Carbon::parse($data['dateRequested']);
-        $dateNeed = Carbon::parse($data['dateNeeded']);
-        $dateRequest = $dateReq->format('F j, Y');
-        $dateNeed = $dateNeed->format('F j, Y');
-
-        $supplier = Supplier::where('gcs_id', $data['selectedSupplierId'])->get();
-
-        $productionReqItems = self::productionRequest($data['id']);
-
-
-        $html = (new PdfServices)->getHtml($checkby, $approveByFirstname, $approveByLastname, $dateRequest, $supplier, $productionReqItems, $requestNo, $dateNeed);
-
-        // Create DOMPDF Options and configure them
-        $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isPhpEnabled', true);
-
-        // Initialize Dompdf with the specified options
-        $dompdf = new Dompdf($options);
-
-        // Load HTML content into the DOMPDF object
-        $dompdf->loadHtml($html);
-
-        // Set paper size and orientation
-        $dompdf->setPaper('A4', 'portrait');
-
-        // Render the PDF (generate the PDF from HTML)
-        $dompdf->render();
-
-        $output = $dompdf->output();
-
-        $filename = $requestNo . '.pdf';
-        $filePathName = storage_path('app/' . $filename);
-
-        if (!file_exists(dirname($filePathName))) {
-            mkdir(dirname($filePathName), 0755, true);
-        }
-        Storage::put($filename, $output);
-
-        $filePath = route('download', ['filename' => $filename]);
-
-        return $filePath;
-    }
-
-
+    
     public function pendingRequest(Request $request)
     {
         $checkedBy = Assignatory::where('assig_dept', $request->user()->usertype)
@@ -1435,6 +1385,10 @@ class MarketingController extends Controller
     public function submitPendingRequest(Request $request)
     {
 
+
+
+
+
         $prid = $request->data['id'];
         if ($request->data['status'] == '1') {
             if ($request->data['status'] == null || $request->data['remarks'] == null || $request->data['checkedBy'] == null || $request->data['preparedById'] == null) {
@@ -1498,10 +1452,34 @@ class MarketingController extends Controller
 
                             if ($isApproved) {
                                 $this->RegularGc->approveProductionRequest($request, $prid);
-                                return back()->with([
+
+                                $barcodes = $request->barcode;
+                                $data = [
+                                    'pr_no' => $request->data['pe_no'],
+                                    'dateRequested' => $request->data['dateRequested'],
+                                    'dateNeeded' => $request->data['dateNeeded'],
+                                    'currentBudget' => $this->marketing->currentBudget(),
+                                    'Remarks' => $request->data['InputRemarks'],
+                                    'checkby' => $request->data['checkedBy'],
+                                    'approvedBy' => $request->data['approvedBy'],
+                                    'preparedBy' => $request->data['preparedBy']
+                                ];
+
+                                $pdf = Pdf::loadView('pdf/productionrequest', [
+                                    'data' => $data,
+                                    'barcodes' => $barcodes
+                                ])
+                                    ->setPaper('A4');
+
+                                $fileName = $data['pr_no'] . '.pdf';
+
+                                $store = Storage::disk('public');
+
+                                $store->put('approvalform/' . $fileName, $pdf->output());
+
+                                return redirect()->back()->with([
                                     'type' => 'success',
-                                    'msg' => 'Success!',
-                                    'description' => 'Production Request Successfully Approved!'
+                                    'stream' => base64_encode($pdf->output())
                                 ]);
                             }
                         } else {
@@ -1822,12 +1800,12 @@ class MarketingController extends Controller
             'approved_request.reqap_checkedby',
             'approved_request.reqap_date',
             DB::raw("CONCAT(users.firstname, ' ', users.lastname) as appby"),
-            DB::raw("CONCAT(approvedBy.firstname, ' ', approvedBy.lastname) as approvedBy"), 
-            DB::raw("CONCAT(checkBy.firstname, ' ', checkBy.lastname) as checkBy") 
+            DB::raw("CONCAT(approvedBy.firstname, ' ', approvedBy.lastname) as approvedBy"),
+            DB::raw("CONCAT(checkBy.firstname, ' ', checkBy.lastname) as checkBy")
         )
             ->join('users', 'users.user_id', '=', 'approved_request.reqap_preparedby')
-            ->leftJoin('users as approvedBy', 'approvedBy.user_id', '=', 'approved_request.reqap_approvedby') 
-            ->leftJoin('users as checkBy', 'checkBy.user_id', '=', 'approved_request.reqap_checkedby') 
+            ->leftJoin('users as approvedBy', 'approvedBy.user_id', '=', 'approved_request.reqap_approvedby')
+            ->leftJoin('users as checkBy', 'checkBy.user_id', '=', 'approved_request.reqap_checkedby')
             ->where('approved_request.reqap_approvedtype', 'promo gc approved')
             ->where('approved_request.reqap_trid', $request->id)
             ->get()
