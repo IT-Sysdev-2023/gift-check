@@ -188,7 +188,7 @@ class MarketingServices
 
         $supplier = Supplier::where('gcs_id', $request->data['selectedSupplierId'])->first();
         $data = [
-            'reqNum' => $request->data['productionReqNum'],
+            'reqNum' => $request->data['requestNo'],
             'dateReq' => Date::parse($request->data['dateRequested'])->format('F d Y'),
             'dateNeed' => Date::parse($request->data['dateNeeded'])->format('F d Y'),
             'approvedBy' => strtoupper($request->data['approvedBy']),
@@ -201,7 +201,7 @@ class MarketingServices
             'supplier' => $supplier
         ])->setPaper('A4');
 
-        $fileName = $request->data['productionReqNum'] . '.pdf';
+        $fileName = $request->data['requestNo'] . '.pdf';
 
       
         $storeSuccess = Storage::disk('public')->put('e-requisitionform/' . $fileName, $pdf->output());
