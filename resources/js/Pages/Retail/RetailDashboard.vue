@@ -5,17 +5,18 @@
                 <store-gc-request-card :counts="countGcRequest" />
             </a-col>
             <a-col :span="8">
-                <AvailableGc :availableGc/>
+                <available-gc :availableGc />
             </a-col>
             <a-col :span="8">
-
+                <sold-gc />
             </a-col>
         </a-row>
     </AuthenticatedLayout>
 </template>
+
 <script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AvailableGc from './Cards/AvailableGc.vue';
+
 export default {
     props: {
         countGcRequest: Object,

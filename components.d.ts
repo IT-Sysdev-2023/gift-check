@@ -317,6 +317,7 @@ declare module 'vue' {
     SetupReceiving: typeof import('./resources/js/Pages/Iad/SetupReceiving.vue')['default']
     SetupRecommendation: typeof import('./resources/js/Pages/RetailGroup/SetupRecommendation.vue')['default']
     SmileTwoTone: typeof import('@ant-design/icons-vue')['SmileTwoTone']
+    SoldGc: typeof import('./resources/js/Pages/Retail/Cards/SoldGc.vue')['default']
     SpecialExGcRequest: typeof import('./resources/js/Pages/Iad/Cards/SpecialExGcRequest.vue')['default']
     SpecialExternalGc: typeof import('./resources/js/Pages/Marketing/Card/SpecialExternalGc.vue')['default']
     SpecialExternalGcRequest: typeof import('./resources/js/Pages/Custodian/Cards/SpecialExternalGcRequest.vue')['default']

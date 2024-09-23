@@ -48,10 +48,10 @@ class EodServices
 
         $wholesaletime = now()->format('H:i');
 
-        $user = 'IT';
-        $password = 'itsysdev';
+        $user = 'Kenjey';
+        $password = 'ken';
 
-        exec('net use \\\172.16.43.7\Gift\\\\ /user:' . $user . ' ' . $password . ' /persistent:no');
+        exec('net use \\\172.16.42.143\Gift\\\\ /user:' . $user . ' ' . $password . ' /persistent:no');
 
 
         $store = StoreVerification::select(
@@ -91,7 +91,7 @@ class EodServices
                 ]);
             }
 
-            $ip = '\\\172.16.43.7\Gift\\';
+            $ip = '\\\172.16.42.143\Gift\\';
 
             $quickCheck = collect(File::files($ip));
 
