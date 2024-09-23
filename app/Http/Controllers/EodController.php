@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
+use App\Models\InstitutEod;
 use App\Models\StoreEod;
 use App\Models\StoreVerification;
 use App\Services\Eod\EodServices;
@@ -11,7 +12,9 @@ use Illuminate\Support\Facades\Date;
 
 class EodController extends Controller
 {
-    public function __construct(public EodServices $eodServices) {}
+    public function __construct(public EodServices $eodServices)
+    {
+    }
     //
     public function index()
     {
@@ -41,8 +44,30 @@ class EodController extends Controller
 
     public function list()
     {
-        return inertia('Eod/ListOfEod',[
+        return inertia('Eod/ListOfEod', [
             'record' => $this->eodServices->getEodList(),
         ]);
+    }
+
+    public function eodList(Request $request)
+    {
+       
+        $data = InstitutEod::select('ieod_by', 'ieod_id', 'ieod_num', 'ieod_date')
+            ->with('user:user_id,firstname,lastname')
+            ->orderByDesc('ieod_date')
+            ->filter($request)
+            ->paginate()
+            ->withQueryString();
+
+        return inertia('Treasury/Dashboard/Eod/EodListTreasury', [
+            'title' => 'Eod List',
+            'filters' => $request->only(['date', 'search']),
+            'data' => $data,
+            'columns' => \App\Services\Treasury\ColumnHelper::$eodList
+        ]);
+    }
+
+    public function generatePdf(int $id){
+        return $this->eodServices->generatePdf($id);
     }
 }
