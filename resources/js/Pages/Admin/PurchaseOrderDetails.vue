@@ -17,17 +17,17 @@
                                     <a-descriptions size="small" layout="horizontal" bordered>
                                         <a-descriptions-item style="width: 50%;" label="Reference Purchase Order No.">{{
                                             record.ref_po_no
-                                            }}</a-descriptions-item>
+                                        }}</a-descriptions-item>
                                     </a-descriptions>
                                     <a-descriptions size="small" layout="horizontal" bordered>
                                         <a-descriptions-item style="width: 50%;" label="Deparment Code">{{
                                             record.dep_code
-                                            }}</a-descriptions-item>
+                                        }}</a-descriptions-item>
                                     </a-descriptions>
                                     <a-descriptions size="small" layout="horizontal" bordered>
                                         <a-descriptions-item style="width: 50%;" label="Location Code.">{{
                                             record.loc_code
-                                            }}</a-descriptions-item>
+                                        }}</a-descriptions-item>
                                     </a-descriptions>
                                     <a-descriptions size="small" layout="horizontal" bordered>
                                         <a-descriptions-item style="width: 50%;" label="Receiving No.">{{ record.rec_no
@@ -96,7 +96,7 @@
         </a-tab-pane>
     </a-tabs>
 
-    <purchase-order-drawer :open="editDrawer" @close-drawer="onClose"/>
+    <purchase-order-drawer :open="editDrawer" @close-drawer="onClose" :data="selectedData" :denom="denomination"/>
 
 </template>
 <script>
@@ -116,6 +116,7 @@ export default {
             openmodal: false,
             activeKey: '1',
             editDrawer: false,
+            selectedData: {},
         }
     },
     methods: {
@@ -123,10 +124,13 @@ export default {
             this.openmodal = true;
         },
         edit(id) {
-            axios.get(route('admin.edit.po', id))
-            // this.editDrawer = true;
+            axios.get(route('admin.edit.po', id)).then(res => {
+                this.editDrawer = true;
+                this.selectedData = res.data;
+
+            });
         },
-        onClose(){
+        onClose() {
             this.editDrawer = false;
         }
 
