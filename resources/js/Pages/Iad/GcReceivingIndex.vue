@@ -1,7 +1,7 @@
 <template>
     <a-breadcrumb class="mb-4">
         <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-        <a-breadcrumb-item>Fad Textfiles Details</a-breadcrumb-item>
+        <a-breadcrumb-item>Fad Requsition Details</a-breadcrumb-item>
     </a-breadcrumb>
     <a-card>
         <a-table bordered size="small" :data-source="record" :columns="columns">
@@ -9,9 +9,9 @@
                 <template v-if="column.dataIndex == 'setup'">
                     <a-button @click="setup(record)">
                         <template #icon>
-                            <ToolFilled />
+                            <FastForwardOutlined />
                         </template>
-                        Setup Textfile
+                        Setup Requsition
                     </a-button>
                 </template>
             </template>
@@ -20,7 +20,7 @@
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-
+import { notification } from 'ant-design-vue';
 export default {
     layout: AuthenticatedLayout,
 
@@ -29,9 +29,18 @@ export default {
         columns: Array,
     },
     methods: {
-        setup(data){
+        setup(data) {
             this.$inertia.get(route('iad.setup.receiving'), {
                 requisId: data.req_no,
+            }, {
+                onSuccess: (res) => {
+                    if (res.props.flash.status === 'error') {
+                        notification[res.props.flash.status]({
+                            message: res.props.flash.title,
+                            description: res.props.flash.msg,
+                        });
+                    }
+                }
             });
         }
     }

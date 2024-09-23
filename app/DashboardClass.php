@@ -43,7 +43,6 @@ class DashboardClass extends DashboardService
     public function retailDashboard()
     {
         //
-
         return [
             'approved' => ApprovedGcrequest::with('storeGcRequest', 'storeGcRequest.store', 'user')
                 ->whereHas('storeGcRequest', function ($query) {

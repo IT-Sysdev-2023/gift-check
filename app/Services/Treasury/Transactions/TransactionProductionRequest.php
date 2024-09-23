@@ -6,14 +6,14 @@ use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
 use App\Rules\DenomQty;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Date;
 
-class TransactionProductionRequest extends UploadFileHandler
+class TransactionProductionRequest extends FileHandler
 {
 	public function __construct()
 	{
@@ -32,9 +32,9 @@ class TransactionProductionRequest extends UploadFileHandler
 	public function storeGc(Request $request)
 	{
 
-		if ($this->isAbleToRequest($request)) {
-			return redirect()->back()->with('error', 'You have pending production request');
-		}
+		// if ($this->isAbleToRequest($request)) {
+		// 	return redirect()->back()->with('error', 'You have pending production request');
+		// }
 
 		$request->validate([
 			'remarks' => 'required',
@@ -47,6 +47,7 @@ class TransactionProductionRequest extends UploadFileHandler
 
 		try {
 			$denom = collect($request->denom)->filter(fn($val) => isset ($val['qty']) && $val['qty'] > 0);
+
 			DB::transaction(function () use ($request, $filename, $denom) {
 
 				$pr = ProductionRequest::create([
@@ -92,12 +93,23 @@ class TransactionProductionRequest extends UploadFileHandler
 			'dateRequested' => today()->toFormattedDateString(),
 			'dateNeeded' => Date::parse($request->dateNeeded)->toFormattedDateString(),
 			'remarks' => $request->remarks,
-			'barcode' => $denomination,
-			'preparedBy' => $request->user()->full_name
-		];
-		$pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
 
-        $pdf->setPaper('A3');
+			'subtitle' => 'Production Request Form',
+			'barcode' => $denomination,
+
+			//signatures
+			'preparedBy' => [
+				'name' => $request->user()->full_name,
+				'position' => 'Sr Cash Clerk'
+			]
+		];
+
+		$pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
+        // $pdf->setPaper('A3');
+
+		//store pdf in storage
+		$this->folderName = 'generatedTreasuryPdf/ProductionRequest';
+		$this->savePdfFile($request, $request->prNo, $pdf->output());
 
         $stream = base64_encode($pdf->output());
 

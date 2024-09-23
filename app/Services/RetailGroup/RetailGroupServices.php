@@ -7,11 +7,11 @@ use App\Models\CancelledRequest;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\PromoLedger;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
 
-class RetailGroupServices extends UploadFileHandler
+class RetailGroupServices extends FileHandler
 {
     public function __construct()
     {

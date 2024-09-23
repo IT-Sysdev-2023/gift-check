@@ -1,17 +1,35 @@
 <template>
     <a-form :label-col="{ span: 7 }" :wrapper-col="{ span: 15 }">
         <div v-if="form.paymentType.type === '2'">
-            <a-form-item label="Bank Name:" name="bank">
+            <a-form-item
+                label="Bank Name:"
+                name="bank"
+                :validate-status="
+                    form.errors['paymentType.bankName'] ? 'error' : ''
+                "
+                :help="form.errors['paymentType.bankName']"
+            >
                 <a-input v-model:value="form.paymentType.bankName" />
             </a-form-item>
-            <a-form-item label="Account Number:" name="acc">
+            <a-form-item
+                label="Account Number:"
+                name="acc"
+                :validate-status="
+                    form.errors['paymentType.accountNumber'] ? 'error' : ''
+                "
+                :help="form.errors['paymentType.accountNumber']"
+            >
                 <a-input v-model:value="form.paymentType.accountNumber" />
             </a-form-item>
-            <a-form-item label="Check Number:" name="check">
+            <a-form-item
+                label="Check Number:"
+                name="check"
+                :validate-status="
+                    form.errors['paymentType.checkNumber'] ? 'error' : ''
+                "
+                :help="form.errors['paymentType.checkNumber']"
+            >
                 <a-input v-model:value="form.paymentType.checkNumber" />
-            </a-form-item>
-            <a-form-item label="Check Amount:" name="check">
-                <a-input v-model:value="form.paymentType.checkAmount" />
             </a-form-item>
         </div>
         <a-form-item
@@ -19,9 +37,11 @@
             name="amount"
             :validate-status="getErrorStatus('paymentType.amount')"
             :help="getErrorMessage('paymentType.amount')"
-            v-else
         >
-            <ant-input-number v-model:amount="form.paymentType.amount" @clear-error="clearError('paymentType.amount')"/>
+            <ant-input-number
+                v-model:amount="form.paymentType.amount"
+                @clear-error="clearError('paymentType.amount')"
+            />
         </a-form-item>
     </a-form>
 </template>

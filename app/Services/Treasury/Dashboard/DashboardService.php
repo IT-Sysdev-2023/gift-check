@@ -2,21 +2,17 @@
 
 namespace App\Services\Treasury\Dashboard;
 
-use App\Helpers\NumberHelper;
+
 use App\Models\AllocationAdjustment;
 use App\Models\ApprovedGcrequest;
 use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
-use App\Models\InstitutEod;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
-use App\Models\PromoGcReleaseToDetail;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\StoreGcrequest;
 use App\Models\User;
-
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {

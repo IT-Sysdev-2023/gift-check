@@ -14,7 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-
+    'hrms_employee_api' => env('HRMS_EMPLOYEE_API'),
     /*
     |--------------------------------------------------------------------------
     | Application Environment

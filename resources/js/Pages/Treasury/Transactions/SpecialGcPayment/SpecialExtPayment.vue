@@ -5,11 +5,11 @@
             <a-breadcrumb-item>
                 <Link :href="route('treasury.dashboard')">Home</Link>
             </a-breadcrumb-item>
-            <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
+            <a-breadcrumb-item>{{ titleGc }}</a-breadcrumb-item>
         </a-breadcrumb>
         
 
-        <a-card :title="'Submit ' + title" class="mt-10">
+        <a-card :title="'Submit ' + titleGc" class="mt-10">
             <template #extra>
                 <a-switch
                     v-model:checked="formState.switchGc"
@@ -163,6 +163,10 @@ const props = defineProps<{
     options: any[];
 }>();
 
+const titleGc = computed(() => {
+    const t = formState.switchGc ? "Special Internal " : "Special External ";
+    return t + props.title;
+});
 // const switchGc = reactive({ state: false });
 const page = usePage<PageWithSharedProps>().props;
 const currentDate = dayjs().format("MMM DD, YYYY");
@@ -193,7 +197,6 @@ const paymentType = ref<SelectProps["options"]>([
     {
         value: "2",
         label: "Check",
-        disabled: true,
     },
     {
         value: "3",
@@ -247,9 +250,6 @@ const onSubmit = () => {
             },
         });
 };
-const totalDenomination = computed(() => {
-    return;
-});
 const routeToHome = () => {
     router.visit(route("treasury.dashboard"));
 };

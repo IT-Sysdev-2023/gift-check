@@ -15,7 +15,6 @@ use App\Models\LedgerSpgc;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
-use App\Services\Documents\UploadFileHandler;
 use App\Services\Finance\ApprovedPendingPromoGCRequestService;
 use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
@@ -38,7 +37,8 @@ class FinanceController extends Controller
         public ApprovedReleasedPdfExcelService $appRelPdfExcelService,
         public DashboardClass $dashboardClass,
         public FinanceService $financeService
-    ) {}
+    ) {
+    }
 
     public function index()
     {
@@ -301,7 +301,7 @@ class FinanceController extends Controller
         $ledgerBudgetNum = LedgerBudget::select('bledger_no')->orderByDesc('bledger_id')->first();
         $nextLedgerBudgetNum = (int) $ledgerBudgetNum->bledger_no + 1;
         $pending = SpecialExternalGcrequest::where('spexgc_id', $id)->where('spexgc_status', 'pending')->exists();
-        $specGet = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', '!=', '0')->orderByDesc('spexgcemp_trid')->first()->spexgcemp_barcode + 1;
+        $specGet = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', '!=', '0')->orderByDesc('spexgcemp_id')->first()->spexgcemp_barcode + 1;
 
         if ($pending) {
             $cust = ($customer[0]->spexgc_company == 342 || $customer[0]->spexgc_company == 341) ? 'dti' : '';
@@ -402,61 +402,22 @@ class FinanceController extends Controller
             ->orderByDesc('spexgc_id')
             ->get();
         $data->transform(function ($item) {
-
-            $item->dateReq = Date::parse($item->spexgc_datereq)->format('Y-m-d');
+            $item->dateValid = Date::parse($item->spexgc_dateneed)->format('F d Y');
+            $item->dateReq = Date::parse($item->spexgc_datereq)->format('F d Y');
             return $item;
         });
 
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['RFSEGC #', 'DATE REQUESTED', 'DATE VALIDITY', 'CUSTOMER', 'DATE APPROVED', 'APPROVED BY'],
-            ['spexgc_num', 'dateReq', 'spexgc_dateneed', 'spcus_acctname', 'reqap_date', 'reqap_approvedby', 'View']
+            ['spexgc_num', 'dateReq', 'dateValid', 'spcus_acctname', 'reqap_date', 'reqap_approvedby', 'View']
         );
-
-
-        $selectedData = DB::table('special_external_gcrequest')
-            ->select(
-                'special_external_gcrequest.spexgc_id',
-                'special_external_gcrequest.spexgc_num',
-                DB::raw("CONCAT(req.firstname, ' ', req.lastname) as reqby"),
-                'special_external_gcrequest.spexgc_datereq',
-                'special_external_gcrequest.spexgc_dateneed',
-                'special_external_gcrequest.spexgc_remarks',
-                'special_external_gcrequest.spexgc_payment',
-                'special_external_gcrequest.spexgc_paymentype',
-                'special_external_gcrequest.spexgc_payment_arnum',
-                'special_external_customer.spcus_companyname',
-                'approved_request.reqap_remarks',
-                'approved_request.reqap_doc',
-                'approved_request.reqap_checkedby',
-                'approved_request.reqap_approvedby',
-                'approved_request.reqap_preparedby',
-                'approved_request.reqap_date',
-                DB::raw("CONCAT(prep.firstname, ' ', prep.lastname) as prepby")
-            )
-            ->join('users as req', 'req.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
-            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
-            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
-            ->join('users as prep', 'prep.user_id', '=', 'approved_request.reqap_preparedby')
-            ->where('special_external_gcrequest.spexgc_status', 'approved')
-            ->where('special_external_gcrequest.spexgc_id', $request->id)
-            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
-            ->get();
-
-        $selectedData->transform(function ($item) {
-            $item->dateReq = Date::parse($item->spexgc_datereq)->format('Y-m-d');
-            $item->requestedBy = ucwords($item->reqby);
-            $item->requestApproved = Date::parse($item->reqap_date)->format('Y-m-d');
-            $item->preparedBy = ucwords($item->prepby);
-            return $item;
-        });
 
 
 
         return Inertia::render('Finance/ApprovedGcRequest', [
             'data' => $data,
             'columns' => $columns,
-            'selectedGcData' => $selectedData ?? []
         ]);
     }
 
@@ -496,4 +457,56 @@ class FinanceController extends Controller
     {
         return $this->financeService->getApprovedBudgetDetails($id);
     }
+
+    public function selectedapprovedGc(Request $request)
+    {
+        $query = SpecialExternalGcrequest::select([
+            'special_external_gcrequest.spexgc_id',
+            'special_external_gcrequest.spexgc_num',
+            DB::raw("CONCAT(req.firstname, ' ', req.lastname) as reqby"),
+            'special_external_gcrequest.spexgc_datereq',
+            'special_external_gcrequest.spexgc_dateneed',
+            'special_external_gcrequest.spexgc_remarks',
+            'special_external_gcrequest.spexgc_payment',
+            'special_external_gcrequest.spexgc_paymentype',
+            'special_external_gcrequest.spexgc_payment_arnum',
+            'special_external_customer.spcus_companyname',
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_doc',
+            'approved_request.reqap_checkedby',
+            'approved_request.reqap_approvedby',
+            'approved_request.reqap_preparedby',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(prep.firstname, ' ', prep.lastname) as prepby"),
+        ])
+            ->join('users as req', 'req.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->join('users as prep', 'prep.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('special_external_gcrequest.spexgc_status', 'approved')
+            ->where('special_external_gcrequest.spexgc_id', $request->id)
+            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->get();
+        $query->transform(function ($item) {
+            $item->dateRequested = Date::parse($item['spexgc_datereq'])->format('F d Y');
+            $item->dateNeeded = Date::parse($item['spexgc_dateneed'])->format('F d Y');
+            $item->dateApproved = Date::parse($item->reqap_date)->format('F d Y');
+            $item->preparedBy = ucwords($item->prepby);
+            return $item;
+        });
+
+        $barcode = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->get();
+
+        $barcode->transform(function ($item) {
+            $item->fullname = ucwords($item->spexgcemp_fname.' '.$item->spexgcemp_mname.' '.$item->spexgcemp_lname);
+            return $item;
+        });
+
+
+        return response()->json([
+            'data' => $query,
+            'barcodes' => $barcode
+        ]);
+    }
+
 }

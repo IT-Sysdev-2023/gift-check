@@ -6,6 +6,7 @@ use App\Helpers\ColumnHelper;
 use App\Helpers\GetVerifiedGc;
 use App\Http\Resources\PromoResource;
 use App\Models\ApprovedProductionRequest;
+use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
 use App\Models\CancelledProductionRequest;
 use App\Models\Gc;
@@ -32,6 +33,7 @@ use App\Models\TransactionStore;
 use App\Services\Marketing\PdfServices;
 use App\Services\Marketing\MarketingServices;
 use App\Services\Treasury\RegularGcProcessService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -40,7 +42,7 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-
+use Illuminate\View\View;
 
 use function Pest\Laravel\json;
 
@@ -89,7 +91,7 @@ class MarketingController extends Controller
 
         $promoGcRequest = $this->marketing->promoGcRequest();
         $gcProductionRequest = $this->marketing->productionRequest();
-        $supplier = Supplier::all();
+        $supplier = Supplier::where('gcs_status', 1)->get();
         $checkedBy = $this->marketing->checkedBy();
         $currentBudget = $this->marketing->currentBudget();
         $requestNum = ProductionRequest::where('pe_generate_code', 1)
@@ -1166,7 +1168,6 @@ class MarketingController extends Controller
     {
         if ($request->data['finalize'] == 1) {
 
-
             if (
                 $request->data['id'] == null ||
                 $request->data['requestNo'] == null ||
@@ -1229,16 +1230,19 @@ class MarketingController extends Controller
                 });
 
                 if ($inserted) {
-                    $pdf = $this->requisitionPdf($request->data);
 
-                    ProductionRequest::where('pe_id', $request->data['id'])
-                        ->update([
-                            'pe_requisition' => '1'
+                    $pdfgenerated = $this->marketing->generatepdfrequisition($request);
+                    if ($pdfgenerated) {
+                        ProductionRequest::where('pe_id', $request->data['id'])
+                            ->update([
+                                'pe_requisition' => '1'
+                            ]);
+
+                        return redirect()->back()->with([
+                            'type' => 'success',
+                            'stream' => base64_encode($pdfgenerated->output())
                         ]);
-
-                    return Inertia::render('Marketing/Pdf/RequisitionResult', [
-                        'filePath' => $pdf,
-                    ]);
+                    }
                 }
             }
         } elseif ($request->data['finalize'] == 3) {
@@ -1311,60 +1315,7 @@ class MarketingController extends Controller
         }
     }
 
-    public function requisitionPdf($data)
-    {
-
-
-        $checkby = $data['checkedBy'];
-        $approveBy = User::where('user_id', $data['approvedById'])->get();
-        $approveByFirstname = $approveBy[0]->firstname;
-        $approveByLastname = $approveBy[0]->lastname;
-        $requestNo = $data['requestNo'];
-        $dateReq = Carbon::parse($data['dateRequested']);
-        $dateNeed = Carbon::parse($data['dateNeeded']);
-        $dateRequest = $dateReq->format('F j, Y');
-        $dateNeed = $dateNeed->format('F j, Y');
-
-        $supplier = Supplier::where('gcs_id', $data['selectedSupplierId'])->get();
-
-        $productionReqItems = self::productionRequest($data['id']);
-
-
-        $html = (new PdfServices)->getHtml($checkby, $approveByFirstname, $approveByLastname, $dateRequest, $supplier, $productionReqItems, $requestNo, $dateNeed);
-
-        // Create DOMPDF Options and configure them
-        $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isPhpEnabled', true);
-
-        // Initialize Dompdf with the specified options
-        $dompdf = new Dompdf($options);
-
-        // Load HTML content into the DOMPDF object
-        $dompdf->loadHtml($html);
-
-        // Set paper size and orientation
-        $dompdf->setPaper('A4', 'portrait');
-
-        // Render the PDF (generate the PDF from HTML)
-        $dompdf->render();
-
-        $output = $dompdf->output();
-
-        $filename = $requestNo . '.pdf';
-        $filePathName = storage_path('app/' . $filename);
-
-        if (!file_exists(dirname($filePathName))) {
-            mkdir(dirname($filePathName), 0755, true);
-        }
-        Storage::put($filename, $output);
-
-        $filePath = route('download', ['filename' => $filename]);
-
-        return $filePath;
-    }
-
-
+    
     public function pendingRequest(Request $request)
     {
         $checkedBy = Assignatory::where('assig_dept', $request->user()->usertype)
@@ -1420,12 +1371,12 @@ class MarketingController extends Controller
         );
 
 
-        
+
         return Inertia::render('Marketing/gcproductionrequest/PendingRequest', [
             'data' => $pendingRequests,
             'columns' => ColumnHelper::getColumns($columns),
             'barcodes' => $productionBarcode,
-            'barcodeColumns' =>ColumnHelper::getColumns($barcodeColumns),
+            'barcodeColumns' => ColumnHelper::getColumns($barcodeColumns),
             'checkedBy' => $checkedBy
 
         ]);
@@ -1433,6 +1384,10 @@ class MarketingController extends Controller
 
     public function submitPendingRequest(Request $request)
     {
+
+
+
+
 
         $prid = $request->data['id'];
         if ($request->data['status'] == '1') {
@@ -1497,10 +1452,34 @@ class MarketingController extends Controller
 
                             if ($isApproved) {
                                 $this->RegularGc->approveProductionRequest($request, $prid);
-                                return back()->with([
+
+                                $barcodes = $request->barcode;
+                                $data = [
+                                    'pr_no' => $request->data['pe_no'],
+                                    'dateRequested' => $request->data['dateRequested'],
+                                    'dateNeeded' => $request->data['dateNeeded'],
+                                    'currentBudget' => $this->marketing->currentBudget(),
+                                    'Remarks' => $request->data['InputRemarks'],
+                                    'checkby' => $request->data['checkedBy'],
+                                    'approvedBy' => $request->data['approvedBy'],
+                                    'preparedBy' => $request->data['preparedBy']
+                                ];
+
+                                $pdf = Pdf::loadView('pdf/productionrequest', [
+                                    'data' => $data,
+                                    'barcodes' => $barcodes
+                                ])
+                                    ->setPaper('A4');
+
+                                $fileName = $data['pr_no'] . '.pdf';
+
+                                $store = Storage::disk('public');
+
+                                $store->put('approvalform/' . $fileName, $pdf->output());
+
+                                return redirect()->back()->with([
                                     'type' => 'success',
-                                    'msg' => 'Success!',
-                                    'description' => 'Production Request Successfully Approved!'
+                                    'stream' => base64_encode($pdf->output())
                                 ]);
                             }
                         } else {
@@ -1667,6 +1646,187 @@ class MarketingController extends Controller
                 'type' => "error",
             ]);
         }
+
+    }
+
+    public function addSupplier(Request $request)
+    {
+        $inserted = Supplier::create([
+            'gcs_companyname' => $request->data['gcs_companyname'],
+            'gcs_accountname' => $request->data['gcs_accountname'],
+            'gcs_contactperson' => $request->data['gcs_contactperson'],
+            'gcs_contactnumber' => $request->data['gcs_contactnumber'],
+            'gcs_address' => $request->data['gcs_address'],
+            'gcs_status' => '1',
+        ]);
+
+        if ($inserted) {
+            return back()->with([
+                'msg' => "Success!",
+                'description' => "New Supplier Added ",
+                'type' => "success",
+            ]);
+        } else {
+            return back()->with([
+                'msg' => "Opps!",
+                'description' => "Something went wrong!",
+                'type' => "error",
+            ]);
+        }
+    }
+
+    public function statusSupplier(Request $request)
+    {
+        $status = Supplier::where('gcs_id', $request->id)->first();
+        Supplier::where('gcs_id', $request->id)
+            ->update([
+                'gcs_status' => $status->gcs_status == 0 ? 1 : 0
+            ]);
+
+        return back()->with([
+            'msg' => "Status",
+            'description' => "Status updated",
+            'type' => "success",
+        ]);
+
+    }
+
+    public function promoApprovedlist()
+    {
+
+        $query = PromoGcRequest::select([
+            'promo_gc_request.pgcreq_id',
+            'promo_gc_request.pgcreq_reqnum',
+            'promo_gc_request.pgcreq_datereq',
+            'promo_gc_request.pgcreq_dateneeded',
+            'promo_gc_request.pgcreq_total',
+            'promo_gc_request.pgcreq_group',
+            DB::raw("CONCAT(prepby.firstname, ' ', prepby.lastname) as prepby"),
+            DB::raw("CONCAT(recom.firstname, ' ', recom.lastname) as recby")
+        ])
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'promo_gc_request.pgcreq_id')
+            ->join('users as prepby', 'prepby.user_id', '=', 'promo_gc_request.pgcreq_reqby')
+            ->join('users as recom', 'recom.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('promo_gc_request.pgcreq_status', 'approved')
+            ->where('approved_request.reqap_approvedtype', 'promo gc preapproved')
+            ->orderByDesc('pgcreq_id')
+            ->get();
+        // ->paginate(10)
+        // ->withQueryString();
+
+        $query = PromoGcRequest::select([
+            'promo_gc_request.pgcreq_id',
+            'promo_gc_request.pgcreq_reqnum',
+            'promo_gc_request.pgcreq_datereq',
+            'promo_gc_request.pgcreq_dateneeded',
+            'promo_gc_request.pgcreq_total',
+            'promo_gc_request.pgcreq_group',
+            DB::raw("CONCAT(prepby.firstname, ' ', prepby.lastname) as prepby"),
+            DB::raw("CONCAT(recom.firstname, ' ', recom.lastname) as recby")
+        ])
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'promo_gc_request.pgcreq_id')
+            ->join('users as prepby', 'prepby.user_id', '=', 'promo_gc_request.pgcreq_reqby')
+            ->join('users as recom', 'recom.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('promo_gc_request.pgcreq_status', 'approved')
+            ->where('approved_request.reqap_approvedtype', 'promo gc preapproved')
+            ->orderByDesc('pgcreq_id')
+            ->paginate(10)
+            ->withQueryString();
+
+        $query->transform(function ($item) {
+            $item->dateRequested = Date::parse($item->pgcreq_datereq)->format('F d, Y');
+            $item->dateNeeded = Date::parse($item->pgcreq_dateneeded)->format('F d, Y');
+            $item->recommendedBy = ucwords($item->recby);
+            $item->requestedBy = ucwords($item->prepby);
+            $approvedBy = ApprovedRequest::select([
+                DB::raw("CONCAT(users.firstname, ' ', users.lastname) as appby")
+            ])
+                ->join('users', 'users.user_id', '=', 'approved_request.reqap_preparedby')
+                ->where('approved_request.reqap_trid', $item->pgcreq_id)
+                ->where('approved_request.reqap_approvedtype', 'promo gc approved')
+                ->first();
+            $item->approvedBy = $approvedBy ? ucwords($approvedBy->appby) : null;
+
+            return $item;
+        });
+
+        return Inertia::render('Marketing/PromoGCRequest/ApprovedGcRequest', [
+            'data' => $query
+        ]);
+    }
+
+    public function selectedApproved(Request $request)
+    {
+        $promoGcRequest = PromoGcRequest::select(
+            'promo_gc_request.pgcreq_id',
+            'promo_gc_request.pgcreq_reqnum',
+            'promo_gc_request.pgcreq_datereq',
+            'promo_gc_request.pgcreq_dateneeded',
+            'promo_gc_request.pgcreq_doc',
+            'promo_gc_request.pgcreq_status',
+            'promo_gc_request.pgcreq_group',
+            'promo_gc_request.pgcreq_remarks',
+            'promo_gc_request.pgcreq_total',
+            DB::raw("CONCAT(prep.firstname, ' ', prep.lastname) as prepby"),
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_doc',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(recom.firstname, ' ', recom.lastname) as recomby")
+        )
+            ->join('users as prep', 'prep.user_id', '=', 'promo_gc_request.pgcreq_reqby')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'promo_gc_request.pgcreq_id')
+            ->join('users as recom', 'recom.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('promo_gc_request.pgcreq_id', $request->id)
+            ->where('promo_gc_request.pgcreq_status', 'approved')
+            ->where('approved_request.reqap_approvedtype', 'promo gc preapproved')
+            ->get();
+
+        $promoGcRequest->transform(function ($item) {
+            $item->dateRequest = Date::parse($item->pgcreq_datereq)->format('F d Y');
+            $item->dateNeeded = Date::parse($item->pgcreq_dateneeded)->format('F d Y');
+            $item->requestedBy = ucwords($item->prepby);
+            ;
+            $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d Y');
+            $item->requestApprovedTime = Date::parse($item->reqap_date)->format('H:i:s A');
+            $item->recommendedBy = ucwords($item->recomby);
+
+            return $item;
+        });
+
+        $approvedRequests = ApprovedRequest::select(
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_doc',
+            'approved_request.reqap_approvedby',
+            'approved_request.reqap_checkedby',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as appby"),
+            DB::raw("CONCAT(approvedBy.firstname, ' ', approvedBy.lastname) as approvedBy"),
+            DB::raw("CONCAT(checkBy.firstname, ' ', checkBy.lastname) as checkBy")
+        )
+            ->join('users', 'users.user_id', '=', 'approved_request.reqap_preparedby')
+            ->leftJoin('users as approvedBy', 'approvedBy.user_id', '=', 'approved_request.reqap_approvedby')
+            ->leftJoin('users as checkBy', 'checkBy.user_id', '=', 'approved_request.reqap_checkedby')
+            ->where('approved_request.reqap_approvedtype', 'promo gc approved')
+            ->where('approved_request.reqap_trid', $request->id)
+            ->get()
+            ->transform(function ($item) {
+                $item->approvedBy = ucwords($item->approvedBy);
+                $item->checkedBy = ucwords($item->checkBy);
+                $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d y');
+                $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i:s A');
+                $item->prepby = ucwords($item->appby);
+                return $item;
+            });
+
+        $barcode = PromoGcRequestItem::where('pgcreqi_trid', $request->id)
+            ->join('denomination', 'denomination.denom_id', '=', 'promo_gc_request_items.pgcreqi_denom')
+            ->get();
+
+        return response()->json([
+            'data' => $promoGcRequest,
+            'barcodes' => $barcode,
+            'approvedRequests' => $approvedRequests
+        ]);
 
     }
 }

@@ -5,16 +5,15 @@ namespace App\Http\Controllers\Treasury\Dashboard;
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SpecialExternalGcRequestResource;
+use App\Models\SpecialExternalBankPaymentInfo;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
-use App\Models\SpecialExternalGcrequestEmpAssign;
-use App\Models\SpecialExternalGcrequestItem;
 use App\Rules\DenomQty;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class SpecialGcRequestController extends Controller
@@ -26,20 +25,7 @@ class SpecialGcRequestController extends Controller
     }
     public function pendingSpecialGc(Request $request)
     {
-        $record = SpecialExternalGcrequest::with(
-            'user:user_id,firstname,lastname',
-            'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty',
-            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname'
-        )
-            ->select('spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq', 'spexgc_company', 'spexgc_reqby')
-            ->where([
-                ['special_external_gcrequest.spexgc_status', 'pending'],
-                ['special_external_gcrequest.spexgc_promo', '0']
-            ])
-            ->paginate()
-            ->withQueryString();
-
-        // dd(SpecialExternalGcRequestResource::collection($record)->toArray(request()));
+        $record = $this->specialGcPaymentService->pending();
 
         return inertia(
             'Treasury/Dashboard/SpecialGcTable',
@@ -53,16 +39,61 @@ class SpecialGcRequestController extends Controller
     }
     public function updatePendingSpecialGc(SpecialExternalGcrequest $id)
     {
-        $record = $id->load('specialExternalCustomer', 'specialExternalBankPaymentInfo', 'document', 'specialExternalGcrequestEmpAssign');
+        $record = $id->load([
+            'specialExternalCustomer',
+            'specialExternalBankPaymentInfo',
+            'document',
+            'specialExternalGcrequestEmpAssign'
+        ]);
 
+        // dd(vars: $record->specialExternalGcrequestEmpAssign->groupBy('spexgcemp_denom'));
         return inertia(
             'Treasury/Dashboard/UpdateSpecialExternal',
             [
                 'title' => 'Special GC Request',
                 'data' => new SpecialExternalGcRequestResource($record),
+                'assignedCustomer' => $record->specialExternalGcrequestEmpAssign->transform(function ($i) {
+                    $i->spexgcemp_denom = (float) $i->spexgcemp_denom;
+                    return $i;
+                })->groupBy('spexgcemp_denom'),
                 'options' => self::options()
             ]
         );
+    }
+
+    public function updateSpecialGc(Request $request)
+    {
+        return $this->specialGcPaymentService->updateSpecial($request);
+
+    }
+
+    //Special Gc Payment
+    public function specialGcPayment()
+    {
+        $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
+
+        $transNo = $transactionNumber ?
+            NumberHelper::leadingZero($transactionNumber + 1, "%03d")
+            : '0001';
+
+        return inertia('Treasury/Transactions/SpecialGcPayment/SpecialExtPayment', [
+            'title' => 'Gc Payment',
+            'trans' => $transNo,
+            'options' => self::options()
+        ]);
+    }
+
+    public function gcPaymentSubmission(Request $request)
+    {
+        $data = $this->specialGcPaymentService->store($request);
+
+        $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
+
+        $pdf->setPaper('A3');
+
+        $stream = base64_encode($pdf->output());
+
+        return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
     }
 
     private function options()
@@ -72,69 +103,5 @@ class SpecialGcRequestController extends Controller
             ->where('spcus_type', 2)
             ->orderByDesc('spcus_id')
             ->get();
-    }
-
-    public function getAssignEmployee(Request $request)
-    {
-        //in Development
-        $record = SpecialExternalGcrequestEmpAssign::select(
-            'spexgcemp_fname as fname',
-            'spexgcemp_lname as lname',
-            'spexgcemp_mname as mname',
-            'spexgcemp_extname as xname'
-        )->where('spexgcemp_trid', $request->id)->get();
-
-        dd($request->id);
-        return response()->json([
-            'data' => $record,
-            'columns' => [
-                [
-                    'title' => 'Last Name',
-                    'dataIndex' => 'lname',
-                ],
-                [
-                    'title' => 'First Name',
-                    'dataIndex' => 'fname',
-                ],
-                [
-                    'title' => 'Middle Name',
-                    'dataIndex' => 'mname',
-                ],
-                [
-                    'title' => 'Name Ext.',
-                    'dataIndex' => 'xname',
-                ],
-            ]
-        ]);
-    }
-
-    public function addAssignEmployee(Request $request)
-    {
-        dd($request->all());
-    }
-
-    //Special Gc Payment
-    public function specialExternalPayment()
-    {
-        $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
-
-        return inertia('Treasury/Transactions/SpecialGcPayment/SpecialExtPayment', [
-            'title' => 'Special External Gc Payment',
-            'trans' => $transactionNumber ? NumberHelper::leadingZero($transactionNumber + 1, "%03d") : '0001',
-            'options' => self::options()
-        ]);
-    }
-
-    public function gcPaymentSubmission(Request $request)
-    {
-        $data = $this->specialGcPaymentService->store($request);
-        
-        $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
-
-        $pdf->setPaper('A3');
-
-        $stream = base64_encode($pdf->output());
-
-        return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
     }
 }

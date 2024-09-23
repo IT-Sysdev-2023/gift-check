@@ -24,13 +24,15 @@ class SpecialExternalGcRequestResource extends JsonResource
         // } else {
         //     $record = true;
         // }
+        // dd($this->spexgc_paymentype);
         return [
             'spexgc_num' => $this->spexgc_num,
+            'spexgc_type' => $this->spexgc_type,
             'spexgc_dateneed' => $this->spexgc_dateneed->toFormattedDateString(),
             'spexgc_payment_arnum' => $this->spexgc_payment_arnum,
             'spexgc_paymentype' => !is_null($this->spexgc_paymentype) ? $this->paymentType($this->spexgc_paymentype) : '',
             'spexgc_id' => $this->spexgc_id,
-            'spexgc_payment' => $this->spexgc_payment,
+            'spexgc_payment' => (float) $this->spexgc_payment,
             'spexgc_datereq' => $this->spexgc_datereq->toDayDateTimeString(),
             'spexgc_remarks' => $this->spexgc_remarks,
             'user' => $this->whenLoaded('user', fn($q) => $q->full_name),
@@ -58,7 +60,7 @@ class SpecialExternalGcRequestResource extends JsonResource
                     return [
                         'id' => $item->spexgcemp_trid,
                         'primary_id' => $item->spexgcemp_trid,
-                        'denom' => (float) $item->spexgcemp_denom,
+                        'denomination' => (float ) $item->spexgcemp_denom,
                         'qty' => $q->count('spexgcemp_trid'),
                     ];
                 });

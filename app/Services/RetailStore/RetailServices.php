@@ -486,6 +486,7 @@ class RetailServices
 
                 $enddt = Date::parse($dtrelease)->addDays($days)->format('Y-m-d');
 
+
                 if ($enddt > today()) {
 
                     return back()->with([

@@ -9,7 +9,7 @@
             <a-card>
                 <div class="flex justify-end">
                     <h2 class="bg-gray-900 text-white p-2 rounded mb-3">
-                         Current Budget: {{ form.formattedbudget }}
+                        Current Budget: {{ form.formattedbudget }}
                     </h2>
                 </div>
                 <a-row :gutter="[16, 16]">
@@ -56,6 +56,9 @@
                                                 <inbox-outlined></inbox-outlined>
                                             </p>
                                             <p class="ant-upload-text">Click or drag file to this area to upload</p>
+                                            <p class="ant-upload-hint">
+                                                JPG.JPEG,PNG only
+                                            </p>
                                         </a-upload-dragger>
                                     </a-form-item>
                                 </div>
@@ -92,12 +95,7 @@
                                                 <inbox-outlined></inbox-outlined>
                                             </p>
                                             <p class="ant-upload-text">Click or drag file to this area to upload</p>
-                                            <p class="ant-upload-hint">
-                                                Support for a single or bulk upload. Strictly prohibit from uploading
-                                                company data
-                                                or other
-                                                band files
-                                            </p>
+
                                         </a-upload>
                                     </a-form-item>
                                 </div>

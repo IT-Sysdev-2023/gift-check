@@ -4,49 +4,34 @@ namespace App\Http\Controllers\Treasury\Transactions;
 
 use App\Helpers\ArrayHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\InstitutTransactionResource;
 use App\Models\Assignatory;
 
 use App\Models\InstitutCustomer;
 use App\Models\InstitutTransaction;
 use App\Models\PaymentFund;
+use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Transactions\InstitutionGcSalesService;
 use Illuminate\Http\Request;
 
 class InstitutionGcSalesController extends Controller
 {
-   public function __construct(public InstitutionGcSalesService $institutionGcSalesService)
-   {}
+    public function __construct(public InstitutionGcSalesService $institutionGcSalesService)
+    {
+    }
     public function index(Request $request)
     {
-        $trNumber = InstitutTransaction::where('institutr_trtype', 'sales')->max('institutr_trnum') + 1;
+        $record = $this->institutionGcSalesService->index($request);
 
-        $customer = InstitutCustomer::select(
-            'ins_name as label',
-            'ins_date_created as date',
-            'ins_id as value'
-        )
-            ->where('ins_status', 'active')->orderByDesc('ins_date_created')->get();
-
-        $paymentFund = PaymentFund::select(
-            'pay_id as value',
-            'pay_desc as label',
-            'pay_dateadded as date'
-        )->where('pay_status', 'active')->orderByDesc('pay_dateadded')->get();
-
-        $sessionBarcode = $request->session()->get('scanForReleasedCustomerGC');
-        $scannedBarcode = ArrayHelper::paginate($sessionBarcode, 5) ?? [];
-
-        // dd($sessionBarcode);
         return inertia('Treasury/Transactions/InstitutionGcSales/InstitutionSalesIndex', [
             'title' => 'Institution Gc Sales',
-            'customer' => $customer,
-            'paymentFund' => $paymentFund,
+            'customer' => $record->customer,
+            'paymentFund' => $record->paymentFund,
             'checkBy' => Assignatory::assignatories($request),
-            'releasingNo' => $trNumber,
-            'scannedBc' => $scannedBarcode,
-            'totalScannedDenomination' => collect($sessionBarcode)->sum('denomination'), 
+            'releasingNo' => $record->trNo,
+            'scannedBc' => $record->scannedBarcode,
+            'totalScannedDenomination' => collect($record->sessionBarcode)->sum('denomination'),
             'filters' => $request->only('date', 'search')
-
         ]);
     }
 
@@ -55,11 +40,50 @@ class InstitutionGcSalesController extends Controller
         return $this->institutionGcSalesService->barcodeScanning($request);
     }
 
-    public function removeBarcode(Request $request, $barcode){
+    public function removeBarcode(Request $request, $barcode)
+    {
         return $this->institutionGcSalesService->destroyBarcode($request, $barcode);
     }
 
-    public function formSubmission(Request $request){
+    public function formSubmission(Request $request)
+    {
         return $this->institutionGcSalesService->store($request);
+    }
+
+    public function viewTransaction(Request $request)
+    {
+
+        $data = InstitutTransaction::select('institutr_cusid', 'institutr_id', 'institutr_trnum', 'institutr_paymenttype', 'institutr_receivedby', 'institutr_date')
+            ->with(['institutCustomer:ins_id,ins_name', 'institutTransactionItem.gc.denomination'])
+            ->withCount('institutTransactionItem')
+            // ->withSum('institutTransactionItem.gc as total_denomination', 'gc.denomination.denomination')
+            ->orderByDesc('institutr_trnum')->limit(10)->get();
+            // ->paginate()
+            // ->withQueryString();
+
+
+        dd(InstitutTransactionResource::collection($data)->toArray($request));
+        //   dd($data);
+        // $table = 'institut_transactions_items';
+        // $select = "IFNULL(SUM(denomination.denomination),0) as sum";
+        // $where = "institut_transactions_items.instituttritems_trid='$tr->institutr_id'";
+        // $join = 'INNER JOIN
+        //         gc
+        //     ON	
+        //         gc.barcode_no = institut_transactions_items.instituttritems_barcode
+        //     INNER JOIN
+        //         denomination
+        //     ON
+        //         denomination.denom_id = gc.denom_id
+        // ';
+        // $limit = '';
+        // $sum = getSelectedData($link,$table,$select,$where,$join,$limit);
+        // echo number_format($sum->sum,2);
+
+        return inertia('Treasury/Dashboard/InstitutionGcSales', [
+            'title' => 'Institution Gc Sales Transactions',
+            'data' => InstitutTransactionResource::collection($data),
+            'columns' => ColumnHelper::$institution_gc_sales
+        ]);
     }
 }

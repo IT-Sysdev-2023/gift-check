@@ -409,4 +409,72 @@ class ColumnHelper
             'align' => 'center'
         ],
     ];
+
+    public static $institution_gc_sales = [
+        [
+            'title' => 'Transaction No.',
+            'dataIndex' => 'institutrTrnum',
+
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Date',
+            'dataIndex' => 'date',
+
+        ],
+        [
+            'title' => 'Time',
+            'dataIndex' => 'time',
+
+        ],
+        [
+            'title' => 'Gc (pcs)',
+            'dataIndex' => 'institutTransactionItem',
+
+        ],
+        [
+            'title' => 'Total Denom',
+            'dataIndex' => ['abr', 'approved_by'],
+            'key' => 'approved_by',
+
+        ],
+        [
+            'title' => 'Payment Type',
+            'dataIndex' => ['abr', 'approved_by'],
+            'key' => 'approved_by',
+
+        ],
+        [
+            'title' => 'Actions',
+            'dataIndex' => 'action'
+
+        ],
+    ];
+    public static $eodList = [
+      
+        [
+            'title' => 'Date',
+            'key' => 'ieod_date',
+
+        ],
+        [
+            'title' => 'EOD Number',
+            'dataIndex' => 'ieod_num',
+
+        ],
+        [
+            'title' => 'EOD By',
+            'key' => 'eodBy',
+
+        ],
+        [
+            'title' => 'Actions',
+            'dataIndex' => 'action',
+            'width' => '150px'
+        ],
+    ];
 }

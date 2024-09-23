@@ -23,7 +23,7 @@ class AdminServices
 {
     public function purchaseOrderDetails()
     {
-        $collect = RequisitionForm::with('requisFormDenom')->get();
+        $collect = RequisitionForm::with('requisFormDenom')->paginate(10)->withQueryString();
 
         $collect->transform(function ($item) {
             $item->trans_date = Date::parse($item->trans_date)->toFormattedDateString();

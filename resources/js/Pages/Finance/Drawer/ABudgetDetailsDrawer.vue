@@ -18,7 +18,7 @@
                             <div class="flex justify-center">
                                 <a-card v-if="selected.br_file_docno">
                                     <a-image style="width: 300px; height: 200px; border-radius: 10px;"
-                                        :src="'/storage/BudgetRequestScanCopy/' + selected.br_file_docno">
+                                        :src="'/storage/budgetRequestScanCopy/' + selected.br_file_docno">
 
                                     </a-image>
                                 </a-card>

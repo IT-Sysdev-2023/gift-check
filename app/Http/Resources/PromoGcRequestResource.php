@@ -20,6 +20,7 @@ class PromoGcRequestResource extends JsonResource
         $approvedBy = ApprovedRequest::where('reqap_trid', $this->pgcreq_id)->where('reqap_approvedtype','promo gc approved')->value('reqap_approvedby');
 
         return [
+            'pgcreq_group_status' => $this->pgcreq_group_status,
             'req_no' => $this->pgcreq_reqnum,
             'document' => $this->pgcreq_doc,
             'remarks' => $this->pgcreq_remarks,

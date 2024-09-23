@@ -1,5 +1,5 @@
 <template>
-    <a-descriptions title="User Info" bordered size="small">
+    <a-descriptions title="Approved Budget Request Info" bordered>
         <a-descriptions-item label="BR No.">{{
             data.br_no
         }}</a-descriptions-item>
@@ -16,9 +16,13 @@
         <a-descriptions-item label="Budget Requested" :span="2">{{
             data.br_request
         }}</a-descriptions-item>
-        <a-descriptions-item label="Request Document">{{
-            data.br_file_docno
-        }}</a-descriptions-item>
+        <a-descriptions-item label="Request Document">
+            <a-image
+                style="height: 100px"
+                :src="data.br_file_docno"
+                :fallback="imageUrl"
+            />
+        </a-descriptions-item>
         <a-descriptions-item label="Request Remark">{{
             data.br_remarks
         }}</a-descriptions-item>
@@ -31,9 +35,13 @@
             data.abr.approved_at
         }}</a-descriptions-item>
 
-        <a-descriptions-item label="Approved Document">{{
-            data.abr.file_doc_no
-        }}</a-descriptions-item>
+        <a-descriptions-item label="Approved Document">
+            <a-image
+                style="height: 100px"
+                :src="data.abr.file_doc_no"
+                :fallback="imageUrl"
+            />
+        </a-descriptions-item>
         <a-descriptions-item label="Approved Remarks"
             ><a-tag color="cyan">{{
                 data.abr.budget_remark
@@ -52,9 +60,15 @@
 </template>
 
 <script>
+import { imageFallback } from "@/Mixin/UiUtilities";
 export default {
     props: {
         data: Object,
+    },
+    data() {
+        return {
+            imageUrl: imageFallback(), // Placeholder for the image URL
+        };
     },
 };
 </script>

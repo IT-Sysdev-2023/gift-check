@@ -11,10 +11,10 @@ use App\Models\ApprovedRequest;
 use App\Models\LedgerBudget;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Support\Facades\DB;
 
-class ApprovedPendingPromoGCRequestService extends UploadFileHandler
+class ApprovedPendingPromoGCRequestService extends FileHandler
 {
     public function __construct()
     {
@@ -24,7 +24,6 @@ class ApprovedPendingPromoGCRequestService extends UploadFileHandler
     }
     public function pendingPromoGCRequestIndex($request)
     {
-        // dd();
         return inertia('Finance/PendingPromoGcRequest', [
             'data' => self::getPromoRequest($request),
             'columns' => ColumnHelper::app_pend_request_columns(true),
@@ -37,7 +36,6 @@ class ApprovedPendingPromoGCRequestService extends UploadFileHandler
 
     public static function getPromoRequest($request)
     {
-        // dd();
         $data = PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
             ->selectPromoRequest()
             ->whereFilterForPending()

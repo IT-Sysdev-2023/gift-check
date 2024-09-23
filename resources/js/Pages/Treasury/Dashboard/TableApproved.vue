@@ -73,7 +73,7 @@ const { highlightText } = highlighten();
                 </template>
             </template>
         </a-table>
-        <a-modal v-model:open="showModal" width="1000px">
+        <a-modal v-model:open="showModal" width="1000px" :footer="null">
             <!-- <component :is="tabs[currentTab]" /> -->
             <Description :data="descriptionRecord" />
         </a-modal>

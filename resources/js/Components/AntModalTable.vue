@@ -7,6 +7,16 @@
         maskClosable
         @cancel="handleClose"
     >
+        <a-tabs v-model:activeKey="activeKey" @change="handleTab">
+            <a-tab-pane key="all" tab="All" force-render></a-tab-pane>
+            <a-tab-pane
+                v-for="denom of denoms"
+                :key="denom.denomination"
+                :tab="denom.denomination_format"
+                ></a-tab-pane
+            >
+            
+        </a-tabs>
         <a-table
             bordered
             :columns="columns"
@@ -38,8 +48,12 @@
 
 <script lang="ts" setup>
 import axios from "axios";
+import { ref } from "vue";
+
+const activeKey = ref("all");
 const props = defineProps<{
     title: string;
+    denoms: any;
     open: boolean;
     data: {
         data: any[];
@@ -52,11 +66,15 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: "update:open", value: boolean): void;
     (e: "handlePagination", link): void;
+    (e: "handleTabChange", value): void;
 }>();
 
 const handleClose = () => {
     emit("update:open", false);
 };
+const handleTab = (val) =>{
+    emit("handleTabChange", val);
+}
 const getValue = (record, index) => {
     return index.reduce((acc, index) => acc[index], record);
 };

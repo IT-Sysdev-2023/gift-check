@@ -13,5 +13,21 @@ class InstitutTransaction extends Model
 
     protected $guarded = [];
 
+    protected function casts(): array
+    {
+        return [
+            'institutr_date' => 'datetime'
+        ];
+    }
+
+
     public $timestamps = false;
+
+    public function institutCustomer(){
+        return $this->belongsTo(InstitutCustomer::class, 'institutr_cusid', 'ins_id');
+    }
+
+    public function institutTransactionItem(){
+        return $this->hasMany(InstitutTransactionsItem::class, 'instituttritems_trid', 'institutr_id');
+    }
 }
