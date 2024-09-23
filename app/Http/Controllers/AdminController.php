@@ -52,8 +52,6 @@ class AdminController extends Controller
     {
     }
 
-
-
     public function purchaseOrderDetails()
     {
         return inertia('Admin/PurchaseOrderDetails', [
@@ -133,5 +131,10 @@ class AdminController extends Controller
     public function generateReports(Request $request)
     {
         return $this->adminservices->generateReportPdf($request);
+    }
+
+    public function editPoDetails($id)
+    {
+        dd($id);
     }
 }

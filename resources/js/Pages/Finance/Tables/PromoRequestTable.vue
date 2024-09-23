@@ -15,11 +15,17 @@
                 <a-table size="small" bordered :data-source="record.data" :columns="columns" :pagination="false">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'open'">
-                            <a-button @click="setup(record.req_id)">
+                            <a-button @click="setup(record.req_id)" v-if="record.pgcreq_group_status === 'approved'">
                                 <template #icon>
-                                    <TagFilled />
+                                    <FastForwardOutlined />
                                 </template>
                                 Setup Approval
+                            </a-button>
+                            <a-button @click="setup(record.req_id)" v-else>
+                                <template #icon>
+                                    <LikeOutlined />
+                                </template>
+                                Waiting Approval
                             </a-button>
                         </template>
                     </template>

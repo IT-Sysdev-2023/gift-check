@@ -33,7 +33,21 @@ class IadController extends Controller
     public function setupReceiving(Request $request)
     {
 
+        // dd($request->all());
+
+
         $data =  $this->iadServices->setupReceivingtxt($request);
+
+
+        if (empty($data->requisFormDenom)) {
+            
+            return redirect()->back()->with([
+                'status' => 'error',
+                'msg' => 'Requistion Not Found!',
+                'title' => 'Not Found!'
+            ]);
+
+        }
 
         return inertia('Iad/SetupReceiving', [
             'denomination' => $this->iadServices->getDenomination($data->requisFormDenom, $request),

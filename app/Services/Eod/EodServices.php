@@ -153,7 +153,8 @@ class EodServices
 
             $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss) {
 
-                if ($item['payto'] == 'WHOLESALE') {
+                if ($item['payto'] == '
+                 ') {
 
                     DB::transaction(function () use ($item, $id,  $wholesaletime) {
 
@@ -164,6 +165,7 @@ class EodServices
                         $this->storeEodItem($item, $id);
 
                     });
+
                 } else {
 
                     $file = $item['txtfile_ip'] . '\\' . $item['ver_textfilename'];
@@ -220,7 +222,7 @@ class EodServices
                             $amount = $exprn[$key][1];
 
                             if ($amount < $item['ver_denom']) {
-                
+
                                 $success = $this->updateStoreVerification($item, $pc, $am, $amount);
 
                                 if ($success) {

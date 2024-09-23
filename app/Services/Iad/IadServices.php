@@ -30,6 +30,7 @@ class IadServices
 
     public function setupReceivingtxt($request)
     {
+        // dd();
         $isEntry = RequisitionEntry::where('requis_erno', $request->requisId)->exists();
 
         $requisform = RequisitionForm::with('requisFormDenom')->where('req_no', $request->requisId)->first();
@@ -57,9 +58,12 @@ class IadServices
 
     public function getDenomination($denom, $request)
     {
+        // dd($denom);
 
 
         $requisProId = self::getRequistionNo($request->requisId) ?? null;
+
+        // dd(1);
 
 
         $data =  Denomination::select('denomination', 'denom_fad_item_number', 'denom_code', 'denom_id')

@@ -1,7 +1,8 @@
 <template>
     <a-row :gutter="[16, 16]">
         <a-col :span="11">
-            <a-card v-if="details.data.pgcreq_group_status === 'approved'">
+            <div v-if="details.data.pgcreq_group_status === 'approved' ">
+                <a-card >
                 <a-form layout="vertical">
                     <a-form-item>
                         <a-descriptions size="small" bordered>
@@ -68,6 +69,7 @@
                     </a-form-item>
                 </a-form>
             </a-card>
+            </div>
             <div v-else>
                 <a-alert message="Approval" type="warning" show-icon>
                     <template #description>

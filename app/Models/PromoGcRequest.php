@@ -43,6 +43,7 @@ class PromoGcRequest extends Model
             promo_gc_request.pgcreq_id,
             promo_gc_request.pgcreq_dateneeded,
             promo_gc_request.pgcreq_total,
+            promo_gc_request.pgcreq_group_status,
             (
                 SELECT CONCAT(users.firstname, ' ', users.lastname)
                 FROM approved_request
