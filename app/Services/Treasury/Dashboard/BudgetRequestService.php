@@ -17,7 +17,7 @@ class BudgetRequestService extends FileHandler
 	public function __construct()
 	{
 		parent::__construct();
-		$this->folderName = "BudgetRequestScanCopy";
+		$this->folderName = "budgetRequestScanCopy";
 	}
 	public function pendingRequest() //pending_budget_request
 	{

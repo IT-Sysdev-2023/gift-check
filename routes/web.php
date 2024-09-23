@@ -298,7 +298,7 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
             //Treasury
             Route::prefix('treasury-eod')->name('eod.')->group(function () {
                 Route::get('/', [EodController::class, 'eodList'])->name('eodList');
-                // Route::get('generate-pdf', [EodController::class, 'generatePdf'])->name('pdf');
+                Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
             });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');

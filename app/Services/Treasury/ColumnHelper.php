@@ -474,7 +474,7 @@ class ColumnHelper
         [
             'title' => 'Actions',
             'dataIndex' => 'action',
-            'width' => '200px'
+            'width' => '150px'
         ],
     ];
 }

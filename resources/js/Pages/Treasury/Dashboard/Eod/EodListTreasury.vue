@@ -17,15 +17,15 @@ const { highlightText } = highlighten();
                 <a-range-picker v-model:value="form.date" />
             </div>
             <div>
-            <a-input-search
-                class="mr-1"
-                v-model:value="form.search"
-                placeholder="Search here..."
-                style="width: 300px"
-            />
+                <a-input-search
+                    class="mr-1"
+                    v-model:value="form.search"
+                    placeholder="Search here..."
+                    style="width: 300px"
+                />
+            </div>
         </div>
-        </div>
-        
+
         <a-table
             :data-source="data.data"
             :columns="columns"
@@ -57,22 +57,22 @@ const { highlightText } = highlighten();
 
                 <template v-if="column.dataIndex === 'action'">
                     <a-space>
-                        <a-button
+                        <!-- <a-button
                             type="primary"
                             size="small"
-                            @click="viewRecord(record)"
+                            @click="viewRecord(record.ieod_id)"
                         >
                             <template #icon>
                                 <FileSearchOutlined />
                             </template>
                             View
-                        </a-button>
+                        </a-button> -->
 
                         <a-button
                             type="primary"
                             size="small"
                             ghost
-                            @click="viewRecord(record)"
+                            @click="viewRecord(record.ieod_id)"
                         >
                             <template #icon>
                                 <AuditOutlined />
@@ -123,14 +123,25 @@ export default {
     },
     methods: {
         async viewRecord(id) {
-            // try {
-            //     const { data } = await axios.get(
-            //         route("treasury.budget.request.view.approved", id)
-            //     );
-            //     this.descriptionRecord = data;
-            // } finally {
-            //     this.showModal = true;
-            // }
+            const url = route("treasury.eod.pdf", { id: id });
+
+            axios
+                .get(url, { responseType: "blob" })
+                .then((response) => {
+                    const file = new Blob([response.data], {
+                        type: "application/pdf",
+                    });
+                    const fileURL = URL.createObjectURL(file);
+                    window.open(fileURL, "_blank");
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 404) {
+                        alert("Pdf Not available");
+                    } else {
+                        console.error(error);
+                        alert("An error occurred while generating the PDF.");
+                    }
+                });
         },
     },
 

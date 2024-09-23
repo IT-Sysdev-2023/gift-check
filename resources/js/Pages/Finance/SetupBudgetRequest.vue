@@ -59,7 +59,7 @@
                     <a-descriptions v-if="record.br_file_docno != ''" layout="horizontal" size="small" class="mt-1"
                         bordered>
                         <a-descriptions-item style="width: 50%;" label="Document">
-                            <a-image style="height: 100px;" :src="'/storage/BudgetRequestScanCopy/' + record.br_file_docno">
+                            <a-image style="height: 100px;" :src="'/storage/budgetRequestScanCopy/' + record.br_file_docno">
                             </a-image>
                         </a-descriptions-item>
                     </a-descriptions>

@@ -56,7 +56,9 @@ class EodController extends Controller
             ->with('user:user_id,firstname,lastname')
             ->orderByDesc('ieod_date')
             ->filter($request)
-            ->paginate()->withQueryString();
+            ->paginate()
+            ->withQueryString();
+
         return inertia('Treasury/Dashboard/Eod/EodListTreasury', [
             'title' => 'Eod List',
             'filters' => $request->only(['date', 'search']),
@@ -65,7 +67,7 @@ class EodController extends Controller
         ]);
     }
 
-    public function generatePdf(){
-        dd(1);
+    public function generatePdf(int $id){
+        return $this->eodServices->generatePdf($id);
     }
 }
