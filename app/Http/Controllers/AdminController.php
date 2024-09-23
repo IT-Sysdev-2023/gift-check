@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
 use App\Http\Requests\PurchaseOrderRequest;
+use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\PromoGcReleaseToItem;
+use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\User;
 use App\Services\Admin\AdminServices;
@@ -17,9 +19,7 @@ use Inertia\Inertia;
 
 class AdminController extends Controller
 {
-    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction)
-    {
-    }
+    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction) {}
 
     public function index()
     {
@@ -48,9 +48,7 @@ class AdminController extends Controller
     {
         return Inertia::render('Admin/ScanGcStatuses');
     }
-    public function barcodeStatus()
-    {
-    }
+    public function barcodeStatus() {}
 
     public function purchaseOrderDetails()
     {
@@ -104,13 +102,13 @@ class AdminController extends Controller
     public function updateStatus(Request $request)
     {
 
-        $user = User::where('user_id',$request->id)->first();
+        $user = User::where('user_id', $request->id)->first();
 
         if ($user) {
-            User::where('user_id',$request->id)
-            ->update([
-                'user_status' => $user['user_status'] == 'active' ? 'inactive' : 'active'
-            ]);
+            User::where('user_id', $request->id)
+                ->update([
+                    'user_status' => $user['user_status'] == 'active' ? 'inactive' : 'active'
+                ]);
 
             return back()->with([
                 'type' => 'success',
@@ -135,6 +133,24 @@ class AdminController extends Controller
 
     public function editPoDetails($id)
     {
-        dd($id);
+
+        $data = RequisitionForm::with('requisFormDenom')->where('id', $id)->first();
+
+        // $denom = [];
+
+        // if ($data) {
+        //     foreach ($data->requisFormDenom as $value) {
+
+        //         $denom = Denomination::where('denom_fad_item_number', $value->denom_no)->get();
+
+        //         if ($denom ?? 0) {
+        //             $denom->qty = $value->quantity ?? 0;
+        //         }
+        //     }
+        // }
+
+        return response()->json([
+            'record' => $data,
+        ]);
     }
 }
