@@ -1166,6 +1166,7 @@ class MarketingController extends Controller
 
     public function submitReqForm(Request $request)
     {
+       
         if ($request->data['finalize'] == 1) {
 
             if (

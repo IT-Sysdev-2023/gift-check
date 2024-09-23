@@ -24,7 +24,9 @@ class IadServices
     public function __construct(public IadDbServices $iadDbServices) {}
     public function gcReceivingIndex()
     {
-        return RequisitionForm::where('used', null)->get();
+        return RequisitionForm::where('used', null)
+        ->orderByDesc('id')
+        ->get();
     }
 
 
