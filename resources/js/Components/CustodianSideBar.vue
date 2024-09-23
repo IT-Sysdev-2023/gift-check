@@ -34,6 +34,12 @@ import {
                 <Link :href="route('custodian.barcode.checker')"> Barcode Checker</Link>
             </span>
         </a-menu-item>
+        <a-menu-item key="barcodeChecker">
+            <QrcodeOutlined />
+            <span>
+                <Link :href="route('custodian.textfile.uploader')"> Textfile Uploader</Link>
+            </span>
+        </a-menu-item>
         <a-menu-item key="recievedGC">
             <GroupOutlined />
             <span>

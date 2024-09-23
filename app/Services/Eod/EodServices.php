@@ -157,9 +157,9 @@ class EodServices extends FileHandler
             }
 
             $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss) {
+                // dd($item);
 
-                if ($item['payto'] == '
-                 ') {
+                if ($item['payto'] == '') {
 
                     DB::transaction(function () use ($item, $id, $wholesaletime) {
 
@@ -203,6 +203,7 @@ class EodServices extends FileHandler
                     $text = File::get($file);
 
                     $exp = explode("\n", $text);
+                    // dd($exp);
 
                     $pc = '';
                     $am = '';
@@ -235,9 +236,8 @@ class EodServices extends FileHandler
                                 }
                             }
                         }
-
                         if ($key > 7) {
-                            if ($key !== '') {
+                            if ($line !== '') {
                                 $if8key = $exprn[$key];
                                 $this->storeEodTransaction($item, $if8key, $id);
                             }
