@@ -11,7 +11,7 @@
             <a-row :gutter="[16, 16]">
                 <a-col :span="10">
                     <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Date Requested">{{ record.special.spexgc_datereq
+                        <a-descriptions-item style="width: 50%;" label="Date Requested">{{ record.special.datereq
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
@@ -19,7 +19,7 @@
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Date Validity">{{ record.special.spexgc_dateneed
+                        <a-descriptions-item style="width: 50%;" label="Date Validity">{{ record.special.dateneeded
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
@@ -83,7 +83,7 @@
                             <a-col :span="12">
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                                     <a-descriptions-item style="width: 50%;" label="Date Approved">{{
-                                        record.special.approved_request.reqap_date
+                                        record.special.dateapp
                                         }}</a-descriptions-item>
                                 </a-descriptions>
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>

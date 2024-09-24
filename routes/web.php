@@ -428,7 +428,8 @@ Route::prefix('custodian')->group(function () {
         Route::name('check.')->group(function () {
             Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
         });
-        Route::post('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
+        Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
+        Route::post('upload', [CustodianController::class, 'upload'])->name('upload');
     });
 });
 

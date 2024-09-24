@@ -3,11 +3,11 @@
         <a-descriptions-item style="width: 50%;" label="GC Request">{{ record[0]?.spexgc_num }}</a-descriptions-item>
     </a-descriptions>
     <a-descriptions size="small" layout="horizontal" bordered>
-        <a-descriptions-item style="width: 50%;" label="Date Requested">{{ record[0]?.spexgc_datereq
+        <a-descriptions-item style="width: 50%;" label="Date Requested">{{ record[0]?.datereq
             }}</a-descriptions-item>
     </a-descriptions>
     <a-descriptions size="small" layout="horizontal" bordered>
-        <a-descriptions-item style="width: 50%;" label="Date Validity">{{ record[0]?.spexgc_dateneed
+        <a-descriptions-item style="width: 50%;" label="Date Validity">{{ record[0]?.dateneeded
             }}</a-descriptions-item>
     </a-descriptions>
     <a-descriptions size="small" class="mt-3" layout="horizontal" bordered>

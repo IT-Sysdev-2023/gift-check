@@ -19,7 +19,30 @@ use Milon\Barcode\DNS1D;
 
 class CustodianServices
 {
-    public function __construct(public CustodianDbServices $custodianDbServices) {}
+    protected $formatter;
+
+    public function __construct(public CustodianDbServices $custodianDbServices)
+    {
+        $this->formatter = [
+            '0',
+            'GC E-REQUISITION NO',
+            'Receiving No',
+            'Transaction Date',
+            'Reference No',
+            'Purchase Order No',
+            'Purchase Date',
+            'Reference PO No',
+            'Payment Terms',
+            'Location Code',
+            'Department Code',
+            'Supplier Name',
+            'Mode of Payment',
+            'Remarks',
+            'Prepared By',
+            'Checked By',
+            'SRR Type',
+        ];
+    }
     public function barcodeChecker()
     {
         $data = BarcodeChecker::with(
@@ -148,6 +171,7 @@ class CustodianServices
 
     public function specialExternalGcSetup($request)
     {
+        // dd();
 
         $data = SpecialExternalGcrequest::selectFilterSetup()
             ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalGcrequestItemsHasMany:specit_trid,specit_denoms,specit_qty')
@@ -156,6 +180,7 @@ class CustodianServices
             ->get();
 
         $count = 1;
+
         $data->transform(function ($item) use (&$count) {
 
             $item->specialExternalGcrequestItemsHasMany->each(function ($subitem) use (&$count) {
@@ -163,12 +188,17 @@ class CustodianServices
                 $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
                 return $subitem;
             });
-            $item->numberinwords = Number::spell($item->spexgc_payment);
+            $item->dateneeded = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
+            $item->datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();
+
+            $item->numberinwords = Number::spell($item->spexgc_payment). ' pesos';
 
             $item->total =  $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
 
             return $item;
         });
+
+        // dd($data->toArray());
 
         return $data;
     }
@@ -203,8 +233,8 @@ class CustodianServices
 
             $item->company = $item->specialExternalCustomer->spcus_companyname;
 
-            $item->spexgc_datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();
-            $item->spexgc_dateneed = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
+            $item->datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();
+            $item->dateneeded = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
             $item->reqap_date = Date::parse($item->reqap_date)->toFormattedDateString();
 
             return $item;
@@ -229,9 +259,11 @@ class CustodianServices
             ->where('spexgc_id', $request->id)
             ->first();
 
-
-        if($special){
+        if ($special) {
             $special->image = $special->approvedRequest->reqap_doc;
+            $special->dateneeded = Date::parse($special->spexgc_dateneed)->toFormattedDateString();
+            $special->datereq = Date::parse($special->spexgc_datereq)->toFormattedDateString();
+            $special->dateapp = Date::parse($special->approvedRequest->reqap_date)->toFormattedDateString();
         }
 
         if ($special) {
@@ -305,5 +337,61 @@ class CustodianServices
         });
 
         return $data;
+    }
+
+    public function upload($request)
+    {
+        if ($request->file[0]['originFileObj']->isValid()) {
+
+            $path = $request->file[0]['originFileObj']->getRealPath();
+            $contents = file_get_contents($path);
+        }
+
+        $exp = $this->explode($contents);
+
+        $collection2 = collect($exp);
+
+        $missingKeys = collect($this->formatter)->filter(function ($value) use ($collection2) {
+            return !$collection2->has($value);
+        });
+
+        if ($missingKeys->isEmpty()) {
+            $this->insertIntoDatabase($exp);
+        } else {
+            return redirect()->back()->with([
+                'msg' => 'Not a valid format',
+                'data' => $missingKeys,
+                'status' => 'error',
+                'title' => 'Invalid Format'
+            ]);
+        }
+    }
+
+    public function insertIntoDatabase($exp)
+    {
+        dd($exp);
+    }
+
+    private  function explode($data)
+    {
+        $lines = explode("\n", $data);
+
+        $parsedData = [];
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            if (!empty($line)) {
+
+                if (strpos($line, '|') !== false) {
+                    list($key, $value) = explode('|', $line);
+                    $parsedData[trim($key)] = trim($value);
+                } else {
+                    $parsedData[] = $line;
+                }
+            }
+        }
+
+        return $parsedData;
     }
 }
