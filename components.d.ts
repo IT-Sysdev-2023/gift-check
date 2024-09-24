@@ -178,6 +178,7 @@ declare module 'vue' {
     FinanceSideBar: typeof import('./resources/js/Components/FinanceSideBar.vue')['default']
     FireOutlined: typeof import('@ant-design/icons-vue')['FireOutlined']
     FolderFilled: typeof import('@ant-design/icons-vue')['FolderFilled']
+    ForApprovalPending: typeof import('./resources/js/Pages/Iad/Cards/ForApprovalPending.vue')['default']
     ForgotPassword: typeof import('./resources/js/Pages/Auth/ForgotPassword.vue')['default']
     FormItem: typeof import('./resources/js/Components/FormItem.vue')['default']
     FundProjectionScreenOutlined: typeof import('@ant-design/icons-vue')['FundProjectionScreenOutlined']

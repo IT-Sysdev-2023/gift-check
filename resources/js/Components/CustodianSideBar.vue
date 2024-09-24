@@ -22,7 +22,7 @@ import {
         </template>
 
         <a-menu-item key="custodian">
-            <QrcodeOutlined />
+            <DashboardOutlined />
             <span>
                 <Link :href="route('custodian.dashboard')"> {{ page.auth.user.usertype == '1' ? 'Custodian Dashboard' :
                     'Dashboard' }}</Link>
@@ -34,8 +34,8 @@ import {
                 <Link :href="route('custodian.barcode.checker')"> Barcode Checker</Link>
             </span>
         </a-menu-item>
-        <a-menu-item key="barcodeChecker">
-            <QrcodeOutlined />
+        <a-menu-item key="text-file">
+            <CloudUploadOutlined />
             <span>
                 <Link :href="route('custodian.textfile.uploader')"> Textfile Uploader</Link>
             </span>
@@ -53,7 +53,7 @@ import {
     </a-sub-menu>
     <div v-else>
         <a-menu-item key="custodian">
-            <QrcodeOutlined />
+            <DashboardOutlined />
             <span>
                 <Link :href="route('custodian.dashboard')"> {{ page.auth.user.usertype == '1' ? 'Custodian Dashboard' :
                     'Dashboard' }}</Link>
@@ -62,13 +62,20 @@ import {
         <a-menu-item key="barcodeChecker">
             <QrcodeOutlined />
             <span>
-                <Link :href="route('custodian.barcode.checker')"> Barcode Checker</Link>
+                <Link :href="route('custodian.barcode.checker')">Barcode Checker</Link>
             </span>
         </a-menu-item>
+        <a-menu-item key="textfileUploader">
+            <CloudUploadOutlined />
+            <span>
+                <Link :href="route('custodian.textfile.uploader')">Textfile Uploader</Link>
+            </span>
+        </a-menu-item>
+
         <a-menu-item key="recievedGC">
             <GroupOutlined />
             <span>
-                <Link :href="route('custodian.received.gc')"> Received Gc</Link>
+                <Link :href="route('custodian.received.gc')">Received Gc</Link>
             </span>
         </a-menu-item>
         <a-menu-item key="gcTracking">
