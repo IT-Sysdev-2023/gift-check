@@ -135,6 +135,7 @@
         <a-table
             class="mt-10"
             :data-source="viewRecordData.denominationTable?.data"
+            :pagination="false"
             bordered
             :columns="[
                 { title: 'GC Barcode #', dataIndex: 'instituttritems_barcode' },
@@ -147,6 +148,11 @@
                 </template>
             </template>
         </a-table>
+        <pagination-axios
+            class="mt-5"
+            :datarecords="viewRecordData.denominationTable"
+            @on-pagination="onChangePagination"
+        />
     </a-modal>
 </template>
 <script>
@@ -166,6 +172,7 @@ export default {
     },
     data() {
         return {
+            value: "",
             viewModal: false,
             viewRecordData: {},
             dateRange: this.dateRange
@@ -174,13 +181,20 @@ export default {
         };
     },
     methods: {
-        exportExcel(id){
-
+        async onChangePagination(link) {
+            if (link.url) {
+                const { data } = await axios.get(link.url);
+                this.viewRecordData.denominationTable = data.denominationTable;
+            }
         },
+        exportExcel(id) {},
         reprint(id) {
-            const url = route("treasury.transactions.institution.gc.sales.reprint", {
-                id: id,
-            });
+            const url = route(
+                "treasury.transactions.institution.gc.sales.reprint",
+                {
+                    id: id,
+                }
+            );
 
             axios
                 .get(url, { responseType: "blob" })
@@ -208,9 +222,12 @@ export default {
         },
 
         printAr(id) {
-            const url = route("treasury.transactions.institution.gc.sales.printAr", {
-                id: id,
-            });
+            const url = route(
+                "treasury.transactions.institution.gc.sales.printAr",
+                {
+                    id: id,
+                }
+            );
 
             axios
                 .get(url, { responseType: "blob" })
@@ -247,15 +264,15 @@ export default {
             this.viewRecordData = data;
             this.viewModal = true;
         },
+
         handleChangeDateRange(_, dateRange) {
-            this.$inertia.get(
-                route("budget.ledger"),
-                { date: dateRange },
+            this.$inertia.get(route(route().current()), { date: dateRange },
                 {
                     preserveState: true,
                 }
             );
         },
+        onSearch() {},
     },
 };
 </script>
