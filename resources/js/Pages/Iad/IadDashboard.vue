@@ -29,7 +29,11 @@
                     @container2-event="gcReceived"
                 />
             </a-col>
+            <a-col :span="8">
+               <for-approval-pending />
+            </a-col>
         </a-row>
+
     </AuthenticatedLayout>
 </template>
 <script setup lang="ts">

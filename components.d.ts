@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: typeof import('ant-design-vue/es')['Alert']
+    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
@@ -169,6 +170,7 @@ declare module 'vue' {
     FinanceSideBar: typeof import('./resources/js/Components/FinanceSideBar.vue')['default']
     FireOutlined: typeof import('@ant-design/icons-vue')['FireOutlined']
     FolderFilled: typeof import('@ant-design/icons-vue')['FolderFilled']
+    ForApprovalPending: typeof import('./resources/js/Pages/Iad/Cards/ForApprovalPending.vue')['default']
     ForgotPassword: typeof import('./resources/js/Pages/Auth/ForgotPassword.vue')['default']
     FormItem: typeof import('./resources/js/Components/FormItem.vue')['default']
     FundProjectionScreenOutlined: typeof import('@ant-design/icons-vue')['FundProjectionScreenOutlined']
