@@ -129,6 +129,7 @@ declare module 'vue' {
     Colonade_colon: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/Colonade_colon.vue')['default']
     ColonadeMandaue: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/ColonadeMandaue.vue')['default']
     ConfirmPassword: typeof import('./resources/js/Pages/Auth/ConfirmPassword.vue')['default']
+    CopyOutlined: typeof import('@ant-design/icons-vue')['CopyOutlined']
     CouponTransaction: typeof import('./resources/js/Pages/Treasury/Coupon/CouponTransaction.vue')['default']
     CreateEntryGc: typeof import('./resources/js/Pages/Retail/Modals/CreateEntryGc.vue')['default']
     CustodianDashboard: typeof import('./resources/js/Pages/Custodian/CustodianDashboard.vue')['default']

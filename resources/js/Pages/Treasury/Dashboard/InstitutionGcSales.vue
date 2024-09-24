@@ -9,7 +9,6 @@
     <a-card>
         <div class="flex justify-between mb-5">
             <div>
-                <p>{{ date }}</p>
                 <a-range-picker
                     v-model:value="dateRange"
                     @change="handleChangeDateRange"
@@ -23,12 +22,12 @@
                     style="width: 300px"
                     @search="onSearch"
                 />
-                <a-button type="primary">
+                <!-- <a-button type="primary">
                     <template #icon>
                         <FileExcelOutlined />
                     </template>
                     Generate Excel Report
-                </a-button>
+                </a-button> -->
             </div>
         </div>
         <a-table
@@ -54,7 +53,7 @@
                             @click="printAr(record.institutrId)"
                         >
                             <template #icon>
-                                <FileSearchOutlined />
+                                <CopyOutlined />
                             </template>
                             Print Ar
                         </a-button>
@@ -65,7 +64,7 @@
                             @click="viewRecord(record.institutrId)"
                         >
                             <template #icon>
-                                <FileSearchOutlined />
+                                <EyeOutlined />
                             </template>
                             View
                         </a-button>
@@ -74,7 +73,7 @@
                             type="primary"
                             size="small"
                             ghost
-                            @click="viewRecord(record)"
+                            @click="reprint(record.institutrId)"
                         >
                             <template #icon>
                                 <AuditOutlined />
@@ -85,10 +84,10 @@
                             type="primary"
                             size="small"
                             ghost
-                            @click="viewRecord(record)"
+                            @click="exportExcel(record.institutrId)"
                         >
                             <template #icon>
-                                <AuditOutlined />
+                                <FileExcelOutlined />
                             </template>
                             Excel
                         </a-button>
@@ -175,6 +174,39 @@ export default {
         };
     },
     methods: {
+        exportExcel(id){
+
+        },
+        reprint(id) {
+            const url = route("treasury.transactions.institution.gc.sales.reprint", {
+                id: id,
+            });
+
+            axios
+                .get(url, { responseType: "blob" })
+                .then((response) => {
+                    const file = new Blob([response.data], {
+                        type: "application/pdf",
+                    });
+                    const fileURL = URL.createObjectURL(file);
+                    window.open(fileURL, "_blank");
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 404) {
+                        notification.error({
+                            message: "File Not Found",
+                            description: "Pdf is missing on the server!",
+                        });
+                    } else {
+                        notification.error({
+                            message: "Error Occured!",
+                            description:
+                                "An error occurred while generating the PDF.",
+                        });
+                    }
+                });
+        },
+
         printAr(id) {
             const url = route("treasury.transactions.institution.gc.sales.printAr", {
                 id: id,

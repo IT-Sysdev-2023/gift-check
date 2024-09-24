@@ -321,6 +321,11 @@ class InstitutionGcSalesService extends FileHandler
         $this->folderName = "reports/treasury_ar_report";
         return $this->retrieveFile($this->folderName, "arreport{$id}.pdf");
     }
+
+    public function reprint($id) {
+        $this->folderName = "reports/treasury_releasing_institutions";
+        return $this->retrieveFile($this->folderName, "gcinst{$id}.pdf");
+    }
     private function dataForPdf($request, $change, $cash)
     {
 

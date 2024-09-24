@@ -94,7 +94,10 @@ class InstitutionGcSalesController extends Controller
     }
 
     public function printAr($id){
-        dd($id);
         return $this->institutionGcSalesService->printAr($id);
+    }
+
+    public function reprint($id){
+        return $this->institutionGcSalesService->reprint($id);
     }
 }

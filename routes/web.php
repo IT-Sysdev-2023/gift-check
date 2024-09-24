@@ -250,8 +250,6 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 //Budget Request
                 Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
                 Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
-                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
 
                 //Production Request
                 Route::prefix('production-request')->name('production.')->group(function () {
@@ -292,6 +290,7 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                     Route::post('form-submission', [InstitutionGcSalesController::class, 'formSubmission'])->name('submission');
                     Route::get('view-transaction-details-{id}', [InstitutionGcSalesController::class, 'transactionDetails'])->name('transactionDetails');
                     Route::get('print-ar-{id}', [InstitutionGcSalesController::class, 'printAr'])->name('printAr');
+                    Route::get('reprint-{id}', [InstitutionGcSalesController::class, 'reprint'])->name('reprint');
                 });
 
                 //special gc payment
