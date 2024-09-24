@@ -49,12 +49,11 @@ class GcAllocationController extends Controller
             'gcType' => 'not_in:0',
             'denomination' => ['required', 'array', new DenomQty()],
         ]);
-
         $denom = collect($request->denomination);
 
-        $denom->each(function ($item) use ($request) {
+        DB::transaction(function () use ($request, $denom) {
 
-            DB::transaction(function () use ($item, $request) {
+            $denom->each(function ($item) use ($request) {
                 $gc = Gc::where([
                     ['gc_validated', '*'],
                     ['denom_id', $item['denom_id']],
@@ -81,7 +80,6 @@ class GcAllocationController extends Controller
                     ]);
                 });
             });
-
         });
         return redirect()->back()->with('success', 'Success mate!');
 

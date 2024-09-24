@@ -162,6 +162,7 @@ declare module 'vue' {
     FileExcelOutlined: typeof import('@ant-design/icons-vue')['FileExcelOutlined']
     FileOutlined: typeof import('@ant-design/icons-vue')['FileOutlined']
     FileSearchOutlined: typeof import('@ant-design/icons-vue')['FileSearchOutlined']
+    FileSyncOutlined: typeof import('@ant-design/icons-vue')['FileSyncOutlined']
     FileTextOutlined: typeof import('@ant-design/icons-vue')['FileTextOutlined']
     FinanceDashboard: typeof import('./resources/js/Pages/Finance/FinanceDashboard.vue')['default']
     FinanceSideBar: typeof import('./resources/js/Components/FinanceSideBar.vue')['default']
