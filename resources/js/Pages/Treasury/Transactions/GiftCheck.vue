@@ -87,7 +87,7 @@
                             >
                                 <a-col :span="12">
                                     <a-input
-                                        :value="item.denomination"
+                                        :value="item.denomination_format"
                                         readonly
                                         class="text-end"
                                     />
@@ -177,7 +177,7 @@ const handleChange = (file: UploadChangeParam) => {
 };
 
 const closeIframe = () =>{
-    // router.visit(route('treasury.dashboard'));
+    router.visit(route('treasury.dashboard'));
 }
 const onSubmit = () => {
     formState
