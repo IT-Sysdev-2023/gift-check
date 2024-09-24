@@ -18,7 +18,7 @@
                 <a-col :span="12">
                     <a-statistic
                         title="Current Budget"
-                        :value="remainingBudget"
+                        :value="bud"
                     />
                 </a-col>
             </a-row>
@@ -72,11 +72,14 @@
                     <a-col :span="14">
                         <a-card>
                             <a-row :gutter="16" class="text-center">
-                                <a-col :span="12">
+                                <a-col :span="8">
                                     <span>Denomination</span>
                                 </a-col>
-                                <a-col :span="12">
+                                <a-col :span="8">
                                     <span>Quantity</span>
+                                </a-col>
+                                <a-col :span="8">
+                                    <span>Pc's left</span>
                                 </a-col>
                             </a-row>
                             <a-row
@@ -85,19 +88,20 @@
                                 v-for="(item, index) of formState.denom"
                                 :key="index"
                             >
-                                <a-col :span="12">
+                                <a-col :span="8">
                                     <a-input
                                         :value="item.denomination_format"
                                         readonly
                                         class="text-end"
                                     />
                                 </a-col>
-                                <a-col :span="12" style="text-align: center">
+                                <a-col :span="8" style="text-align: center">
                                     <a-input-number
                                         id="inputNumber"
                                         v-model:value="item.qty"
                                         placeholder="0"
                                         :min="0"
+                                        @change="quantityChange(item.qty, item.denomination, item)"
                                     >
                                         <template #upIcon>
                                             <ArrowUpOutlined />
@@ -106,6 +110,13 @@
                                             <ArrowDownOutlined />
                                         </template>
                                     </a-input-number>
+                                </a-col>
+                                <a-col :span="8">
+                                    <a-input
+                                        :value="parseInt(bud / item.denomination)"
+                                        readonly
+                                        class="text-end"
+                                    />
                                 </a-col>
                             </a-row>
                             <div
@@ -155,10 +166,11 @@ const props = defineProps<{
     denomination: {
         data: any[];
     };
-    remainingBudget: string;
+    remainingBudget: number;
 }>();
 
 const stream = ref(null);
+const bud = ref(props.remainingBudget);
 const openIframe = ref(false);
 const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
@@ -179,6 +191,19 @@ const handleChange = (file: UploadChangeParam) => {
 const closeIframe = () =>{
     router.visit(route('treasury.dashboard'));
 }
+const previousQuantities = ref({}); // Store previous quantity for each item
+
+const quantityChange = (qty, denom, item) => {
+    const prevQty = previousQuantities.value[item.id] || 0; // Get previous qty for this item
+    const numPrev = prevQty * denom; // Previous cost
+    const numNew = qty * denom; // New cost
+
+    // Adjust the budget
+    bud.value = bud.value + numPrev - numNew;
+
+    // Update the previous quantity for this item
+    previousQuantities.value[item.id] = qty;
+};
 const onSubmit = () => {
     formState
         .transform((data) => ({

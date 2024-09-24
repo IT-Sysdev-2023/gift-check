@@ -33,7 +33,7 @@ class ProductionRequestController extends Controller
             'title' => 'Gift Check',
             'denomination' => DenominationResource::collection($denomination),
             'prNo' => NumberHelper::leadingZero($increment),
-            'remainingBudget' => LedgerBudget::currentBudget(),
+            'remainingBudget' => (float) LedgerBudget::budget(),
         ]);
     }
     public function giftCheckStore(Request $request)
