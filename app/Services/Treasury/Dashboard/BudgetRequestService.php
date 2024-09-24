@@ -64,21 +64,21 @@ class BudgetRequestService extends FileHandler
 			return redirect()->back()->with('error', 'Budget request already approved/cancelled.');
 		}
 		$filename = $this->replaceFile($request);
-		
-		$res = $id->update([
-            'br_requested_by' => $request->updatedById,
-            'br_request' => $request->budget,
-            'br_remarks' => $request->remarks,
-            'br_requested_needed' => $request->dateNeeded,
-            'br_file_docno' => $filename,
-            'br_group' => $request->group ?? 0,
-        ]);
 
-        if ($res) {
+		$res = $id->update([
+			'br_requested_by' => $request->updatedById,
+			'br_request' => $request->budget,
+			'br_remarks' => $request->remarks,
+			'br_requested_needed' => $request->dateNeeded,
+			'br_file_docno' => $filename,
+			'br_group' => $request->group ?? 0,
+		]);
+
+		if ($res) {
 			return redirect()->back()->with('success', 'Budget request Successfully submitted.');
-        } else {
+		} else {
 			return redirect()->back()->with('error', 'Something went wrong while updating..');
-        }
+		}
 	}
 	public function downloadDocument($file)
 	{
@@ -94,8 +94,8 @@ class BudgetRequestService extends FileHandler
 
 	public function budgetRequestSubmission(Request $request)
 	{
-		if($this->validateField($request)){
-				return redirect()->back()->with('error', 'You have pending budget request');
+		if ($this->validateField($request)) {
+			return redirect()->back()->with('error', 'You have pending budget request');
 		}
 
 		$dept = userDepartment($request->user());
@@ -147,13 +147,16 @@ class BudgetRequestService extends FileHandler
 			'dateNeeded' => Date::parse($request->dateNeeded)->toFormattedDateString(),
 			'remarks' => $request->remarks,
 
-			'subtitle' => 'Resolving Budget Entry Form',
+			'subtitle' => 'Revolving Budget Entry Form',
 
 			'budgetRequested' => $request->budget,
 			//signatures
-			'preparedBy' => [
-				'name' => $request->user()->full_name,
-				'position' => 'Sr Cash Clerk'
+
+			'signatures' => [
+				'preparedBy' => [
+					'name' => $request->user()->full_name,
+					'position' => 'Sr Cash Clerk'
+				]
 			]
 		];
 		$pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
@@ -161,10 +164,10 @@ class BudgetRequestService extends FileHandler
 
 		//store pdf in storage
 		$this->folderName = 'generatedTreasuryPdf/BudgetRequest';
-		$this->savePdfFile($request,$request->br, $pdf->output());
+		$this->savePdfFile($request, $request->br, $pdf->output());
 
 		return base64_encode($pdf->output());
 	}
 
-	
+
 }

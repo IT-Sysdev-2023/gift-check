@@ -59,7 +59,7 @@ const approvedProductionRequest = () => routeTo("production.request", "approved"
 const specialGcPending = () => routeTo("special.gc", "pending");
 
 const institutionGc = () => routeTo("transactions.institution.gc.sales", "transaction"); 
-const eodList = () => routeTo("eod", "eodList");
+const eodList = () => routeTo("transactions.eod", "eodList");
 </script>
 
 <template>

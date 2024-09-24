@@ -289,8 +289,11 @@ const setActiveTab = computed(() => {
                     Coupon Gc Payment</Link
                 ></a-menu-item
             >
-            <a-menu-item key="menu-item-gc-sales-report-eod"
-                >GC Sales Report (EOD)</a-menu-item
+            <a-menu-item key="treasury.transactions.eod.gcSales"
+                >
+                <Link :href="route('treasury.transactions.eod.gcSales')">
+                    GC Sales Report (EOD)</Link
+                ></a-menu-item 
             >
         </a-sub-menu>
 

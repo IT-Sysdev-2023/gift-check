@@ -475,4 +475,36 @@ class ColumnHelper
             'width' => '150px'
         ],
     ];
+
+    public static $gcReleasingReport = [
+      
+        [
+            'title' => 'Transaction #',
+            'dataIndex' => 'inspPaymentnum',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'customer',
+
+        ],
+        [
+            'title' => 'Date',
+            'key' => 'date',
+
+        ],
+        [
+            'title' => 'Time',
+            'dataIndex' => 'time',
+        ],
+        [
+            'title' => 'Total Denom',
+            'dataIndex' => 'totalAmount',
+
+        ],
+        [
+            'title' => 'Payment Type',
+            'dataIndex' => 'payment',
+        ],
+    ];
 }

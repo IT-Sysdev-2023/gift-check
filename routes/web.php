@@ -298,13 +298,17 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                     Route::get('/', [SpecialGcRequestController::class, 'specialGcPayment'])->name('index');
                     Route::post('submission-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                 });
+
+                //Treasury
+                Route::prefix('treasury-eod')->name('eod.')->group(function () {
+                    Route::get('/', [EodController::class, 'eodList'])->name('eodList');
+                    Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
+
+                    Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
+                });
+
             });
 
-            //Treasury
-            Route::prefix('treasury-eod')->name('eod.')->group(function () {
-                Route::get('/', [EodController::class, 'eodList'])->name('eodList');
-                Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
-            });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 

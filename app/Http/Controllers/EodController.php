@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
+use App\Http\Resources\InstitutPaymentResource;
 use App\Models\InstitutEod;
+use App\Models\InstitutPayment;
 use App\Models\StoreEod;
 use App\Models\StoreVerification;
 use App\Services\Eod\EodServices;
@@ -51,7 +53,7 @@ class EodController extends Controller
 
     public function eodList(Request $request)
     {
-       
+
         $data = InstitutEod::select('ieod_by', 'ieod_id', 'ieod_num', 'ieod_date')
             ->with('user:user_id,firstname,lastname')
             ->orderByDesc('ieod_date')
@@ -67,7 +69,24 @@ class EodController extends Controller
         ]);
     }
 
-    public function generatePdf(int $id){
+    public function generatePdf(int $id)
+    {
         return $this->eodServices->generatePdf($id);
+    }
+
+    public function gcSalesReport(Request $request)
+    {
+        $data = InstitutPayment::select('insp_id', 'insp_trid', 'insp_paymentcustomer', 'institut_bankname', 'institut_bankaccountnum', 'institut_checknumber', 'institut_amountrec', 'insp_paymentnum', 'institut_eodid')
+            ->where('institut_eodid', '0')
+            ->orderByDesc('insp_paymentnum')
+            ->paginate()
+            ->withQueryString();
+
+        return inertia('Treasury/Dashboard/Eod/GcSalesReport', [
+            'title' => 'Payment Transactions',
+            'filters' => $request->only(['date', 'search']),
+            'data' => InstitutPaymentResource::collection($data),
+            'columns' => \App\Services\Treasury\ColumnHelper::$gcReleasingReport
+        ]);
     }
 }

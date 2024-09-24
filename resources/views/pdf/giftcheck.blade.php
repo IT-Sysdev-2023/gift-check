@@ -74,11 +74,17 @@
         @endif
 
         <section class="signatures clearfix">
-            <p>Prepared by:</p>
-            <div class="signature-block">
-                <h3 style="text-decoration: underline;">{{ $data['preparedBy']['name']}}</h3>
-                <p>{{$data['preparedBy']['position']}}</p>
-            </div>
+
+            @foreach ($data['signatures'] as $sig => $val)
+                <p>{{Str::headline($sig)}}:</p>
+                <div class="signature-block">
+                    <h3 style="text-decoration: underline;">{{ $val['name']}}</h3>
+                    <p>{{$val['position']}}</p>
+                </div>
+            @endforeach
+
+
+            
         </section>
         
 
