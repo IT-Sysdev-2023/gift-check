@@ -51,7 +51,7 @@
                             v-if="record.institutr_paymenttype == 'ar'"
                             type="primary"
                             size="small"
-                            @click="viewRecord(record)"
+                            @click="printAr(record.institutrId)"
                         >
                             <template #icon>
                                 <FileSearchOutlined />
@@ -153,6 +153,7 @@
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
+import { notification } from "ant-design-vue";
 import axios from "axios";
 
 export default {
@@ -174,6 +175,36 @@ export default {
         };
     },
     methods: {
+        printAr(id) {
+            const url = route("treasury.transactions.institution.gc.sales.printAr", {
+                id: id,
+            });
+
+            axios
+                .get(url, { responseType: "blob" })
+                .then((response) => {
+                    const file = new Blob([response.data], {
+                        type: "application/pdf",
+                    });
+                    const fileURL = URL.createObjectURL(file);
+                    window.open(fileURL, "_blank");
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 404) {
+                        notification.error({
+                            message: "File Not Found",
+                            description: "Pdf is missing on the server!",
+                        });
+                    } else {
+                        notification.error({
+                            message: "Error Occured!",
+                            description:
+                                "An error occurred while generating the PDF.",
+                        });
+                    }
+                });
+        },
+
         async viewRecord(id) {
             const { data } = await axios.get(
                 route(

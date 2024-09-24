@@ -51,34 +51,12 @@ class InstitutionGcSalesController extends Controller
 
     public function viewTransaction(Request $request)
     {
-
         $data = InstitutTransaction::select('institutr_cusid', 'institutr_id', 'institutr_trnum', 'institutr_paymenttype', 'institutr_receivedby', 'institutr_date')
             ->with(['institutCustomer:ins_id,ins_name', 'institutTransactionItem.gc.denomination'])
             ->withCount('institutTransactionItem')
-            // ->withSum('institutTransactionItem.gc as total_denomination', 'gc.denomination.denomination')
             ->orderByDesc('institutr_trnum')
-            // ->limit(10)->get();
             ->paginate()
             ->withQueryString();
-
-
-        // dd(InstitutTransactionResource::collection($data)->toArray($request));
-        //   dd($data);
-        // $table = 'institut_transactions_items';
-        // $select = "IFNULL(SUM(denomination.denomination),0) as sum";
-        // $where = "institut_transactions_items.instituttritems_trid='$tr->institutr_id'";
-        // $join = 'INNER JOIN
-        //         gc
-        //     ON	
-        //         gc.barcode_no = institut_transactions_items.instituttritems_barcode
-        //     INNER JOIN
-        //         denomination
-        //     ON
-        //         denomination.denom_id = gc.denom_id
-        // ';
-        // $limit = '';
-        // $sum = getSelectedData($link,$table,$select,$where,$join,$limit);
-        // echo number_format($sum->sum,2);
 
         return inertia('Treasury/Dashboard/InstitutionGcSales', [
             'title' => 'Institution Gc Sales Transactions',
@@ -93,8 +71,7 @@ class InstitutionGcSalesController extends Controller
             'institutr_id',
             'institutr_cusid',
             'institutr_trby',
-            'institutr_trnum'
-            ,
+            'institutr_trnum',
             'institutr_receivedby',
             'institutr_date',
             'institutr_remarks',
@@ -108,11 +85,16 @@ class InstitutionGcSalesController extends Controller
                 'institutTransactionItem',
                 'document',
             ])
-            ->first(); 
+            ->first();
 
         // Separate query for paginating the relationship
         $institutTransactionItems = $record->institutTransactionItem()->with('gc.denomination')->paginate(5);
 
-        return response()->json( ['details' => new InstitutTransactionResource($record), 'denominationTable' => $institutTransactionItems]);
+        return response()->json(['details' => new InstitutTransactionResource($record), 'denominationTable' => $institutTransactionItems]);
+    }
+
+    public function printAr($id){
+        dd($id);
+        return $this->institutionGcSalesService->printAr($id);
     }
 }

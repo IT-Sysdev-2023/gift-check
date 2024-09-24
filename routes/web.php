@@ -291,6 +291,7 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
 
                     Route::post('form-submission', [InstitutionGcSalesController::class, 'formSubmission'])->name('submission');
                     Route::get('view-transaction-details-{id}', [InstitutionGcSalesController::class, 'transactionDetails'])->name('transactionDetails');
+                    Route::get('print-ar-{id}', [InstitutionGcSalesController::class, 'printAr'])->name('printAr');
                 });
 
                 //special gc payment
