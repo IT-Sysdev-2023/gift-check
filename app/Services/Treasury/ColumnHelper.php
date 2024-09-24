@@ -490,7 +490,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Date',
-            'key' => 'date',
+            'dataIndex' => 'date',
 
         ],
         [
