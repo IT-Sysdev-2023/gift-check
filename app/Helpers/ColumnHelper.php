@@ -127,8 +127,8 @@ class ColumnHelper
 
         ],
         [
-            'title' => 'Approved By',
-            'dataIndex' => 'abr_approved_by',
+            'title' => 'Checked By',
+            'dataIndex' => 'checkedby',
 
         ],
         [

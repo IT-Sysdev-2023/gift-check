@@ -464,6 +464,7 @@ Route::middleware('auth')->group(function () {
             Route::get('review-index', [IadController::class, 'reviewedGcIndex'])->name('special.review');
             Route::get('review-datails-{id}', [IadController::class, 'reviewDetails'])->name('details');
         });
+        Route::get('details-{id}', [IadController::class, 'details'])->name('details');
         Route::put('approve-budget-{id}', [IadController::class, 'approveBudget'])->name('approve');
     });
 

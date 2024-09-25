@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{$data['subtitle']}}</title>
+    <title>{{ $data['subtitle'] }}</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -18,73 +19,75 @@
 
             </div>
         </header>
-        <h4 class="subtitle">{{$data['subtitle']}}</h4>
+        <h4 class="subtitle">{{ $data['subtitle'] }}</h4>
         <section class="form-info">
             <table>
                 <tr>
                     <td><strong>PR No.</strong></td>
-                    <td>{{$data['pr']}}</td>
+                    <td>{{ $data['pr'] }}</td>
                 </tr>
                 <tr>
                     <td><strong>Date Requested</strong></td>
-                    <td>{{$data['dateRequested']}}</td>
+                    <td>{{ $data['dateRequested'] }}</td>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <td><strong>Date Needed</strong></td>
                     <td>{{$data['dateNeeded']}}</td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td><strong>Current Budget</strong></td>
-                    <td>{{$data['budget']}}</td>
+                    <td>{{ $data['budget'] }}</td>
                 </tr>
                 <tr>
                     <td><strong>Remarks</strong></td>
-                    <td>{{$data['remarks']}}</td>
+                    <td>{{ $data['remarks'] }}</td>
                 </tr>
-                @if(!empty($data['budgetRequested']))
-                <tr>
-                    <td><strong>Budget Requested</strong></td>
-                    <td>{{$data['budgetRequested']}}</td>
-                </tr>
+                @if (!empty($data['budgetRequested']))
+                    <tr>
+                        <td><strong>Budget Requested</strong></td>
+                        <td>{{ $data['budgetRequested'] }}</td>
+                    </tr>
                 @endif
             </table>
         </section>
 
-        @if(!empty($data['barcode']))
-        <section class="table-section">
-            <table class="denomination-table">
-                <thead>
-                    <tr>
-                        <th>Denomination</th>
-                        <th>Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($data['barcode'] as $denom)
-                    <tr>
+        @if (!empty($data['barcode']))
+            <section class="table-section">
+                <table class="denomination-table">
+                    <thead>
+                        <tr>
+                            <th>Denomination</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($data['barcode'] as $denom)
+                            <tr>
 
-                        <td>Php {{$denom['denomination']}}</td>
-                        <td>{{$denom['qty']}}</td>
+                                <td>Php {{ $denom['denomination'] }}</td>
+                                <td>{{ $denom['qty'] }}</td>
 
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </section>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </section>
         @endif
 
-    
+
 
         <table class="signature-table">
-            <tr>
-                @foreach($data['signatures'] as $title => $name)
-                <td>
-                    <p class="signature-label">{{ Str::headline($title) }}:</p>
-                    <p style="text-decoration: underline;"><strong>{{ $name['name'] }}</strong></p>
-                    <div class="signature-line">{{$name['position']}}</div>
-                </td>
-                @endforeach
-            </tr>
+            @foreach (array_chunk($data['signatures'], 2, true) as $chunk)
+                <tr>
+                    @foreach ($chunk as $title => $name)
+                        <td >
+                            <p class="signature-label ">{{ Str::headline($title) }}:</p>
+                            <p style="text-decoration: underline;"><strong>{{ $name['name'] }}</strong></p>
+                            <div class="signature-line" style="position: relative; margin-top: -10px; font-size: 11px">{{ $name['position'] }}</div>
+                        </td>
+                    @endforeach
+                </tr>
+            @endforeach
         </table>
 
 
@@ -96,39 +99,47 @@
     </div>
 </body>
 <style>
+    * {
+        /* font-family: "Courier New", Courier, monospace; */
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+    }
 
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: white;
-    position: relative;
-    min-height: 100%;
-    padding-bottom: 100px; /* Adjust this to the height of the footer */
-    box-sizing: border-box;
-}
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: white;
+        position: relative;
+        min-height: 100%;
+        padding-bottom: 100px;
+        /* Adjust this to the height of the footer */
+        box-sizing: border-box;
+    }
 
-.container {
-    width: 100%;
-    max-width: 870px; /* Adjust this to fit better within the A4 dimensions */
-    margin: 20px auto;
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+    .container {
+        width: 100%;
+        max-width: 870px;
+        /* Adjust this to fit better within the A4 dimensions */
+        margin: 20px auto;
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-.subtitle{
-    padding-top: 20px;
-    text-transform: uppercase;
-}
-.signature-table {
+    header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .subtitle {
+        padding-top: 20px;
+        text-transform: uppercase;
+    }
+
+    .signature-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 30px;
+
     }
 
     .signature-table td {
@@ -137,101 +148,111 @@ header {
         vertical-align: top;
         padding-top: 30px;
     }
+
     .signatures {
         width: 100%;
         margin-top: 50px;
     }
-    .signature-label{
+
+    .signature-label {
         text-align: left;
-        padding-bottom: 15px
+        margin-left: 50px;
     }
-.company-logo {
-    text-align: right; /* Aligns the content to the right */
-}
-.company-logo img {
-    padding-right: 20px;
-    max-width: 100px;
-    width: 100%; /* Ensure it scales properly */
-    height: auto;
-    margin-bottom: 10px;
-}
 
-.title h1 {
-    text-transform: uppercase;
-    font-size: 24px;
-    margin-bottom: 5px;
-}
+    .company-logo {
+        text-align: right;
+        /* Aligns the content to the right */
+    }
 
-.title h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
-}
+    .company-logo img {
+        padding-right: 20px;
+        max-width: 100px;
+        width: 100%;
+        /* Ensure it scales properly */
+        height: auto;
+        margin-bottom: 10px;
+    }
 
-.form-info table {
-    width: 100%;
-    margin-bottom: 20px;
-    border-collapse: collapse;
-}
+    .title h1 {
+        text-transform: uppercase;
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
 
-.form-info td {
-    padding: 8px;
-    border: 1px solid #ccc;
-}
+    .title h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
 
-.form-info td:first-child {
-    font-weight: bold;
-}
+    .form-info table {
+        width: 100%;
+        margin-bottom: 20px;
+        border-collapse: collapse;
+    }
 
-.table-section {
-    margin-bottom: 20px;
-}
+    .form-info td {
+        padding: 8px;
+        border: 1px solid #ccc;
+    }
 
-.denomination-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
+    .form-info td:first-child {
+        font-weight: bold;
+    }
 
-.denomination-table th, .denomination-table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: center;
-}
+    .table-section {
+        margin-bottom: 20px;
+    }
 
-.denomination-table th {
-    background-color: #f0f0f0;
-}
+    .denomination-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
 
-.signatures {
-    margin-top: 20px;
-}
+    .denomination-table th,
+    .denomination-table td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
 
-.signature-block {
-    float: left;
-    width: 200px; /* Adjust based on your design */
-    text-align: center;
-    margin-left: 30px;
-}
+    .denomination-table th {
+        background-color: #f0f0f0;
+    }
 
-.clearfix::after {
-    content: "";
-    display: table;
-    clear: both;
-}
+    .signatures {
+        margin-top: 20px;
+    }
 
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100px; /* Adjust based on your footer content */
-    text-align: center;
-    font-size: 15px; /* Adjust the font size to fit */
-    color: #666;
-    background-color: white;
-    padding: 10px;
-    box-sizing: border-box;
-}
+    .signature-block {
+        float: left;
+        width: 200px;
+        /* Adjust based on your design */
+        text-align: center;
+        margin-left: 30px;
+    }
 
+    .clearfix::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100px;
+        /* Adjust based on your footer content */
+        text-align: center;
+        font-size: 15px;
+        /* Adjust the font size to fit */
+        color: #666;
+        background-color: white;
+        padding: 10px;
+        box-sizing: border-box;
+    }
 </style>
+
 </html>
