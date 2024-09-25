@@ -1,15 +1,16 @@
 <template>
     <div class="mb-4">
         <a-card>
-            <p>Pending Production Request</p>
+            <p>Approve Pending Production Request</p>
         </a-card>
     </div>
     <div>
+
         <a-card>
             <a-table :dataSource="data" :columns="columns" :pagination="false">
                 <template #bodyCell="props">
                     <div v-if="props.column.key === 'View'">
-                        <a-button @click="handleViewClick(props.record)" type="primary">
+                        <a-button @click="selectedRow(props.record)" type="primary">
                             <PicRightOutlined />View Form
                         </a-button>
                     </div>
@@ -32,26 +33,19 @@
                         <a-form-item label="Date Approved">
                             <a-input v-model:value="form.dateApproved" readonly />
                         </a-form-item>
-                        <a-form-item label="Remarks:" name="remarks">
-                            <a-textarea v-model:value="form.InputRemarks" />
-                        </a-form-item>
                         <a-form-item label="Prepared By">
-                            <a-input v-model:value="form.preparedBy" readonly />
+                            <a-input v-model:value="checkby" readonly />
                         </a-form-item>
-                        <a-form-item label="Approved By:">
-                            <a-input v-model:value="form.approvedBy" readonly />
+                        <a-form-item label="Approved By">
+                            <a-input v-model:value="form.checkedByName" readonly />
                         </a-form-item>
-                        <a-form-item label="Reviewed By:">
-                            <a-input v-model:value="form.reviewedBy" readonly />
-                        </a-form-item>
-
                     </div>
                     <div v-if="form.status == '2'">
                         <a-form-item label="Date Cancelled">
                             <a-input v-model:value="form.dateApproved" readonly />
                         </a-form-item>
                         <a-form-item label="Cancelled By">
-                            <a-input v-model:value="form.preparedBy" readonly />
+                            <a-input v-model:value="form.checkedByName" readonly />
                         </a-form-item>
                     </div>
                 </a-card>
@@ -71,9 +65,6 @@
                         <a-form-item label="Remarks">
                             <a-input v-model:value="form.remarks" readonly />
                         </a-form-item>
-                        <a-form-item label="Requested by">
-                            <a-input v-model:value="form.requestedBy" readonly />
-                        </a-form-item>
                     </a-form>
                     <a-table :dataSource="barcodes" :columns="barcodeColumns" :pagination="false" />
                     <div class="flex justify-end mt-3">
@@ -89,12 +80,6 @@
             </a-button>
         </template>
     </a-modal>
-
-    <a-modal v-model:open="openIframe" style="width: 70%; top: 50px" :footer="null">
-        <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
-    </a-modal>
-
-
 </template>
 
 <script>
@@ -114,8 +99,8 @@ export default {
     },
     data() {
         return {
-            stream: null,
-            openIframe: false,
+            selectedData: [],
+            checkby: this.data[0].requestedBy,
             open: false,
             form: {
                 id: this.data[0]?.pe_id,
@@ -129,45 +114,26 @@ export default {
                 requestedById: '',
                 total: '',
                 status: '1',
-                checkedBy: '',
-                approvedBy: '',
-                approvedById: '',
-                preparedById: '',
-                preparedBy: '',
-                dateApproved: dayjs(),
+                checkedBy: this.$page.props.auth.user.user_id,
+                checkedByName: this.$page.props.auth.user.full_name,
+                dateApproved: dayjs().format('MMMM DD, YYYY'),
                 dateCancelled: dayjs(),
-                reviewedBy: this.$page.props.auth.user.full_name,
-                reviewedById: this.$page.props.auth.user.user_id,
             }
         }
     },
     methods: {
-        handleViewClick(record) {
-            this.selectedRow(record);
-        },
         selectedRow(data) {
-            axios.get(route('marketing.pendingRequest.getSigners'), {
-                params: {
-                    id: this.data[0]?.pe_id,
-                }
-            }).then((response) => {
-                this.form.approvedBy = response.data.response.approvedBy.employee_name;
-                this.form.approvedById = response.data.response.approvedById;
-            });
-
-
-
             this.open = true;
             this.form.pe_no = data.pe_num;
             this.form.department = data.title;
             this.form.dateRequested = data.dateReq;
             this.form.dateNeeded = data.dateneed;
             this.form.remarks = data.pe_remarks;
-            this.form.preparedBy = data.requestedBy;
-            this.form.preparedById = data.pe_requested_by;
+            this.form.requestedBy = data.requestedBy;
+            this.form.requestedById = data.pe_requested_by;
             this.form.total = data.total;
             this.form.dateneed = data.dateneed;
-            this.$inertia.get(route('marketing.pendingRequest.pending.request'), {
+            this.$inertia.get(route('marketing.pendingRequest.approve.pending.request'), {
                 id: data?.pe_id
             }, {
                 preserveState: true
@@ -179,20 +145,12 @@ export default {
                 barcode: this.barcodes
             }, {
                 onSuccess: (response) => {
-                    if (response.props.flash.type == 'success') {
-                        this.open = false;
-                        this.stream = `data:application/pdf;base64,${response.props.flash.stream}`;
-                        this.openIframe = true;
-
-                    } else {
-                        notification[response.props.flash.type]({
-                            message: response.props.flash.msg,
-                            description: response.props.flash.description,
-                        });
-                    }
-
+                    notification[response.props.flash.type]({
+                        message: response.props.flash.msg,
+                        description: response.props.flash.description,
+                    });
+                    this.$inertia.get(route('marketing.dashboard'))
                 },
-                preserveState: true
             })
         },
         closeModal() {

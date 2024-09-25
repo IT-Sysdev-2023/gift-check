@@ -93,6 +93,9 @@ const fetchUser = debounce(async (value) => {
     const fetchId = lastFetchId;
     state.data = [];
     state.fetching = true;
+
+    // console.log(value);
+    
     const { data } = await axios.get(route("get.employee"), {
         params: { q: value },
     });

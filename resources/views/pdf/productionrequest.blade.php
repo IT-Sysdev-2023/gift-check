@@ -77,6 +77,7 @@
             height: 100px;
         }
 
+
         .reviewedBy {
             position: absolute;
             top: 600;
@@ -111,10 +112,6 @@
                 <tr>
                     <th>Date Requested</th>
                     <td>{{$data['dateRequested']}}</td>
-                </tr>
-                <tr>
-                    <th>Date Needed</th>
-                    <td>{{$data['dateNeeded']}}</td>
                 </tr>
                 <tr>
                     <th>Budget</th>
@@ -153,7 +150,7 @@
                 <hr style="border: 0.5px solid #000; width: 100%; text-align: center;">
                 <div>
                     <div style="text-align: center">
-                        <small>Sr. Cash Clerk</small>
+                        <small>Cash Clerk III</small>
                     </div>
                 </div>
             </div>
@@ -162,12 +159,12 @@
                     Reviewed By:
                 </div>
                 <div style="text-align: center; margin-top: 10px">
-                    {{strtoupper($data['checkby'])}}
+                    {{strtoupper($data['reviewedBy'])}}
                 </div>
                 <hr style="border: 0.5px solid #000; width: 100%; text-align: center;">
                 <div>
                     <div style="text-align: center">
-                        <small>Sr. Supervisor</small>
+                        <small>{{$data['reviewerPosition']}}</small>
                     </div>
                 </div>
             </div>
@@ -181,7 +178,7 @@
                 <hr style="border: 0.5px solid #000; width: 100%; text-align: center;">
                 <div>
                     <div style="text-align: center">
-                        <small>Marketing Manager</small>
+                        <small>{{$data['approvedByPosition']}}</small>
                     </div>
                 </div>
             </div>
