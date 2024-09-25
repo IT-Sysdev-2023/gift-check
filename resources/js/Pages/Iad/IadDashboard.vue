@@ -30,7 +30,7 @@
                 />
             </a-col>
             <a-col :span="8">
-               <for-approval-pending />
+               <for-approval-pending :budget="budgetrequest"/>
             </a-col>
         </a-row>
 
@@ -42,6 +42,7 @@ import { router } from "@inertiajs/vue3";
 
 defineProps<{
     count: any;
+    budgetrequest: any
 }>();
 const approvedGcForReview = () => {
     router.get(route("iad.special.external.approvedGc"));

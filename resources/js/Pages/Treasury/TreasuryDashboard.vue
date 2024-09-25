@@ -107,9 +107,9 @@ const eodList = () => routeTo("transactions.eod", "eodList");
                             <Card
                                 use-default
                                 title="Budget Request"
-                                :pending="data?.budgetRequest.pending"
-                                :approved="data?.budgetRequest.approved"
-                                :cancelled="data?.budgetRequest.cancelled"
+                                :pending="data?.budgetRequest?.pending"
+                                :approved="data?.budgetRequest?.approved"
+                                :cancelled="data?.budgetRequest?.cancelled"
                                 @pending-event="budgetRequestPending"
                                 @approved-event="budgetRequestApproved"
                                 @cancelled-event="budgetRequestCancelled"
@@ -118,9 +118,9 @@ const eodList = () => routeTo("transactions.eod", "eodList");
                                 use-default
                                 title="Store Gc Request"
                                 card2="Released Gc"
-                                :pending="data?.storeGcRequest.pending"
-                                :approved="data?.storeGcRequest.released"
-                                :cancelled="data?.storeGcRequest.cancelled"
+                                :pending="data?.storeGcRequest?.pending"
+                                :approved="data?.storeGcRequest?.released"
+                                :cancelled="data?.storeGcRequest?.cancelled"
                                 @pending-event="storeGcPending"
                                 @approved-event="storeGcReleased"
                                 @cancelled-event="storeGcCancelled"
@@ -128,37 +128,37 @@ const eodList = () => routeTo("transactions.eod", "eodList");
                             <Card
                                 use-default
                                 title="Gc Production Request"
-                                :pending="data?.gcProductionRequest.pending"
-                                :approved="data?.gcProductionRequest.approved"
-                                :cancelled="data?.gcProductionRequest.cancelled"
+                                :pending="data?.gcProductionRequest?.pending"
+                                :approved="data?.gcProductionRequest?.approved"
+                                :cancelled="data?.gcProductionRequest?.cancelled"
                                  @pending-event="pendingProductionRequest"
                                  @approved-event="approvedProductionRequest"
                             />
                             <Card
                                 use-default
                                 title="Special GC Requests"
-                                :pending="data?.specialGcRequest.pending"
-                                :approved="data?.specialGcRequest.approved"
-                                :cancelled="data?.specialGcRequest.cancelled"
+                                :pending="data?.specialGcRequest?.pending"
+                                :approved="data?.specialGcRequest?.approved"
+                                :cancelled="data?.specialGcRequest?.cancelled"
                                 @pending-event="specialGcPending"
                             >
                                 <CardBadge
-                                    :count="data?.specialGcRequest.reviewed"
+                                    :count="data?.specialGcRequest?.reviewed"
                                     title="Reviewed GC for Releasing"
                                 />
                                 <CardBadge
-                                    :count="data?.specialGcRequest.released"
+                                    :count="data?.specialGcRequest?.released"
                                     title="Released GC"
                                 />
                             </Card>
                             <Card title="Adjustment">
                                 <template #badge>
                                     <CardBadge
-                                        :count="data?.adjustment.budget"
+                                        :count="data?.adjustment?.budget"
                                         title="Budget Adjustment"
                                     />
                                     <CardBadge
-                                        :count="data?.adjustment.allocation"
+                                        :count="data?.adjustment?.allocation"
                                         title="Allocation Adjustment"
                                     />
                                 </template>
@@ -166,7 +166,7 @@ const eodList = () => routeTo("transactions.eod", "eodList");
                             <Card title="Promo GC Released">
                                 <template #badge>
                                     <CardBadge
-                                        :count="data?.adjustment.budget"
+                                        :count="data?.adjustment?.budget"
                                         title="Released Gc"
                                     />
                                 </template>

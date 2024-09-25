@@ -16,6 +16,7 @@ use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
 use App\Services\Finance\FinanceDashboardService;
 use App\Services\Treasury\Dashboard\DashboardService;
+use Illuminate\Support\Facades\Date;
 
 class DashboardClass extends DashboardService
 {
@@ -88,14 +89,14 @@ class DashboardClass extends DashboardService
 
         // $query = "SELECT SUM(spgcledger_debit),SUM(spgcledger_credit) FROM ledger_spgc";
 
-		// $query = $link->query($query) or die('unable to query');
-		// $budget_row		= $query->fetch_array();
-		// $debit 	= $budget_row['SUM(spgcledger_debit)'];
-		// $credit = $budget_row['SUM(spgcledger_credit)'];
+        // $query = $link->query($query) or die('unable to query');
+        // $budget_row		= $query->fetch_array();
+        // $debit 	= $budget_row['SUM(spgcledger_debit)'];
+        // $credit = $budget_row['SUM(spgcledger_credit)'];
 
-		// $budget = $debit - $credit;
+        // $budget = $debit - $credit;
 
-		// return $budget;
+        // return $budget;
 
 
         return [
@@ -114,8 +115,8 @@ class DashboardClass extends DashboardService
             ],
             'budgetCounts' => [
                 'curBudget' => $debitTotal - $creditTotal,
-                'dti' => $dtiDebitTotal - $dtiCreditTotal ,
-                'spgc' => $spgcDebitTotal - $spgcreditTotal ,
+                'dti' => $dtiDebitTotal - $dtiCreditTotal,
+                'spgc' => $spgcDebitTotal - $spgcreditTotal,
             ],
 
             'appPromoCount' => PromoGcRequest::with('userReqby')
@@ -143,6 +144,17 @@ class DashboardClass extends DashboardService
         // 	return $budget;
         // }
 
+    }
+    public function budgetRequest()
+    {
+        $data = BudgetRequest::where('br_checked_by', null)
+            ->where('br_requested_by', '!=', '')
+            ->where('br_request_status', '0')
+            ->first();
+        if ($data) {
+            $data->datereq = Date::parse($data->br_requested_at)->toFormattedDateString();
+        }
+        return $data;
     }
     public function marketingDashboard()
     {
