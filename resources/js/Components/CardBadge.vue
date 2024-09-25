@@ -24,7 +24,7 @@ withDefaults(defineProps<Props>(), {
                 <a-button
                     size="small"
                     type="primary"
-                    :disabled="count === 0"
+                    :disabled="count === 0 || count == null"
                     :title="count?.toString()"
                     @click="$emit('event')"
                 >
