@@ -125,4 +125,9 @@ class IadController extends Controller
        return $this->iadServices->updateBudgetRequest($request, $id);
 
     }
+    public function details($id){
+        return response()->json([
+            'record' => $this->iadServices->getDetails($id),
+        ]);
+    }
 }

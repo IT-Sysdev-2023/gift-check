@@ -436,7 +436,12 @@ class IadServices extends FileHandler
 
         if ($update) {
             $stream = $this->generatePdf($request, $id);
-            return redirect()->back()->with(['stream' => $stream, 'success' => 'SuccessFully Submitted!']);
+            return redirect()->back()->with([
+                'stream' => $stream,
+                'msg' => 'SuccessFully Submitted!',
+                'title' => 'Success',
+                'status' => 'success',
+            ]);
         }
     }
 
@@ -476,5 +481,17 @@ class IadServices extends FileHandler
         $this->savePdfFile($request, $bud->br_no, $pdf->output());
 
         return base64_encode($pdf->output());
+    }
+
+    public function getDetails($id)
+    {
+        $budget = BudgetRequest::where('br_id', $id)->first();
+
+        if ($budget) {
+            $budget->requested = Date::parse($budget->br_requested_at)->toFormattedDateString();
+            $budget->reqby = User::select('firstname', 'lastname')->where('user_id', $budget->br_requested_by)->value('full_name');
+        }
+
+        return $budget;
     }
 }

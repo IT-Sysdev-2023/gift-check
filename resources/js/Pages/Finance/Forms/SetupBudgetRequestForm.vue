@@ -1,6 +1,9 @@
 <template>
+    <a-divider>
+        <p style="font-size: 14px; font-weight: bold;"> Budget Form Request</p>
+    </a-divider>
     <a-row :gutter="[16, 16]">
-        <a-col :span="12">
+        <a-col :span="9">
             <strong class="ml-1">
                 Request Status
             </strong>
@@ -11,44 +14,28 @@
                     <a-select-option value="2">Cancel</a-select-option>
                 </a-select>
             </a-form-item>
-            <strong class="ml-1">
-                Check By
-            </strong>
-            <a-input :value="record.reqby" readonly>
-            </a-input>
-            <strong class="ml-1">
-                Approved By
-            </strong>
-            <a-input :value="record.checkby" v-model:value="record.br_checked_by" readonly>
-            </a-input>
 
             <strong class="ml-1">
                 Remarks
             </strong>
             <a-form-item has-feedback :help="errors.br_remarks" :validate-status="errors.br_remarks ? 'error' : ''">
-                <a-textarea placeholder="Remarks" @change="() => errors.br_remarks = null" :row="3"
+                <a-textarea placeholder="Remarks" @change="() => errors.br_remarks = null" :row="4"
                     v-model:value="form.br_remarks" allow-clear show-count />
             </a-form-item>
-
-        </a-col>
-        <a-col :span="12">
-            <strong class="ml-1">
-                Date Approved/Cancel
-            </strong>
-            <a-form-item>
-                <a-input class="text-center" style="font-weight: 600; letter-spacing: -.1px;" readonly
-                    :value="dayjs().format('MMMM DD YY')"></a-input>
-            </a-form-item>
-            <strong class="ml-1">
-                Prepare By
-            </strong>
-            <a-form-item>
-                <a-input class="text-center" style="font-weight: 600; letter-spacing: -.1px;" readonly
-                    :value="$page.props.auth.user.full_name"></a-input>
-            </a-form-item>
-            <div class="flex justify-center">
+            <div class="flex justify-center mt-5">
                 <ant-upload-image @handle-change="image" />
             </div>
+
+        </a-col>
+        <a-col :span="15">
+            <a-descriptions size="small" layout="horizontal" class="mb-1" bordered>
+                <a-descriptions-item label="Approved/Cancel " style="width: 50%;">{{ dayjs().format('MMMM DD, YY')
+                    }}</a-descriptions-item>
+            </a-descriptions>
+            <a-descriptions size="small" layout="horizontal" class="mb-1" bordered>
+                <a-descriptions-item label="Reviewed By " style="width: 50%;">{{ $page.props.auth.user.full_name
+                    }}</a-descriptions-item>
+            </a-descriptions>
             <a-button type="primary" class="mt-4" block @click="submit">
                 <template #icon>
                     <FastForwardOutlined />
@@ -58,8 +45,8 @@
         </a-col>
     </a-row>
     <!-- {{ $page.props.auth.user.user_id }} -->
-    <a-modal v-model:open="open" title="Basic Modal" style="width: 70%;">
-        <iframe :src="stream" frameborder="2" style="width: 100%; height: 300px;"></iframe>
+    <a-modal v-model:open="open" title="Basic Modal" style="width: 70%;" :after-close="close">
+        <iframe :src="stream" frameborder="2" style="width: 100%; height: 500px;"></iframe>
     </a-modal>
 
 </template>
@@ -115,6 +102,10 @@ const submit = () => {
             errors.value = err;
         }
     })
+}
+
+const close = () => {
+    router.visit(route('finance.dashboard'));
 }
 
 const image = (file) => {
