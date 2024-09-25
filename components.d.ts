@@ -243,6 +243,8 @@ declare module 'vue' {
     PendingPromoGcRequest: typeof import('./resources/js/Pages/Finance/PendingPromoGcRequest.vue')['default']
     PendingRequest: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/PendingRequest.vue')['default']
     PendingRequestDetail: typeof import('./resources/js/Pages/Retail/GcRequest/PendingRequestDetail.vue')['default']
+    PicLeftOutlined: typeof import('@ant-design/icons-vue')['PicLeftOutlined']
+    PicRightOutlined: typeof import('@ant-design/icons-vue')['PicRightOutlined']
     PlazaMarcela: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/PlazaMarcela.vue')['default']
     PlusOutlined: typeof import('@ant-design/icons-vue')['PlusOutlined']
     PoweroffOutlined: typeof import('@ant-design/icons-vue')['PoweroffOutlined']
