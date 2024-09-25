@@ -470,7 +470,7 @@ class IadServices extends FileHandler
                 ],
                 'checkedBy' => [
                     'name' => $request->user()->full_name,
-                    'position' => 'Finance Analyst'
+                    'position' => 'Department Head'
                 ]
             ]
         ];

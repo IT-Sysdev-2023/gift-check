@@ -367,6 +367,7 @@ Route::prefix('finance')->group(function () {
             Route::post('budget-submit', [FinanceController::class, 'submitBudget'])->name('submit');
             Route::get('approved-budget', [FinanceController::class, 'approvedBudget'])->name('approved');
             Route::get('approved-budget-details-{id}', [FinanceController::class, 'approvedBudgetDetails'])->name('approved.details');
+            Route::get('reprint-{id}', [FinanceController::class, 'reprint'])->name('reprint');
         });
     });
 
