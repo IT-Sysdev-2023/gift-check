@@ -26,7 +26,7 @@
                         >
                             <a-input v-model:value="currentDate" readonly />
                         </a-form-item>
-                        <a-form-item
+                        <!-- <a-form-item
                             label="Date Needed:"
                             name="dateNeeded"
                             has-feedback
@@ -38,7 +38,7 @@
                                 v-model:value="formState.dateNeeded"
                                 @change="clearError('dateNeeded')"
                             />
-                        </a-form-item>
+                        </a-form-item> -->
                         <a-form-item
                             label="Budget:"
                             name="budget"
@@ -164,10 +164,6 @@ const handleChange = (file: UploadChangeParam) => {
 
 const onSubmit = () => {
     formState
-        .transform((data) => ({
-            ...data,
-            dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
-        }))
         .post(route("treasury.transactions.budgetRequestSubmission"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
