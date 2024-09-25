@@ -439,6 +439,7 @@ Route::prefix('custodian')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+
     Route::prefix('iad')->name('iad.')->group(function () {
         Route::get('receiving-index', [IadController::class, 'receivingIndex'])->name('receiving');
         Route::get('receiving-setup', [IadController::class, 'setupReceiving'])->name('setup.receiving');
@@ -463,7 +464,9 @@ Route::middleware('auth')->group(function () {
             Route::get('review-index', [IadController::class, 'reviewedGcIndex'])->name('special.review');
             Route::get('review-datails-{id}', [IadController::class, 'reviewDetails'])->name('details');
         });
+        Route::put('approve-budget-{id}', [IadController::class, 'approveBudget'])->name('approve');
     });
+
 });
 
 Route::prefix('search')->group(function () {

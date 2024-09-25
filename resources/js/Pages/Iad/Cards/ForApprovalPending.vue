@@ -1,5 +1,5 @@
 <template>
-    <a-card>
+    <a-card v-if="budget">
         <div class="flex justify-between">
             <div>
                 <a-space>
@@ -11,13 +11,10 @@
                 </a-space>
             </div>
             <div class="ml-2 mr-2">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem amet error libero suscipit debitis ipsam
-                impedit,
-                dignissimos officiis cupiditate minus ad! Temporibus ex doloremque, ducimus corrupti animi cupiditate
-                odit optio!
+                {{ budget?.br_remarks }} - {{ budget?.datereq }}
             </div>
             <div class="animate-pulse">
-                <a-button>
+                <a-button @click="approve(budget?.br_id)">
                     <template #icon>
                         <LikeOutlined />
                     </template>
@@ -25,8 +22,30 @@
             </div>
         </div>
     </a-card>
+
+    <a-modal v-model:open="open" title="Basic Modal" style="width: 60%;">
+        <iframe :src="stream" frameborder="2" style="width: 100%; height: 400px;" ></iframe>
+    </a-modal>
+
 </template>
 
 <script setup>
+import { router } from '@inertiajs/core';
+import { ref } from 'vue';
 
+const props = defineProps({
+    budget: Object
+});
+const stream = ref();
+const open = ref(false);
+
+const approve = (id) => {
+    router.put(route('iad.approve', id), {
+    }, {
+        onSuccess: (res) => {
+            stream.value = `data:application/pdf;base64,${res.props.flash.stream}`;
+            open.value = true;
+        }
+    })
+}
 </script>

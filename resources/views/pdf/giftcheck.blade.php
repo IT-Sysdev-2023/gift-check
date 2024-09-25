@@ -15,7 +15,7 @@
             </div>
             <div class="title">
                 <h1>Gift Check Monitoring System</h1>
-                
+
             </div>
         </header>
         <h4 class="subtitle">{{$data['subtitle']}}</h4>
@@ -49,7 +49,7 @@
                 @endif
             </table>
         </section>
-        
+
         @if(!empty($data['barcode']))
         <section class="table-section">
             <table class="denomination-table">
@@ -62,10 +62,10 @@
                 <tbody>
                     @foreach ($data['barcode'] as $denom)
                     <tr>
-                        
+
                         <td>Php {{$denom['denomination']}}</td>
                         <td>{{$denom['qty']}}</td>
-                       
+
                     </tr>
                     @endforeach
                 </tbody>
@@ -73,20 +73,20 @@
         </section>
         @endif
 
-        <section class="signatures clearfix">
+    
 
-            @foreach ($data['signatures'] as $sig => $val)
-                <p>{{Str::headline($sig)}}:</p>
-                <div class="signature-block">
-                    <h3 style="text-decoration: underline;">{{ $val['name']}}</h3>
-                    <p>{{$val['position']}}</p>
-                </div>
-            @endforeach
+        <table class="signature-table">
+            <tr>
+                @foreach($data['signatures'] as $title => $name)
+                <td>
+                    <p class="signature-label">{{ Str::headline($title) }}:</p>
+                    <p style="text-decoration: underline;"><strong>{{ $name['name'] }}</strong></p>
+                    <div class="signature-line">{{$name['position']}}</div>
+                </td>
+                @endforeach
+            </tr>
+        </table>
 
-
-            
-        </section>
-        
 
         <footer>
             <p>Alturas Group of Companies</p>
@@ -125,6 +125,26 @@ header {
     padding-top: 20px;
     text-transform: uppercase;
 }
+.signature-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+    }
+
+    .signature-table td {
+        width: 33%;
+        text-align: center;
+        vertical-align: top;
+        padding-top: 30px;
+    }
+    .signatures {
+        width: 100%;
+        margin-top: 50px;
+    }
+    .signature-label{
+        text-align: left;
+        padding-bottom: 15px
+    }
 .company-logo {
     text-align: right; /* Aligns the content to the right */
 }
