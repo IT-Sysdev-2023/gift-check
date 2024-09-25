@@ -39,7 +39,7 @@
                         <a-form-item label="Date Requested:" name="name">
                             <a-input v-model:value="currentDate" readonly />
                         </a-form-item>
-                        <a-form-item
+                        <!-- <a-form-item
                             label="Date Needed:"
                             name="name"
                             has-feedback
@@ -51,7 +51,7 @@
                                 v-model:value="formState.dateNeeded"
                                 @change="clearError('dateNeeded')"
                             />
-                        </a-form-item>
+                        </a-form-item> -->
                         <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                             :help="getErrorMessage('file')">
                             <ant-upload-image @handle-change="handleChange" />

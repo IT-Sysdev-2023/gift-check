@@ -71,4 +71,21 @@ class LedgerBudget extends Model
     {
         return NumberHelper::currency((float) self::budget());
     }
+
+    public static function specialBudget()
+    {
+        $query = self::select(DB::raw('SUM(bdebit_amt) as debit'), DB::raw('SUM(bcredit_amt) as credit'))
+            ->where('bledger_category', 'special')
+            ->whereNot('bcus_guide', 'dti')->first();
+
+        return bcsub($query->debit, $query->credit, 2);
+    }
+    public static function regularBudget()
+    {
+        $query = self::select(DB::raw('SUM(bdebit_amt) as debit'), DB::raw('SUM(bcredit_amt) as credit'))
+            ->where('bledger_category', 'regular')
+            ->whereNot('bcus_guide', 'dti')->first();
+
+        return bcsub($query->debit, $query->credit, 2);
+    }
 }

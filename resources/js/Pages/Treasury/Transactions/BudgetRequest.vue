@@ -96,13 +96,13 @@
                                 <a-col :span="8">
                                     <a-statistic
                                         title="Regular Gc Budget"
-                                        :value="remainingBudget"
+                                        :value="regularBudget"
                                     />
                                 </a-col>
                                 <a-col :span="8">
                                     <a-statistic
                                         title="Special Gc Budget"
-                                        :value="remainingBudget"
+                                        :value="specialBudget"
                                     />
                                 </a-col>
                                 <a-col :span="8">
@@ -164,6 +164,8 @@ interface FormStateGc {
 const props = defineProps<{
     title?: string;
     remainingBudget: string;
+    regularBudget: string
+    specialBudget: string
     br: string;
 }>();
 

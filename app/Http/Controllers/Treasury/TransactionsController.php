@@ -32,7 +32,8 @@ class TransactionsController extends Controller
             'title' => 'Budget Request',
             'br' => NumberHelper::leadingZero($br + 1),
             'remainingBudget' => LedgerBudget::currentBudget(),
-
+            'regularBudget' => LedgerBudget::regularBudget(),
+            'specialBudget' => LedgerBudget::specialBudget()
         ]);
     }
 
