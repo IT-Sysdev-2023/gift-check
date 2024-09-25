@@ -78,7 +78,7 @@ class LedgerBudget extends Model
             ->where('bledger_category', 'special')
             ->whereNot('bcus_guide', 'dti')->first();
 
-        return bcsub($query->debit, $query->credit, 2);
+        return NumberHelper::currency((float) bcsub($query->debit, $query->credit, 2));
     }
     public static function regularBudget()
     {
@@ -86,6 +86,6 @@ class LedgerBudget extends Model
             ->where('bledger_category', 'regular')
             ->whereNot('bcus_guide', 'dti')->first();
 
-        return bcsub($query->debit, $query->credit, 2);
+        return NumberHelper::currency( (float) bcsub($query->debit, $query->credit, 2));
     }
 }

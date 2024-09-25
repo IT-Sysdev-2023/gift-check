@@ -28,6 +28,11 @@ class DashboardClass extends DashboardService
     public function treasuryDashboard()
     {
         return [
+            'budget' => (object) [
+                'totalBudget' => $this->budget(),
+                'regularBudget' => LedgerBudget::regularBudget(),
+                'specialBudget' => LedgerBudget::specialBudget(),
+            ],
             'budgetRequest' => $this->budgetRequest(),
             'storeGcRequest' => $this->storeGcRequest(),
             'promoGcReleased' => PromoGcReleaseToDetail::count(),
@@ -35,7 +40,7 @@ class DashboardClass extends DashboardService
             'gcProductionRequest' => $this->gcProductionRequest(),
             'adjustment' => $this->adjustments(),
             'specialGcRequest' => $this->specialGcRequest(), //Duplicated above use Spatie Permission instead
-            'budget' => $this->budget(),
+            
             'eod' => InstitutEod::count(),
             'productionRequest' => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
         ];
