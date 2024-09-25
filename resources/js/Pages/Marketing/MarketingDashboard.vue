@@ -5,8 +5,8 @@
             <GcProductionReq :gcProductionRequest />
         </a-col>
         <a-col :span="8">
-            <SpecialExternalGc />
-            <PromoGcReceived />
+            <!-- <SpecialExternalGc />
+            <PromoGcReceived /> -->
         </a-col>
         <a-col :span="8">
             <div class="mb-2">

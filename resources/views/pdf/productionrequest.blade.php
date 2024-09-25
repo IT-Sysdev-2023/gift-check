@@ -113,10 +113,6 @@
                     <td>{{$data['dateRequested']}}</td>
                 </tr>
                 <tr>
-                    <th>Date Needed</th>
-                    <td>{{$data['dateNeeded']}}</td>
-                </tr>
-                <tr>
                     <th>Budget</th>
                     <td>{{$data['currentBudget']}}</td>
                 </tr>

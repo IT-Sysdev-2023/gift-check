@@ -89,6 +89,8 @@ class MarketingController extends Controller
     public function index(Request $request)
     {
 
+        $dashboard = '';
+
         $promoGcRequest = $this->marketing->promoGcRequest();
         $gcProductionRequest = $this->marketing->productionRequest();
         $supplier = Supplier::where('gcs_status', 1)->get();
@@ -107,7 +109,15 @@ class MarketingController extends Controller
         $query = RequisitionEntry::orderByDesc('requis_erno')->first();
         $getRequestNo = intval($query->requis_erno) + 1;
         $getRequestNo = sprintf('%04d', $getRequestNo);
-        return Inertia::render(('Marketing/MarketingDashboard'), [
+
+        if ($request->user()->user_role == 1) {
+            $dashboard = 'CheckerDashboard';
+        } elseif ($request->user()->user_role == 2) {
+            $dashboard = 'ApproveeDashboard';
+        } elseif ($request->user()->user_role == 0) {
+            $dashboard = 'MarketingDashboard';
+        }
+        return Inertia::render(('Marketing/' . $dashboard), [
             'getRequestNo' => $getRequestNo,
             'ReqNum' => $requestNum,
             'currentBudget' => $currentBudget,
@@ -1166,7 +1176,7 @@ class MarketingController extends Controller
 
     public function submitReqForm(Request $request)
     {
-       
+
         if ($request->data['finalize'] == 1) {
 
             if (
@@ -1316,13 +1326,9 @@ class MarketingController extends Controller
         }
     }
 
-    
+
     public function pendingRequest(Request $request)
     {
-        $checkedBy = Assignatory::where('assig_dept', $request->user()->usertype)
-            ->orWhere('assig_dept', 1)
-            ->get();
-
         $productionBarcode = self::productionRequest($request->id);
 
         $productionBarcode->transform(function ($item) {
@@ -1357,7 +1363,6 @@ class MarketingController extends Controller
             return $item;
         });
 
-
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['PR No', 'Date Request', 'Total Amount', 'Date Needed', 'Requested By', 'Department', 'Action'],
@@ -1378,111 +1383,84 @@ class MarketingController extends Controller
             'columns' => ColumnHelper::getColumns($columns),
             'barcodes' => $productionBarcode,
             'barcodeColumns' => ColumnHelper::getColumns($barcodeColumns),
-            'checkedBy' => $checkedBy
-
         ]);
     }
 
     public function submitPendingRequest(Request $request)
     {
-
-
-
-
-
         $prid = $request->data['id'];
+
         if ($request->data['status'] == '1') {
-            if ($request->data['status'] == null || $request->data['remarks'] == null || $request->data['checkedBy'] == null || $request->data['preparedById'] == null) {
-                return back()->with([
-                    'type' => 'error',
-                    'msg' => 'Opps!',
-                    'description' => 'Please fill all required fields'
-                ]);
-            } else {
-                $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
-                $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
+            if ($request->user()->user_role === 1) {
+                $alreadyApproved = ApprovedProductionRequest::where('ape_pro_request_id', $prid)->exists();
+                if ($alreadyApproved) {
+                    return back()->with([
+                        'type' => 'warning',
+                        'msg' => 'Warning!',
+                        'description' => 'Production request already checked'
+                    ]);
+                }
 
-                $query = ProductionRequest::select(
-                    'production_request.pe_id',
-                    'users.firstname',
-                    'users.lastname',
-                    'production_request.pe_file_docno',
-                    'production_request.pe_date_needed',
-                    'production_request.pe_remarks',
-                    'production_request.pe_num',
-                    'production_request.pe_date_request',
-                    'production_request.pe_type',
-                    'production_request.pe_group',
-                    'access_page.title'
-                )
-                    ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
-                    ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
-                    ->where('production_request.pe_id', $request->data['id'])
-                    ->where('production_request.pe_status', 0)
-                    ->get();
+                if ($request->data['status'] == null || $request->data['checkedBy'] == null) {
+                    return back()->with([
+                        'type' => 'error',
+                        'msg' => 'Opps!',
+                        'description' => 'Please fill all required fields'
+                    ]);
+                } else {
+                    $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
+                    $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
 
-                $insertLedgerBudget = LedgerBudget::create([
-                    'bledger_no' => $ledgerNumber,
-                    'bledger_trid' => $prid,
-                    'bledger_datetime' => now(),
-                    'bledger_type' => 'RFGCP',
-                    'bcredit_amt' => $request->data['total'],
-                    'bledger_typeid' => $query[0]->pe_type,
-                    'bledger_group' => $query[0]->pe_group
-                ]);
+                    $query = ProductionRequest::select(
+                        'production_request.pe_id',
+                        'users.firstname',
+                        'users.lastname',
+                        'production_request.pe_file_docno',
+                        'production_request.pe_date_needed',
+                        'production_request.pe_remarks',
+                        'production_request.pe_num',
+                        'production_request.pe_date_request',
+                        'production_request.pe_type',
+                        'production_request.pe_group',
+                        'access_page.title'
+                    )
+                        ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
+                        ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
+                        ->where('production_request.pe_id', $request->data['id'])
+                        ->where('production_request.pe_status', 0)
+                        ->get();
 
-                if ($insertLedgerBudget) {
-                    $insertApprovedRequest = ApprovedProductionRequest::create([
-                        'ape_pro_request_id' => $prid,
-                        'ape_approved_by' => $request->data['approvedBy'],
-                        'ape_checked_by' => $request->data['checkedBy'],
-                        'ape_remarks' => $request->data['remarks'],
-                        'ape_approved_at' => now(),
-                        'ape_file_doc_no' => '',
-                        'ape_preparedby' => $request->user()->user_id,
-                        'ape_ledgernum' => $ledgerNumber
+                    $insertLedgerBudget = LedgerBudget::create([
+                        'bledger_no' => $ledgerNumber,
+                        'bledger_trid' => $prid,
+                        'bledger_datetime' => now(),
+                        'bledger_type' => 'RFGCP',
+                        'bcredit_amt' => $request->data['total'],
+                        'bledger_typeid' => $query[0]->pe_type,
+                        'bledger_group' => $query[0]->pe_group
                     ]);
 
-                    if ($insertApprovedRequest) {
-                        if (ProductionRequest::where('pe_id', $prid)->value('pe_status') == 0) {
-                            $isApproved = ProductionRequest::where('pe_id', $prid)
-                                ->where('pe_status', '0')
-                                ->update([
-                                    'pe_status' => $request->data['status']
-                                ]);
 
-                            if ($isApproved) {
-                                $this->RegularGc->approveProductionRequest($request, $prid);
 
-                                $barcodes = $request->barcode;
-                                $data = [
-                                    'pr_no' => $request->data['pe_no'],
-                                    'dateRequested' => $request->data['dateRequested'],
-                                    'dateNeeded' => $request->data['dateNeeded'],
-                                    'currentBudget' => $this->marketing->currentBudget(),
-                                    'Remarks' => $request->data['InputRemarks'],
-                                    'checkby' => $request->data['checkedBy'],
-                                    'approvedBy' => $request->data['approvedBy'],
-                                    'preparedBy' => $request->data['preparedBy']
-                                ];
+                    if ($insertLedgerBudget) {
+                        $insertApprovedRequest = ApprovedProductionRequest::create([
+                            'ape_pro_request_id' => $prid,
+                            'ape_approved_by' => null,
+                            'ape_checked_by' => $request->user()->full_name,
+                            'ape_remarks' => $request->data['remarks'],
+                            'ape_approved_at' => now(),
+                            'ape_file_doc_no' => '',
+                            'ape_preparedby' => null,
+                            'ape_ledgernum' => $ledgerNumber
+                        ]);
 
-                                $pdf = Pdf::loadView('pdf/productionrequest', [
-                                    'data' => $data,
-                                    'barcodes' => $barcodes
-                                ])
-                                    ->setPaper('A4');
+                        if ($insertApprovedRequest) {
+                            return back()->with([
+                                'type' => 'success',
+                                'msg' => 'nice!',
+                                'description' => 'Production request checked Successfully'
+                            ]);
 
-                                $fileName = $data['pr_no'] . '.pdf';
-
-                                $store = Storage::disk('public');
-
-                                $store->put('approvalform/' . $fileName, $pdf->output());
-
-                                return redirect()->back()->with([
-                                    'type' => 'success',
-                                    'stream' => base64_encode($pdf->output())
-                                ]);
-                            }
                         } else {
                             return back()->with([
                                 'type' => 'error',
@@ -1490,6 +1468,117 @@ class MarketingController extends Controller
                                 'description' => 'Production request already approved/cancelled'
                             ]);
                         }
+                    }
+                }
+            } elseif ($request->user()->user_role === 2) {
+
+                $q = ApprovedProductionRequest::where('ape_pro_request_id', $prid)->exists();
+
+                if (!$q) {
+                    return back()->with([
+                        'type' => 'warning',
+                        'msg' => 'Warning!',
+                        'description' => 'This pending production request has not yet been checked. Please contact the authorized personnel for verification.'
+                    ]);
+                }
+
+                if (
+                    ApprovedProductionRequest::where('ape_pro_request_id', $prid)
+                        ->where('ape_approved_by', '<>', '')->exists()
+                ) {
+                    return back()->with([
+                        'type' => 'warning',
+                        'msg' => 'Warning!',
+                        'description' => 'Production request already approved'
+                    ]);
+                }
+                $approved = ApprovedProductionRequest::where('ape_pro_request_id', $prid)
+                    ->update(['ape_approved_by' => $request->user()->full_name]);
+
+                if ($approved) {
+                    return back()->with([
+                        'type' => 'success',
+                        'msg' => 'Nice!',
+                        'description' => 'Production request approved successfully'
+                    ]);
+                }
+            } elseif ($request->user()->user_role === 0) {
+
+
+                if ($request->data['InputRemarks'] == null) {
+                    return back()->with([
+                        'type' => 'error',
+                        'msg' => 'Opps!',
+                        'description' => 'Please fill all required fields'
+                    ]);
+                }
+                if ($request->data['checkedBy'] == null) {
+                    return back()->with([
+                        'type' => 'warning',
+                        'msg' => 'Warning!',
+                        'description' => '`Checked By` is Empty please contact the authorized personel to check this production request'
+                    ]);
+                } elseif ($request->data['approvedBy'] == null) {
+                    return back()->with([
+                        'type' => 'warning',
+                        'msg' => 'Warning!',
+                        'description' => '`Approved By` is Empty please contact the authorized personel to approve this production request'
+                    ]);
+                }
+
+                $insertApprovedRequest = ApprovedProductionRequest::where('ape_pro_request_id', $prid)
+                    ->update([
+                        'ape_preparedby' => $request->user()->user_id
+                    ]);
+
+                if ($insertApprovedRequest) {
+                    if (ProductionRequest::where('pe_id', $prid)->value('pe_status') == 0) {
+                        $isApproved = ProductionRequest::where('pe_id', $prid)
+                            ->where('pe_status', '0')
+                            ->update([
+                                'pe_status' => $request->data['status']
+                            ]);
+
+                        if ($isApproved) {
+                            $this->RegularGc->approveProductionRequest($request, $prid);
+
+                            $barcodes = $request->barcode;
+
+
+                            $data = [
+                                'pr_no' => $request->data['pe_no'],
+                                'dateRequested' => $request->data['dateRequested'],
+                                'dateNeeded' => $request->data['dateNeeded'],
+                                'currentBudget' => $this->marketing->currentBudget(),
+                                'Remarks' => $request->data['InputRemarks'],
+                                'checkby' => strtoupper($request->data['checkedBy']),
+                                'approvedBy' => strtoupper($request->data['approvedBy']),
+                                'preparedBy' => strtoupper($request->data['preparedBy'])
+                            ];
+
+                            $pdf = Pdf::loadView('pdf/productionrequest', [
+                                'data' => $data,
+                                'barcodes' => $barcodes
+                            ])
+                                ->setPaper('A4');
+
+                            $fileName = $data['pr_no'] . '.pdf';
+
+                            $store = Storage::disk('public');
+
+                            $store->put('approvalform/' . $fileName, $pdf->output());
+
+                            return redirect()->back()->with([
+                                'type' => 'success',
+                                'stream' => base64_encode($pdf->output())
+                            ]);
+                        }
+                    } else {
+                        return back()->with([
+                            'type' => 'error',
+                            'msg' => 'Opps!',
+                            'description' => 'Production request already approved/cancelled'
+                        ]);
                     }
                 }
             }
@@ -1829,5 +1918,148 @@ class MarketingController extends Controller
             'approvedRequests' => $approvedRequests
         ]);
 
+    }
+
+    public function checkerpendingRequest(Request $request)
+    {
+        $productionBarcode = self::productionRequest($request->id);
+
+        $productionBarcode->transform(function ($item) {
+            $item->total = $item->denomination * $item->pe_items_quantity;
+            return $item;
+        });
+
+
+
+        $pendingRequests = ProductionRequest::where('pe_status', '0')
+            ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
+            ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
+            ->get();
+
+        $pendingRequests->transform(function ($item) {
+
+            $dateReq = Date::parse($item->pe_date_request)->format('F d, Y');
+            $dateneed = Date::parse($item->pe_date_needed)->format('F d, Y');
+            $requestId = $item->pe_id;
+            $firstname = $item->firstname;
+            $lastname = $item->lastname;
+            $requestedBy = ucwords($firstname . ' ' . $lastname);
+            $total = ProductionRequestItem::join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+                ->where('production_request_items.pe_items_request_id', $requestId)
+                ->select(DB::raw('SUM(denomination.denomination * production_request_items.pe_items_quantity) as total'))
+                ->value('total');
+            $item->dateReq = $dateReq;
+            $item->dateneed = $dateneed;
+            $item->requestedBy = $requestedBy;
+            $item->total = $total;
+
+            return $item;
+        });
+
+
+        $columns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['PR No', 'Date Request', 'Total Amount', 'Date Needed', 'Requested By', 'Department', 'Action'],
+            ['pe_num', 'dateReq', 'total', 'dateneed', 'requestedBy', 'title', 'View']
+        );
+
+
+        $barcodeColumns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Denomination', 'Quantity', ''],
+            ['denomination', 'pe_items_quantity', 'total']
+        );
+
+
+
+        return Inertia::render('Marketing/gcproductionrequest/CheckerPendingRequest', [
+            'data' => $pendingRequests,
+            'columns' => ColumnHelper::getColumns($columns),
+            'barcodes' => $productionBarcode,
+            'barcodeColumns' => ColumnHelper::getColumns($barcodeColumns)
+
+        ]);
+    }
+
+    public function approvependingRequest(Request $request)
+    {
+
+
+        $productionBarcode = self::productionRequest($request->id);
+
+        $productionBarcode->transform(function ($item) {
+            $item->total = $item->denomination * $item->pe_items_quantity;
+            return $item;
+        });
+
+
+
+        $pendingRequests = ProductionRequest::where('pe_status', '0')
+            ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
+            ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
+            ->get();
+
+        $pendingRequests->transform(function ($item) {
+
+            $dateReq = Date::parse($item->pe_date_request)->format('F d, Y');
+            $dateneed = Date::parse($item->pe_date_needed)->format('F d, Y');
+            $requestId = $item->pe_id;
+            $firstname = $item->firstname;
+            $lastname = $item->lastname;
+            $requestedBy = ucwords($firstname . ' ' . $lastname);
+            $total = ProductionRequestItem::join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+                ->where('production_request_items.pe_items_request_id', $requestId)
+                ->select(DB::raw('SUM(denomination.denomination * production_request_items.pe_items_quantity) as total'))
+                ->value('total');
+            $item->dateReq = $dateReq;
+            $item->dateneed = $dateneed;
+            $item->requestedBy = $requestedBy;
+            $item->total = $total;
+
+            return $item;
+        });
+
+
+        $columns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['PR No', 'Date Request', 'Total Amount', 'Date Needed', 'Requested By', 'Department', 'Action'],
+            ['pe_num', 'dateReq', 'total', 'dateneed', 'requestedBy', 'title', 'View']
+        );
+
+
+        $barcodeColumns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Denomination', 'Quantity', ''],
+            ['denomination', 'pe_items_quantity', 'total']
+        );
+
+
+
+        return Inertia::render('Marketing/gcproductionrequest/approvePendingRequest', [
+            'data' => $pendingRequests,
+            'columns' => ColumnHelper::getColumns($columns),
+            'barcodes' => $productionBarcode,
+            'barcodeColumns' => ColumnHelper::getColumns($barcodeColumns)
+        ]);
+    }
+
+
+    public function getSigners(Request $request)
+    {
+
+        $query = ApprovedProductionRequest::where('ape_pro_request_id', $request['id'])->first();
+        return response()->json([
+            'response' => $query
+        ]);
+    }
+
+    public function getChecker(Request $request)
+    {
+    
+        $query=ApprovedProductionRequest::where('ape_pro_request_id',$request->data)->first();
+       
+        return response()->json([
+            'checkedBy' => $query
+        ]);
     }
 }

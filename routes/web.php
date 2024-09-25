@@ -139,6 +139,10 @@ Route::prefix('marketing')->group(function () {
         });
         Route::name('pendingRequest.')->group(function () {
             Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
+            Route::get('checker-pending-request', [MarketingController::class, 'checkerpendingRequest'])->name('checker.pending.request');
+            Route::get('approve-pending-request', [MarketingController::class, 'approvependingRequest'])->name('approve.pending.request');
+            Route::get('getSigners', [MarketingController::class, 'getSigners'])->name('getSigners');
+            Route::get('getChecker', [MarketingController::class, 'getChecker'])->name('getChecker');
             Route::post('submit-request', [MarketingController::class, 'submitPendingRequest'])->name('submit.request');
         });
         Route::name('approvedRequest.')->group(function () {

@@ -32,17 +32,8 @@
                         <a-form-item label="Date Approved">
                             <a-input v-model:value="form.dateApproved" readonly />
                         </a-form-item>
-                        <a-form-item label="Remarks:" name="remarks">
-                            <a-textarea v-model:value="form.InputRemarks" />
-                        </a-form-item>
-                        <a-form-item label="Checked By:">
-                            <a-input v-model:value="form.checkedBy" readonly/>
-                        </a-form-item>
-                        <a-form-item label="Approved By:">
-                            <a-input v-model:value="form.approvedBy" readonly/>
-                        </a-form-item>
-                        <a-form-item label="Prepared By">
-                            <a-input v-model:value="form.preparedBy" readonly />
+                        <a-form-item label="Checked By">
+                            <a-input v-model:value="form.checkedByName" readonly />
                         </a-form-item>
                     </div>
                     <div v-if="form.status == '2'">
@@ -50,7 +41,7 @@
                             <a-input v-model:value="form.dateApproved" readonly />
                         </a-form-item>
                         <a-form-item label="Cancelled By">
-                            <a-input v-model:value="form.preparedBy" readonly />
+                            <a-input v-model:value="form.checkedByName" readonly />
                         </a-form-item>
                     </div>
                 </a-card>
@@ -100,7 +91,6 @@
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
 import { PicRightOutlined } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue';
-import axios from "axios";
 import dayjs from "dayjs";
 
 export default {
@@ -129,11 +119,9 @@ export default {
                 requestedById: '',
                 total: '',
                 status: '1',
-                checkedBy: '',
-                approvedBy: '',
-                preparedById: this.$page.props.auth.user.user_id,
-                preparedBy: this.$page.props.auth.user.full_name,
-                dateApproved: dayjs(),
+                checkedBy: this.$page.props.auth.user.user_id,
+                checkedByName: this.$page.props.auth.user.full_name,
+                dateApproved: dayjs().format('MMMM DD, YYYY'),
                 dateCancelled: dayjs(),
             }
         }
@@ -143,17 +131,6 @@ export default {
             this.selectedRow(record);
         },
         selectedRow(data) {
-            axios.get(route('marketing.pendingRequest.getSigners'), {
-                params: {
-                    id: this.data[0]?.pe_id,
-                }
-            }).then((response) => {
-                this.form.checkedBy = response.data.response.ape_checked_by;
-                this.form.approvedBy = response.data.response.ape_approved_by;
-            });
-
-
-
             this.open = true;
             this.form.pe_no = data.pe_num;
             this.form.department = data.title;
@@ -164,7 +141,7 @@ export default {
             this.form.requestedById = data.pe_requested_by;
             this.form.total = data.total;
             this.form.dateneed = data.dateneed;
-            this.$inertia.get(route('marketing.pendingRequest.pending.request'), {
+            this.$inertia.get(route('marketing.pendingRequest.checker.pending.request'), {
                 id: data?.pe_id
             }, {
                 preserveState: true
@@ -176,20 +153,12 @@ export default {
                 barcode: this.barcodes
             }, {
                 onSuccess: (response) => {
-                    if (response.props.flash.type == 'success') {
-                        this.open = false;
-                        this.stream = `data:application/pdf;base64,${response.props.flash.stream}`;
-                        this.openIframe = true;
-
-                    } else {
-                        notification[response.props.flash.type]({
-                            message: response.props.flash.msg,
-                            description: response.props.flash.description,
-                        });
-                    }
-
+                    notification[response.props.flash.type]({
+                        message: response.props.flash.msg,
+                        description: response.props.flash.description,
+                    });
+                    this.$inertia.get(route('marketing.dashboard'))
                 },
-                preserveState: true
             })
         },
         closeModal() {
