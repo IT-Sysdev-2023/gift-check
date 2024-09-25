@@ -127,6 +127,7 @@ class FinanceService extends FileHandler
                 'bdebit_amt' => $request->br_req,
                 'bledger_typeid' => $request->br_budtype,
                 'bledger_group' => $request->br_group,
+                'bledger_category' => $request->br_category
             ]);
 
             ApprovedBudgetRequest::create([

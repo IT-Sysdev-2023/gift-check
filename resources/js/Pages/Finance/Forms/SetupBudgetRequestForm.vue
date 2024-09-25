@@ -70,6 +70,7 @@ const open = ref(false);
 const stream = ref('');
 
 const form = useForm({
+    br_category: props.record.br_category,
     br_id: props.record.br_id,
     br_select: null,
     br_checkby: props.record.br_requested_by,
