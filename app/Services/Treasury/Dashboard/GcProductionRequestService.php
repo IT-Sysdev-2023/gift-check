@@ -152,11 +152,11 @@ class GcProductionRequestService extends FileHandler
     {
 
         $request->validate([
-            'dateNeeded' => 'required',
+            // 'dateNeeded' => 'required',
             'remarks' => 'required',
             'denom' => ['required', 'array', new DenomQty()],
         ]);
-
+     
         DB::transaction(function () use ($request) {
 
             $file = $this->createFileName($request);

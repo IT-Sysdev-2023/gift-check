@@ -17,15 +17,21 @@ declare module 'vue' {
     ACard: typeof import('ant-design-vue/es')['Card']
     AccountingSideBar: typeof import('./resources/js/Components/AccountingSideBar.vue')['default']
     ACol: typeof import('ant-design-vue/es')['Col']
+<<<<<<< HEAD
     ACollapse: typeof import('ant-design-vue/es')['Collapse']
     ACollapsePanel: typeof import('ant-design-vue/es')['CollapsePanel']
+=======
+>>>>>>> 282faba95e7f82b6fefaa8be507cb01fbc927e9e
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     ADatePicker: typeof import('ant-design-vue/es')['DatePicker']
     AddNewPromo: typeof import('./resources/js/Pages/Marketing/AddNewPromo.vue')['default']
     AddOrderDetails: typeof import('./resources/js/Pages/Admin/Tabs/AddOrderDetails.vue')['default']
     ADescriptions: typeof import('ant-design-vue/es')['Descriptions']
     ADescriptionsItem: typeof import('ant-design-vue/es')['DescriptionsItem']
+<<<<<<< HEAD
     ADivider: typeof import('ant-design-vue/es')['Divider']
+=======
+>>>>>>> 282faba95e7f82b6fefaa8be507cb01fbc927e9e
     AdminDashboard: typeof import('./resources/js/Pages/Admin/AdminDashboard.vue')['default']
     AdminSidebar: typeof import('./resources/js/Components/AdminSidebar.vue')['default']
     ADrawer: typeof import('ant-design-vue/es')['Drawer']
@@ -39,7 +45,10 @@ declare module 'vue' {
     AInput: typeof import('ant-design-vue/es')['Input']
     AInputGroup: typeof import('ant-design-vue/es')['InputGroup']
     AInputNumber: typeof import('ant-design-vue/es')['InputNumber']
+<<<<<<< HEAD
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
+=======
+>>>>>>> 282faba95e7f82b6fefaa8be507cb01fbc927e9e
     AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
     ALayout: typeof import('ant-design-vue/es')['Layout']
     ALayoutContent: typeof import('ant-design-vue/es')['LayoutContent']
@@ -106,8 +115,11 @@ declare module 'vue' {
     ASubMenu: typeof import('ant-design-vue/es')['SubMenu']
     ASwitch: typeof import('ant-design-vue/es')['Switch']
     ATable: typeof import('ant-design-vue/es')['Table']
+<<<<<<< HEAD
     ATableSummaryCell: typeof import('ant-design-vue/es')['TableSummaryCell']
     ATableSummaryRow: typeof import('ant-design-vue/es')['TableSummaryRow']
+=======
+>>>>>>> 282faba95e7f82b6fefaa8be507cb01fbc927e9e
     ATabPane: typeof import('ant-design-vue/es')['TabPane']
     ATabs: typeof import('ant-design-vue/es')['Tabs']
     ATag: typeof import('ant-design-vue/es')['Tag']
@@ -119,7 +131,10 @@ declare module 'vue' {
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
     AuditOutlined: typeof import('@ant-design/icons-vue')['AuditOutlined']
     AUpload: typeof import('ant-design-vue/es')['Upload']
+<<<<<<< HEAD
     AUploadDragger: typeof import('ant-design-vue/es')['UploadDragger']
+=======
+>>>>>>> 282faba95e7f82b6fefaa8be507cb01fbc927e9e
     AuthenticatedLayout: typeof import('./resources/js/Layouts/AuthenticatedLayout.vue')['default']
     AvailableGc: typeof import('./resources/js/Pages/Retail/Cards/AvailableGc.vue')['default']
     AvailableGcTable: typeof import('./resources/js/Pages/Retail/AvailableGcTable.vue')['default']
@@ -176,6 +191,7 @@ declare module 'vue' {
     Errors: typeof import('./resources/js/Pages/Finance/Cards/Errors.vue')['default']
     ExclamationCircleFilled: typeof import('@ant-design/icons-vue')['ExclamationCircleFilled']
     ExclamationCircleOutlined: typeof import('@ant-design/icons-vue')['ExclamationCircleOutlined']
+<<<<<<< HEAD
     EyeFilled: typeof import('@ant-design/icons-vue')['EyeFilled']
     EyeOutlined: typeof import('@ant-design/icons-vue')['EyeOutlined']
     FarmersMarket: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/FarmersMarket.vue')['default']
@@ -184,6 +200,12 @@ declare module 'vue' {
     FileExcelOutlined: typeof import('@ant-design/icons-vue')['FileExcelOutlined']
     FileOutlined: typeof import('@ant-design/icons-vue')['FileOutlined']
     FileProtectOutlined: typeof import('@ant-design/icons-vue')['FileProtectOutlined']
+=======
+    EyeOutlined: typeof import('@ant-design/icons-vue')['EyeOutlined']
+    FarmersMarket: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/FarmersMarket.vue')['default']
+    FileExcelOutlined: typeof import('@ant-design/icons-vue')['FileExcelOutlined']
+    FileOutlined: typeof import('@ant-design/icons-vue')['FileOutlined']
+>>>>>>> 282faba95e7f82b6fefaa8be507cb01fbc927e9e
     FileSearchOutlined: typeof import('@ant-design/icons-vue')['FileSearchOutlined']
     FileSyncOutlined: typeof import('@ant-design/icons-vue')['FileSyncOutlined']
     FileTextOutlined: typeof import('@ant-design/icons-vue')['FileTextOutlined']
@@ -271,6 +293,7 @@ declare module 'vue' {
     ProgressHeader: typeof import('./resources/js/Components/Finance/ProgressHeader.vue')['default']
     PromoForApproval: typeof import('./resources/js/Pages/Finance/Cards/PromoForApproval.vue')['default']
     PromoGcCard: typeof import('./resources/js/Pages/Finance/Cards/PromoGcCard.vue')['default']
+    PromoGCCard: typeof import('./resources/js/Pages/Finance/Cards/PromoGCCard.vue')['default']
     PromoGcReceived: typeof import('./resources/js/Pages/Marketing/Card/PromoGcReceived.vue')['default']
     PromoGcReleasingIndex: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/PromoGcReleasingIndex.vue')['default']
     PromoGcReleasingModal: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/Components/PromoGcReleasingModal.vue')['default']
