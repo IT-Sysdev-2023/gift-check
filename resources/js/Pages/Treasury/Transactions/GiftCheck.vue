@@ -18,7 +18,7 @@
                 <a-col :span="12">
                     <a-statistic
                         title="Current Budget"
-                        :value="bud"
+                          :value="'₱ ' + Number(bud).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })"
                     />
                 </a-col>
             </a-row>
