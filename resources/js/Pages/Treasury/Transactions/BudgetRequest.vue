@@ -59,6 +59,14 @@
                                 @change="clearError('budget')"
                             />
                         </a-form-item>
+                        <a-form-item
+                            label="Budget Category:"
+                            name="cat"
+                            :validate-status="getErrorStatus('category')"
+                            :help="getErrorMessage('category')"
+                        >
+                            <ant-select :options="[{label: 'Regular Gc', value: 'regular'}, {label: 'Special Gc', value: 'special'}]" @handle-change="categoryHandler"/>
+                        </a-form-item>
                         <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                         :help="getErrorMessage('file')">
                             <ant-upload-image @handle-change="handleChange" />
@@ -85,13 +93,29 @@
                     <a-col :span="14">
                         <a-card>
                             <a-row>
-                                <a-col :span="12">
+                                <a-col :span="8">
                                     <a-statistic
-                                        title="Current Budget"
-                                        :value="remainingBudget"
+                                        title="Regular Gc Budget"
+                                        :value="regularBudget"
                                     />
                                 </a-col>
-                                <a-col :span="12">
+                                <a-col :span="8">
+                                    <a-statistic
+                                        title="Special Gc Budget"
+                                        :value="specialBudget"
+                                    />
+                                </a-col>
+                                <a-col :span="8">
+                                    <a-statistic
+                                        title="Total Budget"
+                                         :value="remainingBudget"
+                                    />
+                                </a-col>
+                            </a-row>
+                        </a-card>
+                        <a-card class="mt-5">
+                            <a-row>
+                                <a-col :span="24">
                                     <a-statistic
                                         title="Prepaired By"
                                         :value="page.auth.user.full_name"
@@ -100,6 +124,7 @@
                             </a-row>
                         </a-card>
                     </a-col>
+                    
                 </a-row>
             </a-form>
         </a-card>
@@ -133,11 +158,14 @@ interface FormStateGc {
     budget: number;
     remarks: string;
     dateNeeded: null;
+    category: string
 }
 
 const props = defineProps<{
     title?: string;
     remainingBudget: string;
+    regularBudget: string
+    specialBudget: string
     br: string;
 }>();
 
@@ -153,6 +181,7 @@ const formState = useForm<FormStateGc>({
     budget: 0,
     file: null,
     remarks: "",
+    category: null
 });
 
 const stream = ref(null);
@@ -173,6 +202,10 @@ const onSubmit = () => {
                 }
             },
         });
+};
+
+const categoryHandler = (cat: string) => {
+    formState.category = cat;
 };
 const closeIframe = () => {
     router.visit(route("treasury.dashboard"));

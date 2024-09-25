@@ -97,7 +97,6 @@ class BudgetRequestService extends FileHandler
 		if ($this->validateField($request)) {
 			return redirect()->back()->with('error', 'You have pending budget request');
 		}
-		
 		$dept = userDepartment($request->user());
 
 		$filename = $this->createFileName($request);
@@ -112,7 +111,8 @@ class BudgetRequestService extends FileHandler
 			'br_remarks' => $request->remarks,
 			'br_request_status' => '0',
 			'br_type' => $dept,
-			'br_group' => 0
+			'br_group' => 0,
+			'br_category' => $request->category
 		]);
 
 		if ($insertData->wasRecentlyCreated) {
@@ -128,6 +128,7 @@ class BudgetRequestService extends FileHandler
 	{
 		$request->validate([
 			"br" => 'required',
+			"category" => 'required',
 			// "dateNeeded" => 'required|date',
 			"budget" => 'required|not_in:0',
 			"remarks" => 'required',
