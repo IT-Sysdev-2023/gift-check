@@ -97,6 +97,7 @@ class BudgetRequestService extends FileHandler
 		if ($this->validateField($request)) {
 			return redirect()->back()->with('error', 'You have pending budget request');
 		}
+		
 		$dept = userDepartment($request->user());
 
 		$filename = $this->createFileName($request);
@@ -120,7 +121,7 @@ class BudgetRequestService extends FileHandler
 			$stream = $this->generatePdf($request);
 			return redirect()->back()->with(['stream' => $stream, 'success' => 'SuccessFully Submitted!']);
 		}
-		return redirect()->back()->with('error', 'Something went wrong, please try again later');
+		return redirect()->back()->with('error', 'Something went wrong with generating PDF, please try again later');
 	}
 
 	private function validateField(Request $request)
@@ -143,14 +144,14 @@ class BudgetRequestService extends FileHandler
 			'pr' => $request->br,
 			'budget' => NumberHelper::format(LedgerBudget::budget()),
 			'dateRequested' => today()->toFormattedDateString(),
-			'dateNeeded' => Date::parse($request->dateNeeded)->toFormattedDateString(),
+			// 'dateNeeded' => Date::parse($request->dateNeeded)->toFormattedDateString(),
 			'remarks' => $request->remarks,
 
 			'subtitle' => 'Revolving Budget Entry Form',
 
 			'budgetRequested' => $request->budget,
+			
 			//signatures
-
 			'signatures' => [
 				'preparedBy' => [
 					'name' => $request->user()->full_name,
@@ -159,7 +160,6 @@ class BudgetRequestService extends FileHandler
 			]
 		];
 		$pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
-		// $pdf->setPaper('A3');
 
 		//store pdf in storage
 		$this->folderName = 'generatedTreasuryPdf/BudgetRequest';

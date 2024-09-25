@@ -19,7 +19,7 @@ class ProductionRequestResource extends JsonResource
             'pe_num' => $this->pe_num,
             'pe_date_request' => $this->pe_date_request->toFormattedDateString(),
             'pe_date_request_time' => $this->pe_date_request->format('g:i A'),
-            'pe_date_needed' => $this->pe_date_needed->toFormattedDateString(),
+            'pe_date_needed' => $this->pe_date_needed?->toFormattedDateString(),
 
             'pe_requested_by' => $this->pe_requested_by,
             'pe_file_docno' => $this->pe_file_docno,
