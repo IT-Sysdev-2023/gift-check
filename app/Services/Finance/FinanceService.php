@@ -202,17 +202,17 @@ class FinanceService extends FileHandler
                 ],
                 'checkedBy' => [
                     'name' => $checkby,
-                    'position' => 'Finance Analyst'
+                    'position' => 'Department Head'
                 ],
                 'reviewedBy' => [
                     'name' => $request->user()->full_name,
-                    'position' => 'Finance Analyst'
+                    'position' => 'Financial Analyst'
                 ],
             ]
         ];
         $pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
 
-        $this->folderName = 'generatedTreasuryPdf/BudgetRequest';
+        $this->folderName = 'generatedTreasuryPdf/FinanceBudgetRequest';
 
         $this->savePdfFile($request, $bud->br_no, $pdf->output());
 

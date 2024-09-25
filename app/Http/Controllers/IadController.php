@@ -130,4 +130,5 @@ class IadController extends Controller
             'record' => $this->iadServices->getDetails($id),
         ]);
     }
+    
 }

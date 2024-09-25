@@ -10,9 +10,14 @@
             <a-table size="small" :data-source="record.data" :columns="columns" bordered :pagination="false">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'viewing'">
-                        <a-button @click="view(record.br_id)">
+                        <a-button @click="view(record.br_id)" class="mr-1">
                             <template #icon>
                                 <EyeFilled />
+                            </template>
+                        </a-button>
+                        <a-button @click="reprint(record.br_no)">
+                            <template #icon>
+                                <PrinterOutlined />
                             </template>
                         </a-button>
                     </template>
@@ -27,6 +32,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import axios from 'axios';
 import { ref } from 'vue';
+import { notification } from 'ant-design-vue';
+
 defineProps({
     record: Object,
     columns: Array,
@@ -43,5 +50,26 @@ const view = async (id) => {
         }
     )
 }
+const reprint = (id) => {
+    fetch(`/finance/reprint-${id}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    // console.log(errorData.status)
+                    notification[errorData.status]({
+                        message: errorData.title,
+                        description: errorData.msg,
+                    });
+                });
+            } else {
+                // Handle successful file download
+                window.location.href = `/finance/reprint-${id}`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while processing your request.');
+        });
+};
 
 </script>
