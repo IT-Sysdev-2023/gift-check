@@ -112,11 +112,14 @@
                                     </a-input-number>
                                 </a-col>
                                 <a-col :span="8">
-                                    <a-input
-                                        :value="parseInt(bud / item.denomination)"
-                                        readonly
-                                        class="text-end"
-                                    />
+                                    <div   style="text-align: center;">
+
+                                        <a-input-number
+                                             :value="Math.floor(bud / item.denomination)"
+                                            readonly
+                                          
+                                        />
+                                    </div>
                                 </a-col>
                             </a-row>
                             <div

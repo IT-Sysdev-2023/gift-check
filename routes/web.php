@@ -244,6 +244,7 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
 
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
+
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 

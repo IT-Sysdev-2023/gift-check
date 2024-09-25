@@ -27,12 +27,17 @@ class SpecialGcRequestController extends Controller
     {
         $record = $this->specialGcPaymentService->pending();
 
+        $externalGc = SpecialExternalGcrequest::with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+            ->select('spexgc_num', 'spexgc_reqby', 'spexgc_company', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
+            ->where([['special_external_gcrequest.spexgc_status', 'pending'], ['special_external_gcrequest.spexgc_promo', '*']])
+            ->paginate()->withQueryString();
         return inertia(
             'Treasury/Dashboard/SpecialGcTable',
             [
                 'filters' => $request->only('search', 'date'),
                 'title' => 'Special GC Request',
                 'data' => SpecialExternalGcRequestResource::collection($record),
+                'externalData' => SpecialExternalGcRequestResource::collection($externalGc),
                 'columns' => ColumnHelper::$pendingSpecialGc,
             ]
         );
@@ -96,6 +101,14 @@ class SpecialGcRequestController extends Controller
         return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
     }
 
+    public function pendingInternalGc()
+    {
+        $data = SpecialExternalGcrequest::with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+            ->select('spexgc_num', 'spexgc_reqby', 'spexgc_company', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
+            ->where([['special_external_gcrequest.spexgc_status', 'pending'], ['special_external_gcrequest.spexgc_promo', '*']])
+            ->paginate()->withQueryString();
+
+    }
     private function options()
     {
         return SpecialExternalCustomer::has('user')
@@ -104,4 +117,5 @@ class SpecialGcRequestController extends Controller
             ->orderByDesc('spcus_id')
             ->get();
     }
+
 }
