@@ -30,6 +30,7 @@ use App\Models\Supplier;
 use App\Models\StoreVerification;
 use App\Models\TransactionSale;
 use App\Models\TransactionStore;
+use App\Models\UserDetails;
 use App\Services\Marketing\PdfServices;
 use App\Services\Marketing\MarketingServices;
 use App\Services\Treasury\RegularGcProcessService;
@@ -43,6 +44,7 @@ use Inertia\Inertia;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\View\View;
+use PHPUnit\Event\Test\Prepared;
 
 use function Pest\Laravel\json;
 
@@ -1391,132 +1393,74 @@ class MarketingController extends Controller
         $prid = $request->data['id'];
 
         if ($request->data['status'] == '1') {
-            if ($request->user()->user_role === 1) {
-                $alreadyApproved = ApprovedProductionRequest::where('ape_pro_request_id', $prid)->exists();
-                if ($alreadyApproved) {
-                    return back()->with([
-                        'type' => 'warning',
-                        'msg' => 'Warning!',
-                        'description' => 'Production request already checked'
-                    ]);
-                }
 
-                if ($request->data['status'] == null || $request->data['checkedBy'] == null) {
-                    return back()->with([
-                        'type' => 'error',
-                        'msg' => 'Opps!',
-                        'description' => 'Please fill all required fields'
-                    ]);
-                } else {
-                    $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
-                    $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
+            if ($request->user()->user_role === 2) {
+                $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
+                $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
 
-                    $query = ProductionRequest::select(
-                        'production_request.pe_id',
-                        'users.firstname',
-                        'users.lastname',
-                        'production_request.pe_file_docno',
-                        'production_request.pe_date_needed',
-                        'production_request.pe_remarks',
-                        'production_request.pe_num',
-                        'production_request.pe_date_request',
-                        'production_request.pe_type',
-                        'production_request.pe_group',
-                        'access_page.title'
-                    )
-                        ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
-                        ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
-                        ->where('production_request.pe_id', $request->data['id'])
-                        ->where('production_request.pe_status', 0)
-                        ->get();
+                $query = ProductionRequest::select(
+                    'production_request.pe_id',
+                    'users.firstname',
+                    'users.lastname',
+                    'production_request.pe_file_docno',
+                    'production_request.pe_date_needed',
+                    'production_request.pe_remarks',
+                    'production_request.pe_num',
+                    'production_request.pe_date_request',
+                    'production_request.pe_type',
+                    'production_request.pe_group',
+                    'access_page.title'
+                )
+                    ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
+                    ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
+                    ->where('production_request.pe_id', $request->data['id'])
+                    ->where('production_request.pe_status', 0)
+                    ->get();
 
-                    $insertLedgerBudget = LedgerBudget::create([
-                        'bledger_no' => $ledgerNumber,
-                        'bledger_trid' => $prid,
-                        'bledger_datetime' => now(),
-                        'bledger_type' => 'RFGCP',
-                        'bcredit_amt' => $request->data['total'],
-                        'bledger_typeid' => $query[0]->pe_type,
-                        'bledger_group' => $query[0]->pe_group
+                $insertLedgerBudget = LedgerBudget::create([
+                    'bledger_no' => $ledgerNumber,
+                    'bledger_trid' => $prid,
+                    'bledger_datetime' => now(),
+                    'bledger_type' => 'RFGCP',
+                    'bcredit_amt' => $request->data['total'],
+                    'bledger_typeid' => $query[0]->pe_type,
+                    'bledger_group' => $query[0]->pe_group
+                ]);
+                if ($insertLedgerBudget) {
+                    $insertApprovedRequest = ApprovedProductionRequest::create([
+                        'ape_pro_request_id' => $prid,
+                        'ape_approved_by' => $request->user()->user_id,
+                        'ape_checked_by' => null,
+                        'ape_remarks' => $request->data['remarks'],
+                        'ape_approved_at' => now(),
+                        'ape_file_doc_no' => '',
+                        'ape_preparedby' => $request->data['requestedById'],
+                        'ape_ledgernum' => $ledgerNumber
                     ]);
 
-
-
-                    if ($insertLedgerBudget) {
-                        $insertApprovedRequest = ApprovedProductionRequest::create([
-                            'ape_pro_request_id' => $prid,
-                            'ape_approved_by' => null,
-                            'ape_checked_by' => $request->user()->full_name,
-                            'ape_remarks' => $request->data['remarks'],
-                            'ape_approved_at' => now(),
-                            'ape_file_doc_no' => '',
-                            'ape_preparedby' => null,
-                            'ape_ledgernum' => $ledgerNumber
+                    if ($insertApprovedRequest) {
+                        return back()->with([
+                            'type' => 'success',
+                            'msg' => 'Nice!',
+                            'description' => 'Production request approved successfully'
                         ]);
 
-                        if ($insertApprovedRequest) {
-                            return back()->with([
-                                'type' => 'success',
-                                'msg' => 'nice!',
-                                'description' => 'Production request checked Successfully'
-                            ]);
-
-                        } else {
-                            return back()->with([
-                                'type' => 'error',
-                                'msg' => 'Opps!',
-                                'description' => 'Production request already approved/cancelled'
-                            ]);
-                        }
+                    } else {
+                        return back()->with([
+                            'type' => 'error',
+                            'msg' => 'Opps!',
+                            'description' => 'Production request already approved/cancelled'
+                        ]);
                     }
                 }
-            } elseif ($request->user()->user_role === 2) {
 
-                $q = ApprovedProductionRequest::where('ape_pro_request_id', $prid)->exists();
-
-                if (!$q) {
-                    return back()->with([
-                        'type' => 'warning',
-                        'msg' => 'Warning!',
-                        'description' => 'This pending production request has not yet been checked. Please contact the authorized personnel for verification.'
-                    ]);
-                }
-
-                if (
-                    ApprovedProductionRequest::where('ape_pro_request_id', $prid)
-                        ->where('ape_approved_by', '<>', '')->exists()
-                ) {
-                    return back()->with([
-                        'type' => 'warning',
-                        'msg' => 'Warning!',
-                        'description' => 'Production request already approved'
-                    ]);
-                }
-                $approved = ApprovedProductionRequest::where('ape_pro_request_id', $prid)
-                    ->update(['ape_approved_by' => $request->user()->full_name]);
-
-                if ($approved) {
-                    return back()->with([
-                        'type' => 'success',
-                        'msg' => 'Nice!',
-                        'description' => 'Production request approved successfully'
-                    ]);
-                }
             } elseif ($request->user()->user_role === 0) {
-
 
                 if ($request->data['InputRemarks'] == null) {
                     return back()->with([
                         'type' => 'error',
                         'msg' => 'Opps!',
                         'description' => 'Please fill all required fields'
-                    ]);
-                }
-                if ($request->data['checkedBy'] == null) {
-                    return back()->with([
-                        'type' => 'warning',
-                        'msg' => 'Warning!',
-                        'description' => '`Checked By` is Empty please contact the authorized personel to check this production request'
                     ]);
                 } elseif ($request->data['approvedBy'] == null) {
                     return back()->with([
@@ -1528,7 +1472,7 @@ class MarketingController extends Controller
 
                 $insertApprovedRequest = ApprovedProductionRequest::where('ape_pro_request_id', $prid)
                     ->update([
-                        'ape_preparedby' => $request->user()->user_id
+                        'ape_checked_by' => $request->user()->user_id
                     ]);
 
                 if ($insertApprovedRequest) {
@@ -1544,6 +1488,8 @@ class MarketingController extends Controller
 
                             $barcodes = $request->barcode;
 
+                            $reviewerPosition = UserDetails::where('user_id', $request->data['reviewedById'])->first();
+                            $approverPosition = UserDetails::where('user_id', $request->data['approvedById'])->first();
 
                             $data = [
                                 'pr_no' => $request->data['pe_no'],
@@ -1551,9 +1497,11 @@ class MarketingController extends Controller
                                 'dateNeeded' => $request->data['dateNeeded'],
                                 'currentBudget' => $this->marketing->currentBudget(),
                                 'Remarks' => $request->data['InputRemarks'],
-                                'checkby' => strtoupper($request->data['checkedBy']),
+                                'reviewedBy' => strtoupper($request->data['reviewedBy']),
+                                'reviewerPosition' => $reviewerPosition['details']['employee_position'],
                                 'approvedBy' => strtoupper($request->data['approvedBy']),
-                                'preparedBy' => strtoupper($request->data['preparedBy'])
+                                'approvedByPosition' => $approverPosition->details['employee_position'],
+                                'preparedBy' => strtoupper($request->data['preparedBy']),
                             ];
 
                             $pdf = Pdf::loadView('pdf/productionrequest', [
@@ -2047,19 +1995,32 @@ class MarketingController extends Controller
     public function getSigners(Request $request)
     {
 
+
         $query = ApprovedProductionRequest::where('ape_pro_request_id', $request['id'])->first();
+
+
+        $approvedBy = UserDetails::where('user_id', $query['ape_approved_by'])->first();
+
+
+        $data = [
+            'approvedBy' => $approvedBy['details'],
+            'approvedById' => $approvedBy['user_id'],
+
+        ];
+
+
         return response()->json([
-            'response' => $query
+            'response' => $data
         ]);
     }
 
     public function getChecker(Request $request)
     {
-    
-        $query=ApprovedProductionRequest::where('ape_pro_request_id',$request->data)->first();
-       
+
+        $query = ApprovedProductionRequest::where('ape_pro_request_id', $request->data)->first();
+        $q = UserDetails::where('user_id', $query->ape_checked_by)->first();
         return response()->json([
-            'checkedBy' => $query
+            'checkedBy' => $q['details']['employee_name']
         ]);
     }
 }

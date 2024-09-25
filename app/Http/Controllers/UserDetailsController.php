@@ -33,7 +33,8 @@ class UserDetailsController extends Controller
      */
     public function getEmp(Request $request)
     {
-        $data = Http::timeout(5)->get(config('app.hrms_employee_api'), $request->only(['q']))->json();
+        $data = Http::timeout(5)->get(config('app.hrms_employee_api'), $request->q)->json();
+        dd($data);
         return response()->json($data);
     }
 

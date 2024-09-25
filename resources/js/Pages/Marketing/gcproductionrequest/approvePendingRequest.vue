@@ -33,7 +33,7 @@
                         <a-form-item label="Date Approved">
                             <a-input v-model:value="form.dateApproved" readonly />
                         </a-form-item>
-                        <a-form-item label="Checked By">
+                        <a-form-item label="Prepared By">
                             <a-input v-model:value="checkby" readonly />
                         </a-form-item>
                         <a-form-item label="Approved By">
@@ -64,9 +64,6 @@
                         </a-form-item>
                         <a-form-item label="Remarks">
                             <a-input v-model:value="form.remarks" readonly />
-                        </a-form-item>
-                        <a-form-item label="Requested by">
-                            <a-input v-model:value="form.requestedBy" readonly />
                         </a-form-item>
                     </a-form>
                     <a-table :dataSource="barcodes" :columns="barcodeColumns" :pagination="false" />
@@ -103,7 +100,7 @@ export default {
     data() {
         return {
             selectedData: [],
-            checkby: null,
+            checkby: this.data[0].requestedBy,
             open: false,
             form: {
                 id: this.data[0]?.pe_id,
@@ -126,16 +123,6 @@ export default {
     },
     methods: {
         selectedRow(data) {
-
-            axios.get(route('marketing.pendingRequest.getChecker'), {
-                params: {
-                    data: data.pe_id
-                }
-            }).then(response => {
-                console.log(response.data.checkedBy.ape_checked_by);
-                this.checkby = response.data.checkedBy.ape_checked_by;
-            })
-
             this.open = true;
             this.form.pe_no = data.pe_num;
             this.form.department = data.title;

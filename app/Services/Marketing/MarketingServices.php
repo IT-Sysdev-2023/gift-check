@@ -186,6 +186,7 @@ class MarketingServices
     public function generatepdfrequisition($request)
     {
 
+        
         $supplier = Supplier::where('gcs_id', $request->data['selectedSupplierId'])->first();
         $data = [
             'reqNum' => $request->data['requestNo'],

@@ -35,15 +35,16 @@
                         <a-form-item label="Remarks:" name="remarks">
                             <a-textarea v-model:value="form.InputRemarks" />
                         </a-form-item>
-                        <a-form-item label="Checked By:">
-                            <a-input v-model:value="form.checkedBy" readonly/>
-                        </a-form-item>
-                        <a-form-item label="Approved By:">
-                            <a-input v-model:value="form.approvedBy" readonly/>
-                        </a-form-item>
                         <a-form-item label="Prepared By">
                             <a-input v-model:value="form.preparedBy" readonly />
                         </a-form-item>
+                        <a-form-item label="Approved By:">
+                            <a-input v-model:value="form.approvedBy" readonly />
+                        </a-form-item>
+                        <a-form-item label="Reviewed By:">
+                            <a-input v-model:value="form.reviewedBy" readonly />
+                        </a-form-item>
+
                     </div>
                     <div v-if="form.status == '2'">
                         <a-form-item label="Date Cancelled">
@@ -110,7 +111,6 @@ export default {
         columns: Object,
         barcodes: Object,
         barcodeColumns: Object,
-        checkedBy: Object,
     },
     data() {
         return {
@@ -131,10 +131,13 @@ export default {
                 status: '1',
                 checkedBy: '',
                 approvedBy: '',
-                preparedById: this.$page.props.auth.user.user_id,
-                preparedBy: this.$page.props.auth.user.full_name,
+                approvedById: '',
+                preparedById: '',
+                preparedBy: '',
                 dateApproved: dayjs(),
                 dateCancelled: dayjs(),
+                reviewedBy: this.$page.props.auth.user.full_name,
+                reviewedById: this.$page.props.auth.user.user_id,
             }
         }
     },
@@ -148,8 +151,8 @@ export default {
                     id: this.data[0]?.pe_id,
                 }
             }).then((response) => {
-                this.form.checkedBy = response.data.response.ape_checked_by;
-                this.form.approvedBy = response.data.response.ape_approved_by;
+                this.form.approvedBy = response.data.response.approvedBy.employee_name;
+                this.form.approvedById = response.data.response.approvedById;
             });
 
 
@@ -160,8 +163,8 @@ export default {
             this.form.dateRequested = data.dateReq;
             this.form.dateNeeded = data.dateneed;
             this.form.remarks = data.pe_remarks;
-            this.form.requestedBy = data.requestedBy;
-            this.form.requestedById = data.pe_requested_by;
+            this.form.preparedBy = data.requestedBy;
+            this.form.preparedById = data.pe_requested_by;
             this.form.total = data.total;
             this.form.dateneed = data.dateneed;
             this.$inertia.get(route('marketing.pendingRequest.pending.request'), {
