@@ -507,4 +507,35 @@ class ColumnHelper
             'dataIndex' => 'payment',
         ],
     ];
+    public static $retailGcReleasing = [
+      
+        [
+            'title' => 'Gc Request #',
+            'dataIndex' => 'sgc_num',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'store_name',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'sgc_date_needed',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'dataIndex' => 'user',
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'sgc_date_request',
+
+        ],
+        [
+            'title' => 'Request Status',
+            'dataIndex' => 'payment',
+        ],
+    ];
 }

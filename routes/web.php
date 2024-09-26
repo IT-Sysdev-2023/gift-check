@@ -28,6 +28,7 @@ use App\Http\Controllers\Treasury\Transactions\GcAllocationController;
 use App\Http\Controllers\Treasury\Transactions\InstitutionGcSalesController;
 use App\Http\Controllers\Treasury\Transactions\ProductionRequestController;
 use App\Http\Controllers\Treasury\Transactions\PromoGcReleasingController;
+use App\Http\Controllers\Treasury\Transactions\RetailGcReleasingController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Controllers\UserDetailsController;
@@ -274,6 +275,16 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                     Route::get('view-gc-for-allocation', [GcAllocationController::class, 'viewForAllocationGc'])->name('forallocation');
                 });
 
+                //Gc Releasiing Retail Store
+                Route::prefix('retail-gc-releasing')->name('retail.releasing.')->group(function () {
+                    Route::get('/', [RetailGcReleasingController::class, 'index'])->name('index');
+                    // Route::post('gc-location-submission', [GcAllocationController::class, 'store'])->name('store');
+
+                    // Route::get('store-allocation', [GcAllocationController::class, 'storeAllocation'])->name('storeAllocation');
+                    // Route::get('view-allocated-gc', [GcAllocationController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
+                    // Route::get('view-gc-for-allocation', [GcAllocationController::class, 'viewForAllocationGc'])->name('forallocation');
+                });
+
                 //Promo Gc Releasing
                 Route::prefix('promo-gc-releasing')->name('promo.gc.releasing.')->group(function () {
                     Route::get('/', [PromoGcReleasingController::class, 'index'])->name('index');
@@ -304,7 +315,7 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                     Route::post('submission-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                 });
 
-                //Treasury
+                //EOD
                 Route::prefix('treasury-eod')->name('eod.')->group(function () {
                     Route::get('/', [EodController::class, 'eodList'])->name('eodList');
                     Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');

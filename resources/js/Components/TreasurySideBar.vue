@@ -255,8 +255,14 @@ const setActiveTab = computed(() => {
                     GC Allocation</Link
                 ></a-menu-item
             >
-            <a-menu-item key="menu-item-gc-releasing-retail-store"
-                >GC Releasing (Retail Store)</a-menu-item
+            <a-menu-item key="treasury.transactions.retail.releasing.index">
+                <Link
+                    :href="
+                        route('treasury.transactions.retail.releasing.index')
+                    "
+                >
+                    GC Releasing (Retail Store)</Link
+                ></a-menu-item
             >
             <a-menu-item key="treasury.transactions.promo.gc.releasing.index">
                 <Link
@@ -270,7 +276,9 @@ const setActiveTab = computed(() => {
             <a-menu-item key="treasury.transactions.institution.gc.sales.index">
                 <Link
                     :href="
-                        route('treasury.transactions.institution.gc.sales.index')
+                        route(
+                            'treasury.transactions.institution.gc.sales.index'
+                        )
                     "
                 >
                     Institution GC Sales
@@ -285,15 +293,16 @@ const setActiveTab = computed(() => {
                 ></a-menu-item
             >
             <a-menu-item key="treasury.coupon.transactions.special.index">
-                <Link :href="route('treasury.coupon.transactions.special.index')">
+                <Link
+                    :href="route('treasury.coupon.transactions.special.index')"
+                >
                     Coupon Gc Payment</Link
                 ></a-menu-item
             >
-            <a-menu-item key="treasury.transactions.eod.gcSales"
-                >
+            <a-menu-item key="treasury.transactions.eod.gcSales">
                 <Link :href="route('treasury.transactions.eod.gcSales')">
                     GC Sales Report (EOD)</Link
-                ></a-menu-item 
+                ></a-menu-item
             >
         </a-sub-menu>
 
