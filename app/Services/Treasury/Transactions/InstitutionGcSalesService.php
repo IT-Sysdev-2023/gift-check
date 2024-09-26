@@ -152,6 +152,7 @@ class InstitutionGcSalesService extends FileHandler
         $request->session()->put($this->sessionName, $filtered);
         return redirect()->back()->with('success', "Barcode {$barcode} successfully deleted!");
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -316,7 +317,16 @@ class InstitutionGcSalesService extends FileHandler
 
     }
 
-    public function dataForPdf($request, $change, $cash)
+    public function printAr($id) {
+        $this->folderName = "reports/treasury_ar_report";
+        return $this->retrieveFile($this->folderName, "arreport{$id}.pdf");
+    }
+
+    public function reprint($id) {
+        $this->folderName = "reports/treasury_releasing_institutions";
+        return $this->retrieveFile($this->folderName, "gcinst{$id}.pdf");
+    }
+    private function dataForPdf($request, $change, $cash)
     {
 
         $barcode = collect($request->session()->get($this->sessionName, []));

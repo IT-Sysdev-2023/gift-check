@@ -8,7 +8,7 @@ use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Custodian\CustodianServices;
 use App\Services\Custodian\ReprintPdf;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\File;
 
 class CustodianController extends Controller
 {
@@ -56,6 +56,7 @@ class CustodianController extends Controller
             'columns' => ColumnHelper::$special_gc_request_holder,
             'activeKey' => $request->activeKey ?? '1',
         ]);
+        
     }
     public function pendingHolderSetup(Request $request)
     {
@@ -124,5 +125,17 @@ class CustodianController extends Controller
     public function reprintRequest($id)
     {
         return (new ReprintPdf)->reprintRequestService($id);
+    }
+
+    public function textFileUploader()
+    {
+
+        return inertia('Custodian/TextfileUploader');
+    }
+    public function upload(Request $request)
+    {
+
+      return $this->custodianservices->upload($request);
+
     }
 }

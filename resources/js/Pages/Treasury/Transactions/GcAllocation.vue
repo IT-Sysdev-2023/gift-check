@@ -66,7 +66,7 @@
                             >
                                 <a-col :span="12">
                                     <a-input
-                                        :value="item.denomination"
+                                        :value="item.denominationFormat"
                                         readonly
                                         class="text-end"
                                     />
@@ -118,7 +118,7 @@
                                         v-for="(item, index) of denoms"
                                         :key="index"
                                         class="mt-5"
-                                        :message="`₱ ${item.denomination}`"
+                                        :message="item.denomination_format"
                                         type="success"
                                     >
                                         <template #action>
@@ -146,7 +146,7 @@
                                         v-for="(item, index) of allDenoms"
                                         :key="index"
                                         class="mt-5"
-                                        :message="`₱ ${item.denomination}`"
+                                        :message="item.denomination_format"
                                         type="warning"
                                     >
                                         <template #action>
@@ -274,8 +274,9 @@ const formState = useForm<{
     store: 0,
     gcType: 1,
     denomination: props.denoms.map((item) => ({
+        denominationFormat: item.denomination_format,
         denomination: item.denomination,
-        qty: 0,
+        qty: null,
         denom_id: item.denom_id,
     })),
 });
@@ -354,7 +355,7 @@ const onSubmit = () => {
         .transform((data) => ({
             ...data,
             denomination: data.denomination.filter(
-                (item) => item.denomination !== 0 && item.qty !== 0
+                (item) => item.denomination !== 0 && item.qty !== 0 && item.qty !== null
             ),
         }))
         .post(route("treasury.transactions.gcallocation.store"), {

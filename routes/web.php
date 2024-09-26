@@ -248,12 +248,11 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
 
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
+
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 
                 //Budget Request
-                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
                 Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
                 Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
 
@@ -294,6 +293,9 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                     Route::put('remove-barcode-{barcode}', [InstitutionGcSalesController::class, 'removeBarcode'])->name('removeBarcode');
 
                     Route::post('form-submission', [InstitutionGcSalesController::class, 'formSubmission'])->name('submission');
+                    Route::get('view-transaction-details-{id}', [InstitutionGcSalesController::class, 'transactionDetails'])->name('transactionDetails');
+                    Route::get('print-ar-{id}', [InstitutionGcSalesController::class, 'printAr'])->name('printAr');
+                    Route::get('reprint-{id}', [InstitutionGcSalesController::class, 'reprint'])->name('reprint');
                 });
 
                 //special gc payment
@@ -301,13 +303,17 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                     Route::get('/', [SpecialGcRequestController::class, 'specialGcPayment'])->name('index');
                     Route::post('submission-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
                 });
+
+                //Treasury
+                Route::prefix('treasury-eod')->name('eod.')->group(function () {
+                    Route::get('/', [EodController::class, 'eodList'])->name('eodList');
+                    Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
+
+                    Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
+                });
+
             });
 
-            //Treasury
-            Route::prefix('treasury-eod')->name('eod.')->group(function () {
-                Route::get('/', [EodController::class, 'eodList'])->name('eodList');
-                Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
-            });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
@@ -432,10 +438,13 @@ Route::prefix('custodian')->group(function () {
         Route::name('check.')->group(function () {
             Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
         });
+        Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
+        Route::post('upload', [CustodianController::class, 'upload'])->name('upload');
     });
 });
 
 Route::middleware('auth')->group(function () {
+
     Route::prefix('iad')->name('iad.')->group(function () {
         Route::get('receiving-index', [IadController::class, 'receivingIndex'])->name('receiving');
         Route::get('receiving-setup', [IadController::class, 'setupReceiving'])->name('setup.receiving');
@@ -460,7 +469,9 @@ Route::middleware('auth')->group(function () {
             Route::get('review-index', [IadController::class, 'reviewedGcIndex'])->name('special.review');
             Route::get('review-datails-{id}', [IadController::class, 'reviewDetails'])->name('details');
         });
+        Route::put('approve-budget-{id}', [IadController::class, 'approveBudget'])->name('approve');
     });
+
 });
 
 Route::prefix('search')->group(function () {

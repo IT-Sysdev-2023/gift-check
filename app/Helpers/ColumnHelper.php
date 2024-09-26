@@ -630,11 +630,11 @@ class ColumnHelper
         ],
         [
             'title' => 'Date Requested',
-            'dataIndex' => 'spexgc_datereq',
+            'dataIndex' => 'datereq',
         ],
         [
             'title' => 'Date Validity',
-            'dataIndex' => 'spexgc_dateneed',
+            'dataIndex' => 'dateneeded',
         ],
         [
             'title' => 'Customer',

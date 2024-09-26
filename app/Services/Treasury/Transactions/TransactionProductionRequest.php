@@ -32,9 +32,9 @@ class TransactionProductionRequest extends FileHandler
 	public function storeGc(Request $request)
 	{
 
-		// if ($this->isAbleToRequest($request)) {
-		// 	return redirect()->back()->with('error', 'You have pending production request');
-		// }
+		if ($this->isAbleToRequest($request)) {
+			return redirect()->back()->with('error', 'You have pending production request');
+		}
 
 		$request->validate([
 			'remarks' => 'required',
@@ -42,12 +42,12 @@ class TransactionProductionRequest extends FileHandler
 			// 'file' => 'required|image|mimes:jpeg,png,jpg|max:5048',
 			'denom' => ['required', 'array', new DenomQty()],
 		]);
-
+		
 		$filename = $this->createFileName($request);
 
 		try {
 			$denom = collect($request->denom)->filter(fn($val) => isset ($val['qty']) && $val['qty'] > 0);
-
+	
 			DB::transaction(function () use ($request, $filename, $denom) {
 
 				$pr = ProductionRequest::create([

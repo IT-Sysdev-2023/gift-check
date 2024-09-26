@@ -1391,178 +1391,196 @@ class MarketingController extends Controller
     public function submitPendingRequest(Request $request)
     {
         $prid = $request->data['id'];
+        $status = $request->data['status'];
+        $userRole = $request->user()->user_role;
 
-        if ($request->data['status'] == '1') {
-
-            if ($request->user()->user_role === 2) {
-                $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
-                $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
-
-                $query = ProductionRequest::select(
-                    'production_request.pe_id',
-                    'users.firstname',
-                    'users.lastname',
-                    'production_request.pe_file_docno',
-                    'production_request.pe_date_needed',
-                    'production_request.pe_remarks',
-                    'production_request.pe_num',
-                    'production_request.pe_date_request',
-                    'production_request.pe_type',
-                    'production_request.pe_group',
-                    'access_page.title'
-                )
-                    ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
-                    ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
-                    ->where('production_request.pe_id', $request->data['id'])
-                    ->where('production_request.pe_status', 0)
-                    ->get();
-
-                $insertLedgerBudget = LedgerBudget::create([
-                    'bledger_no' => $ledgerNumber,
-                    'bledger_trid' => $prid,
-                    'bledger_datetime' => now(),
-                    'bledger_type' => 'RFGCP',
-                    'bcredit_amt' => $request->data['total'],
-                    'bledger_typeid' => $query[0]->pe_type,
-                    'bledger_group' => $query[0]->pe_group
-                ]);
-                if ($insertLedgerBudget) {
-                    $insertApprovedRequest = ApprovedProductionRequest::create([
-                        'ape_pro_request_id' => $prid,
-                        'ape_approved_by' => $request->user()->user_id,
-                        'ape_checked_by' => null,
-                        'ape_remarks' => $request->data['remarks'],
-                        'ape_approved_at' => now(),
-                        'ape_file_doc_no' => '',
-                        'ape_preparedby' => $request->data['requestedById'],
-                        'ape_ledgernum' => $ledgerNumber
-                    ]);
-
-                    if ($insertApprovedRequest) {
-                        return back()->with([
-                            'type' => 'success',
-                            'msg' => 'Nice!',
-                            'description' => 'Production request approved successfully'
-                        ]);
-
-                    } else {
-                        return back()->with([
-                            'type' => 'error',
-                            'msg' => 'Opps!',
-                            'description' => 'Production request already approved/cancelled'
-                        ]);
-                    }
-                }
-
-            } elseif ($request->user()->user_role === 0) {
-
-                if ($request->data['InputRemarks'] == null) {
-                    return back()->with([
-                        'type' => 'error',
-                        'msg' => 'Opps!',
-                        'description' => 'Please fill all required fields'
-                    ]);
-                } elseif ($request->data['approvedBy'] == null) {
-                    return back()->with([
-                        'type' => 'warning',
-                        'msg' => 'Warning!',
-                        'description' => '`Approved By` is Empty please contact the authorized personel to approve this production request'
-                    ]);
-                }
-
-                $insertApprovedRequest = ApprovedProductionRequest::where('ape_pro_request_id', $prid)
-                    ->update([
-                        'ape_checked_by' => $request->user()->user_id
-                    ]);
-
-                if ($insertApprovedRequest) {
-                    if (ProductionRequest::where('pe_id', $prid)->value('pe_status') == 0) {
-                        $isApproved = ProductionRequest::where('pe_id', $prid)
-                            ->where('pe_status', '0')
-                            ->update([
-                                'pe_status' => $request->data['status']
-                            ]);
-
-                        if ($isApproved) {
-                            $this->RegularGc->approveProductionRequest($request, $prid);
-
-                            $barcodes = $request->barcode;
-
-                            $reviewerPosition = UserDetails::where('user_id', $request->data['reviewedById'])->first();
-                            $approverPosition = UserDetails::where('user_id', $request->data['approvedById'])->first();
-
-                            $data = [
-                                'pr_no' => $request->data['pe_no'],
-                                'dateRequested' => $request->data['dateRequested'],
-                                'dateNeeded' => $request->data['dateNeeded'],
-                                'currentBudget' => $this->marketing->currentBudget(),
-                                'Remarks' => $request->data['InputRemarks'],
-                                'reviewedBy' => strtoupper($request->data['reviewedBy']),
-                                'reviewerPosition' => $reviewerPosition['details']['employee_position'],
-                                'approvedBy' => strtoupper($request->data['approvedBy']),
-                                'approvedByPosition' => $approverPosition->details['employee_position'],
-                                'preparedBy' => strtoupper($request->data['preparedBy']),
-                            ];
-
-                            $pdf = Pdf::loadView('pdf/productionrequest', [
-                                'data' => $data,
-                                'barcodes' => $barcodes
-                            ])
-                                ->setPaper('A4');
-
-                            $fileName = $data['pr_no'] . '.pdf';
-
-                            $store = Storage::disk('public');
-
-                            $store->put('approvalform/' . $fileName, $pdf->output());
-
-                            return redirect()->back()->with([
-                                'type' => 'success',
-                                'stream' => base64_encode($pdf->output())
-                            ]);
-                        }
-                    } else {
-                        return back()->with([
-                            'type' => 'error',
-                            'msg' => 'Opps!',
-                            'description' => 'Production request already approved/cancelled'
-                        ]);
-                    }
-                }
+        if ($status == '1') {
+            if ($userRole === 2) {
+                return $this->handleRoleTwoApproval($request, $prid);
+            } elseif ($userRole === 0) {
+                return $this->handleRoleZeroApproval($request, $prid);
             }
-        } elseif ($request->data['status'] == '2') {
-            if (ProductionRequest::where('pe_id', $prid)->value('pe_status') == 0) {
-                $cancelled = ProductionRequest::where('pe_id', $prid)
-                    ->where('pe_status', '0')
-                    ->update([
-                        'pe_status' => $request->data['status']
-                    ]);
-
-                if ($cancelled) {
-                    $insertCancel = CancelledProductionRequest::create([
-                        'cpr_pro_id' => $prid,
-                        'cpr_at' => now(),
-                        'cpr_by' => $request->user()->user_id,
-                        'cpr_isrequis_cancel' => '0',
-                        'cpr_ldgerid' => ''
-                    ]);
-                    if ($insertCancel) {
-                        return back()->with([
-                            'type' => 'success',
-                            'msg' => 'Success!',
-                            'description' => 'Production request successfully cancelled '
-                        ]);
-                    }
-                }
-            } else {
-                return back()->with([
-                    'type' => 'error',
-                    'msg' => 'Opps!',
-                    'description' => 'Production request already approved/cancelled'
-                ]);
-            }
+        } elseif ($status == '2') {
+            return $this->handleRequestCancellation($request, $prid);
         }
     }
+
+    private function handleRoleTwoApproval(Request $request, $prid)
+    {
+        $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
+        $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
+
+        $query = ProductionRequest::select(
+            'production_request.pe_id',
+            'users.firstname',
+            'users.lastname',
+            'production_request.pe_file_docno',
+            'production_request.pe_date_needed',
+            'production_request.pe_remarks',
+            'production_request.pe_num',
+            'production_request.pe_date_request',
+            'production_request.pe_type',
+            'production_request.pe_group',
+            'access_page.title'
+        )
+            ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
+            ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
+            ->where('production_request.pe_id', $prid)
+            ->where('production_request.pe_status', 0)
+            ->get();
+
+        $insertLedgerBudget = LedgerBudget::create([
+            'bledger_no' => $ledgerNumber,
+            'bledger_trid' => $prid,
+            'bledger_datetime' => now(),
+            'bledger_type' => 'RFGCP',
+            'bcredit_amt' => $request->data['total'],
+            'bledger_typeid' => $query[0]->pe_type,
+            'bledger_group' => $query[0]->pe_group
+        ]);
+
+        if ($insertLedgerBudget) {
+            $insertApprovedRequest = ApprovedProductionRequest::create([
+                'ape_pro_request_id' => $prid,
+                'ape_approved_by' => $request->user()->user_id,
+                'ape_checked_by' => null,
+                'ape_remarks' => $request->data['remarks'],
+                'ape_approved_at' => now(),
+                'ape_file_doc_no' => '',
+                'ape_preparedby' => $request->data['requestedById'],
+                'ape_ledgernum' => $ledgerNumber
+            ]);
+
+            return $this->handleResponse($insertApprovedRequest, 'Production request approved successfully');
+        }
+
+        return back()->with([
+            'type' => 'error',
+            'msg' => 'Opps!',
+            'description' => 'Failed to create ledger budget'
+        ]);
+    }
+
+    private function handleRoleZeroApproval(Request $request, $prid)
+    {
+        if ($request->data['InputRemarks'] == null) {
+            return back()->with([
+                'type' => 'error',
+                'msg' => 'Opps!',
+                'description' => 'Please fill all required fields'
+            ]);
+        } elseif ($request->data['approvedBy'] == null) {
+            return back()->with([
+                'type' => 'warning',
+                'msg' => 'Warning!',
+                'description' => '`Approved By` is empty. Please contact the authorized personnel.'
+            ]);
+        }
+
+        ApprovedProductionRequest::where('ape_pro_request_id', $prid)
+            ->update(['ape_checked_by' => $request->user()->user_id]);
+
+        $productionRequestStatus = ProductionRequest::where('pe_id', $prid)->value('pe_status');
+
+        if ($productionRequestStatus == 0) {
+            $isApproved = ProductionRequest::where('pe_id', $prid)
+                ->where('pe_status', '0')
+                ->update(['pe_status' => $request->data['status']]);
+
+            if ($isApproved) {
+                $this->RegularGc->approveProductionRequest($request, $prid);
+
+                return $this->generateProductionRequestPDF($request);
+            }
+        }
+
+        return back()->with([
+            'type' => 'error',
+            'msg' => 'Opps!',
+            'description' => 'Production request already approved/cancelled'
+        ]);
+    }
+
+    private function handleRequestCancellation(Request $request, $prid)
+    {
+        $productionRequestStatus = ProductionRequest::where('pe_id', $prid)->value('pe_status');
+
+        if ($productionRequestStatus == 0) {
+            $cancelled = ProductionRequest::where('pe_id', $prid)
+                ->where('pe_status', '0')
+                ->update(['pe_status' => $request->data['status']]);
+
+            if ($cancelled) {
+                $insertCancel = CancelledProductionRequest::create([
+                    'cpr_pro_id' => $prid,
+                    'cpr_at' => now(),
+                    'cpr_by' => $request->user()->user_id,
+                    'cpr_isrequis_cancel' => '0',
+                    'cpr_ldgerid' => ''
+                ]);
+
+                return $this->handleResponse($insertCancel, 'Production request successfully cancelled');
+            }
+        }
+
+        return back()->with([
+            'type' => 'error',
+            'msg' => 'Opps!',
+            'description' => 'Production request already approved/cancelled'
+        ]);
+    }
+
+    private function generateProductionRequestPDF(Request $request)
+    {
+        $barcodes = $request->barcode;
+
+        $reviewerPosition = UserDetails::where('user_id', $request->data['reviewedById'])->first();
+        $approverPosition = UserDetails::where('user_id', $request->data['approvedById'])->first();
+
+        $data = [
+            'pr_no' => $request->data['pe_no'],
+            'dateRequested' => $request->data['dateRequested'],
+            'dateNeeded' => $request->data['dateNeeded'],
+            'currentBudget' => $this->marketing->currentBudget(),
+            'Remarks' => $request->data['InputRemarks'],
+            'reviewedBy' => strtoupper($request->data['reviewedBy']),
+            'reviewerPosition' => $reviewerPosition['details']['employee_position'],
+            'approvedBy' => strtoupper($request->data['approvedBy']),
+            'approvedByPosition' => $approverPosition->details['employee_position'],
+            'preparedBy' => strtoupper($request->data['preparedBy']),
+        ];
+
+        $pdf = Pdf::loadView('pdf/productionrequest', [
+            'data' => $data,
+            'barcodes' => $barcodes
+        ])->setPaper('A4');
+
+        $fileName = $data['pr_no'] . '.pdf';
+        Storage::disk('public')->put('approvalform/' . $fileName, $pdf->output());
+
+        return redirect()->back()->with([
+            'type' => 'success',
+            'stream' => base64_encode($pdf->output())
+        ]);
+    }
+
+    private function handleResponse($result, $successMsg)
+    {
+        if ($result) {
+            return back()->with([
+                'type' => 'success',
+                'msg' => 'Nice!',
+                'description' => $successMsg
+            ]);
+        }
+
+        return back()->with([
+            'type' => 'error',
+            'msg' => 'Opps!',
+            'description' => 'An error occurred while processing the request'
+        ]);
+    }
+
 
     public function approvedRequest(Request $request)
     {
