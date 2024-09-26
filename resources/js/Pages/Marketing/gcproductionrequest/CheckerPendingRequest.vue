@@ -61,7 +61,7 @@
                         <a-form-item label="Remarks">
                             <a-input v-model:value="form.remarks" readonly />
                         </a-form-item>
-                        <a-form-item label="Requested by">
+                        <a-form-item label="Approved by">
                             <a-input v-model:value="form.requestedBy" readonly />
                         </a-form-item>
                     </a-form>
