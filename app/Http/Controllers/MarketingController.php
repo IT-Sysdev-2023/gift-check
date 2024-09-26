@@ -1395,8 +1395,8 @@ class MarketingController extends Controller
         $userRole = $request->user()->user_role;
 
         if ($status == '1') {
-            if ($userRole === 2) {
-                return $this->handleRoleTwoApproval($request, $prid);
+            if ($userRole === 1) {
+                return $this->handleRoleApproval($request, $prid);
             } elseif ($userRole === 0) {
                 return $this->handleRoleZeroApproval($request, $prid);
             }
@@ -1405,7 +1405,7 @@ class MarketingController extends Controller
         }
     }
 
-    private function handleRoleTwoApproval(Request $request, $prid)
+    private function handleRoleApproval(Request $request, $prid)
     {
         $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
         $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
