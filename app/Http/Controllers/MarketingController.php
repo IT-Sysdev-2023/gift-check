@@ -109,13 +109,11 @@ class MarketingController extends Controller
         );
 
         $query = RequisitionEntry::orderByDesc('requis_erno')->first();
-        $getRequestNo = intval($query->requis_erno) + 1;
+        $getRequestNo = intval($query->requis_erno ?? 0) + 1;
         $getRequestNo = sprintf('%04d', $getRequestNo);
 
         if ($request->user()->user_role == 1) {
             $dashboard = 'CheckerDashboard';
-        } elseif ($request->user()->user_role == 2) {
-            $dashboard = 'ApproveeDashboard';
         } elseif ($request->user()->user_role == 0) {
             $dashboard = 'MarketingDashboard';
         }
