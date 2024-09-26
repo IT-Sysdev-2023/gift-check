@@ -284,8 +284,14 @@ const setActiveTab = computed(() => {
                     Institution GC Sales
                 </Link></a-menu-item
             >
-            <a-menu-item key="menu-item-institution-gc-refund"
-                >Institution GC Refund</a-menu-item
+            <a-menu-item key="treasury.transactions.intitution.refund.index"
+                ><Link
+                    :href="
+                        route('treasury.transactions.intitution.refund.index')
+                    "
+                >
+                    Institution GC Refund
+                </Link></a-menu-item
             >
             <a-menu-item key="treasury.transactions.special.index">
                 <Link :href="route('treasury.transactions.special.index')">
