@@ -38,16 +38,16 @@ class TransactionProductionRequest extends FileHandler
 
 		$request->validate([
 			'remarks' => 'required',
-			'dateNeeded' => 'required|date',
+			// 'dateNeeded' => 'required|date',
 			// 'file' => 'required|image|mimes:jpeg,png,jpg|max:5048',
 			'denom' => ['required', 'array', new DenomQty()],
 		]);
-		
+
 		$filename = $this->createFileName($request);
 
 		try {
 			$denom = collect($request->denom)->filter(fn($val) => isset ($val['qty']) && $val['qty'] > 0);
-	
+
 			DB::transaction(function () use ($request, $filename, $denom) {
 
 				$pr = ProductionRequest::create([
@@ -77,42 +77,44 @@ class TransactionProductionRequest extends FileHandler
 			return $this->generatePdf($request, $denom);
 
 		} catch (\Exception $e) {
-			return redirect()->back()->with('error', 'Something went wrong!');
+			return redirect()->back()->with('error', 'Something went wrong when generating PDF!');
 		}
 	}
 
-	public function generatePdf(Request $request, Collection $denom){
+	public function generatePdf(Request $request, Collection $denom)
+	{
 
 		$denomination = $denom->map(function ($item) {
 			return array_merge($item, ['denomination' => NumberHelper::format($item['denomination'])]);
-		});		
+		});
 
 		$data = [
 			'pr' => $request->prNo,
 			'budget' => NumberHelper::format(LedgerBudget::budget()),
 			'dateRequested' => today()->toFormattedDateString(),
-			'dateNeeded' => Date::parse($request->dateNeeded)->toFormattedDateString(),
+			// 'dateNeeded' => Date::parse($request->dateNeeded)->toFormattedDateString(),
 			'remarks' => $request->remarks,
 
 			'subtitle' => 'Production Request Form',
 			'barcode' => $denomination,
 
 			//signatures
-			'preparedBy' => [
-				'name' => $request->user()->full_name,
-				'position' => 'Sr Cash Clerk'
+			'signatures' => [
+				'preparedBy' => [
+					'name' => $request->user()->full_name,
+					'position' => 'Sr Cash Clerk'
+				]
 			]
 		];
 
 		$pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
-        // $pdf->setPaper('A3');
 
 		//store pdf in storage
 		$this->folderName = 'generatedTreasuryPdf/ProductionRequest';
 		$this->savePdfFile($request, $request->prNo, $pdf->output());
 
-        $stream = base64_encode($pdf->output());
+		$stream = base64_encode($pdf->output());
 
-        return redirect()->back()->with(['stream' => $stream, 'success' => 'SuccessFully Requested']);
+		return redirect()->back()->with(['stream' => $stream, 'success' => 'SuccessFully Requested']);
 	}
 }

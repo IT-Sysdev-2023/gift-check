@@ -35,11 +35,11 @@
                         <a-descriptions-item style="width: 50%;" label="Time Request">{{ record.time
                             }}</a-descriptions-item>
                     </a-descriptions>
-
+<!--
                     <a-descriptions layout="horizontal" size="small" class="mt-1" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date Needed">{{ record.needed
                             }}</a-descriptions-item>
-                    </a-descriptions>
+                    </a-descriptions> -->
 
                     <a-descriptions layout="horizontal" size="small" class="mt-1" bordered>
                         <a-descriptions-item style="width: 50%;" label="Budget Requested">{{ record.br_request
@@ -52,7 +52,11 @@
                     </a-descriptions>
 
                     <a-descriptions layout="horizontal" size="small" class="mt-1" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Requested By">{{ record.user.full_name
+                        <a-descriptions-item style="width: 50%;" label="Prepared By">{{ record.user.full_name
+                            }}</a-descriptions-item>
+                    </a-descriptions>
+                    <a-descriptions layout="horizontal" size="small" class="mt-1" bordered>
+                        <a-descriptions-item style="width: 50%;" label="Checked By">{{ record.checkby
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <!-- {{ record.br_file_docno }} -->

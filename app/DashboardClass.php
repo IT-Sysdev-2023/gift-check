@@ -108,7 +108,7 @@ class DashboardClass extends DashboardService
                 'cancel' => SpecialExternalGcrequest::where('spexgc_status', 'cancelled')->count(),
             ],
             'budgetRequest' => [
-                'pending' => BudgetRequest::where('br_request_status', '0')
+                'pending' => BudgetRequest::where('br_request_status', '0')->where('br_checked_by', '!=' , '')
                     ->count(),
                 'approved' => BudgetRequest::where('br_request_status', '1')
                     ->count(),

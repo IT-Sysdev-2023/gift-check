@@ -25,6 +25,7 @@ use App\Services\Treasury\LedgerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 use function PHPUnit\Framework\isNull;
@@ -37,8 +38,7 @@ class FinanceController extends Controller
         public ApprovedReleasedPdfExcelService $appRelPdfExcelService,
         public DashboardClass $dashboardClass,
         public FinanceService $financeService
-    ) {
-    }
+    ) {}
 
     public function index()
     {
@@ -498,7 +498,7 @@ class FinanceController extends Controller
         $barcode = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->get();
 
         $barcode->transform(function ($item) {
-            $item->fullname = ucwords($item->spexgcemp_fname.' '.$item->spexgcemp_mname.' '.$item->spexgcemp_lname);
+            $item->fullname = ucwords($item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' ' . $item->spexgcemp_lname);
             return $item;
         });
 
@@ -508,5 +508,27 @@ class FinanceController extends Controller
             'barcodes' => $barcode
         ]);
     }
+    public function reprint($id)
+    {
+        $files = Storage::files('public/generatedTreasuryPdf/FinanceBudgetRequest');
 
+        $filePath = null;
+
+        foreach ($files as $file) {
+            if (strpos($file, $id) !== false) {
+                $filePath = $file;
+                break;
+            }
+        }
+
+        if ($filePath) {
+            return Storage::download($filePath);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'msg' => 'File not found',
+            'title' => 'Not Found!'
+        ], 404);
+    }
 }
