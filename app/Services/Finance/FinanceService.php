@@ -85,7 +85,6 @@ class FinanceService extends FileHandler
 
     public function submitBudget($request)
     {
-
         $request->validate([
             'br_select' => 'required',
             'br_checkby' => 'required',
@@ -105,19 +104,7 @@ class FinanceService extends FileHandler
                 }
             } else {
 
-                $ledger =  $this->legderBudget($request);
-
-                if ($ledger) {
-
-                    $stream = $this->generatePdf($request);
-                    
-                    return redirect()->back()->with([
-                        'stream' => $stream,
-                        'msg' => 'SuccessFully Submitted!',
-                        'status' => 'success',
-                        'title' => 'Success'
-                    ]);
-                }
+                $this->legderBudget($request);
             }
         } else {
             $this->cancelBudgetRequest($request);
@@ -163,7 +150,14 @@ class FinanceService extends FileHandler
 
                     $this->saveFile($request, $file);
 
-                    return true;
+                    $stream = $this->generatePdf($request);
+
+                    return redirect()->back()->with([
+                        'stream' => $stream,
+                        'msg' => 'SuccessFully Submitted!',
+                        'status' => 'success',
+                        'title' => 'Success'
+                    ]);
                 } else {
                     return back()->with([
                         'title' => 'Warning',
@@ -186,7 +180,7 @@ class FinanceService extends FileHandler
     {
         $bud = BudgetRequest::where('br_id', $request->br_id)->first();
 
-        $appby = User::select('firstname', 'lastname')->where('user_id', $bud->br_requested_by)->first('full_name');
+        $appby = User::select('firstname', 'lastname')->where('user_id', $bud->br_requested_by)->value('full_name');
         $checkby = User::select('firstname', 'lastname')->where('user_id', $bud->br_checked_by)->value('full_name');
 
         $data = [
@@ -208,17 +202,17 @@ class FinanceService extends FileHandler
                 ],
                 'checkedBy' => [
                     'name' => $checkby,
-                    'position' => 'Finance Analyst'
+                    'position' => 'Department Head'
                 ],
                 'reviewedBy' => [
                     'name' => $request->user()->full_name,
-                    'position' => 'Finance Analyst'
-                ]
+                    'position' => 'Financial Analyst'
+                ],
             ]
         ];
         $pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
 
-        $this->folderName = 'generatedTreasuryPdf/BudgetRequest';
+        $this->folderName = 'generatedTreasuryPdf/FinanceBudgetRequest';
 
         $this->savePdfFile($request, $bud->br_no, $pdf->output());
 
@@ -279,6 +273,7 @@ class FinanceService extends FileHandler
             $item->requestDate = Date::parse($item->br_requested_at)->toFormattedDateString();
             $item->approvedAt = Date::parse($item->abr_approved_at)->toFormattedDateString();
             $item->budgetReq = NumberHelper::currency($item->br_request);
+            $item->checkedby =  User::select('firstname', 'lastname')->where('user_id', $item->abr_approved_by)->value('full_name') ?? '--Mao ning Daan--';
             return $item;
         });
 
@@ -301,8 +296,9 @@ class FinanceService extends FileHandler
             $data->reqat = Date::parse($data->br_requested_at)->toFormattedDateString();
             $data->time = Date::parse($data->br_requested_at)->format('h:i');
             $data->budgetReq = NumberHelper::currency($data->br_request);
+            $data->checkedby =  User::select('firstname', 'lastname')->where('user_id', $data->abr_approved_by)->value('full_name');
+            $data->appby =  User::select('firstname', 'lastname')->where('user_id', $data->abr_checked_by)->value('full_name');
         }
-
         return $data;
     }
 }

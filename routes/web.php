@@ -367,6 +367,7 @@ Route::prefix('finance')->group(function () {
             Route::post('budget-submit', [FinanceController::class, 'submitBudget'])->name('submit');
             Route::get('approved-budget', [FinanceController::class, 'approvedBudget'])->name('approved');
             Route::get('approved-budget-details-{id}', [FinanceController::class, 'approvedBudgetDetails'])->name('approved.details');
+            Route::get('reprint-{id}', [FinanceController::class, 'reprint'])->name('reprint');
         });
     });
 
@@ -469,6 +470,7 @@ Route::middleware('auth')->group(function () {
             Route::get('review-index', [IadController::class, 'reviewedGcIndex'])->name('special.review');
             Route::get('review-datails-{id}', [IadController::class, 'reviewDetails'])->name('details');
         });
+        Route::get('details-{id}', [IadController::class, 'details'])->name('details');
         Route::put('approve-budget-{id}', [IadController::class, 'approveBudget'])->name('approve');
     });
 

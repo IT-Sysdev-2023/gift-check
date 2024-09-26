@@ -209,10 +209,6 @@ const quantityChange = (qty, denom, item) => {
 };
 const onSubmit = () => {
     formState
-        .transform((data) => ({
-            ...data,
-            dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
-        }))
         .post(route("treasury.transactions.production.gcSubmit"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
