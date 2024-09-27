@@ -109,13 +109,11 @@ class MarketingController extends Controller
         );
 
         $query = RequisitionEntry::orderByDesc('requis_erno')->first();
-        $getRequestNo = intval($query->requis_erno) + 1;
+        $getRequestNo = intval($query->requis_erno ?? 0) + 1;
         $getRequestNo = sprintf('%04d', $getRequestNo);
 
         if ($request->user()->user_role == 1) {
             $dashboard = 'CheckerDashboard';
-        } elseif ($request->user()->user_role == 2) {
-            $dashboard = 'ApproveeDashboard';
         } elseif ($request->user()->user_role == 0) {
             $dashboard = 'MarketingDashboard';
         }
@@ -250,7 +248,7 @@ class MarketingController extends Controller
 
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
-            ['Company Name', 'Account Name', 'Contact Person', 'Company Number', 'Address', 'View'],
+            ['Company Name', 'Account Name', 'Contact Person', 'Company Number', 'Address', 'Action'],
             ['gcs_companyname', 'gcs_accountname', 'gcs_contactperson', 'gcs_contactnumber', 'gcs_address', 'View']
         );
         return Inertia::render('Marketing/ManageSupplier', [
@@ -721,6 +719,12 @@ class MarketingController extends Controller
                 'description' => "Please fill all required fields",
                 'type' => "error",
             ]);
+        } elseif (is_null($request->file)) {
+            return back()->with([
+                'msg' => "Upload Image",
+                'description' => "Please upload Image",
+                'type' => "warning",
+            ]);
         } else {
             $totalrequest = str_replace(',', '', $request->total);
 
@@ -745,14 +749,14 @@ class MarketingController extends Controller
                     'pgcreq_reqnum' => $reqNum,
                     'pgcreq_reqby' => $request->user()->user_id,
                     'pgcreq_datereq' => now(),
-                    'pgcreq_dateneeded' => Date::parse($request->data['dateneeded'])->format('y-m-d'),
+                    'pgcreq_dateneeded' => Date::parse($request->data['dateneeded']['$d'])->format('Y-m-d'),
                     'pgcreq_status' => 'pending',
                     'pgcreq_remarks' => $request->data['remarks'],
                     'pgcreq_total' => (float) $totalrequest,
                     'pgcreq_group' => $group,
                     'pgcreq_tagged' => $request->user()->promo_tag,
                     'pgcreq_group_status' => '',
-                    'pgcreq_doc' => ''
+                    'pgcreq_doc' => $this->marketing->fileUpload($request, $reqNum)
                 ]);
 
                 $trid = is_null($promo->pgcreq_id) ? '1' : $promo->pgcreq_id;
@@ -1407,6 +1411,16 @@ class MarketingController extends Controller
 
     private function handleRoleApproval(Request $request, $prid)
     {
+        $exists = ApprovedProductionRequest::where('ape_pro_request_id', $request->data['id'])->exists();
+
+        if ($exists) {
+            return back()->with([
+                'type' => 'warning',
+                'msg' => 'Warning!',
+                'description' => 'Production Pending Request Already Approved'
+            ]);
+        }
+
         $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
         $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
 
@@ -2014,11 +2028,11 @@ class MarketingController extends Controller
     {
 
 
+
         $query = ApprovedProductionRequest::where('ape_pro_request_id', $request['id'])->first();
 
-
+        
         $approvedBy = UserDetails::where('user_id', $query['ape_approved_by'])->first();
-
 
         $data = [
             'approvedBy' => $approvedBy['details'],

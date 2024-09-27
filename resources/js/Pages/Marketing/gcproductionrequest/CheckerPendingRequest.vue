@@ -32,7 +32,7 @@
                         <a-form-item label="Date Approved">
                             <a-input v-model:value="form.dateApproved" readonly />
                         </a-form-item>
-                        <a-form-item label="Checked By">
+                        <a-form-item label="Approved By">
                             <a-input v-model:value="form.checkedByName" readonly />
                         </a-form-item>
                     </div>
@@ -61,7 +61,7 @@
                         <a-form-item label="Remarks">
                             <a-input v-model:value="form.remarks" readonly />
                         </a-form-item>
-                        <a-form-item label="Requested by">
+                        <a-form-item label="Prepared by">
                             <a-input v-model:value="form.requestedBy" readonly />
                         </a-form-item>
                     </a-form>

@@ -71,9 +71,6 @@
                         <a-form-item label="Remarks">
                             <a-input v-model:value="form.remarks" readonly />
                         </a-form-item>
-                        <a-form-item label="Requested by">
-                            <a-input v-model:value="form.requestedBy" readonly />
-                        </a-form-item>
                     </a-form>
                     <a-table :dataSource="barcodes" :columns="barcodeColumns" :pagination="false" />
                     <div class="flex justify-end mt-3">

@@ -36,6 +36,9 @@
                                 <a-form-item label="Requested By">
                                     <a-input v-model:value='selectedData.requestedBy' readonly />
                                 </a-form-item>
+                                <a-form-item label="Uploaded Document">
+                                    <a-image style="height: 100px;" :src="'/storage/promoGcUpload/'+selectedData.pgcreq_doc"></a-image>
+                                </a-form-item>
                             </a-card>
                         </a-col>
                         <a-col :span="12">
@@ -86,7 +89,7 @@
                                 <a-input v-model:value="selectedData.reqap_remarks" readonly/>
                             </a-form-item>
                             <a-form-item label="Checked By">
-                                <a-input v-model:value="approvedDetails.checkedBy" readonly/>
+                                <a-input v-model:value="approvedDetails.reqap_checkedby" readonly/>
                             </a-form-item>
                         </a-card>
                     </a-col>
@@ -104,7 +107,7 @@
                                 </div>
                             </a-form-item>
                             <a-form-item label="Approved By">
-                                <a-input v-model:value="approvedDetails.approvedBy" readonly/>
+                                <a-input v-model:value="approvedDetails.reqap_approvedby" readonly/>
                             </a-form-item>
                         </a-card>
                     </a-col>

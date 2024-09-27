@@ -1,67 +1,3 @@
-<script setup lang="ts">
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { router } from "@inertiajs/vue3";
-
-defineProps<{
-    data?: {
-        budgetRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-        };
-        storeGcRequest: {
-            pending: number;
-            released: number;
-            cancelled: number;
-        };
-        gcProductionRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-        };
-        specialGcRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-            reviewed: number;
-            released: number;
-        };
-        adjustment: {
-            budget: number;
-            allocation: number;
-        };
-        eod: number;
-        budget: number;
-        institutionGcSales: number
-    };
-}>();
-
-
-const routeTo = (type: string, status: string) => {
-    router.get(route(`treasury.${type}.${status}`));
-};
-
-// Budget request handlers
-const budgetRequestPending = () => routeTo("budget.request", "pending");
-const budgetRequestApproved = () => routeTo("budget.request", "approved");
-const budgetRequestCancelled = () => routeTo("budget.request", "cancelled");
-
-// Store GC request handlers
-const storeGcPending = () => routeTo("store.gc", "pending");
-const storeGcReleased = () => routeTo("store.gc", "released");
-const storeGcCancelled = () => routeTo("store.gc", "cancelled");
-
-// GC Production request handlers
-const pendingProductionRequest = () => routeTo("production.request", 'pending')
-const approvedProductionRequest = () => routeTo("production.request", "approved");
-
-//Special GC Requesh
-const specialGcPending = () => routeTo("special.gc", "pending");
-
-const institutionGc = () => routeTo("transactions.institution.gc.sales", "transaction"); 
-const eodList = () => routeTo("transactions.eod", "eodList");
-</script>
-
 <template>
     <Head title="Dashboard" />
 
@@ -84,24 +20,32 @@ const eodList = () => routeTo("transactions.eod", "eodList");
                             "
                             justify="center"
                         >
-                            <a-col :span="24">
+                            <a-col :span="8">
                                 <a-statistic
-                                    title="Current Budget"
-                                    :value="data?.budget"
+                                    title="Regular Gc Budget"
+                                    :value="data?.budget?.regularBudget"
                                     style="margin-right: 50px"
+                                >
+                                </a-statistic>
+                            </a-col>
+                            <a-col :span="8">
+                                <a-statistic
+                                    title="Special Gc Budget"
+                                    :precision="2"
+                                    :value="data?.budget?.specialBudget"
+                                />
+                            </a-col>
+                            <a-col :span="8">
+                                <a-statistic
+                                    title="Total Budget"
+                                    :precision="2"
+                                    :value="data?.budget?.totalBudget"
                                 >
                                     <template #prefix>
                                         <FireOutlined />
                                     </template>
                                 </a-statistic>
                             </a-col>
-                            <!-- <a-col :span="12">
-                                <a-statistic
-                                    title="Abog sa Kalibotan"
-                                    :precision="2"
-                                    :value="112893"
-                                />
-                            </a-col> -->
                         </a-row>
                         <a-row :gutter="16">
                             <Card
@@ -130,9 +74,11 @@ const eodList = () => routeTo("transactions.eod", "eodList");
                                 title="Gc Production Request"
                                 :pending="data?.gcProductionRequest?.pending"
                                 :approved="data?.gcProductionRequest?.approved"
-                                :cancelled="data?.gcProductionRequest?.cancelled"
-                                 @pending-event="pendingProductionRequest"
-                                 @approved-event="approvedProductionRequest"
+                                :cancelled="
+                                    data?.gcProductionRequest?.cancelled
+                                "
+                                @pending-event="pendingProductionRequest"
+                                @approved-event="approvedProductionRequest"
                             />
                             <Card
                                 use-default
@@ -196,3 +142,71 @@ const eodList = () => routeTo("transactions.eod", "eodList");
         </div>
     </AuthenticatedLayout>
 </template>
+<script setup lang="ts">
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { router } from "@inertiajs/vue3";
+
+const props = defineProps<{
+    data?: {
+        budgetRequest: {
+            pending: number;
+            approved: number;
+            cancelled: number;
+        };
+        storeGcRequest: {
+            pending: number;
+            released: number;
+            cancelled: number;
+        };
+        gcProductionRequest: {
+            pending: number;
+            approved: number;
+            cancelled: number;
+        };
+        specialGcRequest: {
+            pending: number;
+            approved: number;
+            cancelled: number;
+            reviewed: number;
+            released: number;
+        };
+        adjustment: {
+            budget: number;
+            allocation: number;
+        };
+        eod: number;
+        budget: {
+            totalBudget: number,
+            regularBudget: number,
+            specialBudget: number
+        };
+        institutionGcSales: number;
+    };
+}>();
+
+const routeTo = (type: string, status: string) => {
+    router.get(route(`treasury.${type}.${status}`));
+};
+
+// Budget request handlers
+const budgetRequestPending = () => routeTo("budget.request", "pending");
+const budgetRequestApproved = () => routeTo("budget.request", "approved");
+const budgetRequestCancelled = () => routeTo("budget.request", "cancelled");
+
+// Store GC request handlers
+const storeGcPending = () => routeTo("store.gc", "pending");
+const storeGcReleased = () => routeTo("store.gc", "released");
+const storeGcCancelled = () => routeTo("store.gc", "cancelled");
+
+// GC Production request handlers
+const pendingProductionRequest = () => routeTo("production.request", "pending");
+const approvedProductionRequest = () =>
+    routeTo("production.request", "approved");
+
+//Special GC Requesh
+const specialGcPending = () => routeTo("special.gc", "pending");
+
+const institutionGc = () =>
+    routeTo("transactions.institution.gc.sales", "transaction");
+const eodList = () => routeTo("transactions.eod", "eodList");
+</script>
