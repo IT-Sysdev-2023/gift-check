@@ -719,6 +719,12 @@ class MarketingController extends Controller
                 'description' => "Please fill all required fields",
                 'type' => "error",
             ]);
+        } elseif (is_null($request->file)) {
+            return back()->with([
+                'msg' => "Upload Image",
+                'description' => "Please upload Image",
+                'type' => "warning",
+            ]);
         } else {
             $totalrequest = str_replace(',', '', $request->total);
 
@@ -743,14 +749,14 @@ class MarketingController extends Controller
                     'pgcreq_reqnum' => $reqNum,
                     'pgcreq_reqby' => $request->user()->user_id,
                     'pgcreq_datereq' => now(),
-                    'pgcreq_dateneeded' => Date::parse($request->data['dateneeded'])->format('y-m-d'),
+                    'pgcreq_dateneeded' => Date::parse($request->data['dateneeded']['$d'])->format('Y-m-d'),
                     'pgcreq_status' => 'pending',
                     'pgcreq_remarks' => $request->data['remarks'],
                     'pgcreq_total' => (float) $totalrequest,
                     'pgcreq_group' => $group,
                     'pgcreq_tagged' => $request->user()->promo_tag,
                     'pgcreq_group_status' => '',
-                    'pgcreq_doc' => ''
+                    'pgcreq_doc' => $this->marketing->fileUpload($request, $reqNum)
                 ]);
 
                 $trid = is_null($promo->pgcreq_id) ? '1' : $promo->pgcreq_id;
@@ -1246,8 +1252,8 @@ class MarketingController extends Controller
                     if ($pdfgenerated) {
                         ProductionRequest::where('pe_id', $request->data['id'])
                             ->update([
-                                'pe_requisition' => '1'
-                            ]);
+                                    'pe_requisition' => '1'
+                                ]);
 
                         return redirect()->back()->with([
                             'type' => 'success',
@@ -1271,8 +1277,8 @@ class MarketingController extends Controller
             if ($productionDetails) {
                 $updateProductionStatus = ProductionRequest::where('pe_id', $request->data['id'])
                     ->update([
-                        'pe_requisition' => '2'
-                    ]);
+                    'pe_requisition' => '2'
+                ]);
 
                 if ($updateProductionStatus) {
                     $amount = ProductionRequestItem::join('denomination', 'production_request_items.pe_items_denomination', '=', 'denomination.denom_id')
@@ -1655,10 +1661,10 @@ class MarketingController extends Controller
         $inserted = DB::transaction(function () use ($request) {
             PromoGcRequest::where('pgcreq_id', $request->reqnum)
                 ->update([
-                    'pgcreq_dateneeded' => Date::parse($request->dateNeed)->format('Y-m-d'),
-                    'pgcreq_remarks' => $request->remarks,
-                    'pgcreq_group' => $request->group,
-                ]);
+                        'pgcreq_dateneeded' => Date::parse($request->dateNeed)->format('Y-m-d'),
+                        'pgcreq_remarks' => $request->remarks,
+                        'pgcreq_group' => $request->group,
+                    ]);
             $filteredArray = array_filter($request->denom, function ($item) {
                 return isset($item['quantity']);
             });
@@ -1734,8 +1740,8 @@ class MarketingController extends Controller
         $status = Supplier::where('gcs_id', $request->id)->first();
         Supplier::where('gcs_id', $request->id)
             ->update([
-                'gcs_status' => $status->gcs_status == 0 ? 1 : 0
-            ]);
+                    'gcs_status' => $status->gcs_status == 0 ? 1 : 0
+                ]);
 
         return back()->with([
             'msg' => "Status",
