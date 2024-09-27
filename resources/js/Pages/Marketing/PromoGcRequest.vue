@@ -5,7 +5,7 @@
         <a-card title="Promo GC Request Form"></a-card>
         <div class="flex justify-end mt-2">
             <a-button type="primary" @click="submit">
-                Submit Promo Requestfgffftt
+                Submit Promo Request
             </a-button>
         </div>
         <a-row :gutter="[16, 16]">
@@ -23,6 +23,24 @@
                     <a-form-item label="Remarks:" name="remarks">
                         <a-textarea v-model:value="form.remarks" allow-clear />
                     </a-form-item>
+
+
+                    <a-form-item label="Upload Document">
+                        <!-- <a-upload v-model:file-list="fileList" name="avatar" list-type="picture-card"
+                            class="avatar-uploader" :show-upload-list="false" :before-upload="beforeUpload"
+                            @change="handleChange">
+                            <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
+                            <div v-else>
+                                <loading-outlined v-if="loading"></loading-outlined>
+                                <plus-outlined v-else></plus-outlined>
+                                <div class="ant-upload-text">Upload</div>
+                            </div>
+                        </a-upload> -->
+
+                        <ant-upload-image @handle-change="handleimagechange"/>
+                    </a-form-item>
+
+
                     <a-form-item label="Promo Group:" name="promoGroup">
                         <a-select ref="select" placeholder="select" v-model:value="form.group" style="width: 130px">
                             <a-select-option :value="'1'">Group 1</a-select-option>
@@ -79,6 +97,7 @@ export default {
     data() {
         return {
             form: {
+                file: null,
                 dateReq: dayjs(this.dateRequested),
                 rfprom_number: this.rfprom_number,
                 dateneeded: dayjs(),
@@ -107,6 +126,7 @@ export default {
         submit() {
             this.$inertia.post(route('marketing.promo.gc.submit'), {
                 data: this.form,
+                file: this.form.file,
                 total: this.totalValue
             }, {
                 onSuccess: (response) => {
@@ -124,6 +144,30 @@ export default {
         disabledDate(current) {
             return current && current < new Date().setHours(0, 0, 0, 0);
         },
+        handleimagechange(file){
+            
+            this.form.file = file.file;
+        }
+       
     }
+
 };
 </script>
+
+
+<style scoped>
+.avatar-uploader>.ant-upload {
+    width: 128px;
+    height: 128px;
+}
+
+.ant-upload-select-picture-card i {
+    font-size: 32px;
+    color: #999;
+}
+
+.ant-upload-select-picture-card .ant-upload-text {
+    margin-top: 8px;
+    color: #666;
+}
+</style>

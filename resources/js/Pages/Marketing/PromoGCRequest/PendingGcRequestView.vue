@@ -22,6 +22,7 @@
                                 <a-select-option value="2">2</a-select-option>
                             </a-select>
                         </a-form-item>
+                        <a-image style="height: 100px;" :src="'/storage/promoGcUpload/'+data[0]['pgcreq_doc']"></a-image>
                         <a-form-item>
                             <a-table :dataSource="denom" :columns="columns" :pagination="false">
                                 <template v-slot:bodyCell="{ column, record }">
