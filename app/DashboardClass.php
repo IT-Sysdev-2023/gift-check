@@ -59,7 +59,6 @@ class DashboardClass extends DashboardService
     }
     public function retailGroupDashboard()
     {
-
         return [
             'pending' => PromoGcRequest::with('userReqby:user_id,firstname,lastname')
                 ->where('pgcreq_group', request()->user()->usergroup)

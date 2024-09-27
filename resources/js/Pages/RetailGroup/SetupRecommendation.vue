@@ -70,10 +70,10 @@
 
                                 </a-col>
                                 <a-divider>
-                                    <a-typography-text code>upload image</a-typography-text>
+                                    <a-typography-text code>Document Uploaded</a-typography-text>
                                 </a-divider>
                                 <div class="flex justify-center" style="width: 100%;">
-                                    <ant-upload-image class="ml-2" @handleChange="imageHandler" />
+                                   <a-image style="height: 150px; border: #3795BD solid; border-radius: 10px;" :src="'/storage/promoGcUpload/'+record.pgcreq_doc"></a-image>
                                 </div>
                             </a-row>
                         </div>
@@ -119,7 +119,6 @@
                     </a-card>
                 </a-col>
                 <a-col :span="14">
-
                     <pending-gc-description :record="record" />
 
                     <div class="flex justify-end" v-if="record.pgcreq_group_status == ''">

@@ -6,13 +6,18 @@ use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcRequest;
 use App\Models\Supplier;
+use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
 
-class MarketingServices
+class MarketingServices extends FileHandler
 {
+    public function __construct() {
+        parent::__construct();
+        $this->folderName = 'promoGcUpload';
+    }
     public function promoGcRequest()
     {
         $promoGcRequest = [
@@ -186,7 +191,7 @@ class MarketingServices
     public function generatepdfrequisition($request)
     {
 
-        
+
         $supplier = Supplier::where('gcs_id', $request->data['selectedSupplierId'])->first();
         $data = [
             'reqNum' => $request->data['requestNo'],
@@ -204,14 +209,27 @@ class MarketingServices
 
         $fileName = $request->data['requestNo'] . '.pdf';
 
-      
+
         $storeSuccess = Storage::disk('public')->put('e-requisitionform/' . $fileName, $pdf->output());
 
         if ($storeSuccess) {
-            return $pdf; 
+            return $pdf;
         } else {
-            return false; 
+            return false;
         }
+    }
+
+    public function fileUpload(Request $request, $reqNum)
+    {
+        // return $request->all();
+        if ($request->hasFile('file')) {
+            $file = $reqNum . '.jpg';
+            $this->saveFile($request, $file);
+
+            return $file;
+        }
+
+
     }
 
 
