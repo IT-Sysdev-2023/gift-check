@@ -203,7 +203,7 @@ Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->n
 
 
 //Treasury
-Route::middleware(['auth', 'userType:treasury'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::prefix('treasury')->group(function () {
         Route::name('treasury.')->group(function () {
             Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
@@ -248,7 +248,6 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
 
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
-
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 
@@ -311,7 +310,6 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
 
                     Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
                 });
-
             });
 
 
@@ -333,8 +331,22 @@ Route::prefix('eod')->group(function () {
         Route::get('eod-verified-gc', [EodController::class, 'eodVerifiedGc'])->name('verified.gc');
         Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
         Route::get('list', [EodController::class, 'list'])->name('list');
+    });
+});
 
+//Accounting =====
 
+Route::prefix('accounting')->name('accounting.')->group(function () {
+    Route::name('pending.')->group(function () {
+        Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('index');
+    });
+    Route::name('approved.')->group(function () {
+        Route::get('approved-gc-request', [CustodianController::class, 'approvedGcRequest'])->name('request');
+    });
+    Route::name('payment.')->group(function () {
+        Route::get('payment-gc', [AccountingController::class, 'paymantGc'])->name('payment.gc');
+        Route::get('setup-payment-{id}', [AccountingController::class, 'setupPayment'])->name('setup');
+        Route::get('setup-table-{id}', [AccountingController::class, 'tableFetch'])->name('fetch');
     });
 });
 
@@ -473,7 +485,6 @@ Route::middleware('auth')->group(function () {
         Route::get('details-{id}', [IadController::class, 'details'])->name('details');
         Route::put('approve-budget-{id}', [IadController::class, 'approveBudget'])->name('approve');
     });
-
 });
 
 Route::prefix('search')->group(function () {

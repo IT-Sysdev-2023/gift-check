@@ -22,8 +22,8 @@ class SpecialExternalGcrequest extends Model
     protected function casts(): array
     {
         return [
-            'spexgc_dateneed' => 'date',
-            'spexgc_datereq' => 'date'
+            'spexgc_dateneed' => 'datetime',
+            'spexgc_datereq' => 'datetime'
         ];
     }
 

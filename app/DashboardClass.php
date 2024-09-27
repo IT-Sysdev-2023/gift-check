@@ -108,7 +108,7 @@ class DashboardClass extends DashboardService
                 'cancel' => SpecialExternalGcrequest::where('spexgc_status', 'cancelled')->count(),
             ],
             'budgetRequest' => [
-                'pending' => BudgetRequest::where('br_request_status', '0')->where('br_checked_by', '!=' , '')
+                'pending' => BudgetRequest::where('br_request_status', '0')->where('br_checked_by', '!=', '')
                     ->count(),
                 'approved' => BudgetRequest::where('br_request_status', '1')
                     ->count(),
@@ -191,6 +191,17 @@ class DashboardClass extends DashboardService
                 ->where('spexgc_status', 'approved')
                 ->where('reqap_approvedtype', 'Special External GC Approved')->count(),
 
+        ];
+    }
+
+    public function accountingDashboard()
+    {
+        return [
+            'pending' => SpecialExternalGcrequest::with('user')
+                ->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+                ->where('spexgc_status', 'pending')
+                ->where('spexgc_promo', '0')
+                ->count()
         ];
     }
 }

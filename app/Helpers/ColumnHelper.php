@@ -100,6 +100,50 @@ class ColumnHelper
 
         ],
     ];
+    public static $payment_gc_columns = [
+        [
+            'title' => 'RFSEGC#',
+            'dataIndex' => 'spexgc_num',
+            'align' => 'center'
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'reqby',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'spcus_acctname',
+
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'spexgc_balance',
+
+        ],
+        [
+            'title' => 'Status',
+            'key' => 'status',
+
+        ],
+        [
+            'title' => 'Setup',
+            'key' => 'setup',
+            'align' => 'center',
+
+        ],
+    ];
     public static $approved_budget_request = [
         [
             'title' => 'Br No',
