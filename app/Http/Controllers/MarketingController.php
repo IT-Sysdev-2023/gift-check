@@ -248,7 +248,7 @@ class MarketingController extends Controller
 
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
-            ['Company Name', 'Account Name', 'Contact Person', 'Company Number', 'Address', 'View'],
+            ['Company Name', 'Account Name', 'Contact Person', 'Company Number', 'Address', 'Action'],
             ['gcs_companyname', 'gcs_accountname', 'gcs_contactperson', 'gcs_contactnumber', 'gcs_address', 'View']
         );
         return Inertia::render('Marketing/ManageSupplier', [
@@ -1252,8 +1252,8 @@ class MarketingController extends Controller
                     if ($pdfgenerated) {
                         ProductionRequest::where('pe_id', $request->data['id'])
                             ->update([
-                                    'pe_requisition' => '1'
-                                ]);
+                                'pe_requisition' => '1'
+                            ]);
 
                         return redirect()->back()->with([
                             'type' => 'success',
@@ -1277,8 +1277,8 @@ class MarketingController extends Controller
             if ($productionDetails) {
                 $updateProductionStatus = ProductionRequest::where('pe_id', $request->data['id'])
                     ->update([
-                    'pe_requisition' => '2'
-                ]);
+                        'pe_requisition' => '2'
+                    ]);
 
                 if ($updateProductionStatus) {
                     $amount = ProductionRequestItem::join('denomination', 'production_request_items.pe_items_denomination', '=', 'denomination.denom_id')
@@ -1411,6 +1411,16 @@ class MarketingController extends Controller
 
     private function handleRoleApproval(Request $request, $prid)
     {
+        $exists = ApprovedProductionRequest::where('ape_pro_request_id', $request->data['id'])->exists();
+
+        if ($exists) {
+            return back()->with([
+                'type' => 'warning',
+                'msg' => 'Warning!',
+                'description' => 'Production Pending Request Already Approved'
+            ]);
+        }
+
         $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
         $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
 
@@ -1661,10 +1671,10 @@ class MarketingController extends Controller
         $inserted = DB::transaction(function () use ($request) {
             PromoGcRequest::where('pgcreq_id', $request->reqnum)
                 ->update([
-                        'pgcreq_dateneeded' => Date::parse($request->dateNeed)->format('Y-m-d'),
-                        'pgcreq_remarks' => $request->remarks,
-                        'pgcreq_group' => $request->group,
-                    ]);
+                    'pgcreq_dateneeded' => Date::parse($request->dateNeed)->format('Y-m-d'),
+                    'pgcreq_remarks' => $request->remarks,
+                    'pgcreq_group' => $request->group,
+                ]);
             $filteredArray = array_filter($request->denom, function ($item) {
                 return isset($item['quantity']);
             });
@@ -1740,8 +1750,8 @@ class MarketingController extends Controller
         $status = Supplier::where('gcs_id', $request->id)->first();
         Supplier::where('gcs_id', $request->id)
             ->update([
-                    'gcs_status' => $status->gcs_status == 0 ? 1 : 0
-                ]);
+                'gcs_status' => $status->gcs_status == 0 ? 1 : 0
+            ]);
 
         return back()->with([
             'msg' => "Status",
@@ -2018,11 +2028,11 @@ class MarketingController extends Controller
     {
 
 
+
         $query = ApprovedProductionRequest::where('ape_pro_request_id', $request['id'])->first();
 
-
+        
         $approvedBy = UserDetails::where('user_id', $query['ape_approved_by'])->first();
-
 
         $data = [
             'approvedBy' => $approvedBy['details'],
