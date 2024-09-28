@@ -77,9 +77,6 @@
             <strong>Date Requested :</strong> {{$data['dateReq']}}
         </div>
         <div style="text-align:left">
-            <strong>Date Needed :</strong> {{$data['dateNeed']}}
-        </div>
-        <div style="text-align:left">
             <strong>Request :</strong> Request for gift cheque printing as per breakdown provided below.
         </div>
 

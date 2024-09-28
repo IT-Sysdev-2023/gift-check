@@ -40,9 +40,6 @@
                         <a-form-item label="Date Requested:" :style="{ width: '70%' }">
                             <a-input v-model:value="form.dateRequested" readonly />
                         </a-form-item>
-                        <a-form-item label="Date Needed:" :style="{ width: '70%' }">
-                            <a-input v-model:value="form.dateNeeded" readonly />
-                        </a-form-item>
                         <a-form-item label="Location:" :style="{ width: '70%' }">
                             <a-input v-model:value="form.location" readonly />
                         </a-form-item>
@@ -54,12 +51,7 @@
                         </a-form-item>
 
                         <a-form-item label="Checked By:" :style="{ width: '70%' }">
-                            <a-select v-model:value="form.checkedBy" placeholder="Select an option">
-                                <a-select-option v-for="item in checkBy" :key="item.assig_name"
-                                    :value="item.assig_name">
-                                    {{ item.assig_name }}
-                                </a-select-option>
-                            </a-select>
+                            <a-input v-model:value="form.checkedBy" />
                         </a-form-item>
                     </div>
 
@@ -143,13 +135,8 @@
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs, { Dayjs } from "dayjs";
 import { notification } from 'ant-design-vue';
-import GcProductionReq from "./Card/GcProductionReq.vue";
-import GcPromoReq from "./Card/PromoGcReq.vue";
-import BudgetRequest from "../Treasury/Transactions/BudgetRequest.vue";
-import BudgetReq from "./Card/PromoGcReq.vue";
-import PromoGcReq from "./Card/PromoGcReq.vue";
-import SpecialExternalGc from "./Card/SpecialExternalGc.vue";
-import PromoGcReceived from "./Card/PromoGcReceived.vue";
+import axios from "axios";
+
 
 export default {
     layout: Authenticatedlayout,
@@ -178,13 +165,13 @@ export default {
                 finalize: '1',
                 productionReqNum: '',
                 dateRequested: dayjs(this.ReqNum[0]?.pe_date_request),
-                dateNeeded: dayjs(this.ReqNum[0]?.pe_date_needed),
                 location: 'AGC Head Office',
                 department: 'Marketing',
                 remarks: '',
                 checkedBy: '',
-                approvedById: this.$page.props.auth.user.user_id,
-                approvedBy: this.$page.props.auth.user.full_name,
+                checkedById: '',
+                approvedById: '',
+                approvedBy: '',
                 selectedSupplierId: '',
                 contactPerson: '',
                 contactNum: '',
@@ -207,6 +194,26 @@ export default {
 
     methods: {
         openReqModal(data) {
+
+            axios.get(route('marketing.pendingRequest.getChecker'), {
+                params: {
+                    data: data.pe_id
+                }
+            }).then(e => {
+                this.form.checkedBy = e.data.checkedBy
+                this.form.checkedById = e.data.checkedById
+            })
+
+            axios.get(route('marketing.pendingRequest.getSigners'), {
+                params: {
+                    data: data.pe_id
+                }
+            }).then(e => {
+                console.log(e.data.response.approvedById);
+                this.form.approvedBy =e.data.response.approvedBy.employee_name
+                this.form.approvedById = e.data.response.approvedById
+            });
+
             this.$inertia.get(route('marketing.dashboard'),
                 {
                     data: data.pe_id,
