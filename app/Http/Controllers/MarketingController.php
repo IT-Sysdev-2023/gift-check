@@ -1182,7 +1182,6 @@ class MarketingController extends Controller
 
     public function submitReqForm(Request $request)
     {
-
         if ($request->data['finalize'] == 1) {
 
             if (
@@ -1191,7 +1190,6 @@ class MarketingController extends Controller
                 $request->data['finalize'] == null ||
                 $request->data['productionReqNum'] == null ||
                 $request->data['dateRequested'] == null ||
-                $request->data['dateNeeded'] == null ||
                 $request->data['location'] == null ||
                 $request->data['department'] == null ||
                 $request->data['remarks'] == null ||
@@ -1228,7 +1226,6 @@ class MarketingController extends Controller
                     $requisEntry = RequisitionEntry::create([
                         'requis_erno' => $request->data['requestNo'],
                         'requis_req' => now(),
-                        'requis_need' => substr($request->data['dateNeeded'], 0, 10),
                         'requis_loc' => $request->data['location'],
                         'requis_dept' => $request->data['department'],
                         'requis_rem' => $request->data['remarks'],
@@ -1352,7 +1349,6 @@ class MarketingController extends Controller
         $pendingRequests->transform(function ($item) {
 
             $dateReq = Date::parse($item->pe_date_request)->format('F d, Y');
-            $dateneed = Date::parse($item->pe_date_needed)->format('F d, Y');
             $requestId = $item->pe_id;
             $firstname = $item->firstname;
             $lastname = $item->lastname;
@@ -1554,7 +1550,6 @@ class MarketingController extends Controller
         $data = [
             'pr_no' => $request->data['pe_no'],
             'dateRequested' => $request->data['dateRequested'],
-            'dateNeeded' => $request->data['dateNeeded'],
             'currentBudget' => $this->marketing->currentBudget(),
             'Remarks' => $request->data['InputRemarks'],
             'reviewedBy' => strtoupper($request->data['reviewedBy']),
@@ -2026,12 +2021,14 @@ class MarketingController extends Controller
 
     public function getSigners(Request $request)
     {
+        if ($request->data) {
+            $q = $request->data;
+        } else {
+            $q = $request['id'];
+        }
+        $query = ApprovedProductionRequest::where('ape_pro_request_id', $q)->first();
 
 
-
-        $query = ApprovedProductionRequest::where('ape_pro_request_id', $request['id'])->first();
-
-        
         $approvedBy = UserDetails::where('user_id', $query['ape_approved_by'])->first();
 
         $data = [
@@ -2039,8 +2036,6 @@ class MarketingController extends Controller
             'approvedById' => $approvedBy['user_id'],
 
         ];
-
-
         return response()->json([
             'response' => $data
         ]);
@@ -2048,11 +2043,12 @@ class MarketingController extends Controller
 
     public function getChecker(Request $request)
     {
-
         $query = ApprovedProductionRequest::where('ape_pro_request_id', $request->data)->first();
         $q = UserDetails::where('user_id', $query->ape_checked_by)->first();
+
         return response()->json([
-            'checkedBy' => $q['details']['employee_name']
+            'checkedBy' => $q['details']['employee_name'],
+            'checkedById' => $query['ape_checked_by'],
         ]);
     }
 }
