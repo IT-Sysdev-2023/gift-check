@@ -1,6 +1,10 @@
 <template>
     <a-row class="flex justify-between" align="middle" v-if="datarecords !== undefined">
+<<<<<<< HEAD
             <a-col>
+=======
+        <a-col>
+>>>>>>> kenji
             <a-typography-text>{{ `Showing ${datarecords?.from || 0} to ${datarecords?.to || 0} of
                 ${datarecords?.total.toLocaleString()}
                 records` }}
@@ -15,6 +19,10 @@
 
             </a-config-provider>
         </a-col>
+<<<<<<< HEAD
+=======
+
+>>>>>>> kenji
     </a-row>
 </template>
 

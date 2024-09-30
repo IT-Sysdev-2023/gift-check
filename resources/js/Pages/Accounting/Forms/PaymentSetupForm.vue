@@ -1,4 +1,5 @@
 <template>
+    <a-alert v-if="response.status === 'error'" class="mb-3" :message="response.title" :description="response.msg" :type="response.status" show-icon />
     <div class="flex justify-between">
         <div>
             <a-form class="ml-1" :layout="'horizontal'">
@@ -23,7 +24,6 @@
             </template>
         </template>
     </a-table>
-
     <a-descriptions class="mt-6 ml-1" size="small" layout="horizontal">
         <a-descriptions-item style="width: 50%;" label="Total Gc"> <a-tag style="font-size: 14px;" color="blue">
                 <p>{{ selected.total }}
@@ -40,35 +40,56 @@
             <p class="underline">{{ dayjs().format('MMM DD, YYYY')
                 }}</p>
         </a-descriptions-item>
-        <a-descriptions-item style="width: 50%;" label="Checked by"><a-input></a-input></a-descriptions-item>
+        <a-descriptions-item style="width: 50%;" label="Checked by">
+            <a-form-item has-feedback :validate-status="error.checkedby ? 'error' : ''" :help="error.checkedby">
+                <a-input v-model:value="form.checkedby" placeholder="Enter Checked By"
+                    @change="() => error.checkedby = ''">
+                </a-input>
+            </a-form-item>
+        </a-descriptions-item>
     </a-descriptions>
     <a-descriptions class="ml-1 mt-1" size="small" layout="vertical">
         <a-descriptions-item style="width: 50%;" label="Received By">
-            <a-input placeholder="Type here..." />
+            <a-form-item has-feedback :validate-status="error.receiveby ? 'error' : ''" :help="error.receiveby">
+                <a-input style="width: 320px;" v-model:value="form.receiveby" placeholder="Type here..."
+                    @change="() => error.receiveby = ''" />
+            </a-form-item>
         </a-descriptions-item>
         <a-descriptions-item style="width: 50%;" label="Payment Status">
-            <a-select ref="select" placeholder="Select Status" style="width: 100%">
-                <a-select-option value="jack">PARTIAL</a-select-option>
-                <a-select-option value="lucy">WHOLE</a-select-option>
-            </a-select>
+            <a-form-item has-feedback :validate-status="error.status ? 'error' : ''" :help="error.status">
+                <a-select style="width: 320px;" ref="select" v-model:value="form.status" placeholder="Select Status"
+                    @change="() => error.status = ''">
+                    <a-select-option value="partial">PARTIAL</a-select-option>
+                    <a-select-option value="whole">WHOLE</a-select-option>
+                </a-select>
+            </a-form-item>
         </a-descriptions-item>
     </a-descriptions>
     <a-descriptions class="ml-1 mt-1" size="small" layout="vertical">
-        <a-descriptions-item v-model:value="form.payment" style="width: 20%;" label="Payment Type">
-            <a-select ref="select" placeholder="Select Payment Method" style="width: 100%"
-                @change="handlePaymentMehthod">
-                <a-select-option value="0">CASH</a-select-option>
-                <a-select-option value="1">CHECK</a-select-option>
-                <a-select-option value="2">JV</a-select-option>
-            </a-select>
+        <a-descriptions-item style="width: 20%;" label="Payment Type">
+            <a-form-item has-feedback :validate-status="error.payment ? 'error' : ''" :help="error.payment">
+                <a-select v-model:value="form.payment" ref="select" placeholder="Select Payment Method"
+                    style="width: 190px" @change="handlePaymentMehthod">
+                    <a-select-option value="0">CASH</a-select-option>
+                    <a-select-option value="1">CHECK</a-select-option>
+                    <a-select-option value="2">JV</a-select-option>
+                </a-select>
+            </a-form-item>
         </a-descriptions-item>
 
         <a-descriptions-item style="width: 50%;" label="">
-            <a-card style="width: 100%;" v-if="payment.cash">
+            <a-card style="width: 100%;" v-if="paymentstat.cash">
                 <p class="text-center mb-5 font-bold">CASH</p>
                 <p>Cash Amount</p>
-                <a-input-number placeholder="Enter here..." style="width: 100%;" v-model:value="form.amount"
-                    @change="handleChange" />
+                <a-form-item has-feedback :validate-status="error.amount ? 'error' : ''" :help="error.amount">
+                    <a-input-number placeholder="Enter here..." style="width: 100%;" v-model:value="form.amount"
+                        @change="handleChange" :formatter="(value) =>
+                            `₱ ${value}`.replace(
+                                /\B(?=(\d{3})+(?!\d))/g,
+                                ','
+                            )
+                            " />
+                </a-form-item>
                 <a-descriptions size="small" class="mt-4" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 100%;">
                         <template #label>
@@ -80,56 +101,77 @@
 
             </a-card>
 
-            <a-card style="width: 100%;" v-if="payment.check">
+            <a-card style="width: 100%;" v-if="paymentstat.check">
                 <p class="text-center mb-5 font-bold">CHECK</p>
                 <p class="mt-2 ml-1">
                     Bank Name
                 </p>
-                <a-input placeholder="Enter here..." />
+                <a-form-item has-feedback :validate-status="error.bank ? 'error' : ''" :help="error.bank">
+                    <a-input v-model:value="form.bank" placeholder="Enter here..." />
+
+                </a-form-item>
                 <p class="mt-2 ml-1">
                     Account Number
                 </p>
-                <a-input placeholder="Enter here..." />
+                <a-form-item has-feedback :validate-status="error.account ? 'error' : ''" :help="error.account">
+
+                    <a-input v-model:value="form.account" placeholder="Enter here..." />
+                </a-form-item>
                 <p class="mt-2 ml-1">
                     Check Number
                 </p>
-                <a-input placeholder="Enter here..." />
+                <a-form-item has-feedback :validate-status="error.checkno ? 'error' : ''" :help="error.checkno">
+                    <a-input placeholder="Enter here..." v-model:value="form.checkno" />
+                </a-form-item>
                 <p class="mt-2 ml-1">
                     Check Amount
                 </p>
-                <a-input placeholder="Enter here..." />
-                <p class="mt-4">Amount in words</p>
-                <a-textarea readonly>
-
-                </a-textarea>
+                <a-form-item has-feedback :validate-status="error.amount ? 'error' : ''" :help="error.amount">
+                    <a-input-number placeholder="Enter here..." style="width: 100%;" v-model:value="form.amount"
+                        @change="handleChange" :formatter="(value) =>
+                            `₱ ${value}`.replace(
+                                /\B(?=(\d{3})+(?!\d))/g,
+                                ','
+                            )
+                            " />
+                </a-form-item>
+                <a-descriptions size="small" class="mt-4" layout="horizontal" bordered>
+                    <a-descriptions-item style="width: 100%;">
+                        <template #label>
+                            Number Into Words
+                        </template>
+                        <a-badge status="processing" class="font-bold font-italic" :text="form.numToWords" />
+                    </a-descriptions-item>
+                </a-descriptions>
             </a-card>
 
-            <a-card style="width: 100%;" v-if="payment.jv">
+            <a-card style="width: 100%;" v-if="paymentstat.jv">
                 <p class="text-center mb-5 font-bold">JV</p>
                 <p>
                     *Customer Name
                 </p>
-                <a-input style="font-weight: bold;" :value="'IBEX'" />
+                <a-input style="font-weight: bold;" :value="accname" />
             </a-card>
         </a-descriptions-item>
 
     </a-descriptions>
     <a-descriptions class="ml-1 mt-4" size="small" layout="horizontal">
         <a-descriptions-item style="width: 50%;" label="Remarks">
-            <a-textarea :rows="3" placeholder="Type here..." :maxlength="6" />
+            <a-textarea v-model:value="form.remarks" :rows="3" placeholder="Type here..." />
         </a-descriptions-item>
     </a-descriptions>
     <div class="flex justify-center mt-6">
-        <a-button type="primary">
+        <a-button type="primary" @click="submit">
             <template #icon>
                 <FastForwardOutlined />
             </template>
-            Released Special Gc Payment
+            Release Special Gc Payment
         </a-button>
     </div>
 </template>
 
 <script setup>
+import { notification } from 'ant-design-vue';
 import { ref, onMounted, watch } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import axios from 'axios';
@@ -140,39 +182,62 @@ const emit = defineEmits(['updatedCount']);
 
 const props = defineProps({
     id: Number,
+    accname: String,
+    balance: Number,
 });
 
 const form = useForm({
+    balance: props.balance,
+    id: props.id,
     payment: null,
     numToWords: null,
+    amount: null,
+    account: null,
+    checkno: null,
+    remarks: null,
+    receiveby: null,
+    checkedby: null,
+    status: null,
+    jv: props.accname,
+    checked: [],
+    bank: null,
 });
 
 
-const payment = ref({
+const paymentstat = ref({
     cash: false,
     check: false,
     jv: false,
 });
 
 const handlePaymentMehthod = (key) => {
+
+    error.value.payment = '';
+
+    if (error.value.payment) {
+        error.value = [];
+    }
+
     if (key === '0') {
-        payment.value.cash = true;
-        payment.value.check = false;
-        payment.value.jv = false;
+        paymentstat.value.cash = true;
+        paymentstat.value.check = false;
+        paymentstat.value.jv = false;
     }
     if (key === '1') {
-        payment.value.check = true;
-        payment.value.cash = false;
-        payment.value.jv = false;
+        paymentstat.value.check = true;
+        paymentstat.value.cash = false;
+        paymentstat.value.jv = false;
     }
     if (key === '2') {
-        payment.value.jv = true;
-        payment.value.check = false;
-        payment.value.cash = false;
+        paymentstat.value.jv = true;
+        paymentstat.value.check = false;
+        paymentstat.value.cash = false;
     }
 }
 
 const selected = ref({});
+const error = ref({});
+const response = ref({});
 const checkedRecord = ref([]);
 const isFetching = ref(false);
 const allSelected = ref(false);
@@ -210,22 +275,17 @@ const columns = ref([
     },
 ]);
 
-// const onPaginate = async (e) => {
-//     if (e.url) {
-//         const { data } = await axios.get(e.url);
-
-//         selected.value = data;
-
-//     }
-
-// }
 const fetchData = () => {
+
     isFetching.value = true;
 
     axios.get(route('accounting.payment.fetch', props.id)).then(res => {
+
         selected.value = res.data;
         isFetching.value = false;
+
         emit('updatedCounts', res.data.denomcount);
+
     });
 }
 
@@ -244,18 +304,50 @@ const toggleSelectAll = (event) => {
         }
 
     });
+
+    form.checked = checkedRecord.value;
 };
 
 const toggleRow = (record) => {
+
+    if (response.value.status === 'error') {
+        response.value = [];
+    }
+
     if (record.checked) {
         checkedRecord.value.push(record);
     } else {
         checkedRecord.value = checkedRecord.value.filter(item => item !== record);
     }
     allSelected.value = selected.value.record.every(row => row.checked);
+    form.checked = checkedRecord.value;
 };
 const handleChange = (value) => {
-    form.numToWords = toWords(value);
+    error.value.amount = '';
+    form.numToWords = value === null ? '' : toWords(value) + ' pesos';
+}
+
+const submit = () => {
+    form.transform((data) => ({ ...data })).post(route('accounting.payment.submit'), {
+        onSuccess: (e) => {
+
+            response.value = e.props.flash;
+
+            notification[e.props.flash.status]({
+                message: e.props.flash.title,
+                description: e.props.flash.msg,
+            });
+
+            if (e.props.flash.status === 'success') {
+                router.visit(route('accounting.payment.setup', props.id))
+            }
+        },
+        onError: (e) => {
+            error.value = e;
+        },
+        preserveState: true,
+        preserveScroll: true,
+    })
 }
 
 
