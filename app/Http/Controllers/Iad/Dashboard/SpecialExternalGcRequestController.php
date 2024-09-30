@@ -24,6 +24,7 @@ class SpecialExternalGcRequestController extends Controller
     }
     public function approvedGc(Request $request)
     {
+        // dd(1);
         $data = $this->specialExternalGcService->approvedGc($request);
         return inertia('Iad/Dashboard/ApprovedGcTable', [
             'data' => SpecialExternalGcRequestResource::collection($data),

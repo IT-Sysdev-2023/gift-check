@@ -96,6 +96,11 @@
                                     :count="data?.specialGcRequest?.released"
                                     title="Released GC"
                                 />
+                                <CardBadge
+                                    :count="data?.specialGcRequest?.internalReviewed"
+                                    title="Reviewed GC For Releasing(Internal)"
+                                     @event="releasingInternal"
+                                />
                             </Card>
                             <Card title="Adjustment">
                                 <template #badge>
@@ -169,6 +174,7 @@ const props = defineProps<{
             cancelled: number;
             reviewed: number;
             released: number;
+            internalReviewed: number
         };
         adjustment: {
             budget: number;
@@ -203,8 +209,9 @@ const pendingProductionRequest = () => routeTo("production.request", "pending");
 const approvedProductionRequest = () =>
     routeTo("production.request", "approved");
 
-//Special GC Requesh
+//Special GC Request
 const specialGcPending = () => routeTo("special.gc", "pending");
+const releasingInternal = () => routeTo("special.gc", "releasingInternal");
 
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");

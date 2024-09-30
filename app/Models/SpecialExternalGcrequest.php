@@ -101,6 +101,10 @@ class SpecialExternalGcrequest extends Model
     {
         return $this->belongsTo(ApprovedRequest::class, 'spexgc_id', 'reqap_trid');
     }
+    public function approvedRequestRevied()
+    {
+        return $this->belongsTo(ApprovedRequest::class, 'spexgc_id', 'reqap_trid')->where('reqap_approvedtype','special external gc review');
+    }
     public function approvedRequest1()
     {
         return $this->hasOne(ApprovedRequest::class, 'reqap_trid', 'spexgc_id');

@@ -7,27 +7,27 @@
     },
     "devDependencies": {
         "@inertiajs/vue3": "^1.2.0",
-        "@vitejs/plugin-vue": "^5.1.2",
+        "@vitejs/plugin-vue": "^5.1.4",
         "autoprefixer": "^10.4.20",
-        "axios": "^1.7.4",
+        "axios": "^1.7.7",
         "laravel-echo": "^1.16.1",
         "laravel-vite-plugin": "^1.0.5",
-        "postcss": "^8.4.41",
+        "postcss": "^8.4.47",
         "pusher-js": "8.4.0-rc2",
-        "typescript": "^5.5.4",
+        "typescript": "^5.6.2",
         "unplugin-vue-components": "^0.27.4",
-        "vite": "^5.4.1",
-        "vue": "^3.4.38",
-        "vue-tsc": "^2.0.29"
+        "vite": "^5.4.8",
+        "vue": "^3.5.9",
+        "vue-tsc": "^2.1.6"
     },
     "dependencies": {
         "@ant-design/icons-vue": "^7.0.1",
         "@inertiajs/core": "^1.2.0",
-        "@tailwindcss/forms": "^0.5.7",
-        "ant-design-vue": "~4.2.3",
-        "dayjs": "^1.11.12",
+        "@tailwindcss/forms": "^0.5.9",
+        "ant-design-vue": "~4.2.5",
+        "dayjs": "^1.11.13",
         "lodash": "^4.17.21",
-        "tailwindcss": "^3.4.10",
-        "vue-router": "^4.4.3"
+        "tailwindcss": "^3.4.13",
+        "vue-router": "^4.4.5"
     }
 }

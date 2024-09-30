@@ -18,7 +18,7 @@ class ApprovedRequestResource extends JsonResource
             'reqap_id' => $this->reqap_id,
             'reqap_trid' => $this->reqap_trid,
             'reqap_preparedby' => $this->reqap_preparedby,
-            'reqap_date' => $this->reqap_date->toFormattedDateString(),
+            'reqap_date' => $this->reqap_date?->toFormattedDateString(),
             'reqap_remarks' => $this->reqap_remarks,
             'reqap_doc' => $this->whenNotNull($this->reqap_doc, function () {
                 return [
@@ -32,7 +32,8 @@ class ApprovedRequestResource extends JsonResource
             ,
             'reqap_checkedby' => $this->reqap_checkedby,
             'reqap_approvedby' => $this->reqap_approvedby,
-            'user' => $this->whenLoaded('user')
+            'user' => $this->whenLoaded('user'),
+            
         ];
     }
 }

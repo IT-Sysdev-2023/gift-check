@@ -16,24 +16,15 @@ class SpecialExternalGcRequestResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        // $denom = $this->specialExternalGcrequestItems()->exists();
-
-        // // dd($denom);
-        // if ($denom) {
-        //     $record = false;
-        // } else {
-        //     $record = true;
-        // }
-        // dd($this->spexgc_paymentype);
         return [
             'spexgc_num' => $this->spexgc_num,
             'spexgc_type' => $this->spexgc_type,
-            'spexgc_dateneed' => $this->spexgc_dateneed->toFormattedDateString(),
+            'spexgc_dateneed' => $this->spexgc_dateneed?->toFormattedDateString(),
             'spexgc_payment_arnum' => $this->spexgc_payment_arnum,
             'spexgc_paymentype' => !is_null($this->spexgc_paymentype) ? $this->paymentType($this->spexgc_paymentype) : '',
             'spexgc_id' => $this->spexgc_id,
             'spexgc_payment' => (float) $this->spexgc_payment,
-            'spexgc_datereq' => $this->spexgc_datereq->toDayDateTimeString(),
+            'spexgc_datereq' => $this->spexgc_datereq?->toDayDateTimeString(),
             'spexgc_remarks' => $this->spexgc_remarks,
             'user' => $this->whenLoaded('user', fn($q) => $q->full_name),
             'userAccessPageTitle' => $this->whenLoaded('user', function ($q) {
@@ -66,8 +57,19 @@ class SpecialExternalGcRequestResource extends JsonResource
                 });
             }),
 
-            'approvedRequest' => $this->whenLoaded('approvedRequest', new ApprovedRequestResource($this->approvedRequest))
+            'approvedRequest' => $this->whenLoaded('approvedRequest', new ApprovedRequestResource($this->approvedRequest)),
+            'reviewed' => $this->whenLoaded('approvedRequestRevied', function ($q){
+                return $q->user->full_name;
+            })
         ];
+    }
+
+    private function denomType(){
+        if($this->spexgc_id == 1)
+        {
+            // dd(1);
+            // return $this->totalGcRequestItems;
+        }
     }
     private function paymentType(int $num)
     {
