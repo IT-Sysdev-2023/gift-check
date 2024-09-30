@@ -196,7 +196,6 @@ class MarketingServices extends FileHandler
         $data = [
             'reqNum' => $request->data['requestNo'],
             'dateReq' => Date::parse($request->data['dateRequested'])->format('F d Y'),
-            'dateNeed' => Date::parse($request->data['dateNeeded'])->format('F d Y'),
             'approvedBy' => strtoupper($request->data['approvedBy']),
             'checkedBy' => strtoupper($request->data['checkedBy'])
         ];

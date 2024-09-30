@@ -162,50 +162,43 @@ Route::prefix('marketing')->group(function () {
             Route::get('add-supplier', [MarketingController::class, 'addSupplier'])->name('add.supplier');
             Route::get('status-supplier', [MarketingController::class, 'statusSupplier'])->name('status.supplier');
         });
+        Route::name('verifiedgc.')->group(function () {
+            Route::get('verified-gc-alturas-mall', [MarketingController::class, 'verifiedGc_Amall'])->name('verified.gc.alturas.mall');
+            Route::get('verified-gc-alturas-talibon', [MarketingController::class, 'verifiedGc_A_talibon'])->name('verified.gc.alturas.talibon');
+            Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('verified.gc.island.city.mall');
+            Route::get('verified-gc-plaza-marcela', [MarketingController::class, 'verifiedGc_plazaMarcela'])->name('verified.gc.plaza.marcela');
+            Route::get('verified-gc-alturas-tubigon', [MarketingController::class, 'verifiedGc_A_tubigon'])->name('verified.gc.alturas.tubigon');
+            Route::get('verified-gc-colonade-colon', [MarketingController::class, 'verifiedGc_colonadeColon'])->name('verified.gc.colonade.colon');
+            Route::get('verified-gc-colonade-mandaue', [MarketingController::class, 'verifiedGc_colonadeMandaue'])->name('verified.gc.colonade.mandaue');
+            Route::get('verified-gc-alta-cita', [MarketingController::class, 'verifiedGc_AltaCita'])->name('verified.gc.alta.cita');
+            Route::get('verified-gc-farmers-market', [MarketingController::class, 'verifiedGc_farmersMarket'])->name('verified.gc.farmers.market');
+            Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc'])->name('verified.gc.udc');
+            Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville'])->name('verified.gc.screenville');
+            Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech'])->name('verified.gc.asctech');
+        });
+        Route::name('promostatus.')->group(function () {
+            Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
+        });
+        Route::name('treasurysales.')->group(function () {
+            Route::get('sales', [MarketingController::class, 'treasurySales'])->name('sales.treasury.sales');
+            Route::get('view-treasury-sales', [MarketingController::class, 'viewTreasurySales'])->name('view.treasury.sales');
+        });
     });
 });
 
 
-
-Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
 Route::get('sales-treasury-sales', [MarketingController::class, 'treasurySales'])->name('marketing.sales.treasury.sales');
 Route::get('sales-store-sales', [MarketingController::class, 'storeSales'])->name('sales.store.sales');
 Route::get('verified-gc-alturas-mall', [MarketingController::class, 'verifiedGc_Amall'])->name('verified.gc.alturas.mall');
-Route::get('verified-gc-alturas-talibon', [MarketingController::class, 'verifiedGc_A_talibon'])->name('verified.gc.alturas.talibon');
-Route::get('verified-gc-alturas-tubigon', [MarketingController::class, 'verifiedGc_A_tubigon'])->name('verified.gc.alturas.tubigon');
-Route::get('verified-gc-colonade-colon', [MarketingController::class, 'verifiedGc_colonadeColon'])->name('verified.gc.colonade.colon');
-Route::get('verified-gc-colonade-mandaue', [MarketingController::class, 'verifiedGc_colonadeMandaue'])->name('verified.gc.colonade.mandaue');
-Route::get('verified-gc-alta-cita', [MarketingController::class, 'verifiedGc_AltaCita'])->name('verified.gc.alta.cita');
-Route::get('verified-gc-plaza-marcela', [MarketingController::class, 'verifiedGc_plazaMarcela'])->name('verified.gc.plaza.marcela');
-Route::get('verified-gc-farmers-market', [MarketingController::class, 'verifiedGc_farmersMarket'])->name('verified.gc.farmers.market');
-Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc'])->name('verified.gc.udc');
-Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville'])->name('verified.gc.screenville');
-Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech'])->name('verified.gc.asctech');
-Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('verified.gc.island.city.mall');
 Route::get('get-view-promo-details', [MarketingController::class, 'getPromoDetails'])->name('get.view.details');
 Route::get('get-store-sales-details', [MarketingController::class, 'getStoreSaleDetails'])->name('get.store.sale.details');
 Route::get('get-transaction-pos-detail', [MarketingController::class, 'getTransactionPOSdetail'])->name('get.transaction.pos.detail');
 Route::get('get-view-barcode-details', [MarketingController::class, 'getBarcodeDetails'])->name('get.sub.barcode.details');
-Route::get('view-treasury-sales', [MarketingController::class, 'viewTreasurySales'])->name('view.treasury.sales');
-Route::get('sales/treasury-sales', [MarketingController::class, 'treasurySales'])->name('sales.treasury.sales');
 Route::get('sales/store-sales', [MarketingController::class, 'storeSales'])->name('sales.store.sales');
-Route::get('verified-gc-alturas-mall', [MarketingController::class, 'verifiedGc_Amall'])->name('verified.gc.alturas.mall');
-Route::get('verified-gc-alturas-talibon', [MarketingController::class, 'verifiedGc_A_talibon'])->name('verified.gc.alturas.talibon');
-Route::get('verified-gc-alturas-tubigon', [MarketingController::class, 'verifiedGc_A_tubigon'])->name('verified.gc.alturas.tubigon');
-Route::get('verified-gc-colonade-colon', [MarketingController::class, 'verifiedGc_colonadeColon'])->name('verified.gc.colonade.colon');
-Route::get('verified-gc-colonade-mandaue', [MarketingController::class, 'verifiedGc_colonadeMandaue'])->name('verified.gc.colonade.mandaue');
-Route::get('verified-gc-alta-cita', [MarketingController::class, 'verifiedGc_AltaCita'])->name('verified.gc.alta.cita');
-Route::get('verified-gc-plaza-marcela', [MarketingController::class, 'verifiedGc_plazaMarcela'])->name('verified.gc.plaza.marcela');
-Route::get('verified-gc-farmers-market', [MarketingController::class, 'verifiedGc_farmersMarket'])->name('verified.gc.farmers.market');
-Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc'])->name('verified.gc.udc');
-Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville'])->name('verified.gc.screenville');
-Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech'])->name('verified.gc.asctech');
-Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('verified.gc.island.city.mall');
-Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('verified.gc.island.city.mall');
 
 
 //Treasury
-Route::middleware(['auth', 'userType:treasury'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::prefix('treasury')->group(function () {
         Route::name('treasury.')->group(function () {
             Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
@@ -325,7 +318,6 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
 
                     Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
                 });
-
             });
 
 
@@ -347,8 +339,22 @@ Route::prefix('eod')->group(function () {
         Route::get('eod-verified-gc', [EodController::class, 'eodVerifiedGc'])->name('verified.gc');
         Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
         Route::get('list', [EodController::class, 'list'])->name('list');
+    });
+});
 
+//Accounting =====
 
+Route::prefix('accounting')->name('accounting.')->group(function () {
+    Route::name('pending.')->group(function () {
+        Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('index');
+    });
+    Route::name('approved.')->group(function () {
+        Route::get('approved-gc-request', [CustodianController::class, 'approvedGcRequest'])->name('request');
+    });
+    Route::name('payment.')->group(function () {
+        Route::get('payment-gc', [AccountingController::class, 'paymantGc'])->name('payment.gc');
+        Route::get('setup-payment-{id}', [AccountingController::class, 'setupPayment'])->name('setup');
+        Route::get('setup-table-{id}', [AccountingController::class, 'tableFetch'])->name('fetch');
     });
 });
 
@@ -487,7 +493,6 @@ Route::middleware('auth')->group(function () {
         Route::get('details-{id}', [IadController::class, 'details'])->name('details');
         Route::put('approve-budget-{id}', [IadController::class, 'approveBudget'])->name('approve');
     });
-
 });
 
 Route::prefix('search')->group(function () {

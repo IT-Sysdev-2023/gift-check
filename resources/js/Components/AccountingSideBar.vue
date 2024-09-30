@@ -45,6 +45,10 @@ const page = usePage<PageWithSharedProps>().props;
     </a-sub-menu>
 
     <div v-else>
+        <a-menu-item key="accounting-dashboard">
+            <DashboardOutlined />
+            <span><Link :href="route('accounting.dashboard')">Dashboard</Link></span>
+        </a-menu-item>
         <a-sub-menu key="menu-sub-masterfile">
             <template #title>
                 <span>
