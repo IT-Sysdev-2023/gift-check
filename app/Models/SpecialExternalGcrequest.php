@@ -174,6 +174,59 @@ class SpecialExternalGcrequest extends Model
             'spexgc_num',
             'spexgc_id',
         );
-
+    }
+    public function scopeSelectExternalRequestEvery(Builder $query)
+    {
+        return $query->select(
+            'spexgc_id',
+            'spexgc_num',
+            'spexgc_datereq',
+            'spexgc_dateneed',
+            'spcus_acctname',
+            'spcus_companyname',
+            'spexgc_company',
+            'spcus_id',
+            'spexgc_balance',
+            'spexgc_payment_stat',
+            'reqap_date',
+            'reqap_remarks',
+            'reqap_approvedtype',
+            'spexgc_reviewed',
+            'spexgc_released',
+            'spexgc_payment_stat',
+            'spexgc_payment',
+            'spexgc_remarks',
+            'spexgc_reqby',
+            'reqby.firstname as fn',
+            'reqby.lastname as ln',
+            'prepby.firstname',
+            'prepby.lastname',
+            'title',
+            'reqap_checkedby',
+            'reqap_approvedby',
+        );
+    }
+    public function scopeSelectExternalRequestAll(Builder $query)
+    {
+        return $query->select(
+            'spexgc_id',
+            'spexgc_num',
+            'spexgc_datereq',
+            'spexgc_dateneed',
+            'spcus_acctname',
+            'spcus_companyname',
+            'spexgc_company',
+            'spcus_id',
+            'spexgc_balance',
+            'spexgc_payment_stat',
+            'reqap_date',
+            'reqap_approvedtype',
+            'spexgc_reviewed',
+            'spexgc_released',
+            'spexgc_payment_stat',
+            'spexgc_reqby',
+            'reqby.firstname',
+            'reqby.lastname',
+        );
     }
 }

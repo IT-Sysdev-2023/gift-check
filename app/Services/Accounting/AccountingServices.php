@@ -2,35 +2,21 @@
 
 namespace App\Services\Accounting;
 
+use App\Models\ApprovedRequest;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class AccountingServices
 {
+
+    public function __construct(public AccountingDbServices $dbservices) {}
     public function getPaymentList()
     {
-        $data = SpecialExternalGcrequest::select(
-            'spexgc_id',
-            'spexgc_num',
-            'spexgc_datereq',
-            'spexgc_dateneed',
-            'spcus_acctname',
-            'spcus_companyname',
-            'spexgc_company',
-            'spcus_id',
-            'spexgc_balance',
-            'spexgc_payment_stat',
-            'reqap_date',
-            'reqap_approvedtype',
-            'spexgc_reviewed',
-            'spexgc_released',
-            'spexgc_payment_stat',
-            'spexgc_reqby',
-            'reqby.firstname',
-            'reqby.lastname',
-        )->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+        $data = SpecialExternalGcrequest::selectExternalRequestAll()
+            ->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
             ->join('approved_request', 'reqap_trid', '=', 'spexgc_id')
             ->join('users as reqby', 'user_id', '=', 'spexgc_reqby')
             ->where('spexgc_released', 'released')
@@ -38,14 +24,17 @@ class AccountingServices
             ->where('reqap_approvedtype', 'special external releasing')
             ->orWhere('reqap_approvedtype', 'special external gc review')
             ->where('spexgc_payment_stat', '!=', 'FINAL')
-            ->where('spexgc_payment_stat', '!=', 'WHOLE')
+            ->orWhere('spexgc_payment_stat', '!=', 'WHOLE')
             ->orderByDesc('spexgc_num')
             ->paginate(10)
             ->withQueryString();
 
+
         $data->transform(function ($item) {
 
             $item->reqby = Str::ucfirst($item->firstname) . ' ' . Str::ucfirst($item->lastname);
+            $item->date = Date::parse($item->spexgc_datereq)->toFormattedDateString();
+            $item->validity = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
 
             return $item;
         });
@@ -57,34 +46,8 @@ class AccountingServices
     public function getDetialsEveryPayment($id)
     {
 
-        $data = SpecialExternalGcrequest::select(
-            'spexgc_id',
-            'spexgc_num',
-            'spexgc_datereq',
-            'spexgc_dateneed',
-            'spcus_acctname',
-            'spcus_companyname',
-            'spexgc_company',
-            'spcus_id',
-            'spexgc_balance',
-            'spexgc_payment_stat',
-            'reqap_date',
-            'reqap_remarks',
-            'reqap_approvedtype',
-            'spexgc_reviewed',
-            'spexgc_released',
-            'spexgc_payment_stat',
-            'spexgc_payment',
-            'spexgc_remarks',
-            'spexgc_reqby',
-            'reqby.firstname as fn',
-            'reqby.lastname as ln',
-            'prepby.firstname',
-            'prepby.lastname',
-            'title',
-            'reqap_checkedby',
-            'reqap_approvedby',
-        )->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+        $data = SpecialExternalGcrequest::selectExternalRequestEvery()
+            ->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
             ->join('approved_request', 'reqap_trid', '=', 'spexgc_id')
             ->join('users as reqby', 'reqby.user_id', '=', 'spexgc_reqby')
             ->join('users as prepby', 'prepby.user_id', '=', 'reqap_preparedby')
@@ -125,5 +88,86 @@ class AccountingServices
             'total' => $data->count(),
             'denomcount' => $data->sum('spexgcemp_denom'),
         ]);
+    }
+
+    public function submitPayementForm($request)
+    {
+
+
+        $request->validate([
+            'payment' => 'required',
+            'checkedby' => 'required',
+            'receiveby' => 'required',
+            'status' => 'required',
+            'remarks' => 'required',
+        ]);
+
+        if ($request->payment === '0') {
+            $request->validate([
+                'amount' => 'required',
+            ]);
+        }
+
+        if ($request->payment === '1') {
+            $request->validate([
+                'amount' => 'required',
+                'checkno' => 'required',
+                'bank' => 'required',
+                'account' => 'required',
+            ]);
+        }
+
+        if ($request->payement === '2') {
+            $request->validate([
+                'jv' => 'required',
+            ]);
+        }
+
+
+        if (empty($request->checked)) {
+            return back()->with([
+                'status' => 'error',
+                'msg' => 'Please Select Atleast One Record First!',
+                'title' => 'Opps Error',
+            ]);
+        }
+
+
+        if (SpecialExternalGcrequest::where('spexgc_payment_stat', '!=', 'FINAL')->where('spexgc_id', $request->id)->exists()) {
+
+            $relid = $this->getSpecialGCReleasingNo();
+
+            DB::transaction(function () use ($request, $relid) {
+
+                $this->dbservices->insertIntoApprovedRequest($request, $relid)
+                    ->insertIntoLedgerBudget($request)
+                    ->updateSpecialEnternalGcRequest($request)
+                    ->insertInstitutionalPayment($request)
+                    ->updateSpecialExternalEmpAssign($request);
+            });
+
+            return back()->with([
+                'status' => 'success',
+                'msg' => 'Special External GC Transaction Saved.',
+                'title' => 'Success',
+            ]);
+        } else {
+            return back()->with([
+                'status' => 'error',
+                'msg' => 'Opss something went Wrong!!',
+                'title' => 'Error',
+            ]);
+        }
+    }
+    private function getSpecialGCReleasingNo()
+    {
+
+        $data = ApprovedRequest::where('reqap_approvedtype', 'special external releasing')->orderByDesc('reqap_trnum')->max('reqap_trnum');
+
+        if ($data > 0) {
+            return $data++;
+        }
+
+        return 1;
     }
 }

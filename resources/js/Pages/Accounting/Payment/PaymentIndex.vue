@@ -16,7 +16,7 @@
                             <template #icon>
                                 <FastForwardOutlined />
                             </template>
-                            Setup
+                            Setup Payment
                         </a-button>
                     </template>
                 </template>
