@@ -1,10 +1,5 @@
 <template>
-    <a-row class="flex justify-between" align="middle">
-        <!-- {{ datarecords.links }} -->
-          <div v-if="datarecords === undefined">
-            No Pagination here
-          </div>
-          <div v-else>
+    <a-row class="flex justify-between" align="middle" v-if="datarecords !== undefined">
             <a-col>
             <a-typography-text>{{ `Showing ${datarecords?.from || 0} to ${datarecords?.to || 0} of
                 ${datarecords?.total.toLocaleString()}
@@ -20,9 +15,6 @@
 
             </a-config-provider>
         </a-col>
-
-          </div>
-
     </a-row>
 </template>
 

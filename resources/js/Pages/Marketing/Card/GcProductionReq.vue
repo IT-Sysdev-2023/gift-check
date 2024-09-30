@@ -33,7 +33,8 @@
                     </a-col>
                 </a-row>
             </div>
-            <div class="card black">
+            <div class="card black" :class="{ 'cursor-pointer': gcProductionRequest.cancelledRequest >= 1 }"
+                @click="gcProductionRequest.cancelledRequest >= 1 ? $inertia.get(route('marketing.cancelled.production.request')) : null">
                 <a-row class="w-full">
                     <a-col :span="4">
                     </a-col>
