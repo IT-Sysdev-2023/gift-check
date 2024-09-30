@@ -219,6 +219,7 @@ declare module 'vue' {
     InstitutionGcSales: typeof import('./resources/js/Pages/Treasury/Dashboard/InstitutionGcSales.vue')['default']
     InstitutionSalesIndex: typeof import('./resources/js/Pages/Treasury/Transactions/InstitutionGcSales/InstitutionSalesIndex.vue')['default']
     InstitutionSelect: typeof import('./resources/js/Components/Treasury/InstitutionSelect.vue')['default']
+    InternalGcReleasingView: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialExternalGc/Components/InternalGcReleasingView.vue')['default']
     IslandCityMall: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/IslandCityMall.vue')['default']
     Ledgerx: typeof import('./resources/js/Pages/Ledgerx.vue')['default']
     LikeOutlined: typeof import('@ant-design/icons-vue')['LikeOutlined']

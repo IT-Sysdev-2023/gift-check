@@ -558,7 +558,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Total Denom',
-            'dataIndex' => 'denom',
+            'key' => 'denom',
         ],
         [
             'title' => 'Customer',
@@ -576,6 +576,10 @@ class ColumnHelper
         [
             'title' => 'Reviewed By',
             'key' => 'reviewed',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
         ],
     ];
 }

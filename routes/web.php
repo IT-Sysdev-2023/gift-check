@@ -252,6 +252,7 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
 
                 Route::get('reviewing-gc-internal', [SpecialGcRequestController::class,'releasingInternal'])->name('releasingInternal');
+                Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class,'viewReleasingInternal'])->name('viewReleasingInternal');
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 

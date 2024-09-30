@@ -112,7 +112,7 @@ class SpecialGcRequestController extends Controller
     public function releasingInternal(Request $request)
     {
         $record = SpecialExternalGcrequest::
-            with(['specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'user:user_id,firstname,lastname', 'approvedRequestRevied.user'])
+            with(['specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'user:user_id,firstname,lastname', 'approvedRequestRevied.user', 'specialExternalGcrequestEmpAssign'])
             ->withWhereHas('approvedRequest', function ($q) {
                 $q->select('reqap_trid', 'reqap_approvedby')->where('reqap_approvedtype', 'Special External GC Approved');
             })
@@ -125,6 +125,27 @@ class SpecialGcRequestController extends Controller
             'title' => 'Reviewed GC For Releasing(Internal)',
             'records' => SpecialExternalGcRequestResource::collection($record),
             'columns' => ColumnHelper::$specialInternal
+        ]);
+    }
+
+    public function viewReleasingInternal(SpecialExternalGcrequest $id)
+    {
+        $rec = $id->load([
+            'user' => function ($q) {
+                $q->select('user_id', 'firstname', 'lastname', 'usertype')->with('accessPage:access_no,title');
+            },
+            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
+            'hasManySpecialExternalGcrequestItems',
+            'specialExternalGcrequestEmpAssign',
+            'approvedRequest' => function ($q) {
+                $q->select('reqap_trid', 'reqap_date', 'reqap_remarks', 'reqap_doc', 'reqap_checkedby', 'reqap_approvedby','reqap_preparedby')->with('user:user_id,firstname,lastname')
+                ->where('reqap_approvedtype', 'Special External GC Approved');
+            }
+        ]);
+
+        return inertia('Treasury/Dashboard/SpecialExternalGc/Components/InternalGcReleasingView', [
+            'title' => 'Special Internal Gc Releasing',
+            'records' => new SpecialExternalGcRequestResource($rec)
         ]);
     }
     private function options()

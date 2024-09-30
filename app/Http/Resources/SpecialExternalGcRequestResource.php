@@ -46,29 +46,46 @@ class SpecialExternalGcRequestResource extends JsonResource
 
                 return NumberHelper::currency($denom);
             }),
+            'totalDenom' => $this->denomType(),
             'specialExternalGcrequestEmpAssign' => $this->whenLoaded('specialExternalGcrequestEmpAssign', function ($q) {
                 return $q->unique('spexgcemp_denom')->map(function ($item) use ($q) {
                     return [
                         'id' => $item->spexgcemp_trid,
                         'primary_id' => $item->spexgcemp_trid,
-                        'denomination' => (float ) $item->spexgcemp_denom,
+                        'denomination' => (float) $item->spexgcemp_denom,
                         'qty' => $q->count('spexgcemp_trid'),
                     ];
                 });
             }),
 
             'approvedRequest' => $this->whenLoaded('approvedRequest', new ApprovedRequestResource($this->approvedRequest)),
-            'reviewed' => $this->whenLoaded('approvedRequestRevied', function ($q){
+            'reviewed' => $this->whenLoaded('approvedRequestRevied', function ($q) {
                 return $q->user->full_name;
             })
         ];
     }
 
-    private function denomType(){
-        if($this->spexgc_id == 1)
-        {
-            // dd(1);
-            // return $this->totalGcRequestItems;
+    private function denomType()
+    {
+        if ($this->spexgc_type == 1) {
+            return $this->whenLoaded('hasManySpecialExternalGcrequestItems', function ($item) {
+                $denom = $item->map(function ($i) {
+                    return (float) $i->specit_denoms * $i->specit_qty;
+                })->sum();
+
+                return [
+                    'total' => NumberHelper::currency($denom),
+                    'qty' => $item->sum('specit_qty')
+                ];
+                
+            });
+        }else{
+            return $this->whenLoaded('specialExternalGcrequestEmpAssign', function ($q) {
+                return [
+                    'total' => NumberHelper::currency($q->sum('spexgcemp_denom')),
+                    'qty' => $q->count('spexgcemp_denom'),
+                ];
+            });
         }
     }
     private function paymentType(int $num)
