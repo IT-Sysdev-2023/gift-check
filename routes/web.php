@@ -25,6 +25,7 @@ use App\Http\Controllers\Treasury\Dashboard\GcProductionRequestController;
 use App\Http\Controllers\Treasury\Dashboard\SpecialGcRequestController;
 use App\Http\Controllers\Treasury\Dashboard\StoreGcController;
 use App\Http\Controllers\Treasury\Transactions\GcAllocationController;
+use App\Http\Controllers\Treasury\Transactions\InstitutionGcRefundController;
 use App\Http\Controllers\Treasury\Transactions\InstitutionGcSalesController;
 use App\Http\Controllers\Treasury\Transactions\ProductionRequestController;
 use App\Http\Controllers\Treasury\Transactions\PromoGcReleasingController;
@@ -250,6 +251,8 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
 
+                Route::get('reviewing-gc-internal', [SpecialGcRequestController::class,'releasingInternal'])->name('releasingInternal');
+                Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class,'viewReleasingInternal'])->name('viewReleasingInternal');
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 
@@ -278,11 +281,6 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                 //Gc Releasiing Retail Store
                 Route::prefix('retail-gc-releasing')->name('retail.releasing.')->group(function () {
                     Route::get('/', [RetailGcReleasingController::class, 'index'])->name('index');
-                    // Route::post('gc-location-submission', [GcAllocationController::class, 'store'])->name('store');
-
-                    // Route::get('store-allocation', [GcAllocationController::class, 'storeAllocation'])->name('storeAllocation');
-                    // Route::get('view-allocated-gc', [GcAllocationController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
-                    // Route::get('view-gc-for-allocation', [GcAllocationController::class, 'viewForAllocationGc'])->name('forallocation');
                 });
 
                 //Promo Gc Releasing
@@ -307,6 +305,11 @@ Route::middleware(['auth', 'userType:treasury'])->group(function () {
                     Route::get('view-transaction-details-{id}', [InstitutionGcSalesController::class, 'transactionDetails'])->name('transactionDetails');
                     Route::get('print-ar-{id}', [InstitutionGcSalesController::class, 'printAr'])->name('printAr');
                     Route::get('reprint-{id}', [InstitutionGcSalesController::class, 'reprint'])->name('reprint');
+                });
+
+                //Institution Gc Refund
+                Route::prefix('institution-gc-refund')->name('intitution.refund.')->group(function () {
+                    Route::get('/', [InstitutionGcRefundController::class, 'index'])->name('index');
                 });
 
                 //special gc payment

@@ -92,6 +92,10 @@ class DashboardService
 
     protected function specialGcRequest()
     {
+
+        // $segcreviewed  = numRowsWhereTwo_internal($link,'special_external_gcrequest','spexgc_id','spexgc_reviewed','spexgc_released','reviewed','');
+        $internalReviewd = SpecialExternalGcrequest::where([['spexgc_reviewed','reviewed'], ['spexgc_released',''], ['spexgc_promo', '*']])->count();
+      
         $pending = SpecialExternalGcrequest::spexgcStatus('pending')->count();
         //Approved GC
         $approved = SpecialExternalGcrequest::spexgcStatus('approved')->count();
@@ -107,7 +111,8 @@ class DashboardService
             'approved' => $approved,
             'reviewed' => $reviewed,
             'released' => $released,
-            'cancelled' => $cancelled
+            'cancelled' => $cancelled,
+            'internalReviewed'=> $internalReviewd
         ];
     }
 

@@ -538,4 +538,48 @@ class ColumnHelper
             'dataIndex' => 'payment',
         ],
     ];
+
+    public static $specialInternal = [
+      
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Total Denom',
+            'key' => 'denom',
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'user',
+        ],
+        [
+            'title' => 'Approved By',
+            'key' => 'approved',
+        ],
+        [
+            'title' => 'Reviewed By',
+            'key' => 'reviewed',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
+        ],
+    ];
 }

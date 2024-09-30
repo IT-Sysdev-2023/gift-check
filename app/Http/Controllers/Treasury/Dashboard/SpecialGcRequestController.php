@@ -107,10 +107,50 @@ class SpecialGcRequestController extends Controller
             ->select('spexgc_num', 'spexgc_reqby', 'spexgc_company', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
             ->where([['special_external_gcrequest.spexgc_status', 'pending'], ['special_external_gcrequest.spexgc_promo', '*']])
             ->paginate()->withQueryString();
+    }
 
+    public function releasingInternal(Request $request)
+    {
+        $record = SpecialExternalGcrequest::
+            with(['specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'user:user_id,firstname,lastname', 'approvedRequestRevied.user', 'specialExternalGcrequestEmpAssign'])
+            ->withWhereHas('approvedRequest', function ($q) {
+                $q->select('reqap_trid', 'reqap_approvedby')->where('reqap_approvedtype', 'Special External GC Approved');
+            })
+            ->select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
+            ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', 'reviewed'], ['spexgc_released', ''], ['spexgc_promo', '*']])
+            ->paginate()
+            ->withQueryString();
+
+        return inertia('Treasury/Dashboard/SpecialExternalGc/ReviewedReleasingInternal', [
+            'title' => 'Reviewed GC For Releasing(Internal)',
+            'records' => SpecialExternalGcRequestResource::collection($record),
+            'columns' => ColumnHelper::$specialInternal
+        ]);
+    }
+
+    public function viewReleasingInternal(SpecialExternalGcrequest $id)
+    {
+        $rec = $id->load([
+            'user' => function ($q) {
+                $q->select('user_id', 'firstname', 'lastname', 'usertype')->with('accessPage:access_no,title');
+            },
+            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
+            'hasManySpecialExternalGcrequestItems',
+            'specialExternalGcrequestEmpAssign',
+            'approvedRequest' => function ($q) {
+                $q->select('reqap_trid', 'reqap_date', 'reqap_remarks', 'reqap_doc', 'reqap_checkedby', 'reqap_approvedby','reqap_preparedby')->with('user:user_id,firstname,lastname')
+                ->where('reqap_approvedtype', 'Special External GC Approved');
+            }
+        ]);
+
+        return inertia('Treasury/Dashboard/SpecialExternalGc/Components/InternalGcReleasingView', [
+            'title' => 'Special Internal Gc Releasing',
+            'records' => new SpecialExternalGcRequestResource($rec)
+        ]);
     }
     private function options()
     {
+
         return SpecialExternalCustomer::has('user')
             ->select('spcus_id as value', 'spcus_by', 'spcus_companyname as label', 'spcus_acctname as account_name')
             ->where('spcus_type', 2)
