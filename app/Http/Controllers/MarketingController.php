@@ -1587,7 +1587,7 @@ class MarketingController extends Controller
             $item->requestedBy = ucwords($item->prepby);
             ;
             $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d Y');
-            $item->requestApprovedTime = Date::parse($item->reqap_date)->format('H:i:s A');
+            $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i A');
             $item->recommendedBy = ucwords($item->recomby);
 
             return $item;
@@ -1613,7 +1613,7 @@ class MarketingController extends Controller
                 $item->approvedBy = ucwords($item->approvedBy);
                 $item->checkedBy = ucwords($item->checkBy);
                 $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d y');
-                $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i:s A');
+                $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i A');
                 $item->prepby = ucwords($item->appby);
                 return $item;
             });
