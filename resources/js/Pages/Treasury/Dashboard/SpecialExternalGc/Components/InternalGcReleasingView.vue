@@ -32,9 +32,13 @@
                 <a-descriptions-item label="Customer">{{
                     records.data.specialExternalCustomer?.spcus_acctname
                 }}</a-descriptions-item>
+
                 <a-descriptions-item label="Total Denomination"
                     >{{ records.data.totalDenom?.total }}
-                    <a-button type="primary" size="small"
+                    <a-button
+                        type="primary"
+                        size="small"
+                        @click="viewDenominations"
                         >View</a-button
                     ></a-descriptions-item
                 >
@@ -80,18 +84,62 @@
                 }}</a-descriptions-item>
             </a-descriptions>
 
-            <a-table
-                class="mt-10"
-                bordered
-                :columns="[
-                    { title: 'Lastname', dataIndex: 'lname' },
-                    { title: 'Firstname', dataIndex: 'fname' },
-                    { title: 'Middlename', dataIndex: 'mname' },
-                    { title: 'Denomination', dataIndex: 'denom' },
-                    { title: 'Barcode', dataIndex: 'bcode' },
-                ]"
+            <a-card class="mt-10">
+                <a-form :model="formState">
+                    <a-form-item label="Total Gc">
+                        <a-input
+                            :value="records.data.totalDenom?.qty"
+                            readonly
+                        />
+                    </a-form-item>
+                    <a-form-item label="Total Denomination">
+                        <a-input
+                            :value="records.data.totalDenom?.total"
+                            readonly
+                        />
+                    </a-form-item>
+                    <a-form-item label="Checked By">
+                        <ant-select @handle-change="onCheckChange" :options="checkBy"/>
+                    </a-form-item>
+                    <a-form-item label="Remarks">
+                        <a-textarea v-model:value="formState.remarks" />
+                    </a-form-item>
+                    <a-form-item label="Received By">
+                        <a-input v-model:value="formState.receivedBy" />
+                    </a-form-item>
+                    <a-form-item label="released By">
+                        <a-input
+                            :value="$page.props.auth.user.full_name"
+                            readonly
+                        />
+                    </a-form-item>
+                </a-form>
+            </a-card>
+
+            <a-modal
+                v-model:open="openModal"
+                title="Customer Requested GC"
+                width="800px"
+                :footer="null"
             >
-            </a-table>
+                <a-table
+                    bordered
+                    size="small"
+                    :pagination="false"
+                    :columns="[
+                        { title: 'Lastname', dataIndex: 'spexgcemp_lname' },
+                        { title: 'Firstname', dataIndex: 'spexgcemp_fname' },
+                        { title: 'Middlename', dataIndex: 'spexgcemp_mname' },
+                        { title: 'Denomination', dataIndex: 'denom' },
+                    ]"
+                    :data-source="modalData.data"
+                >
+                </a-table>
+                <pagination-axios-small
+                    :datarecords="modalData"
+                    @onPagination="onPaginate"
+                />
+            </a-modal>
         </a-card>
     </AuthenticatedLayout>
 </template>
@@ -99,13 +147,51 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
+import axios from "axios";
+import { ref } from "vue";
+import { useForm } from "@inertiajs/vue3";
 
-defineProps<{
+const props = defineProps<{
     title: string;
+    id: number;
+    checkBy: {
+        value: number;
+        label: string;
+    }[];
     records: {
         data: any;
     };
+    tableRecords: any;
 }>();
+
+const formState = useForm({
+    checkedBy: "",
+    remarks: "",
+    receivedBy: "",
+    releasedBy: "",
+});
+
+const openModal = ref(false);
+const modalData = ref();
+
+const viewDenominations = async () => {
+    const { data } = await axios.get(
+        route("treasury.special.gc.viewDenomination", props.id)
+    );
+    modalData.value = data;
+    openModal.value = true;
+};
+
+const onPaginate = async (link) => {
+    if (link.url) {
+        const { data } = await axios.get(link.url);
+        modalData.value = data;
+    }
+};
+
+const onCheckChange = (val) =>{
+    formState.checkedBy = val;
+}
 </script>
 
 <style lang="scss" scoped></style>

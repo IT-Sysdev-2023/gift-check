@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Treasury\Dashboard;
 
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SpecialExternalGcrequestEmpAssignResource;
 use App\Http\Resources\SpecialExternalGcRequestResource;
+use App\Models\Assignatory;
 use App\Models\SpecialExternalBankPaymentInfo;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Rules\DenomQty;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
@@ -128,7 +131,7 @@ class SpecialGcRequestController extends Controller
         ]);
     }
 
-    public function viewReleasingInternal(SpecialExternalGcrequest $id)
+    public function viewReleasingInternal(Request $request, SpecialExternalGcrequest $id)
     {
         $rec = $id->load([
             'user' => function ($q) {
@@ -138,14 +141,41 @@ class SpecialGcRequestController extends Controller
             'hasManySpecialExternalGcrequestItems',
             'specialExternalGcrequestEmpAssign',
             'approvedRequest' => function ($q) {
-                $q->select('reqap_trid', 'reqap_date', 'reqap_remarks', 'reqap_doc', 'reqap_checkedby', 'reqap_approvedby','reqap_preparedby')->with('user:user_id,firstname,lastname')
-                ->where('reqap_approvedtype', 'Special External GC Approved');
+                $q->select('reqap_trid', 'reqap_date', 'reqap_remarks', 'reqap_doc', 'reqap_checkedby', 'reqap_approvedby', 'reqap_preparedby')->with('user:user_id,firstname,lastname')
+                    ->where('reqap_approvedtype', 'Special External GC Approved');
             }
         ]);
 
+        // $tableData = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id->spexgc_id)
+        //     ->select('spexgcemp_denom', 'spexgcemp_fname', 'spexgcemp_lname' ,'spexgcemp_mname', 'spexgcemp_extname', 'spexgcemp_barcode')        
+        // ->orderBy('spexgcemp_id')
+        // ->paginate()
+        // ->withQueryString();
+
+        $checkBy  = Assignatory::assignatories($request);
+
+
         return inertia('Treasury/Dashboard/SpecialExternalGc/Components/InternalGcReleasingView', [
             'title' => 'Special Internal Gc Releasing',
+            'id' => $id->spexgc_id,
+            'checkBy' => $checkBy,
             'records' => new SpecialExternalGcRequestResource($rec)
+        ]);
+    }
+
+    public function viewDenomination($id)
+    {
+        $record = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)
+            ->select(['spexgcemp_denom', 'spexgcemp_fname', 'spexgcemp_lname', 'spexgcemp_mname', 'spexgcemp_extname'])
+            ->orderBy('spexgcemp_denom')
+            ->paginate(10)
+            ->withQueryString();
+        return response()->json([
+            'data' => SpecialExternalGcrequestEmpAssignResource::collection($record),
+            'from' => $record->firstItem(),
+            'to' => $record->lastItem(),
+            'total' => $record->total(),
+            'links' => $record->linkCollection(),
         ]);
     }
     private function options()

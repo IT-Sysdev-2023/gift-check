@@ -246,6 +246,7 @@ Route::middleware(['auth'])->group(function () {
 
                 Route::get('reviewing-gc-internal', [SpecialGcRequestController::class,'releasingInternal'])->name('releasingInternal');
                 Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class,'viewReleasingInternal'])->name('viewReleasingInternal');
+                Route::get('view-denominations-{id}' , [SpecialGcRequestController::class,'viewDenomination'])->name('viewDenomination');
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 

@@ -18,6 +18,7 @@ declare module 'vue' {
     AccountingDashboard: typeof import('./resources/js/Pages/Accounting/AccountingDashboard.vue')['default']
     AccountingSideBar: typeof import('./resources/js/Components/AccountingSideBar.vue')['default']
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
+    ACheckboxGroup: typeof import('ant-design-vue/es')['CheckboxGroup']
     ACol: typeof import('ant-design-vue/es')['Col']
     ACollapse: typeof import('ant-design-vue/es')['Collapse']
     ACollapsePanel: typeof import('ant-design-vue/es')['CollapsePanel']
