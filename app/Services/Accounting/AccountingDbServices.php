@@ -86,7 +86,6 @@ class AccountingDbServices
     public function updateSpecialEnternalGcRequest($request)
     {
 
-
         SpecialExternalGcrequest::where('spexgc_id', $request->id)->update([
             'spexgc_amount' => $request->amount,
             'spexgc_balance' => $request->balance + -abs($request->amount),
@@ -99,7 +98,7 @@ class AccountingDbServices
     public function insertInstitutionalPayment($request)
     {
 
-        $instpayment = $this->instituteLedgerNumber();
+        $instpayment = $this->instituteLedgerNumber() + 1;
 
         if ($request->payment === '0') {
 
@@ -150,7 +149,7 @@ class AccountingDbServices
 
         if (InstitutPayment::orderByDesc('insp_id')->max('insp_paymentnum') > 0) {
 
-            return InstitutPayment::orderByDesc('insp_id')->max('insp_paymentnum') + 1;
+            return InstitutPayment::orderByDesc('insp_id')->max('insp_paymentnum');
         }
 
         return 1;
