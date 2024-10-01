@@ -8,7 +8,7 @@
                 <available-gc :availableGc />
             </a-col>
             <a-col :span="8">
-                <sold-gc />
+                <sold-gc :soldGc/>
             </a-col>
         </a-row>
     </AuthenticatedLayout>
@@ -20,7 +20,8 @@ import AvailableGc from './Cards/AvailableGc.vue';
 export default {
     props: {
         countGcRequest: Object,
-        availableGc: Object
+        availableGc: Object,
+        soldGc:Object
     }
 }
 </script>

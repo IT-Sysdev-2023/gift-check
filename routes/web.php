@@ -247,8 +247,8 @@ Route::middleware(['auth'])->group(function () {
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
 
-                Route::get('reviewing-gc-internal', [SpecialGcRequestController::class,'releasingInternal'])->name('releasingInternal');
-                Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class,'viewReleasingInternal'])->name('viewReleasingInternal');
+                Route::get('reviewing-gc-internal', [SpecialGcRequestController::class, 'releasingInternal'])->name('releasingInternal');
+                Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class, 'viewReleasingInternal'])->name('viewReleasingInternal');
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 
@@ -428,6 +428,7 @@ Route::prefix('retail')->group(function () {
             Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
         });
         Route::get('AvailableGc', [RetailController::class, 'availableGcList'])->name('availableGcList');
+        Route::get('soldGc', [RetailController::class, 'soldGc'])->name('soldGc');
     });
 });
 Route::prefix('retailgroup')->group(function () {
