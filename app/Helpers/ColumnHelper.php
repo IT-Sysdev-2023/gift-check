@@ -109,12 +109,12 @@ class ColumnHelper
         ],
         [
             'title' => 'Date Requested',
-            'dataIndex' => 'spexgc_datereq',
+            'dataIndex' => 'date',
 
         ],
         [
             'title' => 'Date Validity',
-            'dataIndex' => 'spexgc_dateneed',
+            'dataIndex' => 'validity',
 
         ],
         [
@@ -135,6 +135,7 @@ class ColumnHelper
         [
             'title' => 'Status',
             'key' => 'status',
+            'align' => 'center'
 
         ],
         [

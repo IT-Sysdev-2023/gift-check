@@ -35,7 +35,7 @@ const dashboardRoute = computed(() => {
 
 <template>
     <div>
-        <a-layout style="min-height: 100vh"  class="dark-layout">
+        <a-layout style="min-height: 100vh" class="dark-layout">
             <a-layout-sider v-model:collapsed="collapsed" collapsible width="250px">
                 <div class="logo" />
                 <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
@@ -64,9 +64,7 @@ const dashboardRoute = computed(() => {
                                         border-radius: 50%;
                                         object-fit: cover;
                                         object-position: center;
-                                    "
-                                src="https://avatars.githubusercontent.com/u/823566?v=4"
-                                    alt="usersimage" />
+                                    " src="https://avatars.githubusercontent.com/u/823566?v=4" alt="usersimage" />
                             </div>
                         </div>
 
@@ -126,7 +124,9 @@ const dashboardRoute = computed(() => {
                             <HomeOutlined />
                             Home
                             </Link>
-                            <a-button class="text-white" type="ghost" @click="() => $inertia.post(route('logout'))"><PoweroffOutlined />Logout</a-button>
+                            <a-button class="text-white" type="ghost" @click="() => $inertia.post(route('logout'))">
+                                <PoweroffOutlined />Logout
+                            </a-button>
                         </p>
                     </a-layout-header>
                     <a-layout-content :style="{
@@ -134,7 +134,7 @@ const dashboardRoute = computed(() => {
                         background: '#fff',
                         minHeight: '280px',
 
-                    }" >
+                    }">
                         <slot />
                     </a-layout-content>
                 </a-layout>
@@ -145,6 +145,8 @@ const dashboardRoute = computed(() => {
 </template>
 
 <style scoped>
+
+
 #components-layout-demo-side .logo {
     height: 32px;
     margin: 16px;
@@ -158,6 +160,4 @@ const dashboardRoute = computed(() => {
 [data-theme="dark"] .site-layout .site-layout-background {
     background: #141414;
 }
-
-
 </style>

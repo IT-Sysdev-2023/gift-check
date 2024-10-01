@@ -43,18 +43,18 @@ class RetailController extends Controller
 
         $getAvailableGc = $this->retail->getAvailableGC();
 
-        // $soldGc = StoreReceivedGc::where('strec_storeid', $request->user()->store_assigned)
-        //     ->whereNotNull('strec_sold') 
-        //     ->join('denomination', 'denomination.denom_id', '=', 'store_received_gc.strec_denom')
-        //     ->get();
+        $soldGc = StoreReceivedGc::where('strec_storeid', $request->user()->store_assigned)
+            ->whereNotNull('strec_sold')
+            ->join('denomination', 'denomination.denom_id', '=', 'store_received_gc.strec_denom')
+            ->select('denomination.denomination', DB::raw('count(*) as total'))
+            ->groupBy('denomination.denom_id', 'denomination.denomination') // Group by both fields
+            ->get();
 
 
-        // dd($soldGc->toArray());
-
-        
         return inertia('Retail/RetailDashboard', [
             'countGcRequest' => $gcRequest,
-            'availableGc' => $getAvailableGc
+            'availableGc' => $getAvailableGc,
+            'soldGc' => $soldGc
         ]);
     }
 
@@ -321,6 +321,56 @@ class RetailController extends Controller
         return Inertia::render('Retail/AvailableGcTable', [
             'denom' => $denom,
             'gc' => $gc
+        ]);
+    }
+
+    public function soldGc(Request $request)
+    {
+        $query = StoreReceivedGc::distinct()
+            ->select([
+                'store_verification.vs_barcode',
+                'store_received_gc.strec_barcode',
+                'denomination.denomination',
+                'store_verification.vs_date',
+                'store_received_gc.strec_recnum',
+                'transaction_stores.trans_number',
+                'transaction_stores.trans_type',
+                'transaction_stores.trans_datetime',
+                'stores.store_name',
+            ])
+            ->whereAny([
+                'store_received_gc.strec_barcode'
+            ],'like',$request['barcode'].'%')
+            ->join('denomination', 'store_received_gc.strec_denom', '=', 'denomination.denom_id')
+            ->join('transaction_sales', 'transaction_sales.sales_barcode', '=', 'store_received_gc.strec_barcode')
+            ->join('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_sales.sales_transaction_id')
+            ->leftJoin('store_verification', 'store_received_gc.strec_barcode', '=', 'store_verification.vs_barcode')
+            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->where('store_received_gc.strec_sold', '*')
+            ->where('store_received_gc.strec_return', '')
+            ->where('store_received_gc.strec_storeid', $request->user()->store_assigned)
+            ->where('transaction_sales.sales_item_status', '0')
+            ->orderBy('transaction_stores.trans_datetime', 'DESC')
+            ->paginate(10)
+            ->withQueryString();
+
+        $query->transform(function ($item) {
+            $paymentTypes = [
+                1 => 'Cash',
+                2 => 'Credit Card',
+                3 => 'AR Payment',
+                5 => 'Refund',
+                6 => 'Revalidation',
+            ];
+
+            $item->paymentType = $paymentTypes[$item->trans_type] ?? null;
+
+            $item->dateSold = Date::parse($item->trans_datetime)->format('F d Y');
+            return $item;
+        });
+
+        return inertia('Retail/SoldGcList', [
+            'data' => $query
         ]);
     }
 

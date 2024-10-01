@@ -1179,157 +1179,6 @@ class MarketingController extends Controller
         return response()->json(['response' => $response]);
     }
 
-
-    public function submitReqForm(Request $request)
-    {
-        if ($request->data['finalize'] == 1) {
-
-            if (
-                $request->data['id'] == null ||
-                $request->data['requestNo'] == null ||
-                $request->data['finalize'] == null ||
-                $request->data['productionReqNum'] == null ||
-                $request->data['dateRequested'] == null ||
-                $request->data['location'] == null ||
-                $request->data['department'] == null ||
-                $request->data['remarks'] == null ||
-                $request->data['checkedBy'] == null ||
-                $request->data['approvedById'] == null ||
-                $request->data['approvedBy'] == null ||
-                $request->data['selectedSupplierId'] == null ||
-                $request->data['contactPerson'] == null ||
-                $request->data['contactNum'] == null ||
-                $request->data['address'] == null
-            ) {
-                return back()->with([
-                    'msg' => "Select",
-                    'description' => "Please fill all required fields",
-                    'type' => "error",
-                ]);
-            } else {
-                $lnumber = LedgerCheck::count() + 1;
-                $reqtotal = ProductionRequestItem::join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
-                    ->where('production_request_items.pe_items_request_id', $request->data['id'])
-                    ->selectRaw('IFNULL(SUM(production_request_items.pe_items_quantity * denomination.denomination), 0) as total')
-                    ->value('total');
-
-                $inserted = DB::transaction(function () use ($request, $lnumber, $reqtotal) {
-                    $ledgerCheck = LedgerCheck::create([
-                        'cledger_no' => $lnumber,
-                        'cledger_datetime' => now(),
-                        'cledger_type' => 'GCRA',
-                        'cledger_desc' => 'GC Requisition Approved',
-                        'cdebit_amt' => $reqtotal,
-                        'c_posted_by' => $request->user()->user_id,
-                    ]);
-
-                    $requisEntry = RequisitionEntry::create([
-                        'requis_erno' => $request->data['requestNo'],
-                        'requis_req' => now(),
-                        'requis_loc' => $request->data['location'],
-                        'requis_dept' => $request->data['department'],
-                        'requis_rem' => $request->data['remarks'],
-                        'repuis_pro_id' => $request->data['id'],
-                        'requis_req_by' => $request->user()->user_id,
-                        'requis_checked' => $request->data['checkedBy'],
-                        'requis_supplierid' => $request->data['selectedSupplierId'],
-                        'requis_ledgeref' => $lnumber,
-                        'requis_foldersaved' => ''
-                    ]);
-
-                    return [
-                        'legderCheck' => $ledgerCheck,
-                        'requisEntry' => $requisEntry,
-                    ];
-                });
-
-                if ($inserted) {
-
-                    $pdfgenerated = $this->marketing->generatepdfrequisition($request);
-                    if ($pdfgenerated) {
-                        ProductionRequest::where('pe_id', $request->data['id'])
-                            ->update([
-                                'pe_requisition' => '1'
-                            ]);
-
-                        return redirect()->back()->with([
-                            'type' => 'success',
-                            'stream' => base64_encode($pdfgenerated->output())
-                        ]);
-                    }
-                }
-            }
-        } elseif ($request->data['finalize'] == 3) {
-
-
-            $total = 0;
-            $lnumber = LedgerCheck::count() + 1;
-            $productionDetails = ProductionRequest::where('pe_id', $request->data['id'])
-                ->select(['pe_type', 'pe_group'])
-                ->get();
-            $ptype = $productionDetails[0]->pe_type;
-            $pgroup = $productionDetails[0]->pe_group;
-
-
-            if ($productionDetails) {
-                $updateProductionStatus = ProductionRequest::where('pe_id', $request->data['id'])
-                    ->update([
-                        'pe_requisition' => '2'
-                    ]);
-
-                if ($updateProductionStatus) {
-                    $amount = ProductionRequestItem::join('denomination', 'production_request_items.pe_items_denomination', '=', 'denomination.denom_id')
-                        ->where('pe_items_request_id', $request->data['id'])->get();
-
-                    foreach ($amount as $item) {
-                        $sub = $item->pe_items_quantity * $item->denomination;
-                        $total = $total + $sub;
-                    }
-                    $cancelGc = Gc::where('pe_entry_gc', $request->data['id'])
-                        ->update(['gc_cancelled' => '*']);
-
-
-                    if ($cancelGc) {
-
-
-                        $isInserted = LedgerBudget::create([
-                            'bledger_no' => $lnumber,
-                            'bledger_datetime' => now(),
-                            'bledger_type' => 'RC',
-                            'bledger_trid' => '0',
-                            'bledger_typeid' => $ptype,
-                            'bledger_group' => $pgroup,
-                            'bdebit_amt' => $total
-                        ]);
-
-
-                        if ($isInserted) {
-
-                            $cancelled = CancelledProductionRequest::create([
-                                'cpr_pro_id' => $request->data['id'],
-                                'cpr_isrequis_cancel' => '1',
-                                'cpr_ldgerid' => $isInserted->bledger_id,
-                                'cpr_at' => now(),
-                                'cpr_by' => $request->user()->user_id
-                            ]);
-
-                            if ($cancelled) {
-                                return back()->with([
-                                    'type' => 'success',
-                                    'msg' => 'Success',
-                                    'description' => 'Production Request Successfully Cancelled'
-                                ]);
-                            }
-
-                        }
-                    }
-
-                }
-            }
-        }
-    }
-
-
     public function pendingRequest(Request $request)
     {
         $productionBarcode = self::productionRequest($request->id);
@@ -1358,7 +1207,6 @@ class MarketingController extends Controller
                 ->select(DB::raw('SUM(denomination.denomination * production_request_items.pe_items_quantity) as total'))
                 ->value('total');
             $item->dateReq = $dateReq;
-            $item->dateneed = $dateneed;
             $item->requestedBy = $requestedBy;
             $item->total = $total;
 
@@ -1367,8 +1215,8 @@ class MarketingController extends Controller
 
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
-            ['PR No', 'Date Request', 'Total Amount', 'Date Needed', 'Requested By', 'Department', 'Action'],
-            ['pe_num', 'dateReq', 'total', 'dateneed', 'requestedBy', 'title', 'View']
+            ['PR No', 'Date Request', 'Total Amount', 'Requested By', 'Department', 'Action'],
+            ['pe_num', 'dateReq', 'total', 'requestedBy', 'title', 'View']
         );
 
 
@@ -1396,199 +1244,86 @@ class MarketingController extends Controller
 
         if ($status == '1') {
             if ($userRole === 1) {
-                return $this->handleRoleApproval($request, $prid);
+                $exists = ApprovedProductionRequest::where('ape_pro_request_id', $request->data['id'])->exists();
+
+                if ($exists) {
+                    return back()->with([
+                        'type' => 'warning',
+                        'msg' => 'Warning!',
+                        'description' => 'Production Pending Request Already Approved'
+                    ]);
+                }
+                $approved = $this->marketing->handleManagerApproval($request, $prid);
+                if ($approved) {
+
+                    return back()->with([
+                        'type' => 'success',
+                        'msg' => 'Success!',
+                        'description' => 'The production pending request has been successfully approved.'
+                    ]);
+                }
             } elseif ($userRole === 0) {
-                return $this->handleRoleZeroApproval($request, $prid);
+                if ($request->data['InputRemarks'] == null) {
+                    return back()->with([
+                        'type' => 'error',
+                        'msg' => 'Opps!',
+                        'description' => 'Please fill all required fields'
+                    ]);
+                }
+                if ($request->data['approvedBy'] == null) {
+                    return back()->with([
+                        'type' => 'error',
+                        'msg' => 'Opps!',
+                        'description' => 'Please contact authorized personnel to approve this production request first.'
+                    ]);
+                }
+                $checked = $this->marketing->handleUserRole0Approval($request, $prid);
+                if ($checked) {
+
+                    $this->RegularGc->approveProductionRequest($request, $prid);
+
+                    $generated = $this->marketing->generateProductionRequestPDF($request);
+                    if ($generated) {
+                        return redirect()->back()->with([
+                            'type' => 'success',
+                            'stream' => base64_encode($generated->output())
+                        ]);
+                    } else {
+                        return back()->with([
+                            'type' => 'error',
+                            'msg' => 'Opps!',
+                            'description' => 'There is a problem generating the PDF.'
+                        ]);
+                    }
+
+                }
             }
         } elseif ($status == '2') {
-            return $this->handleRequestCancellation($request, $prid);
-        }
-    }
-
-    private function handleRoleApproval(Request $request, $prid)
-    {
-        $exists = ApprovedProductionRequest::where('ape_pro_request_id', $request->data['id'])->exists();
-
-        if ($exists) {
-            return back()->with([
-                'type' => 'warning',
-                'msg' => 'Warning!',
-                'description' => 'Production Pending Request Already Approved'
-            ]);
-        }
-
-        $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
-        $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
-
-        $query = ProductionRequest::select(
-            'production_request.pe_id',
-            'users.firstname',
-            'users.lastname',
-            'production_request.pe_file_docno',
-            'production_request.pe_date_needed',
-            'production_request.pe_remarks',
-            'production_request.pe_num',
-            'production_request.pe_date_request',
-            'production_request.pe_type',
-            'production_request.pe_group',
-            'access_page.title'
-        )
-            ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
-            ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
-            ->where('production_request.pe_id', $prid)
-            ->where('production_request.pe_status', 0)
-            ->get();
-
-        $insertLedgerBudget = LedgerBudget::create([
-            'bledger_no' => $ledgerNumber,
-            'bledger_trid' => $prid,
-            'bledger_datetime' => now(),
-            'bledger_type' => 'RFGCP',
-            'bcredit_amt' => $request->data['total'],
-            'bledger_typeid' => $query[0]->pe_type,
-            'bledger_group' => $query[0]->pe_group
-        ]);
-
-        if ($insertLedgerBudget) {
-            $insertApprovedRequest = ApprovedProductionRequest::create([
-                'ape_pro_request_id' => $prid,
-                'ape_approved_by' => $request->user()->user_id,
-                'ape_checked_by' => null,
-                'ape_remarks' => $request->data['remarks'],
-                'ape_approved_at' => now(),
-                'ape_file_doc_no' => '',
-                'ape_preparedby' => $request->data['requestedById'],
-                'ape_ledgernum' => $ledgerNumber
-            ]);
-
-            return $this->handleResponse($insertApprovedRequest, 'Production request approved successfully');
-        }
-
-        return back()->with([
-            'type' => 'error',
-            'msg' => 'Opps!',
-            'description' => 'Failed to create ledger budget'
-        ]);
-    }
-
-    private function handleRoleZeroApproval(Request $request, $prid)
-    {
-        if ($request->data['InputRemarks'] == null) {
-            return back()->with([
-                'type' => 'error',
-                'msg' => 'Opps!',
-                'description' => 'Please fill all required fields'
-            ]);
-        } elseif ($request->data['approvedBy'] == null) {
-            return back()->with([
-                'type' => 'warning',
-                'msg' => 'Warning!',
-                'description' => '`Approved By` is empty. Please contact the authorized personnel.'
-            ]);
-        }
-
-        ApprovedProductionRequest::where('ape_pro_request_id', $prid)
-            ->update(['ape_checked_by' => $request->user()->user_id]);
-
-        $productionRequestStatus = ProductionRequest::where('pe_id', $prid)->value('pe_status');
-
-        if ($productionRequestStatus == 0) {
-            $isApproved = ProductionRequest::where('pe_id', $prid)
-                ->where('pe_status', '0')
-                ->update(['pe_status' => $request->data['status']]);
-
-            if ($isApproved) {
-                $this->RegularGc->approveProductionRequest($request, $prid);
-
-                return $this->generateProductionRequestPDF($request);
-            }
-        }
-
-        return back()->with([
-            'type' => 'error',
-            'msg' => 'Opps!',
-            'description' => 'Production request already approved/cancelled'
-        ]);
-    }
-
-    private function handleRequestCancellation(Request $request, $prid)
-    {
-        $productionRequestStatus = ProductionRequest::where('pe_id', $prid)->value('pe_status');
-
-        if ($productionRequestStatus == 0) {
-            $cancelled = ProductionRequest::where('pe_id', $prid)
-                ->where('pe_status', '0')
-                ->update(['pe_status' => $request->data['status']]);
-
-            if ($cancelled) {
-                $insertCancel = CancelledProductionRequest::create([
-                    'cpr_pro_id' => $prid,
-                    'cpr_at' => now(),
-                    'cpr_by' => $request->user()->user_id,
-                    'cpr_isrequis_cancel' => '0',
-                    'cpr_ldgerid' => ''
+            if ($request->data['cancelremarks'] == null) {
+                return back()->with([
+                    'type' => 'error',
+                    'msg' => 'Opps!',
+                    'description' => 'Kindly ensure that  remarks are provided'
                 ]);
-
-                return $this->handleResponse($insertCancel, 'Production request successfully cancelled');
+            }
+            $cancelled = $this->marketing->handleRequestCancellation($request, $prid);
+            if ($cancelled) {
+                return back()->with([
+                    'type' => 'success',
+                    'msg' => 'Nice!',
+                    'description' => 'Production request successfully cancelled'
+                ]);
+            } else {
+                return back()->with([
+                    'type' => 'warning',
+                    'msg' => 'Warning!',
+                    'description' => 'It appears that the pending request has already been canceled.'
+                ]);
             }
         }
-
-        return back()->with([
-            'type' => 'error',
-            'msg' => 'Opps!',
-            'description' => 'Production request already approved/cancelled'
-        ]);
     }
 
-    private function generateProductionRequestPDF(Request $request)
-    {
-        $barcodes = $request->barcode;
 
-        $reviewerPosition = UserDetails::where('user_id', $request->data['reviewedById'])->first();
-        $approverPosition = UserDetails::where('user_id', $request->data['approvedById'])->first();
-
-        $data = [
-            'pr_no' => $request->data['pe_no'],
-            'dateRequested' => $request->data['dateRequested'],
-            'currentBudget' => $this->marketing->currentBudget(),
-            'Remarks' => $request->data['InputRemarks'],
-            'reviewedBy' => strtoupper($request->data['reviewedBy']),
-            'reviewerPosition' => $reviewerPosition['details']['employee_position'],
-            'approvedBy' => strtoupper($request->data['approvedBy']),
-            'approvedByPosition' => $approverPosition->details['employee_position'],
-            'preparedBy' => strtoupper($request->data['preparedBy']),
-        ];
-
-        $pdf = Pdf::loadView('pdf/productionrequest', [
-            'data' => $data,
-            'barcodes' => $barcodes
-        ])->setPaper('A4');
-
-        $fileName = $data['pr_no'] . '.pdf';
-        Storage::disk('public')->put('approvalform/' . $fileName, $pdf->output());
-
-        return redirect()->back()->with([
-            'type' => 'success',
-            'stream' => base64_encode($pdf->output())
-        ]);
-    }
-
-    private function handleResponse($result, $successMsg)
-    {
-        if ($result) {
-            return back()->with([
-                'type' => 'success',
-                'msg' => 'Nice!',
-                'description' => $successMsg
-            ]);
-        }
-
-        return back()->with([
-            'type' => 'error',
-            'msg' => 'Opps!',
-            'description' => 'An error occurred while processing the request'
-        ]);
-    }
 
 
     public function approvedRequest(Request $request)
@@ -1852,7 +1587,7 @@ class MarketingController extends Controller
             $item->requestedBy = ucwords($item->prepby);
             ;
             $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d Y');
-            $item->requestApprovedTime = Date::parse($item->reqap_date)->format('H:i:s A');
+            $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i A');
             $item->recommendedBy = ucwords($item->recomby);
 
             return $item;
@@ -1878,7 +1613,7 @@ class MarketingController extends Controller
                 $item->approvedBy = ucwords($item->approvedBy);
                 $item->checkedBy = ucwords($item->checkBy);
                 $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d y');
-                $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i:s A');
+                $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i A');
                 $item->prepby = ucwords($item->appby);
                 return $item;
             });
@@ -2049,6 +1784,67 @@ class MarketingController extends Controller
         return response()->json([
             'checkedBy' => $q['details']['employee_name'],
             'checkedById' => $query['ape_checked_by'],
+        ]);
+    }
+
+    public function cancelledProductionRequest()
+    {
+        $data = ProductionRequest::where('pe_status', '2')
+            ->select(
+                'production_request.*',
+                'requestedBy.firstname as requested_by_firstname',
+                'requestedBy.lastname as requested_by_lastname',
+                'cancelled_production_request.*',
+                'cancelledBy.firstname as cancelled_by_firstname',
+                'cancelledBy.lastname as cancelled_by_lastname',
+            )
+            ->leftJoin('users as requestedBy', 'requestedBy.user_id', '=', 'production_request.pe_requested_by')
+            ->leftJoin('cancelled_production_request', 'cancelled_production_request.cpr_pro_id', '=', 'production_request.pe_id')
+            ->leftJoin('users as cancelledBy', 'cancelledBy.user_id', '=', 'cancelled_production_request.cpr_by')
+            ->orderByDesc('pe_id')
+            ->paginate()
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->requestedBy = ucwords($item->requested_by_firstname . ' ' . $item->requested_by_lastname);
+            $item->cancelledBy = ucwords($item->cancelled_by_firstname . ' ' . $item->cancelled_by_lastname);
+            $item->Daterequested = Date::parse($item->pe_date_request)->format('F d, Y');
+            $item->dateCancelled = $item->cpr_at ? Date::parse($item->cpr_at)->format('F d, Y') : '';
+            return $item;
+        });
+
+        return inertia('Marketing/gcproductionrequest/CancelledPR', [
+            'data' => $data
+        ]);
+    }
+
+    public function ViewcancelledProductionRequest(Request $request)
+    {
+        $data = ProductionRequest::where('pe_status', '2')
+            ->select(
+                'production_request.*',
+                'requestedBy.firstname as requested_by_firstname',
+                'requestedBy.lastname as requested_by_lastname',
+                'cancelled_production_request.*',
+                'cancelledBy.firstname as cancelled_by_firstname',
+                'cancelledBy.lastname as cancelled_by_lastname',
+            )
+            ->where('production_request.pe_id', $request->id)
+            ->leftJoin('users as requestedBy', 'requestedBy.user_id', '=', 'production_request.pe_requested_by')
+            ->leftJoin('cancelled_production_request', 'cancelled_production_request.cpr_pro_id', '=', 'production_request.pe_id')
+            ->leftJoin('users as cancelledBy', 'cancelledBy.user_id', '=', 'cancelled_production_request.cpr_by')
+            ->orderByDesc('pe_id')
+            ->get();
+
+        $data->transform(function ($item) {
+            $item->requestedBy = ucwords($item->requested_by_firstname . ' ' . $item->requested_by_lastname);
+            $item->cancelledBy = ucwords($item->cancelled_by_firstname . ' ' . $item->cancelled_by_lastname);
+            $item->Daterequested = Date::parse($item->pe_date_request)->format('F d, Y');
+            $item->dateCancelled = $item->cpr_at ? Date::parse($item->cpr_at)->format('F d, Y') : '';
+            return $item;
+        });
+        return response()->json([
+            'response' =>$data
         ]);
     }
 }

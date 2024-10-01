@@ -35,7 +35,7 @@
             </a-col>
             <a-col :span="14">
                 <a-card>
-                    <payment-setup-form :id="record.spexgc_id"  @updated-counts="handleCount" />
+                    <payment-setup-form :id="record.spexgc_id" :accname="record.spcus_acctname" :balance="record.spexgc_balance" @updated-counts="handleCount" />
                 </a-card>
             </a-col>
         </a-row>

@@ -47,6 +47,9 @@
 
                     </div>
                     <div v-if="form.status == '2'">
+                        <a-form-item label="Cancel Remarks">
+                            <a-textarea v-model:value="form.cancelremarks"/>
+                        </a-form-item>
                         <a-form-item label="Date Cancelled">
                             <a-input v-model:value="form.dateApproved" readonly />
                         </a-form-item>
@@ -124,6 +127,7 @@ export default {
                 remarks: '',
                 requestedBy: '',
                 requestedById: '',
+                cancelremarks: '',
                 total: '',
                 status: '1',
                 checkedBy: '',

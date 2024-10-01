@@ -29,8 +29,11 @@ class AccountingController extends Controller
             'record' => $this->accountingservices->getDetialsEveryPayment($id),
         ]);
     }
-    
+
     public function tableFetch($id){
         return $this->accountingservices->getDataList($id);
+    }
+    public function submitPayment(Request $request){
+        return $this->accountingservices->submitPayementForm($request);
     }
 }
