@@ -250,7 +250,7 @@ const columns = ref([
     },
     {
         title: 'Last Name',
-        dataIndex: 'spexgcemp_fname',
+        dataIndex: 'spexgcemp_lname',
         key: 'name',
     },
     {
