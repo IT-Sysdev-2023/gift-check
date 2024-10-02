@@ -159,7 +159,7 @@ Route::prefix('marketing')->group(function () {
         });
         Route::name('manage-supplier.')->group(function () {
             Route::get('manage-supplier', [MarketingController::class, 'manageSupplier'])->name('manage.supplier');
-            Route::get('add-supplier', [MarketingController::class, 'addSupplier'])->name('add.supplier');
+            Route::post('add-supplier', [MarketingController::class, 'addSupplier'])->name('add.supplier');
             Route::get('status-supplier', [MarketingController::class, 'statusSupplier'])->name('status.supplier');
         });
         Route::name('verifiedgc.')->group(function () {
