@@ -713,70 +713,64 @@ class MarketingController extends Controller
 
     public function submitPromoGcRequest(Request $request)
     {
-        if (is_null($request->data['remarks']) || $request->total == 0) {
-            return back()->with([
-                'msg' => "Select",
-                'description' => "Please fill all required fields",
-                'type' => "error",
-            ]);
-        } elseif (is_null($request->file)) {
-            return back()->with([
-                'msg' => "Upload Image",
-                'description' => "Please upload Image",
-                'type' => "warning",
-            ]);
+        $request->validate([
+            'file' => 'required',
+            'remarks' => 'required',
+            'quantities' => 'required',
+            'totalValue' => 'required',
+        ]);
+
+        $totalrequest = str_replace(',', '', $request->totalValue);
+
+        $num = PromoGcRequest::select('pgcreq_reqnum')->where('pgcreq_tagged', $request->user()->promo_tag)->orderByDesc('pgcreq_reqnum')->first();
+
+        $relnum = is_null($num) ? 1 : $num->pgcreq_reqnum + 1;
+
+        $reqNum = sprintf("%03d", $relnum);
+
+        $denomination = collect($request['quantities'])->filter(function ($item) {
+            return $item !== null;
+        });
+
+        if ($request->user()->user_id == '8') {
+            $group = $request->user()->usergroup;
         } else {
-            $totalrequest = str_replace(',', '', $request->total);
+            $group = $request['group'];
+        }
 
-            $num = PromoGcRequest::select('pgcreq_reqnum')->where('pgcreq_tagged', $request->user()->promo_tag)->orderByDesc('pgcreq_reqnum')->first();
+        DB::transaction(function () use ($request, $reqNum, $group, $denomination, $totalrequest) {
+            $promo = PromoGcRequest::create([
+                'pgcreq_reqnum' => $reqNum,
+                'pgcreq_reqby' => $request->user()->user_id,
+                'pgcreq_datereq' => now(),
+                'pgcreq_dateneeded' => Date::parse($request['dateneeded']['$d'])->format('Y-m-d'),
+                'pgcreq_status' => 'pending',
+                'pgcreq_remarks' => $request['remarks'],
+                'pgcreq_total' => (float) $totalrequest,
+                'pgcreq_group' => $group,
+                'pgcreq_tagged' => $request->user()->promo_tag,
+                'pgcreq_group_status' => '',
+                'pgcreq_doc' => $this->marketing->fileUpload($request, $reqNum)
+            ]);
 
-            $relnum = is_null($num) ? 1 : $num->pgcreq_reqnum + 1;
+            $trid = is_null($promo->pgcreq_id) ? '1' : $promo->pgcreq_id;
 
-            $reqNum = sprintf("%03d", $relnum);
-
-            $denomination = collect($request->data['quantities'])->filter(function ($item) {
-                return $item !== null;
-            });
-
-            if ($request->user()->user_id == '8') {
-                $group = $request->user()->usergroup;
-            } else {
-                $group = $request->data['group'];
+            foreach ($denomination as $key => $value) {
+                PromoGcRequestItem::create([
+                    'pgcreqi_trid' => $trid,
+                    'pgcreqi_denom' => $key,
+                    'pgcreqi_qty' => $value,
+                    'pgcreqi_remaining' => $value
+                ]);
             }
 
-            DB::transaction(function () use ($request, $reqNum, $group, $denomination, $totalrequest) {
-                $promo = PromoGcRequest::create([
-                    'pgcreq_reqnum' => $reqNum,
-                    'pgcreq_reqby' => $request->user()->user_id,
-                    'pgcreq_datereq' => now(),
-                    'pgcreq_dateneeded' => Date::parse($request->data['dateneeded']['$d'])->format('Y-m-d'),
-                    'pgcreq_status' => 'pending',
-                    'pgcreq_remarks' => $request->data['remarks'],
-                    'pgcreq_total' => (float) $totalrequest,
-                    'pgcreq_group' => $group,
-                    'pgcreq_tagged' => $request->user()->promo_tag,
-                    'pgcreq_group_status' => '',
-                    'pgcreq_doc' => $this->marketing->fileUpload($request, $reqNum)
-                ]);
+        });
+        return back()->with([
+            'msg' => "Success",
+            'description' => "Request Saved",
+            'type' => "success",
+        ]);
 
-                $trid = is_null($promo->pgcreq_id) ? '1' : $promo->pgcreq_id;
-
-                foreach ($denomination as $key => $value) {
-                    PromoGcRequestItem::create([
-                        'pgcreqi_trid' => $trid,
-                        'pgcreqi_denom' => $key,
-                        'pgcreqi_qty' => $value,
-                        'pgcreqi_remaining' => $value
-                    ]);
-                }
-
-            });
-            return back()->with([
-                'msg' => "Success",
-                'description' => "Request Saved",
-                'type' => "success",
-            ]);
-        }
 
     }
 

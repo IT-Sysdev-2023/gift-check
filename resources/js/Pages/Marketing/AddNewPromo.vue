@@ -256,7 +256,9 @@ export default {
           message: response.data.response.msg,
           description: response.data.response.description,
         });
-        window.location.href = "promo-list";
+        if (response.data.response.type === 'success') {
+          window.location.href = "promo-list";
+        }
       })
     }
   },
