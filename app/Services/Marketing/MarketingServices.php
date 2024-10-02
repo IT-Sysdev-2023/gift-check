@@ -107,70 +107,87 @@ class MarketingServices extends FileHandler
     {
         $query = ProductionRequest::join('approved_production_request', 'production_request.pe_id', '=', 'approved_production_request.ape_pro_request_id')
             ->join('users', 'users.user_id', '=', 'production_request.pe_requested_by')
+            ->leftJoin('users as approvedBy', 'approvedBy.user_id', '=', 'approved_production_request.ape_approved_by') // Fix alias here
+            ->select(
+                'production_request.*',
+                'users.firstname as requestByFirstname',
+                'users.lastname as requestByLastname',
+                'approvedBy.firstname as approvedByFirstname',
+                'approvedBy.lastname as approvedByLastname'
+            )
             ->where('pe_status', '1')
-            ->whereAny(['pe_num'], 'LIKE', '%' . $request->search . '%')
+            ->whereAny([
+                'pe_num',
+                'pe_date_request',
+                'users.firstname',
+                'users.lastname',
+            ], 'LIKE', '%' . $request->search . '%')
             ->orderByDesc('pe_id')
             ->paginate(10)
             ->withQueryString();
+
         $query->transform(function ($item) {
-            $item->Reqprepared = ucwords($item->firstname . ' ' . $item->lastname);
+            $item->Reqprepared = ucwords($item->requestByFirstname . ' ' . $item->requestByLastname);
+            $item->ApprovedBy = ucwords($item->approvedByFirstname . ' ' . $item->approvedByLastname);
             $item->dateReq = Date::parse($item->pe_date_request)->format('Y-m-d');
             $item->dateNeed = Date::parse($item->pe_date_needed)->format('Y-m-d');
             $item->ape_approved_at = Date::parse($item->ape_approved_at)->format('Y-m-d');
             return $item;
         });
 
-        return $query;
+        return empty($query) ? [] : $query;
     }
     public function approveProductionRequestSelectedData($request, $query)
     {
-        $selectedData = collect([
-            ProductionRequest::select(
-                'production_request.pe_id',
-                'production_request.pe_num',
-                'production_request.pe_requested_by',
-                'production_request.pe_date_request',
-                'production_request.pe_date_needed',
-                'production_request.pe_file_docno',
-                'production_request.pe_remarks',
-                'production_request.pe_generate_code',
-                'production_request.pe_requisition',
-                'approved_production_request.ape_approved_by',
-                'approved_production_request.ape_remarks',
-                'approved_production_request.ape_approved_at',
-                'approved_production_request.ape_preparedby',
-                'approved_production_request.ape_checked_by',
-                'requestby.firstname as frequest',
-                'requestby.lastname as lrequest',
-                'approvedby.firstname as fapproved',
-                'approvedby.lastname as lapproved',
-                'production_request.pe_type',
-                'production_request.pe_group'
-            )
-                ->join('approved_production_request', 'production_request.pe_id', '=', 'approved_production_request.ape_pro_request_id')
-                ->join('users as requestby', 'requestby.user_id', '=', 'production_request.pe_requested_by')
-                ->join('users as approvedby', 'approvedby.user_id', '=', 'approved_production_request.ape_preparedby')
-                ->when($request->id ?? null, function ($query) use ($request) {
-                    $query->where('production_request.pe_id', $request->id);
-                })
-                ->when($request->id === null, function ($item) use ($query) {
-                    $item->where('production_request.pe_id', $query->first()->pe_id);
-                })
-                ->first()
-        ]);
+        if ($query->count() !== 0) {
+            $selectedData = collect([
+                ProductionRequest::select(
+                    'production_request.pe_id',
+                    'production_request.pe_num',
+                    'production_request.pe_requested_by',
+                    'production_request.pe_date_request',
+                    'production_request.pe_date_needed',
+                    'production_request.pe_file_docno',
+                    'production_request.pe_remarks',
+                    'production_request.pe_generate_code',
+                    'production_request.pe_requisition',
+                    'approved_production_request.ape_approved_by',
+                    'approved_production_request.ape_remarks',
+                    'approved_production_request.ape_approved_at',
+                    'approved_production_request.ape_preparedby',
+                    'approved_production_request.ape_checked_by',
+                    'requestby.firstname as frequest',
+                    'requestby.lastname as lrequest',
+                    'approvedby.firstname as fapproved',
+                    'approvedby.lastname as lapproved',
+                    'production_request.pe_type',
+                    'production_request.pe_group'
+                )
+                    ->join('approved_production_request', 'production_request.pe_id', '=', 'approved_production_request.ape_pro_request_id')
+                    ->join('users as requestby', 'requestby.user_id', '=', 'production_request.pe_requested_by')
+                    ->join('users as approvedby', 'approvedby.user_id', '=', 'approved_production_request.ape_preparedby')
+                    ->when($request->id ?? null, function ($query) use ($request) {
+                        $query->where('production_request.pe_id', $request->id);
+                    })
+                    ->when($request->id === null, function ($item) use ($query) {
+                        $item->where('production_request.pe_id', $query->first()->pe_id);
+                    })
+                    ->first()
+            ]);
+
+            $selectedData = $selectedData->transform(function ($item) {
+                $item->DateRequested = Date::parse($item->pe_date_request)->format('Y-F-d') ?? null;
+                $item->DateNeeded = Date::parse($item->pe_date_needed)->format('Y-F-d');
+                $item->DateApproved = Date::parse($item->ape_approved_at)->format('Y-F-d');
+                $item->aprrovedPreparedBy = ucwords($item->fapproved . ' ' . $item->lapproved);
+                $item->RequestPreparedby = ucwords($item->frequest . ' ' . $item->lrequest);
+    
+                return $item;
+            })->first();
+        }
 
 
-        $selectedData = $selectedData->transform(function ($item) {
-            $item->DateRequested = Date::parse($item->pe_date_request)->format('Y-F-d') ?? null;
-            $item->DateNeeded = Date::parse($item->pe_date_needed)->format('Y-F-d');
-            $item->DateApproved = Date::parse($item->ape_approved_at)->format('Y-F-d');
-            $item->aprrovedPreparedBy = ucwords($item->fapproved . ' ' . $item->lapproved);
-            $item->RequestPreparedby = ucwords($item->frequest . ' ' . $item->lrequest);
-
-            return $item;
-        })->first();
-
-        return $selectedData;
+        return $selectedData ?? [];
     }
 
     public function selectedPromoPendingRequest($request)
@@ -235,7 +252,7 @@ class MarketingServices extends FileHandler
 
     public function handleManagerApproval($request, $prid)
     {
-        
+
 
         $lnum = LedgerBudget::select(['bledger_no'])->orderByDesc('bledger_id')->first();
         $ledgerNumber = intval(optional($lnum)->bledger_no) + 1;
