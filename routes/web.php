@@ -360,6 +360,8 @@ Route::prefix('accounting')->name('accounting.')->group(function () {
         Route::get('setup-payment-{id}', [AccountingController::class, 'setupPayment'])->name('setup');
         Route::get('setup-table-{id}', [AccountingController::class, 'tableFetch'])->name('fetch');
         Route::post('submit-form', [AccountingController::class, 'submitPayment'])->name('submit');
+        Route::get('payment-viewing', [AccountingController::class, 'paymentViewing'])->name('viewing');
+        Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
     });
 });
 

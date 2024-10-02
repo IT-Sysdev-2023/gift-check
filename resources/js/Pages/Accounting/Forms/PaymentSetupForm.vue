@@ -337,10 +337,7 @@ const submit = () => {
                 message: e.props.flash.title,
                 description: e.props.flash.msg,
             });
-
-            if (e.props.flash.status === 'success') {
-                router.visit(route('accounting.payment.setup', props.id))
-            }
+            
         },
         onError: (e) => {
             error.value = e;

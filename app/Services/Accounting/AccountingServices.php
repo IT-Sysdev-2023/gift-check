@@ -3,6 +3,7 @@
 namespace App\Services\Accounting;
 
 use App\Models\ApprovedRequest;
+use App\Models\InstitutPayment;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use Illuminate\Support\Facades\Date;
@@ -146,7 +147,7 @@ class AccountingServices
                     ->updateSpecialExternalEmpAssign($request);
             });
 
-            return back()->with([
+            return redirect()->route('accounting.dashboard')->with([
                 'status' => 'success',
                 'msg' => 'Special External GC Transaction Saved.',
                 'title' => 'Success',
@@ -161,7 +162,6 @@ class AccountingServices
     }
     private function getSpecialGCReleasingNo()
     {
-
         $data = ApprovedRequest::where('reqap_approvedtype', 'special external releasing')->orderByDesc('reqap_trnum')->max('reqap_trnum');
 
         if ($data > 0) {
@@ -169,5 +169,22 @@ class AccountingServices
         }
 
         return 1;
+    }
+
+    public function getDonePayment()
+    {
+        $data = InstitutPayment::selectFilterInst()->join('special_external_gcrequest', 'spexgc_id', '=', 'insp_trid')
+            ->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+            ->where('spexgc_payment_stat', '!=', 'pending')
+            ->orderByDesc('insp_paymentnum')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->institut_date = Date::parse($item->institut_date)->toFormattedDateString();
+            return $item;
+        });
+
+        return $data;
     }
 }

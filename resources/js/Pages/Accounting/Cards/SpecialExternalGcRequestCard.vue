@@ -36,7 +36,7 @@
                         Payment Gc
                     </span>
                 </button>
-                <button type="button" class="track" @click="() => $inertia.get(route('eod.verified.gc'))">
+                <button type="button" class="track" @click="() => $inertia.get(route('accounting.payment.viewing'))">
                     <span>
                         <LogoutOutlined />
                         Payment Viewing
