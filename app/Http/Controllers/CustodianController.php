@@ -86,11 +86,11 @@ class CustodianController extends Controller
     public function barcodeOrRange(Request $request)
     {
         if ($request->status == '1') {
-            $request->validate([
+            $request->validate(rules: [
                 'barcode' => 'required',
             ]);
         } else {
-            $request->validate([
+            $request->validate(rules: [
                 'barcodeStart' => 'required|lt:barcodeEnd',
                 'barcodeEnd' => 'gt:barcodeStart',
             ]);

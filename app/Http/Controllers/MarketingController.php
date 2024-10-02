@@ -1451,12 +1451,21 @@ class MarketingController extends Controller
 
     public function addSupplier(Request $request)
     {
+        $request->validate([
+            'gcs_companyname' => 'required|string|max:255',
+            'gcs_accountname' => 'required|string|max:255',
+            'gcs_contactperson' => 'required|string|max:255',
+            'gcs_contactnumber' => 'required|numeric',
+            'gcs_address' => 'required|string|max:255',
+        ]);
+
+
         $inserted = Supplier::create([
-            'gcs_companyname' => $request->data['gcs_companyname'],
-            'gcs_accountname' => $request->data['gcs_accountname'],
-            'gcs_contactperson' => $request->data['gcs_contactperson'],
-            'gcs_contactnumber' => $request->data['gcs_contactnumber'],
-            'gcs_address' => $request->data['gcs_address'],
+            'gcs_companyname' => $request['gcs_companyname'],
+            'gcs_accountname' => $request['gcs_accountname'],
+            'gcs_contactperson' => $request['gcs_contactperson'],
+            'gcs_contactnumber' => $request['gcs_contactnumber'],
+            'gcs_address' => $request['gcs_address'],
             'gcs_status' => '1',
         ]);
 
@@ -1844,7 +1853,7 @@ class MarketingController extends Controller
             return $item;
         });
         return response()->json([
-            'response' =>$data
+            'response' => $data
         ]);
     }
 }
