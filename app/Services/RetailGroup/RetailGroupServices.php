@@ -82,7 +82,8 @@ class RetailGroupServices extends FileHandler
             $data->fullname = $data->userReqby->full_name;
             $data->time = Date::parse($data->pgcreq_datereq)->format('H:i:s');
             $data->title = $data->userReqby->accessPage->title;
-        };
+        }
+        ;
 
         return $data;
     }
@@ -137,7 +138,13 @@ class RetailGroupServices extends FileHandler
             PromoGcRequest::where('pgcreq_status', 'pending')
                 ->where('pgcreq_group_status', '')
                 ->where('pgcreq_id', $request->id)
-                ->update(['pgcreq_group_status' => 'cancelled']);
+                ->update(
+                    [
+                        'pgcreq_group_status' => 'cancelled',
+                        'pgcreq_updateby' => $request->user()->user_id,
+                        'cancellremarks' => $request->remarks,
+                    ]
+                );
         }
         return $this;
     }
@@ -168,7 +175,7 @@ class RetailGroupServices extends FileHandler
                 'reqcan_canceltype' => 'promo gc preapproved',
                 'reqcan_remarks' => $request->remarks,
                 'reqcan_doc' => $request->docs ?? '',
-                'reqcan_preparedby' =>  $request->user()->user_id,
+                'reqcan_preparedby' => $request->user()->user_id,
                 'reqcan_date' => Carbon::now(),
             ]);
 

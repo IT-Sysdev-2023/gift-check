@@ -35,7 +35,7 @@
                     </a-row>
                 </div>
             </div>
-            <div class="card black">
+            <div class="card black" @click="() => $inertia.get(route('marketing.promoGcRequest.cancelled.list'))">
                 <a-row class="w-full">
                     <a-col :span="4">
                     </a-col>
@@ -60,7 +60,7 @@
 export default {
     props: {
         countPromoGcRequest: Object
-    }
+    },
 }
 </script>
 

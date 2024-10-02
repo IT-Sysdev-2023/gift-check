@@ -51,20 +51,16 @@ class SpecialGcRequestController extends Controller
         $record = $id->load([
             'specialExternalCustomer',
             'specialExternalBankPaymentInfo',
+            'specialExternalGcrequestItems',
             'document',
             'specialExternalGcrequestEmpAssign'
         ]);
-
         // dd(vars: $record->specialExternalGcrequestEmpAssign->groupBy('spexgcemp_denom'));
         return inertia(
             'Treasury/Dashboard/UpdateSpecialExternal',
             [
                 'title' => 'Special GC Request',
                 'data' => new SpecialExternalGcRequestResource($record),
-                'assignedCustomer' => $record->specialExternalGcrequestEmpAssign->transform(function ($i) {
-                    $i->spexgcemp_denom = (float) $i->spexgcemp_denom;
-                    return $i;
-                })->groupBy('spexgcemp_denom'),
                 'options' => self::options()
             ]
         );
@@ -94,6 +90,7 @@ class SpecialGcRequestController extends Controller
 
     public function gcPaymentSubmission(Request $request)
     {
+      
         $data = $this->specialGcPaymentService->store($request);
 
         $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
@@ -139,7 +136,7 @@ class SpecialGcRequestController extends Controller
                 $q->select('user_id', 'firstname', 'lastname', 'usertype')->with('accessPage:access_no,title');
             },
             'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
-            'hasManySpecialExternalGcrequestItems',
+            'specialExternalGcrequestItems',
             'specialExternalGcrequestEmpAssign',
             'approvedRequest' => function ($q) {
                 $q->select('reqap_trid', 'reqap_date', 'reqap_remarks', 'reqap_doc', 'reqap_checkedby', 'reqap_approvedby', 'reqap_preparedby')->with('user:user_id,firstname,lastname')

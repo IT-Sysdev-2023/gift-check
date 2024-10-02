@@ -33,7 +33,7 @@
 
                     <div>
                         <div class="flex justify-end">
-                            <a-button @click="addUser" :loading="form.processing">
+                            <a-button @click="addSupplier" :loading="form.processing">
                                 <template #icon>
                                     <StepForwardOutlined />
                                 </template>
@@ -104,7 +104,7 @@ export default {
             this.open = false;
         },
 
-        addUser() {
+        addSupplier() {
             this.form.post(route('marketing.manage-supplier.add.supplier'), {
                 onSuccess: (response) => {
                     if (response.props.flash.type === 'success') {

@@ -1327,7 +1327,7 @@ class MarketingController extends Controller
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['PR No.', 'Date Request', 'Date Needed', '	Requested By', 'Date Approved', '	Approved By', ''],
-            ['pe_num', 'dateReq', 'dateNeed', 'Reqprepared', 'ape_approved_at', 'ape_approved_by', 'View']
+            ['pe_num', 'dateReq', 'dateNeed', 'Reqprepared', 'ape_approved_at', 'ApprovedBy', 'View']
         );
         $selectedData = $this->marketing->approveProductionRequestSelectedData($request, $query);
 
@@ -1339,7 +1339,7 @@ class MarketingController extends Controller
         );
 
         return Inertia::render('Marketing/gcproductionrequest/ApprovedRequest', [
-            'data' => $query,
+            'data' => $query ?? [],
             'barcodes' => $productionBarcode,
             'columns' => ColumnHelper::getColumns($columns),
             'barcodeColumns' => ColumnHelper::getColumns($barcodeColumns),
@@ -1848,6 +1848,32 @@ class MarketingController extends Controller
         });
         return response()->json([
             'response' => $data
+        ]);
+    }
+
+    public function promocancelledlist(Request $request)
+    {
+
+        $data = PromoGcRequest::where('pgcreq_group_status', 'cancelled')
+            ->leftJoin('users as requestBy', 'requestBy.user_id', '=', 'promo_gc_request.pgcreq_reqby')
+            ->leftJoin('users', 'users.user_id', '=', 'promo_gc_request.pgcreq_updateby')
+            ->whereAny([
+                'pgcreq_reqnum',
+                'pgcreq_reqby',
+                'pgcreq_updateby'
+            ],'like', $request->search.'%')
+            ->select('promo_gc_request.*', 'users.firstname', 'users.lastname', 'requestBy.firstname as requestedByName', 'requestBy.lastname as requestedBylastname')
+            ->paginate()
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->cancelledBy = ucwords($item->firstname . ' ' . $item->lastname);
+            $item->requestedBy = ucwords($item->requestedByName . ' ' . $item->requestedBylastname);
+            return $item;
+        });
+
+        return Inertia::render('Marketing/PromoGCRequest/CancelledRequest', [
+            'data' => $data
         ]);
     }
 }

@@ -107,6 +107,8 @@ export default {
         onSearch(data){
             this.$inertia.get(route('marketing.approvedRequest.approved.request'),{
                 search: data,
+            },{
+                preserveState: true
             })
         }
     }

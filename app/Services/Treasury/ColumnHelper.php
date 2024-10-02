@@ -258,7 +258,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Total Denomination',
-            'dataIndex' => 'specialExternalGcrequestItems',
+            'dataIndex' => 'totalGcRequestItems',
 
         ],
         [
