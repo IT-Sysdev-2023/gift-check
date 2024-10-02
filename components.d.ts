@@ -64,6 +64,7 @@ declare module 'vue' {
     AntFloat: typeof import('./resources/js/Components/Treasury/AntFloat.vue')['default']
     AntFormInline: typeof import('./resources/js/Components/Treasury/AntFormInline.vue')['default']
     AntFormNest: typeof import('./resources/js/Components/Treasury/AntFormNest.vue')['default']
+    AntFormNestDenom: typeof import('./resources/js/Pages/Treasury/Dashboard/Components/AntFormNestDenom.vue')['default']
     AntFormNestItem: typeof import('./resources/js/Components/Treasury/AntFormNestItem.vue')['default']
     AntImagePreview: typeof import('./resources/js/Components/AntImagePreview.vue')['default']
     AntInputNumber: typeof import('./resources/js/Components/AntInputNumber.vue')['default']

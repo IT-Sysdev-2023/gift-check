@@ -17,7 +17,7 @@ const props = defineProps<{
         value: number;
         label: string;
     }[];
-    assignedCustomer: {};
+    // assignedCustomer: {};
     data: {
         data: {
             spexgc_id: number;
@@ -33,12 +33,19 @@ const props = defineProps<{
                 spcus_id: number;
                 spcus_type: number;
             };
-            specialExternalGcrequestEmpAssign: {
+            // specialExternalGcrequestEmpAssign: {
+            //     denomination: number;
+            //     id: number;
+            //     qty: number;
+            //     primary_id: number;
+            // }[];
+            specialExternalGcrequestItems: {
                 denomination: number;
                 id: number;
                 qty: number;
                 primary_id: number;
             }[];
+            specialExternalBankPaymentInfo: any;
             spexgc_company: string;
             spexgc_payment: string;
             spexgc_payment_arnum: string;
@@ -54,16 +61,12 @@ const props = defineProps<{
 
 const page = props.data.data;
 const dateRequested = <Dayjs>dayjs(page.spexgc_datereq);
-const totalDenomination = computed(() => {
-    return page.specialExternalGcrequestEmpAssign.reduce((acc, item) => {
-        return acc + item.denomination * item.qty;
-    }, 0);
-});
+
 const form = useForm({
     file: null,
     dateValidity: dayjs(page.spexgc_dateneed),
-    denom: props.assignedCustomer,
-    defaultAssigned: page.specialExternalGcrequestEmpAssign,
+    // denom: props.assignedCustomer,
+    // defaultAssigned: page.specialExternalGcrequestEmpAssign,
     customer: {
         company: page.specialExternalCustomer.spcus_companyname,
         account: page.specialExternalCustomer.spcus_acctname,
@@ -71,12 +74,24 @@ const form = useForm({
     },
     arNo: page.spexgc_payment_arnum,
     paymentType: {
+        bankName: page.specialExternalBankPaymentInfo.spexgcbi_bankname ?? "",
+        accountNumber:
+            page.specialExternalBankPaymentInfo.spexgcbi_bankaccountnum ?? "",
+        checkNumber:
+            page.specialExternalBankPaymentInfo.spexgcbi_checknumber ?? "",
         type: page.spexgc_paymentype,
         amount: page.spexgc_payment,
     },
+    denomination: page.specialExternalGcrequestItems,
     remarks: page.spexgc_remarks,
-    totalDenom: totalDenomination,
 });
+
+const totalDenomination = computed(() => {
+    return form.denomination.reduce((acc, item) => {
+        return acc + item.denomination * item.qty;
+    }, 0);
+});
+
 const paymentOptions = ref<SelectProps["options"]>([
     {
         value: "1",
@@ -89,16 +104,18 @@ const paymentOptions = ref<SelectProps["options"]>([
 ]);
 const formRef = ref<FormInstance>();
 const onFinish = (values: any) => {
+
     form.transform((data) => ({
         ...data,
         file: data.file?.map((item) => item.originFileObj),
         companyId: page.spexgc_company,
         type: page.spexgc_type,
         reqid: page.spexgc_id,
+        totalDenom: totalDenomination.value,
         dateValidity: dayjs(data.dateValidity).format("YYYY-MM-DD"),
     })).post(route("treasury.special.gc.update.special"), {
         onSuccess: ({ props }) => {
-            if(props.flash.success){
+            if (props.flash.success) {
                 notification.success({
                     message: "Success!",
                     description: props.flash.success,
@@ -110,7 +127,6 @@ const onFinish = (values: any) => {
                     description: props.flash.error,
                 });
             }
-            location.reload();
         },
     });
 };
@@ -191,8 +207,8 @@ const handleCustomer = (value, obj) => {
                             <a-row>
                                 <a-col :span="12">
                                     <a-statistic
-                                        title="Total"
-                                        :value="page.spexgc_payment"
+                                        title="Total Denomination"
+                                        :value="totalDenomination"
                                         style="margin-right: 50px"
                                     />
                                 </a-col>
@@ -226,10 +242,13 @@ const handleCustomer = (value, obj) => {
                                     />
                                 </a-form-item>
                                 <a-form-item label="AR Number:">
-                                    <a-input v-model:value="form.arNo"></a-input>
+                                    <a-input
+                                        v-model:value="form.arNo"
+                                    ></a-input>
                                 </a-form-item>
 
                                 <a-form-item label="Payment Type:">
+                                    <!-- {{form.paymentType}} -->
                                     <a-space>
                                         <a-select
                                             ref="select"
@@ -251,11 +270,8 @@ const handleCustomer = (value, obj) => {
                             </a-col>
                             <a-col :span="12">
                                 <a-form-item>
-                                    <ant-form-nest
-                                        :data="
-                                            page.specialExternalGcrequestEmpAssign
-                                        "
-                                        :formCustomer="form"
+                                    <ant-form-nest-denom
+                                        :form="form"
                                     />
                                 </a-form-item>
                             </a-col>
@@ -264,13 +280,8 @@ const handleCustomer = (value, obj) => {
                 </a-row>
                 <a-row>
                     <a-col :span="24" style="text-align: right">
-                        <a-button type="primary" html-type="submit"
+                        <a-button type="primary" html-type="submit" :disabled="!form.isDirty"
                             >Submit</a-button
-                        >
-                        <a-button
-                            style="margin: 0 8px"
-                            @click="() => formRef.resetFields()"
-                            >Clear</a-button
                         >
                     </a-col>
                 </a-row>

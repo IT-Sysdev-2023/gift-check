@@ -64,16 +64,16 @@ class SpecialExternalGcrequest extends Model
 
     public function specialExternalGcrequestItems()
     {
-        return $this->hasOne(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
+        return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
     }
     public function specialExternalGcrequestItemsHasMany()
     {
         return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
     }
-    public function hasManySpecialExternalGcrequestItems()
-    {
-        return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
-    }
+    // public function hasManySpecialExternalGcrequestItems()
+    // {
+    //     return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
+    // }
     public function user()
     {
         return $this->belongsTo(User::class, 'spexgc_reqby', 'user_id');
@@ -112,7 +112,7 @@ class SpecialExternalGcrequest extends Model
 
     public function specialExternalBankPaymentInfo(): HasOne
     {
-        return $this->hasOne(SpecialExternalBankPaymentInfo::class, 'spexgcbi_trid', 'spexgc_id');
+        return $this->hasOne(SpecialExternalBankPaymentInfo::class, 'spexgcbi_trans_id', 'spexgc_id');
     }
 
     public function document()
