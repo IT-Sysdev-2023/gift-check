@@ -28,19 +28,20 @@ class SpecialGcRequestController extends Controller
     }
     public function pendingSpecialGc(Request $request)
     {
-        $record = $this->specialGcPaymentService->pending();
+        $externalData = $this->specialGcPaymentService->pending();
 
-        $externalGc = SpecialExternalGcrequest::with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+        $internalData = SpecialExternalGcrequest::with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
             ->select('spexgc_num', 'spexgc_reqby', 'spexgc_company', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
             ->where([['special_external_gcrequest.spexgc_status', 'pending'], ['special_external_gcrequest.spexgc_promo', '*']])
             ->paginate()->withQueryString();
+
         return inertia(
             'Treasury/Dashboard/SpecialGcTable',
             [
                 'filters' => $request->only('search', 'date'),
                 'title' => 'Special GC Request',
-                'data' => SpecialExternalGcRequestResource::collection($record),
-                'externalData' => SpecialExternalGcRequestResource::collection($externalGc),
+                'externalData' => SpecialExternalGcRequestResource::collection($externalData),
+                'internalData' => SpecialExternalGcRequestResource::collection($internalData),
                 'columns' => ColumnHelper::$pendingSpecialGc,
             ]
         );

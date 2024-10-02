@@ -35,6 +35,7 @@ class SpecialGcPaymentService extends FileHandler
                 ['special_external_gcrequest.spexgc_status', 'pending'],
                 ['special_external_gcrequest.spexgc_promo', '0']
             ])
+            ->orderByDesc('spexgc_num')
             ->paginate()
             ->withQueryString();
     }

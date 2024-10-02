@@ -31,7 +31,7 @@ const { highlightText } = highlighten();
         >
             <a-tab-pane key="1" tab="Pending Special External GC Request">
                 <a-table
-                    :data-source="data.data"
+                    :data-source="externalData.data"
                     :columns="columns"
                     :loading="onLoading"
                     bordered
@@ -71,11 +71,11 @@ const { highlightText } = highlighten();
                         </template>
                     </template>
                 </a-table>
-                <pagination-resource class="mt-5" :datarecords="data" />
+                <pagination-resource class="mt-5" :datarecords="externalData" />
             </a-tab-pane>
             <a-tab-pane key="2" tab="Pending Special Internal GC Request">
                 <a-table
-                    :data-source="externalData.data"
+                    :data-source="internalData.data"
                     :columns="columns"
                     bordered
                     size="small"
@@ -113,7 +113,7 @@ const { highlightText } = highlighten();
                         </template>
                     </template>
                 </a-table>
-                <pagination-resource class="mt-5" :datarecords="externalData" />
+                <pagination-resource class="mt-5" :datarecords="internalData" />
             </a-tab-pane>
         </a-tabs>
     </a-card>
@@ -131,10 +131,10 @@ export default {
     layout: AuthenticatedLayout,
     props: {
         title: String,
-        data: Object,
+        externalData: Object,
         columns: Array,
         filters: Object,
-        externalData: Object,
+        internalData: Object,
     },
     data() {
         return {

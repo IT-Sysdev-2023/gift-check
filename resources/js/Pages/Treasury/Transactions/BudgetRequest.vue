@@ -8,7 +8,7 @@
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
 
-        <a-card title="Submit a Gift Check" class="mt-10">
+        <a-card title=" Revolving Budget Entry Form" class="mt-10">
             <a-form
                 :model="formState"
                 :label-col="{ span: 7 }"
