@@ -6,11 +6,15 @@ use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SpecialExternalGcrequestEmpAssignResource;
 use App\Http\Resources\SpecialExternalGcRequestResource;
+use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
+use App\Models\LedgerBudget;
+use App\Models\LedgerSpgc;
 use App\Models\SpecialExternalBankPaymentInfo;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\SpecialExternalGcrequestItem;
 use App\Rules\DenomQty;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
@@ -90,7 +94,7 @@ class SpecialGcRequestController extends Controller
 
     public function gcPaymentSubmission(Request $request)
     {
-      
+
         $data = $this->specialGcPaymentService->store($request);
 
         $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);
@@ -150,8 +154,7 @@ class SpecialGcRequestController extends Controller
         // ->paginate()
         // ->withQueryString();
 
-        $checkBy  = Assignatory::assignatories($request);
-
+        $checkBy = Assignatory::assignatories($request);
 
         return inertia('Treasury/Dashboard/SpecialExternalGc/Components/InternalGcReleasingView', [
             'title' => 'Special Internal Gc Releasing',
@@ -159,6 +162,60 @@ class SpecialGcRequestController extends Controller
             'checkBy' => $checkBy,
             'records' => new SpecialExternalGcRequestResource($rec)
         ]);
+    }
+
+    public function relasingInternalSubmission(Request $request, $id)
+    {
+        $request->validate([
+            "checkedBy" => 'required',
+            "remarks" => 'required',
+            "receivedBy" => "required"
+        ]);
+
+        DB::transaction(function () use ($id, $request) {
+            SpecialExternalGcrequest::where([["spexgc_id", $id], ['spexgc_released', '']])->update([
+                'spexgc_released' => 'released',
+                'spexgc_receviedby' => $request->receivedBy
+            ]);
+
+            $relid = ApprovedRequest::where('reqap_approvedtype', 'special external releasing')->max('reqap_trnum');
+
+            ApprovedRequest::create([
+                'reqap_trid' => $id,
+                'reqap_approvedtype' => 'special external releasing',
+                'reqap_remarks' => $request->remarks,
+                'reqap_preparedby' => $request->user()->user_id,
+                'reqap_date' => now(),
+                'reqap_trnum' => $relid,
+                'reqap_checkedby' => $request->checkedBy
+            ]);
+
+            $reqType = SpecialExternalGcrequest::where('spexgc_id', $id)->value('spexgc_type');
+
+            if ($reqType == '1') {
+                $r = SpecialExternalGcrequestItem::where('specit_trid', $id)->first(['specit_denoms', 'specit_qty']);
+                $total = $r->specit_denoms * $r->specit_qty;
+            } else {
+                $q = SpecialExternalGcrequestEmpAssign::selectRaw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom),0.00) as totaldenom,
+					IFNULL(COUNT(special_external_gcrequest_emp_assign.spexgcemp_denom),0) as cnt")->where('spexgcemp_trid', $id)->first();
+                $total = $q->totaldenom;
+            }
+
+            $l = LedgerBudget::max('bledger_id');
+            $lnum = $l ? $l + 1 : 1;
+
+            LedgerSpgc::create([
+                'spgcledger_no' => $lnum,
+                'spgcledger_trid' => $id,
+                'spgcledger_datetime' => now(),
+                'spgcledger_type' => 'RFGCSEGCREL',
+                'spgcledger_debit' => $total
+            ]);
+
+            return redirect()->back()->with('success', 'Successfully Submitted');
+        });
+        return redirect()->back()->with('error', 'Something went wrong');
+
     }
 
     public function viewDenomination($id)

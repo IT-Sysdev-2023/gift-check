@@ -250,7 +250,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('reviewing-gc-internal', [SpecialGcRequestController::class,'releasingInternal'])->name('releasingInternal');
                 Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class,'viewReleasingInternal'])->name('viewReleasingInternal');
                 Route::get('view-denominations-{id}' , [SpecialGcRequestController::class,'viewDenomination'])->name('viewDenomination');
-
+                Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class,'relasingInternalSubmission'])->name('internalSubmission');
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 

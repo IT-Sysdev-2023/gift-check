@@ -85,7 +85,7 @@
             </a-descriptions>
 
             <a-card class="mt-10">
-                <a-form :model="formState">
+                <a-form :model="formState" @finish="onFinish">
                     <a-form-item label="Total Gc">
                         <a-input
                             :value="records.data.totalDenom?.qty"
@@ -98,20 +98,47 @@
                             readonly
                         />
                     </a-form-item>
-                    <a-form-item label="Checked By">
-                        <ant-select @handle-change="onCheckChange" :options="checkBy"/>
+                    <a-form-item
+                        label="Checked By"
+                        :validate-status="
+                            formState.errors.checkedBy ? 'error' : ''
+                        "
+                        :help="formState.errors.checkedBy"
+                    >
+                        <ant-select
+                            @handle-change="onCheckChange"
+                            :options="checkBy"
+                        />
                     </a-form-item>
-                    <a-form-item label="Remarks">
+                    <a-form-item
+                        label="Remarks"
+                        :validate-status="
+                            formState.errors.remarks ? 'error' : ''
+                        "
+                        :help="formState.errors.remarks"
+                    >
                         <a-textarea v-model:value="formState.remarks" />
                     </a-form-item>
-                    <a-form-item label="Received By">
+                    <a-form-item
+                        label="Received By"
+                        :validate-status="
+                            formState.errors.receivedBy ? 'error' : ''
+                        "
+                        :help="formState.errors.receivedBy"
+                    >
                         <a-input v-model:value="formState.receivedBy" />
                     </a-form-item>
-                    <a-form-item label="released By">
+                    <a-form-item label="Released By">
                         <a-input
                             :value="$page.props.auth.user.full_name"
                             readonly
                         />
+                    </a-form-item>
+
+                    <a-form-item class="float-right">
+                        <a-button type="primary" html-type="submit"
+                            >Submit</a-button
+                        >
                     </a-form-item>
                 </a-form>
             </a-card>
@@ -171,6 +198,9 @@ const formState = useForm({
     releasedBy: "",
 });
 
+const onFinish = () => {
+    formState.post(route("treasury.special.gc.internalSubmission", props.id), {preserveScroll: true});
+};
 const openModal = ref(false);
 const modalData = ref();
 
@@ -189,9 +219,9 @@ const onPaginate = async (link) => {
     }
 };
 
-const onCheckChange = (val) =>{
+const onCheckChange = (val) => {
     formState.checkedBy = val;
-}
+};
 </script>
 
 <style lang="scss" scoped></style>
