@@ -247,10 +247,16 @@ Route::middleware(['auth'])->group(function () {
 
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
+<<<<<<< HEAD
                 Route::get('reviewing-gc-internal', [SpecialGcRequestController::class,'releasingInternal'])->name('releasingInternal');
                 Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class,'viewReleasingInternal'])->name('viewReleasingInternal');
                 Route::get('view-denominations-{id}' , [SpecialGcRequestController::class,'viewDenomination'])->name('viewDenomination');
                 Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class,'relasingInternalSubmission'])->name('internalSubmission');
+=======
+                Route::get('reviewing-gc-internal', [SpecialGcRequestController::class, 'releasingInternal'])->name('releasingInternal');
+                Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class, 'viewReleasingInternal'])->name('viewReleasingInternal');
+                Route::get('view-denominations-{id}', [SpecialGcRequestController::class, 'viewDenomination'])->name('viewDenomination');
+>>>>>>> b89540763062acb048e133155504008d64bb8a0b
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 
@@ -467,6 +473,10 @@ Route::prefix('custodian')->group(function () {
 
         Route::name('check.')->group(function () {
             Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
+        });
+        Route::name('production.')->group(function () {
+            Route::get('production', [CustodianController::class, 'productionIndex'])->name('index');
+            Route::get('production-details-{id}', [CustodianController::class, 'productionApprovedDetails'])->name('details');
         });
         Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
         Route::post('upload', [CustodianController::class, 'upload'])->name('upload');

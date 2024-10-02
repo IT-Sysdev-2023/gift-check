@@ -49,4 +49,30 @@ class ProductionRequest extends Model
     {
         return $this->belongsTo(ApprovedProductionRequest::class, 'pe_id', 'ape_pro_request_id');
     }
+
+    public function scopeSelectFilterApproved($query){
+        $query->select(
+            'pe_id',
+            'pe_num',
+            'pe_requested_by',
+            'pe_date_request',
+            'pe_date_needed',
+            'pe_file_docno',
+            'pe_remarks',
+            'pe_generate_code',
+            'pe_requisition',
+            'ape_approved_by',
+            'ape_remarks',
+            'ape_approved_at',
+            'ape_preparedby',
+            'ape_checked_by',
+            'pe_type',
+            'pe_group',
+            'reqby.firstname as rname',
+            'reqby.lastname as rsname',
+            'appby.firstname as apname',
+            'appby.lastname as apsurname',
+        );
+    }
+
 }
