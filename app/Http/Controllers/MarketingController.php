@@ -1327,7 +1327,7 @@ class MarketingController extends Controller
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['PR No.', 'Date Request', 'Date Needed', '	Requested By', 'Date Approved', '	Approved By', ''],
-            ['pe_num', 'dateReq', 'dateNeed', 'Reqprepared', 'ape_approved_at', 'ape_approved_by', 'View']
+            ['pe_num', 'dateReq', 'dateNeed', 'Reqprepared', 'ape_approved_at', 'ApprovedBy', 'View']
         );
         $selectedData = $this->marketing->approveProductionRequestSelectedData($request, $query);
 
@@ -1339,7 +1339,7 @@ class MarketingController extends Controller
         );
 
         return Inertia::render('Marketing/gcproductionrequest/ApprovedRequest', [
-            'data' => $query,
+            'data' => $query ?? [],
             'barcodes' => $productionBarcode,
             'columns' => ColumnHelper::getColumns($columns),
             'barcodeColumns' => ColumnHelper::getColumns($barcodeColumns),
