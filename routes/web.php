@@ -246,15 +246,10 @@ Route::middleware(['auth'])->group(function () {
 
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
-
-<<<<<<< HEAD
                 Route::get('reviewing-gc-internal', [SpecialGcRequestController::class,'releasingInternal'])->name('releasingInternal');
                 Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class,'viewReleasingInternal'])->name('viewReleasingInternal');
                 Route::get('view-denominations-{id}' , [SpecialGcRequestController::class,'viewDenomination'])->name('viewDenomination');
-=======
-                Route::get('reviewing-gc-internal', [SpecialGcRequestController::class, 'releasingInternal'])->name('releasingInternal');
-                Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class, 'viewReleasingInternal'])->name('viewReleasingInternal');
->>>>>>> 63b2d80e6b81c11fa6ab5d2fcc46355e046c2c75
+
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 
