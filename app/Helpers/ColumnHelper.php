@@ -100,6 +100,78 @@ class ColumnHelper
 
         ],
     ];
+    public static $approved_details_column = [
+
+        [
+            'title' => 'Denomination',
+            'dataIndex' => 'denomination',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Quantity',
+            'dataIndex' => 'pe_items_quantity',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Unit',
+            'dataIndex' => 'pe_items_quantity',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Barcode Start',
+            'dataIndex' => 'bstart',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Barcode End',
+            'dataIndex' => 'bend',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Subtotal',
+            'dataIndex' => 'fsubt',
+            'key' => 'denom_id'
+
+        ],
+    ];
+    public static $production_approved_column = [
+        [
+            'title' => 'Pr No.',
+            'dataIndex' => 'pe_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'pe_date_request_tran',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'reqby',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => 'ape_approved_at_tran',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'ape_approved_by',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'view',
+            'align' => 'center'
+
+        ],
+    ];
     public static $payment_viewing_column = [
         [
             'title' => 'Payment No.',

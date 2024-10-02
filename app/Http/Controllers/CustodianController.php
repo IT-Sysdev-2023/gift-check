@@ -56,7 +56,7 @@ class CustodianController extends Controller
             'columns' => ColumnHelper::$special_gc_request_holder,
             'activeKey' => $request->activeKey ?? '1',
         ]);
-        
+
     }
     public function pendingHolderSetup(Request $request)
     {
@@ -136,6 +136,16 @@ class CustodianController extends Controller
     {
 
       return $this->custodianservices->upload($request);
+
+    }
+    public function productionIndex(){
+        return inertia('Custodian/ProductionIndex',[
+            'record' => $this->custodianservices->getProductionApproved(),
+            'column' => ColumnHelper::$production_approved_column
+        ]);
+    }
+    public function productionApprovedDetails($id){
+        return $this->custodianservices->getApprovedDetails($id);
 
     }
 }
