@@ -100,6 +100,44 @@ class ColumnHelper
 
         ],
     ];
+    public static $payment_viewing_column = [
+        [
+            'title' => 'Payment No.',
+            'dataIndex' => 'insp_paymentnum',
+
+        ],
+        [
+            'title' => 'Spgc #',
+            'dataIndex' => 'insp_trid',
+
+        ],
+        [
+            'title' => 'Payment Date',
+            'dataIndex' => 'institut_date',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'spcus_companyname',
+
+        ],
+        [
+            'title' => 'Amount Paid',
+            'dataIndex' => 'institut_amountrec',
+
+        ],
+        [
+            'title' => 'Status',
+            'dataIndex' => 'spexgc_payment_stat',
+            'align' => 'center',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'view',
+            'align' => 'center',
+        ],
+    ];
     public static $payment_gc_columns = [
         [
             'title' => 'RFSEGC#',

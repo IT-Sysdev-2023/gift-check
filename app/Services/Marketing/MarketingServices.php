@@ -41,7 +41,7 @@ class MarketingServices extends FileHandler
                 ->count(),
 
             'approvedRequest' => PromoGcRequest::where('pgcreq_status', 'approved')->count(),
-            'cancelledRequest' => PromoGcRequest::where('pgcreq_status', 'cancel')->count(),
+            'cancelledRequest' => PromoGcRequest::where('pgcreq_group_status', 'cancelled')->count(),
         ];
         return $promoGcRequest;
     }

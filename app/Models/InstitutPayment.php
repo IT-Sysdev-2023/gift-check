@@ -19,4 +19,18 @@ class InstitutPayment extends Model
         $ip = InstitutPayment::max('insp_paymentnum');
         return $ip ? $ip + 1 : 1;
     }
+    public function scopeSelectFilterInst($query){
+        $query->select(
+            'insp_id',
+            'insp_paymentnum',
+            'insp_trid',
+            'insp_paymentcustomer',
+            'institut_amountrec',
+            'institut_date',
+            'spexgc_num',
+            'spexgc_payment_stat',
+            'spcus_companyname',
+            'spcus_acctname',
+        );
+    }
 }

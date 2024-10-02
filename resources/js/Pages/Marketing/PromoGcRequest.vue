@@ -20,24 +20,15 @@
                     <a-form-item label="Date Needed" name="dateneeded">
                         <a-date-picker v-model:value="form.dateneeded" :disabled-date="disabledDate" />
                     </a-form-item>
-                    <a-form-item label="Remarks:" name="remarks">
-                        <a-textarea v-model:value="form.remarks" allow-clear />
+                    <a-form-item label="Remarks:" name="remarks" has-feedback :help="error.remarks"
+                        :validate-status="error.remarks ? 'error' : ''">
+                        <a-textarea v-model:value="form.remarks" allow-clear @change="() => error.remarks = ''" />
                     </a-form-item>
 
 
-                    <a-form-item label="Upload Document">
-                        <!-- <a-upload v-model:file-list="fileList" name="avatar" list-type="picture-card"
-                            class="avatar-uploader" :show-upload-list="false" :before-upload="beforeUpload"
-                            @change="handleChange">
-                            <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-                            <div v-else>
-                                <loading-outlined v-if="loading"></loading-outlined>
-                                <plus-outlined v-else></plus-outlined>
-                                <div class="ant-upload-text">Upload</div>
-                            </div>
-                        </a-upload> -->
-
-                        <ant-upload-image @handle-change="handleimagechange"/>
+                    <a-form-item label="Upload Document" has-feedback :help="error.file"
+                        :validate-status="error.file ? 'error' : ''">
+                        <ant-upload-image @handle-change="handleimagechange" @change="this.error.file = ''" />
                     </a-form-item>
 
 
@@ -48,22 +39,25 @@
                         </a-select>
                     </a-form-item>
                     <div>
-                        <a-table :dataSource="denomination" :columns="denomCol" :pagination="false">
-                            <template #bodyCell="{ column, record, index }">
-                                <!-- {{ record.denom_id }} -->
-                                <template v-if="column.dataIndex === 'qty'">
-                                    <a-input type="number" v-model:value="form.quantities[record.denom_id]"
-                                        @change="calculateTotal()" />
+                        <a-form-item has-feedback :help="error.quantities"
+                        :validate-status="error.quantities ? 'error' : ''">
+                            <a-table :dataSource="denomination" :columns="denomCol" :pagination="false">
+                                <template #bodyCell="{ column, record, index }">
+                                    <!-- {{ record.denom_id }} -->
+                                    <template v-if="column.dataIndex === 'qty'">
+                                        <a-input type="number" v-model:value="form.quantities[record.denom_id]"
+                                            @change="handlequantity()"/>
+                                    </template>
                                 </template>
-                            </template>
-                        </a-table>
+                            </a-table>
+                        </a-form-item>
                     </div>
                 </a-card>
             </a-col>
             <a-col :span="12" style="margin-top: 20px;">
                 <a-card>
                     <a-card title="Total Promo GC Request" :bordered="false">
-                        <a-input :value="'₱ ' + totalValue" readonly style="font-size: xx-large;"></a-input>
+                        <a-input :value="'₱ ' + form.totalValue" readonly style="font-size: xx-large;"></a-input>
                     </a-card>
 
                 </a-card>
@@ -81,6 +75,8 @@ import { PlusOutlined, BarcodeOutlined } from "@ant-design/icons-vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import { notification } from 'ant-design-vue';
+import { useForm } from "@inertiajs/vue3";
+
 
 export default {
     layout: AuthenticatedLayout,
@@ -96,24 +92,29 @@ export default {
     },
     data() {
         return {
-            form: {
+            error: {},
+            form: useForm({
                 file: null,
                 dateReq: dayjs(this.dateRequested),
                 rfprom_number: this.rfprom_number,
                 dateneeded: dayjs(),
-                fileList: null,
                 group: '1',
                 remarks: null,
                 quantities: [],
                 requestBy: this.$page.props.auth.user.user_id,
                 totalDenom: 0,
+                totalValue: 0,
 
-            },
-            totalValue: 0,
+            }),
+
             headers: {},
         };
     },
     methods: {
+        handlequantity(){
+            this.error.quantities = '';
+            this.calculateTotal();
+        },
         calculateTotal() {
             let total = 0;
             this.denomination.forEach(record => {
@@ -121,14 +122,10 @@ export default {
                 const subtotal = record.denomination * quantity;
                 total += subtotal;
             });
-            this.totalValue = total.toLocaleString();
+            this.form.totalValue = total.toLocaleString();
         },
         submit() {
-            this.$inertia.post(route('marketing.promo.gc.submit'), {
-                data: this.form,
-                file: this.form.file,
-                total: this.totalValue
-            }, {
+            this.form.post(route('marketing.promo.gc.submit'), {
                 onSuccess: (response) => {
                     notification[response.props.flash.type]({
                         message: response.props.flash.msg,
@@ -138,17 +135,19 @@ export default {
                     if (response.props.flash.type == 'success') {
                         this.$inertia.get(route('marketing.dashboard'));
                     }
+                },
+                onError: (e) => {
+                    this.error = e
                 }
-            })
+            });
         },
         disabledDate(current) {
             return current && current < new Date().setHours(0, 0, 0, 0);
         },
-        handleimagechange(file){
-            
+        handleimagechange(file) {
             this.form.file = file.file;
-        }
-       
+        },
+
     }
 
 };
