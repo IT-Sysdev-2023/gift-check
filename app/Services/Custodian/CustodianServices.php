@@ -448,6 +448,7 @@ class CustodianServices
             $item->bend = Gc::where('denom_id', $item->pe_items_denomination)->where('pe_entry_gc', $id)->orderBy('barcode_no')->value('barcode_no');
             $item->fsubt = NumberHelper::currency($item->denomination * $item->pe_items_quantity);
             $item->nfsubt = $item->denomination * $item->pe_items_quantity;
+            $item->uom = 'pc(s)';
             return $item;
         });
 
