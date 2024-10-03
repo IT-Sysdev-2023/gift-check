@@ -40,7 +40,7 @@ class DashboardClass extends DashboardService
             'gcProductionRequest' => $this->gcProductionRequest(),
             'adjustment' => $this->adjustments(),
             'specialGcRequest' => $this->specialGcRequest(), //Duplicated above use Spatie Permission instead
-            
+
             'eod' => InstitutEod::count(),
             'productionRequest' => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
         ];
@@ -80,9 +80,9 @@ class DashboardClass extends DashboardService
 
         $ledgerSpgc = LedgerSpgc::get();
 
-        // dd($dtiBudget->toArray());
 
         $debitTotal = $curBudget->sum('bdebit_amt');
+
         $creditTotal = $curBudget->sum('bcredit_amt');
 
         $dtiDebitTotal = $dtiBudget->sum('bdebit_amt');
@@ -90,18 +90,6 @@ class DashboardClass extends DashboardService
 
         $spgcDebitTotal = $ledgerSpgc->sum('spgcledger_debit');
         $spgcreditTotal = $ledgerSpgc->sum('spgcledger_credit');
-
-        // $query = "SELECT SUM(spgcledger_debit),SUM(spgcledger_credit) FROM ledger_spgc";
-
-        // $query = $link->query($query) or die('unable to query');
-        // $budget_row		= $query->fetch_array();
-        // $debit 	= $budget_row['SUM(spgcledger_debit)'];
-        // $credit = $budget_row['SUM(spgcledger_credit)'];
-
-        // $budget = $debit - $credit;
-
-        // return $budget;
-
 
         return [
             'specialGcRequest' => [
@@ -119,8 +107,9 @@ class DashboardClass extends DashboardService
             ],
             'budgetCounts' => [
                 'curBudget' => $debitTotal - $creditTotal,
-                'dti' => $dtiDebitTotal - $dtiCreditTotal,
-                'spgc' => $spgcDebitTotal - $spgcreditTotal,
+                'dti' =>  max(0, $dtiDebitTotal - $dtiCreditTotal),
+                'spgc' => max(0, $spgcDebitTotal - $spgcreditTotal)
+,
             ],
 
             'appPromoCount' => PromoGcRequest::with('userReqby')
@@ -133,20 +122,6 @@ class DashboardClass extends DashboardService
                 ->count(),
 
         ];
-
-        //     function currentBudget($link)
-        // {
-        // 	$query = "SELECT SUM(bdebit_amt),SUM(bcredit_amt) FROM ledger_budget WHERE bcus_guide != 'dti'";
-
-        // 	$query = $link->query($query) or die('unable to query');
-        // 	$budget_row		= $query->fetch_array();
-        // 	$debit 	= $budget_row['SUM(bdebit_amt)'];
-        // 	$credit = $budget_row['SUM(bcredit_amt)'];
-
-        // 	$budget = $debit - $credit;
-
-        // 	return $budget;
-        // }
 
     }
     public function budgetRequest()
