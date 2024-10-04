@@ -5,8 +5,7 @@
             <GcProductionReq :gcProductionRequest />
         </a-col>
         <a-col :span="8">
-            <!-- <SpecialExternalGc />
-            <PromoGcReceived /> -->
+            <Card use-default title="Budget Request" :pending="1" :approved="2" :cancelled="3" />
         </a-col>
         <a-col :span="8">
             <div class="mb-2">
@@ -210,7 +209,7 @@ export default {
                 }
             }).then(e => {
                 console.log(e.data.response.approvedById);
-                this.form.approvedBy =e.data.response.approvedBy.employee_name
+                this.form.approvedBy = e.data.response.approvedBy.employee_name
                 this.form.approvedById = e.data.response.approvedById
             });
 

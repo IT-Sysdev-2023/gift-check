@@ -90,9 +90,6 @@ class MarketingController extends Controller
 
     public function index(Request $request)
     {
-
-        $dashboard = '';
-
         $promoGcRequest = $this->marketing->promoGcRequest();
         $gcProductionRequest = $this->marketing->productionRequest();
         $supplier = Supplier::where('gcs_status', 1)->get();
