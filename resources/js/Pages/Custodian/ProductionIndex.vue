@@ -14,7 +14,7 @@
                 </template>
             </a-table>
         </a-card>
-        <production-approved-modal :width="1300" style="top: 40px" v-model:open="open" :data="details"/>
+        <production-approved-modal :id="peId" :width="1300" style="top: 40px" v-model:open="open" :data="details"/>
     </AuthenticatedLayout>
 </template>
 <script setup>
@@ -28,14 +28,16 @@ defineProps({
 
 const open = ref(false);
 const details = ref({});
+const peId = ref('');
+
 
 const view = async (id) => {
     try {
         const { data } = await axios.get(route('custodian.production.details', id));
         open.value = true;
+        peId.value = id;
         details.value = data;
 
-        console.log(data);
 
     } catch (error) {
 

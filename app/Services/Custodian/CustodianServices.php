@@ -223,11 +223,12 @@ class CustodianServices
         ]);
     }
 
-    public function approvedGcList()
+    public function approvedGcList($request)
     {
         $data = SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
             ->selectFilterApproved()
             ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
+            ->where('spexgc_promo', $request->promo ?? '0')
             ->where('spexgc_status', 'approved')
             ->where('reqap_approvedtype', 'Special External GC Approved')
             ->orderByDesc('spexgc_num')
@@ -468,5 +469,25 @@ class CustodianServices
             ->join('users as appby', 'appby.user_id', '=', 'ape_preparedby')
             ->where('pe_id', $id)
             ->first();
+    }
+
+    public function getBarcodeApprovedDetails($id)
+    {
+        $data = Gc::select('denomination.denomination', 'gc.denom_id')
+            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+            ->where('pe_entry_gc', $id)
+            ->where('gc_validated', '')
+            ->get()
+            ->groupBy('denomination');
+
+        $data->transform(function ($item, $key) {
+            return [
+                'denom_id' => $item[0]->denom_id
+            ];
+        });
+
+        return response()->json([
+            'record' => $data,
+        ]);
     }
 }

@@ -16,14 +16,15 @@
                 <!-- <p class="message">List of Transactions needs to be eod</p> -->
             </div>
             <div class="actions">
-                <a-badge :count="count?.pending" show-zero >
-                    <button  type="button" class="history" @click="() => $inertia.get(route('accounting.pending.index'))
-                        ">
-                        <span>
-                            <LogoutOutlined /> Pending Request
-                        </span>
-                    </button>
-                </a-badge>
+
+                <button block type="button" class="history" @click="() => $inertia.get(route('accounting.pending.index'))">
+                    <span>
+                        <LogoutOutlined /> Pending Request
+                    </span>
+                    &nbsp;
+                    <a-badge :count="count?.pending" show-zero>
+                    </a-badge>
+                </button>
                 <button type="button" class="track" @click="() => $inertia.visit(route('accounting.approved.request'))">
                     <span>
                         <LogoutOutlined />
@@ -160,11 +161,10 @@ const props = defineProps({
     line-height: 1.5rem;
     font-weight: 500;
     justify-content: center;
-    width: 355px;
-    /* max-width: 4009px; */
     border-radius: 0.375rem;
     border: none;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    width: 100%;
 }
 
 button {
