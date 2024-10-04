@@ -307,81 +307,75 @@ class FinanceController extends Controller
             $cust = ($customer[0]->spexgc_company == 342 || $customer[0]->spexgc_company == 341) ? 'dti' : '';
 
             if ($request->formData['status'] == '1') {
-                if ($totalDenom > $currentbudget) {
-                    return back()->with([
-                        'type' => 'error',
-                        'msg' => 'Opps!',
-                        'description' => 'Total Denomination requested is bigger than current budget'
-                    ]);
-                } elseif (empty($request->formData['approveRemarks']) || empty($request->formData['checkedBy']) || empty($request->formData['approvedBy'])) {
-                    return back()->with([
-                        'type' => 'error',
-                        'msg' => 'Opps!',
-                        'description' => 'Please fill all required Fields'
-                    ]);
-                } else {
-                    DB::transaction(function () use ($specGet, $reqType, $id, $request, $nextLedgerBudgetNum, $cust, $totalDenom) {
-                        SpecialExternalGcrequest::where('spexgc_id', $id)
-                            ->where('spexgc_status', 'pending')
-                            ->update([
-                                'spexgc_status' => 'approved'
-                            ]);
-
-                        ApprovedRequest::create([
-                            'reqap_trid' => $id,
-                            'reqap_approvedtype' => 'Special External GC Approved',
-                            'reqap_remarks' => $request->formData['approveRemarks'],
-                            'reqap_checkedby' => $request->formData['checkedBy'],
-                            'reqap_approvedby' => $request->formData['approvedBy'],
-                            'reqap_preparedby' => $request->user()->user_id,
-                            'reqap_date' => now(),
-                            'reqap_doc' => !is_null($request->file) ? $this->financeService->uploadFileHandler($request) : ''
+            }
+            if (empty($request->formData['approveRemarks']) || empty($request->formData['checkedBy']) || empty($request->formData['approvedBy'])) {
+                return back()->with([
+                    'type' => 'error',
+                    'msg' => 'Opps!',
+                    'description' => 'Please fill all required Fields'
+                ]);
+            } else {
+                DB::transaction(function () use ($specGet, $reqType, $id, $request, $nextLedgerBudgetNum, $cust, $totalDenom) {
+                    SpecialExternalGcrequest::where('spexgc_id', $id)
+                        ->where('spexgc_status', 'pending')
+                        ->update([
+                            'spexgc_status' => 'approved'
                         ]);
 
-                        LedgerBudget::create([
-                            'bledger_no' => $nextLedgerBudgetNum,
-                            'bledger_trid' => $id,
-                            'bledger_datetime' => now(),
-                            'bledger_type' => 'RFGCSEGC',
-                            'bcus_guide' => $cust,
-                            'bcredit_amt' => $totalDenom  
-                        ]);
+                    ApprovedRequest::create([
+                        'reqap_trid' => $id,
+                        'reqap_approvedtype' => 'Special External GC Approved',
+                        'reqap_remarks' => $request->formData['approveRemarks'],
+                        'reqap_checkedby' => $request->formData['checkedBy'],
+                        'reqap_approvedby' => $request->formData['approvedBy'],
+                        'reqap_preparedby' => $request->user()->user_id,
+                        'reqap_date' => now(),
+                        'reqap_doc' => !is_null($request->file) ? $this->financeService->uploadFileHandler($request) : ''
+                    ]);
 
-                        if ($reqType->spexgc_type == '2') {
-                            $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
-                            foreach ($data->get() as $item) {
-                                $item->update([
-                                    'spexgcemp_barcode' => $specGet++,
-                                ]);
-                            }
-                        } elseif ($reqType->spexgc_type == '1') {
-                            $denoms = SpecialExternalGcrequestItem::select('specit_denoms', 'specit_qty')
-                                ->where('specit_trid', $id)
-                                ->orderBy('specit_id');
+                    LedgerBudget::create([
+                        'bledger_no' => $nextLedgerBudgetNum,
+                        'bledger_trid' => $id,
+                        'bledger_datetime' => now(),
+                        'bledger_type' => 'RFGCSEGC',
+                        'bcus_guide' => $cust,
+                        'bcredit_amt' => $totalDenom
+                    ]);
 
-                            $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
-
-                            foreach ($denoms as $item) {
-                                SpecialExternalGcrequestEmpAssign::create([
-                                    'spexgcemp_trid' => $id,
-                                    'spexgcemp_denom' => $item->specit_denoms,
-                                    'spexgcemp_barcode' => $specGet++
-                                ]);
-                            }
-                        } else {
-                            return back()->with([
-                                'type' => 'error',
-                                'msg' => 'Opps!',
-                                'description' => 'Request Type Not Found.'
+                    if ($reqType->spexgc_type == '2') {
+                        $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
+                        foreach ($data->get() as $item) {
+                            $item->update([
+                                'spexgcemp_barcode' => $specGet++,
                             ]);
                         }
-                    });
-                    return back()->with([
-                        'type' => 'success',
-                        'msg' => 'Nice!',
-                        'description' => 'Request approved successfuly.'
-                    ]);
-                }
+                    } elseif ($reqType->spexgc_type == '1') {
+                        $denoms = SpecialExternalGcrequestItem::select('specit_denoms', 'specit_qty')
+                            ->where('specit_trid', $id)
+                            ->orderBy('specit_id');
+
+                        $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
+
+                        foreach ($denoms as $item) {
+                            SpecialExternalGcrequestEmpAssign::create([
+                                'spexgcemp_trid' => $id,
+                                'spexgcemp_denom' => $item->specit_denoms,
+                                'spexgcemp_barcode' => $specGet++
+                            ]);
+                        }
+                    } else {
+                        return back()->with([
+                            'type' => 'error',
+                            'msg' => 'Opps!',
+                            'description' => 'Request Type Not Found.'
+                        ]);
+                    }
+                });
+                return back()->with([
+                    'type' => 'success',
+                    'msg' => 'Nice!',
+                    'description' => 'Request approved successfuly.'
+                ]);
             }
         } else {
             return back()->with([
