@@ -116,7 +116,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Unit',
-            'dataIndex' => 'pe_items_quantity',
+            'dataIndex' => 'uom',
             'key' => 'denom_id'
 
         ],
