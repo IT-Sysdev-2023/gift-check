@@ -123,6 +123,7 @@ class SpecialGcRequestController extends Controller
             })
             ->select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
             ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', 'reviewed'], ['spexgc_released', ''], ['spexgc_promo', '*']])
+            ->orderByDesc('spexgc_id')
             ->paginate()
             ->withQueryString();
 
@@ -148,12 +149,6 @@ class SpecialGcRequestController extends Controller
             }
         ]);
 
-        // $tableData = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id->spexgc_id)
-        //     ->select('spexgcemp_denom', 'spexgcemp_fname', 'spexgcemp_lname' ,'spexgcemp_mname', 'spexgcemp_extname', 'spexgcemp_barcode')        
-        // ->orderBy('spexgcemp_id')
-        // ->paginate()
-        // ->withQueryString();
-
         $checkBy = Assignatory::assignatories($request);
 
         return inertia('Treasury/Dashboard/SpecialExternalGc/Components/InternalGcReleasingView', [
@@ -166,6 +161,7 @@ class SpecialGcRequestController extends Controller
 
     public function relasingInternalSubmission(Request $request, $id)
     {
+        // dd($id);
         $request->validate([
             "checkedBy" => 'required',
             "remarks" => 'required',
@@ -173,6 +169,7 @@ class SpecialGcRequestController extends Controller
         ]);
 
         DB::transaction(function () use ($id, $request) {
+
             SpecialExternalGcrequest::where([["spexgc_id", $id], ['spexgc_released', '']])->update([
                 'spexgc_released' => 'released',
                 'spexgc_receviedby' => $request->receivedBy
@@ -194,8 +191,11 @@ class SpecialGcRequestController extends Controller
 
             if ($reqType == '1') {
                 $r = SpecialExternalGcrequestItem::where('specit_trid', $id)->first(['specit_denoms', 'specit_qty']);
+                // dd($r);
                 $total = $r->specit_denoms * $r->specit_qty;
             } else {
+                // $re = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)->get();
+                // dd($re);
                 $q = SpecialExternalGcrequestEmpAssign::selectRaw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom),0.00) as totaldenom,
 					IFNULL(COUNT(special_external_gcrequest_emp_assign.spexgcemp_denom),0) as cnt")->where('spexgcemp_trid', $id)->first();
                 $total = $q->totaldenom;
@@ -203,13 +203,12 @@ class SpecialGcRequestController extends Controller
 
             $l = LedgerBudget::max('bledger_id');
             $lnum = $l ? $l + 1 : 1;
-
             LedgerSpgc::create([
                 'spgcledger_no' => $lnum,
                 'spgcledger_trid' => $id,
                 'spgcledger_datetime' => now(),
                 'spgcledger_type' => 'RFGCSEGCREL',
-                'spgcledger_debit' => $total
+                'spgcledger_debit' => $total,
             ]);
 
             return redirect()->back()->with('success', 'Successfully Submitted');

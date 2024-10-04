@@ -344,7 +344,7 @@ class FinanceController extends Controller
                             'bledger_datetime' => now(),
                             'bledger_type' => 'RFGCSEGC',
                             'bcus_guide' => $cust,
-                            'bcredit_amt' => $totalDenom
+                            'bcredit_amt' => $totalDenom  
                         ]);
 
                         if ($reqType->spexgc_type == '2') {
