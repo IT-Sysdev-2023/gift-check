@@ -41,7 +41,7 @@ class BudgetRequestController extends Controller
         $record = $this->budgetRequestService->pendingRequest();
 
         return inertia(
-            'Treasury/Dashboard/PendingRequest',
+            'Treasury/Dashboard/PendingRequestTreasury',
             [
                 'currentBudget' => LedgerBudget::currentBudget(),
                 'title' => 'Update Budget Entry Form',
