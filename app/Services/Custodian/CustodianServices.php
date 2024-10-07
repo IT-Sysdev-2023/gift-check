@@ -490,4 +490,8 @@ class CustodianServices
             'record' => $data,
         ]);
     }
+
+    public function getEveryBarcodeDetails($id){
+        dd($id);
+    }
 }
