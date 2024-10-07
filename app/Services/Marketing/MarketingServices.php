@@ -7,12 +7,14 @@ use App\Models\CancelledProductionRequest;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcRequest;
+use App\Models\SpecialExternalGcrequest;
 use App\Models\Supplier;
 use App\Models\UserDetails;
 use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MarketingServices extends FileHandler
@@ -181,7 +183,7 @@ class MarketingServices extends FileHandler
                 $item->DateApproved = Date::parse($item->ape_approved_at)->format('Y-F-d');
                 $item->aprrovedPreparedBy = ucwords($item->fapproved . ' ' . $item->lapproved);
                 $item->RequestPreparedby = ucwords($item->frequest . ' ' . $item->lrequest);
-    
+
                 return $item;
             })->first();
         }
@@ -374,6 +376,50 @@ class MarketingServices extends FileHandler
                 }
             }
         }
+    }
+
+    public function countspecialgc()
+    {
+        $e = SpecialExternalGcrequest::select([
+            'special_external_gcrequest.spexgc_num',
+            'special_external_gcrequest.spexgc_dateneed',
+            'special_external_gcrequest.spexgc_id',
+            'special_external_gcrequest.spexgc_datereq',
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as prep"),
+            'special_external_customer.spcus_acctname',
+            'special_external_customer.spcus_companyname'
+        ])
+            ->join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->where('special_external_gcrequest.spexgc_status', 'pending')
+            ->where('spexgc_addemp', 'pending')
+            ->where('special_external_gcrequest.spexgc_promo', '0')
+            ->orderBy('special_external_gcrequest.spexgc_id', 'ASC')
+            ->get();
+
+        $i = SpecialExternalGcrequest::select([
+            'special_external_gcrequest.spexgc_num',
+            'special_external_gcrequest.spexgc_dateneed',
+            'special_external_gcrequest.spexgc_id',
+            'special_external_gcrequest.spexgc_datereq',
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as prep"),
+            'special_external_customer.spcus_acctname',
+            'special_external_customer.spcus_companyname'
+        ])
+            ->join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->where('special_external_gcrequest.spexgc_status', 'pending')
+            ->where('spexgc_addemp', 'pending')
+            ->where('special_external_gcrequest.spexgc_promo', '*')
+            ->orderBy('special_external_gcrequest.spexgc_id', 'ASC')
+            ->get();
+
+        $spgc =[
+            'internal' => $i,
+            'external' => $e,
+        ];
+        return $spgc;
+
     }
 
 

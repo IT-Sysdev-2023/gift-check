@@ -5,7 +5,13 @@
             <GcProductionReq :gcProductionRequest />
         </a-col>
         <a-col :span="8">
-            <Card use-default title="Budget Request" :pending="1" :approved="2" :cancelled="3" />
+            <!-- <special-external-gc /> -->
+             <m-card 
+                title="Special External GC Request" 
+                :pending = specialgcount
+                pendingRoute="marketing.dashboard"
+
+             />
         </a-col>
         <a-col :span="8">
             <div class="mb-2">
@@ -149,7 +155,8 @@ export default {
         productionReqItems: Object,
         columns: Object,
         gcProductionRequest: Object,
-        countPromoGcRequest: Object
+        countPromoGcRequest: Object,
+        specialgcount:Number
     },
 
     data() {

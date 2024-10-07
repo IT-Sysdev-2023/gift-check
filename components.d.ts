@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: typeof import('ant-design-vue/es')['Alert']
+    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
@@ -97,6 +98,7 @@ declare module 'vue' {
     ARow: typeof import('ant-design-vue/es')['Row']
     ArrowDownOutlined: typeof import('@ant-design/icons-vue')['ArrowDownOutlined']
     ArrowLeftOutlined: typeof import('@ant-design/icons-vue')['ArrowLeftOutlined']
+    ArrowsAltOutlined: typeof import('@ant-design/icons-vue')['ArrowsAltOutlined']
     ArrowUpOutlined: typeof import('@ant-design/icons-vue')['ArrowUpOutlined']
     AscTech: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/AscTech.vue')['default']
     ASelect: typeof import('ant-design-vue/es')['Select']
@@ -208,6 +210,7 @@ declare module 'vue' {
     GcSalesReport: typeof import('./resources/js/Pages/Treasury/Dashboard/Eod/GcSalesReport.vue')['default']
     GiftCheck: typeof import('./resources/js/Pages/Treasury/Transactions/GiftCheck.vue')['default']
     GiftCheckGenerateResult: typeof import('./resources/js/Pages/Custodian/Result/GiftCheckGenerateResult.vue')['default']
+    GiftTwoTone: typeof import('@ant-design/icons-vue')['GiftTwoTone']
     GroupOutlined: typeof import('@ant-design/icons-vue')['GroupOutlined']
     GuestLayout: typeof import('./resources/js/Layouts/GuestLayout.vue')['default']
     Head: typeof import('@inertiajs/vue3')['Head']
@@ -240,6 +243,7 @@ declare module 'vue' {
     ManageSupplier: typeof import('./resources/js/Pages/Marketing/ManageSupplier.vue')['default']
     MarketingDashboard: typeof import('./resources/js/Pages/Marketing/MarketingDashboard.vue')['default']
     MarketingSideBar: typeof import('./resources/js/Components/MarketingSideBar.vue')['default']
+    MCard: typeof import('./resources/js/Pages/Marketing/Card/MCard.vue')['default']
     MenuFoldOutlined: typeof import('@ant-design/icons-vue')['MenuFoldOutlined']
     MenuUnfoldOutlined: typeof import('@ant-design/icons-vue')['MenuUnfoldOutlined']
     MinusCircleOutlined: typeof import('@ant-design/icons-vue')['MinusCircleOutlined']

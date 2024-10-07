@@ -90,6 +90,7 @@ class MarketingController extends Controller
 
     public function index(Request $request)
     {
+        $specialGc = $this->marketing->countspecialgc();
         $promoGcRequest = $this->marketing->promoGcRequest();
         $gcProductionRequest = $this->marketing->productionRequest();
         $supplier = Supplier::where('gcs_status', 1)->get();
@@ -123,7 +124,8 @@ class MarketingController extends Controller
             'productionReqItems' => $productionReqItems,
             'columns' => ColumnHelper::getColumns($columns),
             'gcProductionRequest' => $gcProductionRequest,
-            'countPromoGcRequest' => $promoGcRequest
+            'countPromoGcRequest' => $promoGcRequest,
+            'specialgcount' => $specialGc['external']->count() + $specialGc['internal']->count()
         ]);
     }
     public function promoList(Request $request)
@@ -1858,7 +1860,7 @@ class MarketingController extends Controller
                 'pgcreq_reqnum',
                 'pgcreq_reqby',
                 'pgcreq_updateby'
-            ],'like', $request->search.'%')
+            ], 'like', $request->search . '%')
             ->select('promo_gc_request.*', 'users.firstname', 'users.lastname', 'requestBy.firstname as requestedByName', 'requestBy.lastname as requestedBylastname')
             ->paginate()
             ->withQueryString();
