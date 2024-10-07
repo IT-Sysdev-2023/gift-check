@@ -150,7 +150,7 @@ class CustodianController extends Controller
     {
         return $this->custodianservices->getBarcodeApprovedDetails($id);
     }
-    public function getEveryBarcode($id){
-        return $this->custodianservices->getEveryBarcodeDetails($id);
+    public function getEveryBarcode(Request $request, $id){
+        return $this->custodianservices->getEveryBarcodeDetails($request,$id);
     }
 }
