@@ -61,8 +61,25 @@
                                     {{ key }}
                                 </span>
                             </template>
+                            <a-table :loading="isloading" bordered size="small" :data-source="bardet" :columns="[{
+                                title: 'Barcode No',
+                                dataIndex: 'barcode_no',
+                            },
+                            {
+                                title: 'Denomination No',
+                                dataIndex: 'denomination',
+                            },
+                            ]">
+                            </a-table>
                         </a-tab-pane>
                     </a-tabs>
+                    <div v-if="activeKey === null">
+                        <a-empty>
+                            <template #description>
+                                Please select Denomination above <ArrowUpOutlined />
+                            </template>
+                        </a-empty>
+                    </div>
                 </a-card>
             </a-modal>
 
@@ -72,33 +89,47 @@
 
 <script setup>
 import axios from 'axios';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const props = defineProps({
-    data: Array,
+    data: Object,
     id: Number
 });
 
 const bopen = ref(false);
-const activeKey = ref('1');
+const activeKey = ref(null);
 const barcodeDetails = ref([]);
+const bardet = ref([]);
+const isloading = ref(false);
 
 const barcode = async (id) => {
     try {
-
         const { data } = await axios.get(route('custodian.production.barcode.details', props.id));
         bopen.value = true;
         barcodeDetails.value = data;
 
-    } catch {
-
+    } catch (error) {
+        console.error(error);
     }
+
 }
 const handlebarcode = async (key) => {
-    try{
-        const {data} = await axios.get(route('custodian.production.barcode.every', key));
-    }catch{
+    isloading.value = true;
+    try {
+        const { data } = await axios.get(route('custodian.production.barcode.every', props.data.items.data[0].pe_items_request_id), {
+            params: {
+                key
+            }
+        });
 
+        bardet.value = data.record;
+        activeKey.value = key;
+        isloading.value = false;
+
+    } catch {
+        isloading.value = false;
     }
 }
+
+
 </script>
