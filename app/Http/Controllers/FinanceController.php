@@ -38,7 +38,8 @@ class FinanceController extends Controller
         public ApprovedReleasedPdfExcelService $appRelPdfExcelService,
         public DashboardClass $dashboardClass,
         public FinanceService $financeService
-    ) {}
+    ) {
+    }
 
     public function index()
     {
@@ -293,10 +294,17 @@ class FinanceController extends Controller
 
     public function SpecialGcApprovalSubmit(Request $request)
     {
+
         $id = $request->formData['id'];
         $totalDenom = $request->data[0]['total'];
         $reqType = SpecialExternalGcrequest::select('spexgc_type')->where('spexgc_id', $id)->first();
-        $currentbudget = intval($request->currentBudget);
+        // $currentbudget = intval($request->currentBudget);
+        $currentbudget = LedgerBudget::whereNull('bledger_category')->get();
+        $debit = $currentbudget->sum('bdebit_amt');
+        $credit = $currentbudget->sum('bcredit_amt');
+
+        dd($debit - $credit);
+
         $customer = SpecialExternalGcrequest::select('spexgc_company')->where('spexgc_id', $id)->get();
         $ledgerBudgetNum = LedgerBudget::select('bledger_no')->orderByDesc('bledger_id')->first();
         $nextLedgerBudgetNum = (int) $ledgerBudgetNum->bledger_no + 1;
@@ -307,40 +315,59 @@ class FinanceController extends Controller
             $cust = ($customer[0]->spexgc_company == 342 || $customer[0]->spexgc_company == 341) ? 'dti' : '';
 
             if ($request->formData['status'] == '1') {
-            }
-            if (empty($request->formData['approveRemarks']) || empty($request->formData['checkedBy']) || empty($request->formData['approvedBy'])) {
-                return back()->with([
-                    'type' => 'error',
-                    'msg' => 'Opps!',
-                    'description' => 'Please fill all required Fields'
-                ]);
-            } else {
-                DB::transaction(function () use ($specGet, $reqType, $id, $request, $nextLedgerBudgetNum, $cust, $totalDenom) {
-                    SpecialExternalGcrequest::where('spexgc_id', $id)
-                        ->where('spexgc_status', 'pending')
-                        ->update([
-                            'spexgc_status' => 'approved'
+                if ($totalDenom > ($debit - $credit)) {
+                    return back()->with([
+                        'type' => 'error',
+                        'msg' => 'Opps!',
+                        'description' => 'Total Denomination requested is bigger than current budget'
+                    ]);
+                } elseif (empty($request->formData['approveRemarks']) || empty($request->formData['checkedBy']) || empty($request->formData['approvedBy'])) {
+                    return back()->with([
+                        'type' => 'error',
+                        'msg' => 'Opps!',
+                        'description' => 'Please fill all required Fields'
+                    ]);
+                } else {
+                    DB::transaction(function () use ($specGet, $reqType, $id, $request, $nextLedgerBudgetNum, $cust, $totalDenom) {
+                        SpecialExternalGcrequest::where('spexgc_id', $id)
+                            ->where('spexgc_status', 'pending')
+                            ->update([
+                                'spexgc_status' => 'approved'
+                            ]);
+
+                        ApprovedRequest::create([
+                            'reqap_trid' => $id,
+                            'reqap_approvedtype' => 'Special External GC Approved',
+                            'reqap_remarks' => $request->formData['approveRemarks'],
+                            'reqap_checkedby' => $request->formData['checkedBy'],
+                            'reqap_approvedby' => $request->formData['approvedBy'],
+                            'reqap_preparedby' => $request->user()->user_id,
+                            'reqap_date' => now(),
+                            'reqap_doc' => !is_null($request->file) ? $this->financeService->uploadFileHandler($request) : ''
                         ]);
+                        LedgerBudget::create([
+                            'bledger_no' => $nextLedgerBudgetNum,
+                            'bledger_trid' => $id,
+                            'bledger_datetime' => now(),
+                            'bledger_type' => 'RFGCSEGC',
+                            'bcus_guide' => $cust,
+                            'bcredit_amt' => $totalDenom,
+                            'bledger_category' => 'special'
+                        ]);
+                        if ($request['type'] === 'internal') {
+                            LedgerSpgc::create([
+                                'spgcledger_no' => $nextLedgerBudgetNum,
+                                'spgcledger_trid' => $id,
+                                'spgcledger_datetime' => now(),
+                                'spgcledger_type' => 'RFGCSEGC',
+                                'spgcledger_credit' => $totalDenom,
+                                'spgcledger_typeid' => '0',
+                                'spgcledger_group' => '0',
+                                'spgcledger_debit' => '0',
+                                'spgctag' => '0',
+                            ]);
+                        }
 
-                    ApprovedRequest::create([
-                        'reqap_trid' => $id,
-                        'reqap_approvedtype' => 'Special External GC Approved',
-                        'reqap_remarks' => $request->formData['approveRemarks'],
-                        'reqap_checkedby' => $request->formData['checkedBy'],
-                        'reqap_approvedby' => $request->formData['approvedBy'],
-                        'reqap_preparedby' => $request->user()->user_id,
-                        'reqap_date' => now(),
-                        'reqap_doc' => !is_null($request->file) ? $this->financeService->uploadFileHandler($request) : ''
-                    ]);
-
-                    LedgerBudget::create([
-                        'bledger_no' => $nextLedgerBudgetNum,
-                        'bledger_trid' => $id,
-                        'bledger_datetime' => now(),
-                        'bledger_type' => 'RFGCSEGC',
-                        'bcus_guide' => $cust,
-                        'bcredit_amt' => $totalDenom
-                    ]);
 
                     if ($reqType->spexgc_type == '2') {
                         $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);

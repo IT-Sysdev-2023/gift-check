@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: typeof import('ant-design-vue/es')['Alert']
+    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
@@ -243,6 +244,7 @@ declare module 'vue' {
     ManageSupplier: typeof import('./resources/js/Pages/Marketing/ManageSupplier.vue')['default']
     MarketingDashboard: typeof import('./resources/js/Pages/Marketing/MarketingDashboard.vue')['default']
     MarketingSideBar: typeof import('./resources/js/Components/MarketingSideBar.vue')['default']
+    MCard: typeof import('./resources/js/Pages/Marketing/Card/MCard.vue')['default']
     MenuFoldOutlined: typeof import('@ant-design/icons-vue')['MenuFoldOutlined']
     MenuUnfoldOutlined: typeof import('@ant-design/icons-vue')['MenuUnfoldOutlined']
     MinusCircleOutlined: typeof import('@ant-design/icons-vue')['MinusCircleOutlined']
