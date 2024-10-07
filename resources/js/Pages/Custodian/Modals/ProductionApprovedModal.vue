@@ -4,7 +4,6 @@
             <p class="text-center">Approved Production Request Details</p>
         </template>
         <a-card>
-            <!-- {{data.items.data.}} -->
             <a-row :gutter="[16, 16]">
                 <a-col :span="16">
                     <a-descriptions size="small" layout="vertical" bordered>
@@ -95,7 +94,11 @@ const barcode = async (id) => {
 
     }
 }
-const handlebarcode = (key) => {
-    alert(key)
+const handlebarcode = async (key) => {
+    try{
+        const {data} = await axios.get(route('custodian.production.barcode.every', key));
+    }catch{
+
+    }
 }
 </script>
