@@ -369,47 +369,48 @@ class FinanceController extends Controller
                         }
 
 
-                    if ($reqType->spexgc_type == '2') {
-                        $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
-                        foreach ($data->get() as $item) {
-                            $item->update([
-                                'spexgcemp_barcode' => $specGet++,
+                        if ($reqType->spexgc_type == '2') {
+                            $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
+                            foreach ($data->get() as $item) {
+                                $item->update([
+                                    'spexgcemp_barcode' => $specGet++,
+                                ]);
+                            }
+                        } elseif ($reqType->spexgc_type == '1') {
+                            $denoms = SpecialExternalGcrequestItem::select('specit_denoms', 'specit_qty')
+                                ->where('specit_trid', $id)
+                                ->orderBy('specit_id');
+
+                            $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
+
+                            foreach ($denoms as $item) {
+                                SpecialExternalGcrequestEmpAssign::create([
+                                    'spexgcemp_trid' => $id,
+                                    'spexgcemp_denom' => $item->specit_denoms,
+                                    'spexgcemp_barcode' => $specGet++
+                                ]);
+                            }
+                        } else {
+                            return back()->with([
+                                'type' => 'error',
+                                'msg' => 'Opps!',
+                                'description' => 'Request Type Not Found.'
                             ]);
                         }
-                    } elseif ($reqType->spexgc_type == '1') {
-                        $denoms = SpecialExternalGcrequestItem::select('specit_denoms', 'specit_qty')
-                            ->where('specit_trid', $id)
-                            ->orderBy('specit_id');
-
-                        $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
-
-                        foreach ($denoms as $item) {
-                            SpecialExternalGcrequestEmpAssign::create([
-                                'spexgcemp_trid' => $id,
-                                'spexgcemp_denom' => $item->specit_denoms,
-                                'spexgcemp_barcode' => $specGet++
-                            ]);
-                        }
-                    } else {
-                        return back()->with([
-                            'type' => 'error',
-                            'msg' => 'Opps!',
-                            'description' => 'Request Type Not Found.'
-                        ]);
-                    }
-                });
+                    });
+                    return back()->with([
+                        'type' => 'success',
+                        'msg' => 'Nice!',
+                        'description' => 'Request approved successfuly.'
+                    ]);
+                }
+            } else {
                 return back()->with([
-                    'type' => 'success',
-                    'msg' => 'Nice!',
-                    'description' => 'Request approved successfuly.'
+                    'type' => 'error',
+                    'msg' => 'Opps!',
+                    'description' => 'Request already approved/cancelled.'
                 ]);
             }
-        } else {
-            return back()->with([
-                'type' => 'error',
-                'msg' => 'Opps!',
-                'description' => 'Request already approved/cancelled.'
-            ]);
         }
     }
 
