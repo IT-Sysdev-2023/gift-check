@@ -253,6 +253,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('view-denominations-{id}' , [SpecialGcRequestController::class,'viewDenomination'])->name('viewDenomination');
                 Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class,'relasingInternalSubmission'])->name('internalSubmission');
 
+                Route::get('released-gc', [SpecialGcRequestController::class,'releasedGc'])->name('specialReleasedGc');
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 

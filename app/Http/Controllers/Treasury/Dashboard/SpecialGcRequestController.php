@@ -127,7 +127,7 @@ class SpecialGcRequestController extends Controller
             ->paginate()
             ->withQueryString();
 
-        return inertia('Treasury/Dashboard/SpecialExternalGc/ReviewedReleasingInternal', [
+        return inertia('Treasury/Dashboard/SpecialGc/ReviewedReleasingInternal', [
             'title' => 'Reviewed GC For Releasing(Internal)',
             'records' => SpecialExternalGcRequestResource::collection($record),
             'columns' => ColumnHelper::$specialInternal
@@ -151,7 +151,7 @@ class SpecialGcRequestController extends Controller
 
         $checkBy = Assignatory::assignatories($request);
 
-        return inertia('Treasury/Dashboard/SpecialExternalGc/Components/InternalGcReleasingView', [
+        return inertia('Treasury/Dashboard/SpecialGc/Components/InternalGcReleasingView', [
             'title' => 'Special Internal Gc Releasing',
             'id' => $id->spexgc_id,
             'checkBy' => $checkBy,
@@ -230,6 +230,24 @@ class SpecialGcRequestController extends Controller
             'to' => $record->lastItem(),
             'total' => $record->total(),
             'links' => $record->linkCollection(),
+        ]);
+    }
+
+    public function releasedGc(Request $request)
+    {
+        $record = SpecialExternalGcrequest::
+            select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed')
+            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', )
+            ->withWhereHas('approvedRequest', function ($q) {
+                $q->with('user:user_id,firstname,lastname')->select('reqap_preparedby', 'reqap_trid', 'reqap_date')->where('reqap_approvedtype', 'special external releasing');
+            })->where('spexgc_released', 'released')
+            // ->limit(10)->get();
+        ->paginate()->withQueryString();
+
+        return inertia('Treasury/Dashboard/SpecialGc/SpecialReleasedGc', [
+            'filters' => $request->only(['date', 'search']),
+            'data' =>  SpecialExternalGcRequestResource::collection($record),
+            'columns' => ColumnHelper::$specialReleasedGc
         ]);
     }
     private function options()
