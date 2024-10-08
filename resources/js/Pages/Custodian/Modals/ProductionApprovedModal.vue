@@ -47,8 +47,7 @@
             </a-table>
 
             <a-descriptions class="text-center mt-2" size="small" layout="horizontal" bordered>
-                <a-descriptions-item style="width: 50%; font-weight: 700;" label="Total">{{ data.items.total
-                    }}</a-descriptions-item>
+                <a-descriptions-item style="width: 50%; font-weight: 700;" label="Total">{{ data.items.total }}</a-descriptions-item>
             </a-descriptions>
 
             <a-modal v-model:open="bopen" title="Generated Barcode" :footer="null" :width="1000">
@@ -61,7 +60,7 @@
                                     Gc for validation
                                 </span>
                             </template>
-                            <a-tabs type="card" centered v-model:activeKey="activeKey" @change="handlebarcode">
+                            <a-tabs type="card" v-model:activeKey="activeKey" @change="handlebarcode">
                                 <a-tab-pane v-for="(bar, key) in barcodeDetails.record" :key="bar.denom_id">
                                     <template #tab>
                                         <span>
@@ -97,7 +96,7 @@
                                     Validated Gc
                                 </span>
                             </template>
-                            <a-tabs type="card" centered v-model:activeKey="activeKey" @change="handlebarcode">
+                            <a-tabs type="card" v-model:activeKey="activeKey" @change="handlebarcode">
                                 <a-tab-pane v-for="(bar, key) in barcodeDetails.record" :key="bar.denom_id">
                                     <template #tab>
                                         <span>
