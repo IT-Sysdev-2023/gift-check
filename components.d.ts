@@ -260,7 +260,7 @@ declare module 'vue' {
     PaymentType: typeof import('./resources/js/Components/Treasury/PaymentType.vue')['default']
     PaymentViewing: typeof import('./resources/js/Pages/Accounting/Payment/PaymentViewing.vue')['default']
     PdfResult: typeof import('./resources/js/Pages/Admin/Results/PdfResult.vue')['default']
-    Pending: typeof import('./resources/js/Pages/Marketing/specialgc/Pending.vue')['default']
+    Pending: typeof import('./resources/js/Pages/Retail/GcRequest/Pending.vue')['default']
     PendingBudgetRequest: typeof import('./resources/js/Pages/Finance/PendingBudgetRequest.vue')['default']
     PendingGc: typeof import('./resources/js/Pages/RetailGroup/PendingGc.vue')['default']
     PendingGcDescription: typeof import('./resources/js/Pages/RetailGroup/Description/PendingGcDescription.vue')['default']
