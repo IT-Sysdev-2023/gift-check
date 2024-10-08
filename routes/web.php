@@ -188,6 +188,9 @@ Route::prefix('marketing')->group(function () {
             Route::get('cancelled-production-request', [MarketingController::class, 'cancelledProductionRequest'])->name('production.request');
             Route::get('view-cancelled-production-request', [MarketingController::class, 'ViewcancelledProductionRequest'])->name('view.cancelled.request');
         });
+        Route::name('special-gc.')->group(function (){
+            Route::get('pending',[MarketingController::class, 'pendingspgclist'])->name('pending');
+        });
     });
 });
 

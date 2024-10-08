@@ -3,21 +3,22 @@
         <a-badge :count="pending" class="mb-2">
             <a-button style="width: 340px;" :overflow-count="Infinity" type="primary" :disabled="pending === 0"
                 @click="() => $inertia.get(route(pRoute))" danger>
-                Pending
+                Pending {{ pextension ? `(${pextension})` : '' }}
             </a-button>
         </a-badge>
 
         <a-badge class="mb-2" :count="approved" :overflow-count="Infinity"
             :number-style="{ backgroundColor: '#1677ff' }">
-            <a-button :disabled="approved === 0" style="width: 340px;  ;" type="primary" @click="() => $inertia.get(route(aRoute))">
-                Approved
+            <a-button :disabled="approved === 0" style="width: 340px;  ;" type="primary"
+                @click="() => $inertia.get(route(aRoute))">
+                Approved {{ aextension ? `(${aextension})` : '' }}
             </a-button>
         </a-badge>
         <a-badge class="mb-2" :count="cancelled" :overflow-count="Infinity"
             :number-style="{ backgroundColor: '#111827' }">
             <a-button :disabled="cancelled === 0" style="width: 340px;  ;" @click="() => $inertia.get(route(cRoute))"
                 class="bg-gray-900 text-white">
-                Cancelled
+                Cancelled {{ cextension ? `(${cextension})` : '' }}
             </a-button>
         </a-badge>
     </a-card>
@@ -32,7 +33,10 @@ export default {
         cancelled: Number,
         pRoute: String,
         aRoute: String,
-        cRoute: String
+        cRoute: String,
+        pextension: String,
+        aextension: String,
+        cextension: String,
     }
 }
 </script>
