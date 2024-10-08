@@ -18,7 +18,7 @@ const { highlightText } = highlighten();
             <div>
                 <a-range-picker v-model:value="form.date" />
             </div>
-           
+
         </div>
         <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false">
             <template #title>
@@ -88,10 +88,10 @@ export default {
             return dataIndex.reduce((acc, index) => acc[index], record);
         },
         async viewRecord($id) {
-            
+
             this.$inertia.get(route("iad.special.external.viewApprovedGc", $id)
             );
-         
+
         },
     },
 
