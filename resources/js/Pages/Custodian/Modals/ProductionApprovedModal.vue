@@ -13,7 +13,7 @@
                         <a-descriptions-item label="Time Requested:">YES</a-descriptions-item>
                         <a-descriptions-item label="Requested Prepared By:">{{ data.approved.rname }}, {{
                             data.approved.rsname
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Remarks" :span="2">
                             <a-badge status="processing" :text="data.approved.pe_remarks" />
                         </a-descriptions-item>
@@ -81,7 +81,7 @@
                                     </a-table>
                                 </a-tab-pane>
                             </a-tabs>
-                            <div v-if="activeKey === null">
+                            <div v-if="activeKey === null && Object.keys(barcodeDetails.record).length !== 0  && statuskey === '1' ">
                                 <a-empty>
                                     <template #description>
                                         Please select Denomination above
@@ -119,7 +119,15 @@
                             </a-tabs>
                         </a-tab-pane>
                     </a-tabs>
-                    <div v-if="Object.keys(barcodeDetails.record).length === 0">
+                    <div v-if="activeKey === null && Object.keys(barcodeDetails.record).length !== 0  && statuskey === '2' ">
+                        <a-empty>
+                            <template #description>
+                                Please select Denomination above
+                                <ArrowUpOutlined />
+                            </template>
+                        </a-empty>
+                    </div>
+                    <div v-if="Object.keys(barcodeDetails.record).length === 0 && statuskey !== null">
                         <a-empty>
                             <template #description>
                                 Empty Denomination
