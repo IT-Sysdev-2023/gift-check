@@ -71,8 +71,15 @@ class DashboardClass extends DashboardService
     }
     public function financeDashboard()
     {
-        $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '0')->where('spexgc_addemp', 'done')->count();
-        $pendingInternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')->where('spexgc_promo', '*')->where('spexgc_addemp', 'done')->count();
+        $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')
+        ->where('spexgc_promo', '0')
+        ->where('spexgc_addemp', 'done')
+        ->count();
+
+        $pendingInternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')
+        ->where('spexgc_promo', '*')
+        ->where('spexgc_addemp', 'done')
+        ->count();
 
         $curBudget = LedgerBudget::where('bcus_guide', '!=', 'dti')->get();
 
@@ -89,7 +96,10 @@ class DashboardClass extends DashboardService
         $dtiCreditTotal = $dtiBudget->sum('bcredit_amt');
 
         $spgcDebitTotal = $ledgerSpgc->sum('spgcledger_debit');
+
         $spgcreditTotal = $ledgerSpgc->sum('spgcledger_credit');
+
+        // dd($spgcreditTotal);
 
         return [
             'specialGcRequest' => [
@@ -107,8 +117,8 @@ class DashboardClass extends DashboardService
             ],
             'budgetCounts' => [
                 'curBudget' => $debitTotal - $creditTotal,
-                'dti' =>  max(0, $dtiDebitTotal - $dtiCreditTotal),
-                'spgc' => max(0, $spgcDebitTotal - $spgcreditTotal)
+                'dti' =>  $dtiDebitTotal - $dtiCreditTotal,
+                'spgc' => $spgcDebitTotal - $spgcreditTotal
 ,
             ],
 

@@ -4,7 +4,6 @@
             <p class="text-center">Approved Production Request Details</p>
         </template>
         <a-card>
-            <!-- {{data.items.data.}} -->
             <a-row :gutter="[16, 16]">
                 <a-col :span="16">
                     <a-descriptions size="small" layout="vertical" bordered>
@@ -14,7 +13,7 @@
                         <a-descriptions-item label="Time Requested:">YES</a-descriptions-item>
                         <a-descriptions-item label="Requested Prepared By:">{{ data.approved.rname }}, {{
                             data.approved.rsname
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Remarks" :span="2">
                             <a-badge status="processing" :text="data.approved.pe_remarks" />
                         </a-descriptions-item>
@@ -48,22 +47,92 @@
             </a-table>
 
             <a-descriptions class="text-center mt-2" size="small" layout="horizontal" bordered>
-                <a-descriptions-item style="width: 50%; font-weight: 700;" label="Total">{{ data.items.total
-                    }}</a-descriptions-item>
+                <a-descriptions-item style="width: 50%; font-weight: 700;" label="Total">{{ data.items.total }}</a-descriptions-item>
             </a-descriptions>
 
             <a-modal v-model:open="bopen" title="Generated Barcode" :footer="null" :width="1000">
                 <a-card>
-                    <a-tabs type="card" centered v-model:activeKey="activeKey" @change="handlebarcode">
-                        <a-tab-pane v-for="(bar, key) in barcodeDetails.record" :key="bar.denom_id">
+                    <a-tabs type="card" v-model:activeKey="statuskey" @change="valStatus">
+                        <a-tab-pane key="1">
                             <template #tab>
                                 <span>
                                     <apple-outlined />
-                                    {{ key }}
+                                    Gc for validation
                                 </span>
                             </template>
+                            <a-tabs type="card" v-model:activeKey="activeKey" @change="handlebarcode">
+                                <a-tab-pane v-for="(bar, key) in barcodeDetails.record" :key="bar.denom_id">
+                                    <template #tab>
+                                        <span>
+                                            <apple-outlined />
+                                            {{ key }}
+                                        </span>
+                                    </template>
+                                    <a-table :loading="isloading" bordered size="small" :data-source="bardet" :columns="[{
+                                        title: 'Barcode No',
+                                        dataIndex: 'barcode_no',
+                                    },
+                                    {
+                                        title: 'Denomination No',
+                                        dataIndex: 'denomination',
+                                    },
+                                    ]">
+                                    </a-table>
+                                </a-tab-pane>
+                            </a-tabs>
+                            <div v-if="activeKey === null && Object.keys(barcodeDetails.record).length !== 0  && statuskey === '1' ">
+                                <a-empty>
+                                    <template #description>
+                                        Please select Denomination above
+                                        <ArrowUpOutlined />
+                                    </template>
+                                </a-empty>
+                            </div>
+                        </a-tab-pane>
+                        <a-tab-pane key="2" force-render>
+                            <template #tab>
+                                <span>
+                                    <apple-outlined />
+                                    Validated Gc
+                                </span>
+                            </template>
+                            <a-tabs type="card" v-model:activeKey="activeKey" @change="handlebarcode">
+                                <a-tab-pane v-for="(bar, key) in barcodeDetails.record" :key="bar.denom_id">
+                                    <template #tab>
+                                        <span>
+                                            <apple-outlined />
+                                            {{ key }}
+                                        </span>
+                                    </template>
+                                    <a-table :loading="isloading" bordered size="small" :data-source="bardet" :columns="[{
+                                        title: 'Barcode No',
+                                        dataIndex: 'barcode_no',
+                                    },
+                                    {
+                                        title: 'Denomination No',
+                                        dataIndex: 'denomination',
+                                    },
+                                    ]">
+                                    </a-table>
+                                </a-tab-pane>
+                            </a-tabs>
                         </a-tab-pane>
                     </a-tabs>
+                    <div v-if="activeKey === null && Object.keys(barcodeDetails.record).length !== 0  && statuskey === '2' ">
+                        <a-empty>
+                            <template #description>
+                                Please select Denomination above
+                                <ArrowUpOutlined />
+                            </template>
+                        </a-empty>
+                    </div>
+                    <div v-if="Object.keys(barcodeDetails.record).length === 0 && statuskey !== null">
+                        <a-empty>
+                            <template #description>
+                                Empty Denomination
+                            </template>
+                        </a-empty>
+                    </div>
                 </a-card>
             </a-modal>
 
@@ -73,29 +142,75 @@
 
 <script setup>
 import axios from 'axios';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const props = defineProps({
-    data: Array,
+    data: Object,
     id: Number
 });
 
 const bopen = ref(false);
-const activeKey = ref('1');
+const activeKey = ref(null);
+const statuskey = ref('1');
 const barcodeDetails = ref([]);
+const bardet = ref([]);
+const isloading = ref(false);
 
 const barcode = async (id) => {
     try {
-
-        const { data } = await axios.get(route('custodian.production.barcode.details', props.id));
+        const { data } = await axios.get(route('custodian.production.barcode.details', props.id), {
+            params: {
+                status: '',
+            }
+        });
         bopen.value = true;
         barcodeDetails.value = data;
 
-    } catch {
+    } catch (error) {
+        console.error(error);
+    }
 
+}
+const handlebarcode = async (key) => {
+
+    let isKey = statuskey.value === '1' ? '' : '*';
+
+    isloading.value = true;
+
+    try {
+        const { data } = await axios.get(route('custodian.production.barcode.every', props.data.items.data[0].pe_items_request_id), {
+            params: {
+                key,
+                status: isKey,
+            }
+        });
+
+        bardet.value = data.record;
+        activeKey.value = key;
+        isloading.value = false;
+
+    } catch {
+        isloading.value = false;
     }
 }
-const handlebarcode = (key) => {
-    alert(key)
+
+const valStatus = async (key) => {
+
+    let isKey = key === '1' ? '' : '*';
+
+    try {
+        const { data } = await axios.get(route('custodian.production.barcode.details', props.id), {
+            params: {
+                status: isKey,
+            }
+        });
+        bopen.value = true;
+        barcodeDetails.value = data;
+
+    } catch (error) {
+        console.error(error);
+    }
 }
+
+
 </script>

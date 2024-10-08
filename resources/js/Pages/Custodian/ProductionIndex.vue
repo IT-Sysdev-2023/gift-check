@@ -8,13 +8,15 @@
                             <template #icon>
                                 <ArrowsAltOutlined />
                             </template>
-                            View
+                            View Details
                         </a-button>
                     </template>
                 </template>
             </a-table>
         </a-card>
+
         <production-approved-modal :id="peId" :width="1300" style="top: 40px" v-model:open="open" :data="details"/>
+
     </AuthenticatedLayout>
 </template>
 <script setup>
@@ -37,8 +39,6 @@ const view = async (id) => {
         open.value = true;
         peId.value = id;
         details.value = data;
-
-
     } catch (error) {
 
     }

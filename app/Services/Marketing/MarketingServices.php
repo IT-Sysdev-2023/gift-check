@@ -7,12 +7,14 @@ use App\Models\CancelledProductionRequest;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcRequest;
+use App\Models\SpecialExternalGcrequest;
 use App\Models\Supplier;
 use App\Models\UserDetails;
 use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MarketingServices extends FileHandler
@@ -181,7 +183,7 @@ class MarketingServices extends FileHandler
                 $item->DateApproved = Date::parse($item->ape_approved_at)->format('Y-F-d');
                 $item->aprrovedPreparedBy = ucwords($item->fapproved . ' ' . $item->lapproved);
                 $item->RequestPreparedby = ucwords($item->frequest . ' ' . $item->lrequest);
-    
+
                 return $item;
             })->first();
         }
@@ -374,6 +376,73 @@ class MarketingServices extends FileHandler
                 }
             }
         }
+    }
+
+    public function countspecialgc()
+    {
+        $e = SpecialExternalGcrequest::join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_gcrequest_items', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_items.specit_trid')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->where('special_external_gcrequest.spexgc_status', 'pending')
+            ->where('spexgc_addemp', 'pending')
+            ->where('special_external_gcrequest.spexgc_promo', '0')
+            ->orderBy('special_external_gcrequest.spexgc_id', 'ASC')
+            ->get();
+
+        $i = SpecialExternalGcrequest::join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_gcrequest_items', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_items.specit_trid')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->where('special_external_gcrequest.spexgc_status', 'pending')
+            ->where('spexgc_addemp', 'pending')
+            ->where('special_external_gcrequest.spexgc_promo', '*')
+            ->orderBy('special_external_gcrequest.spexgc_id', 'ASC')
+            ->get();
+
+        $transformItem = function ($item) {
+            $item->dateNeed = Date::parse($item->spexgc_dateneed)->format('F d Y');
+            $item->dateReq = Date::parse($item->spexgc_datereq)->format('F d Y');
+            $item->totalDenom = number_format($item->specit_denoms * $item->specit_qty, 2);
+            $item->requestedBy = ucwords($item->firstname . ' ' . $item->lastname);
+            return $item;
+        };
+
+        $i->transform($transformItem);
+        $e->transform($transformItem);
+
+
+        $pending = [
+            'internal' => $i,
+            'external' => $e,
+        ];
+
+        $approve = SpecialExternalGcrequest::select(
+            'special_external_gcrequest.spexgc_id',
+            'special_external_gcrequest.spexgc_num',
+            'special_external_gcrequest.spexgc_datereq',
+            'special_external_gcrequest.spexgc_dateneed',
+            'approved_request.reqap_approvedby',
+            'approved_request.reqap_date',
+            'special_external_customer.spcus_acctname',
+            'special_external_customer.spcus_companyname'
+        )
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->leftJoin('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->where('special_external_gcrequest.spexgc_status', 'approved')
+            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->get();
+
+            
+        $cancelled = SpecialExternalGcrequest::where('spexgc_status', 'cancelled')->count();
+
+        $spgc = [
+            'pendingcount' => $pending['internal']->count() + $pending['external']->count(),
+            'pending' => $pending,
+            'approved' => $approve,
+            'cancelled' => $cancelled
+
+        ];
+        return $spgc;
+
     }
 
 

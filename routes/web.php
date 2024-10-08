@@ -188,6 +188,9 @@ Route::prefix('marketing')->group(function () {
             Route::get('cancelled-production-request', [MarketingController::class, 'cancelledProductionRequest'])->name('production.request');
             Route::get('view-cancelled-production-request', [MarketingController::class, 'ViewcancelledProductionRequest'])->name('view.cancelled.request');
         });
+        Route::name('special-gc.')->group(function (){
+            Route::get('pending',[MarketingController::class, 'pendingspgclist'])->name('pending');
+        });
     });
 });
 
@@ -475,6 +478,7 @@ Route::prefix('custodian')->group(function () {
             Route::get('production', [CustodianController::class, 'productionIndex'])->name('index');
             Route::get('production-details-{id}', [CustodianController::class, 'productionApprovedDetails'])->name('details');
             Route::get('barcode-details-{id}', [CustodianController::class, 'barcodeApprovedDetails'])->name('barcode.details');
+            Route::get('barcode-every-{id}', [CustodianController::class, 'getEveryBarcode'])->name('barcode.every');
         });
         Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
         Route::post('upload', [CustodianController::class, 'upload'])->name('upload');
