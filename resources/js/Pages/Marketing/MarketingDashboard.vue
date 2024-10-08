@@ -1,16 +1,35 @@
 <template>
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
-            <PromoGcReq class="mb-2" :countPromoGcRequest />
-            <GcProductionReq :gcProductionRequest />
+            <m-card
+            title="Promo GC Request"
+            :pending="countPromoGcRequest.pendingRequest"
+            :approved="countPromoGcRequest.approvedRequest"
+            :cancelled="countPromoGcRequest.cancelledRequest"
+            pRoute="marketing.promoGcRequest.pending.list"
+            aRoute="marketing.promoGcRequest.approved.list"
+            cRoute="marketing.promoGcRequest.cancelled.list"
+            />
+            <m-card
+            title="GC Production Request"
+            :pending="gcProductionRequest.pendingRequest"
+            :approved="gcProductionRequest.approvedRequest "
+            :cancelled="gcProductionRequest.cancelledRequest"
+            pRoute="marketing.pendingRequest.pending.request"
+            aRoute="marketing.approvedRequest.approved.request"
+            cRoute="marketing.cancelled.production.request"
+            />
         </a-col>
         <a-col :span="8">
             <!-- <special-external-gc /> -->
              <m-card 
                 title="Special External GC Request" 
-                :pending = specialgcount
-                pendingRoute="marketing.dashboard"
-
+                :pending = specialGcpending
+                :approved = specialApproved
+                :cancelled = specialgcount.cancelled
+                pRoute=""
+                aRoute=""
+                cRoute=""
              />
         </a-col>
         <a-col :span="8">
@@ -156,11 +175,13 @@ export default {
         columns: Object,
         gcProductionRequest: Object,
         countPromoGcRequest: Object,
-        specialgcount:Number
+        specialgcount:Object
     },
 
     data() {
         return {
+            specialGcpending: this.specialgcount.pendingcount,
+            specialApproved: this.specialgcount.approved.length,
             stream: null,
             openIframe: false,
             requestListModal: false,

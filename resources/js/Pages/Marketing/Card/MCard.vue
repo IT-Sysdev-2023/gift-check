@@ -1,17 +1,22 @@
 <template>
     <a-card :title="title">
-        <a-badge :count="1">
-            <a-button style="width: 340px; margin-top: 13px ;" type="primary" @click="() => $inertia.get(route(pendingRoute))" danger>
+        <a-badge :count="pending" class="mb-2">
+            <a-button style="width: 340px;" :overflow-count="Infinity" type="primary" :disabled="pending === 0"
+                @click="() => $inertia.get(route(pRoute))" danger>
                 Pending
             </a-button>
         </a-badge>
-        <a-badge :count="5" :number-style="{ backgroundColor: '#1677ff' }">
-            <a-button style="width: 340px; margin-top: 13px ;" type="primary" @click="() => $inertia.get(route(approvedRoute))">
+
+        <a-badge class="mb-2" :count="approved" :overflow-count="Infinity"
+            :number-style="{ backgroundColor: '#1677ff' }">
+            <a-button :disabled="approved === 0" style="width: 340px;  ;" type="primary" @click="() => $inertia.get(route(aRoute))">
                 Approved
             </a-button>
         </a-badge>
-        <a-badge :count="5" :number-style="{ backgroundColor: '#111827' }">
-            <a-button style="width: 340px; margin-top: 13px ;" @click="() => $inertia.get(route(cancelRoute))" class="bg-gray-900 text-white">
+        <a-badge class="mb-2" :count="cancelled" :overflow-count="Infinity"
+            :number-style="{ backgroundColor: '#111827' }">
+            <a-button :disabled="cancelled === 0" style="width: 340px;  ;" @click="() => $inertia.get(route(cRoute))"
+                class="bg-gray-900 text-white">
                 Cancelled
             </a-button>
         </a-badge>
@@ -25,9 +30,9 @@ export default {
         pending: Number,
         approved: Number,
         cancelled: Number,
-        pendingRoute: String,
-        approvedRoute: String,
-        cancelRoute: String
+        pRoute: String,
+        aRoute: String,
+        cRoute: String
     }
 }
 </script>

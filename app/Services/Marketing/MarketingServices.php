@@ -413,10 +413,34 @@ class MarketingServices extends FileHandler
             ->where('special_external_gcrequest.spexgc_promo', '*')
             ->orderBy('special_external_gcrequest.spexgc_id', 'ASC')
             ->get();
-
-        $spgc =[
+        $pending = [
             'internal' => $i,
             'external' => $e,
+        ];
+
+        $approve = SpecialExternalGcrequest::select(
+            'special_external_gcrequest.spexgc_id',
+            'special_external_gcrequest.spexgc_num',
+            'special_external_gcrequest.spexgc_datereq',
+            'special_external_gcrequest.spexgc_dateneed',
+            'approved_request.reqap_approvedby',
+            'approved_request.reqap_date',
+            'special_external_customer.spcus_acctname',
+            'special_external_customer.spcus_companyname'
+        )
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->leftJoin('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->where('special_external_gcrequest.spexgc_status', 'approved')
+            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->get();
+        $cancelled=SpecialExternalGcrequest::where('spexgc_status','cancelled')->count();
+
+        $spgc = [
+            'pendingcount' => $pending['internal']->count() + $pending['external']->count(),
+            'pending' => $pending,
+            'approved' => $approve,
+            'cancelled' => $cancelled
+
         ];
         return $spgc;
 

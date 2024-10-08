@@ -111,7 +111,7 @@ class MarketingController extends Controller
         $getRequestNo = sprintf('%04d', $getRequestNo);
 
         if ($request->user()->user_role == 1) {
-            $dashboard = 'CheckerDashboard';
+            $dashboard = 'ManagerDashboard';
         } elseif ($request->user()->user_role == 0) {
             $dashboard = 'MarketingDashboard';
         }
@@ -125,7 +125,7 @@ class MarketingController extends Controller
             'columns' => ColumnHelper::getColumns($columns),
             'gcProductionRequest' => $gcProductionRequest,
             'countPromoGcRequest' => $promoGcRequest,
-            'specialgcount' => $specialGc['external']->count() + $specialGc['internal']->count()
+            'specialgcount' => $specialGc
         ]);
     }
     public function promoList(Request $request)
