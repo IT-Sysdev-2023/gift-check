@@ -102,40 +102,40 @@ const currentActiveMenu = [route().current().split(".")[1]];
                     </span>
                 </template>
                 <a-menu-item key="amall">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.alturas.mall')">Alturas Mall</Link>
+                    <Link :href="route('marketing.verifiedgc.alturas.mall')">Alturas Mall</Link>
                 </a-menu-item>
                 <a-menu-item key="atalibon">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.alturas.talibon')">Alturas Talibon</Link>
+                    <Link :href="route('marketing.verifiedgc.alturas.talibon')">Alturas Talibon</Link>
                 </a-menu-item>
                 <a-menu-item key="icm">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.island.city.mall')">Island City Mall</Link>
+                    <Link :href="route('marketing.verifiedgc.island.city.mall')">Island City Mall</Link>
                 </a-menu-item>
                 <a-menu-item key="pm">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.plaza.marcela')">Plaza Marcela</Link>
+                    <Link :href="route('marketing.verifiedgc.plaza.marcela')">Plaza Marcela</Link>
                 </a-menu-item>
                 <a-menu-item key="atubigon">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.alturas.tubigon')">Alturas Tubigon</Link>
+                    <Link :href="route('marketing.verifiedgc.alturas.tubigon')">Alturas Tubigon</Link>
                 </a-menu-item>
                 <a-menu-item key="cc">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.colonade.colon')">Colonade Colon</Link>
+                    <Link :href="route('marketing.verifiedgc.colonade.colon')">Colonade Colon</Link>
                 </a-menu-item>
                 <a-menu-item key="cm">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.colonade.mandaue')">Colonade Mandaue</Link>
+                    <Link :href="route('marketing.verifiedgc.colonade.mandaue')">Colonade Mandaue</Link>
                 </a-menu-item>
                 <a-menu-item key="ac">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.alta.cita')">Alta Citta</Link>
+                    <Link :href="route('marketing.verifiedgc.alta.cita')">Alta Citta</Link>
                 </a-menu-item>
                 <a-menu-item key="fm">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.farmers.market')">Farmers Market</Link>
+                    <Link :href="route('marketing.verifiedgc.farmers.market')">Farmers Market</Link>
                 </a-menu-item>
                 <a-menu-item key="udc">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.udc')">Ubay Distribution Center</Link>
+                    <Link :href="route('marketing.verifiedgc.udc')">Ubay Distribution Center</Link>
                 </a-menu-item>
                 <a-menu-item key="screenville">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.screenville')">Screenville</Link>
+                    <Link :href="route('marketing.verifiedgc.screenville')">Screenville</Link>
                 </a-menu-item>
                 <a-menu-item key="asct">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.asctech')">Asc Tech</Link>
+                    <Link :href="route('marketing.verifiedgc.asctech')">Asc Tech</Link>
                 </a-menu-item>
             </a-sub-menu>
         </a-menu>
@@ -221,40 +221,40 @@ const currentActiveMenu = [route().current().split(".")[1]];
                     </span>
                 </template>
                 <a-menu-item key="amall">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.alturas.mall')">Alturas Mall</Link>
+                    <Link :href="route('marketing.verifiedgc.alturas.mall')">Alturas Mall</Link>
                 </a-menu-item>
                 <a-menu-item key="atalibon">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.alturas.talibon')">Alturas Talibon</Link>
+                    <Link :href="route('marketing.verifiedgc.alturas.talibon')">Alturas Talibon</Link>
                 </a-menu-item>
                 <a-menu-item key="icm">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.island.city.mall')">Island City Mall</Link>
+                    <Link :href="route('marketing.verifiedgc.island.city.mall')">Island City Mall</Link>
                 </a-menu-item>
                 <a-menu-item key="pm">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.plaza.marcela')">Plaza Marcela</Link>
+                    <Link :href="route('marketing.verifiedgc.plaza.marcela')">Plaza Marcela</Link>
                 </a-menu-item>
                 <a-menu-item key="atubigon">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.alturas.tubigon')">Alturas Tubigon</Link>
+                    <Link :href="route('marketing.verifiedgc.alturas.tubigon')">Alturas Tubigon</Link>
                 </a-menu-item>
                 <a-menu-item key="cc">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.colonade.colon')">Colonade Colon</Link>
+                    <Link :href="route('marketing.verifiedgc.colonade.colon')">Colonade Colon</Link>
                 </a-menu-item>
                 <a-menu-item key="cm">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.colonade.mandaue')">Colonade Mandaue</Link>
+                    <Link :href="route('marketing.verifiedgc.colonade.mandaue')">Colonade Mandaue</Link>
                 </a-menu-item>
                 <a-menu-item key="ac">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.alta.cita')">Alta Citta</Link>
+                    <Link :href="route('marketing.verifiedgc.alta.cita')">Alta Citta</Link>
                 </a-menu-item>
                 <a-menu-item key="fm">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.farmers.market')">Farmers Market</Link>
+                    <Link :href="route('marketing.verifiedgc.farmers.market')">Farmers Market</Link>
                 </a-menu-item>
                 <a-menu-item key="udc">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.udc')">Ubay Distribution Center</Link>
+                    <Link :href="route('marketing.verifiedgc.udc')">Ubay Distribution Center</Link>
                 </a-menu-item>
                 <a-menu-item key="screenville">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.screenville')">Screenville</Link>
+                    <Link :href="route('marketing.verifiedgc.screenville')">Screenville</Link>
                 </a-menu-item>
                 <a-menu-item key="asct">
-                    <Link :href="route('marketing.verifiedgc.verified.gc.asctech')">Asc Tech</Link>
+                    <Link :href="route('marketing.verifiedgc.asctech')">Asc Tech</Link>
                 </a-menu-item>
             </a-sub-menu>
         </a-menu>

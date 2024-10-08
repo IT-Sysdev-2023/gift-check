@@ -164,18 +164,18 @@ Route::prefix('marketing')->group(function () {
             Route::get('status-supplier', [MarketingController::class, 'statusSupplier'])->name('status.supplier');
         });
         Route::name('verifiedgc.')->group(function () {
-            Route::get('verified-gc-alturas-mall', [MarketingController::class, 'verifiedGc_Amall'])->name('verified.gc.alturas.mall');
-            Route::get('verified-gc-alturas-talibon', [MarketingController::class, 'verifiedGc_A_talibon'])->name('verified.gc.alturas.talibon');
-            Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('verified.gc.island.city.mall');
-            Route::get('verified-gc-plaza-marcela', [MarketingController::class, 'verifiedGc_plazaMarcela'])->name('verified.gc.plaza.marcela');
-            Route::get('verified-gc-alturas-tubigon', [MarketingController::class, 'verifiedGc_A_tubigon'])->name('verified.gc.alturas.tubigon');
-            Route::get('verified-gc-colonade-colon', [MarketingController::class, 'verifiedGc_colonadeColon'])->name('verified.gc.colonade.colon');
-            Route::get('verified-gc-colonade-mandaue', [MarketingController::class, 'verifiedGc_colonadeMandaue'])->name('verified.gc.colonade.mandaue');
-            Route::get('verified-gc-alta-cita', [MarketingController::class, 'verifiedGc_AltaCita'])->name('verified.gc.alta.cita');
-            Route::get('verified-gc-farmers-market', [MarketingController::class, 'verifiedGc_farmersMarket'])->name('verified.gc.farmers.market');
-            Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc'])->name('verified.gc.udc');
-            Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville'])->name('verified.gc.screenville');
-            Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech'])->name('verified.gc.asctech');
+            Route::get('verified-gc-alturas-mall', [MarketingController::class, 'verifiedGc_Amall'])->name('alturas.mall');
+            Route::get('verified-gc-alturas-talibon', [MarketingController::class, 'verifiedGc_A_talibon'])->name('alturas.talibon');
+            Route::get('verified-gc-icm', [MarketingController::class, 'verifiedGc_icm'])->name('island.city.mall');
+            Route::get('verified-gc-plaza-marcela', [MarketingController::class, 'verifiedGc_plazaMarcela'])->name('plaza.marcela');
+            Route::get('verified-gc-alturas-tubigon', [MarketingController::class, 'verifiedGc_A_tubigon'])->name('alturas.tubigon');
+            Route::get('verified-gc-colonade-colon', [MarketingController::class, 'verifiedGc_colonadeColon'])->name('colonade.colon');
+            Route::get('verified-gc-colonade-mandaue', [MarketingController::class, 'verifiedGc_colonadeMandaue'])->name('colonade.mandaue');
+            Route::get('verified-gc-alta-cita', [MarketingController::class, 'verifiedGc_AltaCita'])->name('alta.cita');
+            Route::get('verified-gc-farmers-market', [MarketingController::class, 'verifiedGc_farmersMarket'])->name('farmers.market');
+            Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc'])->name('udc');
+            Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville'])->name('screenville');
+            Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech'])->name('asctech');
         });
         Route::name('promostatus.')->group(function () {
             Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
