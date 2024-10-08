@@ -46,8 +46,8 @@ const { highlightText } = highlighten();
                     {{record.approvedRequest?.user.full_name}}
                 </template>
 
-                <template v-if="column.dataIndex === 'action'">
-                    <a-button type="primary" size="small" @click="viewRecord(record.id)">
+                <template v-if="column.key === 'action'">
+                    <a-button type="primary" size="small" @click="viewRecord(record.spexgc_id)">
                         <template #icon>
                             <FileSearchOutlined />
                         </template>
@@ -56,10 +56,6 @@ const { highlightText } = highlighten();
                 </template>
             </template>
         </a-table>
-        <a-modal v-model:open="showModal" width="1000px">
-
-            <Description :data="descriptionRecord" />
-        </a-modal>
 
         
         <pagination-resource class="mt-5" :datarecords="data" />
@@ -72,6 +68,7 @@ import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
 import ProgressBar from "@/Components/Finance/ProgressBar.vue";
+import { router } from "@inertiajs/core";
 
 export default {
     layout: AuthenticatedLayout,
@@ -110,15 +107,17 @@ export default {
         },
     },
     methods: {
-        async viewRecord($id) {
-            try {
-                const { data } = await axios.get(
-                    route("treasury.view.approved.budget.ledger", $id)
-                );
-                this.descriptionRecord = data;
-            } finally {
-                this.showModal = true;
-            }
+        async viewRecord(id) {
+            router.get(route('treasury.special.gc.viewReleasedGc', id));
+            // alert(id);
+            // try {
+            //     const { data } = await axios.get(
+            //         route("treasury.view.approved.budget.ledger", $id)
+            //     );
+            //     this.descriptionRecord = data;
+            // } finally {
+            //     this.showModal = true;
+            // }
         },
 
         start() {

@@ -616,5 +616,9 @@ class ColumnHelper
             'title' => 'Released By',
             'key' => 'releasedBy',
         ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
     ];
 }

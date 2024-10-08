@@ -242,12 +242,66 @@ class SpecialGcRequestController extends Controller
                 $q->with('user:user_id,firstname,lastname')->select('reqap_preparedby', 'reqap_trid', 'reqap_date')->where('reqap_approvedtype', 'special external releasing');
             })->where('spexgc_released', 'released')
             // ->limit(10)->get();
-        ->paginate()->withQueryString();
+            ->paginate()->withQueryString();
 
         return inertia('Treasury/Dashboard/SpecialGc/SpecialReleasedGc', [
+            'title' => 'Released Special External Gc',
             'filters' => $request->only(['date', 'search']),
-            'data' =>  SpecialExternalGcRequestResource::collection($record),
+            'data' => SpecialExternalGcRequestResource::collection($record),
             'columns' => ColumnHelper::$specialReleasedGc
+        ]);
+    }
+
+    public function viewReleasedGc(Request $request, SpecialExternalGcrequest $id)
+    {
+        // $table = 'special_external_gcrequest';
+        // $select = "special_external_gcrequest.spexgc_id,
+        //     special_external_gcrequest.spexgc_num,
+        //     CONCAT(req.firstname,' ',req.lastname) as reqby,
+        //     special_external_gcrequest.spexgc_datereq,
+        //     special_external_gcrequest.spexgc_dateneed,
+        //     special_external_gcrequest.spexgc_remarks,
+        //     special_external_gcrequest.spexgc_payment,
+        //     special_external_gcrequest.spexgc_paymentype,
+        //     special_external_gcrequest.spexgc_receviedby,
+        //     special_external_customer.spcus_acctname,
+        //     special_external_customer.spcus_companyname,
+        //     special_external_bank_payment_info.spexgcbi_bankname,
+        //     special_external_bank_payment_info.spexgcbi_bankaccountnum,
+        //     special_external_bank_payment_info.spexgcbi_checknumber,
+        //     approved_request.reqap_remarks,
+        //     approved_request.reqap_doc,
+        //     approved_request.reqap_checkedby,
+        //     approved_request.reqap_approvedby,
+        //     approved_request.reqap_preparedby,
+        //     approved_request.reqap_date,
+        //     CONCAT(prep.firstname,' ',prep.lastname) as prepby";
+        // $join = 'INNER JOIN
+        //         users as req
+        //     ON
+        //         req.user_id = special_external_gcrequest.spexgc_reqby
+        //     INNER JOIN
+        //         special_external_customer
+        //     ON
+        //         special_external_customer.spcus_id = special_external_gcrequest.spexgc_company  
+        //     LEFT JOIN
+        //         special_external_bank_payment_info
+        //     ON
+        //         special_external_bank_payment_info.spexgcbi_trid = special_external_gcrequest.spexgc_id
+        //     INNER JOIN
+        //         approved_request
+        //     ON
+        //         approved_request.reqap_trid = special_external_gcrequest.spexgc_id
+        //     INNER JOIN 
+        //         users as prep
+        //     ON
+        //         prep.user_id=approved_request.reqap_preparedby';
+        $data = $id->load('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalBankPaymentInfo', 'approvedRequest.user');
+
+        // $data = getSelectedData($link,$table,$select,$where,$join,$limit);
+        return inertia('Treasury/Dashboard/SpecialGc/Components/SpecialReleasedGcViewing', [
+            'record' => new SpecialExternalGcRequestResource($data),
+            'title' => 'Viewing Special External Gc Request'
         ]);
     }
     private function options()

@@ -257,6 +257,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class,'relasingInternalSubmission'])->name('internalSubmission');
 
                 Route::get('released-gc', [SpecialGcRequestController::class,'releasedGc'])->name('specialReleasedGc');
+                Route::get('view-released-gc-{id}', [SpecialGcRequestController::class,'viewReleasedGc'])->name('viewReleasedGc');
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
 

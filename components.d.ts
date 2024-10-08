@@ -373,6 +373,7 @@ declare module 'vue' {
     SpecialGcTable: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGcTable.vue')['default']
     SpecialPendingRequestFinance: typeof import('./resources/js/Pages/Finance/Cards/SpecialPendingRequestFinance.vue')['default']
     SpecialReleasedGc: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGc/SpecialReleasedGc.vue')['default']
+    SpecialReleasedGcViewing: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGc/Components/SpecialReleasedGcViewing.vue')['default']
     SpgcLedger: typeof import('./resources/js/Pages/Finance/SpgcLedger.vue')['default']
     SpgcLedgerResult: typeof import('./resources/js/Pages/Finance/Results/SpgcLedgerResult.vue')['default']
     Statistics: typeof import('./resources/js/Pages/Custodian/Partials/Statistics.vue')['default']
