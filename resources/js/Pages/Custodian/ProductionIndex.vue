@@ -8,15 +8,14 @@
                             <template #icon>
                                 <ArrowsAltOutlined />
                             </template>
-                            View
+                            View Details
                         </a-button>
                     </template>
                 </template>
             </a-table>
         </a-card>
-        
-        <production-approved-modal :id="peId" :width="1300" style="top: 40px" v-model:open="open" :data="details"/>
 
+        <production-approved-modal :id="peId" :width="1300" style="top: 40px" v-model:open="open" :data="details"/>
 
     </AuthenticatedLayout>
 </template>

@@ -471,12 +471,12 @@ class CustodianServices
             ->first();
     }
 
-    public function getBarcodeApprovedDetails($id)
+    public function getBarcodeApprovedDetails($request, $id)
     {
         $data = Gc::select('denomination.denomination', 'gc.denom_id')
             ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
             ->where('pe_entry_gc', $id)
-            ->where('gc_validated', '')
+            ->where('gc_validated', $request->status === null ? '': $request->status)
             ->get()
             ->groupBy('denomination');
 
@@ -493,9 +493,10 @@ class CustodianServices
 
     public function getEveryBarcodeDetails($request, $id)
     {
+
         $data =  Gc::select('denomination.denomination', 'barcode_no', 'gc.denom_id')
             ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-            ->where('gc_validated', '')
+            ->where('gc_validated', $request->status === null ? '': $request->status)
             ->where('gc.denom_id', $request->key)
             ->where('pe_entry_gc', $id)
             ->get();
