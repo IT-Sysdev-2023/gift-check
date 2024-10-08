@@ -380,16 +380,8 @@ class MarketingServices extends FileHandler
 
     public function countspecialgc()
     {
-        $e = SpecialExternalGcrequest::select([
-            'special_external_gcrequest.spexgc_num',
-            'special_external_gcrequest.spexgc_dateneed',
-            'special_external_gcrequest.spexgc_id',
-            'special_external_gcrequest.spexgc_datereq',
-            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as prep"),
-            'special_external_customer.spcus_acctname',
-            'special_external_customer.spcus_companyname'
-        ])
-            ->join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+        $e = SpecialExternalGcrequest::join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_gcrequest_items', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_items.specit_trid')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
             ->where('special_external_gcrequest.spexgc_status', 'pending')
             ->where('spexgc_addemp', 'pending')
@@ -397,22 +389,27 @@ class MarketingServices extends FileHandler
             ->orderBy('special_external_gcrequest.spexgc_id', 'ASC')
             ->get();
 
-        $i = SpecialExternalGcrequest::select([
-            'special_external_gcrequest.spexgc_num',
-            'special_external_gcrequest.spexgc_dateneed',
-            'special_external_gcrequest.spexgc_id',
-            'special_external_gcrequest.spexgc_datereq',
-            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as prep"),
-            'special_external_customer.spcus_acctname',
-            'special_external_customer.spcus_companyname'
-        ])
-            ->join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+        $i = SpecialExternalGcrequest::join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_gcrequest_items', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_items.specit_trid')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
             ->where('special_external_gcrequest.spexgc_status', 'pending')
             ->where('spexgc_addemp', 'pending')
             ->where('special_external_gcrequest.spexgc_promo', '*')
             ->orderBy('special_external_gcrequest.spexgc_id', 'ASC')
             ->get();
+
+        $transformItem = function ($item) {
+            $item->dateNeed = Date::parse($item->spexgc_dateneed)->format('F d Y');
+            $item->dateReq = Date::parse($item->spexgc_datereq)->format('F d Y');
+            $item->totalDenom = number_format($item->specit_denoms * $item->specit_qty, 2);
+            $item->requestedBy = ucwords($item->firstname . ' ' . $item->lastname);
+            return $item;
+        };
+
+        $i->transform($transformItem);
+        $e->transform($transformItem);
+
+
         $pending = [
             'internal' => $i,
             'external' => $e,
@@ -433,7 +430,9 @@ class MarketingServices extends FileHandler
             ->where('special_external_gcrequest.spexgc_status', 'approved')
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
             ->get();
-        $cancelled=SpecialExternalGcrequest::where('spexgc_status','cancelled')->count();
+
+            
+        $cancelled = SpecialExternalGcrequest::where('spexgc_status', 'cancelled')->count();
 
         $spgc = [
             'pendingcount' => $pending['internal']->count() + $pending['external']->count(),

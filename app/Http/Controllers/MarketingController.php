@@ -1875,4 +1875,16 @@ class MarketingController extends Controller
             'data' => $data
         ]);
     }
+
+    public function pendingspgclist()
+    {
+        $pending = $this->marketing->countspecialgc();
+        $internal = $pending['pending']['internal'];
+        $external = $pending['pending']['external'];
+
+        return inertia('Marketing/specialgc/Pending', [
+            'internal' => $internal,
+            'external' => $external
+        ]);
+    }
 }

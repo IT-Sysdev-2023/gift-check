@@ -294,7 +294,6 @@ class FinanceController extends Controller
 
     public function SpecialGcApprovalSubmit(Request $request)
     {
-
         $id = $request->formData['id'];
         $totalDenom = $request->data[0]['total'];
         $reqType = SpecialExternalGcrequest::select('spexgc_type')->where('spexgc_id', $id)->first();
@@ -302,9 +301,6 @@ class FinanceController extends Controller
         $currentbudget = LedgerBudget::whereNull('bledger_category')->get();
         $debit = $currentbudget->sum('bdebit_amt');
         $credit = $currentbudget->sum('bcredit_amt');
-
-        dd($debit - $credit);
-
         $customer = SpecialExternalGcrequest::select('spexgc_company')->where('spexgc_id', $id)->get();
         $ledgerBudgetNum = LedgerBudget::select('bledger_no')->orderByDesc('bledger_id')->first();
         $nextLedgerBudgetNum = (int) $ledgerBudgetNum->bledger_no + 1;
