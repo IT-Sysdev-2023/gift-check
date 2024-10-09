@@ -253,28 +253,35 @@ class FinanceController extends Controller
             $budget = $currentBudget->total_debit - $currentBudget->total_credit;
         }
 
-
-
-        $checkedBy = Assignatory::where('assig_dept', $request->user()->usertype)
-            ->orWhere('assig_dept', 1)
-            ->get();
-
-        $query = SpecialExternalGcRequest::join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+        $query = SpecialExternalGcRequest::join('users as preparedby', 'preparedby.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('users as checker', 'checker.user_id', '=', 'special_external_gcrequest.spexgc_addempaddby')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
-            ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
+            ->join('access_page', 'access_page.access_no', '=', 'preparedby.usertype')
             ->where('special_external_gcrequest.spexgc_status', 'pending')
             ->where('special_external_gcrequest.spexgc_id', $id)
+            ->select(
+                'special_external_gcrequest.*',
+                'preparedby.firstname as preparedby_firstname',
+                'preparedby.lastname as preparedby_lastname',
+                'checker.firstname as checker_first',
+                'checker.lastname as checker_lastname',
+                'special_external_customer.*',
+                'access_page.*'
+            )
             ->get();
+
+
+
         $query->transform(function ($item) {
             $item->specialExternalGcrequestItemsHasMany->each(function ($subitem) {
 
                 $subitem->subtotal = (float) $subitem->specit_denoms * (float) $subitem->specit_qty;
                 return $subitem;
             });
-
             $item->total = $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
 
-            $item->fullname = ucwords($item->firstname . ' ' . $item->lastname);
+            $item->prepby = ucwords($item->preparedby_firstname . ' ' . $item->preparedby_lastname);
+            $item->checkby = ucwords($item->checker_first . ' ' . $item->checker_lastname);
             $item->dateRequeted = Date::parse($item->spexgc_datereq)->format('Y-F-d');
             $item->dateNeed = Date::parse($item->spexgc_dateneed)->format('Y-F-d');
 
@@ -285,7 +292,6 @@ class FinanceController extends Controller
         return Inertia::render('Finance/SpecialGcApprovalForm', [
             'data' => $query,
             'type' => $gcType,
-            'checkedBy' => $checkedBy,
             'currentBudget' => $budget,
             'gcHolder' => $gcHolder,
             'columns' => ColumnHelper::getColumns($columns),
@@ -297,7 +303,6 @@ class FinanceController extends Controller
         $id = $request->formData['id'];
         $totalDenom = $request->data[0]['total'];
         $reqType = SpecialExternalGcrequest::select('spexgc_type')->where('spexgc_id', $id)->first();
-        // $currentbudget = intval($request->currentBudget);
         $currentbudget = LedgerBudget::whereNull('bledger_category')->get();
         $debit = $currentbudget->sum('bdebit_amt');
         $credit = $currentbudget->sum('bcredit_amt');
