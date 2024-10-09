@@ -21,7 +21,7 @@ class IadSpecialExternalService
         return SpecialExternalGcrequest::with(
             'user:user_id,firstname,lastname',
             'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
-            'hasManySpecialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty'
+            'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty'
         )
             ->select(
                 'spexgc_company',
@@ -45,7 +45,7 @@ class IadSpecialExternalService
             'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
             'approvedRequest:reqap_id,reqap_trid,reqap_preparedby,reqap_date,reqap_remarks,reqap_doc,reqap_checkedby,reqap_approvedby',
             'approvedRequest.user:user_id,firstname,lastname',
-            'hasManySpecialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty',
+            'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty',
             'document:doc_id,doc_trid,doc_fullpath,doc_type'
         );
     }

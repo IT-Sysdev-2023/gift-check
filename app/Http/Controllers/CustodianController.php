@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Models\Gc;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Custodian\CustodianServices;
 use App\Services\Custodian\ReprintPdf;
@@ -56,7 +57,6 @@ class CustodianController extends Controller
             'columns' => ColumnHelper::$special_gc_request_holder,
             'activeKey' => $request->activeKey ?? '1',
         ]);
-        
     }
     public function pendingHolderSetup(Request $request)
     {
@@ -68,11 +68,11 @@ class CustodianController extends Controller
     {
         return  $this->custodianservices->submitSpecialExternalGc($request);
     }
-    public function approvedGcRequest()
+    public function approvedGcRequest(Request $request)
     {
         return inertia('Custodian/ApprovedGcRequest', [
             'columns' => ColumnHelper::$approved_gc_column,
-            'record' => $this->custodianservices->approvedGcList()
+            'record' => $this->custodianservices->approvedGcList($request)
         ]);
     }
     public function setupApproval(Request $request)
@@ -110,7 +110,6 @@ class CustodianController extends Controller
             return inertia('Custodian/Result/GiftCheckGenerateResult', [
                 'record' =>  $this->custodianservices->getSpecialExternalGcRequest($request),
             ]);
-
         } else {
 
             return back()->with([
@@ -118,7 +117,6 @@ class CustodianController extends Controller
                 'msg' => 'Ops Barcode Not Found',
                 'title' => 'Error',
             ]);
-
         }
     }
 
@@ -135,7 +133,24 @@ class CustodianController extends Controller
     public function upload(Request $request)
     {
 
-      return $this->custodianservices->upload($request);
-
+        return $this->custodianservices->upload($request);
+    }
+    public function productionIndex()
+    {
+        return inertia('Custodian/ProductionIndex', [
+            'record' => $this->custodianservices->getProductionApproved(),
+            'column' => ColumnHelper::$production_approved_column
+        ]);
+    }
+    public function productionApprovedDetails($id)
+    {
+        return $this->custodianservices->getApprovedDetails($id);
+    }
+    public function barcodeApprovedDetails(Request $request, $id)
+    {
+        return $this->custodianservices->getBarcodeApprovedDetails($request, $id);
+    }
+    public function getEveryBarcode(Request $request, $id){
+        return $this->custodianservices->getEveryBarcodeDetails($request,$id);
     }
 }

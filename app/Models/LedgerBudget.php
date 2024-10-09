@@ -63,7 +63,9 @@ class LedgerBudget extends Model
     public static function budget()
     {
         $query = self::select(DB::raw('SUM(bdebit_amt) as debit'), DB::raw('SUM(bcredit_amt) as credit'))
-            ->whereNot('bcus_guide', 'dti')->first();
+            ->whereNot('bcus_guide', 'dti')
+            ->whereNull('bledger_category')
+            ->first();
 
         return bcsub($query->debit, $query->credit, 2);
     }

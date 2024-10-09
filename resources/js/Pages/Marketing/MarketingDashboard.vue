@@ -1,12 +1,37 @@
 <template>
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
-            <PromoGcReq class="mb-2" :countPromoGcRequest />
-            <GcProductionReq :gcProductionRequest />
+            <m-card
+            title="Promo GC Request"
+            :pending="countPromoGcRequest.pendingRequest"
+            :approved="countPromoGcRequest.approvedRequest"
+            :cancelled="countPromoGcRequest.cancelledRequest"
+            pRoute="marketing.promoGcRequest.pending.list"
+            aRoute="marketing.promoGcRequest.approved.list"
+            cRoute="marketing.promoGcRequest.cancelled.list"
+            />
+            <m-card class="mt-5"
+            title="GC Production Request"
+            :pending="gcProductionRequest.pendingRequest"
+            :approved="gcProductionRequest.approvedRequest "
+            :cancelled="gcProductionRequest.cancelledRequest"
+            pRoute="marketing.pendingRequest.pending.request"
+            aRoute="marketing.approvedRequest.approved.request"
+            cRoute="marketing.cancelled.production.request"
+            />
         </a-col>
         <a-col :span="8">
-            <!-- <SpecialExternalGc />
-            <PromoGcReceived /> -->
+            <!-- <special-external-gc /> -->
+             <m-card 
+                title="Special External GC Request" 
+                :pending = specialGcpending
+                pextension ='GC Holder Entry'
+                :approved = specialApproved
+                :cancelled = specialgcount.cancelled
+                pRoute="marketing.special-gc.pending"
+                aRoute=""
+                cRoute=""
+             />
         </a-col>
         <a-col :span="8">
             <div class="mb-2">
@@ -150,11 +175,14 @@ export default {
         productionReqItems: Object,
         columns: Object,
         gcProductionRequest: Object,
-        countPromoGcRequest: Object
+        countPromoGcRequest: Object,
+        specialgcount:Object
     },
 
     data() {
         return {
+            specialGcpending: this.specialgcount.pendingcount,
+            specialApproved: this.specialgcount.approved.length,
             stream: null,
             openIframe: false,
             requestListModal: false,
@@ -210,7 +238,7 @@ export default {
                 }
             }).then(e => {
                 console.log(e.data.response.approvedById);
-                this.form.approvedBy =e.data.response.approvedBy.employee_name
+                this.form.approvedBy = e.data.response.approvedBy.employee_name
                 this.form.approvedById = e.data.response.approvedById
             });
 

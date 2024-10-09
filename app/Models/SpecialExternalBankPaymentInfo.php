@@ -12,4 +12,6 @@ class SpecialExternalBankPaymentInfo extends Model
     protected $table= 'special_external_bank_payment_info';
 
     protected $primaryKey= 'spexgcbi_trid';
+    public $timestamps = false;
+    protected $guarded = [];
 }

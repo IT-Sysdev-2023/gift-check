@@ -7,7 +7,6 @@
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ titleGc }}</a-breadcrumb-item>
         </a-breadcrumb>
-        
 
         <a-card :title="'Submit ' + titleGc" class="mt-10">
             <template #extra>
@@ -144,6 +143,9 @@ import type { SelectProps } from "ant-design-vue";
 import { PageWithSharedProps } from "@/../../resources/js/types/index";
 import { onProgress } from "@/../../resources/js/Mixin/UiUtilities";
 import type { UploadProps } from "ant-design-vue";
+import { createVNode } from "vue";
+import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
+import { Modal } from "ant-design-vue";
 interface FormStateGc {
     trans: string;
     file: UploadProps["fileList"];
@@ -228,27 +230,44 @@ const handleCustomerChange = (value: string, acc) => {
 };
 
 const onSubmit = () => {
-    formState
-        .transform((data) => ({
-            ...data,
-            dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
-            denomination: data.denomination.filter(
-                (item) => item.denomination !== 0 && item.qty !== 0
-            ),
-            file: data.file.map((item) => item.originFileObj),
-            total: data.denomination.reduce((acc, item) => {
-                return acc + item.denomination * item.qty;
-            }, 0),
-        }))
-        .post(route("treasury.transactions.special.paymentSubmission"), {
-            onSuccess: ({ props }) => {
-                openLeftNotification(props.flash);
-                if (props.flash.success) {
-                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
-                    openIframe.value = true;
-                }
-            },
-        });
+    const t = formState.switchGc ? "INTERNAL " : "EXTERNAL ";
+    Modal.confirm({
+        title: "Confirm your Action!",
+        icon: createVNode(ExclamationCircleOutlined),
+        content: "You selected SPECIAL "+ t + 'GC',
+        okText: "Yes",
+        okType: "danger",
+        cancelText: "No",
+        onOk() {
+            formState
+                .transform((data) => ({
+                    ...data,
+                    dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
+                    denomination: data.denomination.filter(
+                        (item) => item.denomination !== 0 && item.qty !== 0
+                    ),
+                    file: data.file.map((item) => item.originFileObj),
+                    total: data.denomination.reduce((acc, item) => {
+                        return acc + item.denomination * item.qty;
+                    }, 0),
+                }))
+                .post(
+                    route("treasury.transactions.special.paymentSubmission"),
+                    {
+                        onSuccess: ({ props }) => {
+                            openLeftNotification(props.flash);
+                            if (props.flash.success) {
+                                stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                                openIframe.value = true;
+                            }
+                        },
+                    }
+                );
+        },
+        onCancel() {
+            console.log("Cancel");
+        },
+    });
 };
 const routeToHome = () => {
     router.visit(route("treasury.dashboard"));

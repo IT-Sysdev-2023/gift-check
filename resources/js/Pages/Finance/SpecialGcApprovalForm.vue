@@ -231,6 +231,7 @@ export default {
         },
         submitForm() {
             this.$inertia.post(route('finance.pendingGc.approval.submit'), {
+                type: this.type,
                 data: this.data,
                 formData: this.form,
                 file: this.file,

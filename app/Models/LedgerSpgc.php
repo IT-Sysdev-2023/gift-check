@@ -11,7 +11,8 @@ class LedgerSpgc extends Model
 
     protected $table = 'ledger_spgc';
     protected $primaryKey = 'spgcledger_id';
-
+    protected $guarded = [];
+    public $timestamps = false;
     protected function casts(): array
     {
         return [

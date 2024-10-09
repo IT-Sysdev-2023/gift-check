@@ -4,7 +4,7 @@
             <special-external-gc-request :count="count"/>
         </a-col>
         <a-col :span="8">
-
+            <production-request />
         </a-col>
         <a-col :span="8">
 

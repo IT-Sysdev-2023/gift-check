@@ -21,7 +21,7 @@ class SpecialExternalGcRequestResource extends JsonResource
             'spexgc_type' => $this->spexgc_type,
             'spexgc_dateneed' => $this->spexgc_dateneed?->toFormattedDateString(),
             'spexgc_payment_arnum' => $this->spexgc_payment_arnum,
-            'spexgc_paymentype' => !is_null($this->spexgc_paymentype) ? $this->paymentType($this->spexgc_paymentype) : '',
+            'spexgc_paymentype' => !is_null($this->spexgc_paymentype) ? $this->spexgc_paymentype : '',
             'spexgc_id' => $this->spexgc_id,
             'spexgc_payment' => (float) $this->spexgc_payment,
             'spexgc_datereq' => $this->spexgc_datereq?->toDayDateTimeString(),
@@ -31,15 +31,12 @@ class SpecialExternalGcRequestResource extends JsonResource
                 return $q->accessPage?->title;
             }),
             'document' => $this->when($this->document->isNotEmpty(), function () {
-                return DocumentResource::collection($this->document);
+                return DocumentResource::collection(resource: $this->document);
             }),
             'specialExternalCustomer' => $this->whenLoaded('specialExternalCustomer'),
-            'specialExternalGcrequestItems' => $this->whenLoaded(
-                'specialExternalGcrequestItems',
-                fn($q) => (float) $q->specit_denoms * (float) $q->specit_qty
-            ),
-
-            'totalGcRequestItems' => $this->whenLoaded('hasManySpecialExternalGcrequestItems', function ($item) {
+            'specialExternalBankPaymentInfo' => $this->whenLoaded('specialExternalBankPaymentInfo'),
+            'specialExternalGcrequestItems' => $this->whenLoaded('specialExternalGcrequestItems', SpecialExternalGcrequestItemsResource::collection($this->specialExternalGcrequestItems)),
+            'totalGcRequestItems' => $this->whenLoaded('specialExternalGcrequestItems', function ($item) {
                 $denom = $item->map(function ($i) {
                     return (float) $i->specit_denoms * $i->specit_qty;
                 })->sum();
@@ -68,7 +65,7 @@ class SpecialExternalGcRequestResource extends JsonResource
     private function denomType()
     {
         if ($this->spexgc_type == 1) {
-            return $this->whenLoaded('hasManySpecialExternalGcrequestItems', function ($item) {
+            return $this->whenLoaded('specialExternalGcrequestItems', function ($item) {
                 $denom = $item->map(function ($i) {
                     return (float) $i->specit_denoms * $i->specit_qty;
                 })->sum();

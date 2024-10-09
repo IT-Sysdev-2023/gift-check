@@ -11,10 +11,13 @@
 
 Gif Check is a web application with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling.
 
+Looking For Maintainers
+-Batak mag code
+
 Requirements
 - Node js 18
 - Php 8.2
-- Lakas ng luob
+- Lakas ng luob mag code
 
 Setup
 - clone this repository

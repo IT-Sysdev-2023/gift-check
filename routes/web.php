@@ -188,6 +188,9 @@ Route::prefix('marketing')->group(function () {
             Route::get('cancelled-production-request', [MarketingController::class, 'cancelledProductionRequest'])->name('production.request');
             Route::get('view-cancelled-production-request', [MarketingController::class, 'ViewcancelledProductionRequest'])->name('view.cancelled.request');
         });
+        Route::name('special-gc.')->group(function (){
+            Route::get('pending',[MarketingController::class, 'pendingspgclist'])->name('pending');
+        });
     });
 });
 
@@ -247,9 +250,11 @@ Route::middleware(['auth'])->group(function () {
 
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
+
                 Route::get('reviewing-gc-internal', [SpecialGcRequestController::class,'releasingInternal'])->name('releasingInternal');
                 Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class,'viewReleasingInternal'])->name('viewReleasingInternal');
                 Route::get('view-denominations-{id}' , [SpecialGcRequestController::class,'viewDenomination'])->name('viewDenomination');
+                Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class,'relasingInternalSubmission'])->name('internalSubmission');
 
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {
@@ -467,6 +472,12 @@ Route::prefix('custodian')->group(function () {
 
         Route::name('check.')->group(function () {
             Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
+        });
+        Route::name('production.')->group(function () {
+            Route::get('production', [CustodianController::class, 'productionIndex'])->name('index');
+            Route::get('production-details-{id}', [CustodianController::class, 'productionApprovedDetails'])->name('details');
+            Route::get('barcode-details-{id}', [CustodianController::class, 'barcodeApprovedDetails'])->name('barcode.details');
+            Route::get('barcode-every-{id}', [CustodianController::class, 'getEveryBarcode'])->name('barcode.every');
         });
         Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
         Route::post('upload', [CustodianController::class, 'upload'])->name('upload');
