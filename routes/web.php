@@ -481,6 +481,7 @@ Route::prefix('custodian')->group(function () {
             Route::get('production-details-{id}', [CustodianController::class, 'productionApprovedDetails'])->name('details');
             Route::get('barcode-details-{id}', [CustodianController::class, 'barcodeApprovedDetails'])->name('barcode.details');
             Route::get('barcode-every-{id}', [CustodianController::class, 'getEveryBarcode'])->name('barcode.every');
+            Route::get('requisition-details-{id}', [CustodianController::class, 'getRequisitionDetails'])->name('requisition');
         });
         Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
         Route::post('upload', [CustodianController::class, 'upload'])->name('upload');
