@@ -1887,4 +1887,165 @@ class MarketingController extends Controller
             'external' => $external
         ]);
     }
+
+    public function pendingspgclistview(Request $request)
+    {
+
+        $data = $this->marketing->viewspecialgc($request->type, $request->id);
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function submitReqForm(Request $request)
+    {
+
+        if ($request->data['finalize'] == 1) {
+
+            if (
+                $request->data['id'] == null ||
+                $request->data['requestNo'] == null ||
+                $request->data['finalize'] == null ||
+                $request->data['productionReqNum'] == null ||
+                $request->data['dateRequested'] == null ||
+                $request->data['location'] == null ||
+                $request->data['department'] == null ||
+                $request->data['remarks'] == null ||
+                $request->data['checkedBy'] == null ||
+                $request->data['approvedById'] == null ||
+                $request->data['approvedBy'] == null ||
+                $request->data['selectedSupplierId'] == null ||
+                $request->data['contactPerson'] == null ||
+                $request->data['contactNum'] == null ||
+                $request->data['address'] == null
+            ) {
+                return back()->with([
+                    'msg' => "Select",
+                    'description' => "Please fill all required fields",
+                    'type' => "error",
+                ]);
+            } else {
+                $lnumber = LedgerCheck::count() + 1;
+                $reqtotal = ProductionRequestItem::join('denomination', 'denomination.denom_id', '=', 'production_request_items.pe_items_denomination')
+                    ->where('production_request_items.pe_items_request_id', $request->data['id'])
+                    ->selectRaw('IFNULL(SUM(production_request_items.pe_items_quantity * denomination.denomination), 0) as total')
+                    ->value('total');
+
+                $inserted = DB::transaction(function () use ($request, $lnumber, $reqtotal) {
+                    $ledgerCheck = LedgerCheck::create([
+                        'cledger_no' => $lnumber,
+                        'cledger_datetime' => now(),
+                        'cledger_type' => 'GCRA',
+                        'cledger_desc' => 'GC Requisition Approved',
+                        'cdebit_amt' => $reqtotal,
+                        'c_posted_by' => $request->user()->user_id,
+                    ]);
+
+                    $requisEntry = RequisitionEntry::create([
+                        'requis_erno' => $request->data['requestNo'],
+                        'requis_req' => now()->format('Y-m-d'),
+                        'requis_need' => null,
+                        'requis_loc' => $request->data['location'],
+                        'requis_dept' => $request->data['department'],
+                        'requis_rem' => $request->data['remarks'],
+                        'repuis_pro_id' => $request->data['id'],
+                        'requis_req_by' => $request->user()->user_id,
+                        'requis_checked' => $request->data['checkedBy'],
+                        'requis_supplierid' => $request->data['selectedSupplierId'],
+                        'requis_ledgeref' => $lnumber,
+                        'requis_foldersaved' => ''
+                    ]);
+
+                    return [
+                        'legderCheck' => $ledgerCheck,
+                        'requisEntry' => $requisEntry,
+                    ];
+                });
+
+                if ($inserted) {
+
+                    $pdfgenerated = $this->marketing->generatepdfrequisition($request);
+                    if ($pdfgenerated) {
+                        ProductionRequest::where('pe_id', $request->data['id'])
+                            ->update([
+                                    'pe_requisition' => '1'
+                                ]);
+
+                        return redirect()->back()->with([
+                            'type' => 'success',
+                            'stream' => base64_encode($pdfgenerated->output())
+                        ]);
+                    }
+                }
+            }
+        } elseif ($request->data['finalize'] == 3) {
+
+
+            $total = 0;
+            $lnumber = LedgerCheck::count() + 1;
+            $productionDetails = ProductionRequest::where('pe_id', $request->data['id'])
+                ->select(['pe_type', 'pe_group'])
+                ->get();
+            $ptype = $productionDetails[0]->pe_type;
+            $pgroup = $productionDetails[0]->pe_group;
+
+
+            if ($productionDetails) {
+                $updateProductionStatus = ProductionRequest::where('pe_id', $request->data['id'])
+                    ->update([
+                    'pe_requisition' => '2'
+                ]);
+
+                if ($updateProductionStatus) {
+                    $amount = ProductionRequestItem::join('denomination', 'production_request_items.pe_items_denomination', '=', 'denomination.denom_id')
+                        ->where('pe_items_request_id', $request->data['id'])->get();
+
+                    foreach ($amount as $item) {
+                        $sub = $item->pe_items_quantity * $item->denomination;
+                        $total = $total + $sub;
+                    }
+                    $cancelGc = Gc::where('pe_entry_gc', $request->data['id'])
+                        ->update(['gc_cancelled' => '*']);
+
+
+                    if ($cancelGc) {
+
+
+                        $isInserted = LedgerBudget::create([
+                            'bledger_no' => $lnumber,
+                            'bledger_datetime' => now(),
+                            'bledger_type' => 'RC',
+                            'bledger_trid' => '0',
+                            'bledger_typeid' => $ptype,
+                            'bledger_group' => $pgroup,
+                            'bdebit_amt' => $total
+                        ]);
+
+
+                        if ($isInserted) {
+
+                            $cancelled = CancelledProductionRequest::create([
+                                'cpr_pro_id' => $request->data['id'],
+                                'cpr_isrequis_cancel' => '1',
+                                'cpr_ldgerid' => $isInserted->bledger_id,
+                                'cpr_at' => now(),
+                                'cpr_by' => $request->user()->user_id
+                            ]);
+
+                            if ($cancelled) {
+                                return back()->with([
+                                    'type' => 'success',
+                                    'msg' => 'Success',
+                                    'description' => 'Production Request Successfully Cancelled'
+                                ]);
+                            }
+
+                        }
+                    }
+
+                }
+            }
+        }
+    }
 }

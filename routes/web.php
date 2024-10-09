@@ -190,6 +190,7 @@ Route::prefix('marketing')->group(function () {
         });
         Route::name('special-gc.')->group(function (){
             Route::get('pending',[MarketingController::class, 'pendingspgclist'])->name('pending');
+            Route::get('pending-view-details',[MarketingController::class, 'pendingspgclistview'])->name('pending.view');
         });
     });
 });

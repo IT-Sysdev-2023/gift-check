@@ -177,7 +177,7 @@ export default {
   watch: {
     'form.dateNotify'(newVal) {
       if (newVal) {
-        this.form.expiryDate = dayjs(newVal).add(1, 'month');
+        this.form.expiryDate = dayjs(newVal).add(2, 'month');
       } else {
         this.form.expiryDate = null;
       }
