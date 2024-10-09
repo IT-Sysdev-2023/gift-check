@@ -100,7 +100,7 @@
                                 )
                                 " />
                     </a-form-item>
-                    <a-descriptions size="small" class="mt-4" layout="horizontal" bordered>
+                    <a-descriptions size="small" class="mt-4" layout="vertical" bordered>
                         <a-descriptions-item style="width: 100%;">
                             <template #label>
                                 Number Into Words
