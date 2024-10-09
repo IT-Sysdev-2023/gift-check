@@ -21,6 +21,7 @@ class SpecialExternalGcRequestResource extends JsonResource
             'spexgc_type' => $this->spexgc_type,
             'spexgc_dateneed' => $this->spexgc_dateneed?->toFormattedDateString(),
             'spexgc_payment_arnum' => $this->spexgc_payment_arnum,
+            'paymentTypeFormat' => !is_null($this->spexgc_paymentype) ? $this->paymentType($this->spexgc_paymentype) : '',
             'spexgc_paymentype' => !is_null($this->spexgc_paymentype) ? $this->spexgc_paymentype : '',
             'spexgc_id' => $this->spexgc_id,
             'spexgc_payment' => (float) $this->spexgc_payment,

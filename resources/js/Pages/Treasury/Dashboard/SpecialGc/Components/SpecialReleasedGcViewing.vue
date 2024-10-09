@@ -13,74 +13,131 @@
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
         <a-card>
-            <a-row>
-                <a-col :span="12">
-                    <a-descriptions :title="title" layout="vertical" bordered>
-                        <a-descriptions-item label="Date Requested"
-                            >{{ record.data.spexgc_datereq }}</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Requested By"
-                            >{{record.data.user}}</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Date Validity"
-                            >{{ record.data.spexgc_dateneed }}</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Remarks"
-                            >{{ record.data.approvedRequest?.reqap_remarks }}</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Payment Type" :span="2"
-                            >{{ record.data.spexgc_paymentype }}</a-descriptions-item
-                        >
-                    </a-descriptions>
-                    <a-descriptions :title="title" layout="vertical" bordered>
-                        <a-descriptions-item label="Date Approved">
-                            <a-badge status="processing" text="Running" />
-                        </a-descriptions-item>
-                        <a-descriptions-item label="Documents"
-                            >$80.00</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Checked By"
-                            >$20.00</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Prepared By"
-                            >$60.00</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Remarks"
-                            >$60.00</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Approved By"
-                            >$60.00</a-descriptions-item
-                        >
-                    </a-descriptions>
-                </a-col>
-                <a-col :span="12">
-                    <a-descriptions :title="title" layout="vertical" bordered>
-                        <a-descriptions-item label="Date Reviewed">
-                            <a-badge status="processing" text="Running" />
-                        </a-descriptions-item>
-                        <a-descriptions-item label="Remarks"
-                            >$80.00</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Reviewed By"
-                            >$20.00</a-descriptions-item
-                        >
-                    </a-descriptions>
-                    <a-descriptions :title="title" layout="vertical" bordered>
-                        <a-descriptions-item label="Date Released">
-                            <a-badge status="processing" text="Running" />
-                        </a-descriptions-item>
-                        <a-descriptions-item label="Remarks"
-                            >$80.00</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Received By"
-                            >$20.00</a-descriptions-item
-                        >
-                        <a-descriptions-item label="Released By"
-                            >$20.00</a-descriptions-item
-                        >
-                    </a-descriptions>
-                </a-col>
-            </a-row>
+            <a-tabs v-model:activeKey="activeKey">
+                <a-tab-pane key="1" :tab="title"
+                    ><a-row :gutter="[32, 16]" class="mt-5">
+                        <a-col :span="12">
+                            <a-descriptions
+                                title="Requested Details"
+                                layout="vertical"
+                                bordered
+                            >
+                                <a-descriptions-item label="Date Requested">{{
+                                    record.data.spexgc_datereq
+                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Requested By">{{
+                                    record.data.user
+                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Date Validity">{{
+                                    record.data.spexgc_dateneed
+                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Remarks">{{
+                                    record.data.approvedRequest?.reqap_remarks
+                                }}</a-descriptions-item>
+                                <a-descriptions-item
+                                    label="Payment Type"
+                                    :span="2"
+                                    >{{
+                                        record.data.paymentTypeFormat
+                                    }}</a-descriptions-item
+                                >
+                            </a-descriptions>
+                            <a-descriptions
+                                title="Approved Details"
+                                class="mt-10"
+                                layout="vertical"
+                                bordered
+                            >
+                                <a-descriptions-item label="Date Approved">
+                                    {{ record.data.spexgc_datereq }}
+                                </a-descriptions-item>
+                                <a-descriptions-item label="Documents">{{
+                                    record.data.approvedRequest?.reqap_doc
+                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Checked By">{{
+                                    record.data.approvedRequest?.reqap_checkedby
+                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Prepared By">{{
+                                    record.data.approvedRequest?.user
+                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Remarks">{{
+                                    record.data.spexgc_remarks
+                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Approved By">{{
+                                    record.data.approvedRequest
+                                        ?.reqap_approvedby
+                                }}</a-descriptions-item>
+                            </a-descriptions>
+                        </a-col>
+                        <a-col :span="12">
+                            <a-descriptions
+                                title="Reviewed Details"
+                                layout="vertical"
+                                bordered
+                            >
+                                <a-descriptions-item label="Date Reviewed">
+                                    {{ dayjs(reviewed.reqap_date) }}
+                                </a-descriptions-item>
+                                <a-descriptions-item label="Remarks">{{
+                                    reviewed.reqap_remarks
+                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Reviewed By">{{
+                                    reviewed.user?.full_name
+                                }}</a-descriptions-item>
+                            </a-descriptions>
+                            <a-descriptions
+                                title="Released Details"
+                                class="mt-10"
+                                layout="vertical"
+                                bordered
+                            >
+                                <a-descriptions-item label="Date Released">
+                                    {{ dayjs(released.reqap_date) }}
+                                </a-descriptions-item>
+                                <a-descriptions-item label="Remarks">{{
+                                    released.reqap_remarks
+                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Received By">{{
+                                    released.spexgc_receviedby
+                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Released By">{{
+                                    released.user.full_name
+                                }}</a-descriptions-item>
+                            </a-descriptions>
+                        </a-col>
+                    </a-row></a-tab-pane
+                >
+                <a-tab-pane key="2" tab="Barcodes" force-render
+                    >
+                    <a-table bordered :columns="[{
+                        title: 'Barcode',
+                        dataIndex: 'fname' 
+                    },
+                    {
+                        title: 'Denomination',
+                        dataIndex: 'fname' 
+                    },
+                    {
+                        title: 'Lastname',
+                        dataIndex: 'fname' 
+                    }, 
+                    {
+                        title: 'Firstname',
+                        dataIndex: 'fname' 
+                    },
+                    {
+                        title: 'Middlename',
+                        dataIndex: 'fname' 
+                    },
+                    {
+                        title: 'Name ',
+                        dataIndex: 'fname' 
+                    }]">
+
+                    </a-table>
+                    </a-tab-pane
+                >
+            </a-tabs>
         </a-card>
     </AuthenticatedLayout>
 </template>
@@ -97,8 +154,11 @@ import { onProgress } from "@/Mixin/UiUtilities";
 const props = defineProps<{
     title?: string;
     record: any;
+    reviewed: any;
+    released: any;
+    barcodes: any;
 }>();
-
+const activeKey = ref("1");
 const page = usePage<PageWithSharedProps>().props;
 const currentDate = dayjs().format("MMM DD, YYYY");
 const disabledDate = (current: Dayjs) => {
