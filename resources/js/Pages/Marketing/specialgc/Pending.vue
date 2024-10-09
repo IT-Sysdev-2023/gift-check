@@ -26,21 +26,72 @@
                 </a-tab-pane>
             </a-tabs>
         </a-card>
-        <a-modal v-model:open="open">
-            
+        <a-modal v-model:open="open" :width="1000">
+            <a-row :gutter="[16,16]">
+                <a-col :span="12">
+                    <a-form-item label="GC Request #">
+                        <a-input v-model:value="selectedData.spexgc_num" readonly />
+                    </a-form-item>
+                    <a-form-item label="Date Requested">
+                        <a-input v-model:value="selectedData.dateReq" readonly />
+                    </a-form-item>
+                    <a-form-item label="Date Validity">
+                        <a-input v-model:value="selectedData.dateNeed" readonly />
+                    </a-form-item>
+                    <a-form-item label="Document Uploaded">
+                        <a-image style="height: 100px;" src="https://rb.gy/9q5uky"></a-image>
+                    </a-form-item>
+                </a-col>
+                <a-col :span="12">
+                    <a-form-item label="Company Name">
+                        <a-textarea v-model:value="selectedData.spcus_companyname"/>
+                    </a-form-item>
+                    <a-form-item label="Account Name">
+                        <a-textarea v-model:value="selectedData.spcus_acctname"/>
+                    </a-form-item>
+                    <a-form-item label="AR #">
+                        <a-input v-model:value="selectedData.spexgc_payment_arnum"/>
+                    </a-form-item>
+                    <a-form-item label="Amount Paid">
+                        <a-input v-model:value="selectedData.spexgc_balance"/>
+                    </a-form-item>
+                    <a-form-item label="Number to words">
+                        <a-input v-model:value="selectedData.numbertowords"/>
+                    </a-form-item>
+                </a-col>
+            </a-row>
+            <a-form-item label="Remarks">
+                <a-textarea v-model:value="selectedData.spexgc_remarks"/>
+            </a-form-item>
+            <a-row>
+                <a-col :span="8">
+                    <a-form-item label="Denomination">
+                        <a-input v-model:value="selectedData.specit_denoms"/>
+                    </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                    <a-form-item label="Quantity">
+                        <!-- <a-input v-model:value="selectedData."/> -->
+                    </a-form-item>
+                </a-col>
+                <a-col :span="8">3</a-col>
+            </a-row>
+            {{ selectedData }}
         </a-modal>
     </AuthenticatedLayout>
 </template>
 
 <script setup>
+import axios from 'axios';
 import { ref } from 'vue';
+
 
 const props = defineProps({
     internal: Object,
     external: Object
 })
 const open = ref(false)
-
+const selectedData = ref({})
 const activeKey = ref('1')
 
 const columns = [
@@ -82,9 +133,17 @@ const columns = [
     },
 ]
 
-const view = (e, type) => {
-    open.value = true
-}
+const view = (id, type) => {
+    axios.get(route('marketing.special-gc.pending.view'),
+        {
+            params: { id, type }
+        })
+        .then(({ data }) => {
+            open.value = true;
+            selectedData.value = data.data[0];
+        });
+};
+
 
 
 </script>

@@ -1887,4 +1887,14 @@ class MarketingController extends Controller
             'external' => $external
         ]);
     }
+
+    public function pendingspgclistview(Request $request)
+    {
+
+        $data = $this->marketing->viewspecialgc($request->type, $request->id);
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
 }
