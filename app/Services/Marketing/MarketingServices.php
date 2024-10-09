@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Number;
 
 class MarketingServices extends FileHandler
 {
@@ -431,7 +432,7 @@ class MarketingServices extends FileHandler
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
             ->get();
 
-            
+
         $cancelled = SpecialExternalGcrequest::where('spexgc_status', 'cancelled')->count();
 
         $spgc = [
@@ -444,6 +445,47 @@ class MarketingServices extends FileHandler
         return $spgc;
 
     }
+
+    public function viewspecialgc($type, $id)
+    {
+        // Define the transformation function before using it
+        $transformItem = function ($item) {
+            $item->dateNeed = Date::parse($item->spexgc_dateneed)->format('F d Y');
+            $item->dateReq = Date::parse($item->spexgc_datereq)->format('F d Y');
+            $item->totalDenom = number_format($item->specit_denoms * $item->specit_qty, 2);
+            $item->requestedBy = ucwords($item->firstname . ' ' . $item->lastname);
+            $item->numbertowords = Number::spell($item->spexgc_balance).' peso(s)';
+            return $item;
+        };
+    
+        if ($type === 'internal') {
+            $i = SpecialExternalGcrequest::join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+                ->join('special_external_gcrequest_items', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_items.specit_trid')
+                ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+                ->where('special_external_gcrequest.spexgc_id', $id)
+                ->where('special_external_gcrequest.spexgc_status', 'pending')
+                ->where('spexgc_addemp', 'pending')
+                ->where('special_external_gcrequest.spexgc_promo', '*')
+                ->orderBy('special_external_gcrequest.spexgc_id', 'ASC')
+                ->get();
+            $i->transform($transformItem);
+        } else {
+            $e = SpecialExternalGcrequest::join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+                ->join('special_external_gcrequest_items', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_items.specit_trid')
+                ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+                ->where('special_external_gcrequest.spexgc_id', $id)
+                ->where('special_external_gcrequest.spexgc_status', 'pending')
+                ->where('spexgc_addemp', 'pending')
+                ->where('special_external_gcrequest.spexgc_promo', '0')
+                ->orderBy('special_external_gcrequest.spexgc_id', 'ASC')
+                ->get();
+            $e->transform($transformItem);
+        }
+    
+        // Return the result
+        return isset($i) ? $i : $e;
+    }
+    
 
 
 
