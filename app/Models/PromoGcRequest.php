@@ -82,6 +82,7 @@ class PromoGcRequest extends Model
         // dd($query->get()->toArray());
         $query->select(
             'pgcreq_id',
+            'pgcreq_id',
             'pgcreq_reqnum',
             'pgcreq_reqby',
             'pgcreq_datereq',

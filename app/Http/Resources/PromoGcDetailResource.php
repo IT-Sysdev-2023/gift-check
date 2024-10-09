@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\ApprovedRequest;
 use App\Models\LedgerBudget;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
@@ -18,7 +19,7 @@ class PromoGcDetailResource extends JsonResource
     public function toArray(Request $request)
     {
 
-        $approvedBy = ApprovedRequest::where('reqap_trid', $this->pgcreq_id)->where('reqap_approvedtype','promo gc preapproved')->get();
+        $approvedBy = ApprovedRequest::where('reqap_trid', $this->pgcreq_id)->where('reqap_approvedtype', 'promo gc preapproved')->value('reqap_preparedby');
 
         return [
             'pgcreq_id' => $this->pgcreq_id,
@@ -34,7 +35,7 @@ class PromoGcDetailResource extends JsonResource
             'fullname' => $this->userReqby->full_name ?? null,
             'title' => $this->userReqby->accessPage->title ?? null,
             'current' => LedgerBudget::currentBudget(),
-            'checkby' => $approvedBy,
+            'checkby' => User::select('firstname', 'lastname')->where('user_id', $approvedBy)->value('full_name'),
         ];
     }
 }

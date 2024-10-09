@@ -1,75 +1,68 @@
 <template>
     <a-row :gutter="[16, 16]">
         <a-col :span="11">
-            <!-- {{details.data}} -->
-            <div v-if="details.data[0]?.pgcreq_group_status === 'approved' ">
-                <a-card >
-                <a-form layout="vertical">
-                    <a-form-item>
-                        <a-descriptions size="small" bordered>
-                            <a-descriptions-item style="width: 50%;" label="Prepared By:" class="text-end">{{
-                                $page.props.auth.user.full_name
-                            }}</a-descriptions-item>
-                        </a-descriptions>
-                        <a-descriptions size="small" bordered>
-                            <a-descriptions-item style="width: 50%;" label="Date Approved/Cancel:" class="text-end">{{
-                                details.data[0].today
-                                }}</a-descriptions-item>
-                        </a-descriptions>
-                    </a-form-item>
+            <div v-if="details.data[0]?.pgcreq_group_status === 'approved'">
+                <a-card>
+                    <a-form layout="vertical">
+                        <a-form-item>
+                            <a-descriptions size="small" bordered>
+                                <a-descriptions-item style="width: 50%;" label="Date Approved/Cancel:"
+                                    class="text-end">{{
+                                        details.data[0].today
+                                    }}</a-descriptions-item>
+                            </a-descriptions>
+                        </a-form-item>
 
-                    <a-form-item label="Request Status" has-feedback :validate-status="errors.status ? 'error' : ''"
-                        :help="errors.status">
-                        <a-select v-model:value="form.status" ref="select" placeholder="Select Status"
-                            @change="() => errors.status = null">
-                            <a-select-option :value="1">Approved</a-select-option>
-                            <a-select-option :value="2">Cancel</a-select-option>
-                        </a-select>
-                    </a-form-item>
-                    <a-row :gutter="[16, 16]">
-                        <a-col :span="12">
-                            <a-form-item label="Check By:" has-feedback :validate-status="errors.checkby ? 'error' : ''"
-                                :help="errors.checkby">
-                                <a-select ref="select" v-model:value="form.checkby" placeholder="Select Checked by"
-                                    @change="() => errors.checkby = null">
-                                    <a-select-option v-for="item in cdata" :value="item.assig_id">{{ item.assig_name
-                                        }}</a-select-option>
-                                </a-select>
-                            </a-form-item>
-                        </a-col>
-                        <a-col :span="12">
-                            <a-form-item label="Approved By:" has-feedback
-                                :validate-status="errors.appby ? 'error' : ''" :help="errors.appby">
-                                <a-select ref="select" v-model:value="form.appby" placeholder="Select Approved By"
+                        <a-form-item label="Request Status" has-feedback :validate-status="errors.status ? 'error' : ''"
+                            :help="errors.status">
+                            <a-select v-model:value="form.status" ref="select" placeholder="Select Status"
+                                @change="() => errors.status = null">
+                                <a-select-option :value="1">Approved</a-select-option>
+                                <a-select-option :value="2">Cancel</a-select-option>
+                            </a-select>
+                        </a-form-item>
+                        <a-row :gutter="[16, 16]">
+                            <a-col :span="12">
+                                <a-form-item label="Checked By:" has-feedback
+                                    :validate-status="errors.checkby ? 'error' : ''" :help="errors.checkby">
+                                    <a-input v-model:value="form.checkby" readonly />
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="12">
+                                <a-form-item label="Prepared By:" has-feedback
+                                    :validate-status="errors.appby ? 'error' : ''" :help="errors.appby">
+                                    <a-input :value="$page.props.auth.user.full_name"></a-input>
+                                    <!-- <a-select ref="select" v-model:value="form.appby" placeholder="Select Approved By"
                                     @change="() => errors.appby = null">
                                     <a-select-option v-for="item in cdata" :value="item.assig_id">{{ item.assig_name
                                         }}</a-select-option>
-                                </a-select>
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
-                    <a-form-item has-feedback :help="errors.remarks" :validate-status="errors.remarks ? 'error' : ''">
-                        <a-textarea v-model:value="form.remarks" placeholder="Enter remarks" :rows="2"
-                            @change="() => errors.remarks = null" />
-                    </a-form-item>
-                    <a-divider>
-                        <a-typography-text code>upload image</a-typography-text>
-                    </a-divider>
-                    <div class="flex justify-center">
-                        <a-form-item>
-                            <ant-upload-image @handle-change="handleImageChange" />
+                                </a-select> -->
+                                </a-form-item>
+                            </a-col>
+                        </a-row>
+                        <a-form-item has-feedback :help="errors.remarks"
+                            :validate-status="errors.remarks ? 'error' : ''">
+                            <a-textarea v-model:value="form.remarks" placeholder="Enter remarks" :rows="2"
+                                @change="() => errors.remarks = null" />
                         </a-form-item>
-                    </div>
-                    <a-form-item>
-                        <a-button type="primary" block @click="approve" :loading="form.processing">
-                            <template #icon>
-                                <TagsFilled />
-                            </template>
-                            Submit Approval Form
-                        </a-button>
-                    </a-form-item>
-                </a-form>
-            </a-card>
+                        <a-divider>
+                            <a-typography-text code>upload image</a-typography-text>
+                        </a-divider>
+                        <div class="flex justify-center">
+                            <a-form-item>
+                                <ant-upload-image @handle-change="handleImageChange" />
+                            </a-form-item>
+                        </div>
+                        <a-form-item>
+                            <a-button type="primary" block @click="approve" :loading="form.processing">
+                                <template #icon>
+                                    <TagsFilled />
+                                </template>
+                                Submit Approval Form
+                            </a-button>
+                        </a-form-item>
+                    </a-form>
+                </a-card>
             </div>
             <div v-else>
                 <a-alert message="Approval" type="warning" show-icon>
@@ -163,12 +156,12 @@ h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"></path>
                     <a-descriptions size="small" bordered>
                         <a-descriptions-item label="Retail Group" style="width: 50%;">Group {{
                             details.data[0].pgcreq_group
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
                         <a-descriptions-item label="Date Requested" style="width: 50%;">{{
                             details.data[0].pgcreq_datereq
-                        }}
+                            }}
                         </a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
@@ -198,7 +191,7 @@ h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"></path>
                 <a-table size="small" bordered :pagination="false" class="mt-1" :columns="[
                     {
                         title: 'Denomination',
-                        dataIndex: 'denomination',
+                        dataIndex: 'denom',
                         key: 'denom',
                     },
                     {
@@ -210,17 +203,9 @@ h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"></path>
                     {
                         title: 'Subtotal',
                         dataIndex: 'subtotal',
-                        align: 'end'
+                        align: 'start'
                     },
                 ]" :data-source="denomination.data">
-                    <template #bodyCell="{ column, record }">
-                        <template v-if="column.key == 'denom'">
-                            <span>
-                                {{ record.denomination.denomination }}
-                            </span>
-                        </template>
-                    </template>
-
                 </a-table>
                 <div class="mt-2 flex justify-end">
                     <a-typography-text class="mt-2" keyboard>Total: {{ denomination.total }} </a-typography-text>
@@ -245,10 +230,10 @@ export default {
         return {
             cdata: [],
             errors: {},
-            
+
             form: useForm({
-                appby: null,
-                checkby: null,
+                appby: this.$page.props.auth.user.full_name,
+                checkby: this.details.data[0].checkby,
                 status: null,
                 remarks: null,
                 reqid: this.reqid,

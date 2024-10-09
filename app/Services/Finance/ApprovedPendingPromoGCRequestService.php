@@ -45,13 +45,12 @@ class ApprovedPendingPromoGCRequestService extends FileHandler
             ->withQueryString();
 
         $result = PromoGcRequestResource::collection($data);
-        
+
         return $result;
     }
 
     public static function getRequestDetails($request)
     {
-
         $data = PromoGcRequest::selectPendingRequest()->with([
             'userReqby' => function ($query) {
                 $query->select('usertype', 'user_id', 'firstname', 'lastname');
@@ -70,6 +69,7 @@ class ApprovedPendingPromoGCRequestService extends FileHandler
 
     public function approvedPromoGCRequestIndex($request)
     {
+        // dd();
         return inertia('Finance/ApprovedPromoGcRequest', [
             'data' => PromoGcRequestResource::collection(
                 PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
@@ -93,8 +93,9 @@ class ApprovedPendingPromoGCRequestService extends FileHandler
 
         $data->transform(function ($item) {
             $item->subt = $item->denomination->denomination * $item->pgcreqi_qty;
-            $item->subtotal = NumberHelper::formatterFloat($item->denomination->denomination * $item->pgcreqi_qty);
-            $item->denomination->denomination = NumberHelper::formatterFloat($item->denomination->denomination);
+            $item->subtotal = NumberHelper::currency($item->denomination->denomination * $item->pgcreqi_qty);
+            $item->denom = NumberHelper::currency($item->denomination->denomination);
+            $item->denomformat = NumberHelper::formatterFloat($item->denomination->denomination);
             return $item;
         });
         return (object)[
