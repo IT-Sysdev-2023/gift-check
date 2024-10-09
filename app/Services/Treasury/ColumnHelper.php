@@ -582,4 +582,39 @@ class ColumnHelper
             'key' => 'action',
         ],
     ];
+
+    public static $specialReleasedGc = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'key' => 'requestedBy',
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Date Released',
+            'key' => 'dateReleased',
+        ],
+        [
+            'title' => 'Released By',
+            'key' => 'releasedBy',
+        ],
+    ];
 }

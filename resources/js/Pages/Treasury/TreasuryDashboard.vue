@@ -95,6 +95,7 @@
                                 <CardBadge
                                     :count="data?.specialGcRequest?.released"
                                     title="Released GC"
+                                     @event="specialReleasedGc"
                                 />
                                 <CardBadge
                                     :count="data?.specialGcRequest?.internalReviewed"
@@ -212,6 +213,7 @@ const approvedProductionRequest = () =>
 //Special GC Request
 const specialGcPending = () => routeTo("special.gc", "pending");
 const releasingInternal = () => routeTo("special.gc", "releasingInternal");
+const specialReleasedGc = () => routeTo("special.gc", "specialReleasedGc")
 
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");
