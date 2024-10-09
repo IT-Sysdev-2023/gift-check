@@ -66,6 +66,7 @@ class CustodianController extends Controller
     }
     public function submitSpecialExternalGc(Request $request)
     {
+        // dd($request->all());
         return  $this->custodianservices->submitSpecialExternalGc($request);
     }
     public function approvedGcRequest(Request $request)

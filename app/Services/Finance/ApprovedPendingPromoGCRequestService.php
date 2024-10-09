@@ -45,7 +45,7 @@ class ApprovedPendingPromoGCRequestService extends FileHandler
             ->withQueryString();
 
         $result = PromoGcRequestResource::collection($data);
-
+        
         return $result;
     }
 
