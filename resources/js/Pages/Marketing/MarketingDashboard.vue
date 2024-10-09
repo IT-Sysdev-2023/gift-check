@@ -10,7 +10,8 @@
             aRoute="marketing.promoGcRequest.approved.list"
             cRoute="marketing.promoGcRequest.cancelled.list"
             />
-            <m-card class="mt-5"
+            <m-card class="mt-5
+            "
             title="GC Production Request"
             :pending="gcProductionRequest.pendingRequest"
             :approved="gcProductionRequest.approvedRequest "
@@ -21,7 +22,6 @@
             />
         </a-col>
         <a-col :span="8">
-            <!-- <special-external-gc /> -->
              <m-card 
                 title="Special External GC Request" 
                 :pending = specialGcpending
