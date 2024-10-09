@@ -1,7 +1,8 @@
 <template>
     <a-row :gutter="[16, 16]">
         <a-col :span="11">
-            <div v-if="details.data.pgcreq_group_status === 'approved' ">
+            <!-- {{details.data}} -->
+            <div v-if="details.data[0]?.pgcreq_group_status === 'approved' ">
                 <a-card >
                 <a-form layout="vertical">
                     <a-form-item>
@@ -244,6 +245,7 @@ export default {
         return {
             cdata: [],
             errors: {},
+            
             form: useForm({
                 appby: null,
                 checkby: null,

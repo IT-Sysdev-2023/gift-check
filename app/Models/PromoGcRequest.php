@@ -89,7 +89,7 @@ class PromoGcRequest extends Model
             'pgcreq_group',
             'pgcreq_total',
             'pgcreq_remarks',
-            'pgcreq_group_status'
+            'pgcreq_group_status',
         );
     }
 
