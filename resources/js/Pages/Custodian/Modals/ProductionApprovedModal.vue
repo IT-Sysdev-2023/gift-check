@@ -34,7 +34,7 @@
                     <a-button block class="mb-3" @click="barcode">
                         <ArrowsAltOutlined /> Barcode Generated Details
                     </a-button>
-                    <a-button block class="mb-3">
+                    <a-button block class="mb-3" @click="requistion">
                         <ArrowsAltOutlined /> Requisiton Created Details
                     </a-button>
                     <a-button block class="mb-3" type="primary">
@@ -47,10 +47,11 @@
             </a-table>
 
             <a-descriptions class="text-center mt-2" size="small" layout="horizontal" bordered>
-                <a-descriptions-item style="width: 50%; font-weight: 700;" label="Total">{{ data.items.total }}</a-descriptions-item>
+                <a-descriptions-item style="width: 50%; font-weight: 700;" label="Total">{{ data.items.total
+                    }}</a-descriptions-item>
             </a-descriptions>
 
-            <a-modal v-model:open="bopen" title="Generated Barcode" :footer="null" :width="1000">
+            <a-modal v-model:open="bopen" title="Generated Barcode" :footer="null" :width="1000" :after-close="close">
                 <a-card>
                     <a-tabs type="card" v-model:activeKey="statuskey" @change="valStatus">
                         <a-tab-pane key="1">
@@ -80,7 +81,8 @@
                                     </a-table>
                                 </a-tab-pane>
                             </a-tabs>
-                            <div v-if="activeKey === null && Object.keys(barcodeDetails.record).length !== 0  && statuskey === '1' ">
+                            <div
+                                v-if="activeKey === null && Object.keys(barcodeDetails.record).length !== 0 && statuskey === '1'">
                                 <a-empty>
                                     <template #description>
                                         Please select Denomination above
@@ -118,7 +120,8 @@
                             </a-tabs>
                         </a-tab-pane>
                     </a-tabs>
-                    <div v-if="activeKey === null && Object.keys(barcodeDetails.record).length !== 0  && statuskey === '2' ">
+                    <div
+                        v-if="activeKey === null && Object.keys(barcodeDetails.record).length !== 0 && statuskey === '2'">
                         <a-empty>
                             <template #description>
                                 Please select Denomination above
@@ -136,6 +139,35 @@
                 </a-card>
             </a-modal>
 
+            <a-modal v-model:open="ropen" :width="1000" >
+                <template #title>
+                 <p class="text-center"> Requisition Details</p>
+                </template>
+                <a-card>
+                    <a-descriptions size="small" layout="vertical" bordered>
+                        <a-descriptions-item label="Request No">{{ requisitionDetails.requis_erno }}</a-descriptions-item>
+                        <a-descriptions-item label="Date Requested">{{ requisitionDetails.requis_req }}</a-descriptions-item>
+                        <a-descriptions-item label="Location">{{ requisitionDetails.requis_loc }}</a-descriptions-item>
+                        <a-descriptions-item label="Department">{{ requisitionDetails.requis_dept }}</a-descriptions-item>
+                        <a-descriptions-item label="Remarks" :span="3">{{ requisitionDetails.requis_rem }}</a-descriptions-item>
+                        <a-descriptions-item label="Checked By" >{{ requisitionDetails.requis_checked }}</a-descriptions-item>
+                        <a-descriptions-item label="Approved By" >{{ requisitionDetails.requis_approved }}</a-descriptions-item>
+                        <a-descriptions-item label="Prepared By" :span="2">{{ requisitionDetails.firstname }}, {{ requisitionDetails.lastname }}</a-descriptions-item>
+
+                        <a-descriptions-item label="Supplier Information" class="mt-4">
+                           <span class="font-bold"> Company Name:</span> {{ requisitionDetails.gcs_companyname }}
+                            <br />
+                           <span class="font-bold"> Contact Person:</span> {{ requisitionDetails.gcs_contactperson }}
+                            <br />
+                           <span class="font-bold"> Contact Number:</span> {{ requisitionDetails.gcs_contactnumber }}
+                            <br />
+                            <span class="font-bold"> Company Address:</span> {{ requisitionDetails.gcs_address }}
+                            <br />
+                        </a-descriptions-item>
+                    </a-descriptions>
+                </a-card>
+            </a-modal>
+
         </a-card>
     </a-modal>
 </template>
@@ -150,9 +182,11 @@ const props = defineProps({
 });
 
 const bopen = ref(false);
+const ropen = ref(false);
 const activeKey = ref(null);
 const statuskey = ref('1');
 const barcodeDetails = ref([]);
+const requisitionDetails = ref([]);
 const bardet = ref([]);
 const isloading = ref(false);
 
@@ -199,16 +233,34 @@ const valStatus = async (key) => {
     let isKey = key === '1' ? '' : '*';
 
     try {
+
         const { data } = await axios.get(route('custodian.production.barcode.details', props.id), {
             params: {
                 status: isKey,
             }
         });
+
         bopen.value = true;
         barcodeDetails.value = data;
 
     } catch (error) {
         console.error(error);
+    }
+}
+
+const close = () => {
+    // barcodeDetails.value = null;
+    statuskey.value = '1';
+    activeKey.value = null;
+}
+
+const requistion = async () => {
+    try {
+        const { data } = await axios.get(route('custodian.production.requisition', props.id));
+        requisitionDetails.value = data;
+        ropen.value = true;
+    } catch {
+
     }
 }
 
