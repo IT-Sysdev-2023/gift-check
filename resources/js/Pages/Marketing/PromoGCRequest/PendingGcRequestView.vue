@@ -64,7 +64,7 @@ import { notification } from 'ant-design-vue';
 
 const props = defineProps({
     data: Object,
-    denom: Array, // Define as array
+    denom: Array, 
     columns: Object,
     denomQty: Object
 });
@@ -75,7 +75,8 @@ const form = useForm({
     dateNeed: dayjs(props.data[0]?.pgcreq_datereq),
     remarks: props.data[0]?.pgcreq_remarks,
     group: props.data[0]?.pgcreq_group,
-    total: 0 // Initialize total to 0
+    total: 0 ,
+    // doc = 
 });
 
 const calculateTotal = () => {
@@ -87,9 +88,7 @@ const calculateTotal = () => {
 };
 
 const submit = () => {
-    // Calculate the total before submitting
     calculateTotal();
-
     const denomination = props.denom.map((record) => ({
         quantity: record.qty,
         id: record.denom_id,
