@@ -1361,7 +1361,6 @@ class MarketingController extends Controller
     public function selectedPromoPendingRequest(Request $request)
     {
         $data = $this->marketing->selectedPromoPendingRequest($request);
-
         $denom = Denomination::where('denom_type', 'RSGC')
             ->where('denom_status', 'active')->get();
 
@@ -1380,6 +1379,7 @@ class MarketingController extends Controller
             return $item;
 
         });
+
 
         return Inertia::render('Marketing/PromoGCRequest/PendingGcRequestView', [
             'data' => $data,
