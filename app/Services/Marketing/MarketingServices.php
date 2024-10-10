@@ -196,8 +196,6 @@ class MarketingServices extends FileHandler
     public function selectedPromoPendingRequest($request)
     {
         $data = PromoGcRequest::where('pgcreq_id', $request->id)
-            ->where('pgcreq_status', 'pending')
-            ->where('pgcreq_group_status', '')
             ->join('users', 'users.user_id', '=', 'promo_gc_request.pgcreq_reqby')
             ->get();
         $data->transform(function ($item) {
