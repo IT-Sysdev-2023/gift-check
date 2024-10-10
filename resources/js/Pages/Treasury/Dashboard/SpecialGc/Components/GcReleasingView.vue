@@ -6,7 +6,7 @@
                 <Link :href="route('treasury.dashboard')">Home</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>
-                <Link :href="route('treasury.special.gc.releasingInternal')"
+                <Link :href="route('treasury.special.gc.gcReleasing')"
                     >Reviewed GC For Releasing(Internal)</Link
                 >
             </a-breadcrumb-item>
@@ -176,8 +176,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import { ref } from "vue";
-import { useForm } from "@inertiajs/vue3";
-
+import { router, useForm } from "@inertiajs/vue3";
+import { onProgress } from "@/Mixin/UiUtilities";
 const props = defineProps<{
     title: string;
     id: number;
@@ -197,9 +197,13 @@ const formState = useForm({
     receivedBy: "",
     releasedBy: "",
 });
-
+const { openLeftNotification } = onProgress();
 const onFinish = () => {
-    formState.post(route("treasury.special.gc.internalSubmission", props.id), {preserveScroll: true});
+    formState.post(route("treasury.special.gc.releasingSubmission", props.id), {preserveScroll: true, onSuccess: ({props}) => {
+       
+        openLeftNotification(props.flash);
+        router.visit(route('treasury.special.gc.gcReleasing'));
+    }});
 };
 const openModal = ref(false);
 const modalData = ref();

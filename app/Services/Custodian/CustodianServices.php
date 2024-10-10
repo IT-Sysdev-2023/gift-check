@@ -13,6 +13,7 @@ use App\Models\Document;
 use App\Models\Gc;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
+use App\Models\RequisitionEntry;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use Illuminate\Support\Facades\Date;
@@ -476,7 +477,7 @@ class CustodianServices
         $data = Gc::select('denomination.denomination', 'gc.denom_id')
             ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
             ->where('pe_entry_gc', $id)
-            ->where('gc_validated', $request->status === null ? '': $request->status)
+            ->where('gc_validated', $request->status === null ? '' : $request->status)
             ->get()
             ->groupBy('denomination');
 
@@ -496,7 +497,7 @@ class CustodianServices
 
         $data =  Gc::select('denomination.denomination', 'barcode_no', 'gc.denom_id')
             ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-            ->where('gc_validated', $request->status === null ? '': $request->status)
+            ->where('gc_validated', $request->status === null ? '' : $request->status)
             ->where('gc.denom_id', $request->key)
             ->where('pe_entry_gc', $id)
             ->get();
@@ -504,5 +505,28 @@ class CustodianServices
         return response()->json([
             'record' => $data
         ]);
+    }
+    public function getRequisitionDetailsData($id)
+    {
+        return RequisitionEntry::select(
+            'requis_erno',
+            'requis_req',
+            'pe_date_needed',
+            'requis_loc',
+            'requis_dept',
+            'requis_rem',
+            'requis_checked',
+            'requis_approved',
+            'gcs_companyname',
+            'gcs_contactperson',
+            'gcs_contactnumber',
+            'gcs_address',
+            'firstname',
+            'lastname',
+        )->join('production_request', 'pe_id', '=', 'repuis_pro_id')
+            ->join('supplier', 'gcs_id', '=', 'requis_supplierid')
+            ->join('users', 'user_id', '=', 'requis_req_by')
+            ->where('repuis_pro_id', $id)
+            ->first();
     }
 }

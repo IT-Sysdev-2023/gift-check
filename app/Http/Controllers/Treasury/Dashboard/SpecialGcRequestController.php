@@ -33,11 +33,7 @@ class SpecialGcRequestController extends Controller
     public function pendingSpecialGc(Request $request)
     {
         $externalData = $this->specialGcPaymentService->pending();
-
-        $internalData = SpecialExternalGcrequest::with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
-            ->select('spexgc_num', 'spexgc_reqby', 'spexgc_company', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
-            ->where([['special_external_gcrequest.spexgc_status', 'pending'], ['special_external_gcrequest.spexgc_promo', '*']])
-            ->paginate()->withQueryString();
+        $internalData = $this->specialGcPaymentService->pendingInternal();
 
         return inertia(
             'Treasury/Dashboard/SpecialGcTable',
@@ -59,7 +55,7 @@ class SpecialGcRequestController extends Controller
             'document',
             'specialExternalGcrequestEmpAssign'
         ]);
-        // dd(vars: $record->specialExternalGcrequestEmpAssign->groupBy('spexgcemp_denom'));
+
         return inertia(
             'Treasury/Dashboard/UpdateSpecialExternal',
             [
@@ -106,35 +102,22 @@ class SpecialGcRequestController extends Controller
         return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
     }
 
-    public function pendingInternalGc()
+    public function releasingGc(Request $request)
     {
-        $data = SpecialExternalGcrequest::with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
-            ->select('spexgc_num', 'spexgc_reqby', 'spexgc_company', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
-            ->where([['special_external_gcrequest.spexgc_status', 'pending'], ['special_external_gcrequest.spexgc_promo', '*']])
-            ->paginate()->withQueryString();
-    }
+        // dd(1);
+        $promo = $request->has('promo') ? $request->promo : '*';
 
-    public function releasingInternal(Request $request)
-    {
-        $record = SpecialExternalGcrequest::
-            with(['specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'user:user_id,firstname,lastname', 'approvedRequestRevied.user', 'specialExternalGcrequestEmpAssign'])
-            ->withWhereHas('approvedRequest', function ($q) {
-                $q->select('reqap_trid', 'reqap_approvedby')->where('reqap_approvedtype', 'Special External GC Approved');
-            })
-            ->select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
-            ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', 'reviewed'], ['spexgc_released', ''], ['spexgc_promo', '*']])
-            ->orderByDesc('spexgc_id')
-            ->paginate()
-            ->withQueryString();
-
-        return inertia('Treasury/Dashboard/SpecialGc/ReviewedReleasingInternal', [
+        $record = $this->specialGcPaymentService->releasingGc($promo);
+        // dd($record);
+        return inertia('Treasury/Dashboard/SpecialGc/ReviewedReleasing', [
             'title' => 'Reviewed GC For Releasing(Internal)',
             'records' => SpecialExternalGcRequestResource::collection($record),
-            'columns' => ColumnHelper::$specialInternal
+            'columns' => ColumnHelper::$specialInternal,
+            'tab' => $promo
         ]);
     }
 
-    public function viewReleasingInternal(Request $request, SpecialExternalGcrequest $id)
+    public function viewReleasing(Request $request, SpecialExternalGcrequest $id)
     {
         $rec = $id->load([
             'user' => function ($q) {
@@ -151,7 +134,7 @@ class SpecialGcRequestController extends Controller
 
         $checkBy = Assignatory::assignatories($request);
 
-        return inertia('Treasury/Dashboard/SpecialGc/Components/InternalGcReleasingView', [
+        return inertia('Treasury/Dashboard/SpecialGc/Components/GcReleasingView', [
             'title' => 'Special Internal Gc Releasing',
             'id' => $id->spexgc_id,
             'checkBy' => $checkBy,
@@ -159,61 +142,61 @@ class SpecialGcRequestController extends Controller
         ]);
     }
 
-    public function relasingInternalSubmission(Request $request, $id)
+    public function relasingGcSubmission(Request $request, $id)
     {
-        // dd($id);
         $request->validate([
             "checkedBy" => 'required',
             "remarks" => 'required',
             "receivedBy" => "required"
         ]);
+        try {
+            DB::transaction(function () use ($id, $request) {
 
-        DB::transaction(function () use ($id, $request) {
+                SpecialExternalGcrequest::where([["spexgc_id", $id], ['spexgc_released', '']])->update([
+                    'spexgc_released' => 'released',
+                    'spexgc_receviedby' => $request->receivedBy
+                ]);
 
-            SpecialExternalGcrequest::where([["spexgc_id", $id], ['spexgc_released', '']])->update([
-                'spexgc_released' => 'released',
-                'spexgc_receviedby' => $request->receivedBy
-            ]);
+                $relid = ApprovedRequest::where('reqap_approvedtype', 'special external releasing')->max('reqap_trnum');
 
-            $relid = ApprovedRequest::where('reqap_approvedtype', 'special external releasing')->max('reqap_trnum');
+                ApprovedRequest::create([
+                    'reqap_trid' => $id,
+                    'reqap_approvedtype' => 'special external releasing',
+                    'reqap_remarks' => $request->remarks,
+                    'reqap_preparedby' => $request->user()->user_id,
+                    'reqap_date' => now(),
+                    'reqap_trnum' => $relid,
+                    'reqap_checkedby' => $request->checkedBy
+                ]);
 
-            ApprovedRequest::create([
-                'reqap_trid' => $id,
-                'reqap_approvedtype' => 'special external releasing',
-                'reqap_remarks' => $request->remarks,
-                'reqap_preparedby' => $request->user()->user_id,
-                'reqap_date' => now(),
-                'reqap_trnum' => $relid,
-                'reqap_checkedby' => $request->checkedBy
-            ]);
+                $reqType = SpecialExternalGcrequest::where('spexgc_id', $id)->value('spexgc_type');
 
-            $reqType = SpecialExternalGcrequest::where('spexgc_id', $id)->value('spexgc_type');
-
-            if ($reqType == '1') {
-                $r = SpecialExternalGcrequestItem::where('specit_trid', $id)->first(['specit_denoms', 'specit_qty']);
-                // dd($r);
-                $total = $r->specit_denoms * $r->specit_qty;
-            } else {
-                // $re = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)->get();
-                // dd($re);
-                $q = SpecialExternalGcrequestEmpAssign::selectRaw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom),0.00) as totaldenom,
+                if ($reqType == '1') {
+                    $r = SpecialExternalGcrequestItem::where('specit_trid', $id)->first(['specit_denoms', 'specit_qty']);
+                    // dd($r);
+                    $total = $r->specit_denoms * $r->specit_qty;
+                } else {
+                    // $re = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)->get();
+                    // dd($re);
+                    $q = SpecialExternalGcrequestEmpAssign::selectRaw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom),0.00) as totaldenom,
 					IFNULL(COUNT(special_external_gcrequest_emp_assign.spexgcemp_denom),0) as cnt")->where('spexgcemp_trid', $id)->first();
-                $total = $q->totaldenom;
-            }
+                    $total = $q->totaldenom;
+                }
 
-            $l = LedgerBudget::max('bledger_id');
-            $lnum = $l ? $l + 1 : 1;
-            LedgerSpgc::create([
-                'spgcledger_no' => $lnum,
-                'spgcledger_trid' => $id,
-                'spgcledger_datetime' => now(),
-                'spgcledger_type' => 'RFGCSEGCREL',
-                'spgcledger_debit' => $total,
-            ]);
-
-            return redirect()->back()->with('success', 'Successfully Submitted');
-        });
-        return redirect()->back()->with('error', 'Something went wrong');
+                $l = LedgerBudget::max('bledger_id');
+                $lnum = $l ? $l + 1 : 1;
+                LedgerSpgc::create([
+                    'spgcledger_no' => $lnum,
+                    'spgcledger_trid' => $id,
+                    'spgcledger_datetime' => now(),
+                    'spgcledger_type' => 'RFGCSEGCREL',
+                    'spgcledger_debit' => $total,
+                ]);
+                return redirect()->back()->with('success', 'Successfully Submitted');
+            });
+        } catch (e) {
+            return redirect()->back()->with('error', 'Something went wrong');
+        }
 
     }
 
@@ -224,6 +207,7 @@ class SpecialGcRequestController extends Controller
             ->orderBy('spexgcemp_denom')
             ->paginate(10)
             ->withQueryString();
+
         return response()->json([
             'data' => SpecialExternalGcrequestEmpAssignResource::collection($record),
             'from' => $record->firstItem(),
@@ -243,6 +227,7 @@ class SpecialGcRequestController extends Controller
             })->where('spexgc_released', 'released')
             ->orderByDesc('spexgc_id')
             ->paginate()->withQueryString();
+
         return inertia('Treasury/Dashboard/SpecialGc/SpecialReleasedGc', [
             'title' => 'Released Special External Gc',
             'filters' => $request->only(['date', 'search']),
@@ -254,8 +239,8 @@ class SpecialGcRequestController extends Controller
     public function viewReleasedGc(Request $request, $id)
     {
         $approvedReq = SpecialExternalGcrequest::where('spexgc_id', $id)->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalBankPaymentInfo')
-            ->whereHas('approvedRequest', function ($q) {
-                $q->where('reqap_approvedtype', 'Special External GC Approved');
+            ->withWhereHas('approvedRequest', function ($q) {
+                $q->with('user:user_id,firstname,lastname')->where('reqap_approvedtype', 'Special External GC Approved');
             })->first();
 
         $reviewed = ApprovedRequest::with('user:user_id,firstname,lastname')
@@ -276,6 +261,25 @@ class SpecialGcRequestController extends Controller
             'title' => 'Viewing Special External Gc Request'
         ]);
     }
+
+    // public function reviewedGcReleasing(Request $request)
+    // {
+    //     $records = SpecialExternalGcrequest::select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_datereq', 'spexgc_dateneed', 'spexgc_num')
+    //         ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', 'reviewed'], ['spexgc_released', ''], ['spexgc_promo', '0']])
+    //         ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'approvedRequestRevied')
+    //         ->withWhereHas('approvedRequest', function ($q) {
+    //             $q->select('reqap_trid', 'reqap_approvedby')->with('user:user_id,firstname,lastname')->where('reqap_approvedtype', 'Special External GC Approved');
+    //         })
+    //         ->orderByDesc('spexgc_id')
+    //         ->paginate()->withQueryString();
+
+    //     return inertia('Treasury/Dashboard/SpecialGc/ReviewedGcReleasing', [
+    //         'title' => 'Reviewed Special External GC',
+    //         'records' => SpecialExternalGcRequestResource::collection($records),
+    //         'columns'=> ColumnHelper::$reviewedSpecialExternal,
+    //     ]);
+
+    // }
     private function options()
     {
 

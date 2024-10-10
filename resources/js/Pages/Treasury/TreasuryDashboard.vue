@@ -88,10 +88,11 @@
                                 :cancelled="data?.specialGcRequest?.cancelled"
                                 @pending-event="specialGcPending"
                             >
-                                <CardBadge
+                                <!-- <CardBadge
                                     :count="data?.specialGcRequest?.reviewed"
-                                    title="Reviewed GC for Releasing"
-                                />
+                                    title="Reviewed GC for Releasing(External)"
+                                    @event="reviewedGcReleasing"
+                                /> -->
                                 <CardBadge
                                     :count="data?.specialGcRequest?.released"
                                     title="Released GC"
@@ -99,8 +100,8 @@
                                 />
                                 <CardBadge
                                     :count="data?.specialGcRequest?.internalReviewed"
-                                    title="Reviewed GC For Releasing(Internal)"
-                                     @event="releasingInternal"
+                                    title="Reviewed GC For Releasing(Internal/ External)"
+                                     @event="gcReleasing"
                                 />
                             </Card>
                             <Card title="Adjustment">
@@ -212,8 +213,9 @@ const approvedProductionRequest = () =>
 
 //Special GC Request
 const specialGcPending = () => routeTo("special.gc", "pending");
-const releasingInternal = () => routeTo("special.gc", "releasingInternal");
+const gcReleasing = () => routeTo("special.gc", "gcReleasing");
 const specialReleasedGc = () => routeTo("special.gc", "specialReleasedGc")
+const reviewedGcReleasing = () => routeTo("special.gc", "reviewedGcReleasing")
 
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");
