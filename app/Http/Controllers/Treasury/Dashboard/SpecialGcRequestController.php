@@ -241,9 +241,8 @@ class SpecialGcRequestController extends Controller
             ->withWhereHas('approvedRequest', function ($q) {
                 $q->with('user:user_id,firstname,lastname')->select('reqap_preparedby', 'reqap_trid', 'reqap_date')->where('reqap_approvedtype', 'special external releasing');
             })->where('spexgc_released', 'released')
-            // ->limit(10)->get();
+            ->orderByDesc('spexgc_id')
             ->paginate()->withQueryString();
-
         return inertia('Treasury/Dashboard/SpecialGc/SpecialReleasedGc', [
             'title' => 'Released Special External Gc',
             'filters' => $request->only(['date', 'search']),
