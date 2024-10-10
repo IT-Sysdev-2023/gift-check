@@ -154,4 +154,7 @@ class CustodianController extends Controller
     public function getEveryBarcode(Request $request, $id){
         return $this->custodianservices->getEveryBarcodeDetails($request,$id);
     }
+    public function getRequisitionDetails($id){
+        return $this->custodianservices->getRequisitionDetailsData($id);
+    }
 }
