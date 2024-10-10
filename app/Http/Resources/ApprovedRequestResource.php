@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 class ApprovedRequestResource extends JsonResource
 {
@@ -20,11 +21,12 @@ class ApprovedRequestResource extends JsonResource
             'reqap_preparedby' => $this->reqap_preparedby,
             'reqap_date' => $this->reqap_date?->toFormattedDateString(),
             'reqap_remarks' => $this->reqap_remarks,
-            'reqap_doc' => $this->whenNotNull($this->reqap_doc, function () {
+            'reqap_doc' => $this->when(!is_null($this->reqap_doc), function () {
+                $filename = Str::replace('//', '/', $this->reqap_doc);
                 return [
                     [
                         'uid' => $this->reqap_id,
-                        'url' => "/storage/{$this->reqap_doc}",
+                        'url' => "/storage/{$filename}",
                         'name' => basename($this->reqap_doc),
                     ]
                 ];

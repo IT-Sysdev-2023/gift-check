@@ -241,6 +241,7 @@ class SpecialGcRequestController extends Controller
             ->withWhereHas('approvedRequest', function ($q) {
                 $q->with('user:user_id,firstname,lastname')->select('reqap_preparedby', 'reqap_trid', 'reqap_date')->where('reqap_approvedtype', 'special external releasing');
             })->where('spexgc_released', 'released')
+            ->orderByDesc('spexgc_id')
             // ->limit(10)->get();
             ->paginate()->withQueryString();
 
@@ -255,8 +256,8 @@ class SpecialGcRequestController extends Controller
     public function viewReleasedGc(Request $request, $id)
     {
         $approvedReq = SpecialExternalGcrequest::where('spexgc_id', $id)->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalBankPaymentInfo')
-            ->whereHas('approvedRequest', function ($q) {
-                $q->where('reqap_approvedtype', 'Special External GC Approved');
+            ->withWhereHas('approvedRequest', function ($q) {
+                $q->with('user:user_id,firstname,lastname')->where('reqap_approvedtype', 'Special External GC Approved');
             })->first();
 
         $reviewed = ApprovedRequest::with('user:user_id,firstname,lastname')

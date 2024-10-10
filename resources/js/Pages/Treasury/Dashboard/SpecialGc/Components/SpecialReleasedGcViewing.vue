@@ -51,14 +51,14 @@
                                 <a-descriptions-item label="Date Approved">
                                     {{ record.data.spexgc_datereq }}
                                 </a-descriptions-item>
-                                <a-descriptions-item label="Documents">{{
-                                    record.data.approvedRequest?.reqap_doc
-                                }}</a-descriptions-item>
+                                <a-descriptions-item label="Documents">
+                                    <ant-image-preview :images="record.data.approvedRequest?.reqap_doc"/>
+                                    </a-descriptions-item>
                                 <a-descriptions-item label="Checked By">{{
                                     record.data.approvedRequest?.reqap_checkedby
                                 }}</a-descriptions-item>
                                 <a-descriptions-item label="Prepared By">{{
-                                    record.data.approvedRequest?.user
+                                    record.data.approvedRequest?.user.full_name
                                 }}</a-descriptions-item>
                                 <a-descriptions-item label="Remarks">{{
                                     record.data.spexgc_remarks
@@ -98,7 +98,7 @@
                                     released.reqap_remarks
                                 }}</a-descriptions-item>
                                 <a-descriptions-item label="Received By">{{
-                                    released.spexgc_receviedby
+                                    record.data.spexgc_receviedby
                                 }}</a-descriptions-item>
                                 <a-descriptions-item label="Released By">{{
                                     released.user.full_name
@@ -109,29 +109,31 @@
                 >
                 <a-tab-pane key="2" tab="Barcodes" force-render
                     >
-                    <a-table bordered :columns="[{
+                    <a-table bordered 
+                    :data-source="barcodes.data"
+                    :columns="[{
                         title: 'Barcode',
-                        dataIndex: 'fname' 
+                        dataIndex: 'spexgcemp_barcode' 
                     },
                     {
                         title: 'Denomination',
-                        dataIndex: 'fname' 
+                        dataIndex: 'spexgcemp_denom' 
                     },
                     {
                         title: 'Lastname',
-                        dataIndex: 'fname' 
+                        dataIndex: 'spexgcemp_lname' 
                     }, 
                     {
                         title: 'Firstname',
-                        dataIndex: 'fname' 
+                        dataIndex: 'spexgcemp_fname' 
                     },
                     {
                         title: 'Middlename',
-                        dataIndex: 'fname' 
+                        dataIndex: 'spexgcemp_mname' 
                     },
                     {
-                        title: 'Name ',
-                        dataIndex: 'fname' 
+                        title: 'Name Ext.',
+                        dataIndex: 'spexgcemp_extname' 
                     }]">
 
                     </a-table>
