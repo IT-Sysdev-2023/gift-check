@@ -6,6 +6,7 @@ use App\Helpers\NumberHelper;
 use App\Models\Document;
 use App\Models\SpecialExternalCustomer;
 use App\Services\Documents\FileHandler;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalBankPaymentInfo;
@@ -38,6 +39,14 @@ class SpecialGcPaymentService extends FileHandler
             ->orderByDesc('spexgc_num')
             ->paginate()
             ->withQueryString();
+    }
+
+    public function pendingInternal()
+    {
+        return SpecialExternalGcrequest::with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+            ->select('spexgc_num', 'spexgc_reqby', 'spexgc_company', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
+            ->where([['special_external_gcrequest.spexgc_status', 'pending'], ['special_external_gcrequest.spexgc_promo', '*']])
+            ->paginate()->withQueryString();
     }
     public function store(Request $request)
     {
@@ -118,13 +127,15 @@ class SpecialGcPaymentService extends FileHandler
                 }
 
                 SpecialExternalGcrequestItem::where('specit_trid', $request->reqid)->delete();
-                $filter = collect($request->denomination)->reject(function ($item){ return $item['denomination'] === 0 || $item['qty'] === 0;});
+                $filter = collect($request->denomination)->reject(function ($item) {
+                    return $item['denomination'] === 0 || $item['qty'] === 0;
+                });
                 $filter->each(function ($val) use ($request) {
-                        SpecialExternalGcrequestItem::create([
-                            'specit_denoms' => $val['denomination'],
-                            'specit_qty' => $val['qty'],
-                            'specit_trid' => $request->reqid,
-                        ]);
+                    SpecialExternalGcrequestItem::create([
+                        'specit_denoms' => $val['denomination'],
+                        'specit_qty' => $val['qty'],
+                        'specit_trid' => $request->reqid,
+                    ]);
                 });
 
                 if ($request->has('file')) {
@@ -150,6 +161,19 @@ class SpecialGcPaymentService extends FileHandler
         } else {
             return redirect()->back()->with('error', 'Company dont Exists!');
         }
+    }
+
+    public function releasingGc(string $promo)
+    {
+        return SpecialExternalGcrequest::with(['specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'user:user_id,firstname,lastname', 'approvedRequestRevied.user', 'specialExternalGcrequestEmpAssign'])
+            ->withWhereHas('approvedRequest', function ($q) {
+                $q->select('reqap_trid', 'reqap_approvedby')->where('reqap_approvedtype', 'Special External GC Approved');
+            })
+            ->select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
+            ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', 'reviewed'], ['spexgc_released', ''], ['spexgc_promo', $promo]])
+            ->orderByDesc('spexgc_id')
+            ->paginate()
+            ->withQueryString();
     }
 
 

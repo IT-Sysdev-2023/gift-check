@@ -252,12 +252,13 @@ Route::middleware(['auth'])->group(function () {
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
 
-                Route::get('reviewing-gc-internal', [SpecialGcRequestController::class,'releasingInternal'])->name('releasingInternal');
-                Route::get('reviewing-gc-internal-{id}', [SpecialGcRequestController::class,'viewReleasingInternal'])->name('viewReleasingInternal');
+                Route::get('reviewing-gc-internal', [SpecialGcRequestController::class,'releasingGc'])->name('gcReleasing');
+                Route::get('reviewing-gc-{id}', [SpecialGcRequestController::class,'viewReleasing'])->name('viewReleasing');
                 Route::get('view-denominations-{id}' , [SpecialGcRequestController::class,'viewDenomination'])->name('viewDenomination');
-                Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class,'relasingInternalSubmission'])->name('internalSubmission');
+                Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class,'relasingGcSubmission'])->name('releasingSubmission');
 
                 Route::get('released-gc', [SpecialGcRequestController::class,'releasedGc'])->name('specialReleasedGc');
+                // Route::get('reviewed-gc-for-releasing', [SpecialGcRequestController::class,'reviewedGcReleasing'])->name('reviewedGcReleasing');
                 Route::get('view-released-gc-{id}', [SpecialGcRequestController::class,'viewReleasedGc'])->name('viewReleasedGc');
             });
             Route::prefix('transactions')->name('transactions.')->group(function () {

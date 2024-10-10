@@ -621,4 +621,47 @@ class ColumnHelper
             'key' => 'action',
         ],
     ];
+
+    public static $reviewedSpecialExternal = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Total Denom',
+            'key' => 'totalDenom',
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'key' => 'requestedBy',
+        ],
+        [
+            'title' => 'Approved By',
+            'key' => 'approvedBy',
+        ],
+        [
+            'title' => 'Reviewed By',
+            'key' => 'reviewedBy',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
 }
