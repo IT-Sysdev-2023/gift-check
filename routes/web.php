@@ -455,6 +455,7 @@ Route::prefix('retailgroup')->group(function () {
 });
 
 Route::prefix('custodian')->group(function () {
+    
     Route::name('custodian.')->group(function () {
 
         Route::get('barcode-checker', [CustodianController::class, 'barcodeCheckerIndex'])->name('barcode.checker');
@@ -525,11 +526,13 @@ Route::prefix('search')->group(function () {
         Route::get('search-customer', [QueryFilterController::class, 'customer'])->name('customer');
     });
 });
+
 Route::prefix('management')->group(function () {
     Route::name('manager.')->group(function () {
         Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('managers.key');
     });
 });
+
 Route::prefix('coupon')->group(function () {
     Route::name('treasury.')->group(function () {
         Route::name('coupon.')->group(function () {
