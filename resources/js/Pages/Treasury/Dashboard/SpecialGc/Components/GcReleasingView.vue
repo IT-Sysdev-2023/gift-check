@@ -190,8 +190,9 @@ const props = defineProps<{
     };
     tableRecords: any;
 }>();
-
+// const promo = ref();
 const formState = useForm({
+    promo: props.records.data.spexgc_promo,
     checkedBy: "",
     remarks: "",
     receivedBy: "",

@@ -110,7 +110,7 @@ class SpecialGcRequestController extends Controller
         $record = $this->specialGcPaymentService->releasingGc($promo);
         // dd($record);
         return inertia('Treasury/Dashboard/SpecialGc/ReviewedReleasing', [
-            'title' => 'Reviewed GC For Releasing(Internal)',
+            'title' => 'Reviewed GC For Releasing',
             'records' => SpecialExternalGcRequestResource::collection($record),
             'columns' => ColumnHelper::$specialInternal,
             'tab' => $promo
@@ -185,13 +185,39 @@ class SpecialGcRequestController extends Controller
 
                 $l = LedgerBudget::max('bledger_id');
                 $lnum = $l ? $l + 1 : 1;
-                LedgerSpgc::create([
-                    'spgcledger_no' => $lnum,
-                    'spgcledger_trid' => $id,
-                    'spgcledger_datetime' => now(),
-                    'spgcledger_type' => 'RFGCSEGCREL',
-                    'spgcledger_debit' => $total,
-                ]);
+
+                //external
+                if ($request->promo === '0') {
+                    // LedgerBudget::create([
+                    //     'bledger_no' => $lnum,
+                    //     'bledger_trid' => $id,
+                    //     'bledger_datetime' => now(),
+                    //     'bledger_type' => 'RFGCSEGCREL',
+                    //     'bcredit_amt' => $total,
+                    //     'bledger_category' => null
+                    // ]);
+                    LedgerBudget::create([
+                        'bledger_no' => $lnum,
+                        'bledger_trid' => $id,
+                        'bledger_datetime' => now(),
+                        'bledger_type' => 'RFGCSEGCREL',
+                        'bdebit_amt' => $total,
+                        'bledger_category' => 'special'
+                    ]);
+                } else {
+                    //internal
+                    LedgerSpgc::create([
+                        'spgcledger_no' => $lnum,
+                        'spgcledger_trid' => $id,
+                        'spgcledger_datetime' => now(),
+                        'spgcledger_type' => 'RFGCSEGCREL',
+                        'spgcledger_debit' => $total,
+                    ]);
+                }
+
+
+
+
                 return redirect()->back()->with('success', 'Successfully Submitted');
             });
         } catch (e) {

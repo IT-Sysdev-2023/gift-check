@@ -19,6 +19,7 @@ class SpecialExternalGcRequestResource extends JsonResource
         return [
             'spexgc_num' => $this->spexgc_num,
             'spexgc_type' => $this->spexgc_type,
+            'spexgc_promo' => $this->spexgc_promo,
             'spexgc_receviedby' => $this->spexgc_receviedby,
             'spexgc_dateneed' => $this->spexgc_dateneed?->toFormattedDateString(),
             'spexgc_payment_arnum' => $this->spexgc_payment_arnum,
