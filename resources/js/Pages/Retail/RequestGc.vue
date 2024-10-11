@@ -1,12 +1,7 @@
 <template>
     <a-card title="Store GC Request Form">
         <div class="flex justify-end mb-2">
-            <a-button title="Please fill required fields"
-                v-if="(form.dateNeed == '' || form.remarks == '' || form.quantities.filter((data) => data).length == 0)"
-                @click="submitForm" type="primary" disabled>
-                <CheckOutlined /> Submit Form
-            </a-button>
-            <a-button v-else @click="submitForm" type="primary">
+            <a-button @click="submitForm" type="primary">
                 <CheckOutlined /> Submit Form
             </a-button>
         </div>
@@ -14,12 +9,13 @@
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <a-card>
-                    <a-form-item label="">
+                    <a-form-item label="" has-feedback :help="error?.quantities"
+                        :validate-status="error?.quantities ? 'error' : ''">
                         <a-table :dataSource="denoms" :columns="denomColumns" :pagination="false">
                             <template #bodyCell="{ column, record, index }">
                                 <template v-if="column.key === 'qty'">
                                     <a-input type="number" v-model:value="form.quantities[record.denom_id]"
-                                        @change="calculateTotal(record)"></a-input>
+                                        @change="handleQuatity(record)"></a-input>
                                 </template>
                             </template>
                         </a-table>
@@ -41,22 +37,9 @@
                     <a-form-item label="Date Requested">
                         <a-input v-model:value="form.dateReq" readonly></a-input>
                     </a-form-item>
-                    <a-form-item label="Date Needed">
-                        <a-date-picker :disabled-date="disabledDate" style="width: 100%;" v-model:value="form.dateNeed" />
-                        <small style="color: red;" v-if="form.dateNeed == ''">*this field is required</small>
-                    </a-form-item>
-                    <!-- <a-form-item label="Upload Doc">
-                        <a-upload-dragger name="file" :before-upload="() => false" :max-count="1"
-                            @change="handleImageChange" @drop="handleDrop">
-                            <p class="ant-upload-drag-icon">
-                                <inbox-outlined></inbox-outlined>
-                            </p>
-                            <p class="ant-upload-text">Click or drag file to this area to upload</p>
-                        </a-upload-dragger>
-                    </a-form-item> -->
-                    <a-form-item label="Remarks">
+                    <a-form-item label="Remarks" has-feedback :help="error?.remarks"
+                        :validate-status="error?.remarks ? 'error' : ''">
                         <a-textarea v-model:value="form.remarks"></a-textarea>
-                        <small style="color: red;" v-if="form.remarks == ''">*this field is required</small>
                     </a-form-item>
                     <a-form-item label="Prepared by">
                         <a-input v-model:value="form.approvedBy" readonly></a-input>
@@ -80,6 +63,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import dayjs from 'dayjs';
 import { notification } from 'ant-design-vue';
+import { useForm } from '@inertiajs/vue3';
 
 export default {
     layout: AuthenticatedLayout,
@@ -95,7 +79,8 @@ export default {
     data() {
         return {
             file: null,
-            form: {
+            error: null,
+            form: useForm({
                 sgc_id: this.requestno.sgc_id,
                 quantities: [],
                 requestNumber: this.requestNumber,
@@ -105,7 +90,7 @@ export default {
                 remarks: '',
                 approvedBy: this.$page.props.auth.user.full_name,
                 approvedById: this.$page.props.auth.user.user_id,
-            },
+            }),
             total: 0,
         }
     },
@@ -121,17 +106,25 @@ export default {
                 return sum + (denom.denomination * qty);
             }, 0);
         },
+        handleQuatity() {
+            this.error.quantities = '';
+            this.calculateTotal()
+        },
         submitForm() {
-            this.$inertia.post(route('retail.gc.request.submit'), {
-                data: this.form,
-                file: this.file,
-            }, {
+            this.form.post(route('retail.gc.request.submit'), {
+                onError: (e) => {
+                    this.error = e
+                },
                 onSuccess: (response) => {
                     notification[response.props.flash.type]({
                         message: response.props.flash.msg,
                         description: response.props.flash.description,
                     });
-                    this.$inertia.get(route('retail.dashboard'))
+                    
+                    if (response.props.flash.type === 'success') {
+                        this.$inertia.get(route('retail.dashboard'))
+                    }
+
                 }
             });
         },
