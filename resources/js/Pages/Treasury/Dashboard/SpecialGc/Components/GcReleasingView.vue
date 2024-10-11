@@ -7,14 +7,14 @@
             </a-breadcrumb-item>
             <a-breadcrumb-item>
                 <Link :href="route('treasury.special.gc.gcReleasing')"
-                    >Reviewed GC For Releasing(Internal)</Link
+                    >Reviewed GC For Releasing</Link
                 >
             </a-breadcrumb-item>
-            <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
+            <a-breadcrumb-item>{{ title }} {{ titl }} </a-breadcrumb-item>
         </a-breadcrumb>
 
         <a-card>
-            <a-descriptions bordered :title="title">
+            <a-descriptions bordered :title="title + ' ' + titl">
                 <a-descriptions-item label="RFSEGC #">{{
                     records.data.spexgc_num
                 }}</a-descriptions-item>
@@ -66,9 +66,9 @@
                 <a-descriptions-item
                     label="Approved Document"
                     v-if="records.data.approvedRequest.reqap_doc"
-                    >{{
-                        records.data.approvedRequest.reqap_doc
-                    }}</a-descriptions-item
+                    >
+                    <ant-image-preview :images=" records.data.approvedRequest.reqap_doc"/>
+                    </a-descriptions-item
                 >
                 <a-descriptions-item label="Approved Remarks">{{
                     records.data.approvedRequest.reqap_remarks
@@ -176,6 +176,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import { ref } from "vue";
+import { computed } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
 import { onProgress } from "@/Mixin/UiUtilities";
 const props = defineProps<{
@@ -191,6 +192,9 @@ const props = defineProps<{
     tableRecords: any;
 }>();
 // const promo = ref();
+const titl = computed(() => {
+    return props.records.data.spexgc_promo == 0 ? 'External' : 'Internal';
+})
 const formState = useForm({
     promo: props.records.data.spexgc_promo,
     checkedBy: "",
