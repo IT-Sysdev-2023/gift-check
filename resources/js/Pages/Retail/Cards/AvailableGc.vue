@@ -1,6 +1,9 @@
 <template>
     <div>
         <a-card title="Available GC">
+            <a-form-item label="Total GC">
+                <a-input v-bind:value="total" readonly/>
+            </a-form-item>
             <a-table size="small" bordered :dataSource="availableGc" :columns="columns" :pagination="false">
                 <template v-slot:bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'denomination'">
@@ -27,7 +30,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 export default {
     layout: AuthenticatedLayout,
     props: {
-        availableGc: Object
+        availableGc: Object,
+        total: Object
     },
     data() {
         return {
