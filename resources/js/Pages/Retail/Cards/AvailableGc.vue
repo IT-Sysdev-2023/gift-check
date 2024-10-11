@@ -1,6 +1,7 @@
 <template>
     <div>
         <a-card title="Available GC">
+            
             <a-table size="small" bordered :dataSource="availableGc" :columns="columns" :pagination="false">
                 <template v-slot:bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'denomination'">
@@ -11,6 +12,9 @@
                     </template>
                 </template>
             </a-table>
+            <a-form-item label="Total GC">
+                <a-input v-bind:value="'₱'+total" readonly/>
+            </a-form-item>
             <div>
                 <div class="flex justify-end mt-2">
                     <a-button size="small" @click="() => $inertia.get(route('retail.availableGcList'))" type="primary">
@@ -27,7 +31,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 export default {
     layout: AuthenticatedLayout,
     props: {
-        availableGc: Object
+        availableGc: Object,
+        total: Object
     },
     data() {
         return {
