@@ -664,4 +664,39 @@ class ColumnHelper
             'key' => 'action',
         ],
     ];
+
+    public static $approvedRequest = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'key' => 'dateApproved',
+        ],
+        [
+            'title' => 'Approved By',
+            'key' => 'approvedBy',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
 }

@@ -87,6 +87,7 @@
                                 :approved="data?.specialGcRequest?.approved"
                                 :cancelled="data?.specialGcRequest?.cancelled"
                                 @pending-event="specialGcPending"
+                                @approved-event="approvedRequest"
                             >
                                 <!-- <CardBadge
                                     :count="data?.specialGcRequest?.reviewed"
@@ -216,6 +217,7 @@ const specialGcPending = () => routeTo("special.gc", "pending");
 const gcReleasing = () => routeTo("special.gc", "gcReleasing");
 const specialReleasedGc = () => routeTo("special.gc", "specialReleasedGc")
 const reviewedGcReleasing = () => routeTo("special.gc", "reviewedGcReleasing")
+const approvedRequest = () => routeTo("special.gc", "approvedRequest")
 
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");
