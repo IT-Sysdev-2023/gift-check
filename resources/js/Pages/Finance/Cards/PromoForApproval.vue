@@ -22,16 +22,19 @@
                             </a-select>
                         </a-form-item>
                         <a-row :gutter="[16, 16]">
-                            <a-col :span="12">
+                            <a-col v-if="form.status === 1" :span="12">
                                 <a-form-item label="Checked By:" has-feedback
                                     :validate-status="errors.checkby ? 'error' : ''" :help="errors.checkby">
                                     <a-input v-model:value="form.checkby" readonly />
                                 </a-form-item>
                             </a-col>
-                            <a-col :span="12">
-                                <a-form-item label="Prepared By:" has-feedback
-                                    :validate-status="errors.appby ? 'error' : ''" :help="errors.appby">
-                                    <a-input :value="$page.props.auth.user.full_name"></a-input>
+                            <a-col v-if="form.status === 1 || form.status === 2" :span="form.status === 1 ? 12 : 24">
+                                <a-form-item has-feedback :validate-status="errors.appby ? 'error' : ''"
+                                    :help="errors.appby">
+                                    <template #label>
+                                        {{ form.status === 1 ? 'Approved By:' : 'Cancelled By' }}
+                                    </template>
+                                    <a-input readonly :value="$page.props.auth.user.full_name"></a-input>
                                     <!-- <a-select ref="select" v-model:value="form.appby" placeholder="Select Approved By"
                                     @change="() => errors.appby = null">
                                     <a-select-option v-for="item in cdata" :value="item.assig_id">{{ item.assig_name
@@ -40,20 +43,22 @@
                                 </a-form-item>
                             </a-col>
                         </a-row>
-                        <a-form-item has-feedback :help="errors.remarks"
+                        <a-form-item has-feedback :help="errors.remarks" v-if="form.status === 1"
                             :validate-status="errors.remarks ? 'error' : ''">
                             <a-textarea v-model:value="form.remarks" placeholder="Enter remarks" :rows="2"
                                 @change="() => errors.remarks = null" />
                         </a-form-item>
-                        <a-divider>
-                            <a-typography-text code>upload image</a-typography-text>
-                        </a-divider>
-                        <div class="flex justify-center">
-                            <a-form-item>
-                                <ant-upload-image @handle-change="handleImageChange" />
-                            </a-form-item>
+                        <div v-if="form.status === 1">
+                            <a-divider>
+                                <a-typography-text code>upload image</a-typography-text>
+                            </a-divider>
+                            <div class="flex justify-center">
+                                <a-form-item>
+                                    <ant-upload-image @handle-change="handleImageChange" />
+                                </a-form-item>
+                            </div>
                         </div>
-                        <a-form-item>
+                        <a-form-item v-if="form.status === 1 || form.status === 2">
                             <a-button type="primary" block @click="approve" :loading="form.processing">
                                 <template #icon>
                                     <TagsFilled />
@@ -61,6 +66,7 @@
                                 Submit Approval Form
                             </a-button>
                         </a-form-item>
+
                     </a-form>
                 </a-card>
             </div>
@@ -181,7 +187,7 @@ h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"></path>
                         </a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" bordered>
-                        <a-descriptions-item label="Requested by:" style="width: 50%;">{{ details.data[0].fullname
+                        <a-descriptions-item label="Prepared by:" style="width: 50%;">{{ details.data[0].fullname
                             }}</a-descriptions-item>
                     </a-descriptions>
                 </div>
