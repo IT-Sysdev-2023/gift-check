@@ -50,15 +50,15 @@ class RetailController extends Controller
             ->select('denomination.denomination', DB::raw('count(*) as total'))
             ->groupBy('denomination.denom_id', 'denomination.denomination') // Group by both fields
             ->get();
-        $currentStorebudget = $rfund['r_fund'] - $getAvailableGc['total'];
+        $currentStorebudget = number_format($rfund['r_fund'] - $getAvailableGc['total'],2);
 
 
         return inertia('Retail/RetailDashboard', [
             'countGcRequest' => $gcRequest,
             'availableGc' => $getAvailableGc['denoms'],
             'soldGc' => $soldGc,
-            'total' => $getAvailableGc['total'],
-            'r_fund' => $rfund['r_fund'],
+            'total' => number_format($getAvailableGc['total'],2),
+            'r_fund' => number_format($rfund['r_fund'],2),
             'storeBudget' => $currentStorebudget
         ]);
     }
@@ -124,7 +124,15 @@ class RetailController extends Controller
 
         $storeBudget = $this->retail->getRevolvingFund($request);
 
+        $hasPending = $this->retail->GcPendingRequest();
 
+        if (!empty($hasPending->toArray())) {
+            return back()->with([
+                'type' => 'warning',
+                'msg' => 'Warning!',
+                'description' => 'You still have pending GC Request!'
+            ]);
+        }
 
         $storeAssigned = $request->user()->store_assigned;
 
@@ -146,7 +154,7 @@ class RetailController extends Controller
             $total += $subt;
         }
 
-        if($total > $storeBudget){
+        if ($total > $storeBudget) {
             return back()->with([
                 'type' => 'warning',
                 'msg' => 'Warning!',
