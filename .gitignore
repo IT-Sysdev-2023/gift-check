@@ -10,6 +10,7 @@
 .env.production
 .phpunit.result.cache
 .pnpm-store/
+bun.lockb
 Homestead.json
 Homestead.yaml
 auth.json
