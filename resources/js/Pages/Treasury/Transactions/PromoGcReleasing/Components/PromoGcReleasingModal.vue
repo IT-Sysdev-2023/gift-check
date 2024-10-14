@@ -38,12 +38,12 @@
                         <a-form-item
                             label="Checked By:"
                         >
-                          <a-input :value="data.approved_request_user.user.full_name" readonly/>
+                          <a-input :value="formState.checkedBy" readonly/>
                         </a-form-item>
                         <a-form-item
                             label="Approved By:"
                         >
-                           <a-input :value="data.approved_by_type" readonly/>
+                           <a-input :value="formState.approvedBy" readonly/>
                         </a-form-item>
                         <a-form-item label="Released By:">
                             <a-input
@@ -257,8 +257,8 @@ const formState = useForm({
         checkAmount: "",
         customer: "",
     },
-    checkedBy: "",
-    approvedBy: "",
+    checkedBy: props.data.approved_request_user.user.full_name,
+    approvedBy: props.data.approved_by_type,
 });
 const releasingNo = ref("");
 const today = dayjs().format("YYYY-MMM-DD HH:mm:ss a");
