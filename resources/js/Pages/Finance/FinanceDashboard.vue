@@ -12,8 +12,7 @@
     </a-row>
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
-            <!-- <promo-gc-card :count="count"/> -->
-            <promo-gc-card :count="count" />
+             <PromoGCViewCard :count="count"></PromoGCViewCard>
         </a-col>
         <a-col :span="8">
             <special-pending-request-finance :count="count.specialGcRequest" :pendingExGcRequest :columns

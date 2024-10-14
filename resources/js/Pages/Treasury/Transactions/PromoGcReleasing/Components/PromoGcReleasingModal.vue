@@ -37,27 +37,13 @@
                         </a-form-item>
                         <a-form-item
                             label="Checked By:"
-                            :validate-status="
-                                formState.errors?.checkedBy ? 'error' : ''
-                            "
-                            :help="formState.errors?.checkedBy"
                         >
-                            <ant-select
-                                :options="denominations.assignatories"
-                                @handle-change="handleCheckedBy"
-                            />
+                          <a-input :value="data.approved_request_user.user.full_name" readonly/>
                         </a-form-item>
                         <a-form-item
                             label="Approved By:"
-                            :validate-status="
-                                formState.errors?.approvedBy ? 'error' : ''
-                            "
-                            :help="formState.errors?.approvedBy"
                         >
-                            <ant-select
-                                :options="denominations.assignatories"
-                                @handle-change="handleApprovedBy"
-                            />
+                           <a-input :value="data.approved_by_type" readonly/>
                         </a-form-item>
                         <a-form-item label="Released By:">
                             <a-input
