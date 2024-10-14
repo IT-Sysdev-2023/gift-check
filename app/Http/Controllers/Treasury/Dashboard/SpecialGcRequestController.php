@@ -188,14 +188,6 @@ class SpecialGcRequestController extends Controller
 
                 //external
                 if ($request->promo === '0') {
-                    // LedgerBudget::create([
-                    //     'bledger_no' => $lnum,
-                    //     'bledger_trid' => $id,
-                    //     'bledger_datetime' => now(),
-                    //     'bledger_type' => 'RFGCSEGCREL',
-                    //     'bcredit_amt' => $total,
-                    //     'bledger_category' => null
-                    // ]);
                     LedgerBudget::create([
                         'bledger_no' => $lnum,
                         'bledger_trid' => $id,
@@ -288,24 +280,87 @@ class SpecialGcRequestController extends Controller
         ]);
     }
 
-    // public function reviewedGcReleasing(Request $request)
-    // {
-    //     $records = SpecialExternalGcrequest::select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_datereq', 'spexgc_dateneed', 'spexgc_num')
-    //         ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', 'reviewed'], ['spexgc_released', ''], ['spexgc_promo', '0']])
-    //         ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'approvedRequestRevied')
-    //         ->withWhereHas('approvedRequest', function ($q) {
-    //             $q->select('reqap_trid', 'reqap_approvedby')->with('user:user_id,firstname,lastname')->where('reqap_approvedtype', 'Special External GC Approved');
-    //         })
-    //         ->orderByDesc('spexgc_id')
-    //         ->paginate()->withQueryString();
+    public function approvedRequest(Request $request)
+    {
 
-    //     return inertia('Treasury/Dashboard/SpecialGc/ReviewedGcReleasing', [
-    //         'title' => 'Reviewed Special External GC',
-    //         'records' => SpecialExternalGcRequestResource::collection($records),
-    //         'columns'=> ColumnHelper::$reviewedSpecialExternal,
-    //     ]);
+        $record = SpecialExternalGcrequest::with([
+            'approvedRequest' => function ($q) {
+                $q->select('reqap_approvedby', 'reqap_trid', 'reqap_date')->where('reqap_approvedtype', 'Special External GC Approved');
+            },
+            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname'
+        ])
+            ->select('spexgc_id', 'spexgc_company', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed')
+            ->where('spexgc_status', 'approved')
+            ->orderByDesc('spexgc_id')
+            ->paginate()->withQueryString();
 
-    // }
+        return inertia('Treasury/Dashboard/SpecialGc/ApprovedGc', [
+            'filters' => $request->only(['date', 'search']),
+            'title' => 'Approved Special External Gc',
+            'data' => SpecialExternalGcRequestResource::collection($record),
+            'columns' => ColumnHelper::$approvedRequest,
+        ]);
+    }
+
+    public function viewApprovedRequest(Request $request, SpecialExternalGcrequest $id)
+    {
+        $table = 'special_external_gcrequest';
+        $select = "special_external_gcrequest.spexgc_id,
+            special_external_gcrequest.spexgc_num,
+            CONCAT(req.firstname,' ',req.lastname) as reqby,
+            special_external_gcrequest.spexgc_datereq,
+            special_external_gcrequest.spexgc_dateneed,
+            special_external_gcrequest.spexgc_remarks,
+            special_external_gcrequest.spexgc_payment,
+            special_external_gcrequest.spexgc_paymentype,
+            special_external_gcrequest.spexgc_payment_arnum,
+            special_external_customer.spcus_companyname,
+            approved_request.reqap_remarks,
+            approved_request.reqap_doc,
+            approved_request.reqap_checkedby,
+            approved_request.reqap_approvedby,
+            approved_request.reqap_preparedby,
+            approved_request.reqap_date,
+            CONCAT(prep.firstname,' ',prep.lastname) as prepby";
+        // $where = "special_external_gcrequest.spexgc_status='approved'
+        //     AND
+        //         special_external_gcrequest.spexgc_id = '".$reqid."'
+        //     AND
+        //         approved_request.reqap_approvedtype='Special External GC Approved'
+        //     ";
+        $join = 'INNER JOIN
+                users as req
+            ON
+                req.user_id = special_external_gcrequest.spexgc_reqby
+            INNER JOIN
+                special_external_customer
+            ON
+                special_external_customer.spcus_id = special_external_gcrequest.spexgc_company  
+            INNER JOIN
+                approved_request
+            ON
+                approved_request.reqap_trid = special_external_gcrequest.spexgc_id
+            INNER JOIN 
+                users as prep
+            ON
+                prep.user_id=approved_request.reqap_preparedby';
+        $limit = '';
+
+        $data = $id->load([
+            'approvedRequest' => function ($q) {
+                $q->with('user:user_id,firstname,lastname')
+                    ->select('reqap_trid', 'reqap_preparedby', 'reqap_remarks', 'reqap_doc', 'reqap_checkedby', 'reqap_approvedby', 'reqap_preparedby', 'reqap_date');
+            },
+            'specialExternalCustomer:spcus_id,spcus_companyname',
+            'user:user_id,firstname,lastname'
+        ]);
+        return inertia('Treasury/Dashboard/SpecialGc/Components/ApprovedGcViewing', [
+            'title' => 'Special External Gc Requests',
+            'records' => new SpecialExternalGcRequestResource($data),
+
+        ]);
+    }
+
     private function options()
     {
 

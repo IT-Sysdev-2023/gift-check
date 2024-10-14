@@ -25,7 +25,6 @@ const { highlightText } = highlighten();
             <div>
                 <a-input-search class="mr-1" v-model:value="form.search" placeholder="Search here..."
                     style="width: 300px" />
-                
             </div>
         </div>
         <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false">
@@ -33,17 +32,14 @@ const { highlightText } = highlighten();
                 <a-typography-title :level="4">{{ title }}</a-typography-title>
             </template>
             <template #bodyCell="{ column, record }">
-                 <template v-if="column.key === 'requestedBy'">
-                    {{record.user}}
-                </template>
                 <template v-if="column.key === 'customer'">
                     {{record.specialExternalCustomer?.spcus_acctname}}
                 </template>
-                <template v-if="column.key === 'dateReleased'">
-                    {{record.approvedRequest?.reqap_date}}
+                <template v-if="column.key === 'dateApproved'">
+                    {{record.approvedRequest.reqap_date}}
                 </template>
-                <template v-if="column.key === 'releasedBy'">
-                    {{record.approvedRequest?.user.full_name}}
+                <template v-if="column.key === 'approvedBy'">
+                    {{record.approvedRequest.reqap_approvedby}}
                 </template>
 
                 <template v-if="column.key === 'action'">
@@ -56,8 +52,6 @@ const { highlightText } = highlighten();
                 </template>
             </template>
         </a-table>
-
-        
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
 </template>
@@ -91,7 +85,12 @@ export default {
                     ? [dayjs(this.filters.date[0]), dayjs(this.filters.date[1])]
                     : [],
             },
-           
+            progressBar: {
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+                currentRow: 0,
+            },
         };
     },
     computed: {
@@ -103,7 +102,7 @@ export default {
     },
     methods: {
         async viewRecord(id) {
-            router.get(route('treasury.special.gc.viewReleasedGc', id));
+            router.get(route('treasury.special.gc.viewApprovedRequest', id));
         },
     },
 
