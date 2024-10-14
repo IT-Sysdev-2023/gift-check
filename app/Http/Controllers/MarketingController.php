@@ -15,6 +15,7 @@ use App\Models\Promo;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\User;
 use App\Models\Denomination;
+use App\Models\Document;
 use App\Models\LedgerBudget;
 use App\Models\LedgerCheck;
 use App\Models\ProductionRequest;
@@ -1894,11 +1895,15 @@ class MarketingController extends Controller
 
         $data = $this->marketing->viewspecialgc($request->type, $request->id);
         $denom = SpecialExternalGcrequestItem::where('specit_trid', $request->id)->get();
-
+        $doc = Document::where('doc_trid', $request->id)
+            ->where('doc_type', 'Special External GC Request')
+            ->select('doc_fullpath')
+            ->first();
 
         return response()->json([
             'data' => $data,
-            'denom' => $denom
+            'denom' => $denom,
+            'doc' => $doc['doc_fullpath']
         ]);
     }
 
@@ -1973,8 +1978,8 @@ class MarketingController extends Controller
                     if ($pdfgenerated) {
                         ProductionRequest::where('pe_id', $request->data['id'])
                             ->update([
-                                    'pe_requisition' => '1'
-                                ]);
+                                'pe_requisition' => '1'
+                            ]);
 
                         return redirect()->back()->with([
                             'type' => 'success',
@@ -1998,8 +2003,8 @@ class MarketingController extends Controller
             if ($productionDetails) {
                 $updateProductionStatus = ProductionRequest::where('pe_id', $request->data['id'])
                     ->update([
-                    'pe_requisition' => '2'
-                ]);
+                        'pe_requisition' => '2'
+                    ]);
 
                 if ($updateProductionStatus) {
                     $amount = ProductionRequestItem::join('denomination', 'production_request_items.pe_items_denomination', '=', 'denomination.denom_id')
