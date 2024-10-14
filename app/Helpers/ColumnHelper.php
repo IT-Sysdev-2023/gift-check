@@ -100,6 +100,39 @@ class ColumnHelper
 
         ],
     ];
+    public static $cancelled_production_columns = [
+        [
+            'title' => 'Pr No',
+            'dataIndex' => 'pe_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'req_date',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'dataIndex' => 'prepby',
+
+        ],
+        [
+            'title' => 'Date Cancelled',
+            'dataIndex' => 'can_at',
+
+        ],
+        [
+            'title' => 'Cancelled By',
+            'dataIndex' => 'canby',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'view',
+            'align' => 'center',
+
+        ],
+    ];
     public static $approved_details_column = [
 
         [

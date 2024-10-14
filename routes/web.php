@@ -456,7 +456,7 @@ Route::prefix('retailgroup')->group(function () {
 });
 
 Route::prefix('custodian')->group(function () {
-    
+
     Route::name('custodian.')->group(function () {
 
         Route::get('barcode-checker', [CustodianController::class, 'barcodeCheckerIndex'])->name('barcode.checker');
@@ -480,6 +480,8 @@ Route::prefix('custodian')->group(function () {
         });
         Route::name('production.')->group(function () {
             Route::get('production', [CustodianController::class, 'productionIndex'])->name('index');
+            Route::get('production-cancelled', [CustodianController::class, 'productionCancelled'])->name('pro.cancelled');
+            Route::get('production-cancelled-details-{id}', [CustodianController::class, 'productionCancelledDetails'])->name('cancelled.details');
             Route::get('production-details-{id}', [CustodianController::class, 'productionApprovedDetails'])->name('details');
             Route::get('barcode-details-{id}', [CustodianController::class, 'barcodeApprovedDetails'])->name('barcode.details');
             Route::get('barcode-every-{id}', [CustodianController::class, 'getEveryBarcode'])->name('barcode.every');

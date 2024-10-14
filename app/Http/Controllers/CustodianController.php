@@ -157,4 +157,14 @@ class CustodianController extends Controller
     public function getRequisitionDetails($id){
         return $this->custodianservices->getRequisitionDetailsData($id);
     }
+
+    public function productionCancelled(){
+        return  inertia('Custodian/Cancelled/ProductionCancelled', [
+            'records' =>  $this->custodianservices->getCancelledViewing(),
+            'columns' => ColumnHelper::$cancelled_production_columns
+        ]);
+    }
+    public function productionCancelledDetails($id){
+        return $this->custodianservices->getProductionCancelledDetails($id);
+    }
 }
