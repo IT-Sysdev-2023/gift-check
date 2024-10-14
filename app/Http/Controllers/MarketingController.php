@@ -26,6 +26,7 @@ use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\RequisitionEntry;
+use App\Models\SpecialExternalGcrequestItem;
 use App\Models\Supplier;
 use App\Models\StoreVerification;
 use App\Models\TransactionSale;
@@ -1892,9 +1893,12 @@ class MarketingController extends Controller
     {
 
         $data = $this->marketing->viewspecialgc($request->type, $request->id);
+        $denom = SpecialExternalGcrequestItem::where('specit_trid', $request->id)->get();
+
 
         return response()->json([
-            'data' => $data
+            'data' => $data,
+            'denom' => $denom
         ]);
     }
 
