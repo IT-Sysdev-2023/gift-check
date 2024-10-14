@@ -18,6 +18,7 @@ class CustodianController extends Controller
     {
         return inertia('Custodian/CustodianDashboard', [
             'count' => $this->dashboardClass->custodianDashboard(),
+            'denom' => $this->dashboardClass->custodianDashboardGetDenom(),
         ]);
     }
 
@@ -166,5 +167,11 @@ class CustodianController extends Controller
     }
     public function productionCancelledDetails($id){
         return $this->custodianservices->getProductionCancelledDetails($id);
+    }
+    public function getAvailableGcAllocation(){
+        return $this->custodianservices->getAvailableGcRecords();
+    }
+    public function getAvailableGc(){
+        return $this->custodianservices->getAvailableGcRecords();
     }
 }
