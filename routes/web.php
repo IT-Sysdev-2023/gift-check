@@ -33,7 +33,7 @@ use App\Http\Controllers\Treasury\Transactions\RetailGcReleasingController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Controllers\UserDetailsController;
-use App\Models\UserDetails;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -94,11 +94,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::prefix('admin')->group(function () {
-    Route::name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
         Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
-        Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
+        Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po')->middleware([HandlePrecognitiveRequests::class]);
         Route::get('edit-po-{id}', [AdminController::class, 'editPoDetails'])->name('edit.po');
 
         Route::name('masterfile.')->group(function () {
@@ -109,7 +108,6 @@ Route::prefix('admin')->group(function () {
         Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
         Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');
     });
-});
 
 
 

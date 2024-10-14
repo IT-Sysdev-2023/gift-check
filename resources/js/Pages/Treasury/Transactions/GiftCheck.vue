@@ -66,6 +66,7 @@
                             <a-textarea
                                 v-model:value="formState.remarks"
                                 @input="clearError('remarks')"
+                                @change="formState.validate('remarks')"
                             />
                         </a-form-item>
                     </a-col>
@@ -159,7 +160,8 @@ import { ref } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import type { UploadChangeParam } from "ant-design-vue";
 import dayjs from "dayjs";
-import { router, useForm } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
+import { useForm } from 'laravel-precognition-vue';
 import { FormStateGc } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
 
@@ -178,7 +180,7 @@ const openIframe = ref(false);
 const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
 
-const formState = useForm<FormStateGc>({
+const formState = useForm('post', route("treasury.transactions.production.gcSubmit"),{
     denom: [...props.denomination.data],
     prNo: props.prNo,
     file: null,
@@ -208,16 +210,17 @@ const quantityChange = (qty, denom, item) => {
     previousQuantities.value[item.id] = qty;
 };
 const onSubmit = () => {
-    formState
-        .post(route("treasury.transactions.production.gcSubmit"), {
-            onSuccess: ({ props }) => {
-                openLeftNotification(props.flash);
-                if (props.flash.success) {
-                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
-                    openIframe.value = true;
-                }
-            },
-        });
+    formState.submit();
+    // formState
+    //     .post(route("treasury.transactions.production.gcSubmit"), {
+    //         onSuccess: ({ props }) => {
+    //             openLeftNotification(props.flash);
+    //             if (props.flash.success) {
+    //                 stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+    //                 openIframe.value = true;
+    //             }
+    //         },
+    //     });
 };
 const getErrorStatus = (field: string) => {
     return formState.errors[field] ? "error" : "";

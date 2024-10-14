@@ -66,9 +66,11 @@
 <script setup>
 import { reactive, watch, ref } from "vue";
 import debounce from "lodash/debounce";
-import { router, useForm } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
+import { useForm } from 'laravel-precognition-vue';
 import { notification } from "ant-design-vue";
 import axios from "axios";
+
 let lastFetchId = 0;
 
 const props = defineProps({
