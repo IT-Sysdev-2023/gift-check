@@ -304,51 +304,10 @@ class SpecialGcRequestController extends Controller
 
     public function viewApprovedRequest(Request $request, SpecialExternalGcrequest $id)
     {
-        // $table = 'special_external_gcrequest';
-        // $select = "special_external_gcrequest.spexgc_id,
-        //     special_external_gcrequest.spexgc_num,
-        //     CONCAT(req.firstname,' ',req.lastname) as reqby,
-        //     special_external_gcrequest.spexgc_datereq,
-        //     special_external_gcrequest.spexgc_dateneed,
-        //     special_external_gcrequest.spexgc_remarks,
-        //     special_external_gcrequest.spexgc_payment,
-        //     special_external_gcrequest.spexgc_paymentype,
-        //     special_external_gcrequest.spexgc_payment_arnum,
-        //     special_external_customer.spcus_companyname,
-        //     approved_request.reqap_remarks,
-        //     approved_request.reqap_doc,
-        //     approved_request.reqap_checkedby,
-        //     approved_request.reqap_approvedby,
-        //     approved_request.reqap_preparedby,
-        //     approved_request.reqap_date,
-        //     CONCAT(prep.firstname,' ',prep.lastname) as prepby";
-        // // $where = "special_external_gcrequest.spexgc_status='approved'
-        // //     AND
-        // //         special_external_gcrequest.spexgc_id = '".$reqid."'
-        // //     AND
-        // //         approved_request.reqap_approvedtype='Special External GC Approved'
-        // //     ";
-        // $join = 'INNER JOIN
-        //         users as req
-        //     ON
-        //         req.user_id = special_external_gcrequest.spexgc_reqby
-        //     INNER JOIN
-        //         special_external_customer
-        //     ON
-        //         special_external_customer.spcus_id = special_external_gcrequest.spexgc_company  
-        //     INNER JOIN
-        //         approved_request
-        //     ON
-        //         approved_request.reqap_trid = special_external_gcrequest.spexgc_id
-        //     INNER JOIN 
-        //         users as prep
-        //     ON
-        //         prep.user_id=approved_request.reqap_preparedby';
-        // $limit = '';
-
         $data = $id->load([
             'approvedRequest' => function ($q) {
                 $q->with('user:user_id,firstname,lastname')
+                    ->where('reqap_approvedtype', 'Special External GC Approved')
                     ->select('reqap_trid', 'reqap_preparedby', 'reqap_remarks', 'reqap_doc', 'reqap_checkedby', 'reqap_approvedby', 'reqap_preparedby', 'reqap_date');
             },
             'specialExternalCustomer:spcus_id,spcus_companyname',
@@ -357,9 +316,24 @@ class SpecialGcRequestController extends Controller
                 $q->where('doc_type', 'Special External GC Request');
             }
         ]);
+
+        $barcodes = SpecialExternalGcrequestEmpAssign::select(
+            'spexgcemp_trid',
+            'spexgcemp_denom',
+            'spexgcemp_fname',
+            'spexgcemp_lname',
+            'spexgcemp_mname',
+            'spexgcemp_extname',
+            'voucher',
+            'address',
+            'department',
+            'spexgcemp_barcode'
+        )->where('spexgcemp_trid', $id->spexgc_id)->paginate()->withQueryString();
+
         return inertia('Treasury/Dashboard/SpecialGc/Components/ApprovedGcViewing', [
             'title' => 'Special External Gc Requests',
             'records' => new SpecialExternalGcRequestResource($data),
+            'barcodes' => $barcodes
         ]);
     }
 
