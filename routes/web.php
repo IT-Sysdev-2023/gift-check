@@ -463,6 +463,7 @@ Route::prefix('custodian')->group(function () {
         Route::get('barcode-checker', [CustodianController::class, 'barcodeCheckerIndex'])->name('barcode.checker');
         Route::post('scan-barcode', [CustodianController::class, 'scanBarcode'])->name('scan.barcode');
         Route::get('received-gc-barcode', [CustodianController::class, 'receivedGcIndex'])->name('received.gc');
+        Route::get('available-gc-allocation', [CustodianController::class, 'getAvailableGc'])->name('available.gc');
 
         Route::name('pendings.')->group(function () {
             Route::get('pending-holder-entry', [CustodianController::class, 'pendingHolderEntry'])->name('holder.entry');

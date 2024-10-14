@@ -4,7 +4,7 @@
         <a-breadcrumb-item>Pending Gc Holders</a-breadcrumb-item>
     </a-breadcrumb>
     <a-card>
-        <a-tabs v-model:activeKey="activeKey" @change="switchData">
+        <a-tabs type="card" v-model:activeKey="activeKey" @change="switchData">
             <a-tab-pane key="1">
                 <template #tab>
                     <span>
