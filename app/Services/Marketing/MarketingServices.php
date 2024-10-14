@@ -446,7 +446,6 @@ class MarketingServices extends FileHandler
 
     public function viewspecialgc($type, $id)
     {
-        // Define the transformation function before using it
         $transformItem = function ($item) {
             $item->dateNeed = Date::parse($item->spexgc_dateneed)->format('F d Y');
             $item->dateReq = Date::parse($item->spexgc_datereq)->format('F d Y');

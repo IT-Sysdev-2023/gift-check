@@ -26,8 +26,8 @@
                 </a-tab-pane>
             </a-tabs>
         </a-card>
-        <a-modal v-model:open="open" :width="1000">
-            <a-row :gutter="[16,16]">
+        <a-modal v-model:open="open" :width="1000" @ok="closemodal">
+            <a-row :gutter="[16, 16]">
                 <a-col :span="12">
                     <a-form-item label="GC Request #">
                         <a-input v-model:value="selectedData.spexgc_num" readonly />
@@ -44,39 +44,58 @@
                 </a-col>
                 <a-col :span="12">
                     <a-form-item label="Company Name">
-                        <a-textarea v-model:value="selectedData.spcus_companyname"/>
+                        <a-textarea v-model:value="selectedData.spcus_companyname" readonly />
                     </a-form-item>
                     <a-form-item label="Account Name">
-                        <a-textarea v-model:value="selectedData.spcus_acctname"/>
+                        <a-textarea v-model:value="selectedData.spcus_acctname" readonly />
                     </a-form-item>
                     <a-form-item label="AR #">
-                        <a-input v-model:value="selectedData.spexgc_payment_arnum"/>
+                        <a-input v-model:value="selectedData.spexgc_payment_arnum" readonly />
                     </a-form-item>
                     <a-form-item label="Amount Paid">
-                        <a-input v-model:value="selectedData.spexgc_balance"/>
+                        <a-input v-model:value="selectedData.spexgc_balance" readonly />
                     </a-form-item>
                     <a-form-item label="Number to words">
-                        <a-input v-model:value="selectedData.numbertowords"/>
+                        <a-input v-model:value="selectedData.numbertowords" readonly />
                     </a-form-item>
                 </a-col>
             </a-row>
             <a-form-item label="Remarks">
-                <a-textarea v-model:value="selectedData.spexgc_remarks"/>
+                <a-textarea v-model:value="selectedData.spexgc_remarks" readonly />
             </a-form-item>
             <a-row>
                 <a-col :span="8">
                     <a-form-item label="Denomination">
-                        <a-input v-model:value="selectedData.specit_denoms"/>
+                        <a-input v-for="item in denom" v-model:value="item.specit_denoms" readonly />
                     </a-form-item>
                 </a-col>
                 <a-col :span="8">
                     <a-form-item label="Quantity">
-                        <!-- <a-input v-model:value="selectedData."/> -->
+                        <a-input v-for="item in denom" v-model:value="item.specit_qty" readonly />
                     </a-form-item>
                 </a-col>
-                <a-col :span="8">3</a-col>
+                <a-col :span="8">
+                    <a-form-item label="# Holder">
+                        <a-input v-for="item in denom" value="0" readonly />
+                    </a-form-item>
+                </a-col>
             </a-row>
-            {{ selectedData }}
+            <a-row>
+                <a-col :span="18">
+                    <a-row>
+                        <a-col :span="12">
+                            <a-form-item label="TOTAL">
+                                <a-input v-model:value="selectedData.totalDenom" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="12">
+                            <a-form-item label="Entry By">
+                                <a-input :value="$page.props.auth.user.full_name"/>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                </a-col>
+            </a-row>
         </a-modal>
     </AuthenticatedLayout>
 </template>
@@ -93,6 +112,7 @@ const props = defineProps({
 const open = ref(false)
 const selectedData = ref({})
 const activeKey = ref('1')
+const denom = ref({})
 
 const columns = [
     {
@@ -139,10 +159,17 @@ const view = (id, type) => {
             params: { id, type }
         })
         .then(({ data }) => {
+            console.log(data.denom);
+
             open.value = true;
             selectedData.value = data.data[0];
+            denom.value = data.denom;
         });
 };
+
+const closemodal = () => {
+    open.value = false
+}
 
 
 
