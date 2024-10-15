@@ -43,8 +43,8 @@
                 <p class="sub-text text-white">All Approved Gc Request</p>
             </div>
             <a-badge >
-                <a-button disabled
-                    @click="() => $inertia.get(route('retail.approved.request'))">
+                <a-button
+                    @click="() => $inertia.get(route('retailgroup.approved'))">
                     <template #icon>
                         <FolderFilled />
                     </template>

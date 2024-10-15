@@ -82,6 +82,7 @@ declare module 'vue' {
     ApprovedGcTable: typeof import('./resources/js/Pages/Iad/Dashboard/ApprovedGcTable.vue')['default']
     ApprovedGcViewing: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGc/Components/ApprovedGcViewing.vue')['default']
     ApprovedPromoGcRequest: typeof import('./resources/js/Pages/Finance/ApprovedPromoGcRequest.vue')['default']
+    ApprovedPromoRequest: typeof import('./resources/js/Pages/RetailGroup/ApprovedPromoRequest.vue')['default']
     ApprovedRequest: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/ApprovedRequest.vue')['default']
     ApprovedSpgcExcelResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcExcelResult.vue')['default']
     ApprovedSpgcPdfResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcPdfResult.vue')['default']
