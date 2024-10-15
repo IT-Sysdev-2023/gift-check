@@ -699,4 +699,38 @@ class ColumnHelper
             'key' => 'action',
         ],
     ];
+    public static $allocationAdjustment = [
+        [
+            'title' => 'Location Adjusted',
+            'key' => 'store',
+
+        ],
+        [
+            'title' => 'Gc Type',
+            'key' => 'gctype',
+
+        ],
+        [
+            'title' => 'Adjustment Type',
+            'key' => 'adjustType',
+
+        ],
+        [
+            'title' => 'Date',
+            'dataIndex' => 'aadj_datetime',
+
+        ],
+        [
+            'title' => 'Remarks',
+            'dataIndex' => 'aadj_remark',
+        ],
+        [
+            'title' => 'Adjusted By',
+            'key' => 'user',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
 }

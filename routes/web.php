@@ -20,6 +20,7 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\RetailController;
 use App\Http\Controllers\QueryFilterController;
 use App\Http\Controllers\RetailGroupController;
+use App\Http\Controllers\Treasury\AdjustmentController;
 use App\Http\Controllers\Treasury\Dashboard\BudgetRequestController;
 use App\Http\Controllers\Treasury\Dashboard\GcProductionRequestController;
 use App\Http\Controllers\Treasury\Dashboard\SpecialGcRequestController;
@@ -205,8 +206,7 @@ Route::get('sales/store-sales', [MarketingController::class, 'storeSales'])->nam
 
 //Treasury
 Route::middleware(['auth'])->group(function () {
-    Route::prefix('treasury')->group(function () {
-        Route::name('treasury.')->group(function () {
+    Route::prefix('treasury')->name('treasury.')->group(function () {
             Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
                 Route::get('approved', [BudgetRequestController::class, 'approvedRequest'])->name('approved');
                 Route::get('view-approved-record/${id}', [BudgetRequestController::class, 'viewApprovedRequest'])->name('view.approved');
@@ -335,13 +335,16 @@ Route::middleware(['auth'])->group(function () {
                 });
             });
 
+            Route::prefix('adjustment')->name('adjustment.')->group(function () {
+
+                Route::get('allocation', [AdjustmentController::class,'allocationAdjustment'])->name('allocation');
+            });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
             Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
             Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
         });
-    });
 });
 Route::prefix('documents')->group(function () {
     Route::name('start.')->group(function () {

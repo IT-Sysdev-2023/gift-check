@@ -114,6 +114,7 @@
                                     <CardBadge
                                         :count="data?.adjustment?.allocation"
                                         title="Allocation Adjustment"
+                                         @event="allocationAdjustment"
                                     />
                                 </template>
                             </Card>
@@ -154,7 +155,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router } from "@inertiajs/vue3";
 
-const props = defineProps<{
+defineProps<{
     data?: {
         budgetRequest: {
             pending: number;
@@ -219,6 +220,8 @@ const specialReleasedGc = () => routeTo("special.gc", "specialReleasedGc")
 const reviewedGcReleasing = () => routeTo("special.gc", "reviewedGcReleasing")
 const approvedRequest = () => routeTo("special.gc", "approvedRequest")
 
+//Adjustment
+const allocationAdjustment = () => routeTo('adjustment', 'allocation')
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");
 const eodList = () => routeTo("transactions.eod", "eodList");
