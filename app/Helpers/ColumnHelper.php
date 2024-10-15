@@ -109,43 +109,41 @@ class ColumnHelper
         [
             'title' => 'Date Requested',
             'dataIndex' => 'reqdate',
-            'key' => 'denom_id'
 
         ],
         [
             'title' => 'Date Needed',
             'dataIndex' => 'dateneed',
-            'key' => 'denom_id'
 
         ],
         [
             'title' => 'Total Gc',
             'dataIndex' => 'pgcreq_total',
-            'key' => 'denom_id'
 
         ],
         [
             'title' => 'Retail Group',
             'dataIndex' => 'pgcreq_group',
-            'key' => 'denom_id'
 
         ],
         [
             'title' => 'Requested By',
             'dataIndex' => 'reqby',
-            'key' => 'denom_id'
 
         ],
         [
             'title' => 'Recommended By',
             'dataIndex' => 'recby',
-            'key' => 'denom_id'
 
         ],
         [
             'title' => 'Approved By',
             'dataIndex' => 'appby',
-            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'view',
 
         ],
     ];
