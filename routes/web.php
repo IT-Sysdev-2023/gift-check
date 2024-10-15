@@ -96,19 +96,19 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
-        Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
-        Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po')->middleware([HandlePrecognitiveRequests::class]);
-        Route::get('edit-po-{id}', [AdminController::class, 'editPoDetails'])->name('edit.po');
+    Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
+    Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
+    Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po')->middleware([HandlePrecognitiveRequests::class]);
+    Route::get('edit-po-{id}', [AdminController::class, 'editPoDetails'])->name('edit.po');
 
-        Route::name('masterfile.')->group(function () {
-            Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
-            Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
-        });
-
-        Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
-        Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');
+    Route::name('masterfile.')->group(function () {
+        Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
+        Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
     });
+
+    Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
+    Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');
+});
 
 
 
@@ -187,9 +187,9 @@ Route::prefix('marketing')->group(function () {
             Route::get('cancelled-production-request', [MarketingController::class, 'cancelledProductionRequest'])->name('production.request');
             Route::get('view-cancelled-production-request', [MarketingController::class, 'ViewcancelledProductionRequest'])->name('view.cancelled.request');
         });
-        Route::name('special-gc.')->group(function (){
-            Route::get('pending',[MarketingController::class, 'pendingspgclist'])->name('pending');
-            Route::get('pending-view-details',[MarketingController::class, 'pendingspgclistview'])->name('pending.view');
+        Route::name('special-gc.')->group(function () {
+            Route::get('pending', [MarketingController::class, 'pendingspgclist'])->name('pending');
+            Route::get('pending-view-details', [MarketingController::class, 'pendingspgclistview'])->name('pending.view');
         });
     });
 });
@@ -250,14 +250,14 @@ Route::middleware(['auth'])->group(function () {
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
 
-                Route::get('reviewing-gc', [SpecialGcRequestController::class,'releasingGc'])->name('gcReleasing');
-                Route::get('reviewing-gc-{id}', [SpecialGcRequestController::class,'viewReleasing'])->name('viewReleasing');
-                Route::get('view-denominations-{id}' , [SpecialGcRequestController::class,'viewDenomination'])->name('viewDenomination');
-                Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class,'relasingGcSubmission'])->name('releasingSubmission');
+                Route::get('reviewing-gc', [SpecialGcRequestController::class, 'releasingGc'])->name('gcReleasing');
+                Route::get('reviewing-gc-{id}', [SpecialGcRequestController::class, 'viewReleasing'])->name('viewReleasing');
+                Route::get('view-denominations-{id}', [SpecialGcRequestController::class, 'viewDenomination'])->name('viewDenomination');
+                Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class, 'relasingGcSubmission'])->name('releasingSubmission');
 
-                Route::get('released-gc', [SpecialGcRequestController::class,'releasedGc'])->name('specialReleasedGc');
+                Route::get('released-gc', [SpecialGcRequestController::class, 'releasedGc'])->name('specialReleasedGc');
                 // Route::get('reviewed-gc-for-releasing', [SpecialGcRequestController::class,'reviewedGcReleasing'])->name('reviewedGcReleasing');
-                Route::get('view-released-gc-{id}', [SpecialGcRequestController::class,'viewReleasedGc'])->name('viewReleasedGc');
+                Route::get('view-released-gc-{id}', [SpecialGcRequestController::class, 'viewReleasedGc'])->name('viewReleasedGc');
 
                 Route::get('approved-request', [SpecialGcRequestController::class, 'approvedRequest'])->name('approvedRequest');
                 Route::get('view-approved-request-{id}', [SpecialGcRequestController::class, 'viewApprovedRequest'])->name('viewApprovedRequest');
@@ -450,14 +450,16 @@ Route::prefix('retail')->group(function () {
         Route::get('soldGc', [RetailController::class, 'soldGc'])->name('soldGc');
     });
 });
-Route::prefix('retailgroup')->group(function () {
-    Route::name('retailgroup.')->group(function () {
-        Route::get('pending-gc-request', [RetailGroupController::class, 'pendingGcRequest'])->name('pending');
-        Route::name('recommendation.')->group(function () {
-            Route::get('setup', [RetailGroupController::class, 'setup'])->name('setup');
-            Route::post('submit', [RetailGroupController::class, 'submitPendingRequest'])->name('submit');
-        });
+Route::prefix('retailgroup')->name('retailgroup.')->group(function () {
+    Route::get('pending-gc-request', [RetailGroupController::class, 'pendingGcRequest'])->name('pending');
+
+    Route::name('recommendation.')->group(function () {
+        Route::get('setup', [RetailGroupController::class, 'setup'])->name('setup');
+        Route::post('submit', [RetailGroupController::class, 'submitPendingRequest'])->name('submit');
     });
+
+    Route::get('approved-promo-request', [RetailGroupController::class, 'approvedPromoRequest'])->name('approved');
+
 });
 
 Route::prefix('custodian')->group(function () {

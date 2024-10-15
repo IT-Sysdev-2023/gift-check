@@ -43,9 +43,11 @@ class RetailGroupController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
+
             $this->retailgroup->updatePromoGcRequest($request)
                 ->insertIntoApprovedRequest($request)
                 ->insertIntoPromoLedger($request);
+
         });
 
         if ($request->status == '1') {
@@ -61,5 +63,12 @@ class RetailGroupController extends Controller
                 'status' => 'success',
             ]);
         }
+    }
+
+    public function approvedPromoRequest(){
+        return inertia('RetailGroup/ApprovedPromoRequest', [
+            'records' => $this->retailgroup->getPromoApprovedRequest(),
+            'columns' => ColumnHelper::$approved_request_columns,
+        ]);
     }
 }
