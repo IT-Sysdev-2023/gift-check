@@ -338,6 +338,7 @@ Route::middleware(['auth'])->group(function () {
             Route::prefix('adjustment')->name('adjustment.')->group(function () {
 
                 Route::get('allocation', [AdjustmentController::class,'allocationAdjustment'])->name('allocation');
+                Route::get('allocation-details-{id}', [AdjustmentController::class,'viewAllocationAdjustment'])->name('viewAllocation');
             });
 
             Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');

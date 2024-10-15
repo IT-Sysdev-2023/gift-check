@@ -4,6 +4,7 @@ namespace App\Services\Treasury;
 
 use App\Http\Resources\AllocationAdjustmentResource;
 use App\Models\AllocationAdjustment;
+use App\Models\AllocationAdjustmentItem;
 use App\Models\Denomination;
 use App\Models\GcType;
 use App\Models\LedgerBudget;
@@ -36,5 +37,17 @@ class AdjustmentService
             'records' => AllocationAdjustmentResource::collection($record),
             'columns'=> ColumnHelper::$allocationAdjustment,
         ]);
+    }
+
+    public static function viewAllocationAdjustment(string $id)
+    {
+      
+    $record = AllocationAdjustmentItem::with(['gc' => function ($q) {
+        $q->with('denomination:denom_id,denomination')->select('barcode_no', 'denom_id');
+    }])->where('aadji_aadj_id', $id)
+        ->orderBy('aadji_barcode')
+    ->paginate(10)->withQueryString();
+
+    return response()->json($record);
     }
 }

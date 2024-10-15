@@ -16,4 +16,9 @@ class AdjustmentController extends Controller
     {
         return AdjustmentService::allocationAdjustment();
     }
+
+    public function viewAllocationAdjustment($id)
+    {
+        return AdjustmentService::viewAllocationAdjustment($id);
+    }
 }
