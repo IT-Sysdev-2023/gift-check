@@ -39,7 +39,7 @@
                         <a-input v-model:value="selectedData.dateNeed" readonly />
                     </a-form-item>
                     <a-form-item label="Document Uploaded">
-                        <a-image style="height: 100px;" src="https://rb.gy/9q5uky"></a-image>
+                        <a-image style="height: 100px;" :src="'storage/'+doc"></a-image>
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
@@ -108,11 +108,14 @@ import { ref } from 'vue';
 const props = defineProps({
     internal: Object,
     external: Object
-})
+});
+
+
 const open = ref(false)
 const selectedData = ref({})
 const activeKey = ref('1')
 const denom = ref({})
+const doc = ref('')
 
 const columns = [
     {
@@ -159,11 +162,10 @@ const view = (id, type) => {
             params: { id, type }
         })
         .then(({ data }) => {
-            console.log(data.denom);
-
             open.value = true;
             selectedData.value = data.data[0];
             denom.value = data.denom;
+            doc.value = data.doc;
         });
 };
 

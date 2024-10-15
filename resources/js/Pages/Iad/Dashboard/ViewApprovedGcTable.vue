@@ -39,7 +39,6 @@
                         }}</a-descriptions-item>
                         <a-descriptions-item label="Payment Amount" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.spexgc_payment }}</a-descriptions-item>
-
                         <a-descriptions-item label="Request Remarks" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.spexgc_remarks }}</a-descriptions-item>
                         <a-descriptions-item label="Requested by" :labelStyle="{ fontWeight: 'bold' }">{{ records.user
@@ -47,14 +46,10 @@
                         <a-descriptions-item label="Date Approved" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.approvedRequest.reqap_date
                         }}</a-descriptions-item>
-                        <a-descriptions-item label="Date Approved" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records?.approvedRequest.reqap_doc
-                        }}</a-descriptions-item>
-                        ddadasd
-                        <!-- {{ records?.approvedRequest }} -->
-                        <!-- <a-descriptions-item label="Approved Document" v-if="records?.approvedRequest?.reqap_doc">
-                            <ant-image-preview :images="records?.approvedRequest?.reqap_doc" />
-                        </a-descriptions-item> -->
+                        <a-descriptions-item label="Documents" :labelStyle="{ fontWeight: 'bold' }">
+                            <a-image :src="records?.approvedRequest.reqap_doc[0]['url']">
+                            </a-image>
+                        </a-descriptions-item>
                         <a-descriptions-item label="Approved Remarks" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.approvedRequest?.reqap_remarks
                         }}</a-descriptions-item>
@@ -71,7 +66,6 @@
                         <a-descriptions-item label="Prepared By" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.approvedRequest?.user?.full_name
                         }}</a-descriptions-item>
-
                     </a-descriptions>
 
 

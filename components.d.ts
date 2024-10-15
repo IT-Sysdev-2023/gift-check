@@ -128,6 +128,7 @@ declare module 'vue' {
     AUploadDragger: typeof import('ant-design-vue/es')['UploadDragger']
     AuthenticatedLayout: typeof import('./resources/js/Layouts/AuthenticatedLayout.vue')['default']
     AvailableGc: typeof import('./resources/js/Pages/Retail/Cards/AvailableGc.vue')['default']
+    AvailableGcAllocationCard: typeof import('./resources/js/Pages/Custodian/Cards/AvailableGcAllocationCard.vue')['default']
     AvailableGcTable: typeof import('./resources/js/Pages/Retail/AvailableGcTable.vue')['default']
     BankOutlined: typeof import('@ant-design/icons-vue')['BankOutlined']
     BarChartOutlined: typeof import('@ant-design/icons-vue')['BarChartOutlined']

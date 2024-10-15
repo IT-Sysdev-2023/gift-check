@@ -10,6 +10,7 @@ use App\Http\Resources\SpecialGcRequestResource;
 use App\Models\BarcodeChecker;
 use App\Models\CancelledProductionRequest;
 use App\Models\CustodianSrr;
+use App\Models\Denomination;
 use App\Models\Document;
 use App\Models\Gc;
 use App\Models\ProductionRequest;
@@ -17,6 +18,7 @@ use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\User;
 use Illuminate\Support\Facades\Date;
 use App\Services\Custodian\CustodianDbServices;
 use Illuminate\Support\Facades\DB;
@@ -607,5 +609,35 @@ class CustodianServices
             'data' => $data,
             'barcode' => $barcode,
         ];
+    }
+    public function getAvailableGcRecords()
+    {
+        $data = Gc::select(
+            'barcode_no',
+            'denom_id',
+            'csrr_prepared_by',
+            'cssitem_recnum',
+            'csrr_datetime',
+            'csrr_id'
+        )
+            ->join('custodian_srr_items', 'cssitem_barcode', '=', 'barcode_no')
+            ->join('custodian_srr', 'csrr_id', '=', 'cssitem_recnum')
+            ->where('gc_validated', '*')
+            ->where('gc_allocated', '')
+            ->where('gc_ispromo', '')
+            ->where('gc_treasury_release', '')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->valBy = User::select('firstname', 'lastname')->where('user_id', $item->csrr_prepared_by)->value('full_name');
+            $item->date = Date::parse($item->csrr_datetime)->toFormattedDateString();
+            $item->denom = Denomination::select('denomination')->where('denom_id', $item->denom_id)->value('denomination_format');
+            return $item;
+        });
+
+        return $data;
+
+
     }
 }
