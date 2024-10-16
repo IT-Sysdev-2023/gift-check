@@ -11,7 +11,7 @@
             <a-row>
                 <a-col :span="12">
                     <a-statistic
-                        title="Prepaired By"
+                        title="Prepared By"
                         :value="$page.props.auth.user.full_name"
                     />
                 </a-col>

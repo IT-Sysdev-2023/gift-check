@@ -117,14 +117,14 @@
                             <a-row>
                                 <a-col :span="24">
                                     <a-statistic
-                                        title="Prepaired By"
+                                        title="Prepared By"
                                         :value="page.auth.user.full_name"
                                     />
                                 </a-col>
                             </a-row>
                         </a-card>
                     </a-col>
-                    
+
                 </a-row>
             </a-form>
         </a-card>
