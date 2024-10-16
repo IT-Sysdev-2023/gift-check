@@ -303,7 +303,36 @@ class RetailGroupServices extends FileHandler
             ->where('pgcreq_group', $tag)
             ->get();
 
+        $ledger = 1;
 
-        dd($data->toArray());
+        $record = [];
+
+        $data->each(function ($item) use (&$record, &$ledger) {
+            // dump($item->sum('promled_debit'));
+            if ($item->promled_desc == 'promo request approval') {
+
+                $rec = PromoGcRequest::select('reqap_date')->join('approved_request', 'reqap_trid', '=', 'pgcreq_id')
+                    ->where('pgcreq_id', $item->promled_trid)
+                    ->where('reqap_approvedtype', 'promo gc preapproved')
+                    ->first();
+
+                $total = 0;
+
+                if ($rec) {
+
+                    $total += $item->promled_debit;
+
+                    $record[] = [
+                        'count' => NumberHelper::leadingZero($ledger++, '%03d'), // Increment $ledger
+                        'date'  => Date::parse($rec->reqap_date)->toFormattedDateString() ?? null,
+                        'desc' => Str::title($item->promled_desc),
+                        'total' => NumberHelper::currency($total),
+                        'debit' => $item->promled_debit === 0 ? "" : NumberHelper::currency($item->promled_debit),
+                    ];
+                }
+            }
+        });
+
+        return $record;
     }
 }
