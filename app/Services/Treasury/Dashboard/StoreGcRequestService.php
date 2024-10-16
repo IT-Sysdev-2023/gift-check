@@ -385,7 +385,7 @@ class StoreGcRequestService extends FileHandler
 
 				$latestId = ApprovedGcrequest::create([
 					'agcr_request_id' => $reqId,
-					'agcr_approvedby' => '',
+					'agcr_approvedby' => $request->user()->user_id,
 					'agcr_checkedby' => $request->checkedBy,
 					'agcr_remarks' => $request->remarks,
 					'agcr_approved_at' => now(),
