@@ -113,6 +113,7 @@ class MarketingController extends Controller
         $getRequestNo = sprintf('%04d', $getRequestNo);
 
 
+
         return Inertia::render(('Marketing/MarketingDashboard'), [
             'getRequestNo' => $getRequestNo,
             'ReqNum' => $requestNum,
@@ -2053,4 +2054,15 @@ class MarketingController extends Controller
             }
         }
     }
+
+    public function ApprovedExternalGcRequest(Request $request)
+    {
+
+        $approveExtGCReq = $this->marketing->approvedSpecialExternalRequest($request->search);
+
+        return inertia('Marketing/specialgc/Approved', [
+            'apexgcreq' => $approveExtGCReq
+        ]);
+    }
+
 }

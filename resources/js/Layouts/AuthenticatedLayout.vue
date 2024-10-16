@@ -101,10 +101,6 @@ const dashboardRoute = computed(() => {
                         <span>User Guide</span>
                     </a-menu-item>
                     <a-menu-item key="menu-item-about-us">
-                        <SettingOutlined />
-                        <span>My Settings</span>
-                    </a-menu-item>
-                    <a-menu-item key="menu-item-about-us">
                         <InfoCircleOutlined />
                         <span>About Us</span>
                     </a-menu-item>

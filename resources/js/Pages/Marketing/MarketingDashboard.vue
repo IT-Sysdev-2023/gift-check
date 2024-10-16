@@ -2,6 +2,7 @@
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
             <m-card
+                v-if="$page.props.auth.user.user_role === 0"
                 title="Promo GC Request"
                 :pending="countPromoGcRequest.pendingRequest"
                 :approved="countPromoGcRequest.approvedRequest"
@@ -27,18 +28,19 @@
         </a-col>
         <a-col :span="8">
             <m-card
+                v-if="$page.props.auth.user.user_role === 0"
                 title="Special External GC Request"
                 :pending="specialGcpending"
                 pextension="GC Holder Entry"
                 :approved="specialApproved"
                 :cancelled="specialgcount.cancelled"
                 pRoute="marketing.special-gc.pending"
-                aRoute=""
+                aRoute="marketing.special-gc.aexgcreq"
                 cRoute=""
             />
         </a-col>
         <a-col :span="8">
-            <div class="mb-2">
+            <div class="mb-2" v-if="$page.props.auth.user.user_role === 0">
                 <a-card title="Current Budget">
                     <h2>₱ {{ currentBudget }}</h2>
                 </a-card>
@@ -227,6 +229,7 @@
     </a-modal>
 
     <a-float-button
+        v-if="$page.props.auth.user.user_role === 0"
         title="List of Requisition Request"
         @click="requisitionListModal"
         :badge="{ count: Object.keys(ReqNum).length, overflowCount: 999 }"
@@ -253,6 +256,7 @@ export default {
         gcProductionRequest: Object,
         countPromoGcRequest: Object,
         specialgcount: Object,
+        approveExtGCReq: Object
     },
 
     data() {
