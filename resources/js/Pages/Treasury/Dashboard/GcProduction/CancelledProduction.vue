@@ -101,7 +101,7 @@ const { highlightText } = highlighten();
             >
                 {{ viewCancelled.pe_remarks }}
             </a-descriptions-item>
-            
+
             <a-descriptions-item
                 label="Document"
                 :labelStyle="{ fontWeight: 'bold' }"
@@ -109,7 +109,7 @@ const { highlightText } = highlighten();
             >
                 {{ viewCancelled.pe_file_docno }}
             </a-descriptions-item>
-            
+
             <a-descriptions-item
                 label="Request Prepared By"
                 :labelStyle="{ fontWeight: 'bold' }"
@@ -127,7 +127,7 @@ const { highlightText } = highlighten();
                     ).format("MMM DD, YYYY HH:mm:ss")
                 }}
             </a-descriptions-item>
-            
+
             <a-descriptions-item
                 label="Cancelled By"
                 :labelStyle="{ fontWeight: 'bold' }"

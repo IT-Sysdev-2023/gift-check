@@ -90,7 +90,6 @@ class GcProductionRequestController extends Controller
                 'to' => $barcodes->lastItem(),
                 'total' => $barcodes->total(),
                 'links' => $barcodes->linkCollection(),
-
             ]
            
         ]);
