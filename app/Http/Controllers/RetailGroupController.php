@@ -77,4 +77,9 @@ class RetailGroupController extends Controller
             'records' => $this->retailgroup->getPromoApprovedRequestDetails($id)
         ]);
     }
+    public function ledger(){
+        return inertia('RetailGroup/LedgerIndex', [
+            'records' => $this->retailgroup->getLedgerData(),
+        ]);
+    }
 }

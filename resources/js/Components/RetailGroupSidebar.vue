@@ -8,7 +8,7 @@
     </a-menu-item>
     <a-menu-item key="storeLedger">
         <BarcodeOutlined />
-        <span>Ledger</span>
+        <span><Link :href="route('retailgroup.ledger')">Ledger</Link></span>
     </a-menu-item>
 </template>
 <script setup lang="ts">
