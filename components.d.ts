@@ -76,6 +76,7 @@ declare module 'vue' {
     APopover: typeof import('ant-design-vue/es')['Popover']
     AppleOutlined: typeof import('@ant-design/icons-vue')['AppleOutlined']
     ApplicationLogo: typeof import('./resources/js/Components/ApplicationLogo.vue')['default']
+    Approved: typeof import('./resources/js/Pages/Marketing/specialgc/Approved.vue')['default']
     ApprovedAndReleaseSpgc: typeof import('./resources/js/Pages/Finance/ApprovedAndReleaseSpgc.vue')['default']
     ApprovedBudget: typeof import('./resources/js/Pages/Finance/ApprovedBudget.vue')['default']
     ApprovedGc: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGc/ApprovedGc.vue')['default']
