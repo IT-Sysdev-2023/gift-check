@@ -100,6 +100,54 @@ class ColumnHelper
 
         ],
     ];
+    public static $approved_request_columns = [
+        [
+            'title' => 'RFPROM',
+            'dataIndex' => 'pgcreq_reqnum',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'reqdate',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'dateneed',
+
+        ],
+        [
+            'title' => 'Total Gc',
+            'dataIndex' => 'pgcreq_total',
+
+        ],
+        [
+            'title' => 'Retail Group',
+            'dataIndex' => 'pgcreq_group',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'reqby',
+
+        ],
+        [
+            'title' => 'Recommended By',
+            'dataIndex' => 'recby',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'appby',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'view',
+            'align' =>  'center'
+
+        ],
+    ];
     public static $cancelled_production_columns = [
         [
             'title' => 'Pr No',

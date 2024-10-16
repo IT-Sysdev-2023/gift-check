@@ -112,12 +112,9 @@ class MarketingController extends Controller
         $getRequestNo = intval($query->requis_erno ?? 0) + 1;
         $getRequestNo = sprintf('%04d', $getRequestNo);
 
-        if ($request->user()->user_role == 1) {
-            $dashboard = 'ManagerDashboard';
-        } elseif ($request->user()->user_role == 0) {
-            $dashboard = 'MarketingDashboard';
-        }
-        return Inertia::render(('Marketing/' . $dashboard), [
+
+
+        return Inertia::render(('Marketing/MarketingDashboard'), [
             'getRequestNo' => $getRequestNo,
             'ReqNum' => $requestNum,
             'currentBudget' => $currentBudget,
@@ -2057,4 +2054,15 @@ class MarketingController extends Controller
             }
         }
     }
+
+    public function ApprovedExternalGcRequest(Request $request)
+    {
+
+        $approveExtGCReq = $this->marketing->approvedSpecialExternalRequest($request->search);
+
+        return inertia('Marketing/specialgc/Approved', [
+            'apexgcreq' => $approveExtGCReq
+        ]);
+    }
+
 }
