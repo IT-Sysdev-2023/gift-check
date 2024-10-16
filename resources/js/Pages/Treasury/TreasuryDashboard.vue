@@ -79,6 +79,7 @@
                                 "
                                 @pending-event="pendingProductionRequest"
                                 @approved-event="approvedProductionRequest"
+                                @cancelled-event="cancelledProductionRequest"
                             />
                             <Card
                                 use-default
@@ -212,6 +213,8 @@ const storeGcCancelled = () => routeTo("store.gc", "cancelled");
 const pendingProductionRequest = () => routeTo("production.request", "pending");
 const approvedProductionRequest = () =>
     routeTo("production.request", "approved");
+const cancelledProductionRequest = () =>
+    routeTo("production.request", "cancelled");
 
 //Special GC Request
 const specialGcPending = () => routeTo("special.gc", "pending");

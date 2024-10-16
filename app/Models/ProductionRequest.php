@@ -40,6 +40,11 @@ class ProductionRequest extends Model
         });
     }
 
+    public function cancelledProductionRequest()
+    {
+        return $this->belongsTo(CancelledProductionRequest::class,'pe_id', 'cpr_pro_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'pe_requested_by', 'user_id');

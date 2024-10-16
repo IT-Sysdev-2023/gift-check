@@ -143,12 +143,12 @@ class GcAllocationController extends Controller
             ->select('denom_id', 'barcode_no')
             ->where([['gc_validated', '*'], ['gc_allocated', ''], ['gc_ispromo', ''], ['gc_treasury_release', '']])
             ->filterDenomination($request)
-            ->paginate()
+            ->paginate(5)
             ->withQueryString();
 
 
         return response()->json([
-            'data' => GcResource::collection($record->items()),
+            'data' => GcResource::collection(resource: $record->items()),
             'from' => $record->firstItem(),
             'to' => $record->lastItem(),
             'total' => $record->total(),

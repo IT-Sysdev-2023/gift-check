@@ -16,7 +16,17 @@ class CancelledProductionRequest extends Model
     protected $guarded=[];
     public $timestamps= false;
 
+    protected function casts(): array
+    {
+        return [
+            'cpr_at' => 'datetime'
+        ];
+    }
     public function user(): BelongsTo{
-        return $this->belongsTo(User::class, 'pe_requested_by', 'user_id');
+        return $this->belongsTo(User::class, 'cpr_by', 'user_id');
+    }
+
+    public function productionRequest(){
+        return $this->belongsTo(ProductionRequest::class, 'cpr_pro_id','pe_id');
     }
 }

@@ -733,4 +733,39 @@ class ColumnHelper
             'key' => 'action',
         ],
     ];
+
+    public static $cancelledProductionRequest = [
+        [
+            'title' => 'PR No.',
+            'key' => 'pr',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'key' => 'dateRequested',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'key' => 'dateNedded',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'key' => 'preparedBy',
+
+        ],
+        [
+            'title' => 'Date Cancelled',
+            'dataIndex' => 'cpr_at',
+        ],
+        [
+            'title' => 'Cancelled By',
+            'key' => 'cancelledBy',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
 }
