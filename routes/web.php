@@ -461,6 +461,8 @@ Route::prefix('retailgroup')->name('retailgroup.')->group(function () {
     Route::get('approved-promo-request', [RetailGroupController::class, 'approvedPromoRequest'])->name('approved');
     Route::get('approved-details-{id}', [RetailGroupController::class, 'approvedDetails'])->name('details');
 
+    Route::get('legder', [RetailGroupController::class, 'ledger'])->name('ledger');
+
 });
 
 Route::prefix('custodian')->group(function () {

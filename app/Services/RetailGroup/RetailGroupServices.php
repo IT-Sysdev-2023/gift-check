@@ -8,6 +8,7 @@ use App\Models\CancelledRequest;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\PromoLedger;
+use App\Models\User;
 use App\Services\Documents\FileHandler;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
@@ -272,10 +273,10 @@ class RetailGroupServices extends FileHandler
             ->where('reqap_approvedtype', 'promo gc approved')
             ->first();
 
-            if($approved){
-                $approved->reqdate = $approved->reqap_date->toFormattedDateString();
-                $approved->reqtime = $approved->reqap_date->format('h:s A');
-            }
+        if ($approved) {
+            $approved->reqdate = $approved->reqap_date->toFormattedDateString();
+            $approved->reqtime = $approved->reqap_date->format('h:s A');
+        }
 
         return (object) [
             'data' => $data,
@@ -285,5 +286,24 @@ class RetailGroupServices extends FileHandler
             ],
             'approved' => $approved,
         ];
+    }
+
+    public function getLedgerData()
+    {
+
+        $tag = User::where('user_id', request()->user()->user_id)->value('usergroup');
+
+        $data = PromoLedger::select(
+            'promled_desc',
+            'promled_debit',
+            'promled_credit',
+            'promled_trid',
+            'pgcreq_group',
+        )->join('promo_gc_request', 'pgcreq_id', '=', 'promled_trid')
+            ->where('pgcreq_group', $tag)
+            ->get();
+
+
+        dd($data->toArray());
     }
 }
