@@ -257,8 +257,8 @@ const formState = useForm({
         checkAmount: "",
         customer: "",
     },
-    checkedBy: props.data.approved_request_user.user.full_name,
-    approvedBy: props.data.approved_by_type,
+    checkedBy: props.data?.approved_request_user?.user?.full_name,
+    approvedBy: props.data?.approved_by_type,
 });
 const releasingNo = ref("");
 const today = dayjs().format("YYYY-MMM-DD HH:mm:ss a");
