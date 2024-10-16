@@ -2,6 +2,7 @@
 
 namespace App\Services\RetailGroup;
 
+use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
 use App\Models\CancelledRequest;
 use App\Models\PromoGcRequest;
@@ -233,5 +234,56 @@ class RetailGroupServices extends FileHandler
         });
 
         return $data;
+    }
+
+    public function getPromoApprovedRequestDetails($id)
+    {
+        $data = PromoGcRequest::where('pgcreq_id', $id)->where('pgcreq_status', 'approved')
+            ->with('userReqby:user_id,firstname,lastname')
+            ->withWhereHas('approvedReq', function ($q) {
+                $q->with('user:user_id,firstname,lastname')
+                    ->where('reqap_approvedtype', 'promo gc preapproved');
+            })->first();
+
+        if ($data) {
+            $data->reqdate = $data->approvedReq->reqap_date->toFormattedDateString();
+            $data->reqtime = $data->approvedReq->reqap_date->format('h:s A');
+        };
+
+        $denomination = PromoGcRequestItem::select('pgcreqi_qty', 'denomination')
+            ->join('denomination', 'denom_id', '=', 'pgcreqi_denom')
+            ->where('pgcreqi_trid', $id)
+            ->get();
+
+        $denomination->transform(function ($item) {
+            $item->sub = $item->pgcreqi_qty * $item->denomination;
+            return $item;
+        });
+
+        $approved = ApprovedRequest::select(
+            'reqap_remarks',
+            'reqap_doc',
+            'reqap_approvedby',
+            'reqap_checkedby',
+            'reqap_date',
+            'reqap_preparedby'
+        )->with('user:user_id,firstname,lastname')
+            ->where('reqap_trid', $id)
+            ->where('reqap_approvedtype', 'promo gc approved')
+            ->first();
+
+            if($approved){
+                $approved->reqdate = $approved->reqap_date->toFormattedDateString();
+                $approved->reqtime = $approved->reqap_date->format('h:s A');
+            }
+
+        return (object) [
+            'data' => $data,
+            'denom' => [
+                'denomdata' => $denomination,
+                'total' => NumberHelper::currency($denomination->sum('sub')),
+            ],
+            'approved' => $approved,
+        ];
     }
 }

@@ -144,6 +144,7 @@ class ColumnHelper
         [
             'title' => 'Action',
             'key' => 'view',
+            'align' =>  'center'
 
         ],
     ];

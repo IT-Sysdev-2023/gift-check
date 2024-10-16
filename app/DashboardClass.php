@@ -68,7 +68,11 @@ class DashboardClass extends DashboardService
                 ->where(function ($q) {
                     $q->where('pgcreq_group_status', '')
                         ->orWhere('pgcreq_group_status', 'approved');
-                })->count()
+                })->count(),
+            'approved' => PromoGcRequest::where('pgcreq_status', 'approved')
+                ->withWhereHas('approvedReq', function ($q) {
+                    $q->where('reqap_approvedtype', 'promo gc preapproved');
+                })->count(),
         ];
     }
     public function financeDashboard()
@@ -100,8 +104,6 @@ class DashboardClass extends DashboardService
         $spgcDebitTotal = $ledgerSpgc->sum('spgcledger_debit');
 
         $spgcreditTotal = $ledgerSpgc->sum('spgcledger_credit');
-
-        // dd($spgcreditTotal);
 
         return [
             'specialGcRequest' => [
