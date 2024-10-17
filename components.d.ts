@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: typeof import('ant-design-vue/es')['Alert']
+    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
@@ -90,7 +91,7 @@ declare module 'vue' {
     ApprovedSpgcExcelResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcExcelResult.vue')['default']
     ApprovedSpgcPdfResult: typeof import('./resources/js/Pages/Finance/Results/ApprovedSpgcPdfResult.vue')['default']
     ApprovedTab: typeof import('./resources/js/Pages/Finance/Reports/ApprovedTab.vue')['default']
-    ApprovePendingRequest: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/ApprovePendingRequest.vue')['default']
+    ApprovePendingRequest: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/approvePendingRequest.vue')['default']
     AProgress: typeof import('ant-design-vue/es')['Progress']
     ARadio: typeof import('ant-design-vue/es')['Radio']
     ARadioGroup: typeof import('ant-design-vue/es')['RadioGroup']
@@ -359,6 +360,7 @@ declare module 'vue' {
     SetupBudgetRequestForm: typeof import('./resources/js/Pages/Finance/Forms/SetupBudgetRequestForm.vue')['default']
     SetupDetails: typeof import('./resources/js/Pages/Iad/Cards/SetupDetails.vue')['default']
     SetupPayment: typeof import('./resources/js/Pages/Accounting/Payment/SetupPayment.vue')['default']
+    SetupPurchaseOrders: typeof import('./resources/js/Pages/Admin/SetupPurchaseOrders.vue')['default']
     SetupReceiving: typeof import('./resources/js/Pages/Iad/SetupReceiving.vue')['default']
     SetupRecommendation: typeof import('./resources/js/Pages/RetailGroup/SetupRecommendation.vue')['default']
     ShrinkOutlined: typeof import('@ant-design/icons-vue')['ShrinkOutlined']

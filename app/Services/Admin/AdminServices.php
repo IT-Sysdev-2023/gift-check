@@ -17,21 +17,15 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class AdminServices
 {
     public function purchaseOrderDetails()
     {
-        $collect = RequisitionForm::with('requisFormDenom')->paginate(10)->withQueryString();
-
-        $collect->transform(function ($item) {
-            $item->trans_date = Date::parse($item->trans_date)->toFormattedDateString();
-            $item->pur_date = Date::parse($item->pur_date)->toFormattedDateString();
-            return $item;
-        });
-
-        return $collect;
+        $files = Storage::disk('fad')->files();
+        return collect($files);
     }
 
     public function denomination()
@@ -843,26 +837,26 @@ class AdminServices
         // {
         //     $query = $link->query(
         //         "SELECT
-		// 		transaction_stores.trans_datetime,
-		// 		SUM(transaction_payment.payment_amountdue) as cash,
-		// 		COUNT(transaction_stores.trans_sid) as cnt
-		// 	FROM
-		// 		transaction_stores
-		// 	INNER JOIN
-		// 		transaction_payment
-		// 	ON
-		// 		transaction_payment.payment_trans_num = transaction_stores.trans_sid
-		// 	WHERE
-		// 		transaction_stores.trans_cashier='$cashier'
-		// 	AND
-		// 		transaction_stores.trans_store='$store'
-		// 	AND
-		// 		DATE(transaction_stores.trans_datetime) <= CURDATE()
-		// 	AND
-		// 		transaction_stores.trans_type='$mode'
-		// 	AND
-		// 		transaction_stores.trans_eos=''
-		// "
+        // 		transaction_stores.trans_datetime,
+        // 		SUM(transaction_payment.payment_amountdue) as cash,
+        // 		COUNT(transaction_stores.trans_sid) as cnt
+        // 	FROM
+        // 		transaction_stores
+        // 	INNER JOIN
+        // 		transaction_payment
+        // 	ON
+        // 		transaction_payment.payment_trans_num = transaction_stores.trans_sid
+        // 	WHERE
+        // 		transaction_stores.trans_cashier='$cashier'
+        // 	AND
+        // 		transaction_stores.trans_store='$store'
+        // 	AND
+        // 		DATE(transaction_stores.trans_datetime) <= CURDATE()
+        // 	AND
+        // 		transaction_stores.trans_type='$mode'
+        // 	AND
+        // 		transaction_stores.trans_eos=''
+        // "
         //     );
         //     if ($query) {
         //         $row = $query->fetch_object();
@@ -871,5 +865,24 @@ class AdminServices
         //         return $link->error;
         //     }
         // }
+    }
+    
+
+    public function getPoDetailsTextfiles($name)
+    {
+        $files = Storage::disk('fad')->get($name);
+
+        $lines = preg_split("/\r\n|\n|\r/", $files);
+
+
+        collect($lines)->each(function ($item) {
+            $exploded = explode('|', $item);
+
+            dump($exploded);
+        });
+        dd(1);
+
+
+        // collect($files)->each(functio);
     }
 }

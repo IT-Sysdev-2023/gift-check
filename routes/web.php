@@ -108,6 +108,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
     Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');
+
+
+    Route::get('setup-po-{any}', [AdminController::class, 'setupPurchaseOrders'])->name('setup');
+
+
 });
 
 
