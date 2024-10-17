@@ -52,6 +52,7 @@ class RetailServices
             ->whereHas('storeGcRequest', function ($query) {
                 $query->where('sgc_store', request()->user()->store_assigned);
             })
+            ->leftJoin('users', 'users.user_id', '=', 'approved_gcrequest.agcr_approvedby')
             ->orderByDesc('agcr_request_relnum')
             ->paginate(10)->withQueryString();
 
@@ -60,11 +61,9 @@ class RetailServices
             $item->agcr_date = $item->agcr_approved_at->toFormattedDateString();
             $item->storename = $item->storeGcRequest->store->store_name;
             $item->fullname = $item->user->full_name;
-
             return $item;
         });
 
-        dd($data->toArray());
         return $data;
     }
     public static function transanctionType($type)

@@ -610,7 +610,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Approved By',
-            'dataIndex' => 'valid',
+            'dataIndex' => 'fullname',
             'align' => 'center'
         ],
         [
