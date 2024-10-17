@@ -12,7 +12,7 @@ use App\Http\Controllers\EodController;
 use App\Http\Controllers\FadController;
 use App\Http\Controllers\Iad\Dashboard\SpecialExternalGcRequestController;
 use App\Http\Controllers\MarketingController;
-use App\Http\Controllers\MasterfileController;
+use \App\Http\Controllers\Treasury\MasterfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\IadController;
@@ -190,7 +190,7 @@ Route::prefix('marketing')->group(function () {
         Route::name('special-gc.')->group(function () {
             Route::get('pending', [MarketingController::class, 'pendingspgclist'])->name('pending');
             Route::get('pending-view-details', [MarketingController::class, 'pendingspgclistview'])->name('pending.view');
-            Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest']) ->name('aexgcreq');
+            Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest'])->name('aexgcreq');
         });
     });
 });
@@ -208,147 +208,149 @@ Route::get('sales/store-sales', [MarketingController::class, 'storeSales'])->nam
 //Treasury
 Route::middleware(['auth'])->group(function () {
     Route::prefix('treasury')->name('treasury.')->group(function () {
-            Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
-                Route::get('approved', [BudgetRequestController::class, 'approvedRequest'])->name('approved');
-                Route::get('view-approved-record/${id}', [BudgetRequestController::class, 'viewApprovedRequest'])->name('view.approved');
+        Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
+            Route::get('approved', [BudgetRequestController::class, 'approvedRequest'])->name('approved');
+            Route::get('view-approved-record/${id}', [BudgetRequestController::class, 'viewApprovedRequest'])->name('view.approved');
 
-                Route::get('pending-request', [BudgetRequestController::class, 'pendingRequest'])->name('pending');
-                Route::post('submit-budget-entry/{id}', [BudgetRequestController::class, 'submitBudgetEntry'])->name('budget.entry');
-                Route::get('download-document/{file}', [BudgetRequestController::class, 'downloadDocument'])->name('download.document');
+            Route::get('pending-request', [BudgetRequestController::class, 'pendingRequest'])->name('pending');
+            Route::post('submit-budget-entry/{id}', [BudgetRequestController::class, 'submitBudgetEntry'])->name('budget.entry');
+            Route::get('download-document/{file}', [BudgetRequestController::class, 'downloadDocument'])->name('download.document');
 
-                Route::get('cancelled-request', [BudgetRequestController::class, 'cancelledRequest'])->name('cancelled');
-                Route::get('view-cancelled-request/{$id}', [BudgetRequestController::class, 'viewCancelledRequest'])->name('view.cancelled');
-            });
-            Route::prefix('store-gc')->name('store.gc.')->group(function () {
-                Route::get('pending-request', [StoreGcController::class, 'pendingRequestStoreGc'])->name('pending');
-                Route::get('released-gc', [StoreGcController::class, 'releasedGc'])->name('released');
-                Route::get('cancelled-request', [StoreGcController::class, 'cancelledRequestStoreGc'])->name('cancelled');
-
-                Route::get('reprint/{id}', [StoreGcController::class, 'reprint'])->name('reprint');
-                Route::get('view-cancelled-gc/{id}', [StoreGcController::class, 'viewCancelledGc'])->name('cancelled.gc');
-
-                Route::get('releasing-entry-{id}', [StoreGcController::class, 'viewReleasingEntry'])->name('releasingEntry');
-                Route::get('view-allocated-gc-{id}', [StoreGcController::class, 'viewAllocatedList'])->name('viewAllocatedList');
-                Route::post('scan-barcode', [StoreGcController::class, 'scanBarcode'])->name('scanBarcode');
-                Route::get('view-scanned-barcode', [StoreGcController::class, 'viewScannedBarcode'])->name('viewScannedBarcode');
-                Route::post('submit-releasing-entry', [StoreGcController::class, 'releasingEntrySubmission'])->name('releasingEntrySubmission');
-            });
-            Route::prefix('gc-production-request')->name('production.request.')->group(function () {
-                Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');
-                Route::get('cancelled-request', [GcProductionRequestController::class, 'cancelledProductionRequest'])->name('cancelled');
-                Route::get('view-cancelled-request-{id}', [GcProductionRequestController::class, 'viewCancelledProduction'])->name('viewCancelled');
-                Route::get('view-approved-request/{id}', [GcProductionRequestController::class, 'viewApprovedProduction'])->name('view.approved');
-                Route::get('view-barcode-generated/{id}', [GcProductionRequestController::class, 'viewBarcodeGenerate'])->name('view.barcode');
-                Route::get('view-requisition/{id}', [GcProductionRequestController::class, 'viewRequisition'])->name('requisition');
-                Route::get('download-{file}', [GcProductionRequestController::class, 'download'])->name('download.document');
-                Route::get('reprint-{id}', [GcProductionRequestController::class, 'reprintRequest'])->name('reprint');
-
-                Route::get('pending', [GcProductionRequestController::class, 'pending'])->name('pending');
-                Route::post('submit-pending-request', [GcProductionRequestController::class, 'pendingSubmission'])->name('pendingSubmission');
-            });
-            Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
-                Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('pending');
-                Route::get('update-pending-special-gc/{id}', [SpecialGcRequestController::class, 'updatePendingSpecialGc'])->name('update.pending');
-
-                // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
-                Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
-
-                Route::get('reviewing-gc', [SpecialGcRequestController::class, 'releasingGc'])->name('gcReleasing');
-                Route::get('reviewing-gc-{id}', [SpecialGcRequestController::class, 'viewReleasing'])->name('viewReleasing');
-                Route::get('view-denominations-{id}', [SpecialGcRequestController::class, 'viewDenomination'])->name('viewDenomination');
-                Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class, 'relasingGcSubmission'])->name('releasingSubmission');
-
-                Route::get('released-gc', [SpecialGcRequestController::class, 'releasedGc'])->name('specialReleasedGc');
-                // Route::get('reviewed-gc-for-releasing', [SpecialGcRequestController::class,'reviewedGcReleasing'])->name('reviewedGcReleasing');
-                Route::get('view-released-gc-{id}', [SpecialGcRequestController::class, 'viewReleasedGc'])->name('viewReleasedGc');
-
-                Route::get('approved-request', [SpecialGcRequestController::class, 'approvedRequest'])->name('approvedRequest');
-                Route::get('view-approved-request-{id}', [SpecialGcRequestController::class, 'viewApprovedRequest'])->name('viewApprovedRequest');
-            });
-            Route::prefix('transactions')->name('transactions.')->group(function () {
-
-                //Budget Request
-                Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
-                Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
-
-                //Production Request
-                Route::prefix('production-request')->name('production.')->group(function () {
-                    Route::get('gift-check', [ProductionRequestController::class, 'giftCheck'])->name('gc');
-                    Route::post('store-gift-check', [ProductionRequestController::class, 'giftCheckStore'])->name('gcSubmit');
-                    Route::get('envelope', [ProductionRequestController::class, 'envelope'])->name('envelope');
-                    Route::get('accept-production-request-{id}', [ProductionRequestController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
-                });
-
-                //Gc allocation
-                Route::prefix('gc-allocation')->name('gcallocation.')->group(function () {
-                    Route::get('/', [GcAllocationController::class, 'gcAllocation'])->name('index');
-                    Route::post('gc-location-submission', [GcAllocationController::class, 'store'])->name('store');
-
-                    Route::get('store-allocation', [GcAllocationController::class, 'storeAllocation'])->name('storeAllocation');
-                    Route::get('view-allocated-gc', [GcAllocationController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
-                    Route::get('view-gc-for-allocation', [GcAllocationController::class, 'viewForAllocationGc'])->name('forallocation');
-                });
-
-                //Gc Releasiing Retail Store
-                Route::prefix('retail-gc-releasing')->name('retail.releasing.')->group(function () {
-                    Route::get('/', [RetailGcReleasingController::class, 'index'])->name('index');
-                });
-
-                //Promo Gc Releasing
-                Route::prefix('promo-gc-releasing')->name('promo.gc.releasing.')->group(function () {
-                    Route::get('/', [PromoGcReleasingController::class, 'index'])->name('index');
-
-                    Route::get('promo-gc-request-{id}', [PromoGcReleasingController::class, 'denominationList'])->name('denominationList');
-                    Route::post('scan-barcode', [PromoGcReleasingController::class, 'scanBarcode'])->name('scanBarcode');
-
-                    Route::post('form-submission', [PromoGcReleasingController::class, 'formSubmission'])->name('submission');
-                });
-
-                //Institution GC Sales
-                Route::prefix('institution-gc-sales')->name('institution.gc.sales.')->group(function () {
-                    Route::get('/', [InstitutionGcSalesController::class, 'index'])->name('index');
-                    Route::get('view-trasactions', [InstitutionGcSalesController::class, 'viewTransaction'])->name('transaction');
-
-                    Route::get('scan-barcode', [InstitutionGcSalesController::class, 'scanBarcode'])->name('scan');
-                    Route::put('remove-barcode-{barcode}', [InstitutionGcSalesController::class, 'removeBarcode'])->name('removeBarcode');
-
-                    Route::post('form-submission', [InstitutionGcSalesController::class, 'formSubmission'])->name('submission');
-                    Route::get('view-transaction-details-{id}', [InstitutionGcSalesController::class, 'transactionDetails'])->name('transactionDetails');
-                    Route::get('print-ar-{id}', [InstitutionGcSalesController::class, 'printAr'])->name('printAr');
-                    Route::get('reprint-{id}', [InstitutionGcSalesController::class, 'reprint'])->name('reprint');
-                });
-
-                //Institution Gc Refund
-                Route::prefix('institution-gc-refund')->name('intitution.refund.')->group(function () {
-                    Route::get('/', [InstitutionGcRefundController::class, 'index'])->name('index');
-                });
-
-                //special gc payment
-                Route::prefix('special-gc-payment')->name('special.')->group(function () {
-                    Route::get('/', [SpecialGcRequestController::class, 'specialGcPayment'])->name('index');
-                    Route::post('submission-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
-                });
-
-                //EOD
-                Route::prefix('treasury-eod')->name('eod.')->group(function () {
-                    Route::get('/', [EodController::class, 'eodList'])->name('eodList');
-                    Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
-
-                    Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
-                });
-            });
-
-            Route::prefix('adjustment')->name('adjustment.')->group(function () {
-
-                Route::get('allocation', [AdjustmentController::class,'allocationAdjustment'])->name('allocation');
-                Route::get('allocation-details-{id}', [AdjustmentController::class,'viewAllocationAdjustment'])->name('viewAllocation');
-            });
-
-            Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
-
-            Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
-            Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
+            Route::get('cancelled-request', [BudgetRequestController::class, 'cancelledRequest'])->name('cancelled');
+            Route::get('view-cancelled-request/{$id}', [BudgetRequestController::class, 'viewCancelledRequest'])->name('view.cancelled');
         });
+        Route::prefix('store-gc')->name('store.gc.')->group(function () {
+            Route::get('pending-request', [StoreGcController::class, 'pendingRequestStoreGc'])->name('pending');
+            Route::get('released-gc', [StoreGcController::class, 'releasedGc'])->name('released');
+            Route::get('cancelled-request', [StoreGcController::class, 'cancelledRequestStoreGc'])->name('cancelled');
+
+            Route::get('reprint/{id}', [StoreGcController::class, 'reprint'])->name('reprint');
+            Route::get('view-cancelled-gc/{id}', [StoreGcController::class, 'viewCancelledGc'])->name('cancelled.gc');
+
+            Route::get('releasing-entry-{id}', [StoreGcController::class, 'viewReleasingEntry'])->name('releasingEntry');
+            Route::get('view-allocated-gc-{id}', [StoreGcController::class, 'viewAllocatedList'])->name('viewAllocatedList');
+            Route::post('scan-barcode', [StoreGcController::class, 'scanBarcode'])->name('scanBarcode');
+            Route::get('view-scanned-barcode', [StoreGcController::class, 'viewScannedBarcode'])->name('viewScannedBarcode');
+            Route::post('submit-releasing-entry', [StoreGcController::class, 'releasingEntrySubmission'])->name('releasingEntrySubmission');
+        });
+        Route::prefix('gc-production-request')->name('production.request.')->group(function () {
+            Route::get('approved-request', [GcProductionRequestController::class, 'approvedProductionRequest'])->name('approved');
+            Route::get('cancelled-request', [GcProductionRequestController::class, 'cancelledProductionRequest'])->name('cancelled');
+            Route::get('view-cancelled-request-{id}', [GcProductionRequestController::class, 'viewCancelledProduction'])->name('viewCancelled');
+            Route::get('view-approved-request/{id}', [GcProductionRequestController::class, 'viewApprovedProduction'])->name('view.approved');
+            Route::get('view-barcode-generated/{id}', [GcProductionRequestController::class, 'viewBarcodeGenerate'])->name('view.barcode');
+            Route::get('view-requisition/{id}', [GcProductionRequestController::class, 'viewRequisition'])->name('requisition');
+            Route::get('download-{file}', [GcProductionRequestController::class, 'download'])->name('download.document');
+            Route::get('reprint-{id}', [GcProductionRequestController::class, 'reprintRequest'])->name('reprint');
+
+            Route::get('pending', [GcProductionRequestController::class, 'pending'])->name('pending');
+            Route::post('submit-pending-request', [GcProductionRequestController::class, 'pendingSubmission'])->name('pendingSubmission');
+        });
+        Route::prefix('special-gc-request')->name('special.gc.')->group(function () {
+            Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('pending');
+            Route::get('update-pending-special-gc/{id}', [SpecialGcRequestController::class, 'updatePendingSpecialGc'])->name('update.pending');
+
+            // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
+            Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
+
+            Route::get('reviewing-gc', [SpecialGcRequestController::class, 'releasingGc'])->name('gcReleasing');
+            Route::get('reviewing-gc-{id}', [SpecialGcRequestController::class, 'viewReleasing'])->name('viewReleasing');
+            Route::get('view-denominations-{id}', [SpecialGcRequestController::class, 'viewDenomination'])->name('viewDenomination');
+            Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class, 'relasingGcSubmission'])->name('releasingSubmission');
+
+            Route::get('released-gc', [SpecialGcRequestController::class, 'releasedGc'])->name('specialReleasedGc');
+            // Route::get('reviewed-gc-for-releasing', [SpecialGcRequestController::class,'reviewedGcReleasing'])->name('reviewedGcReleasing');
+            Route::get('view-released-gc-{id}', [SpecialGcRequestController::class, 'viewReleasedGc'])->name('viewReleasedGc');
+
+            Route::get('approved-request', [SpecialGcRequestController::class, 'approvedRequest'])->name('approvedRequest');
+            Route::get('view-approved-request-{id}', [SpecialGcRequestController::class, 'viewApprovedRequest'])->name('viewApprovedRequest');
+        });
+        Route::prefix('transactions')->name('transactions.')->group(function () {
+
+            //Budget Request
+            Route::get('budget-request', [TransactionsController::class, 'budgetRequest'])->name('budgetRequest');
+            Route::post('budget-request-submission', [TransactionsController::class, 'budgetRequestSubmission'])->name('budgetRequestSubmission');
+
+            //Production Request
+            Route::prefix('production-request')->name('production.')->group(function () {
+                Route::get('gift-check', [ProductionRequestController::class, 'giftCheck'])->name('gc');
+                Route::post('store-gift-check', [ProductionRequestController::class, 'giftCheckStore'])->name('gcSubmit');
+                Route::get('envelope', [ProductionRequestController::class, 'envelope'])->name('envelope');
+                Route::get('accept-production-request-{id}', [ProductionRequestController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+            });
+
+            //Gc allocation
+            Route::prefix('gc-allocation')->name('gcallocation.')->group(function () {
+                Route::get('/', [GcAllocationController::class, 'gcAllocation'])->name('index');
+                Route::post('gc-location-submission', [GcAllocationController::class, 'store'])->name('store');
+
+                Route::get('store-allocation', [GcAllocationController::class, 'storeAllocation'])->name('storeAllocation');
+                Route::get('view-allocated-gc', [GcAllocationController::class, 'viewAllocatedGc'])->name('viewAllocatedGc');
+                Route::get('view-gc-for-allocation', [GcAllocationController::class, 'viewForAllocationGc'])->name('forallocation');
+            });
+
+            //Gc Releasiing Retail Store
+            Route::prefix('retail-gc-releasing')->name('retail.releasing.')->group(function () {
+                Route::get('/', [RetailGcReleasingController::class, 'index'])->name('index');
+            });
+
+            //Promo Gc Releasing
+            Route::prefix('promo-gc-releasing')->name('promo.gc.releasing.')->group(function () {
+                Route::get('/', [PromoGcReleasingController::class, 'index'])->name('index');
+
+                Route::get('promo-gc-request-{id}', [PromoGcReleasingController::class, 'denominationList'])->name('denominationList');
+                Route::post('scan-barcode', [PromoGcReleasingController::class, 'scanBarcode'])->name('scanBarcode');
+
+                Route::post('form-submission', [PromoGcReleasingController::class, 'formSubmission'])->name('submission');
+            });
+
+            //Institution GC Sales
+            Route::prefix('institution-gc-sales')->name('institution.gc.sales.')->group(function () {
+                Route::get('/', [InstitutionGcSalesController::class, 'index'])->name('index');
+                Route::get('view-trasactions', [InstitutionGcSalesController::class, 'viewTransaction'])->name('transaction');
+
+                Route::get('scan-barcode', [InstitutionGcSalesController::class, 'scanBarcode'])->name('scan');
+                Route::put('remove-barcode-{barcode}', [InstitutionGcSalesController::class, 'removeBarcode'])->name('removeBarcode');
+
+                Route::post('form-submission', [InstitutionGcSalesController::class, 'formSubmission'])->name('submission');
+                Route::get('view-transaction-details-{id}', [InstitutionGcSalesController::class, 'transactionDetails'])->name('transactionDetails');
+                Route::get('print-ar-{id}', [InstitutionGcSalesController::class, 'printAr'])->name('printAr');
+                Route::get('reprint-{id}', [InstitutionGcSalesController::class, 'reprint'])->name('reprint');
+            });
+
+            //Institution Gc Refund
+            Route::prefix('institution-gc-refund')->name('intitution.refund.')->group(function () {
+                Route::get('/', [InstitutionGcRefundController::class, 'index'])->name('index');
+            });
+
+            //special gc payment
+            Route::prefix('special-gc-payment')->name('special.')->group(function () {
+                Route::get('/', [SpecialGcRequestController::class, 'specialGcPayment'])->name('index');
+                Route::post('submission-request', [SpecialGcRequestController::class, 'gcPaymentSubmission'])->name('paymentSubmission');
+            });
+
+            //EOD
+            Route::prefix('treasury-eod')->name('eod.')->group(function () {
+                Route::get('/', [EodController::class, 'eodList'])->name('eodList');
+                Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
+
+                Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
+            });
+        });
+        Route::prefix('masterfile')->name('masterfile.')->group(function () {
+            Route::get('customer-setup', [MasterfileController::class, 'customerSetup'])->name('customersetup');
+        });
+        Route::prefix('adjustment')->name('adjustment.')->group(function () {
+
+            Route::get('allocation', [AdjustmentController::class, 'allocationAdjustment'])->name('allocation');
+            Route::get('allocation-details-{id}', [AdjustmentController::class, 'viewAllocationAdjustment'])->name('viewAllocation');
+        });
+
+        Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
+
+        Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
+        Route::get('gc-ledger', [TreasuryController::class, 'gcLedger'])->name('gc.ledger');
+    });
 });
 Route::prefix('documents')->group(function () {
     Route::name('start.')->group(function () {

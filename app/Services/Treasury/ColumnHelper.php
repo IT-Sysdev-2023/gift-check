@@ -768,4 +768,31 @@ class ColumnHelper
             'key' => 'action',
         ],
     ];
+
+    public static $customerSetup = [
+        [
+            'title' => 'Customer name',
+            'dataIndex' => 'ins_name',
+
+        ],
+        [
+            'title' => 'Customer Type',
+            'dataIndex' => 'ins_custype',
+
+        ],
+        [
+            'title' => 'Gc Type',
+            'key' => 'gcType',
+
+        ],
+        [
+            'title' => 'Date Created',
+            'dataIndex' => 'ins_date_created',
+
+        ],
+        [
+            'title' => 'Created By',
+            'key' => 'createdBy',
+        ],
+    ];
 }
