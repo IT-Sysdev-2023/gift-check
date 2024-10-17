@@ -2,11 +2,13 @@
 
 namespace App\Services\Marketing;
 use App\Models\ApprovedProductionRequest;
+use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
 use App\Models\CancelledProductionRequest;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcRequest;
+use App\Models\PromoGcRequestItem;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\Supplier;
 use App\Models\UserDetails;
@@ -503,7 +505,7 @@ class MarketingServices extends FileHandler
                 'spexgc_num',
                 'spcus_companyname',
                 'reqap_approvedby',
-            ], 'like',$search.'%')
+            ], 'like', $search . '%')
             ->where('special_external_gcrequest.spexgc_status', 'approved')
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
             ->orderByDesc('special_external_gcrequest.spexgc_id')
@@ -517,6 +519,149 @@ class MarketingServices extends FileHandler
             return $item;
         });
         return $query;
+    }
+
+
+    public function promoApprovedlist()
+    {
+        $query = PromoGcRequest::select([
+            'promo_gc_request.pgcreq_id',
+            'promo_gc_request.pgcreq_reqnum',
+            'promo_gc_request.pgcreq_datereq',
+            'promo_gc_request.pgcreq_dateneeded',
+            'promo_gc_request.pgcreq_total',
+            'promo_gc_request.pgcreq_group',
+            DB::raw("CONCAT(prepby.firstname, ' ', prepby.lastname) as prepby"),
+            DB::raw("CONCAT(recom.firstname, ' ', recom.lastname) as recby")
+        ])
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'promo_gc_request.pgcreq_id')
+            ->join('users as prepby', 'prepby.user_id', '=', 'promo_gc_request.pgcreq_reqby')
+            ->join('users as recom', 'recom.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('promo_gc_request.pgcreq_status', 'approved')
+            ->where('approved_request.reqap_approvedtype', 'promo gc preapproved')
+            ->orderByDesc('pgcreq_id')
+            ->get();
+
+        $query = PromoGcRequest::select([
+            'promo_gc_request.pgcreq_id',
+            'promo_gc_request.pgcreq_reqnum',
+            'promo_gc_request.pgcreq_datereq',
+            'promo_gc_request.pgcreq_dateneeded',
+            'promo_gc_request.pgcreq_total',
+            'promo_gc_request.pgcreq_group',
+            DB::raw("CONCAT(prepby.firstname, ' ', prepby.lastname) as prepby"),
+            DB::raw("CONCAT(recom.firstname, ' ', recom.lastname) as recby")
+        ])
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'promo_gc_request.pgcreq_id')
+            ->join('users as prepby', 'prepby.user_id', '=', 'promo_gc_request.pgcreq_reqby')
+            ->join('users as recom', 'recom.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('promo_gc_request.pgcreq_status', 'approved')
+            ->where('approved_request.reqap_approvedtype', 'promo gc preapproved')
+            ->orderByDesc('pgcreq_id')
+            ->paginate(10)
+            ->withQueryString();
+
+        $query->transform(function ($item) {
+            $item->dateRequested = Date::parse($item->pgcreq_datereq)->format('F d, Y');
+            $item->dateNeeded = Date::parse($item->pgcreq_dateneeded)->format('F d, Y');
+            $item->recommendedBy = ucwords($item->recby);
+            $item->requestedBy = ucwords($item->prepby);
+            $approvedBy = ApprovedRequest::select([
+                DB::raw("CONCAT(users.firstname, ' ', users.lastname) as appby")
+            ])
+                ->join('users', 'users.user_id', '=', 'approved_request.reqap_preparedby')
+                ->where('approved_request.reqap_trid', $item->pgcreq_id)
+                ->where('approved_request.reqap_approvedtype', 'promo gc approved')
+                ->first();
+            $item->approvedBy = $approvedBy ? ucwords($approvedBy->appby) : null;
+
+            return $item;
+        });
+
+        return $query;
+    }
+
+
+    public function selectedpromogcrequest($request)
+    {
+        $promoGcRequest = PromoGcRequest::select(
+            'promo_gc_request.pgcreq_id',
+            'promo_gc_request.pgcreq_reqnum',
+            'promo_gc_request.pgcreq_datereq',
+            'promo_gc_request.pgcreq_dateneeded',
+            'promo_gc_request.pgcreq_doc',
+            'promo_gc_request.pgcreq_status',
+            'promo_gc_request.pgcreq_group',
+            'promo_gc_request.pgcreq_remarks',
+            'promo_gc_request.pgcreq_total',
+            DB::raw("CONCAT(prep.firstname, ' ', prep.lastname) as prepby"),
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_doc',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(recom.firstname, ' ', recom.lastname) as recomby")
+        )
+            ->join('users as prep', 'prep.user_id', '=', 'promo_gc_request.pgcreq_reqby')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'promo_gc_request.pgcreq_id')
+            ->join('users as recom', 'recom.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('promo_gc_request.pgcreq_id', $request->id)
+            ->where('promo_gc_request.pgcreq_status', 'approved')
+            ->where('approved_request.reqap_approvedtype', 'promo gc preapproved')
+            ->get();
+
+        $promoGcRequest->transform(function ($item) {
+            $item->dateRequest = Date::parse($item->pgcreq_datereq)->format('F d Y');
+            $item->dateNeeded = Date::parse($item->pgcreq_dateneeded)->format('F d Y');
+            $item->requestedBy = ucwords($item->prepby);
+            ;
+            $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d Y');
+            $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i A');
+            $item->recommendedBy = ucwords($item->recomby);
+
+            return $item;
+        });
+
+
+        return $promoGcRequest;
+    }
+
+
+    public function approvedRequests($request)
+    {
+        $approvedRequests = ApprovedRequest::select(
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_doc',
+            'approved_request.reqap_approvedby',
+            'approved_request.reqap_checkedby',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as appby"),
+            DB::raw("CONCAT(approvedBy.firstname, ' ', approvedBy.lastname) as approvedBy"),
+            DB::raw("CONCAT(checkBy.firstname, ' ', checkBy.lastname) as checkBy")
+        )
+            ->join('users', 'users.user_id', '=', 'approved_request.reqap_preparedby')
+            ->leftJoin('users as approvedBy', 'approvedBy.user_id', '=', 'approved_request.reqap_approvedby')
+            ->leftJoin('users as checkBy', 'checkBy.user_id', '=', 'approved_request.reqap_checkedby')
+            ->where('approved_request.reqap_approvedtype', 'promo gc approved')
+            ->where('approved_request.reqap_trid', $request->id)
+            ->get()
+            ->transform(function ($item) {
+                $item->approvedBy = ucwords($item->approvedBy);
+                $item->checkedBy = ucwords($item->checkBy);
+                $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d, Y');
+                $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i A');
+                $item->prepby = ucwords($item->appby);
+                return $item;
+            });
+
+        return $approvedRequests;
+    }
+
+    public function getbarcode($request)
+    {
+        $barcode = PromoGcRequestItem::where('pgcreqi_trid', $request->id)
+            ->join('denomination', 'denomination.denom_id', '=', 'promo_gc_request_items.pgcreqi_denom')
+            ->get();
+
+        return $barcode;
     }
 
 
