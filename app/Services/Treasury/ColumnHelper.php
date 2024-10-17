@@ -94,11 +94,6 @@ class ColumnHelper
 
         ],
         [
-            'title' => 'Date Needed',
-            'dataIndex' => 'sgc_date_needed',
-
-        ],
-        [
             'title' => 'Prepared By',
             'dataIndex' => ['user', 'full_name'],
             'key' => 'prepared_by',

@@ -7,22 +7,7 @@
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
-        <a-card>
-            <a-row>
-                <a-col :span="12">
-                    <a-statistic
-                        title="Prepared By"
-                        :value="$page.props.auth.user.full_name"
-                    />
-                </a-col>
-                <a-col :span="12">
-                    <a-statistic
-                        title="Current Budget"
-                          :value="'₱ ' + Number(bud).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })"
-                    />
-                </a-col>
-            </a-row>
-        </a-card>
+
         <a-card title="Submit a Gift Check" class="mt-10">
             <a-form
                 ref="formRef"
@@ -68,9 +53,40 @@
                                 @input="clearError('remarks')"
                             />
                         </a-form-item>
+                        <a-form-item label="Prepared By">
+                            <a-input
+                                :value="$page.props.auth.user.full_name"
+                                readonly
+                            />
+                        </a-form-item>
+                        <div>
+                            <div class="flex justify-end" style="margin-right: 80px;">
+                                <a-form-item class="text-end">
+                                    <a-button type="primary" html-type="submit"
+                                        >Submit</a-button
+                                    >
+                                </a-form-item>
+                            </div>
+                        </div>
                     </a-col>
                     <a-col :span="14">
                         <a-card>
+                            <div>
+                                <div>
+                                    <p style="font-size: 20px">
+                                        Current Budget:
+                                        {{
+                                            Number(bud).toLocaleString(
+                                                undefined,
+                                                {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2,
+                                                }
+                                            )
+                                        }}
+                                    </p>
+                                </div>
+                            </div>
                             <a-row :gutter="16" class="text-center">
                                 <a-col :span="8">
                                     <span>Denomination</span>
@@ -101,7 +117,13 @@
                                         v-model:value="item.qty"
                                         placeholder="0"
                                         :min="0"
-                                        @change="quantityChange(item.qty, item.denomination, item)"
+                                        @change="
+                                            quantityChange(
+                                                item.qty,
+                                                item.denomination,
+                                                item
+                                            )
+                                        "
                                     >
                                         <template #upIcon>
                                             <ArrowUpOutlined />
@@ -112,12 +134,14 @@
                                     </a-input-number>
                                 </a-col>
                                 <a-col :span="8">
-                                    <div   style="text-align: center;">
-
+                                    <div style="text-align: center">
                                         <a-input-number
-                                             :value="Math.floor(bud / item.denomination)"
+                                            :value="
+                                                Math.floor(
+                                                    bud / item.denomination
+                                                )
+                                            "
                                             readonly
-
                                         />
                                     </div>
                                 </a-col>
@@ -129,12 +153,6 @@
                                 {{ formState.errors.denom }}
                             </div>
                         </a-card>
-
-                        <a-form-item class="text-end mt-5">
-                            <a-button type="primary" html-type="submit"
-                                >Submit</a-button
-                            >
-                        </a-form-item>
                     </a-col>
                 </a-row>
             </a-form>
@@ -191,9 +209,9 @@ const handleChange = (file: UploadChangeParam) => {
     formState.file = file.file;
 };
 
-const closeIframe = () =>{
-    router.visit(route('treasury.dashboard'));
-}
+const closeIframe = () => {
+    router.visit(route("treasury.dashboard"));
+};
 const previousQuantities = ref({}); // Store previous quantity for each item
 
 const quantityChange = (qty, denom, item) => {
@@ -208,16 +226,15 @@ const quantityChange = (qty, denom, item) => {
     previousQuantities.value[item.id] = qty;
 };
 const onSubmit = () => {
-    formState
-        .post(route("treasury.transactions.production.gcSubmit"), {
-            onSuccess: ({ props }) => {
-                openLeftNotification(props.flash);
-                if (props.flash.success) {
-                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
-                    openIframe.value = true;
-                }
-            },
-        });
+    formState.post(route("treasury.transactions.production.gcSubmit"), {
+        onSuccess: ({ props }) => {
+            openLeftNotification(props.flash);
+            if (props.flash.success) {
+                stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                openIframe.value = true;
+            }
+        },
+    });
 };
 const getErrorStatus = (field: string) => {
     return formState.errors[field] ? "error" : "";

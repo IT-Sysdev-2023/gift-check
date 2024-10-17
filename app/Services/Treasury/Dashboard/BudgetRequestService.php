@@ -134,9 +134,9 @@ class BudgetRequestService extends FileHandler
 			"remarks" => 'required',
 			// 'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
 		]);
-		return BudgetRequest::whereRelation('user', 'usertype', $request->user()->usertype)
-			->where('br_request_status', 0)
-			->count();
+		return BudgetRequest::where('br_checked_by', null)
+        ->where('br_requested_by', '!=', '')
+        ->where('br_request_status', '0')->exists();
 	}
 
 	private function generatePdf(Request $request)
@@ -151,7 +151,7 @@ class BudgetRequestService extends FileHandler
 			'subtitle' => 'Revolving Budget Entry Form',
 
 			'budgetRequested' => $request->budget,
-			
+
 			//signatures
 			'signatures' => [
 				'preparedBy' => [
