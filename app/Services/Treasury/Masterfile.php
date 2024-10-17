@@ -1,46 +1,31 @@
 <?php
 
 namespace App\Services\Treasury;
+
+use App\Http\Resources\InstitutCustomerResource;
 use App\Models\InstitutCustomer;
 use App\Models\PaymentFund;
 use App\Models\SpecialExternalCustomer;
+use Illuminate\Http\Request;
 
 class Masterfile
 {
-    public static function customerSetup() //setup-tres-customer
+    public static function customerSetup(Request $request) //setup-tres-customer
     {
-        //
-
-        $record = InstitutCustomer::with('user:user_id,firstname,lastname')
-            ->leftJoin('gc_type', 'institut_customer.ins_gctype', '=', 'gc_type.gc_type_id')
-            ->select('ins_name', 'ins_custype', 'ins_by', 'ins_date_created', 'gctype')
+        $record = InstitutCustomer::with('user:user_id,firstname,lastname', 'gcType:gc_type_id,gctype')
+            ->select('ins_name', 'ins_custype', 'ins_by', 'ins_date_created', 'ins_gctype')
             ->where('ins_status', 'active')
             ->orderByDesc('ins_id')
-            ->cursorPaginate(15)
-            ->withQueryString(); //For Filters to preserve the state in paginated links
+            ->filter($request)
+            ->paginate()
+            ->withQueryString();
 
-        return $record;
-
-        // $table = 'institut_customer';
-
-        // $select = "institut_customer.ins_name,
-        // 	institut_customer.ins_custype,
-        // 	CONCAT(users.firstname,' ',users.lastname) as crby,
-        // 	institut_customer.ins_date_created,
-        // 	gc_type.gctype";
-
-        // $where = "institut_customer.ins_status='active'";
-        // $join = 'INNER JOIN
-        // 		users
-        // 	ON
-        // 		users.user_id = institut_customer.ins_by
-        // 	LEFT JOIN
-        // 		gc_type
-        // 	ON
-        // 		gc_type.gc_type_id = institut_customer.ins_gctype';
-        // $limit = 'ORDER BY institut_customer.ins_id DESC';
-
-        // $data = getAllData($link,$table,$select,$where,$join,$limit)
+        return inertia('Treasury/Masterfile/CustomerSetup', [
+            'title' => 'Customer Setup',
+            'filters' => $request->only(['date', 'search']),
+            'data' => InstitutCustomerResource::collection($record),
+            'columns' => ColumnHelper::$customerSetup
+        ]);
     }
 
     public static function specialExternalSetup() ///setup-special-external

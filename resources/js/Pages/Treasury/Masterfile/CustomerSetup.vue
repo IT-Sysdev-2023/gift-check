@@ -1,10 +1,3 @@
-<script setup>
-import { highlighten } from "@/Mixin/UiUtilities";
-import Description from "./../Description.vue";
-
-const { highlightText } = highlighten();
-
-</script>
 <template>
     <Head :title="title" />
     <a-breadcrumb style="margin: 15px 0">
@@ -25,12 +18,6 @@ const { highlightText } = highlighten();
                     placeholder="Search here..."
                     style="width: 300px"
                 />
-                <!-- <a-button type="primary">
-                    <template #icon>
-                        <FileExcelOutlined />
-                    </template>
-                    Export to Excel
-                </a-button> -->
             </div>
         </div>
         <a-table
@@ -52,36 +39,24 @@ const { highlightText } = highlighten();
                     >
                     </span>
                 </template>
-                <template v-if="column.key">
-                    <span>
-                        <!-- for the dynamic implementation of object properties, just add a key in column-->
-                        {{ record[column.dataIndex[0]][column.dataIndex[1]] }}
-                    </span>
-                </template>
-                <template v-if="column.dataIndex === 'approved_by'">
-                    <span>
-                        {{ record.cancelled_request?.user.full_name }}
-                    </span>
-                </template>
-
-                <template v-if="column.dataIndex === 'action'">
-                    <a-button
-                        type="primary"
-                        size="small"
-                        @click="viewRecord(record.br_id)"
+                <template v-if="column.key === 'gcType'">
+                    <span
+                        v-html="
+                            highlightText(record.gcType?.gctype, form.search)
+                        "
                     >
-                        <template #icon>
-                            <FileSearchOutlined />
-                        </template>
-                        View
-                    </a-button>
+                    </span>
+                </template>
+                <template v-if="column.key === 'createdBy'">
+                    <span
+                        v-html="
+                            highlightText(record.user.full_name, form.search)
+                        "
+                    >
+                    </span>
                 </template>
             </template>
         </a-table>
-        <a-modal v-model:open="showModal" width="1000px" :footer="null">
-            <!-- <component :is="tabs[currentTab]" /> -->
-            <Description :data="descriptionRecord" />
-        </a-modal>
 
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
@@ -92,21 +67,23 @@ import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
+import { highlighten } from "@/Mixin/UiUtilities";
+import Description from "./../Description.vue";
 
 export default {
     layout: AuthenticatedLayout,
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
     props: {
-        desc: String,
         title: String,
         data: Object,
         columns: Array,
-        remainingBudget: String,
         filters: Object,
     },
     data() {
         return {
-            descriptionRecord: [],
-            showModal: false,
             form: {
                 search: this.filters.search,
                 date: this.filters.date
@@ -122,18 +99,7 @@ export default {
             return res + ".dashboard";
         },
     },
-    methods: {
-        async viewRecord(id) {
-            try {
-                const { data } = await axios.get(
-                    route("treasury.budget.request.view.approved", id)
-                );
-                this.descriptionRecord = data;
-            } finally {
-                this.showModal = true;
-            }
-        },
-    },
+    methods: {},
 
     watch: {
         form: {

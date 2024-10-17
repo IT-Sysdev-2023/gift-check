@@ -40,7 +40,7 @@ class FileHandler
             return $filename;
         }
 
-        return $request->document;
+        return $request->document ?? '';
     }
 
 

@@ -75,8 +75,14 @@ class ColumnHelper
         ],
         [
             'title' => 'Cancelled By',
-            'dataIndex' => ['cancelled_by', 'approved_by'],
-            'key' => 'approved_by',
+            // 'dataIndex' => ['cancelled_by', 'user', 'full_name'],
+            'dataIndex' => 'approved_by',
+
+        ],
+        [
+            'title' => 'Action',
+            // 'dataIndex' => ['cancelled_by', 'user', 'full_name'],
+            'dataIndex' => 'action',
 
         ],
     ];
@@ -761,6 +767,33 @@ class ColumnHelper
         [
             'title' => 'Actions',
             'key' => 'action',
+        ],
+    ];
+
+    public static $customerSetup = [
+        [
+            'title' => 'Customer name',
+            'dataIndex' => 'ins_name',
+
+        ],
+        [
+            'title' => 'Customer Type',
+            'dataIndex' => 'ins_custype',
+
+        ],
+        [
+            'title' => 'Gc Type',
+            'key' => 'gcType',
+
+        ],
+        [
+            'title' => 'Date Created',
+            'dataIndex' => 'ins_date_created',
+
+        ],
+        [
+            'title' => 'Created By',
+            'key' => 'createdBy',
         ],
     ];
 }

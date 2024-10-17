@@ -9,7 +9,7 @@
         </a-breadcrumb>
         <a-row :gutter="16">
             <a-col class="gutter-row" :span="16">
-                <a-card>
+                <a-card :loading="formState.processing">
                     <a-typography-title :level="3" class="text-center">{{
                         title
                     }}</a-typography-title>
@@ -40,7 +40,7 @@
                                     />
                                 </a-form-item>
                             </a-col>
-                            <a-col :span="10">
+                            <!-- <a-col :span="10">
                                 <a-form-item
                                     label="Date Needed"
                                     name="dateneeded"
@@ -52,14 +52,11 @@
                                         v-model:value="formState.dateNeeded"
                                     />
                                 </a-form-item>
-                            </a-col>
+                            </a-col> -->
                         </a-row>
 
                         <a-form-item label="Budget" name="budget">
-                            <a-input
-                                v-model:value="formState.budget"
-                                type="number"
-                            />
+                            <ant-input-number v-model:amount="formState.budget"/>
                         </a-form-item>
 
                         <a-form-item label="Remarks:" name="remarks">
@@ -122,7 +119,6 @@
                             </a-space>
                         </a-form-item>
 
-                       
                         <a-form-item
                             label="Upload Scan Copy"
                             :validate-status="
@@ -130,7 +126,7 @@
                             "
                             :help="formState.errors.file"
                         >
-                        <ant-upload-image @handleChange="handleChange"/>
+                            <ant-upload-image @handleChange="handleChange" />
                         </a-form-item>
 
                         <a-form-item :wrapper-col="{ offset: 22, span: 20 }">
@@ -141,10 +137,36 @@
                     </a-form>
                 </a-card>
             </a-col>
-            <a-col class="gutter-row" :span="8">
+            <a-col class="gutter-row space-y-5" :span="8">
                 <a-card>
                     <a-statistic
-                        title="Current Balance"
+                        title="Regular Gc Budget"
+                        :value="props.regularBudget"
+                        :precision="2"
+                        style="margin-right: 50px"
+                    >
+                        <template #prefix>
+                            <FireOutlined twoToneColor="#3f8600" />
+                        </template>
+                    </a-statistic>
+                    
+                </a-card>
+                <a-card>
+                    <a-statistic
+                        title="Special Gc Budget"
+                        :value="props.specialBudget"
+                        :precision="2"
+                        style="margin-right: 50px"
+                    >
+                        <template #prefix>
+                            <FireOutlined twoToneColor="#3f8600" />
+                        </template>
+                    </a-statistic>
+                    
+                </a-card>
+                <a-card>
+                    <a-statistic
+                        title="Total Balance"
                         :value="props.currentBudget"
                         :precision="2"
                         :value-style="{ color: '#3f8600' }"
@@ -154,6 +176,7 @@
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
+                    
                 </a-card>
             </a-col>
         </a-row>
@@ -175,6 +198,8 @@ import { onProgress } from "@/../../resources/js/Mixin/UiUtilities";
 const props = defineProps<{
     title: string;
     currentBudget: string;
+    specialBudget: string;
+    regularBudget: string;
     data: {
         br_id: number;
         br_no: string;
@@ -199,7 +224,7 @@ const fileList = ref<UploadProps["fileList"]>([]);
 const formState = useForm<FormState>({
     brno: props.data.br_no,
     dateRequested: dayjs(props.data.br_requested_at),
-    dateNeeded: dayjs(props.data.br_requested_needed),
+    // dateNeeded: dayjs(props.data.br_requested_needed),
     budget: props.data.br_request,
     updatedBy: page.auth.user.full_name,
     createdBy: props.data.user.full_name,
@@ -208,29 +233,27 @@ const formState = useForm<FormState>({
     file: null,
 });
 const disabledDate = (current: Dayjs) => {
-  // Can not select days before today and today
-  return current && current < dayjs().startOf('day');
+    // Can not select days before today and today
+    return current && current < dayjs().startOf("day");
 };
 const handleChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };
 const { openNotification, onLoading } = onProgress();
 const onFinish = (values: any) => {
-    onLoading();
-
     formState
         .transform((data) => ({
             ...data,
             updatedById: props.data.user.user_id,
             dateRequested: data.dateRequested.format("YYYY-MM-DD HH:mm:ss"),
-            dateNeeded: data.dateNeeded.format("YYYY-MM-DD"),
+            // dateNeeded: data.dateNeeded.format("YYYY-MM-DD"),
             document: props.data.br_file_docno,
         }))
-        .post(route("treasury.budget.request.budget.entry", props.data.br_id), {
+        .put(route("treasury.budget.request.budget.entry", props.data.br_id), {
             preserveScroll: true,
             onSuccess: (pages: { props: FlashProps }) => {
                 openNotification(pages.props.flash);
-                router.get(route('treasury.dashboard'));
+                router.get(route("treasury.dashboard"));
             },
         });
 };
