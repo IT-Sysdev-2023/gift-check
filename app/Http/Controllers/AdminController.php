@@ -621,8 +621,8 @@ class AdminController extends Controller
 
         )
             ->leftJoin('institut_customer', 'cus_id', '=', 'institut_customer.ins_id')
-            ->leftJoin('stores', 'cus_store_register', '=', 'stores.store_id')
-            ->leftJoin('special_external_customer', 'cus_id', '=', 'special_external_customer.spcus_id');
+            ->leftJoin('special_external_customer', 'cus_id', '=', 'special_external_customer.spcus_id')
+            ->leftJoin('stores', 'cus_store_register', '=', 'stores.store_id');
 
 
         if ($searchTerm) {

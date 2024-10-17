@@ -19,7 +19,6 @@
             <a-select-option value="25">25</a-select-option>
             <a-select-option value="50">50</a-select-option>
             <a-select-option value="100">100</a-select-option>
-            <a-select-option value="500">500</a-select-option>
         </a-select>
         entries
     </span>
