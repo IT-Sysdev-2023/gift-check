@@ -50,15 +50,15 @@ class RetailController extends Controller
             ->select('denomination.denomination', DB::raw('count(*) as total'))
             ->groupBy('denomination.denom_id', 'denomination.denomination') // Group by both fields
             ->get();
-        $currentStorebudget = number_format($rfund['r_fund'] - $getAvailableGc['total'],2);
+        $currentStorebudget = number_format($rfund['r_fund'] - $getAvailableGc['total'], 2);
 
 
         return inertia('Retail/RetailDashboard', [
             'countGcRequest' => $gcRequest,
             'availableGc' => $getAvailableGc['denoms'],
             'soldGc' => $soldGc,
-            'total' => number_format($getAvailableGc['total'],2),
-            'r_fund' => number_format($rfund['r_fund'],2),
+            'total' => number_format($getAvailableGc['total'], 2),
+            'r_fund' => number_format($rfund['r_fund'], 2),
             'storeBudget' => $currentStorebudget
         ]);
     }
@@ -203,15 +203,11 @@ class RetailController extends Controller
 
     public function approvedGcRequest(Request $request)
     {
-        $checkedBy = Assignatory::get();
-
-        $record = $this->retail->details($request);
-
         return inertia('Retail/RetailApprovedGcRequest', [
             'columns' => ColumnHelper::$approved_gc_request,
             'record' => $this->retail->getDataApproved(),
-            'data' => $record,
-            'assign' => $checkedBy
+            'data' => $this->retail->details($request),
+            'assign' => Assignatory::get()
         ]);
     }
 
@@ -225,11 +221,9 @@ class RetailController extends Controller
     }
     public function pendingGcRequestList()
     {
-        $data = $this->retail->GcPendingRequest();
-        $columns = ColumnHelper::pendingGcRequest();
         return Inertia::render('Retail/GcRequest/Pending', [
-            'data' => $data,
-            'columns' => $columns
+            'data' => $this->retail->GcPendingRequest(),
+            'columns' => ColumnHelper::pendingGcRequest()
         ]);
     }
     public function submitEntry(Request $request)
