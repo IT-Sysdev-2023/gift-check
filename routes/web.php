@@ -213,7 +213,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('view-approved-record/${id}', [BudgetRequestController::class, 'viewApprovedRequest'])->name('view.approved');
 
             Route::get('pending-request', [BudgetRequestController::class, 'pendingRequest'])->name('pending');
-            Route::post('submit-budget-entry/{id}', [BudgetRequestController::class, 'submitBudgetEntry'])->name('budget.entry');
+            Route::put('submit-budget-entry/{id}', [BudgetRequestController::class, 'submitBudgetEntry'])->name('budget.entry');
             Route::get('download-document/{file}', [BudgetRequestController::class, 'downloadDocument'])->name('download.document');
 
             Route::get('cancelled-request', [BudgetRequestController::class, 'cancelledRequest'])->name('cancelled');

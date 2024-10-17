@@ -56,10 +56,9 @@ class BudgetRequestService extends FileHandler
 	}
 	public function submitBudgetEntry(BudgetRequest $id, Request $request)
 	{
-		$request->validate([
-			'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
-		]);
-
+		// $request->validate([
+		// 	'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
+		// ]);
 		if ($id->br_request_status != 0) {
 			return redirect()->back()->with('error', 'Budget request already approved/cancelled.');
 		}

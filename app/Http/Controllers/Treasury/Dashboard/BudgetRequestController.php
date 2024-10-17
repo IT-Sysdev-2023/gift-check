@@ -43,6 +43,8 @@ class BudgetRequestController extends Controller
         return inertia(
             'Treasury/Dashboard/PendingRequestTreasury',
             [
+                'regularBudget' => LedgerBudget::regularBudget(),
+                'specialBudget' => LedgerBudget::specialBudget(),
                 'currentBudget' => LedgerBudget::currentBudget(),
                 'title' => 'Update Budget Entry Form',
                 'data' => $record,
