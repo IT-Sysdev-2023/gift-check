@@ -306,19 +306,19 @@ class RetailGroupServices extends FileHandler
         $ledger = 1;
 
         $record = [];
+        $total = 0;
 
-        $data->each(function ($item) use (&$record, &$ledger) {
-            // dump($item->sum('promled_debit'));
-            if ($item->promled_desc == 'promo request approval') {
+        $data->each(function ($item) use (&$record, &$ledger, &$total) {
+
+            if ($item->promled_desc === 'promo request approval') {
 
                 $rec = PromoGcRequest::select('reqap_date')->join('approved_request', 'reqap_trid', '=', 'pgcreq_id')
                     ->where('pgcreq_id', $item->promled_trid)
                     ->where('reqap_approvedtype', 'promo gc preapproved')
                     ->first();
 
-                $total = 0;
 
-                if ($rec) {
+                if ($rec !== null) {
 
                     $total += $item->promled_debit;
 
