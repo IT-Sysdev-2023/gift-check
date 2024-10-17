@@ -88,12 +88,36 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')->group(function () {
     Route::name('admin.')->group(function () {
+        Route::get('add-new-fund',[AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
+        Route::get('users_add_user', [AdminController::class,'users_save_user'])->name('masterfile.user.saveUser');
+        Route::post('update-password',[AdminController::class, 'updateStoreStaffPassword'])->name('masterfile.updateStoreStaffPassword');
+        Route::post('update-store-setup',[AdminController::class, 'updateStoreStaffSetup'])->name('masterfile.updateStoreStaffSetup');
+        Route::get('denomination-setup',[AdminController::class, 'denominationSetup'])->name('masterfile.denominationSetup');
+        Route::get('credit-card-setup',[AdminController::class, 'creditCardSetup'])->name('masterfile.creditCardSetup');
+        Route::get('store-setup',[AdminController::class, 'setupStore'])->name('masterfile.setupStore');
+        Route::get('customer-setup',[AdminController::class, 'customerSetup'])->name('masterfile.customer.setup');
+        Route::post('update-customer-store-register', [AdminController::class, 'updateCustomerStoreRegister'])->name('masterfile.updateCustomerStoreRegister');
+        Route::post('update-institute-customer',[AdminController::class,'updateInstituteCustomer'])->name('masterfile.UpdateInstituteCustomer');
+        Route::get('store-staff-setup', [AdminController::class, 'storeSetup'])->name('masterfile.store.staff');
+        Route::get('save-user', [AdminController::class, 'saveUser'])->name('masterfile.store.saveUser');
         Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
         Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
         Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
         Route::name('masterfile.')->group(function () {
             Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
             Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
+            Route::get('user-reset-password', [AdminController::class, 'usersResetPassword'])->name('usersResetPassword');
+            Route::get('save-store',[AdminController::class, 'saveStore'])->name('saveStore');
+            Route::get('issue-receipt',[AdminController::class, 'issueReceipt'])->name('issueReceipt');
+            Route::get('save-credit-card',[AdminController::class, 'saveCreditCard'])->name('saveCreditCard');
+            Route::get('revolving-fund',[AdminController::class, 'revolving_fund'])->name('revolvingFund');
+            route::get('save-denomination',[AdminController::class, 'saveDenomination'])->name('saveDenomination');
+            route::post('update-denomination', [AdminController::class, 'UpdateDenomination'])->name('saveUpdateDenomination');
+            route::post('update-user',[AdminController::class, 'updateUser'])->name('updateUser');
+            route::post('update-revolvingfund', [AdminController::class, 'updateRevolvingFund'])->name('updateRevolvingFund');
+            route::post('update-special-customer', [AdminController::class, 'updateSpecialCustomer'])->name('updateSpecialCustomer');
+
+
         });
         Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
     });

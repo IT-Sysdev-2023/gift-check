@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class InstitutCustomer extends Model
 {
     use HasFactory;
-
+    const CREATED_AT = 'ins_date_created';
+    const UPDATED_AT = 'ins_date_updated';
+    protected $guarded=[];
     protected $table = 'institut_customer';
     protected $primaryKey = 'ins_id';
 

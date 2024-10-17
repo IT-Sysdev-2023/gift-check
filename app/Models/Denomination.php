@@ -10,7 +10,11 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class Denomination extends Model
 {
     use HasFactory;
+    const CREATED_AT = 'denom_datecreated';
+    const UPDATED_AT = 'denom_dateupdated';
 
+    protected $guarded =[];
+    
     protected $table = 'denomination';
     protected $primaryKey = 'denom_id';
 
