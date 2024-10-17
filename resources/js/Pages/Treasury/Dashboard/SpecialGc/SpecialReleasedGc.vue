@@ -91,12 +91,7 @@ export default {
                     ? [dayjs(this.filters.date[0]), dayjs(this.filters.date[1])]
                     : [],
             },
-            progressBar: {
-                percentage: 0,
-                message: "",
-                totalRows: 0,
-                currentRow: 0,
-            },
+           
         };
     },
     computed: {
@@ -109,23 +104,7 @@ export default {
     methods: {
         async viewRecord(id) {
             router.get(route('treasury.special.gc.viewReleasedGc', id));
-            // alert(id);
-            // try {
-            //     const { data } = await axios.get(
-            //         route("treasury.view.approved.budget.ledger", $id)
-            //     );
-            //     this.descriptionRecord = data;
-            // } finally {
-            //     this.showModal = true;
-            // }
         },
-
-        start() {
-            this.$inertia.get(route('start.budget.ledger'), {
-                date: this.filters.date ? [dayjs(this.filters.date[0]).format('YYYY-MM-DD'), dayjs(this.filters.date[1]).format('YYYY-MM-DD')]
-                    : []
-            });
-        }
     },
 
     watch: {
@@ -146,13 +125,5 @@ export default {
             }, 150),
         },
     },
-    mounted() {
-        this.$ws.private(`generating-excel-events.${this.$page.props.auth.user.user_id}`)
-            .listen(".generate-excel-ledger", (e) => {
-                this.progressBar = e;
-                this.isGenerating = true;
-                console.log('hello');
-            });
-    }
 };
 </script>

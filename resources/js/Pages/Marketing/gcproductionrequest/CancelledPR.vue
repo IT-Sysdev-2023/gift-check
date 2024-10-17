@@ -1,21 +1,35 @@
 <template>
     <div>
         <a-card title="Cancelled Production Request">
-            <a-table :pagination="false" size="small" bordered :dataSource="data.data" :columns="columns">
+            <a-table
+                :pagination="false"
+                size="small"
+                bordered
+                :dataSource="data.data"
+                :columns="columns"
+            >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'view'">
-                        <a-button block type="primary" @click="viewdetails(record.pe_id)">
+                        <a-button
+                            block
+                            type="primary"
+                            @click="viewdetails(record.pe_id)"
+                        >
                             <PicRightOutlined />Details
                         </a-button>
                     </template>
                 </template>
             </a-table>
-            <pagination :datarecords="data" class="mt-5"/>
+            <pagination :datarecords="data" class="mt-5" />
         </a-card>
     </div>
 
-    <a-drawer :height="500" title="Cancelled Production Request Details" placement="bottom" :open="open"
-        @close="onClose">
+    <a-modal
+    width="800px"
+        v-model:open="open"
+        title="Cancelled Production Request Details"
+        @ok="onClose"
+    >
         <a-row :gutter="[16, 16]">
             <a-col :span="12">
                 <a-card title="Request Details">
@@ -47,18 +61,17 @@
                 </a-card>
             </a-col>
         </a-row>
-    </a-drawer>
+    </a-modal>
 </template>
 
-
 <script>
-import Pagination from '@/Components/Pagination.vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import axios from 'axios';
+import Pagination from "@/Components/Pagination.vue";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import axios from "axios";
 export default {
     layout: AuthenticatedLayout,
     props: {
-        data: Object
+        data: Object,
     },
     data() {
         return {
@@ -66,53 +79,55 @@ export default {
             selectedData: [],
             columns: [
                 {
-                    title: 'PR No',
-                    dataIndex: 'pe_num',
-                    width: '5%',
+                    title: "PR No",
+                    dataIndex: "pe_num",
+                    width: "5%",
                 },
                 {
-                    title: 'Date Request',
-                    dataIndex: 'Daterequested',
-                    width: '16%'
+                    title: "Date Request",
+                    dataIndex: "Daterequested",
+                    width: "16%",
                 },
                 {
-                    title: 'Requested By',
-                    dataIndex: 'requestedBy',
-                    width: '16%'
+                    title: "Requested By",
+                    dataIndex: "requestedBy",
+                    width: "16%",
                 },
                 {
-                    title: 'Date Cancelled',
-                    dataIndex: 'dateCancelled',
-                    width: '16%'
+                    title: "Date Cancelled",
+                    dataIndex: "dateCancelled",
+                    width: "16%",
                 },
                 {
-                    title: 'Cancelled By',
-                    dataIndex: 'cancelledBy',
-                    width: '16%'
+                    title: "Cancelled By",
+                    dataIndex: "cancelledBy",
+                    width: "16%",
                 },
                 {
-                    title: 'View',
-                    dataIndex: 'view',
-                    width: '10%',
-                    align: 'center'
+                    title: "View",
+                    dataIndex: "view",
+                    width: "10%",
+                    align: "center",
                 },
             ],
-        }
+        };
     },
     methods: {
         viewdetails(e) {
-            axios.get(route('marketing.cancelled.view.cancelled.request'), {
-                params: {
-                    id: e
-                }
-            }).then(response => {
-                this.open = true
-                this.selectedData = response.data.response[0];
-            })
+            axios
+                .get(route("marketing.cancelled.view.cancelled.request"), {
+                    params: {
+                        id: e,
+                    },
+                })
+                .then((response) => {
+                    this.open = true;
+                    this.selectedData = response.data.response[0];
+                });
         },
         onClose() {
-            this.open = false
-        }
-    }
-}
+            this.open = false;
+        },
+    },
+};
 </script>

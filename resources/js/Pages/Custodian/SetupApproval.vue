@@ -149,7 +149,7 @@
                                             Continue?
                                         </a-button>
                                     </template>
-                                    <a-button block class="mb-3" @click="openManKey('1')">
+                                    <a-button  class="mb-3" @click="openManKey('1')">
                                         <PrinterOutlined />
                                         Print Request By Barcode
                                     </a-button>

@@ -47,7 +47,7 @@ class UserDetailsController extends Controller
             'api' => 'required'
         ]);
 
-        // dd($id->user_id);
+        dd($id);
         if($id){
             UserDetails::create([
                 'user_id' => $id->user_id,

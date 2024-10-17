@@ -79,6 +79,7 @@
                                 "
                                 @pending-event="pendingProductionRequest"
                                 @approved-event="approvedProductionRequest"
+                                @cancelled-event="cancelledProductionRequest"
                             />
                             <Card
                                 use-default
@@ -87,6 +88,7 @@
                                 :approved="data?.specialGcRequest?.approved"
                                 :cancelled="data?.specialGcRequest?.cancelled"
                                 @pending-event="specialGcPending"
+                                @approved-event="approvedRequest"
                             >
                                 <!-- <CardBadge
                                     :count="data?.specialGcRequest?.reviewed"
@@ -113,6 +115,7 @@
                                     <CardBadge
                                         :count="data?.adjustment?.allocation"
                                         title="Allocation Adjustment"
+                                         @event="allocationAdjustment"
                                     />
                                 </template>
                             </Card>
@@ -153,7 +156,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router } from "@inertiajs/vue3";
 
-const props = defineProps<{
+defineProps<{
     data?: {
         budgetRequest: {
             pending: number;
@@ -210,13 +213,18 @@ const storeGcCancelled = () => routeTo("store.gc", "cancelled");
 const pendingProductionRequest = () => routeTo("production.request", "pending");
 const approvedProductionRequest = () =>
     routeTo("production.request", "approved");
+const cancelledProductionRequest = () =>
+    routeTo("production.request", "cancelled");
 
 //Special GC Request
 const specialGcPending = () => routeTo("special.gc", "pending");
 const gcReleasing = () => routeTo("special.gc", "gcReleasing");
 const specialReleasedGc = () => routeTo("special.gc", "specialReleasedGc")
 const reviewedGcReleasing = () => routeTo("special.gc", "reviewedGcReleasing")
+const approvedRequest = () => routeTo("special.gc", "approvedRequest")
 
+//Adjustment
+const allocationAdjustment = () => routeTo('adjustment', 'allocation')
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");
 const eodList = () => routeTo("transactions.eod", "eodList");

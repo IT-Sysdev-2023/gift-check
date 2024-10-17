@@ -13,6 +13,13 @@ class AllocationAdjustment extends Model
     protected $table = 'allocation_adjustment';
     protected $primaryKey = 'aadj_id';
 
+    protected function casts(): array
+    {
+        return [
+            'aadj_datetime' => 'datetime',
+        ];
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'aadj_by', 'user_id');

@@ -5,6 +5,8 @@ namespace App;
 use App\Models\ApprovedGcrequest;
 use App\Models\BudgetRequest;
 use App\Models\CustodianSrr;
+use App\Models\Denomination;
+use App\Models\Gc;
 use App\Models\InstitutEod;
 use App\Models\InstitutTransaction;
 use App\Models\LedgerBudget;
@@ -66,20 +68,24 @@ class DashboardClass extends DashboardService
                 ->where(function ($q) {
                     $q->where('pgcreq_group_status', '')
                         ->orWhere('pgcreq_group_status', 'approved');
-                })->count()
+                })->count(),
+            'approved' => PromoGcRequest::where('pgcreq_status', 'approved')
+                ->withWhereHas('approvedReq', function ($q) {
+                    $q->where('reqap_approvedtype', 'promo gc preapproved');
+                })->count(),
         ];
     }
     public function financeDashboard()
     {
         $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')
-        ->where('spexgc_promo', '0')
-        ->where('spexgc_addemp', 'done')
-        ->count();
+            ->where('spexgc_promo', '0')
+            ->where('spexgc_addemp', 'done')
+            ->count();
 
         $pendingInternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')
-        ->where('spexgc_promo', '*')
-        ->where('spexgc_addemp', 'done')
-        ->count();
+            ->where('spexgc_promo', '*')
+            ->where('spexgc_addemp', 'done')
+            ->count();
 
         $curBudget = LedgerBudget::where('bcus_guide', '!=', 'dti')->get();
 
@@ -99,8 +105,6 @@ class DashboardClass extends DashboardService
 
         $spgcreditTotal = $ledgerSpgc->sum('spgcledger_credit');
 
-        // dd($spgcreditTotal);
-
         return [
             'specialGcRequest' => [
                 'pending' => $pendingExternal + $pendingInternal,
@@ -118,8 +122,7 @@ class DashboardClass extends DashboardService
             'budgetCounts' => [
                 'curBudget' => $debitTotal - $creditTotal,
                 'dti' =>  $dtiDebitTotal - $dtiCreditTotal,
-                'spgc' => $spgcDebitTotal - $spgcreditTotal
-,
+                'spgc' => $spgcDebitTotal - $spgcreditTotal,
             ],
 
             'appPromoCount' => PromoGcRequest::with('userReqby')
@@ -132,7 +135,6 @@ class DashboardClass extends DashboardService
                 ->count(),
 
         ];
-
     }
     public function budgetRequest()
     {
@@ -182,7 +184,21 @@ class DashboardClass extends DashboardService
 
         ];
     }
+    public function custodianDashboardGetDenom()
+    {
+        $data = Denomination::select(
+            'denom_id',
+            'denomination',
+        )->where('denom_type', 'RSGC')->where('denom_status', 'active')->orderBy('denomination')->get();
 
+        $data->transform(function ($item) {
+            $item->count = Gc::where('denom_id', $item->denom_id)
+                ->where('gc_ispromo', '')->where('gc_validated', '*')->where('gc_treasury_release', '')->where('gc_allocated', '')->count();
+            return $item;
+        });
+
+        return $data;
+    }
     public function accountingDashboard()
     {
         return [

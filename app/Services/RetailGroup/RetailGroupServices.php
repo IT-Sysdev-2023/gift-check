@@ -2,14 +2,17 @@
 
 namespace App\Services\RetailGroup;
 
+use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
 use App\Models\CancelledRequest;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\PromoLedger;
+use App\Models\User;
 use App\Services\Documents\FileHandler;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
 
 class RetailGroupServices extends FileHandler
 {
@@ -82,8 +85,7 @@ class RetailGroupServices extends FileHandler
             $data->fullname = $data->userReqby->full_name;
             $data->time = Date::parse($data->pgcreq_datereq)->format('H:i:s');
             $data->title = $data->userReqby->accessPage->title;
-        }
-        ;
+        };
 
         return $data;
     }
@@ -197,20 +199,140 @@ class RetailGroupServices extends FileHandler
         return $this;
     }
 
-    // public function sample()
-    // {
-    //     $data = PromoGcRequest::with('promoitems', 'promoitems.denomination')->where('pgcreq_id', $request->id)->first();
+    public function getPromoApprovedRequest()
+    {
+        $data = PromoGcRequest::select(
+            'pgcreq_total',
+            'pgcreq_id',
+            'pgcreq_reqnum',
+            'pgcreq_reqby',
+            'pgcreq_datereq',
+            'pgcreq_dateneeded',
+            'pgcreq_group'
+        )->where('pgcreq_status', 'approved')
+            ->with('userReqby:user_id,firstname,lastname')
+            ->withWhereHas('approvedReq', function ($q) {
+                $q->select('reqap_approvedtype', 'reqap_preparedby', 'reqap_trid', 'reqap_id', 'reqap_date')
+                    ->with('user:user_id,firstname,lastname')
+                    ->where('reqap_approvedtype', 'promo gc preapproved');
+            })->orderByDesc('pgcreq_reqnum')->paginate(10)->withQueryString();
 
-    //     $data->promoitems->transform(function ($item) {
 
-    //         $item->subtotal = $item->pgcreqi_qty * $item->denomination->denomination;
+        $data->transform(function ($item) {
 
-    //         return $item;
-    //     });
+            $app = ApprovedRequest::select('firstname', 'lastname', 'reqap_preparedby')
+                ->join('users', 'user_id', '=', 'reqap_preparedby')
+                ->where('reqap_trid', $item->pgcreq_id)
+                ->where('reqap_approvedtype', 'promo gc approved')->first();
 
-    //     $total = $data->promoitems->sum('subtotal');
+            $item->appby = Str::ucfirst($app->firstname) . ', ' . Str::ucfirst($app->lastname);
+            $item->reqby = $item->userReqby->full_name;
+            $item->recby = $item->approvedReq->user->full_name;
+            $item->reqdate = $item->pgcreq_datereq->toFormattedDateString();
+            $item->dateneed = $item->pgcreq_dateneeded->toFormattedDateString();
 
-    //     dd($total);
+            return $item;
+        });
 
-    // }
+        return $data;
+    }
+
+    public function getPromoApprovedRequestDetails($id)
+    {
+        $data = PromoGcRequest::where('pgcreq_id', $id)->where('pgcreq_status', 'approved')
+            ->with('userReqby:user_id,firstname,lastname')
+            ->withWhereHas('approvedReq', function ($q) {
+                $q->with('user:user_id,firstname,lastname')
+                    ->where('reqap_approvedtype', 'promo gc preapproved');
+            })->first();
+
+        if ($data) {
+            $data->reqdate = $data->approvedReq->reqap_date->toFormattedDateString();
+            $data->reqtime = $data->approvedReq->reqap_date->format('h:s A');
+        };
+
+        $denomination = PromoGcRequestItem::select('pgcreqi_qty', 'denomination')
+            ->join('denomination', 'denom_id', '=', 'pgcreqi_denom')
+            ->where('pgcreqi_trid', $id)
+            ->get();
+
+        $denomination->transform(function ($item) {
+            $item->sub = $item->pgcreqi_qty * $item->denomination;
+            return $item;
+        });
+
+        $approved = ApprovedRequest::select(
+            'reqap_remarks',
+            'reqap_doc',
+            'reqap_approvedby',
+            'reqap_checkedby',
+            'reqap_date',
+            'reqap_preparedby'
+        )->with('user:user_id,firstname,lastname')
+            ->where('reqap_trid', $id)
+            ->where('reqap_approvedtype', 'promo gc approved')
+            ->first();
+
+        if ($approved) {
+            $approved->reqdate = $approved->reqap_date->toFormattedDateString();
+            $approved->reqtime = $approved->reqap_date->format('h:s A');
+        }
+
+        return (object) [
+            'data' => $data,
+            'denom' => [
+                'denomdata' => $denomination,
+                'total' => NumberHelper::currency($denomination->sum('sub')),
+            ],
+            'approved' => $approved,
+        ];
+    }
+
+    public function getLedgerData()
+    {
+
+        $tag = User::where('user_id', request()->user()->user_id)->value('usergroup');
+
+        $data = PromoLedger::select(
+            'promled_desc',
+            'promled_debit',
+            'promled_credit',
+            'promled_trid',
+            'pgcreq_group',
+        )->join('promo_gc_request', 'pgcreq_id', '=', 'promled_trid')
+            ->where('pgcreq_group', $tag)
+            ->get();
+
+        $ledger = 1;
+
+        $record = [];
+        $total = 0;
+
+        $data->each(function ($item) use (&$record, &$ledger, &$total) {
+
+            if ($item->promled_desc === 'promo request approval') {
+
+                $rec = PromoGcRequest::select('reqap_date')->join('approved_request', 'reqap_trid', '=', 'pgcreq_id')
+                    ->where('pgcreq_id', $item->promled_trid)
+                    ->where('reqap_approvedtype', 'promo gc preapproved')
+                    ->first();
+
+
+                if ($rec !== null) {
+
+                    $total += $item->promled_debit;
+
+                    $record[] = [
+                        'count' => NumberHelper::leadingZero($ledger++, '%03d'), // Increment $ledger
+                        'date'  => Date::parse($rec->reqap_date)->toFormattedDateString() ?? null,
+                        'desc' => Str::title($item->promled_desc),
+                        'total' => NumberHelper::currency($total),
+                        'debit' => $item->promled_debit === 0 ? "" : NumberHelper::currency($item->promled_debit),
+                    ];
+                }
+            }
+        });
+
+        return $record;
+    }
 }

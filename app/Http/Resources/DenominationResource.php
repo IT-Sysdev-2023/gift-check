@@ -20,7 +20,10 @@ class DenominationResource extends JsonResource
             'denomination' => $this->denomination,
             'denomination_format' => $this->denomination_format,
 
-            'qty' => $this->whenLoaded('productionRequestItems', fn($q) => $q->pe_items_quantity)
+            'qty' => $this->whenLoaded('productionRequestItems', fn($q) => $q->pe_items_quantity),
+
+
+            
         ];
     }
 }

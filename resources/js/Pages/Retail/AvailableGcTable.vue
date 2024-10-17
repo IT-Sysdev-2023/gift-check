@@ -1,5 +1,6 @@
 <template>
     <div>
+        <a-spin tip="Loading..." :spinning="isLoading" size="large">
         <a-card title="Available GC">
             <a-row class="mb-2">
                 <a-col :span="16">
@@ -36,11 +37,13 @@
                 <Pagination :datarecords="gc" class="mt-4" />
             </a-card>
         </a-card>
+    </a-spin>
     </div>
 </template>
 <script>
 import Pagination from '@/Components/Pagination.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { onProgress } from '@/Mixin/UiUtilities';
 export default {
     layout: AuthenticatedLayout,
     props: {
@@ -49,6 +52,7 @@ export default {
     },
     data() {
         return {
+            isLoading: false,
             row: 0,
             columns: [
                 {
@@ -72,7 +76,11 @@ export default {
         denomId(id) {
             this.$inertia.get(route('retail.availableGcList'), {
                 id: id
-            });
+            }, {onStart:() => {
+                this.isLoading = true;
+            }, onSuccess:() => {
+                this.isLoading = false;
+            }});
         },
         onSearch(barcode) {
             this.$inertia.get(route('retail.availableGcList'), {

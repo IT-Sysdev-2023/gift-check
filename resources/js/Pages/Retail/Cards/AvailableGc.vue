@@ -12,9 +12,6 @@
                     </template>
                 </template>
             </a-table>
-            <a-form-item label="Total GC">
-                <a-input v-bind:value="'₱'+total" readonly/>
-            </a-form-item>
             <div>
                 <div class="flex justify-end mt-2">
                     <a-button size="small" @click="() => $inertia.get(route('retail.availableGcList'))" type="primary">

@@ -2,6 +2,9 @@
 
 namespace App\Services\Treasury;
 
+use App\Http\Resources\AllocationAdjustmentResource;
+use App\Models\AllocationAdjustment;
+use App\Models\AllocationAdjustmentItem;
 use App\Models\Denomination;
 use App\Models\GcType;
 use App\Models\LedgerBudget;
@@ -25,11 +28,26 @@ class AdjustmentService
 
     public static function allocationAdjustment()
     {
-        $query_store = Store::get(['store_id', 'store_name']);
-        $query_gc_type = GcType::select('gc_type_id', 'gctype', 'gc_status')
-            ->where('gc_status', '1')
-            ->get();
 
-        $denom = Denomination::denomation();
+        $record = AllocationAdjustment::with('store:store_id,store_name', 'gcType:gc_type_id,gctype', 'user:user_id,firstname,lastname')
+        ->select('aadj_id', 'aadj_datetime', 'aadj_type', 'aadj_remark', 'aadj_loc', 'aadj_gctype', 'aadj_by')
+        ->paginate()->withQueryString();
+        return inertia('Treasury/Dashboard/Adjustment/AllocationAdjustment', [
+            'title' => 'Allocation Adjustment',
+            'records' => AllocationAdjustmentResource::collection($record),
+            'columns'=> ColumnHelper::$allocationAdjustment,
+        ]);
+    }
+
+    public static function viewAllocationAdjustment(string $id)
+    {
+      
+    $record = AllocationAdjustmentItem::with(['gc' => function ($q) {
+        $q->with('denomination:denom_id,denomination')->select('barcode_no', 'denom_id');
+    }])->where('aadji_aadj_id', $id)
+        ->orderBy('aadji_barcode')
+    ->paginate(10)->withQueryString();
+
+    return response()->json($record);
     }
 }

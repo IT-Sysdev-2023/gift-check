@@ -94,11 +94,6 @@ class ColumnHelper
 
         ],
         [
-            'title' => 'Date Needed',
-            'dataIndex' => 'sgc_date_needed',
-
-        ],
-        [
             'title' => 'Prepared By',
             'dataIndex' => ['user', 'full_name'],
             'key' => 'prepared_by',
@@ -658,6 +653,110 @@ class ColumnHelper
         [
             'title' => 'Reviewed By',
             'key' => 'reviewedBy',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
+
+    public static $approvedRequest = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'key' => 'dateApproved',
+        ],
+        [
+            'title' => 'Approved By',
+            'key' => 'approvedBy',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
+    public static $allocationAdjustment = [
+        [
+            'title' => 'Location Adjusted',
+            'key' => 'store',
+
+        ],
+        [
+            'title' => 'Gc Type',
+            'key' => 'gctype',
+
+        ],
+        [
+            'title' => 'Adjustment Type',
+            'key' => 'adjustType',
+
+        ],
+        [
+            'title' => 'Date',
+            'dataIndex' => 'aadj_datetime',
+
+        ],
+        [
+            'title' => 'Remarks',
+            'dataIndex' => 'aadj_remark',
+        ],
+        [
+            'title' => 'Adjusted By',
+            'key' => 'user',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
+
+    public static $cancelledProductionRequest = [
+        [
+            'title' => 'PR No.',
+            'key' => 'pr',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'key' => 'dateRequested',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'key' => 'dateNedded',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'key' => 'preparedBy',
+
+        ],
+        [
+            'title' => 'Date Cancelled',
+            'dataIndex' => 'cpr_at',
+        ],
+        [
+            'title' => 'Cancelled By',
+            'key' => 'cancelledBy',
         ],
         [
             'title' => 'Actions',

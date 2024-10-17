@@ -273,7 +273,6 @@ class StoreGcRequestService extends FileHandler
 
 	public function releasingEntrySubmit(Request $request)
 	{
-		
 		$request->validate([
 			// 'file' => 'required',
 			'remarks' => 'required',
@@ -385,7 +384,7 @@ class StoreGcRequestService extends FileHandler
 
 				$latestId = ApprovedGcrequest::create([
 					'agcr_request_id' => $reqId,
-					'agcr_approvedby' => '',
+					'agcr_approvedby' => $request->user()->user_id,
 					'agcr_checkedby' => $request->checkedBy,
 					'agcr_remarks' => $request->remarks,
 					'agcr_approved_at' => now(),
@@ -479,14 +478,12 @@ class StoreGcRequestService extends FileHandler
 
 		$header_data = new ApprovedGcRequestResource(ApprovedGcrequest::where('agcr_request_relnum', $id)
 			->with([
-				'userCheckedBy:user_id,firstname,lastname',
+				'userCheckedBy:assig_id,assig_name',
 				'storeGcRequest:sgc_id,sgc_store',
 				'storeGcRequest.store:store_id,store_name',
 				'user:user_id,firstname,lastname'
 			])
 			->first());
-
-		// dd($header_data->);
 
 		$gcgroup = GcRelease::select('denomination.denomination', 'gc_release.re_barcode_no', 'gc_release.rel_id', 'denomination.denom_id')
 			->joinGcDenomination()
@@ -521,7 +518,7 @@ class StoreGcRequestService extends FileHandler
 			'signatures' => [
 				'received_by' => $header_data->agcr_recby,
 				'released_by' => Str::upper($header_data->user->fullname),
-				'checked_by' => Str::upper($header_data->userCheckedBy->fullname),
+				'checked_by' => Str::upper($header_data->userCheckedBy?->assig_name),
 			],
 
 		];

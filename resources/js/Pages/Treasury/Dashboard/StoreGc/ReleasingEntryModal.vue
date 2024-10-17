@@ -53,7 +53,7 @@
                                 @handle-change="handleCheckedBy"
                             />
                         </a-form-item>
-                        <a-form-item label="Released By:">
+                        <a-form-item label="Approved By:">
                             <a-input
                                 :value="$page.props.auth.user.full_name"
                                 readonly
@@ -67,10 +67,7 @@
                             "
                             :help="formState.errors?.receivedBy"
                         >
-                            <ant-select
-                                :options="data.checkBy"
-                                @handle-change="handleReceivedBy"
-                            />
+                            <a-input v-model:value="formState.receivedBy"/>
                         </a-form-item>
                         <check-cash-jv-payment
                             :formState="formState"
@@ -333,21 +330,6 @@ const scanData = ref(null);
 const scanModal = ref(false);
 const allocatedModal = ref(false);
 const viewScannedModal = ref(false);
-const errorForm = ref({
-    file: null,
-    remarks: "",
-    receivedBy: "",
-    paymentType: {
-        type: "",
-        amount: 0,
-        bankName: "",
-        accountNumber: "",
-        checkNumber: "",
-        checkAmount: "",
-        customer: "",
-    },
-    checkedBy: "",
-});
 const scannedGcData = ref(null);
 
 //Computed

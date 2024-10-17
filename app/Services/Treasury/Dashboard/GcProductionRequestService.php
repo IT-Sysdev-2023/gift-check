@@ -211,4 +211,30 @@ class GcProductionRequestService extends FileHandler
 
         });
     }
+
+    public function pending(Request $request)
+    {
+        $dept = $request->user()->usertype;
+
+        $pr = ProductionRequest::select('pe_requested_by', 'pe_id', 'pe_file_docno', 'pe_date_needed', 'pe_remarks', 'pe_num', 'pe_date_request', 'pe_group')->withWhereHas('user', fn($q) => $q->select('user_id', 'firstname', 'lastname')
+            ->where('usertype', $dept))
+            ->where('pe_status', '0')->first();
+
+        $denoms = Denomination::select('denomination', 'denom_id')->with([
+            'productionRequestItems' => function ($query) use ($pr) {
+                $query->select('pe_items_denomination', 'pe_items_quantity')
+                    ->where('pe_items_request_id', $pr->pe_id);
+            }
+        ])
+            ->where([
+                ['denom_type', 'RSGC'],
+                ['denom_status', 'active']
+            ])
+            ->get();
+
+        return (object) [
+            'production' => $pr,
+            'denomination' => $denoms
+        ];
+    }
 }

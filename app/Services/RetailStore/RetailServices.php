@@ -52,6 +52,7 @@ class RetailServices
             ->whereHas('storeGcRequest', function ($query) {
                 $query->where('sgc_store', request()->user()->store_assigned);
             })
+            ->leftJoin('users', 'users.user_id', '=', 'approved_gcrequest.agcr_approvedby')
             ->orderByDesc('agcr_request_relnum')
             ->paginate(10)->withQueryString();
 
@@ -60,7 +61,6 @@ class RetailServices
             $item->agcr_date = $item->agcr_approved_at->toFormattedDateString();
             $item->storename = $item->storeGcRequest->store->store_name;
             $item->fullname = $item->user->full_name;
-
             return $item;
         });
 
@@ -730,19 +730,20 @@ class RetailServices
             $subtotal = $item->denomination * $item->count;
             $total += $subtotal;
         }
-        $data=[
+        $data = [
             'denoms' => $denoms,
             'total' => $total
         ];
         return $data;
     }
 
-    public function getRevolvingFund($request){
-        $rfund = Store::where('store_id',$request->user()->store_assigned)->first();
+    public function getRevolvingFund($request)
+    {
+        $rfund = Store::where('store_id', $request->user()->store_assigned)->first();
         $getAvailableGc = self::getAvailableGC();
 
-        $storeBudget = $rfund['r_fund']-$getAvailableGc['total'];
+        $storeBudget = $rfund['r_fund'] - $getAvailableGc['total'];
 
-        return $storeBudget ;
+        return $storeBudget;
     }
 }

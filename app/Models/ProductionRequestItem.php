@@ -14,7 +14,8 @@ class ProductionRequestItem extends Model
     public $timestamps = false;
 
 
-    public function scopeSelectFilter($query){
+    public function scopeSelectFilter($query)
+    {
         $query->select(
             'denomination',
             'pe_items_quantity',
@@ -22,4 +23,15 @@ class ProductionRequestItem extends Model
             'pe_items_denomination'
         );
     }
+
+    public function denomination()
+    {
+        return $this->belongsTo(Denomination::class, 'pe_items_denomination', 'denom_id');
+    }
+
+    public function barcodeStartEnd()
+    {
+        return $this->hasMany(Gc::class,'pe_entry_gc','pe_items_request_id');
+    }
+
 }

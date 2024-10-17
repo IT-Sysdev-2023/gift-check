@@ -15,6 +15,7 @@ use App\Models\Promo;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\User;
 use App\Models\Denomination;
+use App\Models\Document;
 use App\Models\LedgerBudget;
 use App\Models\LedgerCheck;
 use App\Models\ProductionRequest;
@@ -26,6 +27,7 @@ use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\RequisitionEntry;
+use App\Models\SpecialExternalGcrequestItem;
 use App\Models\Supplier;
 use App\Models\StoreVerification;
 use App\Models\TransactionSale;
@@ -110,12 +112,9 @@ class MarketingController extends Controller
         $getRequestNo = intval($query->requis_erno ?? 0) + 1;
         $getRequestNo = sprintf('%04d', $getRequestNo);
 
-        if ($request->user()->user_role == 1) {
-            $dashboard = 'ManagerDashboard';
-        } elseif ($request->user()->user_role == 0) {
-            $dashboard = 'MarketingDashboard';
-        }
-        return Inertia::render(('Marketing/' . $dashboard), [
+
+
+        return Inertia::render(('Marketing/MarketingDashboard'), [
             'getRequestNo' => $getRequestNo,
             'ReqNum' => $requestNum,
             'currentBudget' => $currentBudget,
@@ -1614,7 +1613,7 @@ class MarketingController extends Controller
             ->transform(function ($item) {
                 $item->approvedBy = ucwords($item->approvedBy);
                 $item->checkedBy = ucwords($item->checkBy);
-                $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d y');
+                $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d, Y');
                 $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i A');
                 $item->prepby = ucwords($item->appby);
                 return $item;
@@ -1892,9 +1891,16 @@ class MarketingController extends Controller
     {
 
         $data = $this->marketing->viewspecialgc($request->type, $request->id);
+        $denom = SpecialExternalGcrequestItem::where('specit_trid', $request->id)->get();
+        $doc = Document::where('doc_trid', $request->id)
+            ->where('doc_type', 'Special External GC Request')
+            ->select('doc_fullpath')
+            ->first();
 
         return response()->json([
-            'data' => $data
+            'data' => $data,
+            'denom' => $denom,
+            'doc' => $doc['doc_fullpath'] ?? null
         ]);
     }
 
@@ -1969,8 +1975,8 @@ class MarketingController extends Controller
                     if ($pdfgenerated) {
                         ProductionRequest::where('pe_id', $request->data['id'])
                             ->update([
-                                    'pe_requisition' => '1'
-                                ]);
+                                'pe_requisition' => '1'
+                            ]);
 
                         return redirect()->back()->with([
                             'type' => 'success',
@@ -1994,8 +2000,8 @@ class MarketingController extends Controller
             if ($productionDetails) {
                 $updateProductionStatus = ProductionRequest::where('pe_id', $request->data['id'])
                     ->update([
-                    'pe_requisition' => '2'
-                ]);
+                        'pe_requisition' => '2'
+                    ]);
 
                 if ($updateProductionStatus) {
                     $amount = ProductionRequestItem::join('denomination', 'production_request_items.pe_items_denomination', '=', 'denomination.denom_id')
@@ -2048,4 +2054,15 @@ class MarketingController extends Controller
             }
         }
     }
+
+    public function ApprovedExternalGcRequest(Request $request)
+    {
+
+        $approveExtGCReq = $this->marketing->approvedSpecialExternalRequest($request->search);
+
+        return inertia('Marketing/specialgc/Approved', [
+            'apexgcreq' => $approveExtGCReq
+        ]);
+    }
+
 }

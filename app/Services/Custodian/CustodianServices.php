@@ -8,7 +8,9 @@ use App\Helpers\NumberInWordsHelper;
 use App\Http\Resources\CustodianSrrResource;
 use App\Http\Resources\SpecialGcRequestResource;
 use App\Models\BarcodeChecker;
+use App\Models\CancelledProductionRequest;
 use App\Models\CustodianSrr;
+use App\Models\Denomination;
 use App\Models\Document;
 use App\Models\Gc;
 use App\Models\ProductionRequest;
@@ -16,6 +18,7 @@ use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\User;
 use Illuminate\Support\Facades\Date;
 use App\Services\Custodian\CustodianDbServices;
 use Illuminate\Support\Facades\DB;
@@ -528,5 +531,113 @@ class CustodianServices
             ->join('users', 'user_id', '=', 'requis_req_by')
             ->where('repuis_pro_id', $id)
             ->first();
+    }
+
+    public function getCancelledViewing()
+    {
+
+        $data = CancelledProductionRequest::select(
+            'pe_id',
+            'pe_num',
+            'pe_date_request',
+            'cpr_at',
+            'req.firstname as rfname',
+            'req.lastname as rlname',
+            'can.firstname as cfname',
+            'can.lastname as clname',
+        )
+            ->join('production_request', 'pe_id', '=', 'cpr_pro_id')
+            ->join('users as req', 'req.user_id', '=', 'pe_requested_by')
+            ->join('users as can', 'can.user_id', '=', 'cpr_by')
+            ->orderByDesc('cpr_id')
+            ->get();
+
+        $data->transform(function ($item) {
+
+            $item->req_date = Date::parse($item->pe_date_request)->toFormattedDateString();
+            $item->can_at = Date::parse($item->cpr_at)->toFormattedDateString();
+            $item->prepby = Str::ucfirst($item->rfname) . ' ,' . Str::ucfirst($item->rlname);
+            $item->canby = Str::ucfirst($item->cfname) . ' ,' . Str::ucfirst($item->clname);
+
+            return $item;
+        });
+
+        return $data;
+    }
+    public function getProductionCancelledDetails($id)
+    {
+        $data = ProductionRequest::select(
+            'pe_num',
+            'pe_requested_by',
+            'pe_date_request',
+            'remarks',
+            'cpr_at',
+            'req.firstname as rfname',
+            'req.lastname as rlname',
+            'can.firstname as cfname',
+            'can.lastname as clname',
+        )
+            ->join('cancelled_production_request', 'cpr_pro_id', '=', 'pe_id')
+            ->join('users as req', 'req.user_id', '=', 'pe_requested_by')
+            ->join('users as can', 'can.user_id', '=', 'cpr_by')
+            ->where('pe_status', '2')
+            ->where('pe_id', $id)
+            ->first();
+
+        if ($data) {
+            $data->req_date = Date::parse($data->pe_date_request)->toFormattedDateString();
+            $data->can_at = Date::parse($data->cpr_at)->toFormattedDateString();
+            $data->prepby = Str::ucfirst($data->rfname) . ' ,' . Str::ucfirst($data->rlname);
+            $data->canby = Str::ucfirst($data->cfname) . ' ,' . Str::ucfirst($data->clname);
+        }
+
+        $barcode = ProductionRequestItem::select(
+            'pe_items_request_id',
+            'pe_items_denomination',
+        )
+            ->where('pe_items_request_id', $id)
+            ->join('denomination', 'pe_items_denomination', '=', 'denom_id')
+            ->get();
+
+        $barcode->transform(function ($item) use ($id) {
+            $item->start = Gc::where('pe_entry_gc', $id)->where('denom_id', $item->pe_items_denomination)->orderBy('barcode_no')->value('barcode_no');
+            $item->end = Gc::where('pe_entry_gc', $id)->where('denom_id', $item->pe_items_denomination)->orderByDesc('barcode_no')->value('barcode_no');
+            return $item;
+        });
+
+        return (object) [
+            'data' => $data,
+            'barcode' => $barcode,
+        ];
+    }
+    public function getAvailableGcRecords()
+    {
+        $data = Gc::select(
+            'barcode_no',
+            'denom_id',
+            'csrr_prepared_by',
+            'cssitem_recnum',
+            'csrr_datetime',
+            'csrr_id'
+        )
+            ->join('custodian_srr_items', 'cssitem_barcode', '=', 'barcode_no')
+            ->join('custodian_srr', 'csrr_id', '=', 'cssitem_recnum')
+            ->where('gc_validated', '*')
+            ->where('gc_allocated', '')
+            ->where('gc_ispromo', '')
+            ->where('gc_treasury_release', '')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->valBy = User::select('firstname', 'lastname')->where('user_id', $item->csrr_prepared_by)->value('full_name');
+            $item->date = Date::parse($item->csrr_datetime)->toFormattedDateString();
+            $item->denom = Denomination::select('denomination')->where('denom_id', $item->denom_id)->value('denomination_format');
+            return $item;
+        });
+
+        return $data;
+
+
     }
 }

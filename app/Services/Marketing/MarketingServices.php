@@ -446,16 +446,15 @@ class MarketingServices extends FileHandler
 
     public function viewspecialgc($type, $id)
     {
-        // Define the transformation function before using it
         $transformItem = function ($item) {
             $item->dateNeed = Date::parse($item->spexgc_dateneed)->format('F d Y');
             $item->dateReq = Date::parse($item->spexgc_datereq)->format('F d Y');
             $item->totalDenom = number_format($item->specit_denoms * $item->specit_qty, 2);
             $item->requestedBy = ucwords($item->firstname . ' ' . $item->lastname);
-            $item->numbertowords = Number::spell($item->spexgc_balance).' peso(s)';
+            $item->numbertowords = Number::spell($item->spexgc_balance) . ' peso(s)';
             return $item;
         };
-    
+
         if ($type === 'internal') {
             $i = SpecialExternalGcrequest::join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
                 ->join('special_external_gcrequest_items', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_items.specit_trid')
@@ -479,11 +478,47 @@ class MarketingServices extends FileHandler
                 ->get();
             $e->transform($transformItem);
         }
-    
+
         // Return the result
         return isset($i) ? $i : $e;
     }
-    
+
+
+    public function approvedSpecialExternalRequest($search)
+    {
+        $query = SpecialExternalGcrequest::select([
+            'special_external_gcrequest.spexgc_id',
+            'special_external_gcrequest.spexgc_num',
+            'special_external_gcrequest.spexgc_datereq',
+            'special_external_gcrequest.spexgc_dateneed',
+            'approved_request.reqap_approvedby',
+            'approved_request.reqap_date',
+            'special_external_customer.spcus_acctname',
+            'special_external_customer.spcus_companyname',
+        ])
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->leftJoin('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->orWhereAny([
+                'spexgc_id',
+                'spexgc_num',
+                'spcus_companyname',
+                'reqap_approvedby',
+            ], 'like',$search.'%')
+            ->where('special_external_gcrequest.spexgc_status', 'approved')
+            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->orderByDesc('special_external_gcrequest.spexgc_id')
+            ->get();
+
+        $query->transform(function ($item) {
+            $item->dateReq = $item->spexgc_datereq->toFormattedDateString();
+            $item->dateNeed = $item->spexgc_dateneed->toFormattedDateString();
+            $item->dateApproved = Date::parse($item->reqap_date)->format('M d, Y');
+            $item->appBy = ucwords($item->reqap_approvedby);
+            return $item;
+        });
+        return $query;
+    }
+
 
 
 
