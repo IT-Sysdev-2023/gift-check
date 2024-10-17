@@ -64,6 +64,7 @@ class RetailServices
             return $item;
         });
 
+        dd($data->toArray());
         return $data;
     }
     public static function transanctionType($type)
@@ -730,19 +731,20 @@ class RetailServices
             $subtotal = $item->denomination * $item->count;
             $total += $subtotal;
         }
-        $data=[
+        $data = [
             'denoms' => $denoms,
             'total' => $total
         ];
         return $data;
     }
 
-    public function getRevolvingFund($request){
-        $rfund = Store::where('store_id',$request->user()->store_assigned)->first();
+    public function getRevolvingFund($request)
+    {
+        $rfund = Store::where('store_id', $request->user()->store_assigned)->first();
         $getAvailableGc = self::getAvailableGC();
 
-        $storeBudget = $rfund['r_fund']-$getAvailableGc['total'];
+        $storeBudget = $rfund['r_fund'] - $getAvailableGc['total'];
 
-        return $storeBudget ;
+        return $storeBudget;
     }
 }

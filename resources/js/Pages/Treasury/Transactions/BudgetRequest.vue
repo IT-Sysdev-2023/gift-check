@@ -65,14 +65,20 @@
                             :validate-status="getErrorStatus('category')"
                             :help="getErrorMessage('category')"
                         >
-                            <ant-select :options="[{label: 'Regular Gc', value: 'regular'}, {label: 'Special Gc', value: 'special'}]" @handle-change="categoryHandler"/>
+                            <ant-select
+                                :options="[
+                                    { label: 'Regular Gc', value: 'regular' },
+                                    { label: 'Special Gc', value: 'special' },
+                                ]"
+                                @handle-change="categoryHandler"
+                            />
                         </a-form-item>
                         <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                         :help="getErrorMessage('file')">
                             <ant-upload-image @handle-change="handleChange" />
                         </a-form-item> -->
                         <a-form-item
-                            label="Remarks:."
+                            label="Remarks"
                             name="name"
                             has-feedback
                             :validate-status="getErrorStatus('remarks')"
@@ -83,12 +89,21 @@
                                 @input="clearError('remarks')"
                             />
                         </a-form-item>
-
-                        <a-form-item class="text-end mt-5">
-                            <a-button type="primary" html-type="submit"
-                                >Submit</a-button
-                            >
+                        <a-form-item label="Prepared By">
+                            <a-input
+                                :value="page.auth.user.full_name"
+                                readonly
+                            />
                         </a-form-item>
+                        <div>
+                            <div class="flex justify-end mx-9">
+                                <a-form-item class="text-end ">
+                                    <a-button type="primary" html-type="submit"
+                                        >Submit</a-button
+                                    >
+                                </a-form-item>
+                            </div>
+                        </div>
                     </a-col>
                     <a-col :span="14">
                         <a-card>
@@ -108,23 +123,12 @@
                                 <a-col :span="8">
                                     <a-statistic
                                         title="Total Budget"
-                                         :value="remainingBudget"
-                                    />
-                                </a-col>
-                            </a-row>
-                        </a-card>
-                        <a-card class="mt-5">
-                            <a-row>
-                                <a-col :span="24">
-                                    <a-statistic
-                                        title="Prepared By"
-                                        :value="page.auth.user.full_name"
+                                        :value="remainingBudget"
                                     />
                                 </a-col>
                             </a-row>
                         </a-card>
                     </a-col>
-
                 </a-row>
             </a-form>
         </a-card>
@@ -158,14 +162,14 @@ interface FormStateGc {
     budget: number;
     remarks: string;
     dateNeeded: null;
-    category: string
+    category: string;
 }
 
 const props = defineProps<{
     title?: string;
     remainingBudget: string;
-    regularBudget: string
-    specialBudget: string
+    regularBudget: string;
+    specialBudget: string;
     br: string;
 }>();
 
@@ -181,7 +185,7 @@ const formState = useForm<FormStateGc>({
     budget: 0,
     file: null,
     remarks: "",
-    category: null
+    category: null,
 });
 
 const stream = ref(null);
@@ -192,16 +196,15 @@ const handleChange = (file: UploadChangeParam) => {
 };
 
 const onSubmit = () => {
-    formState
-        .post(route("treasury.transactions.budgetRequestSubmission"), {
-            onSuccess: ({ props }) => {
-                openLeftNotification(props.flash);
-                if (props.flash.success) {
-                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
-                    openIframe.value = true;
-                }
-            },
-        });
+    formState.post(route("treasury.transactions.budgetRequestSubmission"), {
+        onSuccess: ({ props }) => {
+            openLeftNotification(props.flash);
+            if (props.flash.success) {
+                stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                openIframe.value = true;
+            }
+        },
+    });
 };
 
 const categoryHandler = (cat: string) => {

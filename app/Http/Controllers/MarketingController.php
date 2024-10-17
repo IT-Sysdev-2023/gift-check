@@ -1613,7 +1613,7 @@ class MarketingController extends Controller
             ->transform(function ($item) {
                 $item->approvedBy = ucwords($item->approvedBy);
                 $item->checkedBy = ucwords($item->checkBy);
-                $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d y');
+                $item->requestApprovedDate = Date::parse($item->reqap_date)->format('F d, Y');
                 $item->requestApprovedTime = Date::parse($item->reqap_date)->format('h:i A');
                 $item->prepby = ucwords($item->appby);
                 return $item;
@@ -1900,7 +1900,7 @@ class MarketingController extends Controller
         return response()->json([
             'data' => $data,
             'denom' => $denom,
-            'doc' => $doc['doc_fullpath']
+            'doc' => $doc['doc_fullpath'] ?? null
         ]);
     }
 

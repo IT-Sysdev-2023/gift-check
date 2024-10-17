@@ -33,96 +33,124 @@
         </a-table>
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
-    <a-modal :footer="false" v-model:open="openViewModal" style="width: 80%;">
+    <a-modal :footer="false" v-model:open="openViewModal" style="width: 80%">
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <a-list>
-                    <a-list-item>
-                        <a-list-item-meta :description="selectedData.promo_id">
-                            <template #title>
-                                <a>Promo No.</a>
-                            </template>
-                        </a-list-item-meta>
-                    </a-list-item>
-                    <a-list-item>
-                        <a-list-item-meta
-                            :description="selectedData.promo_date"
-                        >
-                            <template #title>
-                                <a>Date Created</a>
-                            </template>
-                        </a-list-item-meta>
-                    </a-list-item>
-                    <a-list-item>
-                        <a-list-item-meta
-                            :description="selectedData.promo_drawdate"
-                        >
-                            <template #title>
-                                <a>Date Drawn</a>
-                            </template>
-                        </a-list-item-meta>
-                    </a-list-item>
-                    <a-list-item>
-                        <a-list-item-meta
-                            :description="selectedData.promo_datenotified"
-                        >
-                            <template #title>
-                                <a>Date Notified</a>
-                            </template>
-                        </a-list-item-meta>
-                    </a-list-item>
-                    <a-list-item>
-                        <a-list-item-meta
-                            :description="selectedData.promo_dateexpire"
-                        >
-                            <template #title>
-                                <a>Expiration Date</a>
-                            </template>
-                        </a-list-item-meta>
-                    </a-list-item>
-                    <a-list-item>
-                        <a-list-item-meta
-                            :description="selectedData.promo_group"
-                        >
-                            <template #title>
-                                <a>Group</a>
-                            </template>
-                        </a-list-item-meta>
-                    </a-list-item>
-                    <a-list-item>
-                        <a-list-item-meta
-                            :description="selectedData.promo_name"
-                        >
-                            <template #title>
-                                <a>Promo Name</a>
-                            </template>
-                        </a-list-item-meta>
-                    </a-list-item>
-                    <a-list-item>
-                        <a-list-item-meta
-                            :description="selectedData.promo_remarks"
-                        >
-                            <template #title>
-                                <a>Details</a>
-                            </template>
-                        </a-list-item-meta>
-                    </a-list-item>
-                    <a-list-item>
-                        <a-list-item-meta :description="selectedData.user.full_name">
-                            <template #title>
-                                <a>Created By</a>
-                            </template>
-                        </a-list-item-meta>
-                    </a-list-item>
+                    <a-row>
+                        <a-col :span="12">
+                            <div>
+                                <a-list-item>
+                                    <a-list-item-meta
+                                        :description="selectedData.promo_id"
+                                    >
+                                        <template #title>
+                                            <a>Promo No.</a>
+                                        </template>
+                                    </a-list-item-meta>
+                                </a-list-item>
+                                <a-list-item>
+                                    <a-list-item-meta
+                                        :description="selectedData.promo_date"
+                                    >
+                                        <template #title>
+                                            <a>Date Created</a>
+                                        </template>
+                                    </a-list-item-meta>
+                                </a-list-item>
+                                <a-list-item>
+                                    <a-list-item-meta
+                                        :description="
+                                            selectedData.promo_drawdate
+                                        "
+                                    >
+                                        <template #title>
+                                            <a>Date Drawn</a>
+                                        </template>
+                                    </a-list-item-meta>
+                                </a-list-item>
+                                <a-list-item>
+                                    <a-list-item-meta
+                                        :description="
+                                            selectedData.promo_datenotified
+                                        "
+                                    >
+                                        <template #title>
+                                            <a>Date Notified</a>
+                                        </template>
+                                    </a-list-item-meta>
+                                </a-list-item>
+                            </div>
+                        </a-col>
+                        <a-col :span="12">
+                            <div>
+                                <a-list-item>
+                                    <a-list-item-meta
+                                        :description="
+                                            selectedData.promo_dateexpire
+                                        "
+                                    >
+                                        <template #title>
+                                            <a>Expiration Date</a>
+                                        </template>
+                                    </a-list-item-meta>
+                                </a-list-item>
+                                <a-list-item>
+                                    <a-list-item-meta
+                                        :description="selectedData.promo_group"
+                                    >
+                                        <template #title>
+                                            <a>Group</a>
+                                        </template>
+                                    </a-list-item-meta>
+                                </a-list-item>
+                                <a-list-item>
+                                    <a-list-item-meta
+                                        :description="selectedData.promo_name"
+                                    >
+                                        <template #title>
+                                            <a>Promo Name</a>
+                                        </template>
+                                    </a-list-item-meta>
+                                </a-list-item>
+                                <a-list-item>
+                                    <a-list-item-meta
+                                        :description="
+                                            selectedData.promo_remarks
+                                        "
+                                    >
+                                        <template #title>
+                                            <a>Details</a>
+                                        </template>
+                                    </a-list-item-meta>
+                                </a-list-item>
+                                <a-list-item>
+                                    <a-list-item-meta
+                                        :description="
+                                            selectedData.user.full_name
+                                        "
+                                    >
+                                        <template #title>
+                                            <a>Created By</a>
+                                        </template>
+                                    </a-list-item-meta>
+                                </a-list-item>
+                            </div>
+                        </a-col>
+                    </a-row>
                 </a-list>
             </a-col>
             <a-col :span="16">
-                <a-input-search
-                    class="mt-5 mb-5"
-                    v-model:value="search"
-                    placeholder="input search text here."
-                    style="width: 300px"
-                />
+                <div>
+                    <div class="flex justify-end">
+                        <a-input-search
+                            class="mt-5 mb-5"
+                            v-model:value="search"
+                            placeholder="input search text here."
+                            style="width: 300px"
+                        />
+                    </div>
+                </div>
                 <a-table
                     size="small"
                     :data-source="selectedViewDetails"

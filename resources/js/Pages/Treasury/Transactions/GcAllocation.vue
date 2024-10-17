@@ -104,11 +104,15 @@
                             />
                         </a-form-item>
 
-                        <a-form-item class="text-end mt-5">
-                            <a-button type="primary" html-type="submit"
-                                >Submit</a-button
-                            >
-                        </a-form-item>
+                        <div>
+                            <div class="flex justify-end" style="margin-right: 80px;">
+                                <a-form-item class="text-end">
+                                    <a-button type="primary" html-type="submit"
+                                        >Submit</a-button
+                                    >
+                                </a-form-item>
+                            </div>
+                        </div>
                     </a-col>
                     <a-col :span="14">
                         <a-row :gutter="16">
@@ -187,7 +191,10 @@
             centered
             :footer="null"
         >
-            <a-tabs v-model:activeKey="activeScannedKey" @change="viewGcAllocationTab">
+            <a-tabs
+                v-model:activeKey="activeScannedKey"
+                @change="viewGcAllocationTab"
+            >
                 <a-tab-pane key="all" tab="All" force-render></a-tab-pane>
                 <a-tab-pane
                     v-for="denom of denoms"
@@ -315,7 +322,6 @@ const viewGcAllocation = async () => {
     gcAllocationModal.value = true;
 };
 
-
 const handleStoreChange = async (
     value: number,
     obj: { value: number; label: string }
@@ -355,7 +361,10 @@ const onSubmit = () => {
         .transform((data) => ({
             ...data,
             denomination: data.denomination.filter(
-                (item) => item.denomination !== 0 && item.qty !== 0 && item.qty !== null
+                (item) =>
+                    item.denomination !== 0 &&
+                    item.qty !== 0 &&
+                    item.qty !== null
             ),
         }))
         .post(route("treasury.transactions.gcallocation.store"), {
