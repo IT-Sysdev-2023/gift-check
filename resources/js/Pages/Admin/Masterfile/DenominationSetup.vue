@@ -190,14 +190,12 @@ export default {
                                 description: 'Denomination updated successfully!',
 
                             });
-                            this.updateDenominationReset();
                             this.updateDenominationModal = false;
-                            this.$inertia.get(route('Admin/Masterfile/DenominationSetup'));
                         }
                         else if (props.flash.error) {
                             notification.warning({
                                 message: props.flash.error,
-                                description: 'Please change data first before submitting!',
+                                description: 'No changes happen, update first before submitting!',
                             });
                         }
                     },

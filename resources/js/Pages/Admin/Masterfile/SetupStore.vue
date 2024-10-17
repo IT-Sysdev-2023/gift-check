@@ -174,15 +174,17 @@ export default {
             })
         },
         issueReceipt(store_id) {
-            // alert(1)
+            this.store_name = store_id.store_name
             this.$inertia.get(route('admin.masterfile.issueReceipt'), {
-                store_id: store_id,
+                store_id: store_id
             }, {
-                onSuccess: (response) => {
-                    notification[response.props.flash.type]({
-                        message: response.props.flash.msg,
-                        description: response.props.flash.description,
-                    });
+                onSuccess: ({ props }) => {
+                    if (props.flash.success) {
+                        notification.success({
+                            message: props.flash.success,
+                            description: `${this.store_name} issue receipt updated successfully!`
+                        });
+                    }
                 }
             })
         },

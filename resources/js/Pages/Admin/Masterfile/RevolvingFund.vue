@@ -145,7 +145,7 @@ export default {
                     } else if (props.flash.error(
                         notification.warning({
                             message: props.flash.error,
-                            description: 'Please change data first before submitting!'
+                            description: 'No changes happen, update data first before submitting!'
                         })
                     ));
                 }

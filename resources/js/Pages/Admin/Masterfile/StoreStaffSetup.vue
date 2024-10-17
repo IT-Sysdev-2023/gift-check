@@ -144,7 +144,7 @@
         <!-- {{ form.errors.idnumber }} -->
         <a-form-item for="password" :validate-status="form.errors.password ? 'error' : ''" :help="form.errors.password">
             Password:
-            <a-input allow-clear v-model:value="form.password" placeholder="Password" />
+            <a-input type="password" allow-clear v-model:value="form.password" placeholder="Password" />
         </a-form-item>
 
         <a-form-item for="store_name" :validate-status="form.errors.store_id ? 'error' : ''"
@@ -356,9 +356,9 @@ export default {
                         this.open = false;
                         this.$inertia.get(route('Admin/Masterfile/StoreStaffSetup'));
                     } else if (props.flash.error) {
-                        notification.error({
+                        notification.warning({
                             message: props.flash.error,
-                            description: 'This is a Error message',
+                            description: 'This username already exist, please try again!',
                         });
 
                     }
@@ -369,6 +369,7 @@ export default {
         updateStoreStaffSetup(data) {
             this.openmodalforupdate = true;
             this.dataForUpdate = data;
+            this.dataForUpdate.ss_username = data.ss_username;
             // Use the ID from the selected data
 
         },
@@ -379,14 +380,14 @@ export default {
                         if (props.flash.success) {
                             notification.success({
                                 message: props.flash.success,
-                                description: 'User updated successfully!',
+                                description: `${this.dataForUpdate.ss_username} data updated successfully`
                             });
                             this.openmodalforupdate = false;
-                            this.$inertia.get(route('Admin/Masterfile/StoreStaffSetup'));
+
                         } else if (props.flash.error) {
                             notification.warning({
                                 message: props.flash.error,
-                                description: 'Please change data first before submitting!',
+                                description: `Please update ${this.dataForUpdate.ss_username} data first before submitting!`
                             });
                         }
                     },
@@ -408,13 +409,13 @@ export default {
                     if (props.flash.success) {
                         notification.success({
                             message: props.flash.success,
-                            description: 'Users Password reset to default successfully!',
+                            description: `${this.dataforChangePassword.ss_username} password reset to default successfully!`,
                         });
                         this.modalforchangePassword = false
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: 'This Users Password already reset to default!',
+                            description: `${this.dataforChangePassword.ss_username} password already reset to default!`,
                         });
                         this.modalforchangePassword = false
                     }

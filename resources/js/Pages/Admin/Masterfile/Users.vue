@@ -233,7 +233,7 @@
         </span>
 
         <a-form-item for="password" style="font-style: initial;">
-           Reset
+            Reset
             <span style="color: #C7253E; margin-left: 5px; margin-right: 5px; text-decoration: underline; ">
                 {{ dataforResetPassword.full_name }}
             </span>
@@ -602,6 +602,7 @@ export default {
         updateUser(data) {
             this.modalforUpdateUser = true;
             this.dataForUpdateUser = { ...data };
+            this.modalforUpdateUser.username = data.username
             this.dataForUpdateUser.store_assigned = data.store_name;
             this.dataForUpdateUser.usertype = data.employee_type;
             this.dataForUpdateUser.user_role = data.user_role;
@@ -617,13 +618,13 @@ export default {
                     if (props.flash.success) {
                         notification.success({
                             message: props.flash.success,
-                            description: 'Users updated successfully!'
+                            description: `${this.dataForUpdateUser.username} data updated successfully!`
                         })
                         this.modalforUpdateUser = false
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: 'Please change data first before submitting!'
+                            description: `Please change ${this.dataForUpdateUser.username} data first before submitting!`
                         })
                     }
                 }
@@ -638,15 +639,14 @@ export default {
                     if (props.flash.success) {
                         notification.success({
                             message: props.flash.success,
-                            description: 'Successfully adding new user!',
+                            description: 'Users added successfully!',
                         });
                         this.open = false
-                        this.resetForm();
-                        this.$inertia.get(route('Admin/Masterfile/Users'));
+
                     } else if (props.flash.error) {
-                        notification.error({
+                        notification.warning({
                             message: props.flash.error,
-                            description: 'This is a Error message',
+                            description: 'The username already exists, please try again!'
                         });
 
                     }
@@ -656,6 +656,7 @@ export default {
         },
         resetPassword(rec) {
             this.dataforResetPassword.full_name = rec.full_name
+            this.dataforResetPassword.username = rec.username
             this.dataforResetPassword.user_id = rec.user_id
             this.dataforResetPassword.data
             this.modalforresetPassword = true;
@@ -669,14 +670,14 @@ export default {
                     if (props.flash.success) {
                         notification.success({
                             message: props.flash.success,
-                            description: 'Users Password reset to default successfully!'
+                            description: `${this.dataforResetPassword.username} password is successfully reset!`
                         })
                         this.modalforresetPassword = false;
                     }
                     else if (props.flash.error) {
                         notification.warning({
-                            message:props.flash.error,
-                            description: 'This Users Password is already reset to default!'
+                            message: props.flash.error,
+                            description: `${this.dataforResetPassword.username} password already reset to default!`
                         })
                     }
                 },
@@ -730,8 +731,8 @@ export default {
 .search-button {
     text-align: right;
     font-weight: bold;
-  
-  
+
+
 }
 
 .search-input {

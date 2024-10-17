@@ -500,14 +500,14 @@ export default {
                     if (props.flash.success) {
                         notification.success({
                             message: props.flash.success,
-                            description: 'Customer store register updated successfully'
+                            description: `${this.dataForStoreCustomer.cus_fname} data updated successfully!`
                         })
                         this.modalForStoreCustomer = false
                     }
                     else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: 'Please change data first before submitting!'
+                            description: `Please update ${this.dataForStoreCustomer.cus_fname} data first before submitting`
                         })
                     }
                 }
@@ -532,14 +532,14 @@ export default {
                     if (props.flash.success) {
                         notification.success({
                             message: props.flash.success,
-                            description: 'Institute Customer updated successfully!'
+                            description: `${this.dataForInstituteCustomer.ins_name} data updated successfully!`
                         })
                         this.modalForInstitutionalCustomer = false
                     }
                     else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: 'Please change data first before submitting!'
+                            description: `Please update ${this.dataForInstituteCustomer.ins_name} data first before submitting!`
                         })
                     }
                 }
@@ -566,13 +566,13 @@ export default {
                     if (props.flash.success) {
                         notification.success({
                             message: props.flash.success,
-                            description: 'Special Customer updated successfully!'
+                            description: `${this.dataForSpecialCustomer.spcus_companyname} data updated successfully!`
                         })
                         this.modalForSpecialCustomer = false;
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: 'Please update data first before submitting!'
+                            description: `Please update ${this.dataForSpecialCustomer.spcus_companyname} data first before submitting!`
 
                         })
                     }

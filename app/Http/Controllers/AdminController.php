@@ -130,12 +130,6 @@ class AdminController extends Controller
                     ->orWhere('users.emp_id', 'like', '%' . $searchTerm . '%');
             });
         }
-        // if ($filterStore && $filterStore !== 'Select Store') {
-        //     $selectedStore = Store::where('store_name', $filterStore)->first();
-        //     if ($selectedStore) {
-        //         $usersQuery->where('users.store_assigned', $selectedStore->store_id);
-        //     }
-        // }
         $users = $usersQuery->orderByDesc('users.user_id')
             ->paginate($selectEntries)
             ->withQueryString();
@@ -358,6 +352,13 @@ class AdminController extends Controller
         } else {
             $usertype = $accessPage->access_no;
         }
+        $newUser = User::where('username', $request->username)->first();
+        if($newUser){
+            return back()->with(
+                'error',
+                'OPPS'
+            );
+        }
 
         $password = Hash::make($request->ss_password);
 
@@ -421,11 +422,10 @@ class AdminController extends Controller
                 'issuereceipt' => $receipt['issuereceipt'] == 'yes' ? 'no' : 'yes'
             ]);
 
-            return back()->with([
-                'type' => 'success',
-                'msg' => 'Updated',
-                'description' => 'Issue receipt updated successfully!'
-            ]);
+            return back()->with(
+                'success',
+                'SUCCESS' 
+            );
         }
         return back()->with([
             'error',
@@ -538,13 +538,20 @@ class AdminController extends Controller
             'username' => 'required|max:50',
             'firstname' => 'required',
             'lastname' => 'required',
-            'employee_id' => 'required|digits_between:1,12',
+            'employee_id' => 'required|integer',
             'password' => 'required',
             'store_id' => 'required',
             'usertype' => 'required',
         ]);
-        // dd(1);
-        // dd($request->toArray());
+       
+        $storeStaff = StoreStaff::where('ss_username', $request->username)->first();
+        if($storeStaff){
+            return back()->with(
+                'error',
+                'OPPS'
+            );
+        }
+
         $pass = Hash::make($request->ss_password);
 
         $isSuccessfull = StoreStaff::create([
@@ -700,7 +707,7 @@ class AdminController extends Controller
     public function setupStore(Request $request)
     {
 
-        // dd($request->data);
+        // dd($request->toArray());
 
         $searchTerm = $request->input('data', '');
         $selectEntries = $request->input('value', 10);
