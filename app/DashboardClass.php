@@ -35,7 +35,7 @@ class DashboardClass extends DashboardService
                 'regularBudget' => LedgerBudget::regularBudget(),
                 'specialBudget' => LedgerBudget::specialBudget(),
             ],
-            'budgetRequest' => $this->budgetRequest(),
+            'budgetRequest' => $this->budgetRequestTreasury(),
             'storeGcRequest' => $this->storeGcRequest(),
             'promoGcReleased' => PromoGcReleaseToDetail::count(),
             'institutionGcSales' => InstitutTransaction::count(),

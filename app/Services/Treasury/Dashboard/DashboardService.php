@@ -21,7 +21,7 @@ class DashboardService
     {
 
     }
-    protected function budgetRequest()
+    protected function budgetRequestTreasury()
     {
         //Pending Request
         $pending = User::userTypeBudget(request()->user()->usertype)->count();
