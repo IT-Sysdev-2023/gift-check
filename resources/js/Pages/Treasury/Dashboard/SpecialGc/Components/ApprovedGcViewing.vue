@@ -106,7 +106,7 @@
                 ]">
 
                 </a-table>
-                
+
                 </a-tab-pane
             >
         </a-tabs>
@@ -139,25 +139,25 @@ const formState = useForm({
 });
 const activeKey = ref("1");
 const { openLeftNotification } = onProgress();
-const onFinish = () => {
-    formState.post(route("treasury.special.gc.releasingSubmission", props.id), {
-        preserveScroll: true,
-        onSuccess: ({ props }) => {
-            openLeftNotification(props.flash);
-            router.visit(route("treasury.special.gc.gcReleasing"));
-        },
-    });
-};
+// const onFinish = () => {
+//     formState.post(route("treasury.special.gc.releasingSubmission", props.id), {
+//         preserveScroll: true,
+//         onSuccess: ({ props }) => {
+//             openLeftNotification(props.flash);
+//             router.visit(route("treasury.special.gc.gcReleasing"));
+//         },
+//     });
+// };
 const openModal = ref(false);
 const modalData = ref();
 
-const viewDenominations = async () => {
-    const { data } = await axios.get(
-        route("treasury.special.gc.viewDenomination", props.id)
-    );
-    modalData.value = data;
-    openModal.value = true;
-};
+// const viewDenominations = async () => {
+//     const { data } = await axios.get(
+//         route("treasury.special.gc.viewDenomination", props.id)
+//     );
+//     modalData.value = data;
+//     openModal.value = true;
+// };
 
 const onPaginate = async (link) => {
     if (link.url) {
