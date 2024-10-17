@@ -67,10 +67,7 @@
                             "
                             :help="formState.errors?.receivedBy"
                         >
-                            <ant-select
-                                :options="data.checkBy"
-                                @handle-change="handleReceivedBy"
-                            />
+                            <a-input v-model:value="formState.receivedBy"/>
                         </a-form-item>
                         <check-cash-jv-payment
                             :formState="formState"
