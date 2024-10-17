@@ -10,9 +10,6 @@
         <a-descriptions-item label="Time Requested">{{
             data.br_requested_at_time
         }}</a-descriptions-item>
-        <a-descriptions-item label="Date Needed">{{
-            data.br_requested_needed
-        }}</a-descriptions-item>
         <a-descriptions-item label="Budget Requested" :span="2">{{
             data.br_request
         }}</a-descriptions-item>

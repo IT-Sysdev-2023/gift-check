@@ -75,8 +75,14 @@ class ColumnHelper
         ],
         [
             'title' => 'Cancelled By',
-            'dataIndex' => ['cancelled_by', 'approved_by'],
-            'key' => 'approved_by',
+            // 'dataIndex' => ['cancelled_by', 'user', 'full_name'],
+            'dataIndex' => 'approved_by',
+
+        ],
+        [
+            'title' => 'Action',
+            // 'dataIndex' => ['cancelled_by', 'user', 'full_name'],
+            'dataIndex' => 'action',
 
         ],
     ];
