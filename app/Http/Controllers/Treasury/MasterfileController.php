@@ -22,4 +22,8 @@ class MasterfileController extends Controller
     {
         return Masterfile::paymentFundSetup();
     }
+
+    public function storeCustomer(Request $request){
+        return MasterFile::storeCustomer($request);
+    }
 }

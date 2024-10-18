@@ -18,6 +18,12 @@
                     placeholder="Search here..."
                     style="width: 300px"
                 />
+                <a-button type="primary" @click="visible = true">
+                    <template #icon>
+                        <UserAddOutlined />
+                    </template>
+                    Add Customer
+                </a-button>
             </div>
         </div>
         <a-table
@@ -60,6 +66,84 @@
 
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
+
+    <a-modal
+        v-model:open="visible"
+        title="Add a new Customer"
+        ok-text="Create"
+        cancel-text="Cancel"
+        @ok="onOk"
+    >
+        <a-form
+            ref="formRef"
+            :model="formState"
+            layout="vertical"
+            name="form_in_modal"
+        >
+            <a-form-item
+                name="customerName"
+                label="Customer Name"
+                has-feedback
+                :validate-status="
+                    formState.invalid('customerName') ? 'error' : ''
+                "
+                :help="formState.errors.customerName"
+                :rules="[
+                    {
+                        required: true,
+                        message: 'Please input the Customer Name',
+                    },
+                ]"
+                @change="formState.validate('customerName')"
+            >
+                <a-input v-model:value="formState.customerName" />
+            </a-form-item>
+            <a-form-item
+                name="customerType"
+                label="Customer Type"
+                has-feedback
+                :validate-status="
+                    formState.invalid('customerType') ? 'error' : ''
+                "
+                :help="formState.errors.customerType"
+            >
+                <ant-select
+                    :options="[
+                        {
+                            value: 'external',
+                            label: 'External',
+                        },
+                        {
+                            value: 'internal',
+                            label: 'Internal',
+                        },
+                    ]"
+                    @handle-change="handleCustomerType"
+                />
+            </a-form-item>
+            <a-form-item
+                name="gcType"
+                label="Gc Type"
+                has-feedback
+                :validate-status="formState.invalid('gcType') ? 'error' : ''"
+                :help="formState.errors.gcType"
+            >
+                <ant-select
+                    :options="[
+                        {
+                            value: '1',
+                            label: 'Regular',
+                        },
+                        {
+                            value: '4',
+                            label: 'Promo',
+                        },
+                    ]"
+                    @handle-change="handleGcType"
+                />
+            </a-form-item>
+        </a-form>
+    </a-modal>
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
@@ -68,8 +152,11 @@ import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
 import { highlighten } from "@/Mixin/UiUtilities";
-import Description from "./../Description.vue";
+import { useForm } from "laravel-precognition-vue";
+import { flexProps } from "ant-design-vue/es/flex/interface";
+import { onProgress } from "@/Mixin/UiUtilities";
 
+const { openLeftNotification } = onProgress();
 export default {
     layout: AuthenticatedLayout,
     setup() {
@@ -84,12 +171,22 @@ export default {
     },
     data() {
         return {
+            visible: false,
             form: {
                 search: this.filters.search,
                 date: this.filters.date
                     ? [dayjs(this.filters.date[0]), dayjs(this.filters.date[1])]
                     : [],
             },
+            formState: useForm(
+                "post",
+                route("treasury.masterfile.addCustomer"),
+                {
+                    customerName: "",
+                    customerType: "",
+                    gcType: "",
+                }
+            ),
         };
     },
     computed: {
@@ -99,7 +196,26 @@ export default {
             return res + ".dashboard";
         },
     },
-    methods: {},
+    methods: {
+        handleCustomerType(val) {
+            this.formState.validate("customerType");
+            this.formState.customerType = val;
+        },
+        handleGcType(val) {
+            this.formState.validate("gcType");
+            this.formState.gcType = val;
+        },
+        onOk() {
+            this.formState.submit({
+                preserveScroll: true,
+                onSuccess: ({data}) => {
+                    openLeftNotification(data);
+                    this.formState.reset();
+                    this.visible = false;
+                },
+            });
+        },
+    },
 
     watch: {
         form: {

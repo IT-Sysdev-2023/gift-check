@@ -63,8 +63,12 @@ const setActiveTab = computed(() => {
                     Customer Setup
                 </Link>
                 </a-menu-item>
-            <a-menu-item key="menu-item-special-external-setup"
-                >Special External Setup</a-menu-item
+            <a-menu-item key="treasury.masterfile.externalSetup"
+                >
+                <Link :href="route('treasury.masterfile.externalSetup')">
+                    Special External Setup
+                </Link>
+               </a-menu-item
             >
             <a-menu-item key="menu-item-payment-fund-setup"
                 >Payment Fund Setup</a-menu-item

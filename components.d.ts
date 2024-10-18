@@ -406,6 +406,7 @@ declare module 'vue' {
     UpdateProfileInformationForm: typeof import('./resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue')['default']
     UpdateSpecialExternal: typeof import('./resources/js/Pages/Treasury/Dashboard/UpdateSpecialExternal.vue')['default']
     UploadOutlined: typeof import('@ant-design/icons-vue')['UploadOutlined']
+    UserAddOutlined: typeof import('@ant-design/icons-vue')['UserAddOutlined']
     UsergroupAddOutlined: typeof import('@ant-design/icons-vue')['UsergroupAddOutlined']
     UserOutlined: typeof import('@ant-design/icons-vue')['UserOutlined']
     Users: typeof import('./resources/js/Pages/Admin/Masterfile/Users.vue')['default']
