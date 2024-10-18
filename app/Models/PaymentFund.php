@@ -15,6 +15,8 @@ class PaymentFund extends Model
 
     protected $primaryKey = 'pay_id';
 
+    protected $guarded = [];
+    public $timestamps = false;
     protected function casts(): array
     {
         return [

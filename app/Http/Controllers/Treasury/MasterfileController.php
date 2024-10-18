@@ -30,4 +30,8 @@ class MasterfileController extends Controller
     public function storeSpecialExternalCustomer(Request $request){
         return MasterFile::storeSpecialExternalCustomer($request);
     }
+
+    public function storePaymentFund(Request $request){
+        return MasterFile::storePaymentFund($request);
+    }
 }

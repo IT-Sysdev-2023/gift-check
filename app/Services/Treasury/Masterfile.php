@@ -59,10 +59,10 @@ class Masterfile
             ->withQueryString();
 
         return inertia('Treasury/Masterfile/PaymentFundSetup', [
-            'title'=> 'Payment Fund Setup',
+            'title' => 'Payment Fund Setup',
             'filters' => $request->only(['date', 'search']),
             'data' => PaymentFundResource::collection($record),
-            'columns'=> ColumnHelper::$paymentFundSetup
+            'columns' => ColumnHelper::$paymentFundSetup
         ]);
     }
 
@@ -73,7 +73,7 @@ class Masterfile
             'customerType' => "required",
             'gcType' => "required",
         ]);
-        $res = InstitutCustomer::create([
+        $isSuccess = InstitutCustomer::create([
             'ins_name' => $request->customerName,
             'ins_status' => 'active',
             'ins_custype' => $request->customerType,
@@ -82,7 +82,7 @@ class Masterfile
             'ins_by' => $request->user()->user_id,
         ]);
 
-        if ($res->wasRecentlyCreated) {
+        if ($isSuccess->wasRecentlyCreated) {
             return response()->json(['success' => 'Successfully Created'], 200);
         } else {
             return response()->json(['error' => 'Something Went Wrong']);
@@ -100,7 +100,7 @@ class Masterfile
             "contactNumber" => 'required'
         ]);
 
-        $wasSuccess = SpecialExternalCustomer::create([
+        $isSuccess = SpecialExternalCustomer::create([
             'spcus_companyname' => $request->company,
             'spcus_acctname' => $request->accountName,
             'spcus_address' => $request->address,
@@ -111,11 +111,29 @@ class Masterfile
             'spcus_by' => $request->user()->user_id,
         ]);
 
-        if($wasSuccess->wasRecentlyCreated) {
+        if ($isSuccess->wasRecentlyCreated) {
             return response()->json(['success' => 'Successfully Created']);
         } else {
             return response()->json(['error' => 'Something Went Wrong']);
         }
+    }
 
+    public static function storePaymentFund(Request $request)
+    {
+        $request->validate([
+            'paymentFundName' => 'required',
+        ]);
+
+        $isSuccess = PaymentFund::create([
+            'pay_desc' => $request->paymentFundName,
+            'pay_status' => 'active',
+            'pay_dateadded' => now(),
+            'pay_addby' => $request->user()->user_id,
+        ]);
+        if ($isSuccess->wasRecentlyCreated) {
+            return response()->json(['success' => 'Successfully Created']);
+        } else {
+            return response()->json(['error' => 'Something Went Wrong']);
+        }
     }
 }

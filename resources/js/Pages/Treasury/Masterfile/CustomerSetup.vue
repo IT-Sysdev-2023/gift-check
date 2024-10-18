@@ -155,6 +155,7 @@ import { highlighten } from "@/Mixin/UiUtilities";
 import { useForm } from "laravel-precognition-vue";
 import { flexProps } from "ant-design-vue/es/flex/interface";
 import { onProgress } from "@/Mixin/UiUtilities";
+import { router } from "@inertiajs/core";
 
 const { openLeftNotification } = onProgress();
 export default {
@@ -212,6 +213,7 @@ export default {
                     openLeftNotification(data);
                     this.formState.reset();
                     this.visible = false;
+                    router.visit(route(route().current()), {only: ['data']})
                 },
             });
         },
