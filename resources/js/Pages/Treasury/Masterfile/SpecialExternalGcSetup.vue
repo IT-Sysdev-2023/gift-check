@@ -17,12 +17,12 @@
                     v-model:value="form.search"
                     placeholder="Search here..."
                     style="width: 300px"
-                />
+                /> 
                 <a-button type="primary" @click="visible = true">
                     <template #icon>
                         <UserAddOutlined />
                     </template>
-                    Add Customer
+                    Add Customer Info
                 </a-button>
             </div>
         </div>
@@ -41,14 +41,6 @@
                     <span
                         v-html="
                             highlightText(record[column.dataIndex], form.search)
-                        "
-                    >
-                    </span>
-                </template>
-                <template v-if="column.key === 'gcType'">
-                    <span
-                        v-html="
-                            highlightText(record.gcType?.gctype, form.search)
                         "
                     >
                     </span>
@@ -81,27 +73,101 @@
             name="form_in_modal"
         >
             <a-form-item
-                name="customerName"
-                label="Customer Name"
+                name="company"
+                label="Company Name"
                 has-feedback
-                :validate-status="
-                    formState.invalid('customerName') ? 'error' : ''
-                "
-                :help="formState.errors.customerName"
+                :validate-status="formState.invalid('company') ? 'error' : ''"
+                :help="formState.errors.company"
                 :rules="[
                     {
                         required: true,
-                        message: 'Please input the Customer Name',
+                        message: 'Please input the Company Name',
                     },
                 ]"
-                @change="formState.validate('customerName')"
+                @change="formState.validate('company')"
             >
-                <a-input v-model:value="formState.customerName" />
+                <a-input v-model:value="formState.company" />
+            </a-form-item>
+            <a-form-item
+                name="accountName"
+                label="Account Name"
+                has-feedback
+                :validate-status="
+                    formState.invalid('accountName') ? 'error' : ''
+                "
+                :help="formState.errors.accountName"
+                :rules="[
+                    {
+                        required: true,
+                        message: 'Please input the Account Name',
+                    },
+                ]"
+                @change="formState.validate('accountName')"
+            >
+                <a-input v-model:value="formState.accountName" />
+            </a-form-item>
+            <a-form-item
+                name="address"
+                label="Address"
+                has-feedback
+                :validate-status="formState.invalid('address') ? 'error' : ''"
+                :help="formState.errors.address"
+                :rules="[
+                    {
+                        required: true,
+                        message: 'Please input the Address',
+                    },
+                ]"
+                @change="formState.validate('address')"
+            >
+                <a-input v-model:value="formState.address" />
+            </a-form-item>
+            <a-form-item
+                name="contactPerson"
+                label="Contact Person"
+                has-feedback
+                :validate-status="
+                    formState.invalid('contactPerson') ? 'error' : ''
+                "
+                :help="formState.errors.contactPerson"
+                :rules="[
+                    {
+                        required: true,
+                        message: 'Please input the Contact Person',
+                    },
+                ]"
+                @change="formState.validate('contactPerson')"
+            >
+                <a-input v-model:value="formState.contactPerson" />
+            </a-form-item>
+            <a-form-item
+                name="contactNumber"
+                label="Contact Number"
+                has-feedback
+                :validate-status="
+                    formState.invalid('contactNumber') ? 'error' : ''
+                "
+                :help="formState.errors.contactNumber"
+                :rules="[
+                    {
+                        required: true,
+                        message: 'Please input the Contact Number',
+                    },
+                ]"
+                @change="formState.validate('contactNumber')"
+            >
+                <a-input v-model:value="formState.contactNumber" />
             </a-form-item>
             <a-form-item
                 name="customerType"
                 label="Customer Type"
                 has-feedback
+                :rules="[
+                    {
+                        required: true,
+                        message: 'Please input the Customer Type',
+                    },
+                ]"
                 :validate-status="
                     formState.invalid('customerType') ? 'error' : ''
                 "
@@ -110,36 +176,15 @@
                 <ant-select
                     :options="[
                         {
-                            value: 'external',
+                            value: '2',
                             label: 'External',
                         },
                         {
-                            value: 'internal',
+                            value: '1',
                             label: 'Internal',
                         },
                     ]"
                     @handle-change="handleCustomerType"
-                />
-            </a-form-item>
-            <a-form-item
-                name="gcType"
-                label="Gc Type"
-                has-feedback
-                :validate-status="formState.invalid('gcType') ? 'error' : ''"
-                :help="formState.errors.gcType"
-            >
-                <ant-select
-                    :options="[
-                        {
-                            value: '1',
-                            label: 'Regular',
-                        },
-                        {
-                            value: '4',
-                            label: 'Promo',
-                        },
-                    ]"
-                    @handle-change="handleGcType"
                 />
             </a-form-item>
         </a-form>
@@ -153,7 +198,6 @@ import pickBy from "lodash/pickBy";
 import _ from "lodash";
 import { highlighten } from "@/Mixin/UiUtilities";
 import { useForm } from "laravel-precognition-vue";
-import { flexProps } from "ant-design-vue/es/flex/interface";
 import { onProgress } from "@/Mixin/UiUtilities";
 import { router } from "@inertiajs/core";
 
@@ -181,11 +225,14 @@ export default {
             },
             formState: useForm(
                 "post",
-                route("treasury.masterfile.addCustomer"),
+                route("treasury.masterfile.addSpecialExternalCustomer"),
                 {
-                    customerName: "",
+                    company: "",
                     customerType: "",
-                    gcType: "",
+                    accountName: "",
+                    address: "",
+                    contactPerson: "",
+                    contactNumber: "",
                 }
             ),
         };
@@ -202,14 +249,10 @@ export default {
             this.formState.validate("customerType");
             this.formState.customerType = val;
         },
-        handleGcType(val) {
-            this.formState.validate("gcType");
-            this.formState.gcType = val;
-        },
         onOk() {
             this.formState.submit({
                 preserveScroll: true,
-                onSuccess: ({data}) => {
+                onSuccess: ({ data }) => {
                     openLeftNotification(data);
                     this.formState.reset();
                     this.visible = false;

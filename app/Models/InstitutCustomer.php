@@ -14,6 +14,8 @@ class InstitutCustomer extends Model
     protected $table = 'institut_customer';
     protected $primaryKey = 'ins_id';
 
+    protected $guarded=[];
+     public $timestamps = false;
     protected function casts(): array
     {
         return [

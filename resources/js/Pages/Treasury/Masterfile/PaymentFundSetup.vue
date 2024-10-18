@@ -22,7 +22,7 @@
                     <template #icon>
                         <UserAddOutlined />
                     </template>
-                    Add Customer
+                    Add Payment
                 </a-button>
             </div>
         </div>
@@ -45,15 +45,7 @@
                     >
                     </span>
                 </template>
-                <template v-if="column.key === 'gcType'">
-                    <span
-                        v-html="
-                            highlightText(record.gcType?.gctype, form.search)
-                        "
-                    >
-                    </span>
-                </template>
-                <template v-if="column.key === 'createdBy'">
+                <template v-if="column.key === 'user'">
                     <span
                         v-html="
                             highlightText(record.user.full_name, form.search)
@@ -61,6 +53,7 @@
                     >
                     </span>
                 </template>
+                
             </template>
         </a-table>
 
@@ -69,7 +62,7 @@
 
     <a-modal
         v-model:open="visible"
-        title="Add a new Customer"
+        title="Add a Payment Fund"
         ok-text="Create"
         cancel-text="Cancel"
         @ok="onOk"
@@ -81,67 +74,24 @@
             name="form_in_modal"
         >
             <a-form-item
-                name="customerName"
-                label="Customer Name"
+                name="paymentFundName"
+                label="Payment Fund Name"
                 has-feedback
                 :validate-status="
-                    formState.invalid('customerName') ? 'error' : ''
+                    formState.invalid('paymentFundName') ? 'error' : ''
                 "
-                :help="formState.errors.customerName"
+                :help="formState.errors.paymentFundName"
                 :rules="[
                     {
                         required: true,
-                        message: 'Please input the Customer Name',
+                        message: 'Please input the Payment Fund Name',
                     },
                 ]"
-                @change="formState.validate('customerName')"
+                @change="formState.validate('paymentFundName')"
             >
-                <a-input v-model:value="formState.customerName" />
+                <a-input v-model:value="formState.paymentFundName" />
             </a-form-item>
-            <a-form-item
-                name="customerType"
-                label="Customer Type"
-                has-feedback
-                :validate-status="
-                    formState.invalid('customerType') ? 'error' : ''
-                "
-                :help="formState.errors.customerType"
-            >
-                <ant-select
-                    :options="[
-                        {
-                            value: 'external',
-                            label: 'External',
-                        },
-                        {
-                            value: 'internal',
-                            label: 'Internal',
-                        },
-                    ]"
-                    @handle-change="handleCustomerType"
-                />
-            </a-form-item>
-            <a-form-item
-                name="gcType"
-                label="Gc Type"
-                has-feedback
-                :validate-status="formState.invalid('gcType') ? 'error' : ''"
-                :help="formState.errors.gcType"
-            >
-                <ant-select
-                    :options="[
-                        {
-                            value: '1',
-                            label: 'Regular',
-                        },
-                        {
-                            value: '4',
-                            label: 'Promo',
-                        },
-                    ]"
-                    @handle-change="handleGcType"
-                />
-            </a-form-item>
+            
         </a-form>
     </a-modal>
 </template>
@@ -181,11 +131,9 @@ export default {
             },
             formState: useForm(
                 "post",
-                route("treasury.masterfile.addCustomer"),
+                route("treasury.masterfile.addPaymentFund"),
                 {
-                    customerName: "",
-                    customerType: "",
-                    gcType: "",
+                    paymentFundName: "",
                 }
             ),
         };
@@ -198,14 +146,6 @@ export default {
         },
     },
     methods: {
-        handleCustomerType(val) {
-            this.formState.validate("customerType");
-            this.formState.customerType = val;
-        },
-        handleGcType(val) {
-            this.formState.validate("gcType");
-            this.formState.gcType = val;
-        },
         onOk() {
             this.formState.submit({
                 preserveScroll: true,

@@ -3,6 +3,8 @@
 namespace App\Services\Treasury;
 
 use App\Http\Resources\InstitutCustomerResource;
+use App\Http\Resources\PaymentFundResource;
+use App\Http\Resources\SpecialExternalCustomerResource;
 use App\Models\InstitutCustomer;
 use App\Models\PaymentFund;
 use App\Models\SpecialExternalCustomer;
@@ -28,63 +30,110 @@ class Masterfile
         ]);
     }
 
-    public static function specialExternalSetup() ///setup-special-external
+    public static function specialExternalSetup(Request $request) ///setup-special-external
     {
-        //
 
         $record = SpecialExternalCustomer::with('user:user_id,firstname,lastname')
-        ->select('spcus_by', 'spcus_id', 'spcus_companyname', 'spcus_acctname', 'spcus_address', 'spcus_cperson', 'spcus_cnumber', 'spcus_at')
-        ->orderByDesc('spcus_id')
-        ->cursorPaginate()
-        ->withQueryString();
+            ->select('spcus_by', 'spcus_id', 'spcus_companyname', 'spcus_acctname', 'spcus_address', 'spcus_cperson', 'spcus_cnumber', 'spcus_at')
+            ->orderByDesc('spcus_id')
+            ->filter($request)
+            ->paginate()
+            ->withQueryString();
 
-        return $record;
-
-        //     $select = "special_external_customer.spcus_id, 
-        //     special_external_customer.spcus_companyname, 
-        //     special_external_customer.spcus_acctname,
-        //     special_external_customer.spcus_address, 
-        //     special_external_customer.spcus_cperson, 
-        //     special_external_customer.spcus_cnumber, 
-        //     special_external_customer.spcus_at,
-        //     CONCAT(users.firstname,' ',users.lastname) as createdby";
-
-        // $where = '1';
-
-        // $join = 'INNER JOIN
-        //     users
-        // ON
-        //     users.user_id = special_external_customer.spcus_by';
-
-        // $limit ='ORDER BY spcus_id DESC';
-        // $cus = getAllData($link,'special_external_customer',$select,$where,$join,$limit);
+        return inertia('Treasury/Masterfile/SpecialExternalGcSetup', [
+            'title' => 'Special External Setup',
+            'filters' => $request->only(['date', 'search']),
+            'data' => SpecialExternalCustomerResource::collection($record),
+            'columns' => ColumnHelper::$specialExternalSetup
+        ]);
     }
 
-    public static function paymentFundSetup() //setup-paymentfund
+    public static function paymentFundSetup(Request $request) //setup-paymentfund
     {
-        //
         $record = PaymentFund::with('user:user_id,firstname,lastname')
-        ->select('pay_addby', 'pay_id', 'pay_desc', 'pay_status', 'pay_dateadded')
-        ->where('pay_status', 'active')
-        ->orderByDesc('pay_id')
-        ->cursorPaginate()
-        ->withQueryString();
+            ->select('pay_addby', 'pay_id', 'pay_desc', 'pay_status', 'pay_dateadded')
+            ->where('pay_status', 'active')
+            ->orderByDesc('pay_id')
+            ->filter($request)
+            ->paginate()
+            ->withQueryString();
 
-        return $record;
+        return inertia('Treasury/Masterfile/PaymentFundSetup', [
+            'title' => 'Payment Fund Setup',
+            'filters' => $request->only(['date', 'search']),
+            'data' => PaymentFundResource::collection($record),
+            'columns' => ColumnHelper::$paymentFundSetup
+        ]);
+    }
 
-        //     $table = 'payment_fund';
-        // $select = "payment_fund.pay_id,
-        //     payment_fund.pay_desc,
-        //     payment_fund.pay_status,
-        //     payment_fund.pay_dateadded,
-        //     CONCAT(users.firstname,' ',users.lastname) as user";
-        // $where = "payment_fund.pay_status='active'";
-        // $join = 'INNER JOIN
-        // 		users
-        // 	ON
-        // 		users.user_id = payment_fund.pay_addby	';
-        // $limit = '';
+    public static function storeCustomer(Request $request)
+    {
+        $request->validate([
+            'customerName' => "required",
+            'customerType' => "required",
+            'gcType' => "required",
+        ]);
+        $isSuccess = InstitutCustomer::create([
+            'ins_name' => $request->customerName,
+            'ins_status' => 'active',
+            'ins_custype' => $request->customerType,
+            'ins_gctype' => $request->gcType,
+            'ins_date_created' => now(),
+            'ins_by' => $request->user()->user_id,
+        ]);
 
-        // $payment = getAllData($link,$table,$select,$where,$join,$limit);
+        if ($isSuccess->wasRecentlyCreated) {
+            return response()->json(['success' => 'Successfully Created'], 200);
+        } else {
+            return response()->json(['error' => 'Something Went Wrong']);
+        }
+    }
+
+    public static function storeSpecialExternalCustomer(Request $request)
+    {
+        $request->validate([
+            "company" => 'required',
+            "customerType" => 'required',
+            "accountName" => 'required',
+            "address" => 'required',
+            "contactPerson" => 'required',
+            "contactNumber" => 'required'
+        ]);
+
+        $isSuccess = SpecialExternalCustomer::create([
+            'spcus_companyname' => $request->company,
+            'spcus_acctname' => $request->accountName,
+            'spcus_address' => $request->address,
+            'spcus_cperson' => $request->contactPerson,
+            'spcus_cnumber' => $request->contactNumber,
+            'spcus_at' => now(),
+            'spcus_type' => $request->customerType,
+            'spcus_by' => $request->user()->user_id,
+        ]);
+
+        if ($isSuccess->wasRecentlyCreated) {
+            return response()->json(['success' => 'Successfully Created']);
+        } else {
+            return response()->json(['error' => 'Something Went Wrong']);
+        }
+    }
+
+    public static function storePaymentFund(Request $request)
+    {
+        $request->validate([
+            'paymentFundName' => 'required',
+        ]);
+
+        $isSuccess = PaymentFund::create([
+            'pay_desc' => $request->paymentFundName,
+            'pay_status' => 'active',
+            'pay_dateadded' => now(),
+            'pay_addby' => $request->user()->user_id,
+        ]);
+        if ($isSuccess->wasRecentlyCreated) {
+            return response()->json(['success' => 'Successfully Created']);
+        } else {
+            return response()->json(['error' => 'Something Went Wrong']);
+        }
     }
 }
