@@ -13,9 +13,9 @@ class MasterfileController extends Controller
        return Masterfile::customerSetup($request);
     }
 
-    public function specialExternalSetup() ///setup-special-external
+    public function specialExternalSetup(Request $request) ///setup-special-external
     {
-       return MasterFile::specialExternalSetup();
+       return MasterFile::specialExternalSetup($request);
     }
 
     public function paymentFundSetup() //setup-paymentfund
@@ -25,5 +25,9 @@ class MasterfileController extends Controller
 
     public function storeCustomer(Request $request){
         return MasterFile::storeCustomer($request);
+    }
+
+    public function storeSpecialExternalCustomer(Request $request){
+        return MasterFile::storeSpecialExternalCustomer($request);
     }
 }

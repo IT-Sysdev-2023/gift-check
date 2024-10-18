@@ -390,7 +390,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Recommended By',
-            'dataIndex' => ['approved_request_user','user','full_name'],
+            'dataIndex' => ['approved_request_user', 'user', 'full_name'],
             'key' => 'recommended',
             'align' => 'center'
         ],
@@ -454,7 +454,7 @@ class ColumnHelper
         ],
     ];
     public static $eodList = [
-      
+
         [
             'title' => 'Date',
             'key' => 'ieod_date',
@@ -478,7 +478,7 @@ class ColumnHelper
     ];
 
     public static $gcReleasingReport = [
-      
+
         [
             'title' => 'Transaction #',
             'dataIndex' => 'inspPaymentnum',
@@ -509,7 +509,7 @@ class ColumnHelper
         ],
     ];
     public static $retailGcReleasing = [
-      
+
         [
             'title' => 'Gc Request #',
             'dataIndex' => 'sgc_num',
@@ -541,7 +541,7 @@ class ColumnHelper
     ];
 
     public static $specialInternal = [
-      
+
         [
             'title' => 'RFSEGC #',
             'dataIndex' => 'spexgc_num',
@@ -794,6 +794,42 @@ class ColumnHelper
         [
             'title' => 'Created By',
             'key' => 'createdBy',
+        ],
+    ];
+
+    public static $specialExternalSetup = [
+        [
+            'title' => 'Company name/ Person',
+            'dataIndex' => 'spcus_companyname',
+
+        ],
+        [
+            'title' => 'Account Name',
+            'dataIndex' => 'spcus_acctname',
+
+        ],
+        [
+            'title' => 'Address',
+            'dataIndex' => 'spcus_address',
+            'ellipsis' => true,
+
+        ],
+        [
+            'title' => 'Contact Person',
+            'dataIndex' => 'spcus_cperson',
+
+        ],
+        [
+            'title' => 'Contact Number',
+            'dataIndex' => 'spcus_cnumber',
+        ],
+        [
+            'title' => 'Created By',
+            'key' => 'createdBy',
+        ],
+        [
+            'title' => 'Date Created',
+            'dataIndex' => 'spcus_at',
         ],
     ];
 }
