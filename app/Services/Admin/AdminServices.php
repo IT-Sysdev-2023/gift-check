@@ -2,23 +2,21 @@
 
 namespace App\Services\Admin;
 
+use App\Helpers\NumberHelper;
 use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\InstitutTransactionsItem;
 use App\Models\PromoGcReleaseToItem;
-use App\Models\RequisitionForm;
-use App\Models\RequisitionFormDenomination;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Store;
-use App\Models\StoreVerification;
 use App\Models\Supplier;
 use App\Models\TransactionStore;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AdminServices
 {
@@ -866,23 +864,100 @@ class AdminServices
         //     }
         // }
     }
-    
+
 
     public function getPoDetailsTextfiles($name)
     {
         $files = Storage::disk('fad')->get($name);
 
-        $lines = preg_split("/\r\n|\n|\r/", $files);
+        $exp = explode("\r\n", $files);
 
+        $array = [];
 
-        collect($lines)->each(function ($item) {
-            $exploded = explode('|', $item);
+        $denom = [];
 
-            dump($exploded);
+        collect($exp)->each(function ($item, $key) use (&$array, &$denom) {
+
+            $insexp = explode('|', $item);
+
+            $type = self::transactionType($insexp[0]);
+
+            $array[$type] = $insexp[1] ?? null;
+
+            $itemcode = self::denomType($insexp[0]);
+
+            $denom[$itemcode] = $insexp[1] ?? null;
         });
-        dd(1);
+
+        $recordfiltered = collect($array)->filter(function ($item) {
+            return $item !== null;
+        });
+
+        $denomfiltered = collect($denom)->filter(function ($item) {
+            return $item !== null;
+        });
 
 
-        // collect($files)->each(functio);
+        return (object) [
+            'data' => $recordfiltered,
+            'denom' => $denomfiltered,
+        ];
+    }
+
+    private function transactionType(string $type)
+    {
+        $transaction = [
+            'FAD Purchase Order Details' => 'recno',
+            'Receiving No' => 'recno',
+            'Transaction Date' => 'transdate',
+            'Reference No' => 'refno',
+            'Purchase Order No' => 'pon',
+            'Purchase Date' => 'purdate',
+            'Reference PO No' => 'refpon',
+            'Payment Terms' => 'payterms',
+            'Location Code' => 'locode',
+            'Department Code' => 'depcode',
+            'Supplier Name' => 'supname',
+            'Mode of Payment' => 'mop',
+            'Remarks' => 'remarks',
+            'Prepared By' => 'prepby',
+            'Checked By' => 'checkby',
+            'SRR Type' => 'srrtype',
+        ];
+
+        return $transaction[$type] ?? null;
+    }
+
+    private static function denomType(string $type)
+    {
+        $transaction = [
+            '00086744' => '00002002',
+            '00086743' => '00002003',
+        ];
+
+        return $transaction[$type] ?? null;
+    }
+
+    public function getDenomination($denom)
+    {
+        $data = Denomination::select('denomination', 'denom_fad_item_number')->where('denom_status', 'active')->get();
+
+        $data->transform(function ($item) use ($denom) {
+
+            $filtered = collect($denom)->filter(function ($value, $innerkey) use ($item) {
+
+                $denomcode = $item->denom_fad_item_number === $innerkey ?? $value;
+
+                return $denomcode;
+            });
+
+            $exploded = explode('.', $filtered[$item->denom_fad_item_number] ?? 0);
+
+            $item->qty = NumberHelper::toLocaleString($exploded[0]) ?? 0;
+
+            return $item;
+        });
+
+        return $data;
     }
 }

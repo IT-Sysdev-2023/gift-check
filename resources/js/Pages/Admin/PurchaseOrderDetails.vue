@@ -1,21 +1,19 @@
 <template>
     <AuthenticatedLayout>
-        <a-card>
-            <a-list item-layout="horizontal" :data-source="record">
-                <template #renderItem="{ item }">
-                    <a-list-item>
-                        <a-list-item-meta description="This is gc textfile comming from fad">
-                            <template #title>
-                                <span style="cursor: pointer;" @click="setup(item)">{{ item }}</span>
-                            </template>
-                            <template #avatar>
-                                <a-avatar src="https://joeschmoe.io/api/v1/random" />
-                            </template>
-                        </a-list-item-meta>
-                    </a-list-item>
-                </template>
-            </a-list>
-        </a-card>
+        <a-row :gutter="[16, 16]">
+            <a-col :span="8" v-for="item in record">
+                <a-card  class="card"  @click="setup(item)">
+                  <div class="flex justify-between">
+                    <div style="cursor: pointer;">
+                        <span  style="cursor: pointer; font-weight: bold;" > <FileTextOutlined /> &nbsp; {{ item }}</span>
+                    </div>
+                    <div>
+                        <ArrowRightOutlined  style="cursor: pointer;"/>
+                    </div>
+                  </div>
+                </a-card>
+            </a-col>
+        </a-row>
     </AuthenticatedLayout>
 </template>
 <script setup>
@@ -29,3 +27,12 @@ const setup = (name) => {
     router.get(route('admin.setup', name));
 }
 </script>
+
+<style scoped>
+.card {
+    cursor: pointer;
+}
+.card:hover{
+    color: #0D92F4;
+}
+</style>

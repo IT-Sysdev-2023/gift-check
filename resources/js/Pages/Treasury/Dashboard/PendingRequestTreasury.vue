@@ -149,7 +149,7 @@
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
-                    
+
                 </a-card>
                 <a-card>
                     <a-statistic
@@ -162,7 +162,7 @@
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
-                    
+
                 </a-card>
                 <a-card>
                     <a-statistic
@@ -176,7 +176,7 @@
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
-                    
+
                 </a-card>
             </a-col>
         </a-row>
@@ -224,7 +224,7 @@ const fileList = ref<UploadProps["fileList"]>([]);
 const formState = useForm<FormState>({
     brno: props.data.br_no,
     dateRequested: dayjs(props.data.br_requested_at),
-    // dateNeeded: dayjs(props.data.br_requested_needed),
+    dateNeeded: dayjs(props.data.br_requested_needed),
     budget: props.data.br_request,
     updatedBy: page.auth.user.full_name,
     createdBy: props.data.user.full_name,
