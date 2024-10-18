@@ -832,4 +832,19 @@ class ColumnHelper
             'dataIndex' => 'spcus_at',
         ],
     ];
+
+    public static $paymentFundSetup = [
+        [
+            'title' => 'Name',
+            'dataIndex' => 'pay_desc',
+        ],
+        [
+            'title' => 'Date Created',
+            'dataIndex' => 'pay_dateadded',
+        ],
+        [
+            'title' => 'Created By',
+            'key' => 'user',
+        ],
+    ];
 }

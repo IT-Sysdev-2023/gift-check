@@ -3,6 +3,7 @@
 namespace App\Services\Treasury;
 
 use App\Http\Resources\InstitutCustomerResource;
+use App\Http\Resources\PaymentFundResource;
 use App\Http\Resources\SpecialExternalCustomerResource;
 use App\Models\InstitutCustomer;
 use App\Models\PaymentFund;
@@ -47,32 +48,22 @@ class Masterfile
         ]);
     }
 
-    public static function paymentFundSetup() //setup-paymentfund
+    public static function paymentFundSetup(Request $request) //setup-paymentfund
     {
-        //
         $record = PaymentFund::with('user:user_id,firstname,lastname')
             ->select('pay_addby', 'pay_id', 'pay_desc', 'pay_status', 'pay_dateadded')
             ->where('pay_status', 'active')
             ->orderByDesc('pay_id')
-            ->cursorPaginate()
+            ->filter($request)
+            ->paginate()
             ->withQueryString();
 
-        return $record;
-
-        //     $table = 'payment_fund';
-        // $select = "payment_fund.pay_id,
-        //     payment_fund.pay_desc,
-        //     payment_fund.pay_status,
-        //     payment_fund.pay_dateadded,
-        //     CONCAT(users.firstname,' ',users.lastname) as user";
-        // $where = "payment_fund.pay_status='active'";
-        // $join = 'INNER JOIN
-        // 		users
-        // 	ON
-        // 		users.user_id = payment_fund.pay_addby	';
-        // $limit = '';
-
-        // $payment = getAllData($link,$table,$select,$where,$join,$limit);
+        return inertia('Treasury/Masterfile/PaymentFundSetup', [
+            'title'=> 'Payment Fund Setup',
+            'filters' => $request->only(['date', 'search']),
+            'data' => PaymentFundResource::collection($record),
+            'columns'=> ColumnHelper::$paymentFundSetup
+        ]);
     }
 
     public static function storeCustomer(Request $request)

@@ -348,6 +348,8 @@ Route::middleware(['auth'])->group(function () {
             
             Route::get('special-external-setup', [MasterfileController::class, 'specialExternalSetup'])->name('externalSetup');
             Route::post('add-special-external-customer', [MasterfileController::class, 'storeSpecialExternalCustomer'])->name('addSpecialExternalCustomer')->middleware([HandlePrecognitiveRequests::class]);
+            
+            Route::get('payment-fund-setup', [MasterfileController::class, 'paymentFundSetup'])->name('paymentFundSetup');
         });
         Route::prefix('adjustment')->name('adjustment.')->group(function () {
 
