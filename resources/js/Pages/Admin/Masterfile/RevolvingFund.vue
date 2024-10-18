@@ -49,7 +49,7 @@
         <a-form-item for="store_status" :validate-status="form.errors?.store_status ? 'erros' : ''"
             :help="form.errors?.store_status">
             Store Status:
-            <a-select id="store_status" allow-clear v-model:value="form.store_status" placeholder="Store Status">
+            <a-select id="store_status" v-model:value="form.store_status" placeholder="Store Status">
                 <a-select-option value="active">ACTIVE</a-select-option>
                 <a-select-option value="inactive">INACTIVE</a-select-option>
             </a-select>
@@ -80,7 +80,8 @@ export default {
             form: this.$inertia.form({
 
                 r_fund: '',
-                store_status: ''
+                store_status: '',
+                errors: {}
 
             }),
             modalForUpdateFund: false,
@@ -129,6 +130,10 @@ export default {
 
         },
         updatupdateRevolvingFundeFund() {
+            this.form.errors = {}
+            if (!this.form.r_fund) {
+                this.form.errors.r_fund = "This revolving fund field is required"
+            } 
             this.$inertia.post(route('admin.masterfile.updateRevolvingFund'), {
                 ...this.form,
 

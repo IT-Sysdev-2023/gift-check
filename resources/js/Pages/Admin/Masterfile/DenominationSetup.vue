@@ -82,7 +82,7 @@
                 placeholder="FAD Item #" />
         </a-form-item>
     </a-modal>
-    <!-- {{ data }} -->
+    {{ data }}
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -104,13 +104,15 @@ export default {
             },
             searchTerm: this.search,
             form: this.$inertia.form({
+
                 denomination: '',
                 barcodeNumStart: ''
 
             }),
             updateDenom: this.$inertia.form({
                 denomination: '',
-                denom_barcode_start: ''
+                denom_barcode_start: '',
+                errors: {}
             }),
 
             updateDenominationModal: false,
@@ -155,9 +157,9 @@ export default {
                         })
                         this.addDenomination = false;
                     } else if (props.flash.error) {
-                        notification.error({
+                        notification.warning({
                             message: props.flash.error,
-                            description: 'Failed adding denomination!'
+                            description: 'Denomination already exist, please input another denomination!'
                         })
                     }
 
@@ -175,12 +177,21 @@ export default {
             };
         },
         updateDenominationData(data) {
-            // alert(1)
             this.updateDenominationModal = true;
             this.updateDenom = data;
 
         },
         updateDenomination() {
+            this.updateDenom.errors = {}
+            if (!this.updateDenom.denomination) {
+                this.updateDenom.errors.denomination = "The denomination field is required";
+            }
+            if (!this.updateDenom.denom_barcode_start) {
+                this.updateDenom.errors.denom_barcode_start = "The barcode number field is required ";
+            }
+            if (!this.updateDenom.denom_fad_item_number) {
+                this.updateDenom.errors.denom_fad_item_number = "The Fad Item Number is required ";
+            }
             this.$inertia.post(route('admin.masterfile.saveUpdateDenomination'), { ...this.updateDenom },
                 {
                     onSuccess: ({ props }) => {

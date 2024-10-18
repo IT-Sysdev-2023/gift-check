@@ -390,6 +390,7 @@ export default {
             dataforResetPassword: this.$inertia.form({
                 user_id: '',
                 full_name: ''
+
             }),
 
             dataForUpdateUser: this.$inertia.form({
@@ -404,9 +405,8 @@ export default {
                 store_assigned: '',
                 it_type: '',
                 user_role: '',
-                store_name: ''
-
-
+                store_name: '',
+                errors: {}
 
             }),
             modalforDelete: false,
@@ -601,7 +601,7 @@ export default {
         updateUser(data) {
             this.modalforUpdateUser = true;
             this.dataForUpdateUser = { ...data };
-            this.modalforUpdateUser.username = data.username
+            this.dataForUpdateUser.username = data.username;
             this.dataForUpdateUser.store_assigned = data.store_name;
             this.dataForUpdateUser.usertype = data.employee_type;
             this.dataForUpdateUser.user_role = data.user_role;
@@ -610,6 +610,41 @@ export default {
             this.dataForUpdateUser.retailstore = data.retailstore;
         },
         updateStoreStaff() {
+            this.dataForUpdateUser.errors = {};
+            if (!this.dataForUpdateUser.username) {
+                this.dataForUpdateUser.errors.username = "The username field is required";
+            }
+            if (!this.dataForUpdateUser.firstname) {
+                this.dataForUpdateUser.errors.firstname = "The firstname field is required";
+            }
+            if (!this.dataForUpdateUser.lastname) {
+                this.dataForUpdateUser.errors.lastname = "The lastname field is required";
+            }
+            if (!this.dataForUpdateUser.emp_id) {
+                this.dataForUpdateUser.errors.emp_id = "The employee ID field is required";
+            }
+            if (!this.dataForUpdateUser.usertype) {
+                this.dataForUpdateUser.errors.usertype = "The usertype field is required";
+            }
+            if (!this.dataForUpdateUser.employee_type) {
+                this.dataForUpdateUser.errors.employee_type = "The employee type field is required";
+            }
+            if (!this.dataForUpdateUser.retail_group) {
+                this.dataForUpdateUser.errors.retail_group = "The retail group field is required";
+            }
+            if (!this.dataForUpdateUser.store_assigned) {
+                this.dataForUpdateUser.errors.store_assigned = "The store assigned field is required";
+            }
+            if (!this.dataForUpdateUser.it_type) {
+                this.dataForUpdateUser.errors.it_type = "The IT type field is required";
+            }
+            if (!this.dataForUpdateUser.user_role) {
+                this.dataForUpdateUser.errors.user_role = "The user role field is required";
+            }
+            if (!this.dataForUpdateUser.store_name) {
+                this.dataForUpdateUser.errors.store_name = "The store name field is required";
+            }
+0
             this.$inertia.post(route('admin.masterfile.updateUser'), {
                 ...this.dataForUpdateUser
             }, {
@@ -623,7 +658,7 @@ export default {
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: `Please change ${this.dataForUpdateUser.username} data first before submitting!`
+                            description: `${this.dataForUpdateUser.username} data has no changes happen, update first before submitting! `
                         })
                     }
                 }

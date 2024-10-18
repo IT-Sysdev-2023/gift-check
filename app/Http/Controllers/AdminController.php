@@ -171,7 +171,10 @@ class AdminController extends Controller
             'store_assigned' => [
                 'sometimes',
                 Rule::requiredIf(function () use ($request) {
-                    return !in_array($request->input('usertype'), [
+                    $usertype = $request->input('usertype');
+                    $it_type = $request->input('it_type');
+
+                    $non_required_usertypes = [
                         1,
                         'administrator',
                         2,
@@ -196,12 +199,17 @@ class AdminController extends Controller
                         'it_personnel',
                         13,
                         'cfs'
-                    ])
-                        && ($request->input('usertype') === 7 || $request->input('usertype') === 'retailstore'
-                            || $request->input('usertype') === 'store_accounting' || $request->input('usertype') === 14
-                            || $request->input('it_type') === '2' || $request->input('it_type') === 'store_it');
+                    ];
+                 
+                    $is_in_non_required = in_array($usertype, $non_required_usertypes);
+
+                    $is_required = in_array($usertype, ['7', 'retailstore', 'store_accounting', '14']) ||
+                    in_array($it_type, ['2', 'store_it',]);
+
+                    return !$is_in_non_required && $is_required;
                 })
             ],
+
             'user_role' => [
                 'sometimes',
                 Rule::requiredIf(function () use ($request) {
@@ -297,7 +305,7 @@ class AdminController extends Controller
         if ($onSuccess) {
             return back()->with('success', 'SUCCESS');
         }
-        return back()->with('error', 'FAILED TO UPDATE');
+        return back()->with('error', 'OPPS');
     }
 
 
@@ -834,13 +842,15 @@ class AdminController extends Controller
     public function denominationSetup(Request $request)
     {
 
+
         $data = Denomination::get();
+        // dd($data = Denomination::all());
         $entriesPerPage = $request->input('value', '');
         $searchTerm = $request->input('data', 10);
         $data = Denomination::query();
         // dd($data = Denomination::get());
         if ($searchTerm) {
-            $data->where(function ($query) use ($searchTerm) {
+            $data = $data->where(function ($query) use ($searchTerm) {
                 $query->where('denomination', 'like', '%' . $searchTerm . '%')
                     ->orwhere('denom_barcode_start', 'like', '%' . $searchTerm . '%');
             });
@@ -861,29 +871,29 @@ class AdminController extends Controller
     {
         // dd($request->toArray());
         $request->validate([
-            'denomination' => 'required',
+            'denomination' => 'required|integer',
             'barcodeNumStart' => 'required|integer',
-        ], [
-            'barcodeNumStart.regex' => 'The barcode number must be at least 0 to 13 digits without any letters and symbols.',
-            'barcodeNumStart.required' => 'The barcode number is required.',
-            'barcodeNumStart.integer' => 'The barcode number exceed the maximum digits.',
         ]);
 
-        $denom_fad_item_number = Denomination::max('denom_fad_item_number');
-        $newDenom = $denom_fad_item_number ? $denom_fad_item_number + 1 : 1;
-        if ($newDenom === $request->denom_fad_item_number) {
-            return back()->with('error', 'WARNING');
-        }
+        $denom_code = Denomination::max('denom_code');
+        $newDenomCode = $denom_code ? $denom_code + 1 : 1;
 
+        $denom_fad_item_number = Denomination::max('denom_fad_item_number');
+        $newDenomFadItemNumber = $denom_fad_item_number ? $denom_fad_item_number + 1 : 1;
+
+        $newDenom = Denomination::where( 'denomination', $request->denomination)->first();
+        if ($newDenom) {
+            return back()->with('error', 'OPPS');
+        }
         $isSuccessful = Denomination::create([
             'denomination' => $request->denomination,
             'denom_barcode_start' => $request->barcodeNumStart,
             'denom_dateupdated' => now(),
-            'denom_code' => '9',
-            'denom_fad_item_number' => $newDenom,
+            'denom_code' => $newDenomCode,
+            'denom_fad_item_number' => $newDenomFadItemNumber,
             'denom_type' => 'RSGC',
             'denom_status' => 'active',
-            'denom_createdby' => '1',
+            'denom_createdby' => $request->user()->user_id,
             'denom_datecreated' => now(),
 
         ]);
@@ -917,7 +927,7 @@ class AdminController extends Controller
             $denomination->denom_barcode_start == $request->denom_barcode_start &&
             $denomination->denom_fad_item_number == $request->denom_fad_item_number
         ) {
-            return back()->with('error', 'FAILED TO UPDATE');
+            return back()->with('error', 'OPPS');
         }
 
 
@@ -966,7 +976,7 @@ class AdminController extends Controller
         }
         return back()->with(
             'error',
-            'FAILED TO UPDATE'
+            'OPPS'
         );
     }
     public function updateStoreStaffPassword(Request $request)
@@ -1103,6 +1113,10 @@ class AdminController extends Controller
     }
     public function updateSpecialCustomer(Request $request)
     {
+        $request->validate([
+            'spcus_companyname' => 'required',
+            'spcus_acctname' => 'required'
+        ]);
         // dd($request->toArray());
         $validation = SpecialExternalCustomer::findOrFail($request->spcus_id);
         if (

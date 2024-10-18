@@ -4,7 +4,7 @@
             <PlusOutlined /> Add New User
         </a-button>
     </div>
-    
+
     <div class="storeStaff-search-button">
         Search:
         <a-input class="storeStaff-search-input" allow-clear placeholder="Input search here!" v-model:value="searchTerm"
@@ -201,13 +201,25 @@ export default {
                 store_id: '',
                 usertype: ''
             }),
+
+            form: this.$inertia.form({
+                username: '',
+                firstname: '',
+                lastname: '',
+                employee_id: '',
+                password: '',
+                store_id: '',
+                usertype: ''
+            }),
+
             dataForUpdate: this.$inertia.form({
                 ss_username: '',
                 ss_firstname: '',
                 ss_lastname: '',
                 ss_idnumber: '',
                 ss_store: '',
-                ss_usertype: ''
+                ss_usertype: '',
+                errors: {}
             }),
             dataforChangePassword: this.$inertia.form({
                 ss_password: '',
@@ -343,7 +355,6 @@ export default {
 
     methods: {
         handleOk() {
-            // alert(1)
             this.form.get(route('admin.masterfile.store.saveUser'), {
                 preserveState: true,
                 onSuccess: ({ props }) => {
@@ -371,9 +382,35 @@ export default {
             this.dataForUpdate = data;
             this.dataForUpdate.ss_username = data.ss_username;
             // Use the ID from the selected data
+            // ss_username: '',
+            //     ss_firstname: '',
+            //         ss_lastname: '',
+            //             ss_idnumber: '',
+            //                 ss_store: '',
+            //                     ss_usertype: '',
+            //                         errors: { }
 
         },
         updateStoreStaff() {
+            this.dataForUpdate.errors = {};
+            if (!this.dataForUpdate.ss_username) {
+                this.dataForUpdate.errors.ss_username = "The username field is required";
+            }
+            if (!this.dataForUpdate.ss_firstname) {
+                this.dataForUpdate.errors.ss_firstname = "The firstname field is required";
+            }
+            if (!this.dataForUpdate.ss_lastname) {
+                this.dataForUpdate.errors.ss_lastname = "The lastname field is required";
+            }
+            if (!this.dataForUpdate.ss_idnumber) {
+                this.dataForUpdate.errors.ss_idnumber = "The employee ID field is required";
+            }
+            if (!this.dataForUpdate.ss_store) {
+                this.dataForUpdate.errors.ss_store = "The store assigned field is required";
+            }
+            if (!this.dataForUpdate.ss_usertype) {
+                this.dataForUpdate.errors.ss_usertype = "The Usertype field is required";
+            }
             this.$inertia.post(route('admin.masterfile.updateStoreStaffSetup'), { ...this.dataForUpdate },
                 {
                     onSuccess: ({ props }) => {
@@ -387,7 +424,7 @@ export default {
                         } else if (props.flash.error) {
                             notification.warning({
                                 message: props.flash.error,
-                                description: `Please update ${this.dataForUpdate.ss_username} data first before submitting!`
+                                description: `${this.dataForUpdate.ss_username} data has no changes happen, update first before submitting`
                             });
                         }
                     },
@@ -403,7 +440,7 @@ export default {
 
             console.log(this.dataforChangePassword.ss_id);
             this.$inertia.post(route('admin.masterfile.updateStoreStaffPassword'), {
-              ...this.dataforChangePassword
+                ...this.dataforChangePassword
             }, {
                 onSuccess: ({ props }) => {
                     if (props.flash.success) {

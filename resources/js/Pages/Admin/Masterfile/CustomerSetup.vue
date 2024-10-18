@@ -105,8 +105,7 @@
             :validate-status="dataForStoreCustomer.errors?.cus_store_register ? 'error' : ''"
             :help="dataForStoreCustomer.errors?.cus_store_register">
             Customer Store Register:
-            <a-select allow-clear v-model:value="dataForStoreCustomer.cus_store_register"
-                placeholder="Customer store register">
+            <a-select v-model:value="dataForStoreCustomer.cus_store_register" placeholder="Customer store register">
                 <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
                     {{ item.store_name }}
                 </a-select-option>
@@ -129,8 +128,7 @@
             :validate-status="dataForInstituteCustomer.errors?.ins_custype ? 'error' : ''"
             :help="dataForInstituteCustomer.errors?.ins_custype">
             Institute Customer Type:
-            <a-select allow-clear v-model:value="dataForInstituteCustomer.ins_custype"
-                placeholder="Institute Customer Type">
+            <a-select v-model:value="dataForInstituteCustomer.ins_custype" placeholder="Institute Customer Type">
                 <a-select-option value="internal">INTERNAL </a-select-option>
                 <a-select-option value="external">EXTERNAL </a-select-option>
             </a-select>
@@ -141,7 +139,7 @@
             :help="dataForInstituteCustomer.errors?.ins_gctype"
             v-if="dataForInstituteCustomer.ins_custype === 'internal'">
             Institute GC Type:
-            <a-select allow-clear v-model:value="dataForInstituteCustomer.ins_gctype" placeholder="Institute GC Type">
+            <a-select v-model:value="dataForInstituteCustomer.ins_gctype" placeholder="Institute GC Type">
                 <a-select-option value="1">REGULAR</a-select-option>
                 <a-select-option value="4">PROMO</a-select-option>
             </a-select>
@@ -151,7 +149,7 @@
             :validate-status="dataForInstituteCustomer.errors?.ins_status ? 'error' : ''"
             :help="dataForInstituteCustomer.errors?.ins_status">
             Status:
-            <a-select allow-clear v-model:value="dataForInstituteCustomer.ins_status" placeholder="Institute Status">
+            <a-select v-model:value="dataForInstituteCustomer.ins_status" placeholder="Institute Status">
                 <a-select-option value="active">ACTIVE</a-select-option>
                 <a-select-option value="inactive">INACTIVE</a-select-option>
             </a-select>
@@ -204,7 +202,7 @@
         <a-form-item for="sp_customer_type" :validate-status="dataForSpecialCustomer.errors?.spcus_type ? 'error' : ''"
             :help="dataForSpecialCustomer.errors?.spcus_type">
             SP Customer Type:
-            <a-select allow-clear v-model:value="dataForSpecialCustomer.spcus_type" placeholder-="SP Customer Type">
+            <a-select v-model:value="dataForSpecialCustomer.spcus_type" placeholder-="SP Customer Type">
                 <a-select-option value="1">INTERNAL</a-select-option>
                 <a-select-option value="2">EXTERNAL</a-select-option>
             </a-select>
@@ -240,14 +238,16 @@ export default {
             dataForStoreCustomer: this.$inertia.form({
                 cus_fname: '',
                 cus_lname: '',
-                cus_store_register: ''
+                cus_store_register: '',
+                errors: {}
 
             }),
             dataForInstituteCustomer: this.$inertia.form({
                 ins_name: '',
                 ins_status: '',
                 ins_custype: '',
-                ins_gctype: ''
+                ins_gctype: '',
+                errors: {}
             }),
             dataForSpecialCustomer: this.$inertia.form({
                 spcus_companyname: '',
@@ -255,7 +255,8 @@ export default {
                 spcus_address: '',
                 spcus_cperson: '',
                 spcus_cnumber: '',
-                spcus_type: ''
+                spcus_type: '',
+                errors: {}
             }),
             modalForInstitutionalCustomer: false,
             modalForSpecialCustomer: false,
@@ -335,7 +336,6 @@ export default {
                         }
                     ],
                     onFilter: (value, record) => record.store_name === value,
-                    width: '16%',
 
                 },
                 {
@@ -376,8 +376,6 @@ export default {
 
                     ],
                     onFilter: (value, record) => record.ins_custype === value,
-                    width: '11%',
-
                 },
                 {
                     title: 'GC Type',
@@ -393,7 +391,6 @@ export default {
                         },
                     ],
                     onFilter: (value, record) => record.ins_gctype === value,
-                    width: '8%',
                 },
                 {
                     title: 'Date Created',
@@ -491,6 +488,13 @@ export default {
 
         },
         storeCustomerUpdate() {
+            this.dataForStoreCustomer.errors = {};
+            if (!this.dataForStoreCustomer.cus_fname) {
+                this.dataForStoreCustomer.errors.cus_fname = "The firstname field is required";
+            }
+            if (!this.dataForStoreCustomer.cus_lname) {
+                this.dataForStoreCustomer.errors.cus_lname = "The lastname field is required";
+            }
             this.$inertia.post(route('admin.masterfile.updateCustomerStoreRegister'), {
                 ...this.dataForStoreCustomer
 
@@ -506,7 +510,7 @@ export default {
                     else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: `Please update ${this.dataForStoreCustomer.cus_fname} data first before submitting`
+                            description: `${this.dataForStoreCustomer.cus_fname} data has no changes happen, update first before submitting`
                         })
                     }
                 }
@@ -524,6 +528,10 @@ export default {
 
         },
         institutionalCustomerUpdate() {
+            this.dataForInstituteCustomer.errors = {};
+            if (!this.dataForInstituteCustomer.ins_name) {
+                this.dataForInstituteCustomer.errors.ins_name = "The name field is required";
+            }
             this.$inertia.post(route('admin.masterfile.UpdateInstituteCustomer'), {
                 ...this.dataForInstituteCustomer
             }, {
@@ -538,7 +546,7 @@ export default {
                     else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: `Please update ${this.dataForInstituteCustomer.ins_name} data first before submitting!`
+                            description: `${this.dataForInstituteCustomer.ins_name} data has no changes happen, update first before submitting!`
                         })
                     }
                 }
@@ -558,6 +566,13 @@ export default {
             this.dataForSpecialCustomer.spcus_type = data.spcus_type;
         },
         specialCustomerUpdate() {
+            this.dataForSpecialCustomer.errors = {};
+            if (!this.dataForSpecialCustomer.spcus_companyname) {
+                this.dataForSpecialCustomer.errors.spcus_companyname = "The company name field is required ";
+            }
+            if (!this.dataForSpecialCustomer.spcus_acctname) {
+                this.dataForSpecialCustomer.errors.spcus_acctname = "The SP account name field is required ";
+            }
             this.$inertia.post(route('admin.masterfile.updateSpecialCustomer'), {
                 ...this.dataForSpecialCustomer
             }, {
@@ -571,7 +586,7 @@ export default {
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: `Please update ${this.dataForSpecialCustomer.spcus_companyname} data first before submitting!`
+                            description: `${this.dataForSpecialCustomer.spcus_companyname} data has no changes happen, update first before submitting!`
 
                         })
                     }
