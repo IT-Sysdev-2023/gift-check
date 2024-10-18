@@ -101,6 +101,7 @@ declare module 'vue' {
     ARow: typeof import('ant-design-vue/es')['Row']
     ArrowDownOutlined: typeof import('@ant-design/icons-vue')['ArrowDownOutlined']
     ArrowLeftOutlined: typeof import('@ant-design/icons-vue')['ArrowLeftOutlined']
+    ArrowRightOutlined: typeof import('@ant-design/icons-vue')['ArrowRightOutlined']
     ArrowsAltOutlined: typeof import('@ant-design/icons-vue')['ArrowsAltOutlined']
     ArrowUpOutlined: typeof import('@ant-design/icons-vue')['ArrowUpOutlined']
     AscTech: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/AscTech.vue')['default']
