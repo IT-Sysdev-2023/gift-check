@@ -32,7 +32,7 @@
                     Regular Customer
                 </span>
             </template>
-            <a-table :columns="columns" :data-source="data.data" :pagination="false" style="margin-top: 10px;">
+            <a-table :columns="columns" bordered :data-source="data.data" :pagination="false" style="margin-top: 10px;">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
                         <a-button @click="updateStoreCustomer(record)" title="Update" class="me-2 me-sm-5"
@@ -52,7 +52,7 @@
                     Instutitional Customer
                 </span>
             </template>
-            <a-table :columns="institutionalColumns" :data-source="data.data" :pagination="false"
+            <a-table :columns="institutionalColumns" bordered :data-source="data.data" :pagination="false"
                 style="margin-top: 10px;">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
@@ -73,7 +73,8 @@
                     Special Customer
                 </span>
             </template>
-            <a-table :columns="specialColumns" :data-source="data.data" :pagination="false" style="margin-top: 10px;">
+            <a-table :columns="specialColumns" bordered :data-source="data.data" :pagination="false"
+                style="margin-top: 10px;">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
                         <a-button @click="updateSpecialCustomer(record)" title="Update" class="me-2 me-sm-5"
@@ -209,10 +210,10 @@
         </a-form-item>
 
     </a-modal>
+    <!-- 
 
 
-
-    {{ data }}
+    {{ data }} -->
 
 </template>
 <script>
@@ -344,7 +345,7 @@ export default {
                 },
                 {
                     title: 'Customer Register By',
-                    dataIndex: 'cus_register_by'
+                    dataIndex: 'fullname'
                 },
                 {
                     title: 'Action',
@@ -398,7 +399,7 @@ export default {
                 },
                 {
                     title: 'Created By',
-                    dataIndex: 'ins_by'
+                    dataIndex: 'fullname'
                 },
                 {
                     title: 'Status',

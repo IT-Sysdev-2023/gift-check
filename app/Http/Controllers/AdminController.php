@@ -624,13 +624,20 @@ class AdminController extends Controller
             'special_external_customer.spcus_address as spcus_address',
             'special_external_customer.spcus_cperson as spcus_cperson',
             'special_external_customer.spcus_cnumber as spcus_cnumber',
-            'special_external_customer.spcus_type as spcus_type'
+            'special_external_customer.spcus_type as spcus_type',
+            'users.user_id',
+            'users.firstname as firstname',
+            'users.lastname as lastname',
+            User::raw("CONCAT(users.firstname, ' ', users.lastname) as fullname")
+
 
 
         )
+            ->leftJoin('users', 'cus_register_by', '=', 'users.user_id')
             ->leftJoin('institut_customer', 'cus_id', '=', 'institut_customer.ins_id')
             ->leftJoin('special_external_customer', 'cus_id', '=', 'special_external_customer.spcus_id')
             ->leftJoin('stores', 'cus_store_register', '=', 'stores.store_id');
+            
 
 
         if ($searchTerm) {
@@ -647,7 +654,9 @@ class AdminController extends Controller
                     ->orWhere('spcus_acctname', 'like', '%' . $searchTerm . '%')
                     ->orWhere('spcus_address', 'like', '%' . $searchTerm . '%')
                     ->orWhere('spcus_cperson', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('spcus_cnumber', 'like', '%' . $searchTerm . '%');
+                    ->orWhere('spcus_cnumber', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('firstname', 'like', '%' . $searchTerm . '%');
+
             });
         }
         if ($activeTab === 'store_customer') {
