@@ -50,7 +50,7 @@ Route::get('/not-found', function () {
 })->name('not.found');
 
 Route::fallback(function () {
-    return view('notFound');
+    return view('notFoundMeme');
 });
 
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -345,10 +345,10 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('masterfile')->name('masterfile.')->group(function () {
             Route::get('customer-setup', [MasterfileController::class, 'customerSetup'])->name('customersetup');
             Route::post('add-customer', [MasterfileController::class, 'storeCustomer'])->name('addCustomer')->middleware([HandlePrecognitiveRequests::class]);
-            
+
             Route::get('special-external-setup', [MasterfileController::class, 'specialExternalSetup'])->name('externalSetup');
             Route::post('add-special-external-customer', [MasterfileController::class, 'storeSpecialExternalCustomer'])->name('addSpecialExternalCustomer')->middleware([HandlePrecognitiveRequests::class]);
-            
+
             Route::get('payment-fund-setup', [MasterfileController::class, 'paymentFundSetup'])->name('paymentFundSetup');
             Route::post('add-payment-fund', [MasterfileController::class, 'storePaymentFund'])->name('addPaymentFund')->middleware([HandlePrecognitiveRequests::class]);
         });
