@@ -4,21 +4,34 @@ namespace App\Http\Controllers\Treasury;
 
 use Illuminate\Routing\Controller;
 use App\Services\Treasury\Masterfile;
+use Illuminate\Http\Request;
 
 class MasterfileController extends Controller
 {
-    public function customerSetup() //setup-tres-customer
+    public function customerSetup(Request $request) //setup-tres-customer
     {
-       return Masterfile::customerSetup();
+       return Masterfile::customerSetup($request);
     }
 
-    public function specialExternalSetup() ///setup-special-external
+    public function specialExternalSetup(Request $request) ///setup-special-external
     {
-       return MasterFile::specialExternalSetup();
+       return MasterFile::specialExternalSetup($request);
     }
 
-    public function paymentFundSetup() //setup-paymentfund
+    public function paymentFundSetup(Request $request) //setup-paymentfund
     {
-        return Masterfile::paymentFundSetup();
+        return Masterfile::paymentFundSetup($request);
+    }
+
+    public function storeCustomer(Request $request){
+        return MasterFile::storeCustomer($request);
+    }
+
+    public function storeSpecialExternalCustomer(Request $request){
+        return MasterFile::storeSpecialExternalCustomer($request);
+    }
+
+    public function storePaymentFund(Request $request){
+        return MasterFile::storePaymentFund($request);
     }
 }

@@ -18,6 +18,10 @@ class NumberHelper
     {
         return number_format($number, 2);
     }
+    public static function toLocaleString(mixed $number) : string
+    {
+        return number_format($number);
+    }
 
     public static function formatterFloat($number)
     {

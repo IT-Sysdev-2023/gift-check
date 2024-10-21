@@ -153,4 +153,14 @@ class AdminController extends Controller
             'record' => $data,
         ]);
     }
+
+    public function setupPurchaseOrders($name){
+        $data = $this->adminservices->getPoDetailsTextfiles($name);
+
+        return inertia('Admin/SetupPurchaseOrders', [
+            'record' =>  $data ,
+            'denom' => $this->adminservices->getDenomination($data->denom),
+            'title' => $name,
+        ]);
+    }
 }

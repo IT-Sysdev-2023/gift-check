@@ -90,11 +90,6 @@
                                 @pending-event="specialGcPending"
                                 @approved-event="approvedRequest"
                             >
-                                <!-- <CardBadge
-                                    :count="data?.specialGcRequest?.reviewed"
-                                    title="Reviewed GC for Releasing(External)"
-                                    @event="reviewedGcReleasing"
-                                /> -->
                                 <CardBadge
                                     :count="data?.specialGcRequest?.released"
                                     title="Released GC"
@@ -177,7 +172,6 @@ defineProps<{
             pending: number;
             approved: number;
             cancelled: number;
-            reviewed: number;
             released: number;
             internalReviewed: number
         };

@@ -24,7 +24,7 @@ class BudgetRequestResource extends JsonResource
             'br_no' => $this->br_no,
             'br_file_docno' => "storage/budgetRequestScanCopy/$this->br_file_docno",
             'br_remarks' => $this->br_remarks,
-            'br_requested_needed' => $this->br_requested_needed->toFormattedDateString(),
+            'br_requested_needed' => $this->br_requested_needed?->toFormattedDateString(),
             'prepared_by' => $this->user,
             'abr' => new ApprovedBudgetRequestResource($this->whenLoaded('approvedBudgetRequest')),
             'cancelled_request' => $this->whenLoaded('cancelledBudgetRequest'),

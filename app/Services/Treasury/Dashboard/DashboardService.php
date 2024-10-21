@@ -21,19 +21,20 @@ class DashboardService
     {
 
     }
-    protected function budgetRequest()
+    protected function budgetRequestTreasury()
     {
         //Pending Request
         $pending = User::userTypeBudget(request()->user()->usertype)->count();
-        //Approved Request
-        $approved = BudgetRequest::where('br_request_status', 1)->count();
-        //Cancelled Request
-        $cancelled = BudgetRequest::where('br_request_status', 2)->count();
+
+        $statusCounts = BudgetRequest::selectRaw('
+        SUM(CASE WHEN br_request_status = 1 THEN 1 ELSE 0 END) as approved,
+        SUM(CASE WHEN br_request_status = 2 THEN 1 ELSE 0 END) as cancelled
+        ')->first();
 
         return (object) [
             'pending' => $pending,
-            'approved' => $approved,
-            'cancelled' => $cancelled
+            'approved' => $statusCounts->approved,
+            'cancelled' => $statusCounts->cancelled
         ];
 
     }
@@ -42,8 +43,7 @@ class DashboardService
     {
         //Pending Request
         $pending = StoreGcrequest::where(function (Builder $query) {
-            $query->where('sgc_status', 0)
-                ->orWhere('sgc_status', 1);
+            $query->whereIn('sgc_status', [0, 1]);
         })->where('sgc_cancel', '')->count();
 
         //Release Gc
@@ -65,15 +65,16 @@ class DashboardService
         //Pending Request
         $pending = ProductionRequest::whereRelation('user', 'usertype', request()->user()->usertype)->where('pe_status', 0)->count();
 
-        //Approved Request
-        $approved = ProductionRequest::where('pe_status', 1)->count();
+        //Approved Request //Cancelled
+        $statusCounts = ProductionRequest::selectRaw('
+        SUM(CASE WHEN pe_status = 1 THEN 1 ELSE 0 END) as approved,
+        SUM(CASE WHEN pe_status = 2 THEN 1 ELSE 0 END) as cancelled
+        ')->first();
 
-        //Cancelled Request
-        $cancelled = ProductionRequest::where('pe_status', 2)->count();
         return (object) [
             'pending' => $pending,
-            'approved' => $approved,
-            'cancelled' => $cancelled
+            'approved' => $statusCounts->approved,
+            'cancelled' => $statusCounts->cancelled
         ];
     }
 
@@ -92,27 +93,29 @@ class DashboardService
 
     protected function specialGcRequest()
     {
-
-        // $segcreviewed  = numRowsWhereTwo_internal($link,'special_external_gcrequest','spexgc_id','spexgc_reviewed','spexgc_released','reviewed','');
-        $internalReviewd = SpecialExternalGcrequest::where([['spexgc_reviewed','reviewed'], ['spexgc_released',''], ['spexgc_promo', '*']])->count();
-      
-        $pending = SpecialExternalGcrequest::spexgcStatus('pending')->count();
-        //Approved GC
-        $approved = SpecialExternalGcrequest::spexgcStatus('approved')->count();
-        //Reviewed GC For Releasing
-        $reviewed = SpecialExternalGcrequest::where([['spexgc_reviewed', 'reviewed'], ['spexgc_released', ''], ['spexgc_promo', '0']])->count();
-        //Released GC
-        $released = SpecialExternalGcrequest::spexgcReleased('released')->count();
-        //Cancelled Request
-        $cancelled = SpecialExternalGcrequest::spexgcStatus('cancelled')->count();
+        $statusCounts = SpecialExternalGcrequest::selectRaw('
+        SUM(CASE WHEN spexgc_reviewed = ? AND spexgc_released = ? AND (spexgc_promo = ? OR spexgc_promo = ?) THEN 1 ELSE 0 END) as internalReviewed,
+        SUM(CASE WHEN spexgc_status = ? THEN 1 ELSE 0 END) as pending,
+        SUM(CASE WHEN spexgc_status = ? THEN 1 ELSE 0 END) as approved,
+        SUM(CASE WHEN spexgc_released = ? THEN 1 ELSE 0 END) as released,
+        SUM(CASE WHEN spexgc_status = ? THEN 1 ELSE 0 END) as cancelled
+    ', [
+            'reviewed',
+            '',
+            '*',
+            '0',  // internalReviewed
+            'pending',             // pending
+            'approved',            // approved
+            'released',            // released
+            'cancelled'            // cancelled
+        ])->first();
 
         return (object) [
-            'pending' => $pending,
-            'approved' => $approved,
-            'reviewed' => $reviewed,
-            'released' => $released,
-            'cancelled' => $cancelled,
-            'internalReviewed'=> $internalReviewd
+            'pending' => $statusCounts->pending,
+            'approved' => $statusCounts->approved,
+            'released' => $statusCounts->released,
+            'cancelled' => $statusCounts->cancelled,
+            'internalReviewed' => $statusCounts->internalReviewed
         ];
     }
 

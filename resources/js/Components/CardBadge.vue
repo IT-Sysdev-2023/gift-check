@@ -16,7 +16,7 @@ withDefaults(defineProps<Props>(), {
     <a-badge :count="count" :color="color" :show-zero="false">
         <a-alert :type="type" show-icon style="width: 300px">
             <template #message>
-                <a-typography-text :delete="!count" :disabled="!count">{{
+                <a-typography-text :delete="!count || count == null || count === '0'" :disabled="!count || count == null || count === '0'">{{
                     title
                 }}</a-typography-text>
             </template>
@@ -24,7 +24,7 @@ withDefaults(defineProps<Props>(), {
                 <a-button
                     size="small"
                     type="primary"
-                    :disabled="count === 0 || count == null"
+                    :disabled="count === 0 || count == null || count === '0' "
                     :title="count?.toString()"
                     @click="$emit('event')"
                 >

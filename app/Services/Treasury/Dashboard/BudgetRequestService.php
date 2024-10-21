@@ -32,17 +32,20 @@ class BudgetRequestService extends FileHandler
 	public function cancelledRequest(Request $request)
 	{
 		return BudgetRequest::with([
-			'requestedUser:user_id,firstname,lastname',
-			'cancelledBudgetRequest.user:user_id,firstname,lastname',
-			'cancelledBudgetRequest:cdreq_id,cdreq_req_id,cdreq_at, cdreq_by'
+			'user:user_id,firstname,lastname',
+			'cancelledBudgetRequest' => function ($q){
+				$q->with('user:user_id,firstname,lastname')->select('cdreq_id','cdreq_req_id','cdreq_at', 'cdreq_by');
+			},
 		])
+		->select('br_id', 'br_no', 'br_requested_at', 'br_request', 'br_requested_by')
 			->where('br_request_status', '2')
 			->paginate()
 			->withQueryString();
 	}
 	public function approvedRequest(Request $request)
 	{
-		return BudgetRequest::with(['user', 'approvedBudgetRequest'])
+		return BudgetRequest::with(['user:user_id,firstname,lastname', 'approvedBudgetRequest:abr_id,abr_budget_request_id,abr_approved_by,abr_approved_at'])
+			->select('br_id', 'br_request', 'br_requested_at', 'br_no', 'br_requested_by')
 			->filter($request->only('search', 'date'))
 			->where('br_request_status', '1')
 			->orderByDesc('br_requested_at')
@@ -56,10 +59,9 @@ class BudgetRequestService extends FileHandler
 	}
 	public function submitBudgetEntry(BudgetRequest $id, Request $request)
 	{
-		$request->validate([
-			'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
-		]);
-
+		// $request->validate([
+		// 	'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
+		// ]);
 		if ($id->br_request_status != 0) {
 			return redirect()->back()->with('error', 'Budget request already approved/cancelled.');
 		}
@@ -134,9 +136,9 @@ class BudgetRequestService extends FileHandler
 			"remarks" => 'required',
 			// 'file' => 'required|image|mimes:jpeg,png,jpg|max:5048'
 		]);
-		return BudgetRequest::whereRelation('user', 'usertype', $request->user()->usertype)
-			->where('br_request_status', 0)
-			->count();
+		return BudgetRequest::where('br_checked_by', null)
+			->where('br_requested_by', '!=', '')
+			->where('br_request_status', '0')->exists();
 	}
 
 	private function generatePdf(Request $request)
@@ -151,7 +153,7 @@ class BudgetRequestService extends FileHandler
 			'subtitle' => 'Revolving Budget Entry Form',
 
 			'budgetRequested' => $request->budget,
-			
+
 			//signatures
 			'signatures' => [
 				'preparedBy' => [
