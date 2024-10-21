@@ -7,6 +7,7 @@ use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\InstitutTransactionsItem;
 use App\Models\PromoGcReleaseToItem;
+use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Store;
 use App\Models\Supplier;
@@ -23,6 +24,7 @@ class AdminServices
     public function purchaseOrderDetails()
     {
         $files = Storage::disk('fad')->files();
+
         return collect($files);
     }
 
@@ -33,7 +35,6 @@ class AdminServices
 
     public function statusScanned(Request $request)
     {
-        // dd(1);
         $regular = new Gc();
         $special = new SpecialExternalGcrequestEmpAssign();
         $promo = new PromoGcReleaseToItem();
@@ -931,8 +932,8 @@ class AdminServices
     private static function denomType(string $type)
     {
         $transaction = [
-            '00086744' => '00002002',
-            '00086743' => '00002003',
+            '00086743' => '00002002',
+            '00086744' => '00002003',
         ];
 
         return $transaction[$type] ?? null;
@@ -959,5 +960,14 @@ class AdminServices
         });
 
         return $data;
+    }
+
+    public function getpodetailsDatabase()
+    {
+        $data = RequisitionForm::get();
+
+        $data->transform(function ($item) {
+            return $item;
+        });
     }
 }

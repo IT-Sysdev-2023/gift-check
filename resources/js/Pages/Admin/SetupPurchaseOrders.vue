@@ -23,10 +23,10 @@
                     Requisition Number
                 </a-divider>
                 <a-form-item>
-                    <a-input-number class="text-center" style="width: 100%;" size="large">
+                    <a-input-number v-model:value="reqno" class="text-center" style="width: 100%;" size="large">
                     </a-input-number>
                 </a-form-item>
-                <a-button class="mt-2"  type="primary" block>
+                <a-button class="mt-2"  type="primary" block @click="submit">
                     <FastForwardOutlined /> Submit Requisition Number
                 </a-button>
             </a-col>
@@ -99,9 +99,21 @@
 </template>
 
 <script setup>
-defineProps({
+import { router } from '@inertiajs/core';
+import { ref } from 'vue';
+
+const props = defineProps({
     record: Object,
     denom: Object,
     title: String,
-})
+});
+const reqno = ref(null);
+
+const submit = () => {
+    router.post(route('admin.submit.po.to.iad'), {
+        data: props.record,
+        denom: props.denom,
+        reqno: reqno.value
+    });
+}
 </script>

@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
+
     Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
     Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
     Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po')->middleware([HandlePrecognitiveRequests::class]);
@@ -111,6 +112,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
     Route::get('setup-po-{any}', [AdminController::class, 'setupPurchaseOrders'])->name('setup');
+
+    Route::post('submit-po-to-iad', [AdminController::class, 'submitPurchaseOrdersToIad'])->name('submit.po.to.iad');
 
 
 });

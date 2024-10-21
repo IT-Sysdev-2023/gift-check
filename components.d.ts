@@ -226,6 +226,7 @@ declare module 'vue' {
     IadDashboard: typeof import('./resources/js/Pages/Iad/IadDashboard.vue')['default']
     IadSideBar: typeof import('./resources/js/Components/IadSideBar.vue')['default']
     IdcardOutlined: typeof import('@ant-design/icons-vue')['IdcardOutlined']
+    ImportOutlined: typeof import('@ant-design/icons-vue')['ImportOutlined']
     InboxOutlined: typeof import('@ant-design/icons-vue')['InboxOutlined']
     InfoCircleOutlined: typeof import('@ant-design/icons-vue')['InfoCircleOutlined']
     InputError: typeof import('./resources/js/Components/InputError.vue')['default']

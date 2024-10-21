@@ -53,10 +53,9 @@ class AdminController extends Controller
     public function purchaseOrderDetails()
     {
         return inertia('Admin/PurchaseOrderDetails', [
-            'denomination' => $this->adminservices->denomination(),
-            'supplier' => $this->adminservices->supplier(),
             'columns' => ColumnHelper::$purchase_details_columns,
             'record' => $this->adminservices->purchaseOrderDetails(),
+            'podetails' => $this->adminservices->getpodetailsDatabase(),
         ]);
     }
     public function submitPurchaseOrders(PurchaseOrderRequest $request)
@@ -154,13 +153,20 @@ class AdminController extends Controller
         ]);
     }
 
-    public function setupPurchaseOrders($name){
+    public function setupPurchaseOrders($name)
+    {
+
         $data = $this->adminservices->getPoDetailsTextfiles($name);
 
         return inertia('Admin/SetupPurchaseOrders', [
-            'record' =>  $data ,
+            'record' =>  $data,
             'denom' => $this->adminservices->getDenomination($data->denom),
             'title' => $name,
         ]);
+    }
+
+    public function submitPurchaseOrdersToIad(Request $request)
+    {
+        return $this->dBTransaction->createPruchaseOrders($request);
     }
 }
