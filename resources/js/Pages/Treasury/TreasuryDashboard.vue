@@ -106,6 +106,7 @@
                                     <CardBadge
                                         :count="data?.adjustment?.budget"
                                         title="Budget Adjustment"
+                                         @event="budgetAdjustments"
                                     />
                                     <CardBadge
                                         :count="data?.adjustment?.allocation"
@@ -218,6 +219,8 @@ const reviewedGcReleasing = () => routeTo("special.gc", "reviewedGcReleasing")
 const approvedRequest = () => routeTo("special.gc", "approvedRequest")
 
 //Adjustment
+const budgetAdjustments = () => routeTo('adjustment', 'budgetAdjustments')
+
 const allocationAdjustment = () => routeTo('adjustment', 'allocation')
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");

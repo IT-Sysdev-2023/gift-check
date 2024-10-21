@@ -177,8 +177,11 @@ const setActiveTab = computed(() => {
                     <span>Adjustments</span>
                 </span>
             </template>
-            <a-menu-item key="menu-item-budget-adjustments"
-                >Budget Adjustments</a-menu-item
+            <a-menu-item key="treasury.adjustment.budgetAdjustments"
+                >
+                <Link :href="route('treasury.adjustment.budgetAdjustments')">
+                    Budget Adjustments</Link
+                ></a-menu-item
             >
             <a-menu-item key="menu-item-allocation">Allocation</a-menu-item>
         </a-sub-menu>

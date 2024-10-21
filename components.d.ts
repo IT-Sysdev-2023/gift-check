@@ -139,6 +139,7 @@ declare module 'vue' {
     BarcodeChecker: typeof import('./resources/js/Pages/Custodian/BarcodeChecker.vue')['default']
     BarcodeForm: typeof import('./resources/js/Pages/Custodian/Partials/BarcodeForm.vue')['default']
     BarcodeOutlined: typeof import('@ant-design/icons-vue')['BarcodeOutlined']
+    BudgetAdjustment: typeof import('./resources/js/Pages/Treasury/Adjustment/BudgetAdjustment.vue')['default']
     BudgetLedger: typeof import('./resources/js/Pages/Finance/BudgetLedger.vue')['default']
     BudgetLedgerResult: typeof import('./resources/js/Pages/Documents/BudgetLedgerResult.vue')['default']
     BudgetRequest: typeof import('./resources/js/Pages/Treasury/Transactions/BudgetRequest.vue')['default']

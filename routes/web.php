@@ -356,6 +356,9 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('allocation', [AdjustmentController::class, 'allocationAdjustment'])->name('allocation');
             Route::get('allocation-details-{id}', [AdjustmentController::class, 'viewAllocationAdjustment'])->name('viewAllocation');
+            
+            Route::get('budget-adjustment', [AdjustmentController::class, 'budgetAdjustments'])->name('budgetAdjustments');
+            Route::post('budget-adjustment-submission', [AdjustmentController::class, 'storeBudgetAdjustment'])->name('budgetAdjustmentSubmission');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
