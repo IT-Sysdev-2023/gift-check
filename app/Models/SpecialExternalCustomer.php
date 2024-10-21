@@ -10,9 +10,15 @@ use Illuminate\Database\Eloquent\Builder;
 class SpecialExternalCustomer extends Model
 {
     use HasFactory;
-
+    const UPDATED_AT = 'spcus_at';
+    protected $guarded = [];
     protected $table = 'special_external_customer';
 
+<<<<<<< HEAD
+    protected $table = 'special_external_customer';
+
+=======
+>>>>>>> gamale
     protected $primaryKey = 'spcus_id';
 
     protected $guarded = [];
@@ -48,5 +54,8 @@ class SpecialExternalCustomer extends Model
     {
         return $this->belongsTo(User::class, 'spcus_by', 'user_id');
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> gamale
 }

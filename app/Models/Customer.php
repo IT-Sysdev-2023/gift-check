@@ -10,9 +10,14 @@ use Illuminate\Support\Str;
 class Customer extends Model
 {
     use HasFactory;
+    const CREATED_AT = 'cus_created_at';
+    const UPDATED_AT = 'cus_updated_at';
+    protected $guarded = [];
+
     protected $primaryKey = 'cus_id';
 
     protected $appends = ['full_name'];
+
 
     public function fullName(): Attribute
     {
