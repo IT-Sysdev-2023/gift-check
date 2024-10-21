@@ -305,6 +305,7 @@ declare module 'vue' {
     PromoGcReleasingModal: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/Components/PromoGcReleasingModal.vue')['default']
     PromoGcRequest: typeof import('./resources/js/Pages/Marketing/PromoGcRequest.vue')['default']
     PromoGcRequestCard: typeof import('./resources/js/Pages/RetailGroup/Cards/PromoGcRequestCard.vue')['default']
+    PromoGcViewCard: typeof import('./resources/js/Pages/Finance/Cards/PromoGcViewCard.vue')['default']
     PromoGCViewCard: typeof import('./resources/js/Pages/Finance/Cards/PromoGCViewCard.vue')['default']
     PromoList: typeof import('./resources/js/Pages/Marketing/PromoList.vue')['default']
     PromoRequestTable: typeof import('./resources/js/Pages/Finance/Tables/PromoRequestTable.vue')['default']
