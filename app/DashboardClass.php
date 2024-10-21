@@ -2,7 +2,9 @@
 
 namespace App;
 
+use App\Models\AllocationAdjustment;
 use App\Models\ApprovedGcrequest;
+use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
 use App\Models\CustodianSrr;
 use App\Models\Denomination;
@@ -16,9 +18,15 @@ use App\Models\PromoGcReleaseToDetail;
 use App\Models\PromoGcRequest;
 use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
+use App\Models\StoreGcrequest;
+use App\Models\User;
 use App\Services\Finance\FinanceDashboardService;
+use Illuminate\Support\Benchmark;
+use Illuminate\Support\Facades\DB;
 use App\Services\Treasury\Dashboard\DashboardService;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Concurrency;
+use Illuminate\Database\Eloquent\Builder;
 
 class DashboardClass extends DashboardService
 {
@@ -26,25 +34,109 @@ class DashboardClass extends DashboardService
      * Create a new class instance.
      */
 
-    public function __construct() {}
+    public function __construct()
+    {
+    }
     public function treasuryDashboard()
     {
+        [
+            $total,
+            $regular,
+            $special,
+            $promoGcReleased,
+            $institutionGcSales,
+            $eod,
+            $budget,
+            $allocation,
+            $pending,
+            $statusCounts,
+            $pendingStore,
+            $releasedStore,
+            $cancelledStore,
+            $pendingGc,
+            $approvedCancelledGc,
+            $specialGcRequest,
+            $productionRequest
+        ] = Concurrency::run([
+                        fn() => $this->budget(),
+                        fn() => LedgerBudget::regularBudget(),
+                        fn() => LedgerBudget::specialBudget(),
+                        fn() => PromoGcReleaseToDetail::count(),
+                        fn() => InstitutTransaction::count(),
+                        fn() => InstitutEod::count(),
+                        fn() => BudgetAdjustment::count(),
+                        fn() => AllocationAdjustment::count(),
+                        fn() => User::userTypeBudget(request()->user()?->usertype)->count(),
+                        fn() => BudgetRequest::selectRaw('
+                SUM(CASE WHEN br_request_status = 1 THEN 1 ELSE 0 END) as approved,
+                SUM(CASE WHEN br_request_status = 2 THEN 1 ELSE 0 END) as cancelled
+                ')->first(),
+                        fn() => StoreGcrequest::where(function (Builder $query) {
+                            $query->whereIn('sgc_status', [0, 1]);
+                        })->where('sgc_cancel', '')->count(),
+                        fn() => ApprovedGcrequest::has('storeGcRequest.store')->has('user')->count(),
+                        fn() => StoreGcrequest::where([['sgc_status', 0], ['sgc_cancel', '*']])->count(),
+                        fn() => ProductionRequest::whereRelation('user', 'usertype', request()->user()?->usertype)->where('pe_status', 0)->count(),
+                        fn() => ProductionRequest::selectRaw('
+            SUM(CASE WHEN pe_status = 1 THEN 1 ELSE 0 END) as approved,
+            SUM(CASE WHEN pe_status = 2 THEN 1 ELSE 0 END) as cancelled
+            ')->first(),
+                        fn() => SpecialExternalGcrequest::selectRaw('
+                        SUM(CASE WHEN spexgc_reviewed = ? AND spexgc_released = ? AND (spexgc_promo = ? OR spexgc_promo = ?) THEN 1 ELSE 0 END) as internalReviewed,
+                        SUM(CASE WHEN spexgc_status = ? THEN 1 ELSE 0 END) as pending,
+                        SUM(CASE WHEN spexgc_status = ? THEN 1 ELSE 0 END) as approved,
+                        SUM(CASE WHEN spexgc_released = ? THEN 1 ELSE 0 END) as released,
+                        SUM(CASE WHEN spexgc_status = ? THEN 1 ELSE 0 END) as cancelled
+                    ', [
+                            'reviewed',
+                            '',
+                            '*',
+                            '0',  // internalReviewed
+                            'pending',             // pending
+                            'approved',            // approved
+                            'released',            // released
+                            'cancelled'            // cancelled
+                        ])->first(),
+                        fn() => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
+                    ]);
+
         return [
             'budget' => (object) [
-                'totalBudget' => $this->budget(),
-                'regularBudget' => LedgerBudget::regularBudget(),
-                'specialBudget' => LedgerBudget::specialBudget(),
+                'totalBudget' => $total,
+                'regularBudget' => $regular,
+                'specialBudget' => $special,
             ],
-            'budgetRequest' => $this->budgetRequestTreasury(),
-            'storeGcRequest' => $this->storeGcRequest(),
-            'promoGcReleased' => PromoGcReleaseToDetail::count(),
-            'institutionGcSales' => InstitutTransaction::count(),
-            'gcProductionRequest' => $this->gcProductionRequest(),
-            'adjustment' => $this->adjustments(),
-            'specialGcRequest' => $this->specialGcRequest(), //Duplicated above use Spatie Permission instead
+            'budgetRequest' => (object) [
+                'pending' => $pending,
+                'approved' => $statusCounts->approved,
+                'cancelled' => $statusCounts->cancelled
+            ],
+            'storeGcRequest' => (object) [
+                'pending' => $pendingStore,
+                'released' => $releasedStore,
+                'cancelled' => $cancelledStore
+            ],
+            'promoGcReleased' => $promoGcReleased,
+            'institutionGcSales' => $institutionGcSales,
+            'gcProductionRequest' => (object) [
+                'pending' => $pendingGc,
+                'approved' => $approvedCancelledGc->approved,
+                'cancelled' => $approvedCancelledGc->cancelled
+            ],
+            'adjustment' => (object) [
+                'budget' => $budget,
+                'allocation' => $allocation
+            ],
+            'specialGcRequest' => (object) [
+                'pending' => $specialGcRequest->pending,
+                'approved' => $specialGcRequest->approved,
+                'released' => $specialGcRequest->released,
+                'cancelled' => $specialGcRequest->cancelled,
+                'internalReviewed' => $specialGcRequest->internalReviewed
+            ], //Duplicated above use Spatie Permission instead
 
-            'eod' => InstitutEod::count(),
-            'productionRequest' => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
+            'eod' => $eod,
+            'productionRequest' => $productionRequest
         ];
     }
 
@@ -121,7 +213,7 @@ class DashboardClass extends DashboardService
             ],
             'budgetCounts' => [
                 'curBudget' => $debitTotal - $creditTotal,
-                'dti' =>  $dtiDebitTotal - $dtiCreditTotal,
+                'dti' => $dtiDebitTotal - $dtiCreditTotal,
                 'spgc' => $spgcDebitTotal - $spgcreditTotal,
             ],
 
@@ -156,7 +248,7 @@ class DashboardClass extends DashboardService
         return [
             'countReceiving' => RequisitionForm::where('used', null)->count(),
 
-            'reviewedCount' =>  SpecialExternalGcrequest::join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+            'reviewedCount' => SpecialExternalGcrequest::join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
                 ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
                 ->where('spexgc_reviewed', 'reviewed')
                 ->where('reqap_approvedtype', 'Special External GC Approved')->count(),
@@ -176,7 +268,7 @@ class DashboardClass extends DashboardService
                 ->orderByDesc('spexgc_num')
                 ->count(),
 
-            'countApproved' =>   SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+            'countApproved' => SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
                 ->selectFilterApproved()
                 ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
                 ->where('spexgc_status', 'approved')

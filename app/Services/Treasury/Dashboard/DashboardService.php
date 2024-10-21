@@ -13,6 +13,7 @@ use App\Models\SpecialExternalGcrequest;
 use App\Models\StoreGcrequest;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Concurrency;
 
 class DashboardService
 {
@@ -24,12 +25,19 @@ class DashboardService
     protected function budgetRequestTreasury()
     {
         //Pending Request
-        $pending = User::userTypeBudget(request()->user()->usertype)->count();
+        // $pending = User::userTypeBudget(request()->user()->usertype)->count();
 
-        $statusCounts = BudgetRequest::selectRaw('
-        SUM(CASE WHEN br_request_status = 1 THEN 1 ELSE 0 END) as approved,
-        SUM(CASE WHEN br_request_status = 2 THEN 1 ELSE 0 END) as cancelled
-        ')->first();
+        // $statusCounts = BudgetRequest::selectRaw('
+        // SUM(CASE WHEN br_request_status = 1 THEN 1 ELSE 0 END) as approved,
+        // SUM(CASE WHEN br_request_status = 2 THEN 1 ELSE 0 END) as cancelled
+        // ')->first();
+        [$pending, $statusCounts] = Concurrency::run([
+            fn() => User::userTypeBudget(request()->user()?->usertype)->count(),
+            fn() => BudgetRequest::selectRaw('
+            SUM(CASE WHEN br_request_status = 1 THEN 1 ELSE 0 END) as approved,
+            SUM(CASE WHEN br_request_status = 2 THEN 1 ELSE 0 END) as cancelled
+            ')->first(),
+        ]);
 
         return (object) [
             'pending' => $pending,
@@ -41,16 +49,13 @@ class DashboardService
 
     protected function storeGcRequest()
     {
-        //Pending Request
-        $pending = StoreGcrequest::where(function (Builder $query) {
-            $query->whereIn('sgc_status', [0, 1]);
-        })->where('sgc_cancel', '')->count();
-
-        //Release Gc
-        $released = ApprovedGcrequest::has('storeGcRequest.store')->has('user')->count();
-
-        //Cancelled Request
-        $cancelled = StoreGcrequest::where([['sgc_status', 0], ['sgc_cancel', '*']])->count();
+      [$pending, $released, $cancelled] = Concurrency::run([
+            fn() => StoreGcrequest::where(function (Builder $query) {
+                $query->whereIn('sgc_status', [0, 1]);
+            })->where('sgc_cancel', '')->count(),
+            fn() => ApprovedGcrequest::has('storeGcRequest.store')->has('user')->count(),
+            fn() => StoreGcrequest::where([['sgc_status', 0], ['sgc_cancel', '*']])->count(),
+        ]);
 
         return (object) [
             'pending' => $pending,
@@ -59,17 +64,16 @@ class DashboardService
         ];
     }
 
-    protected function gcProductionRequest()
+    protected function gcProductionRequest(): object
     {
 
-        //Pending Request
-        $pending = ProductionRequest::whereRelation('user', 'usertype', request()->user()->usertype)->where('pe_status', 0)->count();
-
-        //Approved Request //Cancelled
-        $statusCounts = ProductionRequest::selectRaw('
-        SUM(CASE WHEN pe_status = 1 THEN 1 ELSE 0 END) as approved,
-        SUM(CASE WHEN pe_status = 2 THEN 1 ELSE 0 END) as cancelled
-        ')->first();
+        [$pending, $statusCounts] = Concurrency::run([
+            fn() => ProductionRequest::whereRelation('user', 'usertype', request()->user()?->usertype)->where('pe_status', 0)->count(),
+            fn() => ProductionRequest::selectRaw('
+            SUM(CASE WHEN pe_status = 1 THEN 1 ELSE 0 END) as approved,
+            SUM(CASE WHEN pe_status = 2 THEN 1 ELSE 0 END) as cancelled
+            ')->first(),
+        ]);
 
         return (object) [
             'pending' => $pending,
@@ -80,11 +84,11 @@ class DashboardService
 
     protected function adjustments()
     {
-        //Budget
-        $budget = BudgetAdjustment::count();
-        //Allocation
-        $allocation = AllocationAdjustment::count();
 
+        [$budget, $allocation] = Concurrency::run([
+            fn() => BudgetAdjustment::count(),
+            fn() => AllocationAdjustment::count(),
+        ]);
         return (object) [
             'budget' => $budget,
             'allocation' => $allocation
