@@ -29,7 +29,7 @@ class User extends Authenticatable
         'password',
     ];
 
-    public $timestamps= false;
+    public $timestamps = false;
 
     /**
      * The attributes that should be hidden for serialization.
@@ -57,13 +57,13 @@ class User extends Authenticatable
     public function firstname(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => Str::title($value),
+            set: fn(string $value) => Str::title($value),
         );
     }
     public function lastname(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => Str::title($value),
+            set: fn(string $value) => Str::title($value),
         );
     }
 
@@ -73,7 +73,7 @@ class User extends Authenticatable
             get: fn(mixed $value, array $attributes) => Str::title("{$attributes['firstname']} {$attributes['lastname']}")
         );
     }
-    
+
     public function formatFirstname(): Attribute
     {
         return Attribute::make(
@@ -89,7 +89,7 @@ class User extends Authenticatable
     public function scopeUserTypeBudget(Builder $builder, $userType)
     {
         $builder->where('usertype', $userType)
-                ->whereHas('budgetRequest', function ($query) { $query->where('br_request_status', 0); } );
+            ->whereHas('budgetRequest', fn($query) => $query->where('br_request_status', 0));
     }
 
     public function userLog(): BelongsTo
@@ -99,9 +99,10 @@ class User extends Authenticatable
 
     public function budgetRequest()
     {
-        return $this->hasMany(BudgetRequest::class, 'br_requested_by','user_id' );
+        return $this->hasMany(BudgetRequest::class, 'br_requested_by', 'user_id');
     }
-    public function productionRequest(){
+    public function productionRequest()
+    {
         return $this->hasMany(ProductionRequest::class, 'pe_requested_by', 'user_id');
     }
 
