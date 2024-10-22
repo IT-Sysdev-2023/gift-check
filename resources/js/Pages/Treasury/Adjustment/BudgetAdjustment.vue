@@ -144,10 +144,11 @@ import type { UploadFile } from "ant-design-vue";
 import { PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
 interface FormStateGc {
-    file: UploadFile | null;
+    adjustmentNo: string | null
+    file: UploadFile;
     budget: number;
     remarks: string;
-    category: string;
+    adjustmentType: string | null
 }
 
 const props = defineProps<{
@@ -186,7 +187,7 @@ const onSubmit = () => {
         onSuccess: ({ props }) => {
             openLeftNotification(props.flash);
             if (props.flash.success) {
-                this.formState.reset();
+                formState.reset();
                 // stream.value = `data:application/pdf;base64,${props.flash.stream}`;
                 // openIframe.value = true;
             }
