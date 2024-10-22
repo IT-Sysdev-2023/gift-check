@@ -12,6 +12,7 @@ use App\Models\CancelledProductionRequest;
 use App\Models\Gc;
 use App\Models\InstitutPayment;
 use App\Models\Promo;
+use App\Models\SpecialExternalGcrequest;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\User;
 use App\Models\Denomination;
@@ -27,6 +28,7 @@ use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\RequisitionEntry;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
 use App\Models\Supplier;
 use App\Models\StoreVerification;
@@ -1336,6 +1338,8 @@ class MarketingController extends Controller
             ['denomination', 'pe_items_quantity', 'barcodeStart', 'barcodeEnd', 'total']
         );
 
+
+        // dd($selectedData->toArray());
         return Inertia::render('Marketing/gcproductionrequest/ApprovedRequest', [
             'data' => $query ?? [],
             'barcodes' => $productionBarcode,
@@ -1784,7 +1788,6 @@ class MarketingController extends Controller
 
     public function submitReqForm(Request $request)
     {
-
         if ($request->data['finalize'] == 1) {
 
             if (
@@ -1940,6 +1943,62 @@ class MarketingController extends Controller
 
         return inertia('Marketing/specialgc/Approved', [
             'apexgcreq' => $approveExtGCReq
+        ]);
+    }
+
+    public function selectedApprovedExternalGcRequest(Request $request)
+    {
+      
+
+        $query = SpecialExternalGcrequest::select(
+            'special_external_gcrequest.spexgc_id',
+            'special_external_gcrequest.spexgc_num',
+            DB::raw("CONCAT(req.firstname, ' ', req.lastname) as reqby"),
+            'special_external_gcrequest.spexgc_datereq',
+            'special_external_gcrequest.spexgc_dateneed',
+            'special_external_gcrequest.spexgc_remarks',
+            'special_external_gcrequest.spexgc_payment',
+            'special_external_gcrequest.spexgc_paymentype',
+            'special_external_gcrequest.spexgc_payment_arnum',
+            'special_external_customer.spcus_companyname',
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_doc',
+            'approved_request.reqap_checkedby',
+            'approved_request.reqap_approvedby',
+            'approved_request.reqap_preparedby',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(prep.firstname, ' ', prep.lastname) as prepby")
+        )
+            ->join('users as req', 'req.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->join('users as prep', 'prep.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('special_external_gcrequest.spexgc_status', 'approved')
+            ->where('special_external_gcrequest.spexgc_id', $request->id)
+            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->get();
+        $query->transform(function ($item) {
+            $item->preparedby = ucwords($item->prepby);
+            $item->checkedby = ucwords($item->reqap_checkedby);
+            $item->approveby = ucwords($item->reqap_approvedby);
+            $item->requestedby = ucwords($item->reqby);
+            $item->datedRequested = Date::parse($item->spexgc_datereq)->format('F d, Y');
+            $item->datedValidity = Date::parse($item->spexgc_dateneed)->format('F d, Y');
+            $item->datedApproved = Date::parse($item->reqap_date)->format('F d, Y');
+
+            return $item;
+        });
+
+        $barcodes = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->get();
+        $barcodes->transform(function ($item) {
+            $item->holderfullname = ucwords($item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' ' . $item->spexgcemp_lname);
+            return $item;
+        });
+
+
+        return response()->json([
+            'data' => $query,
+            'barcodes' => $barcodes
         ]);
     }
 
