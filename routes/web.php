@@ -36,6 +36,7 @@ use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Controllers\UserDetailsController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -52,6 +53,11 @@ Route::get('/not-found', function () {
 Route::fallback(function () {
     return view('notFound');
 });
+Route::get('kanding', function () {
+    return Storage::disk('fad')->files();
+});
+
+
 
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::get('employee', [UserDetailsController::class, 'index']);
@@ -191,6 +197,7 @@ Route::prefix('marketing')->group(function () {
             Route::get('pending', [MarketingController::class, 'pendingspgclist'])->name('pending');
             Route::get('pending-view-details', [MarketingController::class, 'pendingspgclistview'])->name('pending.view');
             Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest']) ->name('aexgcreq');
+            Route::get('selected-approved-external-gc-request', [MarketingController::class, 'selectedApprovedExternalGcRequest']) ->name('selectedaexgcreq');
         });
     });
 });

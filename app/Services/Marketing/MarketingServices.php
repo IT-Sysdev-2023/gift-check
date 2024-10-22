@@ -191,6 +191,8 @@ class MarketingServices extends FileHandler
             })->first();
         }
 
+        
+
 
         return $selectedData ?? [];
     }
@@ -509,7 +511,8 @@ class MarketingServices extends FileHandler
             ->where('special_external_gcrequest.spexgc_status', 'approved')
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
             ->orderByDesc('special_external_gcrequest.spexgc_id')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         $query->transform(function ($item) {
             $item->dateReq = $item->spexgc_datereq->toFormattedDateString();
