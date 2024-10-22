@@ -51,6 +51,7 @@ declare module 'vue' {
     AList: typeof import('ant-design-vue/es')['List']
     AListItem: typeof import('ant-design-vue/es')['ListItem']
     AListItemMeta: typeof import('ant-design-vue/es')['ListItemMeta']
+    Allocation: typeof import('./resources/js/Pages/Treasury/Adjustment/Allocation.vue')['default']
     AllocationAdjustment: typeof import('./resources/js/Pages/Treasury/Dashboard/Adjustment/AllocationAdjustment.vue')['default']
     AltaCita: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/AltaCita.vue')['default']
     AlturasMall: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/AlturasMall.vue')['default']

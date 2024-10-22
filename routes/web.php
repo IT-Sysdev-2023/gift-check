@@ -356,6 +356,13 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('adjustment')->name('adjustment.')->group(function () {
 
             Route::get('allocation', [AdjustmentController::class, 'allocationAdjustment'])->name('allocation');
+            
+            Route::prefix('allocation')->name('allocation.')->group(function () {
+                Route::get('allocation-setup', [AdjustmentController::class, 'allocationSetup'])->name('allocationSetup');
+                Route::post('allocation-setup-submission', [AdjustmentController::class, 'allocationSetupStore'])->name('setupSubmission');
+            });
+            
+            
             Route::get('allocation-details-{id}', [AdjustmentController::class, 'viewAllocationAdjustment'])->name('viewAllocation');
             
             Route::get('budget-adjustment', [AdjustmentController::class, 'budgetAdjustments'])->name('budgetAdjustments');
