@@ -68,8 +68,7 @@ const setActiveTab = computed(() => {
                     Special External Setup
                 </Link>
             </a-menu-item>
-            <a-menu-item key="treasury.masterfile.paymentFundSetup"
-                >
+            <a-menu-item key="treasury.masterfile.paymentFundSetup">
                 <Link :href="route('treasury.masterfile.paymentFundSetup')">
                     Payment Fund Setup
                 </Link></a-menu-item
@@ -104,7 +103,15 @@ const setActiveTab = computed(() => {
                         >
                     </span></a-menu-item
                 >
-                <a-menu-item key="menu-item-envelope">Envelope</a-menu-item>
+                <a-menu-item key="treasury.transactions.production.envelope">
+                    <Link
+                        :href="
+                            route('treasury.transactions.production.envelope')
+                        "
+                    >
+                        Envelope</Link
+                    ></a-menu-item
+                >
             </a-sub-menu>
             <a-menu-item key="treasury.transactions.gcallocation.index"
                 ><Link
@@ -177,8 +184,7 @@ const setActiveTab = computed(() => {
                     <span>Adjustments</span>
                 </span>
             </template>
-            <a-menu-item key="treasury.adjustment.budgetAdjustments"
-                >
+            <a-menu-item key="treasury.adjustment.budgetAdjustments">
                 <Link :href="route('treasury.adjustment.budgetAdjustments')">
                     Budget Adjustments</Link
                 ></a-menu-item

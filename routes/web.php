@@ -281,6 +281,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('gift-check', [ProductionRequestController::class, 'giftCheck'])->name('gc');
                 Route::post('store-gift-check', [ProductionRequestController::class, 'giftCheckStore'])->name('gcSubmit');
                 Route::get('envelope', [ProductionRequestController::class, 'envelope'])->name('envelope');
+                Route::post('envelope-store', [ProductionRequestController::class, 'envelopeStore'])->name('envelopSubmission');
                 Route::get('accept-production-request-{id}', [ProductionRequestController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
             });
 
