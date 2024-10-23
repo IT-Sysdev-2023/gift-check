@@ -46,6 +46,7 @@ declare module 'vue' {
     AList: typeof import('ant-design-vue/es')['List']
     AListItem: typeof import('ant-design-vue/es')['ListItem']
     AListItemMeta: typeof import('ant-design-vue/es')['ListItemMeta']
+    Allocation: typeof import('./resources/js/Pages/Treasury/Adjustment/Allocation.vue')['default']
     AllocationAdjustment: typeof import('./resources/js/Pages/Treasury/Dashboard/Adjustment/AllocationAdjustment.vue')['default']
     AltaCita: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/AltaCita.vue')['default']
     AlturasMall: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/AlturasMall.vue')['default']
@@ -118,7 +119,11 @@ declare module 'vue' {
     BarcodeChecker: typeof import('./resources/js/Pages/Custodian/BarcodeChecker.vue')['default']
     BarcodeForm: typeof import('./resources/js/Pages/Custodian/Partials/BarcodeForm.vue')['default']
     BarcodeOutlined: typeof import('@ant-design/icons-vue')['BarcodeOutlined']
+<<<<<<< HEAD
     BranchesOutlined: typeof import('@ant-design/icons-vue')['BranchesOutlined']
+=======
+    BudgetAdjustment: typeof import('./resources/js/Pages/Treasury/Adjustment/BudgetAdjustment.vue')['default']
+>>>>>>> main
     BudgetLedger: typeof import('./resources/js/Pages/Finance/BudgetLedger.vue')['default']
     BudgetLedgerResult: typeof import('./resources/js/Pages/Documents/BudgetLedgerResult.vue')['default']
     BudgetRequest: typeof import('./resources/js/Pages/Treasury/Transactions/BudgetRequest.vue')['default']
@@ -161,9 +166,13 @@ declare module 'vue' {
     Dropdown: typeof import('./resources/js/Components/Dropdown.vue')['default']
     DropdownLink: typeof import('./resources/js/Components/DropdownLink.vue')['default']
     Edit: typeof import('./resources/js/Pages/Profile/Edit.vue')['default']
+<<<<<<< HEAD
     EditFilled: typeof import('@ant-design/icons-vue')['EditFilled']
     EditOutlined: typeof import('@ant-design/icons-vue')['EditOutlined']
     EditTwoTone: typeof import('@ant-design/icons-vue')['EditTwoTone']
+=======
+    Envelope: typeof import('./resources/js/Pages/Treasury/Transactions/ProductionRequest/Envelope.vue')['default']
+>>>>>>> main
     EodDashboard: typeof import('./resources/js/Pages/Eod/EodDashboard.vue')['default']
     EodList: typeof import('./resources/js/Pages/Eod/Cards/EodList.vue')['default']
     EodListTreasury: typeof import('./resources/js/Pages/Treasury/Dashboard/Eod/EodListTreasury.vue')['default']
@@ -195,7 +204,7 @@ declare module 'vue' {
     GcReceivingIndex: typeof import('./resources/js/Pages/Iad/GcReceivingIndex.vue')['default']
     GcReleasingView: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGc/Components/GcReleasingView.vue')['default']
     GcSalesReport: typeof import('./resources/js/Pages/Treasury/Dashboard/Eod/GcSalesReport.vue')['default']
-    GiftCheck: typeof import('./resources/js/Pages/Treasury/Transactions/GiftCheck.vue')['default']
+    GiftCheck: typeof import('./resources/js/Pages/Treasury/Transactions/ProductionRequest/GiftCheck.vue')['default']
     GiftCheckGenerateResult: typeof import('./resources/js/Pages/Custodian/Result/GiftCheckGenerateResult.vue')['default']
     GroupOutlined: typeof import('@ant-design/icons-vue')['GroupOutlined']
     GuestLayout: typeof import('./resources/js/Layouts/GuestLayout.vue')['default']
@@ -204,6 +213,12 @@ declare module 'vue' {
     HomeOutlined: typeof import('@ant-design/icons-vue')['HomeOutlined']
     IadDashboard: typeof import('./resources/js/Pages/Iad/IadDashboard.vue')['default']
     IadSideBar: typeof import('./resources/js/Components/IadSideBar.vue')['default']
+<<<<<<< HEAD
+=======
+    IdcardOutlined: typeof import('@ant-design/icons-vue')['IdcardOutlined']
+    ImportOutlined: typeof import('@ant-design/icons-vue')['ImportOutlined']
+    InboxOutlined: typeof import('@ant-design/icons-vue')['InboxOutlined']
+>>>>>>> main
     InfoCircleOutlined: typeof import('@ant-design/icons-vue')['InfoCircleOutlined']
     InputError: typeof import('./resources/js/Components/InputError.vue')['default']
     InputLabel: typeof import('./resources/js/Components/InputLabel.vue')['default']
@@ -276,6 +291,7 @@ declare module 'vue' {
     PromoGcReleasingModal: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/Components/PromoGcReleasingModal.vue')['default']
     PromoGcRequest: typeof import('./resources/js/Pages/Marketing/PromoGcRequest.vue')['default']
     PromoGcRequestCard: typeof import('./resources/js/Pages/RetailGroup/Cards/PromoGcRequestCard.vue')['default']
+    PromoGcViewCard: typeof import('./resources/js/Pages/Finance/Cards/PromoGcViewCard.vue')['default']
     PromoGCViewCard: typeof import('./resources/js/Pages/Finance/Cards/PromoGCViewCard.vue')['default']
     PromoList: typeof import('./resources/js/Pages/Marketing/PromoList.vue')['default']
     PromoRequestTable: typeof import('./resources/js/Pages/Finance/Tables/PromoRequestTable.vue')['default']

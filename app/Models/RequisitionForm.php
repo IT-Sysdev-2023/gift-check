@@ -16,8 +16,18 @@ class RequisitionForm extends Model
 
     protected $table = 'requisition_form';
 
+    protected function casts()
+    {
+
+        return [
+            'trans_date' => 'datetime',
+            'pur_date' => 'datetime'
+        ];
+    }
+
+
     public function requisFormDenom()
     {
-        return $this->hasMany(RequisitionFormDenomination::class, 'form_id' ,'req_no');
+        return $this->hasMany(RequisitionFormDenomination::class, 'form_id', 'req_no');
     }
 }

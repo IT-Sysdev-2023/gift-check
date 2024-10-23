@@ -33,7 +33,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 class AdminController extends Controller
 {
-    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction) {}
+    public function __construct(public AdminServices $adminservices) {}
 
     public function index()
     {
@@ -69,20 +69,19 @@ class AdminController extends Controller
     public function purchaseOrderDetails()
     {
         return inertia('Admin/PurchaseOrderDetails', [
-            'denomination' => $this->adminservices->denomination(),
-            'supplier' => $this->adminservices->supplier(),
             'columns' => ColumnHelper::$purchase_details_columns,
             'record' => $this->adminservices->purchaseOrderDetails(),
+            'podetails' => $this->adminservices->getpodetailsDatabase(),
         ]);
     }
-    public function submitPurchaseOrders(PurchaseOrderRequest $request)
-    {
-        $denomination = collect($request->denom)->filter(function ($item) {
-            return $item !== null;
-        });
+    // public function submitPurchaseOrders(PurchaseOrderRequest $request)
+    // {
+    //     $denomination = collect($request->denom)->filter(function ($item) {
+    //         return $item !== null;
+    //     });
 
-        return $this->dBTransaction->createPruchaseOrders($request, $denomination);
-    }
+    //     return $this->dBTransaction->createPruchaseOrders($request, $denomination);
+    // }
 
     public function userlist(Request $request)
     {
@@ -539,6 +538,7 @@ class AdminController extends Controller
         ]);
     }
 
+<<<<<<< HEAD
     public function saveUser(Request $request)
     {
         // dd($request->all());
@@ -550,6 +550,17 @@ class AdminController extends Controller
             'password' => 'required',
             'store_id' => 'required',
             'usertype' => 'required',
+=======
+    public function setupPurchaseOrders($name)
+    {
+
+        $data = $this->adminservices->getPoDetailsTextfiles($name);
+
+        return inertia('Admin/SetupPurchaseOrders', [
+            'record' =>  $data,
+            'denom' => $this->adminservices->getDenomination($data->denom),
+            'title' => $name,
+>>>>>>> main
         ]);
        
         $storeStaff = StoreStaff::where('ss_username', $request->username)->first();
@@ -1159,5 +1170,10 @@ class AdminController extends Controller
             'error',
             'ERROR'
         );
+    }
+
+    public function submitPurchaseOrdersToIad(Request $request)
+    {
+        return $this->adminservices->submitOrderPurchase($request);
     }
 }

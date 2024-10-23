@@ -2,7 +2,9 @@
 
 namespace App;
 
+use App\Models\AllocationAdjustment;
 use App\Models\ApprovedGcrequest;
+use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
 use App\Models\CustodianSrr;
 use App\Models\Denomination;
@@ -16,9 +18,10 @@ use App\Models\PromoGcReleaseToDetail;
 use App\Models\PromoGcRequest;
 use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
-use App\Services\Finance\FinanceDashboardService;
 use App\Services\Treasury\Dashboard\DashboardService;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Concurrency;
+use Illuminate\Http\Request;
 
 class DashboardClass extends DashboardService
 {
@@ -26,25 +29,62 @@ class DashboardClass extends DashboardService
      * Create a new class instance.
      */
 
-    public function __construct() {}
-    public function treasuryDashboard()
+    public function __construct()
     {
+    }
+    public function treasuryDashboard(Request $request)
+    {
+        $type = $request->user()?->usertype;
+        [
+            $totalBudget,
+            $regularBudget,
+            $specialBudget,
+            $promoGcReleased,
+            $budgetRequest,
+            $storeGcRequest,
+            $institutionGcSales,
+            $gcProductionRequest,
+            $adjustments,
+            $specialGcRequest,
+            $eod,
+            $productionRequest
+        ] = Concurrency::run([
+                        fn() => $this->budget(),
+                        fn() => LedgerBudget::regularBudget(),
+                        fn() => LedgerBudget::specialBudget(),
+                        fn() => PromoGcReleaseToDetail::count(),
+                        fn() => $this->budgetRequestTreasury($type),
+                        fn() => $this->storeGcRequest(),
+                        fn() => InstitutTransaction::count(),
+                        fn() => $this->gcProductionRequest($type),
+                        fn() => $this->adjustments(),
+                        fn() => $this->specialGcRequest(),
+                        fn() => InstitutEod::count(),
+                        fn() => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
+            ]);
         return [
             'budget' => (object) [
-                'totalBudget' => $this->budget(),
-                'regularBudget' => LedgerBudget::regularBudget(),
-                'specialBudget' => LedgerBudget::specialBudget(),
+                'totalBudget' => $totalBudget,
+                'regularBudget' => $regularBudget,
+                'specialBudget' => $specialBudget,
             ],
-            'budgetRequest' => $this->budgetRequestTreasury(),
-            'storeGcRequest' => $this->storeGcRequest(),
-            'promoGcReleased' => PromoGcReleaseToDetail::count(),
-            'institutionGcSales' => InstitutTransaction::count(),
-            'gcProductionRequest' => $this->gcProductionRequest(),
-            'adjustment' => $this->adjustments(),
-            'specialGcRequest' => $this->specialGcRequest(), //Duplicated above use Spatie Permission instead
-
-            'eod' => InstitutEod::count(),
-            'productionRequest' => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
+            'budgetRequest' => (object) [
+                'pending' => $budgetRequest->pending,
+                'approved' => $budgetRequest->approved,
+                'cancelled' => $budgetRequest->cancelled
+            ],
+            'storeGcRequest' => (object) [
+                'pending' => $storeGcRequest->pending,
+                'released' => $storeGcRequest->released,
+                'cancelled' => $storeGcRequest->cancelled
+            ],
+            'promoGcReleased' => $promoGcReleased,
+            'institutionGcSales' => $institutionGcSales,
+            'gcProductionRequest' => $gcProductionRequest,
+            'adjustment' => $adjustments,
+            'specialGcRequest' => $specialGcRequest,
+            'eod' => $eod,
+            'productionRequest' => $productionRequest
         ];
     }
 
@@ -121,7 +161,7 @@ class DashboardClass extends DashboardService
             ],
             'budgetCounts' => [
                 'curBudget' => $debitTotal - $creditTotal,
-                'dti' =>  $dtiDebitTotal - $dtiCreditTotal,
+                'dti' => $dtiDebitTotal - $dtiCreditTotal,
                 'spgc' => $spgcDebitTotal - $spgcreditTotal,
             ],
 
@@ -156,7 +196,7 @@ class DashboardClass extends DashboardService
         return [
             'countReceiving' => RequisitionForm::where('used', null)->count(),
 
-            'reviewedCount' =>  SpecialExternalGcrequest::join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+            'reviewedCount' => SpecialExternalGcrequest::join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
                 ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
                 ->where('spexgc_reviewed', 'reviewed')
                 ->where('reqap_approvedtype', 'Special External GC Approved')->count(),
@@ -176,7 +216,7 @@ class DashboardClass extends DashboardService
                 ->orderByDesc('spexgc_num')
                 ->count(),
 
-            'countApproved' =>   SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+            'countApproved' => SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
                 ->selectFilterApproved()
                 ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
                 ->where('spexgc_status', 'approved')

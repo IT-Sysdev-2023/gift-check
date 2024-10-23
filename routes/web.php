@@ -36,6 +36,7 @@ use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Controllers\UserDetailsController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -50,8 +51,13 @@ Route::get('/not-found', function () {
 })->name('not.found');
 
 Route::fallback(function () {
-    return view('notFoundMeme');
+    return view('notFound');
 });
+Route::get('kanding', function () {
+    return Storage::disk('fad')->files();
+});
+
+
 
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::get('employee', [UserDetailsController::class, 'index']);
@@ -95,6 +101,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+<<<<<<< HEAD
 Route::prefix('admin')->group(function () {
     Route::name('admin.')->group(function () {
         Route::get('add-new-fund',[AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
@@ -125,11 +132,32 @@ Route::prefix('admin')->group(function () {
             route::post('update-user',[AdminController::class, 'updateUser'])->name('updateUser');
             route::post('update-revolvingfund', [AdminController::class, 'updateRevolvingFund'])->name('updateRevolvingFund');
             route::post('update-special-customer', [AdminController::class, 'updateSpecialCustomer'])->name('updateSpecialCustomer');
+=======
+Route::prefix('admin')->name('admin.')->group(function () {
+
+    Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
+    Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
+    Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po')->middleware([HandlePrecognitiveRequests::class]);
+    Route::get('edit-po-{id}', [AdminController::class, 'editPoDetails'])->name('edit.po');
+>>>>>>> main
 
 
         });
         Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
     });
+<<<<<<< HEAD
+=======
+
+    Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
+    Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');
+
+
+    Route::get('setup-po-{any}', [AdminController::class, 'setupPurchaseOrders'])->name('setup');
+
+    Route::post('submit-po-to-iad', [AdminController::class, 'submitPurchaseOrdersToIad'])->name('submit.po.to.iad')->middleware([HandlePrecognitiveRequests::class]);
+
+
+>>>>>>> main
 });
 
 
@@ -212,7 +240,8 @@ Route::prefix('marketing')->group(function () {
         Route::name('special-gc.')->group(function () {
             Route::get('pending', [MarketingController::class, 'pendingspgclist'])->name('pending');
             Route::get('pending-view-details', [MarketingController::class, 'pendingspgclistview'])->name('pending.view');
-            Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest'])->name('aexgcreq');
+            Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest']) ->name('aexgcreq');
+            Route::get('selected-approved-external-gc-request', [MarketingController::class, 'selectedApprovedExternalGcRequest']) ->name('selectedaexgcreq');
         });
     });
 });
@@ -298,6 +327,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('gift-check', [ProductionRequestController::class, 'giftCheck'])->name('gc');
                 Route::post('store-gift-check', [ProductionRequestController::class, 'giftCheckStore'])->name('gcSubmit');
                 Route::get('envelope', [ProductionRequestController::class, 'envelope'])->name('envelope');
+                Route::post('envelope-store', [ProductionRequestController::class, 'envelopeStore'])->name('envelopSubmission');
                 Route::get('accept-production-request-{id}', [ProductionRequestController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
             });
 
@@ -372,7 +402,17 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('adjustment')->name('adjustment.')->group(function () {
 
             Route::get('allocation', [AdjustmentController::class, 'allocationAdjustment'])->name('allocation');
+            
+            Route::prefix('allocation')->name('allocation.')->group(function () {
+                Route::get('allocation-setup', [AdjustmentController::class, 'allocationSetup'])->name('allocationSetup');
+                Route::post('allocation-setup-submission', [AdjustmentController::class, 'allocationSetupStore'])->name('setupSubmission');
+            });
+            
+            
             Route::get('allocation-details-{id}', [AdjustmentController::class, 'viewAllocationAdjustment'])->name('viewAllocation');
+            
+            Route::get('budget-adjustment', [AdjustmentController::class, 'budgetAdjustments'])->name('budgetAdjustments');
+            Route::post('budget-adjustment-submission', [AdjustmentController::class, 'storeBudgetAdjustment'])->name('budgetAdjustmentSubmission');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
@@ -565,6 +605,10 @@ Route::middleware('auth')->group(function () {
         });
         Route::get('details-{id}', [IadController::class, 'details'])->name('details');
         Route::put('approve-budget-{id}', [IadController::class, 'approveBudget'])->name('approve');
+
+        Route::name('audit')->group(function (){
+            Route::get('audit-store', [IadController::class, 'auditStore'])->name('store');
+        });
     });
 });
 

@@ -90,11 +90,6 @@
                                 @pending-event="specialGcPending"
                                 @approved-event="approvedRequest"
                             >
-                                <!-- <CardBadge
-                                    :count="data?.specialGcRequest?.reviewed"
-                                    title="Reviewed GC for Releasing(External)"
-                                    @event="reviewedGcReleasing"
-                                /> -->
                                 <CardBadge
                                     :count="data?.specialGcRequest?.released"
                                     title="Released GC"
@@ -111,6 +106,7 @@
                                     <CardBadge
                                         :count="data?.adjustment?.budget"
                                         title="Budget Adjustment"
+                                         @event="budgetAdjustments"
                                     />
                                     <CardBadge
                                         :count="data?.adjustment?.allocation"
@@ -177,7 +173,6 @@ defineProps<{
             pending: number;
             approved: number;
             cancelled: number;
-            reviewed: number;
             released: number;
             internalReviewed: number
         };
@@ -224,6 +219,8 @@ const reviewedGcReleasing = () => routeTo("special.gc", "reviewedGcReleasing")
 const approvedRequest = () => routeTo("special.gc", "approvedRequest")
 
 //Adjustment
+const budgetAdjustments = () => routeTo('adjustment', 'budgetAdjustments')
+
 const allocationAdjustment = () => routeTo('adjustment', 'allocation')
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");
