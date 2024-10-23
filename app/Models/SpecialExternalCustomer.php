@@ -14,14 +14,9 @@ class SpecialExternalCustomer extends Model
     protected $guarded = [];
     protected $table = 'special_external_customer';
 
-<<<<<<< HEAD
-    protected $table = 'special_external_customer';
 
-=======
->>>>>>> gamale
     protected $primaryKey = 'spcus_id';
 
-    protected $guarded = [];
     public $timestamps = false;
 
     public function scopeFilter(Builder $builder, $filter)
@@ -54,8 +49,4 @@ class SpecialExternalCustomer extends Model
     {
         return $this->belongsTo(User::class, 'spcus_by', 'user_id');
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> gamale
 }

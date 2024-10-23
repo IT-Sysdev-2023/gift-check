@@ -115,7 +115,9 @@ Route::prefix('admin')->group(function () {
         Route::post('update-institute-customer', [AdminController::class, 'updateInstituteCustomer'])->name('masterfile.UpdateInstituteCustomer');
         Route::get('store-staff-setup', [AdminController::class, 'storeSetup'])->name('masterfile.store.staff');
         Route::get('save-user', [AdminController::class, 'saveUser'])->name('masterfile.store.saveUser');
+
         Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
+
         Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
         Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
         Route::name('masterfile.')->group(function () {
@@ -131,12 +133,10 @@ Route::prefix('admin')->group(function () {
             route::post('update-user', [AdminController::class, 'updateUser'])->name('updateUser');
             route::post('update-revolvingfund', [AdminController::class, 'updateRevolvingFund'])->name('updateRevolvingFund');
             route::post('update-special-customer', [AdminController::class, 'updateSpecialCustomer'])->name('updateSpecialCustomer');
-            Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
-            Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
             Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po')->middleware([HandlePrecognitiveRequests::class]);
             Route::get('edit-po-{id}', [AdminController::class, 'editPoDetails'])->name('edit.po');
         });
-        
+
         Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
         Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
         Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');

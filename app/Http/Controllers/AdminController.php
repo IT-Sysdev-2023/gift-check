@@ -199,7 +199,7 @@ class AdminController extends Controller
                         13,
                         'cfs'
                     ];
-                 
+
                     $is_in_non_required = in_array($usertype, $non_required_usertypes);
 
                     $is_required = in_array($usertype, ['7', 'retailstore', 'store_accounting', '14']) ||
@@ -431,7 +431,7 @@ class AdminController extends Controller
 
             return back()->with(
                 'success',
-                'SUCCESS' 
+                'SUCCESS'
             );
         }
         return back()->with([
@@ -471,10 +471,10 @@ class AdminController extends Controller
             );
         }
     }
-    public function eodReports()
+    public function eodReports(Request $request)
     {
         return inertia('Admin/EodReports', [
-            'record' => $this->adminservices->getEodDateRange()
+            'record' => $this->adminservices->getEodDateRange($request)
         ]);
     }
     public function storeSetup(Request $request)
@@ -538,7 +538,6 @@ class AdminController extends Controller
         ]);
     }
 
-<<<<<<< HEAD
     public function saveUser(Request $request)
     {
         // dd($request->all());
@@ -550,19 +549,8 @@ class AdminController extends Controller
             'password' => 'required',
             'store_id' => 'required',
             'usertype' => 'required',
-=======
-    public function setupPurchaseOrders($name)
-    {
-
-        $data = $this->adminservices->getPoDetailsTextfiles($name);
-
-        return inertia('Admin/SetupPurchaseOrders', [
-            'record' =>  $data,
-            'denom' => $this->adminservices->getDenomination($data->denom),
-            'title' => $name,
->>>>>>> main
         ]);
-       
+
         $storeStaff = StoreStaff::where('ss_username', $request->username)->first();
         if($storeStaff){
             return back()->with(
@@ -648,7 +636,7 @@ class AdminController extends Controller
             ->leftJoin('institut_customer', 'cus_id', '=', 'institut_customer.ins_id')
             ->leftJoin('special_external_customer', 'cus_id', '=', 'special_external_customer.spcus_id')
             ->leftJoin('stores', 'cus_store_register', '=', 'stores.store_id');
-            
+
 
 
         if ($searchTerm) {
