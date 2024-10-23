@@ -96,8 +96,6 @@ class AdjustmentController extends Controller
             'denomination' => ['required', 'array', new DenomQty()],
         ]);
 
-
-        // dd($request->denomination);
         try {
 
             DB::transaction(function () use ($request) {
@@ -167,8 +165,6 @@ class AdjustmentController extends Controller
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong');
-
-
         }
     }
 }
