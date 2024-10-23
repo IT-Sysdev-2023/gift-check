@@ -21,6 +21,7 @@ use App\Models\User;
 use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Concurrency;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
@@ -493,5 +494,53 @@ class IadServices extends FileHandler
         }
 
         return $budget;
+    }
+
+    public function getAuditStore($request)
+    {
+        $begbal = DB::table('gc')
+            ->selectRaw('SUBSTRING(gc.barcode_no, 1, 3) as barcode, COUNT(gc.barcode_no) as count')
+            ->distinct()
+            ->join('custodian_srr_items as items', 'items.cssitem_barcode', '=', 'gc.barcode_no')
+            ->join('custodian_srr as srr', 'srr.csrr_id', '=', 'items.cssitem_recnum')
+            ->where('gc.gc_validated', '*')
+            ->where('gc.gc_allocated', '')
+            ->where('gc.gc_treasury_release', '')
+            ->where('gc.gc_ispromo', '')
+            ->where('srr.csrr_id', '>=', 14)
+            ->groupBy(DB::raw('SUBSTRING(gc.barcode_no, 1, 3)'))
+            ->get();
+
+            dd($begbal);
+
+        $date = [$request->date[0], $request->date[1]];
+
+        [$addedGiftCheck] = Concurrency::run([
+            fn() => Gc::select('barcode_no', 'gc.denom_id', 'denomination.denom_id', 'denomination')
+                ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+                ->where('gc_validated', '')
+                ->where('gc_allocated', '')
+                ->where('gc_ispromo', '')
+                ->where('gc_treasury_release', '')
+                ->where('pe_entry_gc', '>=', '14')
+                ->whereBetween('date', $date)
+                ->get()
+                ->groupBy('denom_id'),
+        ]);
+
+        $addedGiftCheck->transform(function ($item) {
+            return (object) [
+                'count' => $item->count(),
+                'barcodest' => $item->first()->barcode_no,
+                'barcodelt' => $item->last()->barcode_no,
+                'denom' => $item->first()->denomination,
+                'subtotal' => $item->count() * $item->first()->denomination,
+            ];
+        });
+
+        return (object) [
+            'addedgc' => $addedGiftCheck->values(),
+            'addedgcTotal' => $addedGiftCheck->sum('subtotal'),
+        ];
     }
 }

@@ -130,5 +130,10 @@ class IadController extends Controller
             'record' => $this->iadServices->getDetails($id),
         ]);
     }
-    
+    public function auditStore(Request $request){
+        return inertia('Iad/AuditStore', [
+            'record' => $this->iadServices->getAuditStore($request),
+        ]);
+    }
+
 }

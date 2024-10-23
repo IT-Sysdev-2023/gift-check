@@ -128,6 +128,7 @@ declare module 'vue' {
     ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
     AuditOutlined: typeof import('@ant-design/icons-vue')['AuditOutlined']
+    AuditStore: typeof import('./resources/js/Pages/Iad/AuditStore.vue')['default']
     AUpload: typeof import('ant-design-vue/es')['Upload']
     AUploadDragger: typeof import('ant-design-vue/es')['UploadDragger']
     AuthenticatedLayout: typeof import('./resources/js/Layouts/AuthenticatedLayout.vue')['default']
