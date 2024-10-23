@@ -13,6 +13,8 @@ class AllocationAdjustment extends Model
     protected $table = 'allocation_adjustment';
     protected $primaryKey = 'aadj_id';
 
+    protected $guarded = [];
+    public $timestamps = false;
     protected function casts(): array
     {
         return [

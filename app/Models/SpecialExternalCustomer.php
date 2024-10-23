@@ -10,12 +10,13 @@ use Illuminate\Database\Eloquent\Builder;
 class SpecialExternalCustomer extends Model
 {
     use HasFactory;
-
+    const UPDATED_AT = 'spcus_at';
+    protected $guarded = [];
     protected $table = 'special_external_customer';
+
 
     protected $primaryKey = 'spcus_id';
 
-    protected $guarded = [];
     public $timestamps = false;
 
     public function scopeFilter(Builder $builder, $filter)
@@ -48,5 +49,4 @@ class SpecialExternalCustomer extends Model
     {
         return $this->belongsTo(User::class, 'spcus_by', 'user_id');
     }
-
 }

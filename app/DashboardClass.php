@@ -2,7 +2,9 @@
 
 namespace App;
 
+use App\Models\AllocationAdjustment;
 use App\Models\ApprovedGcrequest;
+use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
 use App\Models\CustodianSrr;
 use App\Models\Denomination;
@@ -16,9 +18,10 @@ use App\Models\PromoGcReleaseToDetail;
 use App\Models\PromoGcRequest;
 use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
-use App\Services\Finance\FinanceDashboardService;
 use App\Services\Treasury\Dashboard\DashboardService;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Concurrency;
+use Illuminate\Http\Request;
 
 class DashboardClass extends DashboardService
 {
@@ -26,8 +29,10 @@ class DashboardClass extends DashboardService
      * Create a new class instance.
      */
 
-    public function __construct() {}
-    public function treasuryDashboard()
+    public function __construct()
+    {
+    }
+    public function treasuryDashboard(Request $request)
     {
         return [
             'budget' => (object) [
@@ -121,7 +126,7 @@ class DashboardClass extends DashboardService
             ],
             'budgetCounts' => [
                 'curBudget' => $debitTotal - $creditTotal,
-                'dti' =>  $dtiDebitTotal - $dtiCreditTotal,
+                'dti' => $dtiDebitTotal - $dtiCreditTotal,
                 'spgc' => $spgcDebitTotal - $spgcreditTotal,
             ],
 
@@ -156,7 +161,7 @@ class DashboardClass extends DashboardService
         return [
             'countReceiving' => RequisitionForm::where('used', null)->count(),
 
-            'reviewedCount' =>  SpecialExternalGcrequest::join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+            'reviewedCount' => SpecialExternalGcrequest::join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
                 ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
                 ->where('spexgc_reviewed', 'reviewed')
                 ->where('reqap_approvedtype', 'Special External GC Approved')->count(),
@@ -176,7 +181,7 @@ class DashboardClass extends DashboardService
                 ->orderByDesc('spexgc_num')
                 ->count(),
 
-            'countApproved' =>   SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+            'countApproved' => SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
                 ->selectFilterApproved()
                 ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
                 ->where('spexgc_status', 'approved')
