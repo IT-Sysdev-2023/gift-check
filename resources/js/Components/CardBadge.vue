@@ -1,6 +1,6 @@
 <script setup lang="ts">
 export interface Props {
-    count: number | undefined;
+    count: number | undefined | string;
     title: string;
     color?: string;
     type?: string;
@@ -34,3 +34,4 @@ withDefaults(defineProps<Props>(), {
         </a-alert>
     </a-badge>
 </template>
+<!-- norien caren -->
