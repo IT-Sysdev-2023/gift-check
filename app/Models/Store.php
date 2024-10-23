@@ -11,6 +11,5 @@ class Store extends Model
     protected $guarded = [];
 
     protected $primaryKey = 'store_id';
-
-
+    public $timestamps = false;
 }
