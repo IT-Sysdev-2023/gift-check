@@ -19,7 +19,7 @@ use Inertia\Inertia;
 
 class AdminController extends Controller
 {
-    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction) {}
+    public function __construct(public AdminServices $adminservices) {}
 
     public function index()
     {
@@ -58,14 +58,14 @@ class AdminController extends Controller
             'podetails' => $this->adminservices->getpodetailsDatabase(),
         ]);
     }
-    public function submitPurchaseOrders(PurchaseOrderRequest $request)
-    {
-        $denomination = collect($request->denom)->filter(function ($item) {
-            return $item !== null;
-        });
+    // public function submitPurchaseOrders(PurchaseOrderRequest $request)
+    // {
+    //     $denomination = collect($request->denom)->filter(function ($item) {
+    //         return $item !== null;
+    //     });
 
-        return $this->dBTransaction->createPruchaseOrders($request, $denomination);
-    }
+    //     return $this->dBTransaction->createPruchaseOrders($request, $denomination);
+    // }
 
     public function userlist()
     {
@@ -167,6 +167,6 @@ class AdminController extends Controller
 
     public function submitPurchaseOrdersToIad(Request $request)
     {
-        return $this->dBTransaction->createPruchaseOrders($request);
+        return $this->adminservices->submitOrderPurchase($request);
     }
 }

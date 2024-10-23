@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Helpers\NumberHelper;
 use App\Models\Denomination;
 use App\Models\RequisitionForm;
 use App\Models\RequisitionFormDenomination;
@@ -12,55 +13,49 @@ class DBTransaction
 {
     public function createPruchaseOrders($request)
     {
-        $tranDate = Carbon::createFromFormat('d/m/Y', $request->data['data']['transdate']);
 
-        $transdateF = $tranDate->format('Y-m-d');
-
-        $purDate =  Carbon::createFromFormat('d/m/Y', $request->data['data']['purdate']);
-
-        $purDateF = $purDate->format('Y-m-d');
-
-        dd($request->data['data']);
-
-        DB::transaction(function () use ($request, $transdateF, $purDateF) {
+        DB::transaction(function () use ($request) {
 
             RequisitionForm::create([
                 'req_no' => $request->reqno,
-                'sup_name' => $request->data['data']['supname'],
-                'mop' => $request->data['data']['mop'],
-                'rec_no' =>  $request->data['data']['recno'],
-                'trans_date' => $transdateF,
-                'ref_no' => $request->data['data']['refno'],
-                'po_no' => $request->data['data']['pon'],
-                'pay_terms' => $request->data['data']['payterms'],
-                'loc_code' => $request->data['data']['locode'],
-                'pur_date' => $purDateF,
-                'ref_po_no' => $request->data['data']['refpon'],
-                'dep_code' => $request->data['data']['depcode'],
-                'remarks' => $request->data['data']['remarks'],
-                'prep_by' => $request->data['data']['prepby'],
-                'check_by' => $request->data['data']['checkby'],
-                'srr_type' => $request->data['data']['srrtype'],
+                'sup_name' => $request->record['data']['supname'],
+                'mop' => $request->record['data']['mop'],
+                'rec_no' =>  $request->record['data']['recno'],
+                'trans_date' => self::formattedDate($request->record['data']['transdate']),
+                'ref_no' => $request->record['data']['refno'],
+                'po_no' => $request->record['data']['pon'],
+                'pay_terms' => $request->record['data']['payterms'],
+                'loc_code' => $request->record['data']['locode'],
+                'pur_date' => self::formattedDate($request->record['data']['purdate']),
+                'ref_po_no' => $request->record['data']['refpon'],
+                'dep_code' => $request->record['data']['depcode'],
+                'remarks' => $request->record['data']['remarks'],
+                'prep_by' => $request->record['data']['prepby'],
+                'check_by' => $request->record['data']['checkby'],
+                'srr_type' => $request->record['data']['srrtype'],
             ]);
 
-            collect($request->denom)->each(function ($item) use ($request) {
 
+
+            collect($request->denom)->each(function ($item) use (&$request) {
                 if ($item['qty'] !== '0') {
                     RequisitionFormDenomination::create([
                         'form_id' => $request->reqno,
                         'denom_no' => $item['denom_fad_item_number'],
-                        'quantity' => $item['qty'],
+                        'quantity' => NumberHelper::float($item['qty']),
                     ]);
                 };
-
             });
         });
-        dd();
 
-        return back()->with([
-            'title' => 'Success',
-            'msg' => 'Successfully Added Po Details',
-            'status' => 'success'
-        ]);
+        return true;
+    }
+
+    private static function formattedDate($date)
+    {
+
+        $explode = explode('/', $date);
+
+        return $explode[2] . '-' . $explode[0] . '-' . $explode[1];
     }
 }

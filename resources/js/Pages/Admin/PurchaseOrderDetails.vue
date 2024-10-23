@@ -2,22 +2,27 @@
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
-                <a-card v-for="item in record" class="card" @click="setup(item)">
-                    <div class="flex justify-between">
-                        <div style="cursor: pointer;">
-                            <span style="cursor: pointer; font-weight: bold;">
-                                <FileTextOutlined /> &nbsp; {{ item }}
-                            </span>
-                        </div>
-                        <div>
-                            <ArrowRightOutlined style="cursor: pointer;" />
-                        </div>
-                    </div>
-                </a-card>
+                <a-list item-layout="horizontal" :data-source="record" @click="setup(record)">
+                    <template #renderItem="{ item }">
+                        <a-card size="small">
+                            <a-list-item>
+                                <a-list-item-meta description="Click Details...">
+                                    <template #title>
+                                        <a>{{ item }}</a>
+                                    </template>
+                                    <template #avatar>
+                                        <PaperClipOutlined />
+                                    </template>
+                                </a-list-item-meta>
+                            </a-list-item>
+                        </a-card>
+                    </template>
+                </a-list>
             </a-col>
             <a-col :span="16">
+                <!-- {{ podetails }} -->
                 <a-card>
-                    <a-table :data-source="podetails" :columns="columns" bordered size="small" :pagination="false"
+                    <a-table :data-source="podetails.data" :columns="columns" bordered size="small" :pagination="false"
                         :rowKey="record => record.id" expandable="{ expandedRowRender }">
                         <template #expandedRowRender="{ record }">
                             <a-card>
@@ -51,12 +56,17 @@
                                         </a-descriptions>
                                         <a-descriptions size="small" layout="horizontal" bordered>
                                             <a-descriptions-item style="width: 50%;" label="Purchase Date">{{
-                                                record.pur_date
+                                                record.purDate
                                                 }}</a-descriptions-item>
                                         </a-descriptions>
                                         <a-descriptions size="small" layout="horizontal" bordered>
                                             <a-descriptions-item style="width: 50%;" label="Transaction Date">{{
-                                                record.trans_date
+                                                record.transDate
+                                                }}</a-descriptions-item>
+                                        </a-descriptions>
+                                        <a-descriptions size="small" layout="horizontal" bordered>
+                                            <a-descriptions-item style="width: 50%;" label="Pay Terms">{{
+                                                record.pay_terms
                                                 }}</a-descriptions-item>
                                         </a-descriptions>
                                         <a-descriptions size="small" layout="horizontal" bordered>
@@ -75,7 +85,7 @@
                                                 }}</a-descriptions-item>
                                         </a-descriptions>
                                         <a-table bordered :pagination="false" size="small" class="mt-2"
-                                            :data-source="record.denomdata" :columns="[
+                                            :data-source="record.requis_form_denom" :columns="[
                                                 {
                                                     title: 'Fad Item No.',
                                                     dataIndex: 'denom_no',
@@ -96,18 +106,20 @@
                             <span style="color: #179BAE">Details</span>
                         </template>
 
-                        <template #bodyCell="{ column, record }">
+                        <!-- <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
-                                <a-button @click="edit(record.id)">
+                                <a-button size="small" type="primary" @click="edit(record.id)">
                                     <ImportOutlined />
                                     Edit
                                 </a-button>
                             </template>
-                        </template>
+                        </template> -->
                     </a-table>
+                    <pagination class="mt-3" :datarecords="podetails"/>
                 </a-card>
             </a-col>
         </a-row>
+        <!-- {{ record }} -->
     </AuthenticatedLayout>
 </template>
 <script setup>

@@ -17,15 +17,28 @@ use Dompdf\Options;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 
 class AdminServices
 {
+
+    public function __construct(public DBTransaction $dBTransaction) {}
     public function purchaseOrderDetails()
     {
-        $files = Storage::disk('fad')->files();
 
-        return collect($files);
+
+        $newFolder  = Storage::disk('fad')->files('New');
+
+        $files = array_map('basename', $newFolder);
+
+        $lazyFiles = LazyCollection::make(function () use ($files) {
+            foreach ($files as $file) {
+                yield $file;
+            }
+        });
+
+        return $lazyFiles;
     }
 
     public function denomination()
@@ -869,15 +882,23 @@ class AdminServices
 
     public function getPoDetailsTextfiles($name)
     {
-        $files = Storage::disk('fad')->get($name);
 
-        $exp = explode("\r\n", $files);
+        $lazy = LazyCollection::make(function () use ($name) {
+
+            $handle = Storage::disk('fad')->readStream('New/' . $name);
+
+            while (($line = fgets($handle)) !== false) {
+                yield $line;
+            }
+
+            fclose($handle);
+        });
 
         $array = [];
 
         $denom = [];
 
-        collect($exp)->each(function ($item, $key) use (&$array, &$denom) {
+        $lazy->each(function ($item, $key) use (&$array, &$denom) {
 
             $insexp = explode('|', $item);
 
@@ -890,12 +911,12 @@ class AdminServices
             $denom[$itemcode] = $insexp[1] ?? null;
         });
 
-        $recordfiltered = collect($array)->filter(function ($item) {
-            return $item !== null;
+        $recordfiltered = collect($array)->filter(function ($item, $key) {
+            return $key !== "";
         });
 
-        $denomfiltered = collect($denom)->filter(function ($item) {
-            return $item !== null;
+        $denomfiltered = collect($denom)->filter(function ($item, $key) {
+            return $key !== "";
         });
 
 
@@ -964,10 +985,44 @@ class AdminServices
 
     public function getpodetailsDatabase()
     {
-        $data = RequisitionForm::get();
+        $data = RequisitionForm::with('requisFormDenom')->orderByDesc('id')->paginate(10)->withQueryString();
 
         $data->transform(function ($item) {
+            $item->purDate = $item->pur_date->toFormattedDateString();
+            $item->transDate = $item->trans_date->toFormattedDateString();
             return $item;
         });
+
+        return $data;
+    }
+
+    public function submitOrderPurchase($request)
+    {
+
+        // dd($request->name);
+        $request->validate([
+            // 'reqno' => 'required|numeric',
+            'reqno' => 'required|numeric|unique:requisition_form,req_no',
+        ]);
+
+        $create = $this->dBTransaction->createPruchaseOrders($request);
+
+
+        if ($create) {
+            if (Storage::disk('fad')->exists('New/' . $request->name)) {
+
+                Storage::disk('fad')->move('New/' . $request->name, 'Used/' . $request->name);
+                return response()->json([
+                    'title' => 'Success',
+                    'msg' => 'Successfully Added Po Details',
+                    'status' => 'success'
+                ]);
+            }
+        }
+        return response()->json([
+            'title' => 'Error',
+            'msg' => 'Failed Added Po Details',
+            'status' => 'error'
+        ]);
     }
 }

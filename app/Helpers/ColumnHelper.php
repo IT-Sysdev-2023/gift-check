@@ -846,11 +846,11 @@ class ColumnHelper
             'title' => 'Srr Type.',
             'dataIndex' => 'srr_type',
         ],
-        [
-            'title' => 'Action.',
-            'key' => 'action',
-            'align' => 'center'
-        ],
+        // [
+        //     'title' => 'Action.',
+        //     'key' => 'action',
+        //     'align' => 'center'
+        // ],
 
 
     ];
