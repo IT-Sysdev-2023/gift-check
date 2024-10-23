@@ -19,7 +19,7 @@ use Inertia\Inertia;
 
 class AdminController extends Controller
 {
-    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction) {}
+    public function __construct(public AdminServices $adminservices) {}
 
     public function index()
     {
@@ -53,20 +53,19 @@ class AdminController extends Controller
     public function purchaseOrderDetails()
     {
         return inertia('Admin/PurchaseOrderDetails', [
-            'denomination' => $this->adminservices->denomination(),
-            'supplier' => $this->adminservices->supplier(),
             'columns' => ColumnHelper::$purchase_details_columns,
             'record' => $this->adminservices->purchaseOrderDetails(),
+            'podetails' => $this->adminservices->getpodetailsDatabase(),
         ]);
     }
-    public function submitPurchaseOrders(PurchaseOrderRequest $request)
-    {
-        $denomination = collect($request->denom)->filter(function ($item) {
-            return $item !== null;
-        });
+    // public function submitPurchaseOrders(PurchaseOrderRequest $request)
+    // {
+    //     $denomination = collect($request->denom)->filter(function ($item) {
+    //         return $item !== null;
+    //     });
 
-        return $this->dBTransaction->createPruchaseOrders($request, $denomination);
-    }
+    //     return $this->dBTransaction->createPruchaseOrders($request, $denomination);
+    // }
 
     public function userlist()
     {
@@ -154,13 +153,20 @@ class AdminController extends Controller
         ]);
     }
 
-    public function setupPurchaseOrders($name){
+    public function setupPurchaseOrders($name)
+    {
+
         $data = $this->adminservices->getPoDetailsTextfiles($name);
 
         return inertia('Admin/SetupPurchaseOrders', [
-            'record' =>  $data ,
+            'record' =>  $data,
             'denom' => $this->adminservices->getDenomination($data->denom),
             'title' => $name,
         ]);
+    }
+
+    public function submitPurchaseOrdersToIad(Request $request)
+    {
+        return $this->adminservices->submitOrderPurchase($request);
     }
 }

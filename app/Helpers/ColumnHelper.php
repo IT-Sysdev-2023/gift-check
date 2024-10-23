@@ -831,31 +831,26 @@ class ColumnHelper
             'dataIndex' => 'sup_name',
         ],
         [
-            'title' => 'Mode Of Payment.',
+            'title' => 'MOP.',
             'dataIndex' => 'mop',
         ],
-        [
-            'title' => 'Transaction Date.',
-            'dataIndex' => 'trans_date',
-        ],
-        [
-            'title' => 'Purchase Date.',
-            'dataIndex' => 'pur_date',
-        ],
+        // [
+        //     'title' => 'Transaction Date.',
+        //     'dataIndex' => 'trans_date',
+        // ],
+        // [
+        //     'title' => 'Purchase Date.',
+        //     'dataIndex' => 'pur_date',
+        // ],
         [
             'title' => 'Srr Type.',
             'dataIndex' => 'srr_type',
         ],
-        [
-            'title' => 'Pay Terms.',
-            'dataIndex' => 'pay_terms',
-            'align' => 'center'
-        ],
-        [
-            'title' => 'Action.',
-            'key' => 'action',
-            'align' => 'center'
-        ],
+        // [
+        //     'title' => 'Action.',
+        //     'key' => 'action',
+        //     'align' => 'center'
+        // ],
 
 
     ];

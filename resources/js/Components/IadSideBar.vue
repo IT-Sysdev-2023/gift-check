@@ -36,5 +36,12 @@ const page = usePage<PageWithSharedProps>().props;
                 </Link>
             </span>
         </a-menu-item>
+        <a-menu-item key="iad">
+            <QrcodeOutlined />
+            <span>
+                <Link :href="route('iad.audit.store')">Audit (Store)
+                </Link>
+            </span>
+        </a-menu-item>
     </div>
 </template>
