@@ -261,7 +261,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('download-document/{file}', [BudgetRequestController::class, 'downloadDocument'])->name('download.document');
 
             Route::get('cancelled-request', [BudgetRequestController::class, 'cancelledRequest'])->name('cancelled');
-            Route::get('view-cancelled-request/{$id}', [BudgetRequestController::class, 'viewCancelledRequest'])->name('view.cancelled');
+            // Route::get('view-cancelled-request/{$id}', [BudgetRequestController::class, 'viewCancelledRequest'])->name('view.cancelled');
         });
         Route::prefix('store-gc')->name('store.gc.')->group(function () {
             Route::get('pending-request', [StoreGcController::class, 'pendingRequestStoreGc'])->name('pending');
