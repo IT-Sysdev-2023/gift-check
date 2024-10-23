@@ -403,7 +403,7 @@ const onSubmit = () => {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
                 if(props.flash.success){
-                    router.get(route("treasury.dashboard"));
+                    router.get(route("treasury.dashboard"))   ;
                 }
             },
         });

@@ -101,19 +101,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-<<<<<<< HEAD
 Route::prefix('admin')->group(function () {
     Route::name('admin.')->group(function () {
-        Route::get('add-new-fund',[AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
-        Route::get('users_add_user', [AdminController::class,'users_save_user'])->name('masterfile.user.saveUser');
-        Route::post('update-password',[AdminController::class, 'updateStoreStaffPassword'])->name('masterfile.updateStoreStaffPassword');
-        Route::post('update-store-setup',[AdminController::class, 'updateStoreStaffSetup'])->name('masterfile.updateStoreStaffSetup');
-        Route::get('denomination-setup',[AdminController::class, 'denominationSetup'])->name('masterfile.denominationSetup');
-        Route::get('credit-card-setup',[AdminController::class, 'creditCardSetup'])->name('masterfile.creditCardSetup');
-        Route::get('store-setup',[AdminController::class, 'setupStore'])->name('masterfile.setupStore');
-        Route::get('customer-setup',[AdminController::class, 'customerSetup'])->name('masterfile.customer.setup');
+        Route::get('add-new-fund', [AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
+        Route::get('users_add_user', [AdminController::class, 'users_save_user'])->name('masterfile.user.saveUser');
+        Route::post('update-password', [AdminController::class, 'updateStoreStaffPassword'])->name('masterfile.updateStoreStaffPassword');
+        Route::post('update-store-setup', [AdminController::class, 'updateStoreStaffSetup'])->name('masterfile.updateStoreStaffSetup');
+        Route::get('denomination-setup', [AdminController::class, 'denominationSetup'])->name('masterfile.denominationSetup');
+        Route::get('credit-card-setup', [AdminController::class, 'creditCardSetup'])->name('masterfile.creditCardSetup');
+        Route::get('store-setup', [AdminController::class, 'setupStore'])->name('masterfile.setupStore');
+        Route::get('customer-setup', [AdminController::class, 'customerSetup'])->name('masterfile.customer.setup');
         Route::post('update-customer-store-register', [AdminController::class, 'updateCustomerStoreRegister'])->name('masterfile.updateCustomerStoreRegister');
-        Route::post('update-institute-customer',[AdminController::class,'updateInstituteCustomer'])->name('masterfile.UpdateInstituteCustomer');
+        Route::post('update-institute-customer', [AdminController::class, 'updateInstituteCustomer'])->name('masterfile.UpdateInstituteCustomer');
         Route::get('store-staff-setup', [AdminController::class, 'storeSetup'])->name('masterfile.store.staff');
         Route::get('save-user', [AdminController::class, 'saveUser'])->name('masterfile.store.saveUser');
         Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
@@ -123,42 +122,36 @@ Route::prefix('admin')->group(function () {
             Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
             Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
             Route::get('user-reset-password', [AdminController::class, 'usersResetPassword'])->name('usersResetPassword');
-            Route::get('save-store',[AdminController::class, 'saveStore'])->name('saveStore');
-            Route::get('issue-receipt',[AdminController::class, 'issueReceipt'])->name('issueReceipt');
-            Route::get('save-credit-card',[AdminController::class, 'saveCreditCard'])->name('saveCreditCard');
-            Route::get('revolving-fund',[AdminController::class, 'revolving_fund'])->name('revolvingFund');
-            route::get('save-denomination',[AdminController::class, 'saveDenomination'])->name('saveDenomination');
+            Route::get('save-store', [AdminController::class, 'saveStore'])->name('saveStore');
+            Route::get('issue-receipt', [AdminController::class, 'issueReceipt'])->name('issueReceipt');
+            Route::get('save-credit-card', [AdminController::class, 'saveCreditCard'])->name('saveCreditCard');
+            Route::get('revolving-fund', [AdminController::class, 'revolving_fund'])->name('revolvingFund');
+            route::get('save-denomination', [AdminController::class, 'saveDenomination'])->name('saveDenomination');
             route::post('update-denomination', [AdminController::class, 'UpdateDenomination'])->name('saveUpdateDenomination');
-            route::post('update-user',[AdminController::class, 'updateUser'])->name('updateUser');
+            route::post('update-user', [AdminController::class, 'updateUser'])->name('updateUser');
             route::post('update-revolvingfund', [AdminController::class, 'updateRevolvingFund'])->name('updateRevolvingFund');
             route::post('update-special-customer', [AdminController::class, 'updateSpecialCustomer'])->name('updateSpecialCustomer');
-=======
-Route::prefix('admin')->name('admin.')->group(function () {
-
-    Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
-    Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
-    Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po')->middleware([HandlePrecognitiveRequests::class]);
-    Route::get('edit-po-{id}', [AdminController::class, 'editPoDetails'])->name('edit.po');
->>>>>>> main
-
-
+            Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
+            Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
+            Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po')->middleware([HandlePrecognitiveRequests::class]);
+            Route::get('edit-po-{id}', [AdminController::class, 'editPoDetails'])->name('edit.po');
         });
+        
         Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
+        Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
+        Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');
+
+
+        Route::get('setup-po-{any}', [AdminController::class, 'setupPurchaseOrders'])->name('setup');
+
+        Route::post('submit-po-to-iad', [AdminController::class, 'submitPurchaseOrdersToIad'])->name('submit.po.to.iad')->middleware([HandlePrecognitiveRequests::class]);
+
+
     });
-<<<<<<< HEAD
-=======
-
-    Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
-    Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');
-
-
-    Route::get('setup-po-{any}', [AdminController::class, 'setupPurchaseOrders'])->name('setup');
-
-    Route::post('submit-po-to-iad', [AdminController::class, 'submitPurchaseOrdersToIad'])->name('submit.po.to.iad')->middleware([HandlePrecognitiveRequests::class]);
-
-
->>>>>>> main
 });
+
+
+
 
 
 
@@ -240,8 +233,8 @@ Route::prefix('marketing')->group(function () {
         Route::name('special-gc.')->group(function () {
             Route::get('pending', [MarketingController::class, 'pendingspgclist'])->name('pending');
             Route::get('pending-view-details', [MarketingController::class, 'pendingspgclistview'])->name('pending.view');
-            Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest']) ->name('aexgcreq');
-            Route::get('selected-approved-external-gc-request', [MarketingController::class, 'selectedApprovedExternalGcRequest']) ->name('selectedaexgcreq');
+            Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest'])->name('aexgcreq');
+            Route::get('selected-approved-external-gc-request', [MarketingController::class, 'selectedApprovedExternalGcRequest'])->name('selectedaexgcreq');
         });
     });
 });
@@ -402,15 +395,15 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('adjustment')->name('adjustment.')->group(function () {
 
             Route::get('allocation', [AdjustmentController::class, 'allocationAdjustment'])->name('allocation');
-            
+
             Route::prefix('allocation')->name('allocation.')->group(function () {
                 Route::get('allocation-setup', [AdjustmentController::class, 'allocationSetup'])->name('allocationSetup');
                 Route::post('allocation-setup-submission', [AdjustmentController::class, 'allocationSetupStore'])->name('setupSubmission');
             });
-            
-            
+
+
             Route::get('allocation-details-{id}', [AdjustmentController::class, 'viewAllocationAdjustment'])->name('viewAllocation');
-            
+
             Route::get('budget-adjustment', [AdjustmentController::class, 'budgetAdjustments'])->name('budgetAdjustments');
             Route::post('budget-adjustment-submission', [AdjustmentController::class, 'storeBudgetAdjustment'])->name('budgetAdjustmentSubmission');
         });
@@ -536,7 +529,6 @@ Route::prefix('retailgroup')->name('retailgroup.')->group(function () {
     Route::get('approved-details-{id}', [RetailGroupController::class, 'approvedDetails'])->name('details');
 
     Route::get('legder', [RetailGroupController::class, 'ledger'])->name('ledger');
-
 });
 
 Route::prefix('custodian')->group(function () {
@@ -606,8 +598,9 @@ Route::middleware('auth')->group(function () {
         Route::get('details-{id}', [IadController::class, 'details'])->name('details');
         Route::put('approve-budget-{id}', [IadController::class, 'approveBudget'])->name('approve');
 
-        Route::name('audit')->group(function (){
+        Route::name('audit.')->group(function () {
             Route::get('audit-store', [IadController::class, 'auditStore'])->name('store');
+            // Route::get('audit-store-date-range', [IadController::class, 'get'])->name('store');
         });
     });
 });

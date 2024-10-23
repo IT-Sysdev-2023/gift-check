@@ -34,57 +34,22 @@ class DashboardClass extends DashboardService
     }
     public function treasuryDashboard(Request $request)
     {
-        $type = $request->user()?->usertype;
-        [
-            $totalBudget,
-            $regularBudget,
-            $specialBudget,
-            $promoGcReleased,
-            $budgetRequest,
-            $storeGcRequest,
-            $institutionGcSales,
-            $gcProductionRequest,
-            $adjustments,
-            $specialGcRequest,
-            $eod,
-            $productionRequest
-        ] = Concurrency::run([
-                        fn() => $this->budget(),
-                        fn() => LedgerBudget::regularBudget(),
-                        fn() => LedgerBudget::specialBudget(),
-                        fn() => PromoGcReleaseToDetail::count(),
-                        fn() => $this->budgetRequestTreasury($type),
-                        fn() => $this->storeGcRequest(),
-                        fn() => InstitutTransaction::count(),
-                        fn() => $this->gcProductionRequest($type),
-                        fn() => $this->adjustments(),
-                        fn() => $this->specialGcRequest(),
-                        fn() => InstitutEod::count(),
-                        fn() => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
-            ]);
         return [
             'budget' => (object) [
-                'totalBudget' => $totalBudget,
-                'regularBudget' => $regularBudget,
-                'specialBudget' => $specialBudget,
+                'totalBudget' => $this->budget(),
+                'regularBudget' => LedgerBudget::regularBudget(),
+                'specialBudget' => LedgerBudget::specialBudget(),
             ],
-            'budgetRequest' => (object) [
-                'pending' => $budgetRequest->pending,
-                'approved' => $budgetRequest->approved,
-                'cancelled' => $budgetRequest->cancelled
-            ],
-            'storeGcRequest' => (object) [
-                'pending' => $storeGcRequest->pending,
-                'released' => $storeGcRequest->released,
-                'cancelled' => $storeGcRequest->cancelled
-            ],
-            'promoGcReleased' => $promoGcReleased,
-            'institutionGcSales' => $institutionGcSales,
-            'gcProductionRequest' => $gcProductionRequest,
-            'adjustment' => $adjustments,
-            'specialGcRequest' => $specialGcRequest,
-            'eod' => $eod,
-            'productionRequest' => $productionRequest
+            'budgetRequest' => $this->budgetRequestTreasury(),
+            'storeGcRequest' => $this->storeGcRequest(),
+            'promoGcReleased' => PromoGcReleaseToDetail::count(),
+            'institutionGcSales' => InstitutTransaction::count(),
+            'gcProductionRequest' => $this->gcProductionRequest(),
+            'adjustment' => $this->adjustments(),
+            'specialGcRequest' => $this->specialGcRequest(), //Duplicated above use Spatie Permission instead
+
+            'eod' => InstitutEod::count(),
+            'productionRequest' => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
         ];
     }
 
