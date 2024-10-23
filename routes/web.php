@@ -121,7 +121,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::post('submit-po-to-iad', [AdminController::class, 'submitPurchaseOrdersToIad'])->name('submit.po.to.iad')->middleware([HandlePrecognitiveRequests::class]);
 
-
 });
 
 
@@ -570,8 +569,9 @@ Route::middleware('auth')->group(function () {
         Route::get('details-{id}', [IadController::class, 'details'])->name('details');
         Route::put('approve-budget-{id}', [IadController::class, 'approveBudget'])->name('approve');
 
-        Route::name('audit')->group(function (){
+        Route::name('audit.')->group(function (){
             Route::get('audit-store', [IadController::class, 'auditStore'])->name('store');
+            // Route::get('audit-store-date-range', [IadController::class, 'get'])->name('store');
         });
     });
 });
