@@ -23,16 +23,16 @@
                 <a-card>
                     <a-form>
                         <a-form-item label="PR No">
-                            <a-input v-model:value="selectedData[0].pe_num" readonly />
+                            <a-input :value="selectedData[0].pe_num" readonly />
                         </a-form-item>
                         <a-form-item label="Date Requested">
-                            <a-input v-model:value="selectedData[0].DateRequested" readonly />
+                            <a-input :value="selectedData[0].DateRequested" readonly />
                         </a-form-item>
                         <a-form-item label="Request Remarks">
-                            <a-input v-model:value="selectedData[0].pe_remarks" readonly />
+                            <a-input :value="selectedData[0].pe_remarks" readonly />
                         </a-form-item>
                         <a-form-item label="Request Prepared by">
-                            <a-input v-model:value="selectedData[0].RequestPreparedby" readonly />
+                            <a-input :value="selectedData[0].RequestPreparedby" readonly />
                         </a-form-item>
                     </a-form>
                 </a-card>
@@ -41,19 +41,19 @@
                 <a-card>
                     <a-form>
                         <a-form-item label="Date Approved">
-                            <a-input v-model:value="selectedData[0].DateApproved" readonly></a-input>
+                            <a-input :value="selectedData[0].DateApproved" readonly></a-input>
                         </a-form-item>
                         <a-form-item label="Approved Remarks">
-                            <a-input v-model:value="selectedData[0].ape_remarks" readonly></a-input>
+                            <a-input :value="selectedData[0].ape_remarks" readonly></a-input>
                         </a-form-item>
                         <a-form-item label="Approved by">
-                            <a-input v-model:value="selectedData[0].approvedBy" readonly></a-input>
+                            <a-input :value="selectedData[0].approvedBy ? selectedData[0].approvedBy : ''" readonly></a-input>
                         </a-form-item>
                         <a-form-item label="Checked by">
-                            <a-input v-model:value="selectedData[0].checkby" readonly></a-input>
+                            <a-input :value="selectedData[0].checkby ? selectedData[0].checkby : selectedData[0].ape_checked_by" readonly></a-input>
                         </a-form-item>
                         <a-form-item label="Prepared by">
-                            <a-input v-model:value="selectedData[0].aprrovedPreparedBy" readonly></a-input>
+                            <a-input :value="selectedData[0].aprrovedPreparedBy" readonly></a-input>
                         </a-form-item>
                     </a-form>
                 </a-card>
@@ -71,43 +71,43 @@
                 <a-row :gutter="[16, 16]">
                     <a-col :span="12">
                         <a-form-item label="Request No">
-                            <a-input v-model:value="requisitiondata.requis_erno" readonly />
+                            <a-input :value="requisitiondata.requis_erno" readonly />
                         </a-form-item>
                         <a-form-item label="Date Request">
-                            <a-input v-model:value="requisitiondata.requis_req" readonly />
+                            <a-input :value="requisitiondata.requis_req" readonly />
                         </a-form-item>
                         <a-form-item label="Location">
-                            <a-input v-model:value="requisitiondata.requis_loc" readonly />
+                            <a-input :value="requisitiondata.requis_loc" readonly />
                         </a-form-item>
                         <a-form-item label="Department">
-                            <a-input v-model:value="requisitiondata.requis_dept" readonly />
+                            <a-input :value="requisitiondata.requis_dept" readonly />
                         </a-form-item>
                         <a-form-item label="Remarks">
-                            <a-input v-model:value="requisitiondata.requis_rem" readonly />
+                            <a-input :value="requisitiondata.requis_rem" readonly />
                         </a-form-item>
                         <a-form-item label="Checked By">
-                            <a-input v-model:value="requisitiondata.requis_checked" readonly />
+                            <a-input :value="requisitiondata.requis_checked" readonly />
                         </a-form-item>
                         <a-form-item label="Approved By">
-                            <a-input v-model:value="requisitiondata.requis_approved" readonly />
+                            <a-input :value="requisitiondata.requis_approved ? requisitiondata.requis_approved : ''" readonly />
                         </a-form-item>
                     </a-col>
                     <a-col :span="12">
                         <a-card title="Supplier Information">
                             <a-form-item label="Company Name">
-                                <a-input v-model:value="requisitiondata.gcs_companyname
+                                <a-input :value="requisitiondata.gcs_companyname
                                     " readonly />
                             </a-form-item>
                             <a-form-item label="Contact Person">
-                                <a-input v-model:value="requisitiondata.gcs_contactperson
+                                <a-input :value="requisitiondata.gcs_contactperson
                                     " readonly />
                             </a-form-item>
                             <a-form-item label="Contact Number">
-                                <a-input v-model:value="requisitiondata.gcs_contactnumber
+                                <a-input :value="requisitiondata.gcs_contactnumber
                                     " readonly />
                             </a-form-item>
                             <a-form-item label="Company Address">
-                                <a-input v-model:value="requisitiondata.gcs_address" readonly />
+                                <a-input :value="requisitiondata.gcs_address" readonly />
                             </a-form-item>
                         </a-card>
                     </a-col>
