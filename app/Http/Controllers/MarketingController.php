@@ -1360,8 +1360,6 @@ class MarketingController extends Controller
             ['denomination', 'pe_items_quantity', 'barcodeStart', 'barcodeEnd', 'total']
         );
 
-
-        // dd($selectedData->toArray());
         return Inertia::render('Marketing/gcproductionrequest/ApprovedRequest', [
             'data' => $query ?? [],
             'barcodes' => $productionBarcode,
@@ -2050,7 +2048,7 @@ class MarketingController extends Controller
             ->first();
 
         return response()->json([
-            'r' => $query
+            'r' => $query ?? null
         ]);
     }
 

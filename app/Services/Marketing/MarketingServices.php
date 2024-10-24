@@ -121,6 +121,7 @@ class MarketingServices extends FileHandler
                 'approvedBy.lastname as approvedByLastname'
             )
             ->where('pe_status', '1')
+            ->where('pe_requisition', '1')
             ->whereAny([
                 'pe_num',
                 'pe_date_request',
