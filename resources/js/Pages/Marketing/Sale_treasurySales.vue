@@ -36,13 +36,7 @@
             :confirm-loading="confirmLoading"
             @ok="handleOk"
         >
-            <a-table :dataSource="selectedData.data" :columns="selectedcolumns">
-                <template v-slot:bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'gctype'">
-                        {{ 'Institution GC' }}
-                    </template>
-                </template>
-            </a-table>
+            <a-table :dataSource="selectedData.data" :columns="selectedcolumns"/>
         </a-modal>
 
         <pagination class="mt-5" :datarecords="data" />
@@ -73,7 +67,7 @@ export default {
                 },
                 {
                     title: "GC Type",
-                    dataIndex: "gctype",
+                    dataIndex: "gcType",
                 },
                 {
                     title: "Denomination",
@@ -117,6 +111,7 @@ export default {
                 .get(route("marketing.treasurysales.view.treasury.sales"), {
                     params: {
                         id: data.insp_trid,
+                        data: data,
                     },
                 })
                 .then((response) => {

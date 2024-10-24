@@ -407,7 +407,6 @@ class MarketingController extends Controller
 
     public function viewTreasurySales(Request $request)
     {
-
         $query = InstitutTransactionsItem::select([
             'institut_transactions_items.instituttritems_barcode',
             'denomination.denomination',
@@ -428,7 +427,10 @@ class MarketingController extends Controller
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->where('instituttritems_trid', '=', $request->id)
             ->get();
-            
+        $query->transform(function ($item) use ($request) {
+            $item->gcType = $request->data['insp_paymentcustomer'];
+            return $item;
+        });
         return response()->json([
             'data' => $query
         ]);
@@ -2019,6 +2021,35 @@ class MarketingController extends Controller
         return response()->json([
             'data' => $query,
             'barcodes' => $barcodes
+        ]);
+    }
+
+    public function getrequisition(Request $request)
+    {
+        $query = RequisitionEntry::select(
+            'requisition_entry.requis_erno',
+            'requisition_entry.requis_req',
+            'production_request.pe_date_needed',
+            'requisition_entry.requis_loc',
+            'requisition_entry.requis_dept',
+            'requisition_entry.requis_rem',
+            'requisition_entry.requis_checked',
+            'requisition_entry.requis_approved',
+            'supplier.gcs_companyname',
+            'supplier.gcs_contactperson',
+            'supplier.gcs_contactnumber',
+            'supplier.gcs_address',
+            'users.firstname',
+            'users.lastname'
+        )
+            ->join('production_request', 'requisition_entry.repuis_pro_id', '=', 'production_request.pe_id')
+            ->join('supplier', 'requisition_entry.requis_supplierid', '=', 'supplier.gcs_id')
+            ->join('users', 'users.user_id', '=', 'requisition_entry.requis_req_by')
+            ->where('requisition_entry.repuis_pro_id', $request->id)
+            ->first();
+
+        return response()->json([
+            'r' => $query
         ]);
     }
 
