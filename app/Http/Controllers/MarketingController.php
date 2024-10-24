@@ -17,6 +17,7 @@ use App\Models\StoreEodTextfileTransaction;
 use App\Models\User;
 use App\Models\Denomination;
 use App\Models\Document;
+use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
 use App\Models\LedgerCheck;
 use App\Models\ProductionRequest;
@@ -406,11 +407,30 @@ class MarketingController extends Controller
 
     public function viewTreasurySales(Request $request)
     {
-        $trId = $request->id;
 
-
+        $query = InstitutTransactionsItem::select([
+            'institut_transactions_items.instituttritems_barcode',
+            'denomination.denomination',
+            'stores.store_name',
+            'store_verification.vs_date',
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as verby"),
+            DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_lname) as customer"),
+            'store_verification.vs_tf_used',
+            'store_verification.vs_reverifydate',
+            'store_verification.vs_reverifyby',
+            'store_verification.vs_tf_balance'
+        ])
+            ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
+            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+            ->leftJoin('store_verification', 'store_verification.vs_barcode', '=', 'institut_transactions_items.instituttritems_barcode')
+            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->leftJoin('users', 'store_verification.vs_by', '=', 'users.user_id')
+            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->where('instituttritems_trid', '=', $request->id)
+            ->get();
+            
         return response()->json([
-            'data' => $trId
+            'data' => $query
         ]);
     }
 
@@ -1948,7 +1968,7 @@ class MarketingController extends Controller
 
     public function selectedApprovedExternalGcRequest(Request $request)
     {
-      
+
 
         $query = SpecialExternalGcrequest::select(
             'special_external_gcrequest.spexgc_id',
