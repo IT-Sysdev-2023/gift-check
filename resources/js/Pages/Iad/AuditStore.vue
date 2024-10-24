@@ -5,8 +5,10 @@
                 <a-range-picker size="large" @change="fetch" style="width: 100%;" />
             </a-col>
             <a-col :span="17">
-                <p>{{ record.addedgcTotal }}</p>
-                <a-card title="Additional Gift Checks ">
+                <a-descriptions size="small"  layout="horiontal" bordered>
+                    <a-descriptions-item style="width: 50%;" label="Beginning Balance">{{ record.begbal }}</a-descriptions-item>
+                </a-descriptions>
+                <a-card title="Additional Gift Checks " class="mt-3">
                     <a-table bordered :data-source="record.addedgc" :pagination="false" size="small"
                         :columns="addedgccolumn"></a-table>
                 </a-card>
