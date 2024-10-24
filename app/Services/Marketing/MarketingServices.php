@@ -11,6 +11,7 @@ use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\Supplier;
+use App\Models\User;
 use App\Models\UserDetails;
 use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -181,20 +182,21 @@ class MarketingServices extends FileHandler
                     ->first()
             ]);
 
-            $selectedData = $selectedData->transform(function ($item) {
+            $approvedBy = User::where('user_id', $selectedData[0]->ape_approved_by)->first();
+            $checkby = User::where('user_id', $selectedData[0]['ape_checked_by'])->first();
+           
+            $selectedData->transform(function ($item) use($approvedBy,$checkby) {
                 $item->DateRequested = Date::parse($item->pe_date_request)->format('Y-F-d') ?? null;
                 $item->DateNeeded = Date::parse($item->pe_date_needed)->format('Y-F-d');
                 $item->DateApproved = Date::parse($item->ape_approved_at)->format('Y-F-d');
                 $item->aprrovedPreparedBy = ucwords($item->fapproved . ' ' . $item->lapproved);
                 $item->RequestPreparedby = ucwords($item->frequest . ' ' . $item->lrequest);
+                $item->approvedBy = ucwords($approvedBy['firstname'].' '.$approvedBy['lastname']);
+                $item->checkby = ucwords($checkby['full_name']);
 
                 return $item;
             })->first();
         }
-
-        
-
-
         return $selectedData ?? [];
     }
 

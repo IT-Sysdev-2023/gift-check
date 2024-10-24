@@ -23,16 +23,16 @@
                 <a-card>
                     <a-form>
                         <a-form-item label="PR No">
-                            <a-input v-model:value="selectedData.pe_num" readonly />
+                            <a-input v-model:value="selectedData[0].pe_num" readonly />
                         </a-form-item>
                         <a-form-item label="Date Requested">
-                            <a-input v-model:value="selectedData.DateRequested" readonly />
+                            <a-input v-model:value="selectedData[0].DateRequested" readonly />
                         </a-form-item>
                         <a-form-item label="Request Remarks">
-                            <a-input v-model:value="selectedData.pe_remarks" readonly />
+                            <a-input v-model:value="selectedData[0].pe_remarks" readonly />
                         </a-form-item>
                         <a-form-item label="Request Prepared by">
-                            <a-input v-model:value="selectedData.RequestPreparedby" readonly />
+                            <a-input v-model:value="selectedData[0].RequestPreparedby" readonly />
                         </a-form-item>
                     </a-form>
                 </a-card>
@@ -41,19 +41,19 @@
                 <a-card>
                     <a-form>
                         <a-form-item label="Date Approved">
-                            <a-input v-model:value="selectedData.DateApproved"></a-input>
+                            <a-input v-model:value="selectedData[0].DateApproved" readonly></a-input>
                         </a-form-item>
                         <a-form-item label="Approved Remarks">
-                            <a-input v-model:value="selectedData.ape_remarks"></a-input>
+                            <a-input v-model:value="selectedData[0].ape_remarks" readonly></a-input>
                         </a-form-item>
                         <a-form-item label="Approved by">
-                            <a-input v-model:value="selectedData.ape_approved_by"></a-input>
+                            <a-input v-model:value="selectedData[0].approvedBy" readonly></a-input>
                         </a-form-item>
                         <a-form-item label="Checked by">
-                            <a-input v-model:value="selectedData.ape_checked_by"></a-input>
+                            <a-input v-model:value="selectedData[0].checkby" readonly></a-input>
                         </a-form-item>
                         <a-form-item label="Prepared by">
-                            <a-input v-model:value="selectedData.aprrovedPreparedBy"></a-input>
+                            <a-input v-model:value="selectedData[0].aprrovedPreparedBy" readonly></a-input>
                         </a-form-item>
                     </a-form>
                 </a-card>
@@ -64,10 +64,10 @@
         </a-card>
         <div>
             <a-button type="primary" class="m-5">Barcode Generated</a-button>
-            <a-button type="primary" class="m-5" @click="getRequisition(selectedData.pe_id)">Requisition
+            <a-button type="primary" class="m-5" @click="getRequisition(selectedData[0].pe_id)">Requisition
                 Created</a-button>
         </div>
-        <a-modal v-model:open="requisitionmodal" @ok="closeRequisitionModal" width="60%">
+        <a-modal v-model:open="requisitionmodal" style="top: 20px" @ok="closeRequisitionModal" width="60%">
             <a-card title="Requisition Details">
                 <a-row :gutter="[16, 16]">
                     <a-col :span="12">
