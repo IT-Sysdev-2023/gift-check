@@ -28,9 +28,6 @@
                         <a-form-item label="Date Requested">
                             <a-input v-model:value="selectedData.DateRequested" readonly />
                         </a-form-item>
-                        <a-form-item label="Date Needed">
-                            <a-input v-model:value="selectedData.DateNeeded" readonly />
-                        </a-form-item>
                         <a-form-item label="Request Remarks">
                             <a-input v-model:value="selectedData.pe_remarks" readonly />
                         </a-form-item>
