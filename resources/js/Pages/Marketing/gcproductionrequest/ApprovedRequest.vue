@@ -52,9 +52,6 @@
                         <a-form-item label="Checked by">
                             <a-input :value="selectedData[0].checkby ? selectedData[0].checkby : selectedData[0].ape_checked_by" readonly></a-input>
                         </a-form-item>
-                        <a-form-item label="Prepared by">
-                            <a-input :value="selectedData[0].aprrovedPreparedBy" readonly></a-input>
-                        </a-form-item>
                     </a-form>
                 </a-card>
             </a-col>
