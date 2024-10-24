@@ -63,7 +63,6 @@
             <a-table :dataSource="barcodes" :columns="barcodeColumns" :pagination="false" />
         </a-card>
         <div>
-            <a-button type="primary" class="m-5">Barcode Generated</a-button>
             <a-button type="primary" class="m-5" @click="getRequisition(selectedData[0].pe_id)">Requisition
                 Created</a-button>
         </div>
