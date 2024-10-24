@@ -1863,6 +1863,7 @@ class MarketingController extends Controller
                         'requis_checked' => $request->data['checkedBy'],
                         'requis_supplierid' => $request->data['selectedSupplierId'],
                         'requis_ledgeref' => $lnumber,
+                        'requis_approved' => $request->data['approvedBy'],
                         'requis_foldersaved' => ''
                     ]);
 
