@@ -507,7 +507,7 @@ class MarketingServices extends FileHandler
                 'spexgc_num',
                 'spcus_companyname',
                 'reqap_approvedby',
-            ], 'like', $search . '%')
+            ], 'like', '%'.$search . '%')
             ->where('special_external_gcrequest.spexgc_status', 'approved')
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
             ->orderByDesc('special_external_gcrequest.spexgc_id')
