@@ -10,6 +10,8 @@ use App\Models\CustodianSrrItem;
 use App\Models\Denomination;
 use App\Models\Document;
 use App\Models\Gc;
+use App\Models\GcRelease;
+use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
@@ -498,24 +500,36 @@ class IadServices extends FileHandler
 
     public function getAuditStore($request)
     {
-        $begbal = DB::table('gc')
-            ->selectRaw('SUBSTRING(gc.barcode_no, 1, 3) as barcode, COUNT(gc.barcode_no) as count')
-            ->distinct()
-            ->join('custodian_srr_items as items', 'items.cssitem_barcode', '=', 'gc.barcode_no')
-            ->join('custodian_srr as srr', 'srr.csrr_id', '=', 'items.cssitem_recnum')
+        dd($request->date[0], $request->date[1]);
+        $datas = GcRelease::join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
+            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+            ->whereBetween('gc_release.rel_date', [$request->date[0], $request->date[1]])
             ->where('gc.gc_validated', '*')
-            ->where('gc.gc_allocated', '')
-            ->where('gc.gc_treasury_release', '')
-            ->where('gc.gc_ispromo', '')
-            ->where('srr.csrr_id', '>=', 14)
-            ->groupBy(DB::raw('SUBSTRING(gc.barcode_no, 1, 3)'))
-            ->get();
+            ->where('gc.gc_allocated', '*')
+            ->get()
+            ->groupBy('gc.denom_id')
+            ->union(
+                InstitutTransactionsItem::join(
+                    'institut_transactions',
+                    'institutr_id',
+                    '=',
+                    'institut_transactions_items.instituttritems_trid'
+                )
+                    ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
+                    ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+                    ->whereBetween('institutr_date', [$request->date[0], $request->date[1]])
+                    ->where('gc.gc_validated', '*')
+                    ->where('gc.gc_treasury_release', '*')
+                    ->get()
+                    ->groupBy('gc.denom_id')
+            );
 
-            dd($begbal);
+        dd($datas->toArray());
 
-        $date = [$request->date[0], $request->date[1]];
+        $date = empty($request->date) ? [] : [$request->date[0], $request->date[1]];
+        // dd($date);
+        [$addedGiftCheck, $beginningbal] = Concurrency::run([
 
-        [$addedGiftCheck] = Concurrency::run([
             fn() => Gc::select('barcode_no', 'gc.denom_id', 'denomination.denom_id', 'denomination')
                 ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
                 ->where('gc_validated', '')
@@ -523,9 +537,24 @@ class IadServices extends FileHandler
                 ->where('gc_ispromo', '')
                 ->where('gc_treasury_release', '')
                 ->where('pe_entry_gc', '>=', '14')
-                ->whereBetween('date', $date)
+                ->when($date !== [], function ($q) use ($date) {
+                    $q->whereBetween('date', $date);
+                })
                 ->get()
                 ->groupBy('denom_id'),
+
+            fn() =>  Gc::select('barcode_no', 'gc.denom_id', 'denomination.denom_id', 'denomination')
+                ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+                ->join('custodian_srr_items as items', 'items.cssitem_barcode', '=', 'gc.barcode_no')
+                ->join('custodian_srr as srr', 'srr.csrr_id', '=', 'items.cssitem_recnum')
+                ->where('gc.gc_validated', '*')
+                ->where('gc_allocated', '')
+                ->where('gc_ispromo', '')
+                ->where('gc_treasury_release', '')
+                ->where('pe_entry_gc', '>=', '14')
+                ->get()
+                ->groupBy('denom_id'),
+
         ]);
 
         $addedGiftCheck->transform(function ($item) {
@@ -534,13 +563,18 @@ class IadServices extends FileHandler
                 'barcodest' => $item->first()->barcode_no,
                 'barcodelt' => $item->last()->barcode_no,
                 'denom' => $item->first()->denomination,
-                'subtotal' => $item->count() * $item->first()->denomination,
+                'subtotal' => NumberHelper::currency($item->count() * $item->first()->denomination),
             ];
         });
 
+        $beginningbal->transform(function ($item) {
+            $item->subtotal = $item->first()->denomination * $item->count();
+            return $item;
+        });
+
         return (object) [
-            'addedgc' => $addedGiftCheck->values(),
-            'addedgcTotal' => $addedGiftCheck->sum('subtotal'),
+            'addedgc' => !empty($date) ? $addedGiftCheck->values() : [],
+            'begbal' => NumberHelper::currency($beginningbal->sum('subtotal')),
         ];
     }
 }

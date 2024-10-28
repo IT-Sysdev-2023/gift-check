@@ -17,6 +17,7 @@ use App\Models\StoreEodTextfileTransaction;
 use App\Models\User;
 use App\Models\Denomination;
 use App\Models\Document;
+use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
 use App\Models\LedgerCheck;
 use App\Models\ProductionRequest;
@@ -406,11 +407,32 @@ class MarketingController extends Controller
 
     public function viewTreasurySales(Request $request)
     {
-        $trId = $request->id;
-
-
+        $query = InstitutTransactionsItem::select([
+            'institut_transactions_items.instituttritems_barcode',
+            'denomination.denomination',
+            'stores.store_name',
+            'store_verification.vs_date',
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as verby"),
+            DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_lname) as customer"),
+            'store_verification.vs_tf_used',
+            'store_verification.vs_reverifydate',
+            'store_verification.vs_reverifyby',
+            'store_verification.vs_tf_balance'
+        ])
+            ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
+            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+            ->leftJoin('store_verification', 'store_verification.vs_barcode', '=', 'institut_transactions_items.instituttritems_barcode')
+            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->leftJoin('users', 'store_verification.vs_by', '=', 'users.user_id')
+            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->where('instituttritems_trid', '=', $request->id)
+            ->get();
+        $query->transform(function ($item) use ($request) {
+            $item->gcType = $request->data['insp_paymentcustomer'];
+            return $item;
+        });
         return response()->json([
-            'data' => $trId
+            'data' => $query
         ]);
     }
 
@@ -1338,8 +1360,6 @@ class MarketingController extends Controller
             ['denomination', 'pe_items_quantity', 'barcodeStart', 'barcodeEnd', 'total']
         );
 
-
-        // dd($selectedData->toArray());
         return Inertia::render('Marketing/gcproductionrequest/ApprovedRequest', [
             'data' => $query ?? [],
             'barcodes' => $productionBarcode,
@@ -1841,6 +1861,7 @@ class MarketingController extends Controller
                         'requis_checked' => $request->data['checkedBy'],
                         'requis_supplierid' => $request->data['selectedSupplierId'],
                         'requis_ledgeref' => $lnumber,
+                        'requis_approved' => $request->data['approvedBy'],
                         'requis_foldersaved' => ''
                     ]);
 
@@ -1948,7 +1969,7 @@ class MarketingController extends Controller
 
     public function selectedApprovedExternalGcRequest(Request $request)
     {
-      
+
 
         $query = SpecialExternalGcrequest::select(
             'special_external_gcrequest.spexgc_id',
@@ -1999,6 +2020,35 @@ class MarketingController extends Controller
         return response()->json([
             'data' => $query,
             'barcodes' => $barcodes
+        ]);
+    }
+
+    public function getrequisition(Request $request)
+    {
+        $query = RequisitionEntry::select(
+            'requisition_entry.requis_erno',
+            'requisition_entry.requis_req',
+            'production_request.pe_date_needed',
+            'requisition_entry.requis_loc',
+            'requisition_entry.requis_dept',
+            'requisition_entry.requis_rem',
+            'requisition_entry.requis_checked',
+            'requisition_entry.requis_approved',
+            'supplier.gcs_companyname',
+            'supplier.gcs_contactperson',
+            'supplier.gcs_contactnumber',
+            'supplier.gcs_address',
+            'users.firstname',
+            'users.lastname'
+        )
+            ->join('production_request', 'requisition_entry.repuis_pro_id', '=', 'production_request.pe_id')
+            ->join('supplier', 'requisition_entry.requis_supplierid', '=', 'supplier.gcs_id')
+            ->join('users', 'users.user_id', '=', 'requisition_entry.requis_req_by')
+            ->where('requisition_entry.repuis_pro_id', $request->id)
+            ->first();
+
+        return response()->json([
+            'r' => $query ?? null
         ]);
     }
 
