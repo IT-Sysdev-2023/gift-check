@@ -178,7 +178,7 @@ declare module 'vue' {
     CustodianDashboard: typeof import('./resources/js/Pages/Custodian/CustodianDashboard.vue')['default']
     CustodianSideBar: typeof import('./resources/js/Components/CustodianSideBar.vue')['default']
     CustomerServiceOutlined: typeof import('@ant-design/icons-vue')['CustomerServiceOutlined']
-    CustomerSetup: typeof import('./resources/js/Pages/Treasury/Masterfile/CustomerSetup.vue')['default']
+    CustomerSetup: typeof import('./resources/js/Pages/Admin/Masterfile/CustomerSetup.vue')['default']
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     Dashboard: typeof import('./resources/js/Pages/Dashboard.vue')['default']
     DashboardOutlined: typeof import('@ant-design/icons-vue')['DashboardOutlined']
