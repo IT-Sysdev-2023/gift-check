@@ -608,6 +608,7 @@ Route::middleware('auth')->group(function () {
 
         Route::name('audit.')->group(function () {
             Route::get('audit-store', [IadController::class, 'auditStore'])->name('store');
+            Route::get('audit-store-generate', [IadController::class, 'auditStoreGenerate'])->name('generate');
             // Route::get('audit-store-date-range', [IadController::class, 'get'])->name('store');
         });
     });
