@@ -72,8 +72,6 @@ const generate = async () => {
 
 const fetch = (dateObj, dateStr) => {
 
-    date.value = dateStr;
-
     router.get(route('iad.audit.store'), {
         date: dateStr
     }, {
