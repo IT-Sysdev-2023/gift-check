@@ -26,7 +26,7 @@ class InstitutTransactionResource extends JsonResource
                 }));
             }),
             'institutTransactionItem' => InstitutTransactionItemResource::collection($this->whenLoaded('institutTransactionItem')),
-            'document' => $this->whenLoaded('document'),
+            'document' => new DocumentResource($this->whenLoaded('document')),
             'institutrRemarks' => $this->institutr_remarks,
             'institutrReceivedby' => $this->institutr_receivedby,
             'institutr_paymenttype' => Str::ucfirst($this->institutr_paymenttype),
