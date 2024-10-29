@@ -108,7 +108,7 @@ interface FormState {
     store: string;
     date: Dayjs;
 }
-const formState: Form<FormState> = useForm(
+const formState = useForm(
     "get",
     route("treasury.reports.generate.report"),
     {
