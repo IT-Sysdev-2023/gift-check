@@ -12,6 +12,7 @@ use App\Http\Controllers\EodController;
 use App\Http\Controllers\FadController;
 use App\Http\Controllers\Iad\Dashboard\SpecialExternalGcRequestController;
 use App\Http\Controllers\MarketingController;
+use App\Http\Controllers\ReportsController;
 use \App\Http\Controllers\Treasury\MasterfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FinanceController;
@@ -409,6 +410,12 @@ Route::middleware(['auth'])->group(function () {
             Route::post('budget-adjustment-submission', [AdjustmentController::class, 'storeBudgetAdjustment'])->name('budgetAdjustmentSubmission');
         });
 
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/', [ReportsController::class,'reports'])->name('index');
+            Route::get('generate-report', [ReportsController::class,'generateReports'])->name('generate.report')->middleware([HandlePrecognitiveRequests::class]);
+
+        });
+
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
         Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
@@ -601,6 +608,7 @@ Route::middleware('auth')->group(function () {
 
         Route::name('audit.')->group(function () {
             Route::get('audit-store', [IadController::class, 'auditStore'])->name('store');
+            Route::get('audit-store-generate', [IadController::class, 'auditStoreGenerate'])->name('generate');
             // Route::get('audit-store-date-range', [IadController::class, 'get'])->name('store');
         });
     });

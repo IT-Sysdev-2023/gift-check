@@ -5,6 +5,7 @@ namespace App\Services\Treasury;
 use App\Http\Resources\AllocationAdjustmentResource;
 use App\Models\AllocationAdjustment;
 use App\Models\AllocationAdjustmentItem;
+use App\Models\Denomination;
 use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use App\Models\GcType;
@@ -45,18 +46,31 @@ class AdjustmentService extends FileHandler
         ]);
     }
 
-    public static function viewAllocationAdjustment(string $id)
+    public static function viewAllocationAdjustment(Request $request, string $id)
     {
-
         $record = AllocationAdjustmentItem::with([
-            'gc' => function ($q) {
+            'gc' => function ($q) use ($request) {
+
                 $q->with('denomination:denom_id,denomination')->select('barcode_no', 'denom_id');
             }
-        ])->where('aadji_aadj_id', $id)
+        ])
+            ->filterDenomination($request)
+            ->where('aadji_aadj_id', $id)
             ->orderBy('aadji_barcode')
-            ->paginate(10)->withQueryString();
+            ->paginate(10)
+            ->withQueryString();
 
-        return response()->json($record);
+        $denominations = AllocationAdjustmentItem::where('aadji_aadj_id', $id)
+            ->whereHas('gc.denomination')
+            ->with('gc.denomination:denom_id,denomination')
+            ->get()
+            ->pluck('gc.denomination')
+            ->flatten()
+            ->unique('denom_id')
+            ->values();
+
+        // dd($denominations);
+        return response()->json(['record' => $record, 'denoms' => $denominations]);
     }
 
     public function storeBudgetAdjustment(Request $request)
@@ -93,9 +107,9 @@ class AdjustmentService extends FileHandler
                 $this->saveFile($request, $filename);
 
             });
-            return redirect()->back()->with('success','Successfully Submitted');
+            return redirect()->back()->with('success', 'Successfully Submitted');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error',"Something went wrong {$e}");
+            return redirect()->back()->with('error', "Something went wrong {$e}");
 
         }
     }

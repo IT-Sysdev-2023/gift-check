@@ -26,9 +26,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Concurrency;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use App\Traits\Iad\AuditTraits;
 
 class IadServices extends FileHandler
 {
+    use AuditTraits;
 
     public function __construct(public IadDbServices $iadDbServices)
     {
@@ -500,81 +502,51 @@ class IadServices extends FileHandler
 
     public function getAuditStore($request)
     {
-        dd($request->date[0], $request->date[1]);
-        $datas = GcRelease::join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
-            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-            ->whereBetween('gc_release.rel_date', [$request->date[0], $request->date[1]])
-            ->where('gc.gc_validated', '*')
-            ->where('gc.gc_allocated', '*')
-            ->get()
-            ->groupBy('gc.denom_id')
-            ->union(
-                InstitutTransactionsItem::join(
-                    'institut_transactions',
-                    'institutr_id',
-                    '=',
-                    'institut_transactions_items.instituttritems_trid'
-                )
-                    ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
-                    ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-                    ->whereBetween('institutr_date', [$request->date[0], $request->date[1]])
-                    ->where('gc.gc_validated', '*')
-                    ->where('gc.gc_treasury_release', '*')
-                    ->get()
-                    ->groupBy('gc.denom_id')
-            );
 
-        dd($datas->toArray());
 
-        $date = empty($request->date) ? [] : [$request->date[0], $request->date[1]];
-        // dd($date);
-        [$addedGiftCheck, $beginningbal] = Concurrency::run([
+        $traits = $this->dataTraits($request);
 
-            fn() => Gc::select('barcode_no', 'gc.denom_id', 'denomination.denom_id', 'denomination')
-                ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-                ->where('gc_validated', '')
-                ->where('gc_allocated', '')
-                ->where('gc_ispromo', '')
-                ->where('gc_treasury_release', '')
-                ->where('pe_entry_gc', '>=', '14')
-                ->when($date !== [], function ($q) use ($date) {
-                    $q->whereBetween('date', $date);
-                })
-                ->get()
-                ->groupBy('denom_id'),
+        $traits->begbal->transform(function ($item) {
+            $item->subtotal = $item->first()->denomination * $item->count();
+            return $item;
+        });
 
-            fn() =>  Gc::select('barcode_no', 'gc.denom_id', 'denomination.denom_id', 'denomination')
-                ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
-                ->join('custodian_srr_items as items', 'items.cssitem_barcode', '=', 'gc.barcode_no')
-                ->join('custodian_srr as srr', 'srr.csrr_id', '=', 'items.cssitem_recnum')
-                ->where('gc.gc_validated', '*')
-                ->where('gc_allocated', '')
-                ->where('gc_ispromo', '')
-                ->where('gc_treasury_release', '')
-                ->where('pe_entry_gc', '>=', '14')
-                ->get()
-                ->groupBy('denom_id'),
+        $addedgc = $this->transform($traits->addedgc);
+        $unusedgc = $this->transform($traits->unusedgc);
 
-        ]);
 
-        $addedGiftCheck->transform(function ($item) {
+        return (object) [
+            'addedgc' => !empty($request->date) ? $addedgc->values() : [],
+            'gcsold' => !empty($request->date) ? $traits->gcrelease->values() : [],
+            'unusedgc' => !empty($request->date) ? $unusedgc->values() : [],
+            'begbal' => $traits->begbal->sum('subtotal'),
+            'gcsoldbal' => $traits->gcrelease->sum('subtotal'),
+            'unusedbal' => $traits->unusedgc->sum('subtotal'),
+            'datebackend' => !empty($request->date) ?  $request->date  : [] ,
+            'date' =>  !empty($request->date) ? Date::parse($request->date[0])->toFormattedDateString() . ' to ' . Date::parse($request->date[1])->toFormattedDateString() : 'No Date Selected',
+        ];
+    }
+
+    private static function transform($data)
+    {
+        return $data->transform(function ($item) {
             return (object) [
                 'count' => $item->count(),
                 'barcodest' => $item->first()->barcode_no,
                 'barcodelt' => $item->last()->barcode_no,
                 'denom' => $item->first()->denomination,
-                'subtotal' => NumberHelper::currency($item->count() * $item->first()->denomination),
+                'subtotal' => $item->count() * $item->first()->denomination,
             ];
         });
+    }
 
-        $beginningbal->transform(function ($item) {
-            $item->subtotal = $item->first()->denomination * $item->count();
-            return $item;
-        });
+    public function generateAudited($data)
+    {
+        // dd($data);
+        $pdf = Pdf::loadView('pdf.auditstore', ['data' => $data]);
 
-        return (object) [
-            'addedgc' => !empty($date) ? $addedGiftCheck->values() : [],
-            'begbal' => NumberHelper::currency($beginningbal->sum('subtotal')),
-        ];
+        return response()->json([
+            'stream' => base64_encode($pdf->output())
+        ]);
     }
 }

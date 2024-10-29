@@ -57,9 +57,20 @@ const { highlightText } = highlighten();
         width="800px"
         centered
     >
+        <a-tabs
+            v-model:activeKey="activeScannedKey"
+            @change="viewGcAllocationTab"
+        >
+            <a-tab-pane key="all" tab="All" force-render></a-tab-pane>
+            <a-tab-pane
+                v-for="denom of recordDetails.denoms"
+                :key="denom.denomination"
+                :tab="denom.denomination_format"
+            ></a-tab-pane>
+        </a-tabs>
         <a-table
             size="small"
-            :data-source="recordDetails.data"
+            :data-source="recordDetails.record.data"
             bordered
             :columns="[
                 {
@@ -85,7 +96,7 @@ const { highlightText } = highlighten();
 
         <pagination-axios-small
             class="mt-5"
-            :datarecords="recordDetails"
+            :datarecords="recordDetails.record"
             @on-pagination="onChangePagination"
         />
     </a-modal>
@@ -104,8 +115,10 @@ export default {
     },
     data() {
         return {
+            activeScannedKey: "all",
             recordDetails: {},
             open: false,
+            id: '',
         };
     },
     computed: {
@@ -130,11 +143,25 @@ export default {
             }
         },
         async viewDetails(id) {
+            this.id = id;
             const { data } = await axios.get(
                 route("treasury.adjustment.viewAllocation", id)
             );
+            // console.log(data);
             this.recordDetails = data;
             this.open = true;
+        },
+        async viewGcAllocationTab(value) {
+            const text = value == "all" ? "" : value;
+            const { data } = await axios.get(
+                route("treasury.adjustment.viewAllocation", this.id),
+                {
+                    params: {
+                        search: text,
+                    },
+                }
+            );
+            this.recordDetails.record = data.record;
         },
     },
 };
