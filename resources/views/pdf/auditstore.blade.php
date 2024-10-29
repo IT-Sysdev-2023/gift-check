@@ -10,8 +10,8 @@
 <body>
     <div class="header">
         <h4 class="agc" style="margin-bottom: -17px">ALTURAS GROUP OF COMPANIES</h4>
-        <h6 style="margin-bottom: -10px">INTERNAL AUDIT DEPARTMENT</h6>
-        <h5 style="margin-bottom: -17px">Gift Checks Audit</h5>
+        <h5 style="margin-bottom: -17px">INTERNAL AUDIT DEPARTMENT</h5>
+        <h5 style="margin-bottom: -17px">GIFT CHECKS AUDIT</h5>
         <h5>{{ $data->date }}</h5>
     </div>
     <table class="flex" width="100%" style="margin-bottom: 1px;">
@@ -22,7 +22,7 @@
             </td>
         </tr>
     </table>
-    @if (!empty($data->addedgc))
+    @if ($data->addedgc->count() !== 0)
         <table class="table">
             <thead>
                 <tr>
@@ -49,7 +49,7 @@
         </table>
     @endif
 
-    @if (!empty($data->gcsold))
+    @if ($data->gcsold->count() !== 0)
         <p style="margin-bottom: 1px">Sold Gift Checks</p>
         <table class="table">
             <thead>
@@ -81,7 +81,7 @@
         <hr>
     @endif
 
-    @if (!empty($data->unusedgc))
+    @if ($data->unusedgc->count() !== 0)
         <p style="margin-bottom: 1px">Smart of Unused Gift Checks</p>
         <table class="table">
             <thead>

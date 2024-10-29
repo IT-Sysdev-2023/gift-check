@@ -503,11 +503,21 @@ class IadServices extends FileHandler
     public function getAuditStore($request)
     {
 
+        $date = empty($request->date) ? [] : [$request->date[0], $request->date[1]];
 
-        $traits = $this->dataTraits($request);
+        $traits = $this->dataTraits($request, $date);
 
         $traits->begbal->transform(function ($item) {
+            $item->subtformat = NumberHelper::currency($item->first()->denomination * $item->count());
             $item->subtotal = $item->first()->denomination * $item->count();
+            return $item;
+        });
+
+        $traits->gcrelease->transform(function ($item) use ($date) {
+            $item->barcodest = $this->getBarcodes($item, $date)->orderBy('barcode', 'ASC')->first()->barcode;
+            $item->barcodelt = $this->getBarcodes($item, $date)->orderBy('barcode', 'DESC')->first()->barcode;
+            $item->subtformat = NumberHelper::currency($item->denom * $item->count);
+            $item->subtotal = $item->denom * $item->count;
             return $item;
         });
 
@@ -535,6 +545,7 @@ class IadServices extends FileHandler
                 'barcodest' => $item->first()->barcode_no,
                 'barcodelt' => $item->last()->barcode_no,
                 'denom' => $item->first()->denomination,
+                'subtformat' => NumberHelper::currency($item->count() * $item->first()->denomination),
                 'subtotal' => $item->count() * $item->first()->denomination,
             ];
         });
