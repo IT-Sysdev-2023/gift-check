@@ -184,16 +184,16 @@ class MarketingServices extends FileHandler
 
             $approvedBy = User::where('user_id', $selectedData[0]->ape_approved_by)->first();
             $checkby = User::where('user_id', $selectedData[0]['ape_checked_by'])->first();
-           
 
-            $selectedData->transform(function ($item) use($approvedBy,$checkby) {
+
+            $selectedData->transform(function ($item) use ($approvedBy, $checkby) {
                 $item->DateRequested = Date::parse($item->pe_date_request)->format('Y-F-d') ?? null;
                 $item->DateNeeded = Date::parse($item->pe_date_needed)->format('Y-F-d');
                 $item->DateApproved = Date::parse($item->ape_approved_at)->format('Y-F-d');
                 $item->aprrovedPreparedBy = ucwords($item->fapproved . ' ' . $item->lapproved);
                 $item->RequestPreparedby = ucwords($item->frequest . ' ' . $item->lrequest);
-                $item->approvedBy =  $approvedBy ? ucwords($approvedBy['firstname'].' '.$approvedBy['lastname']) : '';
-                $item->checkby = $checkby ? ucwords($checkby['firstname'] .' '.$checkby['lastname']) : '';
+                $item->approvedBy = $approvedBy ? ucwords($approvedBy['firstname'] . ' ' . $approvedBy['lastname']) : '';
+                $item->checkby = $checkby ? ucwords($checkby['firstname'] . ' ' . $checkby['lastname']) : '';
 
                 return $item;
             })->first();
@@ -222,13 +222,20 @@ class MarketingServices extends FileHandler
     public function generatepdfrequisition($request)
     {
 
-
         $supplier = Supplier::where('gcs_id', $request->data['selectedSupplierId'])->first();
+        function reorderName($name)
+        {
+            $nameParts = explode(', ', strtoupper($name));
+            return trim($nameParts[1] . ' ' . $nameParts[0]);
+        }
+        $approvedBy = reorderName($request->data['approvedBy']);
+        $checkedBy = reorderName($request->data['checkedBy']);
+
         $data = [
             'reqNum' => $request->data['requestNo'],
             'dateReq' => Date::parse($request->data['dateRequested'])->format('F d Y'),
-            'approvedBy' => strtoupper($request->data['approvedBy']),
-            'checkedBy' => strtoupper($request->data['checkedBy'])
+            'approvedBy' => $approvedBy,
+            'checkedBy' => $checkedBy
         ];
 
         $pdf = Pdf::loadView('pdf/eRequisitionform', [
@@ -512,7 +519,7 @@ class MarketingServices extends FileHandler
                 'spexgc_num',
                 'spcus_companyname',
                 'reqap_approvedby',
-            ], 'like', '%'.$search . '%')
+            ], 'like', '%' . $search . '%')
             ->where('special_external_gcrequest.spexgc_status', 'approved')
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
             ->orderByDesc('special_external_gcrequest.spexgc_id')

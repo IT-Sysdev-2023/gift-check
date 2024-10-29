@@ -209,7 +209,6 @@
                 />
             </a-card>
             <template #footer>
-                <a-button key="back" @click="handleCancel">Return</a-button>
                 <a-button
                     key="submit"
                     type="primary"
@@ -224,8 +223,13 @@
         </template>
     </a-modal>
 
-    <a-modal v-model:open="reprintmodal" width="900px" style="top:10px;">
-        <iframe :src="stream" width="100%" height="100%"></iframe>
+    <a-modal v-model:open="reprintmodal" width="900px" style="top: 10px">
+        <div v-if="nopdf != null">
+            <h4>{{ nopdf }}</h4>
+        </div>
+        <div v-else>
+            <iframe :src="stream" width="100%" height="1000px"></iframe>
+        </div>
     </a-modal>
 </template>
 
@@ -250,7 +254,8 @@ export default {
             id: "",
             requisitiondata: {},
             requisitionmodal: false,
-            stream: false,
+            stream: null,
+            nopdf: null,
         };
     },
     methods: {
@@ -290,6 +295,7 @@ export default {
                     },
                 })
                 .then((response) => {
+                    this.open = false;
                     this.requisitionmodal = true;
                     this.requisitiondata = response.data.r;
                 });
@@ -299,12 +305,28 @@ export default {
             this.requisitionmodal = false;
         },
         reprint(id) {
-            axios.get(route('marketing.requisition.reprint'),{
-                params:{
-                    id: id
-                }
-            })
-            this.reprintmodal = true;
+            axios
+                .get(route("marketing.requisition.reprint"), {
+                    params: {
+                        id: id,
+                    },
+                })
+                .then((response) => {
+                    this.reprintmodal = true;
+                    if (response.data.stream !== null) {
+                        this.requisitionmodal = false;
+                        this.stream = `data:application/pdf;base64,${response.data.stream}`;
+                    } else {
+                        this.nopdf = "No PDF Available";
+                    }
+                });
+        },
+    },
+    watch: {
+        reprintmodal(newValue) {
+            if (!newValue) {
+                this.$inertia.get(route('marketing.approvedRequest.approved.request'))
+            }
         },
     },
 };

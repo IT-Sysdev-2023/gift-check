@@ -2052,10 +2052,20 @@ class MarketingController extends Controller
         ]);
     }
 
-    public function reprint(Request $request){
-        $filepath= Storage::path('public/e-requisitionform/'.$request->id);
+    public function reprint(Request $request)
+    {
+        $filePath = Storage::path('public/e-requisitionform/' . $request->id . '.pdf');
 
+        if (!file_exists($filePath)) {
+            return response()->json([
+                'stream' => null
+            ]);
+        }
+        $fileContent = file_get_contents($filePath);
 
+        return response()->json([
+            'stream' => base64_encode($fileContent)
+        ]);
     }
 
 }
