@@ -2052,4 +2052,10 @@ class MarketingController extends Controller
         ]);
     }
 
+    public function reprint(Request $request){
+        $filepath= Storage::path('public/e-requisitionform/'.$request->id);
+
+
+    }
+
 }
