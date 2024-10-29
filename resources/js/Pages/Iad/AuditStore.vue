@@ -21,7 +21,7 @@
                         :columns="columns"></a-table>
                 </a-card>
 
-                <a-card title="Sold Gift Checks " class="mt-3">
+                <a-card title="SUMARY OF UNUSED GIFT CHECKS" class="mt-3">
                     <a-table bordered :data-source="record.unusedgc" :pagination="false" size="small"
                         :columns="columns"></a-table>
                 </a-card>
@@ -102,7 +102,7 @@ const columns = ref([
     },
     {
         title: 'Subtotal',
-        dataIndex: 'subtotal',
+        dataIndex: 'subtformat',
         key: 'name',
     },
 ])

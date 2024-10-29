@@ -2,6 +2,7 @@
 
 namespace App\Traits\Iad;
 
+use App\Helpers\NumberHelper;
 use App\Models\Gc;
 use App\Models\GcRelease;
 use App\Models\InstitutTransactionsItem;
@@ -11,9 +12,8 @@ use Illuminate\Support\Facades\DB;
 trait AuditTraits
 {
 
-    public function dataTraits($request)
+    public function dataTraits($request ,$date)
     {
-        $date = empty($request->date) ? [] : [$request->date[0], $request->date[1]];
 
         [$addedGiftCheck, $beginningbal, $gcrelease, $unusedgc] = Concurrency::run([
 
@@ -44,10 +44,8 @@ trait AuditTraits
 
             fn() => GcRelease::select(
                 DB::raw("COUNT(re_barcode_no) as count"),
-                DB::raw("MIN(re_barcode_no) as barcodest"),
-                DB::raw("MAX(re_barcode_no) as barcodelt"),
+                DB::raw("SUBSTRING(re_barcode_no, 1, 3) as barcode"),
                 DB::raw("MAX(denomination.denomination) as denom"),
-                DB::raw("COUNT(re_barcode_no) * MAX(denomination.denomination) as subtotal")
             )
                 ->join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
                 ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
@@ -60,10 +58,8 @@ trait AuditTraits
                 ->union(
                     InstitutTransactionsItem::select(
                         DB::raw("COUNT(instituttritems_barcode) as count"),
-                        DB::raw("MIN(instituttritems_barcode) as barcodest"),
-                        DB::raw("MAX(instituttritems_barcode) as barcodelt"),
+                        DB::raw("SUBSTRING(instituttritems_barcode, 1, 3) as barcode"),
                         DB::raw("MAX(denomination.denomination) as denom"),
-                        DB::raw("COUNT(instituttritems_barcode) * MAX(denomination.denomination) as subtotal")
                     )
                         ->join('institut_transactions as trans', 'trans.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
                         ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
@@ -98,6 +94,35 @@ trait AuditTraits
             'gcrelease' => $gcrelease,
             'unusedgc' => $unusedgc
         ];
+    }
+
+    private function getBarcodes($item, $date)
+    {
+
+        $threeD = substr($item->barcode, 0, 3);
+
+
+        $regular = DB::table('gc_release')
+            ->distinct()
+            ->select('re_barcode_no as barcode')
+            ->join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
+            ->whereBetween('gc_release.rel_date', $date)
+            ->where('gc.gc_validated', '*')
+            ->where('gc.gc_allocated', '*')
+            ->where(DB::raw('LEFT(re_barcode_no, 3)'), $threeD);
+
+
+        $institution = DB::table('institut_transactions_items')
+            ->distinct()
+            ->select('instituttritems_barcode as end')
+            ->join('institut_transactions as trans', 'trans.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
+            ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
+            ->whereBetween(DB::raw('DATE(trans.institutr_date)'), $date)
+            ->where('gc.gc_validated', '*')
+            ->where('gc.gc_treasury_release', '*')
+            ->where(DB::raw('LEFT(instituttritems_barcode, 3)'), $threeD);
+
+        return $regular->union($institution);
     }
     //
 }
