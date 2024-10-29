@@ -33,10 +33,10 @@
                         v-model:value="formState.reportType"
                         @change="formState.validate('reportType')"
                     >
-                        <a-checkbox value="gcsales" name="type"
+                        <a-checkbox value="gcSales" name="type"
                             >Gc Sales</a-checkbox
                         >
-                        <a-checkbox value="reval" name="type"
+                        <a-checkbox value="gcRevalidation" name="type"
                             >Gc Revalidation</a-checkbox
                         >
                         <a-checkbox value="refund" name="type"

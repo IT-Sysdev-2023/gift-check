@@ -2,11 +2,16 @@
 
 namespace App\Services\Treasury;
 
-use App\Models\LedgerBudget;
-use App\Models\LedgerCheck;
+use App\Models\Denomination;
+use App\Models\TransactionStore;
+use App\Services\Treasury\Reports\ReportsHandler;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Benchmark;
+use Illuminate\Http\Request;
 use App\Models\Store;
 
-class ReportService
+class ReportService extends ReportsHandler
 {
 	public static function reports() //storesalesreport.php
 	{
@@ -17,31 +22,51 @@ class ReportService
 			->withQueryString();
 
 		return $record;
-
-		// $rows = [];
-		// $query = $link->query(
-		// 	"SELECT 
-		// 		store_id, 
-		// 		store_name,
-		// 		default_password,
-		// 		company_code,
-		// 		store_code,
-		// 		issuereceipt 
-		// 	FROM 
-		// 		stores
-		// 	WHERE
-		// 		store_status='active'
-		// "
-		// );
-
-		// if ($query) {
-		// 	while ($row = $query->fetch_object()) {
-		// 		$rows[] = $row;
-		// 	}
-		// 	return $rows;
-		// } else {
-		// 	return $rows[] = $link->query;
-		// }
 	}
+
+	public function generatePdf(Request $request)
+	{
+
+		$request->validate([
+			// "reportType" => 'required',
+			// "transactionDate" => "required",
+			"store" => 'required',
+			// "date" => 'required_if:transactionDate,dateRange',
+		]);
+		dd($this->dataForPdf($request));
+		if($this->isExists($request)){
+
+			
+			$cashSales = $this->dataForPdf($request);
+		}
+		// dd($this->dataForPdf($request));
+
+		$data = [
+
+			//Header
+			'header' => $this->pdfHeaderDate($request),
+
+			//Body
+			'data' => [
+				'cashSales' => $cashSales
+			],
+			//Footer
+			'footer' => [
+				'totalTransactionDiscount' => 0,
+				'grandTotalNet' => 0,
+			],
+
+		];
+		$pdf = Pdf::loadView('pdf.treasuryReports', ['data' => $data]);
+
+		return $pdf->output();
+		// return Response::make($pdfContent, 200, [
+		//     'Content-Type' => 'application/pdf',
+		//     'Content-Disposition' => 'attachment; filename="treasuryReports.pdf"',
+		// ]);
+		// dd(1);
+	}
+
+
 
 }

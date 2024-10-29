@@ -7,7 +7,7 @@
     <title>GC Sales Report</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'DejaVu Sans', Arial, sans-serif;
             font-size: 12px;
         }
 
@@ -73,7 +73,15 @@
         </div>
 
         <div class="report-dates">
-            <p>Transaction Date: September 29, 2017 - October 14, 2024</p>
+
+            @if (!empty($data['header']['transactionDate']))
+                <p>Transaction Date: {{$data['header']['transactionDate']}}</p>
+            @endif
+
+            <span>Report Type: </span>
+            @foreach ($data['header']['reportType'] as $item)
+                {{Str::headline($item)}} {{ !$loop->last ? ',' : '' }}
+            @endforeach
             <p>Report Created: {{$data['header']['reportCreated']}}</p>
         </div>
 
@@ -82,13 +90,22 @@
                 <th colspan="5">Cash Sales</th>
             </tr>
             <tr>
-                <th class="left">GC Denomination</th>
+                <th class="left">Gc Denomination</th>
                 <th>GC Sold</th>
                 <th>Sub Total</th>
                 <th>Line Disc.</th>
                 <th>Net</th>
             </tr>
-            <tr>
+            @foreach ($data['data']['cashSales'] as $item)
+                <tr>
+                    <td class="left">{{$item->denomination}}</td>
+                    <td>{{$item->cnt}}</td>
+                    <td>{{$item->densum}}</td>
+                    <td>{{$item}}</td>
+                    <td>Net</td>
+                </tr>
+            @endforeach
+            <!-- <tr>
                 <td class="left">500.00</td>
                 <td>5768</td>
                 <td>2,884,000.00</td>
@@ -115,7 +132,7 @@
                 <td>0.00</td>
                 <td>0.00</td>
                 <td>0.00</td>
-            </tr>
+            </tr> -->
             <tr class="total">
                 <td colspan="4" class="left">Total Net:</td>
                 <td>3,216,000.00</td>
