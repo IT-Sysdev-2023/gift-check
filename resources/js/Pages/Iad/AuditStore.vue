@@ -49,7 +49,7 @@ const props = defineProps({
 
 const open = ref(false);
 
-const dateRange = ref(props.record.datebackend ? [dayjs(props.record.datebackend[0]), dayjs(props.record.datebackend[1])] : []);
+const dateRange = ref(props.record.datebackend.length ? [dayjs(props.record.datebackend[0]), dayjs(props.record.datebackend[1])] : []);
 
 const stream = ref('');
 
