@@ -3,6 +3,7 @@
 namespace App\Services\Treasury\Reports;
 use App\Helpers\NumberHelper;
 use App\Models\Denomination;
+use App\Models\TransactionLinediscount;
 use App\Models\TransactionSale;
 use App\Models\TransactionStore;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -46,15 +47,23 @@ class ReportsHandler
 
 	protected function dataForPdf(Request $request)
 	{
+
 		if (in_array('gcSales', $request->reportType)) {
+
+			$trillianes = TransactionLinediscount::select('gc.denom_id as denom', DB::raw('SUM(trlinedis_discamt) as discount'))
+				->join('gc', 'gc.barcode_no', '=', 'transaction_linediscount.trlinedis_barcode')
+				->groupBy('gc.denom_id');
+
 			$denom = TransactionSale::selectRaw("
-			COUNT(sales_transaction_id) AS cnt,
-			IFNULL(SUM(denomination.denomination), 0) AS densum
-			
-		")
+											COUNT(sales_transaction_id) AS cnt,
+											COALESCE(SUM(denomination.denomination), 0) AS densum,
+											COALESCE(line.discount, 0) AS lineDiscount
+									")
 				->join('denomination', 'denom_id', '=', 'sales_denomination')
 				->join('transaction_stores', 'trans_sid', 'sales_transaction_id')
-				->when(
+				->leftJoinSub($trillianes, 'line', function ($join) {
+					$join->on('transaction_sales.sales_denomination', '=', 'line.denom');
+				})->when(
 					$this->isDateRange($request),
 					fn($q): mixed => $q->whereBetween('trans_datetime', $this->transactionsDate($request)),
 					function ($q) use ($request) {
@@ -68,7 +77,7 @@ class ReportsHandler
 					}
 				)
 				->where([['trans_store', $request->store], ['trans_type', 1]])
-				->groupBy('denomination')
+				->groupBy('denomination', 'line.discount')
 				->get();
 
 			dd($denom);
