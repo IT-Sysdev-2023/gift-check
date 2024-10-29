@@ -181,6 +181,7 @@ Route::prefix('marketing')->group(function () {
         });
         Route::name('requisition.')->group(function () {
             Route::post('submit-requisition-form', [MarketingController::class, 'submitReqForm'])->name('submit.form');
+            Route::get('reprint', [MarketingController::class , 'reprint'])->name('reprint');
         });
         Route::name('pendingRequest.')->group(function () {
             Route::get('pending-request', [MarketingController::class, 'pendingRequest'])->name('pending.request');
@@ -608,6 +609,7 @@ Route::middleware('auth')->group(function () {
 
         Route::name('audit.')->group(function () {
             Route::get('audit-store', [IadController::class, 'auditStore'])->name('store');
+            Route::get('audit-store-generate', [IadController::class, 'auditStoreGenerate'])->name('generate');
             // Route::get('audit-store-date-range', [IadController::class, 'get'])->name('store');
         });
     });
