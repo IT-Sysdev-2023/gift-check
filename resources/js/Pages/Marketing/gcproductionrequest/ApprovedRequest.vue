@@ -223,7 +223,7 @@
         </template>
     </a-modal>
 
-    <a-modal v-model:open="reprintmodal" width="900px" style="top: 10px">
+    <a-modal :footer="false" v-model:open="reprintmodal" width="900px" style="top: 10px">
         <div v-if="nopdf != null">
             <h4>{{ nopdf }}</h4>
         </div>
