@@ -21,7 +21,7 @@
                         :columns="columns"></a-table>
                 </a-card>
 
-                <a-card title="Sold Gift Checks " class="mt-3">
+                <a-card title="SUMARY OF UNUSED GIFT CHECKS" class="mt-3">
                     <a-table bordered :data-source="record.unusedgc" :pagination="false" size="small"
                         :columns="columns"></a-table>
                 </a-card>
@@ -49,7 +49,7 @@ const props = defineProps({
 
 const open = ref(false);
 
-const dateRange = ref(props.record.datebackend ? [dayjs(props.record.datebackend[0]), dayjs(props.record.datebackend[1])] : []);
+const dateRange = ref(props.record.datebackend.length ? [dayjs(props.record.datebackend[0]), dayjs(props.record.datebackend[1])] : []);
 
 const stream = ref('');
 
@@ -102,7 +102,7 @@ const columns = ref([
     },
     {
         title: 'Subtotal',
-        dataIndex: 'subtotal',
+        dataIndex: 'subtformat',
         key: 'name',
     },
 ])
