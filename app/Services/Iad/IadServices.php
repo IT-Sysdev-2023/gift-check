@@ -514,11 +514,13 @@ class IadServices extends FileHandler
         });
 
         $traits->gcrelease->transform(function ($item) use ($date) {
-            $item->barcodest = $this->getBarcodes($item, $date)->orderBy('barcode', 'ASC')->first()->barcode;
-            $item->barcodelt = $this->getBarcodes($item, $date)->orderBy('barcode', 'DESC')->first()->barcode;
-            $item->subtformat = NumberHelper::currency($item->denom * $item->count);
-            $item->subtotal = $item->denom * $item->count;
-            return $item;
+            if (!empty($date)) {
+                $item->barcodest = $this->getBarcodes($item, $date)->orderBy('barcode', 'ASC')->first()->barcode ?? null;
+                $item->barcodelt = $this->getBarcodes($item, $date)->orderBy('barcode', 'DESC')->first()->barcode ?? null;
+                $item->subtformat = NumberHelper::currency($item->denom * $item->count);
+                $item->subtotal = $item->denom * $item->count;
+                return $item;
+            }
         });
 
         $addedgc = $this->transform($traits->addedgc);
@@ -532,7 +534,7 @@ class IadServices extends FileHandler
             'begbal' => $traits->begbal->sum('subtotal'),
             'gcsoldbal' => $traits->gcrelease->sum('subtotal'),
             'unusedbal' => $traits->unusedgc->sum('subtotal'),
-            'datebackend' => !empty($request->date) ?  $request->date  : [] ,
+            'datebackend' => !empty($request->date) ?  $request->date  : [],
             'date' =>  !empty($request->date) ? Date::parse($request->date[0])->toFormattedDateString() . ' to ' . Date::parse($request->date[1])->toFormattedDateString() : 'No Date Selected',
         ];
     }

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 trait AuditTraits
 {
 
-    public function dataTraits($request ,$date)
+    public function dataTraits($request, $date)
     {
 
         [$addedGiftCheck, $beginningbal, $gcrelease, $unusedgc] = Concurrency::run([
@@ -98,31 +98,31 @@ trait AuditTraits
 
     private function getBarcodes($item, $date)
     {
+        if (!empty($date)) {
 
-        $threeD = substr($item->barcode, 0, 3);
+            $threeD = substr($item->barcode, 0, 3) ?? null;
+
+            $regular = DB::table('gc_release')
+                ->distinct()
+                ->select('re_barcode_no as barcode')
+                ->join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
+                ->whereBetween('gc_release.rel_date', $date)
+                ->where('gc.gc_validated', '*')
+                ->where('gc.gc_allocated', '*')
+                ->where(DB::raw('LEFT(re_barcode_no, 3)'), $threeD);
 
 
-        $regular = DB::table('gc_release')
-            ->distinct()
-            ->select('re_barcode_no as barcode')
-            ->join('gc', 'gc.barcode_no', '=', 'gc_release.re_barcode_no')
-            ->whereBetween('gc_release.rel_date', $date)
-            ->where('gc.gc_validated', '*')
-            ->where('gc.gc_allocated', '*')
-            ->where(DB::raw('LEFT(re_barcode_no, 3)'), $threeD);
+            $institution = DB::table('institut_transactions_items')
+                ->distinct()
+                ->select('instituttritems_barcode as end')
+                ->join('institut_transactions as trans', 'trans.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
+                ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
+                ->whereBetween(DB::raw('DATE(trans.institutr_date)'), $date)
+                ->where('gc.gc_validated', '*')
+                ->where('gc.gc_treasury_release', '*')
+                ->where(DB::raw('LEFT(instituttritems_barcode, 3)'), $threeD);
 
-
-        $institution = DB::table('institut_transactions_items')
-            ->distinct()
-            ->select('instituttritems_barcode as end')
-            ->join('institut_transactions as trans', 'trans.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
-            ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
-            ->whereBetween(DB::raw('DATE(trans.institutr_date)'), $date)
-            ->where('gc.gc_validated', '*')
-            ->where('gc.gc_treasury_release', '*')
-            ->where(DB::raw('LEFT(instituttritems_barcode, 3)'), $threeD);
-
-        return $regular->union($institution);
+            return $regular->union($institution) ?? null;
+        }
     }
-    //
 }
