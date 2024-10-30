@@ -118,7 +118,7 @@
                                     readonly
                                 />
                             </a-form-item>
-                            <a-form-item label="Number to words">
+                            <a-form-item label="Amount Paid in Words">
                                 <a-input
                                     v-model:value="selectedData.numbertowords"
                                     readonly
@@ -152,6 +152,12 @@
                         <a-form-item label="# Holder">
                             <a-input v-for="item in denom" value="0" readonly />
                         </a-form-item>
+                        <a-form-item label="Entry By">
+                            <a-input
+                                :value="$page.props.auth.user.full_name"
+                                readonly
+                            />
+                        </a-form-item>
                     </a-col>
                     <a-col :span="12">
                         <a-form-item label="TOTAL">
@@ -160,13 +166,9 @@
                                 readonly
                             />
                         </a-form-item>
-                    </a-col>
-                </a-row>
-                <a-row :gutter="[16, 16]">
-                    <a-col :span="12">
-                        <a-form-item label="Entry By">
+                        <a-form-item label="Total in Words">
                             <a-input
-                                :value="$page.props.auth.user.full_name"
+                                v-model:value="selectedData.totalnumbertowords"
                                 readonly
                             />
                         </a-form-item>
