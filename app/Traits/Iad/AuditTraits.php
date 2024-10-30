@@ -6,6 +6,9 @@ use App\Helpers\NumberHelper;
 use App\Models\Gc;
 use App\Models\GcRelease;
 use App\Models\InstitutTransactionsItem;
+use App\Models\PromogcReleased;
+use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\TransactionSale;
 use Illuminate\Support\Facades\Concurrency;
 use Illuminate\Support\Facades\DB;
 
@@ -124,5 +127,31 @@ trait AuditTraits
 
             return $regular->union($institution) ?? null;
         }
+    }
+
+
+    private function institution($barcode)
+    {
+        return InstitutTransactionsItem::leftJoin('institut_transactions', 'institutr_id', '=', 'instituttritems_trid')
+            ->where('instituttritems_barcode', $barcode)->value('institutr_date');
+    }
+    private function special($barcode)
+    {
+        return SpecialExternalGcrequestEmpAssign::join('approved_request', 'reqap_trid', '=', 'spexgcemp_trid')
+            ->where('spexgcemp_barcode', $barcode)
+            ->where('reqap_approvedtype', 'special external releasing')
+            ->value('reqap_date');
+    }
+    private function transactionsales($barcode)
+    {
+        return TransactionSale::join('transaction_stores', 'trans_sid', '=', 'sales_transaction_id')
+            ->where('sales_barcode', $barcode)
+            ->where('sales_item_status', '0')
+            ->orderBy('sales_id')
+            ->value('trans_datetime');
+    }
+
+    public function promo($barcode){
+        return PromogcReleased::where('prgcrel_barcode', $barcode)->value('prgcrel_at');
     }
 }
