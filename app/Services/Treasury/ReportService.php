@@ -2,6 +2,7 @@
 
 namespace App\Services\Treasury;
 
+use App\Helpers\NumberHelper;
 use App\Models\Denomination;
 use App\Models\TransactionStore;
 use App\Services\Treasury\Reports\ReportsHandler;
@@ -28,27 +29,29 @@ class ReportService extends ReportsHandler
 	{
 
 		$request->validate([
-			// "reportType" => 'required',
-			// "transactionDate" => "required",
+			"reportType" => 'required',
+			"transactionDate" => "required",
 			"store" => 'required',
-			// "date" => 'required_if:transactionDate,dateRange',
+			"date" => 'required_if:transactionDate,dateRange',
 		]);
-		dd($this->dataForPdf($request));
+
 		if($this->isExists($request)){
-
-			
-			$cashSales = $this->dataForPdf($request);
+			$data = $this->gcSales($request);
 		}
-		// dd($this->dataForPdf($request));
-
 		$data = [
-
 			//Header
 			'header' => $this->pdfHeaderDate($request),
-
 			//Body
 			'data' => [
-				'cashSales' => $cashSales
+				'cashSales' => $data->cashSales,
+				'totalCashSales' => NumberHelper::currency($data->cashSales->sum('net')),
+
+				'cardSales' => $data->cardSales,
+				'totalCardSales' => NumberHelper::currency($data->cardSales->sum('net')),
+
+				'ar' => $data->ar,
+				'totalCustomerDiscount' => NumberHelper::currency($data->totalArCustomer),
+				'totalAr' => NumberHelper::currency($data->ar->sum('net'))
 			],
 			//Footer
 			'footer' => [
