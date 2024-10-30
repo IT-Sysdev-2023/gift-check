@@ -240,6 +240,8 @@ declare module 'vue' {
     IdcardOutlined: typeof import('@ant-design/icons-vue')['IdcardOutlined']
     InboxOutlined: typeof import('@ant-design/icons-vue')['InboxOutlined']
     InfoCircleOutlined: typeof import('@ant-design/icons-vue')['InfoCircleOutlined']
+    InfoCircleTwoTone: typeof import('@ant-design/icons-vue')['InfoCircleTwoTone']
+    InfoOutlined: typeof import('@ant-design/icons-vue')['InfoOutlined']
     InputError: typeof import('./resources/js/Components/InputError.vue')['default']
     InputLabel: typeof import('./resources/js/Components/InputLabel.vue')['default']
     InstitutionGcRefund: typeof import('./resources/js/Pages/Treasury/Transactions/InstitutionGcRefund/InstitutionGcRefund.vue')['default']
