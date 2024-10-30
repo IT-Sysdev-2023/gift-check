@@ -468,6 +468,7 @@ class MarketingServices extends FileHandler
             $item->totalDenom = number_format($item->specit_denoms * $item->specit_qty, 2);
             $item->requestedBy = ucwords($item->firstname . ' ' . $item->lastname);
             $item->numbertowords = Number::spell($item->spexgc_balance) . ' peso(s)';
+            $item->totalnumbertowords = ucwords(Number::spell($item->specit_denoms * $item->specit_qty) . ' peso(s)');
             return $item;
         };
 

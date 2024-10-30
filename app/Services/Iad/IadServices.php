@@ -10,7 +10,6 @@ use App\Models\CustodianSrrItem;
 use App\Models\Denomination;
 use App\Models\Document;
 use App\Models\Gc;
-use App\Models\GcRelease;
 use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequestItem;
@@ -18,15 +17,16 @@ use App\Models\RequisitionEntry;
 use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\StoreVerification;
 use App\Models\TempValidation;
+use App\Models\TransactionSale;
 use App\Models\User;
 use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Concurrency;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Iad\AuditTraits;
+use Illuminate\Support\Str;
 
 class IadServices extends FileHandler
 {
@@ -561,5 +561,61 @@ class IadServices extends FileHandler
         return response()->json([
             'stream' => base64_encode($pdf->output())
         ]);
+    }
+    public function getVerifiedSoldUsedData()
+    {
+        $storeVerification  = StoreVerification::select(
+            'vs_barcode',
+            'reval_trans_id',
+            'reval_barcode',
+            'vs_tf_used',
+            'vs_tf_denomination',
+            'vs_cn',
+            'vs_gctype',
+            'vs_store',
+            'vs_reverifydate',
+            'gc_treasury_release',
+            'transaction_stores.trans_datetime',
+        )->with(
+            'customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext',
+            'store:store_id,store_name',
+            'type:gc_type_id,gctype',
+        )->leftJoin('gc', 'barcode_no', '=', 'vs_barcode')
+            ->leftJoin('transaction_revalidation', 'reval_barcode', '=', 'vs_barcode')
+            ->leftJoin('transaction_stores', 'trans_sid', '=', 'reval_trans_id')
+            ->whereRaw('1=1')
+            ->orderByDesc('vs_id')
+            ->paginate(10)->withQueryString();
+
+        $storeVerification->transform(function ($item) {
+            $item->storename = $item->store->store_name;
+            $item->customername = $item->customer->full_name;
+            $item->gctype = empty($item->gc_treasury_release) ? Str::ucfirst($item->type->gctype) :  Str::ucfirst($item->type->gctype) . " (Institutional GC)";
+
+            if ($item->vs_gctype === 1 || $item->vs_gctype === 2) {
+                if ($item->gc_treasury_release === '*') {
+                    $item->soldrel = Date::parse($this->institution($item->vs_barcode))->toFormattedDateString();
+                } else {
+                    $item->soldrel = Date::parse($this->transactionsales($item->vs_barcode))->toFormattedDateString();
+                }
+            } elseif ($item->vs_gctype === 3) {
+                $item->soldrel = Date::parse($this->special($item->vs_barcode))->toFormattedDateString();
+            } elseif ($item->vs_gctype === 4) {
+                $item->soldrel = Date::parse($this->promo($item->vs_barcode))->toFormattedDateString();
+            }
+            return $item;
+        });
+
+        // dd($storeVerification->toArray());
+
+        return  $storeVerification;
+    }
+
+    public function getVerifiedDetails($barcode)
+    {
+        return  StoreVerification::select('vs_by', 'vs_date')
+            ->with('user:user_id,firstname,lastname')
+            ->where('vs_barcode', $barcode)
+            ->first();
     }
 }
