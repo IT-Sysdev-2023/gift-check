@@ -422,6 +422,7 @@ declare module 'vue' {
     TagsFilled: typeof import('@ant-design/icons-vue')['TagsFilled']
     TextfileUploader: typeof import('./resources/js/Pages/Custodian/TextfileUploader.vue')['default']
     TextInput: typeof import('./resources/js/Components/TextInput.vue')['default']
+    TransactionTxtModal: typeof import('./resources/js/Pages/Iad/Cards/TransactionTxtModal.vue')['default']
     TreasuryDashboard: typeof import('./resources/js/Pages/Treasury/TreasuryDashboard.vue')['default']
     TreasurySideBar: typeof import('./resources/js/Components/TreasurySideBar.vue')['default']
     UbayDistributionCenter: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/UbayDistributionCenter.vue')['default']
