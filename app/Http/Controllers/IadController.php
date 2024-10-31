@@ -139,5 +139,14 @@ class IadController extends Controller
     public function auditStoreGenerate(Request $request){
         return $this->iadServices->generateAudited($this->iadServices->getAuditStore($request));
     }
+    public function verifiedSoldUsed(){
+        return inertia('Iad/VerifiedSoldUsedGc', [
+            'record' => $this->iadServices->getVerifiedSoldUsedData(),
+        ]);
+    }
+
+    public function verifiedDetails($barcode){
+        return $this->iadServices->getVerifiedDetails($barcode);
+    }
 
 }

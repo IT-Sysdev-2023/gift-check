@@ -101,45 +101,42 @@
                     <td class="left">{{$item->denomination}}</td>
                     <td>{{$item->cnt}}</td>
                     <td>{{$item->densum}}</td>
-                    <td>{{$item}}</td>
-                    <td>Net</td>
+                    <td>{{$item->lineDiscount}}</td>
+                    <td>{{$item->netIncome}}</td>
                 </tr>
             @endforeach
-            <!-- <tr>
-                <td class="left">500.00</td>
-                <td>5768</td>
-                <td>2,884,000.00</td>
-                <td>0.00</td>
-                <td>2,884,000.00</td>
-            </tr>
-            <tr>
-                <td class="left">1,000.00</td>
-                <td>316</td>
-                <td>316,000.00</td>
-                <td>0.00</td>
-                <td>316,000.00</td>
-            </tr>
-            <tr>
-                <td class="left">2,000.00</td>
-                <td>8</td>
-                <td>16,000.00</td>
-                <td>0.00</td>
-                <td>16,000.00</td>
-            </tr>
-            <tr>
-                <td class="left">5,000.00</td>
-                <td>0</td>
-                <td>0.00</td>
-                <td>0.00</td>
-                <td>0.00</td>
-            </tr> -->
             <tr class="total">
                 <td colspan="4" class="left">Total Net:</td>
-                <td>3,216,000.00</td>
+                <td>{{$data['data']['totalCashSales']}}</td>
             </tr>
         </table>
 
 
+        <table>
+            <tr>
+                <th colspan="5">Card Sales</th>
+            </tr>
+            <tr>
+                <th class="left">GC Denomination</th>
+                <th>GC Sold</th>
+                <th>Sub Total</th>
+                <th>Line Disc.</th>
+                <th>Net</th>
+            </tr>
+            @foreach ($data['data']['cardSales'] as $item)
+                <tr>
+                    <td class="left">{{$item->denomination}}</td>
+                    <td>{{$item->cnt}}</td>
+                    <td>{{$item->densum}}</td>
+                    <td>{{$item->lineDiscount}}</td>
+                    <td>{{$item->netIncome}}</td>
+                </tr>
+            @endforeach
+            <tr class="total">
+                <td colspan="4" class="left">Total Net:</td>
+                <td>{{$data['data']['totalCardSales']}}</td>
+            </tr>
+        </table>
         <table>
             <tr>
                 <th colspan="5">AR</th>
@@ -151,37 +148,22 @@
                 <th>Line Disc.</th>
                 <th>Net</th>
             </tr>
-            <tr>
-                <td class="left">500.00</td>
-                <td>0</td>
-                <td>0.00</td>
-                <td>0.00</td>
-                <td>0.00</td>
-            </tr>
-            <tr>
-                <td class="left">1,000.00</td>
-                <td>0</td>
-                <td>0.00</td>
-                <td>0.00</td>
-                <td>0.00</td>
-            </tr>
-            <tr>
-                <td class="left">2,000.00</td>
-                <td>0</td>
-                <td>0.00</td>
-                <td>0.00</td>
-                <td>0.00</td>
-            </tr>
-            <tr>
-                <td class="left">5,000.00</td>
-                <td>0</td>
-                <td>0.00</td>
-                <td>0.00</td>
-                <td>0.00</td>
+            @foreach ($data['data']['ar'] as $item)
+                <tr>
+                    <td class="left">{{$item->denomination}}</td>
+                    <td>{{$item->cnt}}</td>
+                    <td>{{$item->densum}}</td>
+                    <td>{{$item->lineDiscount}}</td>
+                    <td>{{$item->netIncome}}</td>
+                </tr>
+            @endforeach
+            <tr class="total">
+                <td colspan="4" class="left">Customer Total Discount:</td>
+                <td>{{$data['data']['totalCustomerDiscount']}}</td>
             </tr>
             <tr class="total">
                 <td colspan="4" class="left">Total Net:</td>
-                <td>0.00</td>
+                <td>{{$data['data']['totalAr']}}</td>
             </tr>
         </table>
 

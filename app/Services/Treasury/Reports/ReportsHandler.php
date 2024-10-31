@@ -3,9 +3,11 @@
 namespace App\Services\Treasury\Reports;
 use App\Helpers\NumberHelper;
 use App\Models\Denomination;
+use App\Models\TransactionLinediscount;
 use App\Models\TransactionSale;
 use App\Models\TransactionStore;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Benchmark;
 use Illuminate\Http\Request;
@@ -15,6 +17,9 @@ use Illuminate\Support\Facades\DB;
 
 class ReportsHandler
 {
+	const SALE_TYPE_CASH = 1;
+	const SALE_TYPE_CARD = 2;
+	const SALE_TYPE_AR = 3;
 	protected function pdfHeaderDate(Request $request)
 	{
 		if ($request->store !== 13) { //if is not all Store
@@ -43,45 +48,80 @@ class ReportsHandler
 
 		return $header;
 	}
-
-	protected function dataForPdf(Request $request)
+	protected function gcSales(Request $request)
 	{
+		return (object) [
+			'cashSales' => $this->generateData($request, self::SALE_TYPE_CASH),
+			'cardSales' => $this->generateData($request, self::SALE_TYPE_CARD),
+
+			'ar' => $this->generateData($request, self::SALE_TYPE_CARD),
+			'totalArCustomer' => $this->generateCustomerDiscount($request),
+
+			'totalTransactionDiscount' => $this->generateTotalTransDiscount($request),
+		];
+	}
+
+	private function generateData(Request $request, int $type)
+	{
+
 		if (in_array('gcSales', $request->reportType)) {
+
+			$transactionLines = TransactionLinediscount::select('gc.denom_id as denom', DB::raw('SUM(trlinedis_discamt) as discount'))
+				->join('gc', 'gc.barcode_no', '=', 'transaction_linediscount.trlinedis_barcode')
+				->groupBy('gc.denom_id');
+
 			$denom = TransactionSale::selectRaw("
-			COUNT(sales_transaction_id) AS cnt,
-			IFNULL(SUM(denomination.denomination), 0) AS densum
-			
-		")
+											COUNT(sales_transaction_id) AS cnt,
+											COALESCE(SUM(denomination.denomination), 0) AS densum,
+											COALESCE(line.discount, 0) AS lineDiscount,
+											denomination.denomination,
+											(COALESCE(SUM(denomination.denomination), 0) - COALESCE(line.discount, 0)) AS net
+									")
 				->join('denomination', 'denom_id', '=', 'sales_denomination')
 				->join('transaction_stores', 'trans_sid', 'sales_transaction_id')
+				->leftJoinSub($transactionLines, 'line', function (JoinClause $join) {
+					$join->on('transaction_sales.sales_denomination', '=', 'line.denom');
+				})
 				->when(
 					$this->isDateRange($request),
-					fn($q): mixed => $q->whereBetween('trans_datetime', $this->transactionsDate($request)),
-					function ($q) use ($request) {
-
-						$date = match ($request->transactionDate) {
-							'today' => now(),
-							'yesterday' => Date::yesterday(),
-							default => null
-						};
-						return $q->whereDate('trans_datetime', $date);
-					}
+					fn($q) => $q->whereBetween('trans_datetime', $this->transactionsDate($request)),
+					fn($q) => $q->whereDate('trans_datetime', $this->transactionDateSingle($request))
 				)
-				->where([['trans_store', $request->store], ['trans_type', 1]])
-				->groupBy('denomination')
+				->where([['trans_store', $request->store], ['trans_type', $type]])
+				->groupBy('denomination', 'line.discount')
 				->get();
 
-			dd($denom);
 			return $denom->transform(function ($record) {
-				$record->cnt = NumberHelper::currency($record->cnt);
 				$record->densum = NumberHelper::currency($record->densum);
 				$record->denomination = NumberHelper::currency($record->denomination);
+				$record->netIncome = NumberHelper::currency($record->net);
 				return $record;
 			});
 
 		}
 	}
-
+	private function generateCustomerDiscount(Request $request)
+	{
+		return TransactionStore::selectRaw("COALESCE(SUM(transaction_payment.payment_internal_discount), 0) AS customerDiscount")
+			->join('transaction_payment', 'transaction_payment.payment_trans_num', '=', 'transaction_stores.trans_sid')
+			->where([['transaction_stores.trans_type', '3'], ['transaction_stores.trans_store', $request->store]])
+			->when(
+				$this->isDateRange($request),
+				fn($q) => $q->whereBetween('trans_datetime', $this->transactionsDate($request)),
+				fn($q) => $q->whereDate('trans_datetime', $this->transactionDateSingle($request))
+			)->value('customerDiscount');
+	}
+	private function generateTotalTransDiscount(Request $request)
+	{
+		return TransactionStore::selectRaw("COALESCE(SUM(transaction_docdiscount.trdocdisc_amnt),0) as total")
+			->join('transaction_docdiscount', 'transaction_docdiscount.trdocdisc_trid', '=', 'transaction_stores.trans_sid')
+			->where('transaction_stores.trans_store', $request->store)
+			->when(
+				$this->isDateRange($request),
+				fn($q) => $q->whereBetween('trans_datetime', $this->transactionsDate($request)),
+				fn($q) => $q->whereDate('trans_datetime', $this->transactionDateSingle($request))
+			)->value('total');
+	}
 	protected function isExists(Request $request)
 	{
 		return TransactionStore::select('trans_sid', 'trans_number', 'trans_type', 'trans_datetime')->withWhereHas('ledgerStore')->where('trans_store', $request->store)
@@ -128,6 +168,14 @@ class ReportsHandler
 			'allTransactions' => $this->allTransaction($request)
 		};
 		return $res;
+	}
+	public function transactionDateSingle(Request $request)
+	{
+		return match ($request->transactionDate) {
+			'today' => now(),
+			'yesterday' => Date::yesterday(),
+			default => null
+		};
 	}
 
 	private function isDateRange($request)

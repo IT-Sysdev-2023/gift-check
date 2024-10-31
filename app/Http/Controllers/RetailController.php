@@ -373,7 +373,7 @@ class RetailController extends Controller
             ])
             ->whereAny([
                 'store_received_gc.strec_barcode'
-            ], 'like', $request['barcode'] . '%')
+            ], 'like', '%'.$request['barcode'] . '%')
             ->join('denomination', 'store_received_gc.strec_denom', '=', 'denomination.denom_id')
             ->join('transaction_sales', 'transaction_sales.sales_barcode', '=', 'store_received_gc.strec_barcode')
             ->join('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_sales.sales_transaction_id')

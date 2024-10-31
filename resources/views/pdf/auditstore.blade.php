@@ -30,7 +30,6 @@
                     <th>From</th>
                     <th>To</th>
                     <th>Quantity</th>
-                    <th></th>
                     <th>Amount</th>
                 </tr>
             </thead>
@@ -41,7 +40,6 @@
                         <td>{{ $item->barcodest }}</td>
                         <td>{{ $item->barcodelt }}</td>
                         <td>{{ number_format($item->count) }}</td>
-                        <td> = </td>
                         <td>{{ number_format($item->subtotal, 2) }}</td>
                     </tr>
                 @endforeach
@@ -59,7 +57,6 @@
                     <th>From</th>
                     <th>To</th>
                     <th>Quantity</th>
-                    <th></th>
                     <th>Amount</th>
                 </tr>
             </thead>
@@ -70,7 +67,6 @@
                         <td>{{ $item->barcodest }}</td>
                         <td>{{ $item->barcodelt }}</td>
                         <td>{{ number_format($item->count) }}</td>
-                        <td> = </td>
                         <td>{{ number_format($item->subtotal, 2) }}</td>
                     </tr>
                 @endforeach
@@ -90,7 +86,6 @@
                     <th>From</th>
                     <th>To</th>
                     <th>Quantity</th>
-                    <th></th>
                     <th>Amount</th>
                 </tr>
             </thead>
@@ -101,7 +96,6 @@
                         <td>{{ $item->barcodest }}</td>
                         <td>{{ $item->barcodelt }}</td>
                         <td>{{ number_format($item->count) }}</td>
-                        <td> = </td>
                         <td>{{ number_format($item->subtotal, 2) }}</td>
                     </tr>
                 @endforeach
