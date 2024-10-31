@@ -1,8 +1,13 @@
 <template>
     <a-modal title="Verified Details" :footer="false">
-        <p>{{ record }}</p>
         <a-descriptions layout="horizontal" size="small" bordered>
-            <a-descriptions-item label="Date / Time Verified:">{{ record.vs_date }}</a-descriptions-item>
+            <a-descriptions-item style="width: 50%;"  label="Date Verified:">{{ record.date }}</a-descriptions-item>
+        </a-descriptions>
+        <a-descriptions layout="horizontal" size="small" bordered>
+            <a-descriptions-item style="width: 50%;"  label="Time Verified">{{ record.time }}</a-descriptions-item>
+        </a-descriptions>
+        <a-descriptions class="mt-5" layout="horizontal" size="small" bordered>
+            <a-descriptions-item style="width: 50%;"  label="Verfied By ">{{ record.user.full_name }}</a-descriptions-item>
         </a-descriptions>
     </a-modal>
 </template>
