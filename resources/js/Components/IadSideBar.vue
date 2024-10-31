@@ -43,5 +43,12 @@ const page = usePage<PageWithSharedProps>().props;
                 </Link>
             </span>
         </a-menu-item>
+        <a-menu-item key="iad-audit-store">
+            <QrcodeOutlined />
+            <span>
+                <Link :href="route('iad.versoldused.index')">Verified/Sold/Used GC
+                </Link>
+            </span>
+        </a-menu-item>
     </div>
 </template>

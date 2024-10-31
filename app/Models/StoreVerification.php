@@ -20,22 +20,28 @@ class StoreVerification extends Model
 
     protected function casts(): array{
         return [
-            'vs_reverifydate' => 'date',
-            'vs_date' => 'date'
+            'vs_reverifydate' => 'datetime',
+            'vs_date' => 'datetime'
         ];
     }
 
     public function user(){
-        $this->belongsTo(User::class, 'vs_by', 'user_id')->withDefault();
+       return $this->belongsTo(User::class, 'vs_by', 'user_id')->withDefault();
+    }
+    public function gc(){
+       return $this->belongsTo(Gc::class, 'vs_barcode', 'barcode_no');
     }
     public function customer(){
-        $this->belongsTo(Customer::class, 'vs_cn', 'cus_id');
+      return  $this->belongsTo(Customer::class, 'vs_cn', 'cus_id')->withDefault();
     }
     public function type(){
-        $this->belongsTo(GcType::class, 'vs_gctype', 'gc_type_id');
+       return $this->belongsTo(GcType::class, 'vs_gctype', 'gc_type_id')->withDefault();
     }
     public function store(){
-        $this->belongsTo(Store::class, 'vs_store', 'store_id');
+        return $this->belongsTo(Store::class, 'vs_store', 'store_id')->withDefault();
+    }
+    public function trans_reval(){
+       return $this->belongsTo(TransactionRevalidation::class, 'vs_barcode', 'reval_barcode');
     }
     public function scopeSelectFilter($query){
 

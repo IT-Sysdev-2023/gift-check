@@ -2,8 +2,10 @@
 
 namespace App\Services\Treasury;
 
+use App\Helpers\NumberHelper;
 use App\Models\Denomination;
 use App\Models\TransactionStore;
+use App\Services\Treasury\Reports\ReportHelper;
 use App\Services\Treasury\Reports\ReportsHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Date;
@@ -28,45 +30,42 @@ class ReportService extends ReportsHandler
 	{
 
 		$request->validate([
-			// "reportType" => 'required',
-			// "transactionDate" => "required",
+			"reportType" => 'required',
+			"transactionDate" => "required",
 			"store" => 'required',
-			// "date" => 'required_if:transactionDate,dateRange',
+			"date" => 'required_if:transactionDate,dateRange',
 		]);
-		dd($this->dataForPdf($request));
-		if($this->isExists($request)){
 
-			
-			$cashSales = $this->dataForPdf($request);
+		$this->setDateOfTransactions($request);
+		if ($this->hasRecords($request)) {
+			$gcSales = $this->gcSales($request);
+			// $refund = $this->refund($request);
 		}
-		// dd($this->dataForPdf($request));
 
 		$data = [
-
 			//Header
 			'header' => $this->pdfHeaderDate($request),
-
 			//Body
 			'data' => [
-				'cashSales' => $cashSales
+				'cashSales' => $gcSales->cashSales,
+				'totalCashSales' => NumberHelper::currency($gcSales->cashSales->sum('net')),
+
+				'cardSales' => $gcSales->cardSales,
+				'totalCardSales' => NumberHelper::currency($gcSales->cardSales->sum('net')),
+
+				'ar' => $gcSales->ar,
+				'totalCustomerDiscount' => NumberHelper::currency($gcSales->totalArCustomer),
+				'totalAr' => NumberHelper::currency($gcSales->ar->sum('net')),
 			],
 			//Footer
 			'footer' => [
-				'totalTransactionDiscount' => 0,
-				'grandTotalNet' => 0,
+				'totalTransactionDiscount' => NumberHelper::currency($gcSales->totalTransactionDiscount),
+				'grandTotalNet' => NumberHelper::currency($gcSales->grandTotalNet),
 			],
 
 		];
 		$pdf = Pdf::loadView('pdf.treasuryReports', ['data' => $data]);
 
 		return $pdf->output();
-		// return Response::make($pdfContent, 200, [
-		//     'Content-Type' => 'application/pdf',
-		//     'Content-Disposition' => 'attachment; filename="treasuryReports.pdf"',
-		// ]);
-		// dd(1);
 	}
-
-
-
 }
