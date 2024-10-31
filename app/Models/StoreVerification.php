@@ -20,8 +20,8 @@ class StoreVerification extends Model
 
     protected function casts(): array{
         return [
-            'vs_reverifydate' => 'date',
-            'vs_date' => 'date'
+            'vs_reverifydate' => 'datetime',
+            'vs_date' => 'datetime'
         ];
     }
 

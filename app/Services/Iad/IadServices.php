@@ -606,16 +606,21 @@ class IadServices extends FileHandler
             return $item;
         });
 
-        // dd($storeVerification->toArray());
-
         return  $storeVerification;
     }
 
     public function getVerifiedDetails($barcode)
     {
-        return  StoreVerification::select('vs_by', 'vs_date')
+        $store = StoreVerification::select('vs_by', 'vs_date', 'vs_time')
             ->with('user:user_id,firstname,lastname')
             ->where('vs_barcode', $barcode)
             ->first();
+
+        if ($store) {
+            $store->time = Date::parse($store->vs_time)->format('H:i a');
+            $store->date = Date::parse($store->vs_date)->toFormattedDateString();
+        }
+
+        return $store;
     }
 }
