@@ -8,15 +8,21 @@
 </head>
 
 <body>
+
     <div class="header">
         <h4 class="agc" style="margin-bottom: -17px">ALTURAS GROUP OF COMPANIES</h4>
         <h5 style="margin-bottom: -17px">INTERNAL AUDIT DEPARTMENT</h5>
         <h5 style="margin-bottom: -17px">GIFT CHECKS AUDIT</h5>
         <h5>{{ $data->date }}</h5>
     </div>
+    <div style="margin-top: 50px; margin-bottom: 50px">
+        <strong style="font-size: 13px">Date Generated :</strong> <span> {{ date('F j, Y') }}</span>
+        <br>
+        <strong style="font-size: 13px">Business Unit:</strong> <span> Corporate Treasury</span>
+    </div>
     <table class="flex" width="100%" style="margin-bottom: 1px;">
         <tr>
-            <td style="text-align: left;">{{ empty($data->addedgc) ? '' : ' Additional Gift Checks' }}</td>
+            <td style="text-align: left;">{{ $data->addedgc->count() === 0 ? '' : ' Additional Gift Checks' }}</td>
             <td style="text-align: right; font-weight: 600; font-size: 12px; letter-spacing: 1px; color: #024CAA;">
                 Beginning Balance: {{ number_format($data->begbal, 2) }}
             </td>
@@ -48,7 +54,7 @@
     @endif
 
     @if ($data->gcsold->count() !== 0)
-        <p style="margin-bottom: 1px">Sold Gift Checks</p>
+        <p style="margin-bottom: 1px">SOLD GIFT CHECKS</p>
         <table class="table">
             <thead>
 
@@ -78,7 +84,7 @@
     @endif
 
     @if ($data->unusedgc->count() !== 0)
-        <p style="margin-bottom: 1px">Smart of Unused Gift Checks</p>
+        <p style="margin-bottom: 1px">SUMMARY OF UNUSED GIFT CHECKS</p>
         <table class="table">
             <thead>
                 <tr>

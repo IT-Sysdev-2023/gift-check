@@ -9,8 +9,8 @@
                             <AuditOutlined />
                         </a-button>
                         <span v-if="record.trans_datetime !== null">
-                            <a-button>
-                                <SearchOutlined />
+                            <a-button @click="revalidation(record.vs_barcode)">
+                                <SearchOutlined  />
                             </a-button>
                         </span>
                         <span v-if="record.vs_reverifydate !== null">
@@ -19,7 +19,7 @@
                             </a-button>
                         </span>
                         <span v-if="record.vs_tf_used === '*'">
-                            <a-button>
+                            <a-button @click="transactiontxt(record.vs_barcode)">
                                 <SearchOutlined />
                             </a-button>
                         </span>
@@ -28,6 +28,7 @@
             </a-table>
             <pagination :datarecords="record" class="mt-5" />
             <verified-details-modal v-model:open="verifiedopen" :record="verdata"/>
+            <transaction-txt-modal v-model:open="transtxtopen" :record="transdata"/>
         </a-card>
     </AuthenticatedLayout>
 </template>
@@ -79,7 +80,10 @@ const columns = ref([
 ]);
 
 const verdata = ref({});
+const transdata = ref({});
+
 const verifiedopen = ref(false);
+const transtxtopen = ref(false);
 
 const verified = async (barcode) => {
     try {
@@ -88,6 +92,24 @@ const verified = async (barcode) => {
         verdata.value = data;
 
     } catch {
+        alert('naay error ayaw sig galaw gaw diha');
+    }
+}
+
+const revalidation = async (barcode) => {
+    try{
+        const { data } = await axios.get(route('iad.versoldused.verifieds', barcode));
+        verdata.value = data;
+    }catch{
+        alert('naay error ayaw sig galaw gaw diha');
+    }
+}
+const transactiontxt = async (barcode) => {
+    try{
+        const { data } = await axios.get(route('iad.versoldused.transaction', barcode));
+        transdata.value = data;
+        transtxtopen.value = true;
+    }catch{
         alert('naay error ayaw sig galaw gaw diha');
     }
 }

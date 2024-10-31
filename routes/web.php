@@ -618,6 +618,8 @@ Route::middleware('auth')->group(function () {
         Route::name('versoldused.')->group(function () {
             Route::get('verified-sold-used', [IadController::class, 'verifiedSoldUsed'])->name('index');
             Route::get('get-verified-{barcode}', [IadController::class, 'verifiedDetails'])->name('verified');
+            Route::get('get-verifieds-{barcode}', [IadController::class, 'verifiedsDetails'])->name('verifieds');
+            Route::get('get-transaction-txt-{barcode}', [IadController::class, 'transactionTxtDetails'])->name('transaction');
         });
 
     });
