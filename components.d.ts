@@ -333,6 +333,7 @@ declare module 'vue' {
     ReconciliationOutlined: typeof import('@ant-design/icons-vue')['ReconciliationOutlined']
     Register: typeof import('./resources/js/Pages/Auth/Register.vue')['default']
     ReleasedPromoGc: typeof import('./resources/js/Pages/Marketing/ReleasedPromoGc.vue')['default']
+    ReleasedSpexGc: typeof import('./resources/js/Pages/Marketing/specialgc/ReleasedSpexGc.vue')['default']
     ReleasedTab: typeof import('./resources/js/Pages/Finance/Reports/ReleasedTab.vue')['default']
     ReleasingEntryModal: typeof import('./resources/js/Pages/Treasury/Dashboard/StoreGc/ReleasingEntryModal.vue')['default']
     Reports: typeof import('./resources/js/Pages/Treasury/Reports.vue')['default']

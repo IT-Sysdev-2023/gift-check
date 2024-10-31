@@ -239,6 +239,10 @@ Route::prefix('marketing')->group(function () {
             Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest'])->name('aexgcreq');
             Route::get('selected-approved-external-gc-request', [MarketingController::class, 'selectedApprovedExternalGcRequest'])->name('selectedaexgcreq');
         });
+        Route::name('releasedspexgc.')->group(function () {
+            Route::get('count-released-spex-gc', [MarketingController::class, 'countreleasedspexgc'])->name('count');
+            Route::get('released-spex-gc',[MarketingController::class, 'releasedspexgc'])->name('releasedspexgc');
+        });
     });
 });
 

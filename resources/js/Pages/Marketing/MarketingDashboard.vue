@@ -37,6 +37,7 @@
                 pRoute="marketing.special-gc.pending"
                 aRoute="marketing.special-gc.aexgcreq"
                 cRoute=""
+                spexgcreleased
             />
         </a-col>
         <a-col :span="8">
