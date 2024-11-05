@@ -621,6 +621,9 @@ Route::middleware('auth')->group(function () {
             Route::get('get-verifieds-{barcode}', [IadController::class, 'verifiedsDetails'])->name('verifieds');
             Route::get('get-transaction-txt-{barcode}', [IadController::class, 'transactionTxtDetails'])->name('transaction');
         });
+        Route::name('excel.')->group(function () {
+            Route::get('verified', [IadController::class, 'verifiedReports'])->name('verified');
+        });
 
     });
 });

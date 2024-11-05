@@ -50,5 +50,18 @@ const page = usePage<PageWithSharedProps>().props;
                 </Link>
             </span>
         </a-menu-item>
+        <a-sub-menu v-if="page.auth.user.usertype  === '10'" key="iad-side-bar">
+        <template #title>
+            <span>
+                <SwapOutlined />
+                <span>Excel Reports</span>
+            </span>
+        </template>
+
+        <a-menu-item key="dashboard">
+        <GroupOutlined />
+        <span> <Link :href="route('iad.excel.verified')">Verified Gc Reports</Link></span>
+    </a-menu-item>
+  </a-sub-menu>
     </div>
 </template>
