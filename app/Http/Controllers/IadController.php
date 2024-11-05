@@ -154,5 +154,10 @@ class IadController extends Controller
     public function transactionTxtDetails($barcode){
         return $this->iadServices->getTransactionText($barcode);
     }
+    public function verifiedReports(){
+        return inertia('Iad/Excel/VerifiedReports', [
+            'stores' => $this->iadServices->getStores(),
+        ]);
+    }
 
 }

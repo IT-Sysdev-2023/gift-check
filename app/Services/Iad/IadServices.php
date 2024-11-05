@@ -17,6 +17,7 @@ use App\Models\RequisitionEntry;
 use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\Store;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
 use App\Models\TempValidation;
@@ -625,30 +626,33 @@ class IadServices extends FileHandler
 
         return $store;
     }
-    public function getVerifiedsDetails($barcode) {
-
+    public function getVerifiedsDetails($barcode)
+    {
         $data = TransactionRevalidation::with('trans_stores')->join()->where('reval_barcode', $barcode)->first();
-    //     $select = "transaction_revalidation.reval_barcode,
-	// 	transaction_stores.trans_datetime,
-	// 	CONCAT(store_staff.ss_firstname,' ',store_staff.ss_lastname) as reval";
-	// $where = "transaction_revalidation.reval_barcode='".$barcode."'";
-	// $join = 'INNER JOIN
-	// 		transaction_stores
-	// 	ON
-	// 		transaction_stores.trans_sid = transaction_revalidation.reval_trans_id
-	// 	INNER JOIN
-	// 		store_staff
-	// 	ON
-	// 		store_staff.ss_id = transaction_stores.trans_cashier';
-
-	// $limit = " ORDER BY transaction_stores.trans_datetime DESC";
-
-	// $data = getalldata($link,'transaction_revalidation',$select,$where,$join,$limit);
     }
     public function getTransactionText($barcode)
     {
-         $data = StoreEodTextfileTransaction::where('seodtt_barcode', $barcode)->get();
+        $data = StoreEodTextfileTransaction::where('seodtt_barcode', $barcode)->get();
 
-         return $data;
+        return $data;
+    }
+    public function getVerifiedReports()
+    {
+        // dd();
+    }
+
+    public function getStores()
+    {
+        $store = Store::get();
+
+        $store->transform(function ($item) {
+
+            return (object) [
+                'value' => $item->store_id,
+                'label' => $item->store_name,
+            ];
+        });
+
+        return $store;
     }
 }

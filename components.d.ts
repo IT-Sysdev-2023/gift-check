@@ -441,6 +441,7 @@ declare module 'vue' {
     Verification: typeof import('./resources/js/Pages/Retail/Verification.vue')['default']
     VerifiedDetailsModal: typeof import('./resources/js/Pages/Iad/Modals/VerifiedDetailsModal.vue')['default']
     VerifiedGc: typeof import('./resources/js/Pages/Eod/VerifiedGc.vue')['default']
+    VerifiedReports: typeof import('./resources/js/Pages/Iad/Excel/VerifiedReports.vue')['default']
     VerifiedSoldUsedGc: typeof import('./resources/js/Pages/Iad/VerifiedSoldUsedGc.vue')['default']
     VerifyEmail: typeof import('./resources/js/Pages/Auth/VerifyEmail.vue')['default']
     ViewAllocatedGcModal: typeof import('./resources/js/Components/Treasury/ViewAllocatedGcModal.vue')['default']
