@@ -239,6 +239,10 @@ Route::prefix('marketing')->group(function () {
             Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest'])->name('aexgcreq');
             Route::get('selected-approved-external-gc-request', [MarketingController::class, 'selectedApprovedExternalGcRequest'])->name('selectedaexgcreq');
         });
+        Route::name('releasedspexgc.')->group(function () {
+            Route::get('count-released-spex-gc', [MarketingController::class, 'countreleasedspexgc'])->name('count');
+            Route::get('released-spex-gc',[MarketingController::class, 'releasedspexgc'])->name('releasedspexgc');
+        });
     });
 });
 
@@ -614,6 +618,8 @@ Route::middleware('auth')->group(function () {
         Route::name('versoldused.')->group(function () {
             Route::get('verified-sold-used', [IadController::class, 'verifiedSoldUsed'])->name('index');
             Route::get('get-verified-{barcode}', [IadController::class, 'verifiedDetails'])->name('verified');
+            Route::get('get-verifieds-{barcode}', [IadController::class, 'verifiedsDetails'])->name('verifieds');
+            Route::get('get-transaction-txt-{barcode}', [IadController::class, 'transactionTxtDetails'])->name('transaction');
         });
 
     });

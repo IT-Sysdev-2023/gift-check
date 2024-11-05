@@ -148,5 +148,11 @@ class IadController extends Controller
     public function verifiedDetails($barcode){
         return $this->iadServices->getVerifiedDetails($barcode);
     }
+    public function verifiedsDetails($barcode){
+        return $this->iadServices->getVerifiedsDetails($barcode);
+    }
+    public function transactionTxtDetails($barcode){
+        return $this->iadServices->getTransactionText($barcode);
+    }
 
 }

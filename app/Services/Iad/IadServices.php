@@ -17,8 +17,10 @@ use App\Models\RequisitionEntry;
 use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
 use App\Models\TempValidation;
+use App\Models\TransactionRevalidation;
 use App\Models\TransactionSale;
 use App\Models\User;
 use App\Services\Documents\FileHandler;
@@ -526,16 +528,17 @@ class IadServices extends FileHandler
         $addedgc = $this->transform($traits->addedgc);
         $unusedgc = $this->transform($traits->unusedgc);
 
+        $con = (!empty($date) && $date[0] !== null);
 
         return (object) [
-            'addedgc' => !empty($request->date) ? $addedgc->values() : [],
-            'gcsold' => !empty($request->date) ? $traits->gcrelease->values() : [],
-            'unusedgc' => !empty($request->date) ? $unusedgc->values() : [],
+            'addedgc' => $con ? $addedgc->values() : [],
+            'gcsold' => $con ? $traits->gcrelease->values() : [],
+            'unusedgc' => ($con && $date[0] !== null) ? $unusedgc->values() : [],
             'begbal' => $traits->begbal->sum('subtotal'),
             'gcsoldbal' => $traits->gcrelease->sum('subtotal'),
             'unusedbal' => $traits->unusedgc->sum('subtotal'),
-            'datebackend' => !empty($request->date) ?  $request->date  : [],
-            'date' =>  !empty($request->date) ? Date::parse($request->date[0])->toFormattedDateString() . ' to ' . Date::parse($request->date[1])->toFormattedDateString() : 'No Date Selected',
+            'datebackend' => $con ?  $date  : [],
+            'date' =>  $con ? Date::parse($date[0])->toFormattedDateString() . ' to ' . Date::parse($date[1])->toFormattedDateString() : 'No Date Selected',
         ];
     }
 
@@ -555,7 +558,6 @@ class IadServices extends FileHandler
 
     public function generateAudited($data)
     {
-        // dd($data);
         $pdf = Pdf::loadView('pdf.auditstore', ['data' => $data]);
 
         return response()->json([
@@ -622,5 +624,31 @@ class IadServices extends FileHandler
         }
 
         return $store;
+    }
+    public function getVerifiedsDetails($barcode) {
+
+        $data = TransactionRevalidation::with('trans_stores')->join()->where('reval_barcode', $barcode)->first();
+    //     $select = "transaction_revalidation.reval_barcode,
+	// 	transaction_stores.trans_datetime,
+	// 	CONCAT(store_staff.ss_firstname,' ',store_staff.ss_lastname) as reval";
+	// $where = "transaction_revalidation.reval_barcode='".$barcode."'";
+	// $join = 'INNER JOIN
+	// 		transaction_stores
+	// 	ON
+	// 		transaction_stores.trans_sid = transaction_revalidation.reval_trans_id
+	// 	INNER JOIN
+	// 		store_staff
+	// 	ON
+	// 		store_staff.ss_id = transaction_stores.trans_cashier';
+
+	// $limit = " ORDER BY transaction_stores.trans_datetime DESC";
+
+	// $data = getalldata($link,'transaction_revalidation',$select,$where,$join,$limit);
+    }
+    public function getTransactionText($barcode)
+    {
+         $data = StoreEodTextfileTransaction::where('seodtt_barcode', $barcode)->get();
+
+         return $data;
     }
 }
