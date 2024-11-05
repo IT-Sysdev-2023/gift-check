@@ -37,30 +37,34 @@ class ReportService extends ReportsHandler
 		]);
 
 		$this->setDateOfTransactions($request);
-		if ($this->hasRecords($request)) {
-			$gcSales = $this->gcSales($request);
-			// $refund = $this->refund($request);
-		}
 
+		$record = collect();
+		$footerData = collect();
+		$reportType = collect($request->reportType);
+		
+		if ($this->hasRecords($request)) {
+			if ($reportType->contains('gcSales')) {
+				$record->put('gcSales', $this->gcSales($request));
+				$footerData->put('gcSalesFooter', $this->footer($request));
+			}
+			if ($reportType->contains('refund')) {
+				$footerData->put('refundFooter', $this->refund($request));
+			}
+			if ($reportType->contains('gcRevalidation')) {
+				$footerData->put('revalidationFooter', $this->gcRevalidation($request));
+			}
+		}
+		
 		$data = [
 			//Header
 			'header' => $this->pdfHeaderDate($request),
 			//Body
 			'data' => [
-				'cashSales' => $gcSales->cashSales,
-				'totalCashSales' => NumberHelper::currency($gcSales->cashSales->sum('net')),
-
-				'cardSales' => $gcSales->cardSales,
-				'totalCardSales' => NumberHelper::currency($gcSales->cardSales->sum('net')),
-
-				'ar' => $gcSales->ar,
-				'totalCustomerDiscount' => NumberHelper::currency($gcSales->totalArCustomer),
-				'totalAr' => NumberHelper::currency($gcSales->ar->sum('net')),
+				...$record,
 			],
 			//Footer
 			'footer' => [
-				'totalTransactionDiscount' => NumberHelper::currency($gcSales->totalTransactionDiscount),
-				'grandTotalNet' => NumberHelper::currency($gcSales->grandTotalNet),
+				...$footerData
 			],
 
 		];

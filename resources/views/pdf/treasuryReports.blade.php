@@ -96,7 +96,8 @@
                 <th>Line Disc.</th>
                 <th>Net</th>
             </tr>
-            @foreach ($data['data']['cashSales'] as $item)
+
+            @foreach ($data['data']['gcSales']['cashSales'] as $item)
                 <tr>
                     <td class="left">{{$item->denomination}}</td>
                     <td>{{$item->cnt}}</td>
@@ -107,7 +108,7 @@
             @endforeach
             <tr class="total">
                 <td colspan="4" class="left">Total Net:</td>
-                <td>{{$data['data']['totalCashSales']}}</td>
+                <td>{{$data['data']['gcSales']['totalCashSales']}}</td>
             </tr>
         </table>
 
@@ -123,7 +124,7 @@
                 <th>Line Disc.</th>
                 <th>Net</th>
             </tr>
-            @foreach ($data['data']['cardSales'] as $item)
+            @foreach ($data['data']['gcSales']['cardSales'] as $item)
                 <tr>
                     <td class="left">{{$item->denomination}}</td>
                     <td>{{$item->cnt}}</td>
@@ -134,7 +135,7 @@
             @endforeach
             <tr class="total">
                 <td colspan="4" class="left">Total Net:</td>
-                <td>{{$data['data']['totalCardSales']}}</td>
+                <td>{{$data['data']['gcSales']['totalCardSales']}}</td>
             </tr>
         </table>
         <table>
@@ -148,7 +149,7 @@
                 <th>Line Disc.</th>
                 <th>Net</th>
             </tr>
-            @foreach ($data['data']['ar'] as $item)
+            @foreach ($data['data']['gcSales']['ar'] as $item)
                 <tr>
                     <td class="left">{{$item->denomination}}</td>
                     <td>{{$item->cnt}}</td>
@@ -159,22 +160,46 @@
             @endforeach
             <tr class="total">
                 <td colspan="4" class="left">Customer Total Discount:</td>
-                <td>{{$data['data']['totalCustomerDiscount']}}</td>
+                <td>{{$data['data']['gcSales']['totalCustomerDiscount']}}</td>
             </tr>
             <tr class="total">
                 <td colspan="4" class="left">Total Net:</td>
-                <td>{{$data['data']['totalAr']}}</td>
+                <td>{{$data['data']['gcSales']['totalAr']}}</td>
             </tr>
         </table>
 
+
         <table>
-            @foreach($data['footer'] as $title => $name)
+            <!-- Gc Sales Footer -->
+                @foreach($data['footer']['gcSalesFooter'] as $title => $name)
+                    <tr class="total">
+                        <td colspan="4" class="left">{{Str::headline($title)}}:</td>
+                        <td>{{$name}}</td>
+                    </tr>
+                @endforeach
+        </table>
+
+        <table>
+            <!-- Refund Footer -->
+            @foreach($data['footer']['refundFooter'] as $title => $name)
                 <tr class="total">
                     <td colspan="4" class="left">{{Str::headline($title)}}:</td>
                     <td>{{$name}}</td>
                 </tr>
             @endforeach
         </table>
+
+        <table>
+            <!-- Revalidation Footer -->
+            @foreach($data['footer']['revalidationFooter'] as $title => $name)
+                <tr class="total">
+                    <td colspan="4" class="left">{{Str::headline($title)}}:</td>
+                    <td>{{$name}}</td>
+                </tr>
+            @endforeach
+        </table>
+
+
     </div>
 </body>
 

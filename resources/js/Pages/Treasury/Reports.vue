@@ -12,6 +12,7 @@
                 :model="formState"
                 :label-col="labelCol"
                 :wrapper-col="wrapperCol"
+                    @finish="onSubmit"
             >
                 <a-form-item
                     label="Store"
@@ -79,7 +80,7 @@
                     />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-                    <a-button type="primary" @click="onSubmit">Create</a-button>
+                    <a-button type="primary" html-type="submit">Create</a-button>
                     <a-button style="margin-left: 10px">Cancel</a-button>
                 </a-form-item>
             </a-form>

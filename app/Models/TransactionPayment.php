@@ -12,4 +12,8 @@ class TransactionPayment extends Model
     protected $table= 'transaction_payment';
 
     protected $primaryKey= 'payment_id';
+
+    public function transactionStore(){
+        return $this->belongsTo(TransactionStore::class, 'payment_trans_num', 'trans_sid');
+    }
 }

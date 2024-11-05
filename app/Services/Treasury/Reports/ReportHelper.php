@@ -14,12 +14,6 @@ use App\Models\TransactionLinediscount;
 use App\Models\TransactionSale;
 class ReportHelper
 {
-    public function isRefundExist(Request $request){
-        $data = TransactionRefund::join('denomination', 'denomination.denom_id', '=', 'transaction_refund.refund_denom')
-        ->join('transaction_store', 'transaction_stores.trans_sid', '=', 'transaction_refund.refund_trans_id')
-        ->where('transaction_stores.trans_store', $request->store)
-        ->get();
-    }
     public static function grandTotal($cashSales, $cardSales, $ar, $discount)
 	{
 		$cashSales = (string) $cashSales->sum('net');
@@ -31,16 +25,6 @@ class ReportHelper
 
 		return bcsub($totalSales, $discount, 2);
 	}
-    public static function transactionsDate(Request $request): array|null
-    {
-        $res = match ($request->transactionDate) {
-            'dateRange' => [$request->date[0], $request->date[1]],
-            'thisWeek' => [now()->startOfWeek(), now()->endOfWeek()],
-            'currentMonth' => [now()->startOfMonth(), now()->endOfMonth()],
-            'allTransactions' => self::allTransaction($request)
-        };
-        return $res;
-    }
 
     public static function allTransaction(Request $request)
     {
@@ -73,28 +57,5 @@ class ReportHelper
             'from' => $from ?? null,
             'to' => $to ?? null
         ];
-    }
-
-    public static function isDateRange($request)
-    {
-        if (
-            $request->transactionDate == 'dateRange'
-            || $request->transactionDate == 'thisWeek'
-            || $request->transactionDate == 'currentMonth'
-            || $request->transactionDate == 'allTransactions'
-        ) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-    public static function transactionDateSingle(Request $request)
-    {
-        return match ($request->transactionDate) {
-            'today' => now(),
-            'yesterday' => Date::yesterday(),
-            default => null
-        };
     }
 }
