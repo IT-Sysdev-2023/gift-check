@@ -11,14 +11,20 @@
                     <a-card class="mt-5">
                         <a-row :gutter="[16, 16]">
                             <a-col :span="12">
-                                <a-date-picker style="width: 100%;" v-model:value="month" picker="month" />
+                                <a-date-picker class="mb-2" style="width: 100%;" v-model:value="month" picker="month" />
+                                <a-button block type="primary" @click="generate">
+                                    <template #icon>
+                                        <PrinterOutlined />
+                                    </template>
+                                    Generate Excel
+                                </a-button>
                             </a-col>
                             <a-col :span="12">
                                 <a-select placeholder="Data Type" class="mb-2" @change="handleChangeDataType"
                                     ref="select" style="width: 100%;" :options="datatype">
                                 </a-select>
-                                <a-select placeholder="Select Store" v-model:value="storeData" :disabled="vergc" class="mb-5" ref="select"
-                                    style="width: 100%;" :options="selectedStores">
+                                <a-select placeholder="Select Store" v-model:value="storeData" :disabled="vergc"
+                                    class="mb-5" ref="select" style="width: 100%;" :options="selectedStores">
                                 </a-select>
                             </a-col>
                         </a-row>
@@ -39,12 +45,20 @@
 import { ref } from 'vue';
 import type { SelectProps } from 'ant-design-vue';
 import type { Dayjs } from 'dayjs';
+import { useForm } from 'laravel-precognition-vue';
 
 const month = ref<Dayjs>();
 
 const vergc = ref<boolean>(true);
 
 const storeData = ref<number>();
+
+const form = useForm('post', '', {
+    datatype: '',
+    store: '',
+    date: '',
+});
+
 
 interface Records {
     stores: {
@@ -78,6 +92,9 @@ const datatype = ref<SelectProps['options']>([
 
 const handleChangeType = (value: string) => {
 
+}
+const generate = () => {
+    form.submit();
 }
 const handleChangeDataType = (value: string) => {
     if (value === '0') {
