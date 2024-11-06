@@ -29,6 +29,7 @@ use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\RequisitionEntry;
+use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
 use App\Models\Supplier;
@@ -2106,4 +2107,10 @@ class MarketingController extends Controller
         ]);
     }
 
+    public function viewReleasedSpexGc(Request $request)
+    {
+        return response()->json([
+            'data' => $this->marketing->viewReleasedSpexGc($request)
+        ]);
+    }
 }

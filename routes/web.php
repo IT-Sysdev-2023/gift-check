@@ -242,6 +242,7 @@ Route::prefix('marketing')->group(function () {
         Route::name('releasedspexgc.')->group(function () {
             Route::get('count-released-spex-gc', [MarketingController::class, 'countreleasedspexgc'])->name('count');
             Route::get('released-spex-gc',[MarketingController::class, 'releasedspexgc'])->name('releasedspexgc');
+            Route::get('view-released-spex-gc',[MarketingController::class,'viewReleasedSpexGc'])->name('viewReleasedSpexGcdetails');
         });
     });
 });
