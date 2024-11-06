@@ -13,11 +13,39 @@ use Illuminate\Http\Request;
 use App\Models\TransactionStore;
 use App\Models\TransactionLinediscount;
 use App\Models\TransactionSale;
+use App\Models\Store;
 class ReportGenerator
 {
 
 	protected $transactionDate;
 	protected bool $isDateRange;
+	protected $store;
+	protected function pdfHeaderDate(Request $request)
+	{
+		$store = Store::where('store_id', $this->store)->value('store_name');
+
+		$header = collect([
+			'reportCreated' => now()->toFormattedDateString(),
+			'store' => $store,
+			'reportType' => $request->reportType
+		]);
+
+		$transDateHeader = match ($request->transactionDate) {
+			'dateRange' => ReportHelper::extractDateRange($request)->from . 'to' . ReportHelper::extractDateRange($request)->to,
+			'today' => now()->toFormattedDateString(),
+			'yesterday' => Date::yesterday()->toFormattedDateString(),
+			'thisWeek' => now()->startOfWeek()->toFormattedDateString() . ' to ' . now()->endOfWeek()->toFormattedDateString(),
+			'currentMonth' => now()->startOfMonth()->toFormattedDateString() . ' to ' . now()->endOfMonth()->toFormattedDateString(),
+			'allTransactions' => is_null(ReportHelper::allTransaction($request))
+			? 'No Transactions'
+			: Date::parse(ReportHelper::allTransaction($request)[0])->toFormattedDateString() .
+			' - ' . Date::parse(ReportHelper::allTransaction($request)[1])->toFormattedDateString()
+		};
+
+		$header->put('transactionDate', $transDateHeader);
+
+		return $header;
+	}
 	protected function generateSalesData(Request $request, int $type)
 	{
 		$transactionLines = TransactionLinediscount::select('gc.denom_id as denom', DB::raw('SUM(trlinedis_discamt) as discount'))
@@ -25,12 +53,12 @@ class ReportGenerator
 			->groupBy('gc.denom_id');
 
 		$denom = TransactionSale::selectRaw("
-											COUNT(sales_transaction_id) AS cnt,
-											COALESCE(SUM(denomination.denomination), 0) AS densum,
-											COALESCE(line.discount, 0) AS lineDiscount,
-											denomination.denomination,
-											(COALESCE(SUM(denomination.denomination), 0) - COALESCE(line.discount, 0)) AS net
-									")
+					COUNT(sales_transaction_id) AS cnt,
+					COALESCE(SUM(denomination.denomination), 0) AS densum,
+					COALESCE(line.discount, 0) AS lineDiscount,
+					denomination.denomination,
+					(COALESCE(SUM(denomination.denomination), 0) - COALESCE(line.discount, 0)) AS net
+			")
 			->join('denomination', 'denom_id', '=', 'sales_denomination')
 			->join('transaction_stores', 'trans_sid', 'sales_transaction_id')
 			->leftJoinSub($transactionLines, 'line', function (JoinClause $join) {
@@ -41,11 +69,11 @@ class ReportGenerator
 				fn($q) => $q->whereBetween('trans_datetime', $this->transactionDate),
 				fn($q) => $q->whereDate('trans_datetime', $this->transactionDate)
 			)
-			->where([['trans_store', $request->store], ['trans_type', $type]])
+			->where([['trans_store', $this->store], ['trans_type', $type]])
 			->groupBy('denomination', 'line.discount')
-			->get();
+			->cursor();
 
-		return $denom->transform(function ($record) {
+		return $denom->map(function ($record) {
 			$record->densum = NumberHelper::currency($record->densum);
 			$record->denomination = NumberHelper::currency($record->denomination);
 			$record->netIncome = NumberHelper::currency($record->net);
@@ -56,7 +84,7 @@ class ReportGenerator
 	{
 		return TransactionStore::selectRaw("COALESCE(SUM(transaction_payment.payment_internal_discount), 0) AS customerDiscount")
 			->join('transaction_payment', 'transaction_payment.payment_trans_num', '=', 'transaction_stores.trans_sid')
-			->where([['transaction_stores.trans_type', '3'], ['transaction_stores.trans_store', $request->store]])
+			->where([['transaction_stores.trans_type', '3'], ['transaction_stores.trans_store', $this->store]])
 			->when(
 				$this->isDateRange,
 				fn($q) => $q->whereBetween('trans_datetime', $this->transactionDate),
@@ -67,7 +95,7 @@ class ReportGenerator
 	{
 		return TransactionStore::selectRaw("COALESCE(SUM(transaction_docdiscount.trdocdisc_amnt),0) as total")
 			->join('transaction_docdiscount', 'transaction_docdiscount.trdocdisc_trid', '=', 'transaction_stores.trans_sid')
-			->where('transaction_stores.trans_store', $request->store)
+			->where('transaction_stores.trans_store', $this->store)
 			->when(
 				$this->isDateRange,
 				fn($q) => $q->whereBetween('trans_datetime', $this->transactionDate),
@@ -94,7 +122,8 @@ class ReportGenerator
 	}
 	protected function hasRecords(Request $request)
 	{
-		return TransactionStore::select('trans_sid', 'trans_number', 'trans_type', 'trans_datetime')->withWhereHas('ledgerStore')->where('trans_store', $request->store)
+		return TransactionStore::whereHas('ledgerStore')
+			->where('trans_store', $this->store)
 			->when((in_array('gcSales', $request->reportType)) ?? null, function ($q) use ($request) {
 				$q->whereIn('trans_type', ['1', '2', '3'])
 					->when(
@@ -127,7 +156,7 @@ class ReportGenerator
 		)
 			->whereHas(
 				'transactionStore',
-				fn(Builder $q) => $q->where('trans_store', $request->store)->when(
+				fn(Builder $q) => $q->where('trans_store', $this->store)->when(
 					$this->isDateRange,
 					fn($q) => $q->whereBetween('trans_datetime', $this->transactionDate),
 					fn($q) => $q->whereDate('trans_datetime', $this->transactionDate)
@@ -142,7 +171,7 @@ class ReportGenerator
 	{
 		return TransactionRefundDetail::selectRaw("trefundd_trstoresid, COALESCE(SUM(transaction_refund_details.trefundd_servicecharge),0) as scharge")->whereHas(
 			'transactionStore',
-			fn(Builder $q) => $q->where('trans_store', $request->store)->when(
+			fn(Builder $q) => $q->where('trans_store', $this->store)->when(
 				$this->isDateRange,
 				fn($q) => $q->whereBetween('trans_datetime', $this->transactionDate),
 				fn($q) => $q->whereDate('trans_datetime', $this->transactionDate)
@@ -155,7 +184,7 @@ class ReportGenerator
 		return TransactionPayment::selectRaw("COALESCE(SUM(transaction_payment.payment_amountdue),0) as reval")
 			->whereHas(
 				'transactionStore',
-				fn(Builder $q) => $q->where('trans_store', $request->store)->when(
+				fn(Builder $q) => $q->where('trans_store', $this->store)->when(
 					$this->isDateRange,
 					fn($q) => $q->whereBetween('trans_datetime', $this->transactionDate),
 					fn($q) => $q->whereDate('trans_datetime', $this->transactionDate)

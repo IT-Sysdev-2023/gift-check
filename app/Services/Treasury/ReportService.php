@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Benchmark;
 use Illuminate\Http\Request;
 use App\Models\Store;
+use Illuminate\Support\LazyCollection;
 
 class ReportService extends ReportsHandler
 {
@@ -38,10 +39,46 @@ class ReportService extends ReportsHandler
 
 		$this->setDateOfTransactions($request);
 
+		$storeData = LazyCollection::make(function () use ($request) {
+
+			//All Stores
+			if ($request->store === 'all') { 
+				$store = Store::select('store_id as value')->where('store_status', 'active')->cursor();
+				foreach ($store as $item) {
+					$this->store = $item->value;
+					$record = $this->handleRecords($request);
+
+					yield [
+						'header' => $this->pdfHeaderDate($request),
+						'data' => [...$record['data']],
+						'footer' => [...$record['footer']],
+					];
+				}
+			} else {
+				$this->store = $request->store;
+				$record = $this->handleRecords($request);
+
+				yield [
+					'header' => $this->pdfHeaderDate($request),
+					'data' => [...$record['data']],
+					'footer' => [...$record['footer']],
+				];
+			}
+		});
+
+		$pdf = Pdf::loadView('pdf.treasuryReports', ['data' => ['stores' => $storeData]]);
+
+		return $pdf->output();
+	}
+
+	private function handleRecords(Request $request)
+	{
+
 		$record = collect();
 		$footerData = collect();
+
 		$reportType = collect($request->reportType);
-		
+
 		if ($this->hasRecords($request)) {
 			if ($reportType->contains('gcSales')) {
 				$record->put('gcSales', $this->gcSales($request));
@@ -53,23 +90,13 @@ class ReportService extends ReportsHandler
 			if ($reportType->contains('gcRevalidation')) {
 				$footerData->put('revalidationFooter', $this->gcRevalidation($request));
 			}
+		} else {
+			return response()->json('No Transaction at this moment!');
 		}
-		
-		$data = [
-			//Header
-			'header' => $this->pdfHeaderDate($request),
-			//Body
-			'data' => [
-				...$record,
-			],
-			//Footer
-			'footer' => [
-				...$footerData
-			],
 
+		return [
+			'data' => $record,
+			'footer' => $footerData
 		];
-		$pdf = Pdf::loadView('pdf.treasuryReports', ['data' => $data]);
-
-		return $pdf->output();
 	}
 }

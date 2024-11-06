@@ -19,7 +19,7 @@ class ReportsController extends Controller
         $store = Store::select('store_id as value', 'store_name as label')->where('store_status', 'active')->get();
         return inertia('Treasury/Reports', [
             'title' => 'Reports',
-            'store' => $store->push(['value' => 13, 'label' => 'All Stores']),
+            'store' => $store->push(['value' => 'all', 'label' => 'All Stores']),
         ]);
     }
     public function generateReports(Request $request)
