@@ -69,7 +69,7 @@
 </head>
 
 <body>
-    @foreach ($data['stores'] as $store)
+    @foreach ($data['stores'] as $key => $store)
         <div class="container">
             <div class="header">
                 <h2>{{$store['header']['store']}}</h2>
@@ -206,7 +206,9 @@
 
 
         </div>
+        @if ($key < count($data['stores']) - 1)
         <div class="page-break"></div>
+        @endif
     @endforeach
 </body>
 
