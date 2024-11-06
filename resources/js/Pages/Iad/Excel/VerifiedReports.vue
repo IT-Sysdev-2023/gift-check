@@ -2,7 +2,7 @@
     <AuthenticatedLayout>
         <a-card>
             <div class="flex justify-center">
-                <a-select placeholder="Select Type of Report" @change="handleChangeType" ref="select"
+                <a-select placeholder="Select Type of Report" v-model:value="selected" ref="select"
                     style="width: 400px;" :options="selectedType">
                 </a-select>
             </div>
@@ -11,7 +11,10 @@
                     <a-card class="mt-5">
                         <a-row :gutter="[16, 16]">
                             <a-col :span="12">
-                                <a-date-picker class="mb-2" style="width: 100%;" v-model:value="month" picker="month" />
+
+                                <a-date-picker @change="handleDateChange" class="mb-2" style="width: 100%;"
+                                    :picker="selected === '0' ? 'month' : 'year'" />
+
                                 <a-button block type="primary" @click="generate">
                                     <template #icon>
                                         <PrinterOutlined />
@@ -23,8 +26,9 @@
                                 <a-select placeholder="Data Type" class="mb-2" @change="handleChangeDataType"
                                     ref="select" style="width: 100%;" :options="datatype">
                                 </a-select>
-                                <a-select placeholder="Select Store" v-model:value="storeData" :disabled="vergc"
-                                    class="mb-5" ref="select" style="width: 100%;" :options="selectedStores">
+                                <a-select placeholder="Select Store" v-model:value="storeData"
+                                    :disabled="vergc !== 'vgc'" class="mb-5" ref="select" style="width: 100%;"
+                                    :options="selectedStores">
                                 </a-select>
                             </a-col>
                         </a-row>
@@ -32,9 +36,12 @@
                 </a-col>
                 <a-col :span="12">
                     <a-card class="mt-5">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusantium sunt cumque iure quas at
-                        fuga, ipsum cupiditate pariatur totam ratione ad, vitae laudantium! Minus eius eum amet
-                        accusantium repellat nihil.
+                        <div class="flex justify-center">
+                            <a-progress  type="circle" :stroke-color="{
+                            '0%': '#108ee9',
+                            '100%': '#87d068',
+                        }" :percent="100" />
+                        </div>
                     </a-card>
                 </a-col>
             </a-row>
@@ -45,19 +52,14 @@
 import { ref } from 'vue';
 import type { SelectProps } from 'ant-design-vue';
 import type { Dayjs } from 'dayjs';
-import { useForm } from 'laravel-precognition-vue';
 
-const month = ref<Dayjs>();
+const date = ref<Dayjs>();
 
-const vergc = ref<boolean>(true);
+const vergc = ref<string>('');
+
+const selected = ref<string>('0');
 
 const storeData = ref<number>();
-
-const form = useForm('post', '', {
-    datatype: '',
-    store: '',
-    date: '',
-});
 
 
 interface Records {
@@ -68,6 +70,12 @@ interface Records {
 };
 
 const props = defineProps<Records>();
+
+const selectedStores = ref<SelectProps['options']>(props.stores);
+
+const handleDateChange = (obj: any, str: any) => {
+    date.value = str;
+}
 
 const selectedType = ref<SelectProps['options']>([
     {
@@ -81,25 +89,26 @@ const selectedType = ref<SelectProps['options']>([
 
 ]);
 
-const selectedStores = ref<SelectProps['options']>(props.stores);
 
 const datatype = ref<SelectProps['options']>([
     {
-        value: '0',
+        value: 'vgc',
         label: 'Verified Gc',
     },
 ]);
 
-const handleChangeType = (value: string) => {
+
+const generate = () => {
+
+    window.location.href = route('iad.excel.generate.verified', {
+        datatype: vergc.value,
+        store: storeData.value,
+        date: date.value,
+    });
 
 }
-const generate = () => {
-    form.submit();
-}
 const handleChangeDataType = (value: string) => {
-    if (value === '0') {
-        vergc.value = false;
-    }
+    vergc.value = value;
 }
 
 </script>
