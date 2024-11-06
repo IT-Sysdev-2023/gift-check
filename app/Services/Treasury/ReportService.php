@@ -88,7 +88,7 @@ class ReportService extends ReportsHandler
 				$footerData->put('refundFooter', $this->refund($request));
 			}
 			if ($reportType->contains('gcRevalidation')) {
-				$footerData->put('revalidationFooter', $this->gcRevalidation($request));
+				$footerData->put('revalidationFooter', $this->gcRevalidation());
 			}
 		} else {
 			return response()->json('No Transaction at this moment!');

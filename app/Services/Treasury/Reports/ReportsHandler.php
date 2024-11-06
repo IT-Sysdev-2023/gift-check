@@ -41,9 +41,9 @@ class ReportsHandler extends ReportGenerator
 		];
 	}
 
-	protected function gcRevalidation(Request $request)
+	protected function gcRevalidation()
 	{
-		$records = $this->revalidation($request);
+		$records = $this->revalidation();
 		if (!is_null($records)) {
 			return [
 				'totalRevalidationPayment' => NumberHelper::currency($records)
@@ -53,7 +53,7 @@ class ReportsHandler extends ReportGenerator
 	}
 	protected function refund(Request $request)
 	{
-		$refunds = $this->fundsRecords($request);
+		$refunds = $this->fundsRecords();
 		$serviceCharge = $this->serviceCharge($request);
 		if (!is_null($refunds)) {
 			$denomination = bcsub((string) $refunds->denomination_sum_denomination, (string) $refunds->lindisc, 2);
@@ -74,7 +74,7 @@ class ReportsHandler extends ReportGenerator
 	protected function footer(Request $request)
 	{
 		$gcSales = $this->gcSales($request);
-		$discount = $this->generateTotalTransDiscount($request);
+		$discount = $this->generateTotalTransDiscount();
 		$grandTotal = ReportHelper::grandTotal($gcSales['cashSales'], $gcSales['cardSales'], $gcSales['ar'], $discount);
 
 		return [

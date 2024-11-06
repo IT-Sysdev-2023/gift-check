@@ -36,10 +36,7 @@ class ReportGenerator
 			'yesterday' => Date::yesterday()->toFormattedDateString(),
 			'thisWeek' => now()->startOfWeek()->toFormattedDateString() . ' to ' . now()->endOfWeek()->toFormattedDateString(),
 			'currentMonth' => now()->startOfMonth()->toFormattedDateString() . ' to ' . now()->endOfMonth()->toFormattedDateString(),
-			'allTransactions' => is_null(ReportHelper::allTransaction($request))
-			? 'No Transactions'
-			: Date::parse(ReportHelper::allTransaction($request)[0])->toFormattedDateString() .
-			' - ' . Date::parse(ReportHelper::allTransaction($request)[1])->toFormattedDateString()
+			'allTransactions' => ReportHelper::setAllTransactionDate($this->allTransaction($request))
 		};
 
 		$header->put('transactionDate', $transDateHeader);
@@ -91,7 +88,7 @@ class ReportGenerator
 				fn($q) => $q->whereDate('trans_datetime', $this->transactionDate)
 			)->value('customerDiscount');
 	}
-	protected function generateTotalTransDiscount(Request $request)
+	protected function generateTotalTransDiscount()
 	{
 		return TransactionStore::selectRaw("COALESCE(SUM(transaction_docdiscount.trdocdisc_amnt),0) as total")
 			->join('transaction_docdiscount', 'transaction_docdiscount.trdocdisc_trid', '=', 'transaction_stores.trans_sid')
@@ -112,7 +109,7 @@ class ReportGenerator
 			'dateRange' => [$request->date[0], $request->date[1]],
 			'thisWeek' => [now()->startOfWeek(), now()->endOfWeek()],
 			'currentMonth' => [now()->startOfMonth(), now()->endOfMonth()],
-			'allTransactions' => ReportHelper::allTransaction($request),
+			'allTransactions' => $this->allTransaction($request),
 			default => null
 		};
 
@@ -145,7 +142,7 @@ class ReportGenerator
 			->exists();
 	}
 
-	protected function fundsRecords(Request $request)
+	protected function fundsRecords()
 	{
 		return TransactionRefund::selectRaw(
 			"refund_trans_id, 
@@ -179,7 +176,7 @@ class ReportGenerator
 		)->groupBy('trefundd_trstoresid')->first();
 	}
 
-	protected function revalidation(Request $request)
+	protected function revalidation()
 	{
 		return TransactionPayment::selectRaw("COALESCE(SUM(transaction_payment.payment_amountdue),0) as reval")
 			->whereHas(
@@ -191,4 +188,25 @@ class ReportGenerator
 				)
 			)->value('reval');
 	}
+	public function allTransaction(Request $request)
+    {
+        $transactions = TransactionStore::where('trans_store', $this->store)
+            ->when((in_array('gcSales', $request->reportType)) ?? null, function ($q) use ($request) {
+                $q->whereIn('trans_type', ['1', '2', '3'])
+                    ->when(
+                        (in_array('gcRevalidation', $request->reportType)) ?? null,
+                        fn($true) => $true->orWhere('trans_type', '6'),
+                        fn($false) => $false->where('trans_type', '6')
+                    )
+                    ->when(
+                        (in_array('refund', $request->reportType)) ?? null,
+                        fn($true) => $true->orWhere('trans_type', '4'),
+                        fn($false) => $false->where('trans_type', '4')
+                    );
+            })
+            ->selectRaw('MIN(trans_datetime) as start, MAX(trans_datetime) as end')->first();
+
+        return !is_null($transactions->start) ? [$transactions->start, $transactions->end] : null;
+    }
+	
 }

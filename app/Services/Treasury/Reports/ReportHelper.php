@@ -26,25 +26,9 @@ class ReportHelper
 		return bcsub($totalSales, $discount, 2);
 	}
 
-    public static function allTransaction(Request $request)
+    public static function setAllTransactionDate(array | null $date)
     {
-        $transactions = TransactionStore::where('trans_store', $request->store)
-            ->when((in_array('gcSales', $request->reportType)) ?? null, function ($q) use ($request) {
-                $q->whereIn('trans_type', ['1', '2', '3'])
-                    ->when(
-                        (in_array('gcRevalidation', $request->reportType)) ?? null,
-                        fn($true) => $true->orWhere('trans_type', '6'),
-                        fn($false) => $false->where('trans_type', '6')
-                    )
-                    ->when(
-                        (in_array('refund', $request->reportType)) ?? null,
-                        fn($true) => $true->orWhere('trans_type', '4'),
-                        fn($false) => $false->where('trans_type', '4')
-                    );
-            })
-            ->selectRaw('MIN(trans_datetime) as start, MAX(trans_datetime) as end')->first();
-
-        return !is_null($transactions->start) ? [$transactions->start, $transactions->end] : null;
+        return is_null($date) ? 'No Transactions' : Date::parse($date[0])->toFormattedDateString() . ' - ' . Date::parse($date[1])->toFormattedDateString();
     }
     public static function extractDateRange(Request $request)
     {
