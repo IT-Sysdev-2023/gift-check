@@ -11,6 +11,7 @@ use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Models\UserDetails;
@@ -740,13 +741,29 @@ class MarketingServices extends FileHandler
             ->where('approved_request.reqap_trid', $request->id)
             ->where('approved_request.reqap_approvedtype', 'special external releasing')
             ->get();
-        // $releaseDetails->transform();
+        $releaseDetails->transform(function ($item) {
+            $item->releaseDate = Date::parse($item->reqap_date)->format('F d, Y');
+            return $item;
+        });
 
+        $gc = SpecialExternalGcrequestEmpAssign::select([
+            'spexgcemp_trid',
+            'spexgcemp_denom',
+            'spexgcemp_fname',
+            'spexgcemp_lname',
+            'spexgcemp_mname',
+            'spexgcemp_extname',
+            'spexgcemp_barcode'
+        ])
+            ->where('spexgcemp_trid', $request->id)
+            ->paginate(10)
+            ->withQueryString();
 
         return [
             'data' => $data,
             'revdetails' => $revdetails,
-            'releaseDetails' => $releaseDetails
+            'releaseDetails' => $releaseDetails,
+            'gc' => $gc
         ];
     }
 

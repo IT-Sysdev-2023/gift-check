@@ -25,7 +25,7 @@
                         selecteddata.spexgc_num
                     "
                 >
-                    <div style="height: 700px">
+                    <div style="height: 570px">
                         <a-row :gutter="[16, 16]">
                             <a-col :span="6">
                                 <a-form-item label="Date Requested">
@@ -126,14 +126,51 @@
                                             />
                                         </a-form-item>
                                     </a-col>
-                                    {{ releaseDetails }}
+                                </a-row>
+                                <a-row :gutter="[16, 16]" class="bg-blue-400">
+                                    <a-col :span="12">
+                                        <a-form-item label="Date Released">
+                                            <a-input
+                                                :value="
+                                                    releaseDetails.releaseDate
+                                                "
+                                                readonly
+                                            />
+                                        </a-form-item>
+                                        <a-form-item label="Remarks">
+                                            <a-input
+                                                :value="
+                                                    releaseDetails.reqap_remarks
+                                                "
+                                                readonly
+                                            />
+                                        </a-form-item>
+                                    </a-col>
+                                    <a-col :span="12">
+                                        <a-form-item label="Released by">
+                                            <a-input
+                                                :value="releaseDetails.relby"
+                                                readonly
+                                            />
+                                        </a-form-item>
+                                        <a-form-item label="Received by">
+                                            <a-input
+                                                :value="
+                                                    selecteddata.spexgc_receviedby
+                                                "
+                                                readonly
+                                            />
+                                        </a-form-item>
+                                    </a-col>
                                 </a-row>
                             </a-col>
                         </a-row>
                     </div>
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="Barcodes" force-render>
-                    <div style="height: 700px">Content of Tab Pane 2</div>
+                    <div style="height: 700px">
+                        <a-table :dataSource="gc.data" :columns="gccolumns" />
+                    </div>
                 </a-tab-pane>
             </a-tabs>
         </a-modal>
@@ -153,6 +190,7 @@ const releaseDetails = ref({});
 const viewdetailsmodal = ref(false);
 const activeKey = ref("1");
 const paymentType = ref("");
+const gc = ref([]);
 
 const viewDetails = (id) => {
     axios
@@ -166,6 +204,7 @@ const viewDetails = (id) => {
             selecteddata.value = r.data.data.data[0];
             revdetails.value = r.data.data.revdetails[0];
             releaseDetails.value = r.data.data.releaseDetails[0];
+            gc.value = r.data.data.gc;
             if (r.data.data.data[0].spexgc_paymentype === "1") {
                 paymentType.value = "Cash";
             } else if (r.data.data.data[0].spexgc_paymentype === "2") {
@@ -209,6 +248,39 @@ const columns = ref([
     {
         title: "View",
         dataIndex: "view",
+        align: "center",
+    },
+]);
+
+const gccolumns = ref([
+    {
+        title: "Barcode",
+        dataIndex: "spexgcemp_barcode",
+        align: "center",
+    },
+    {
+        title: "Denomination",
+        dataIndex: "spexgcemp_denom",
+        align: "center",
+    },
+    {
+        title: "Lastname",
+        dataIndex: "spexgcemp_lname",
+        align: "center",
+    },
+    {
+        title: "Firstname",
+        dataIndex: "spexgcemp_fname",
+        align: "center",
+    },
+    {
+        title: "Middlename",
+        dataIndex: "spexgcemp_mname",
+        align: "center",
+    },
+    {
+        title: "Name Extension",
+        dataIndex: "spexgcemp_extname",
         align: "center",
     },
 ]);
