@@ -31,7 +31,7 @@ class ReportsHandler extends ReportGenerator
 		];
 	}
 
-	protected function gcRevalidation()
+	protected function gcRevalidation(): array
 	{
 		$records = $this->revalidation();
 		if (!is_null($records)) {

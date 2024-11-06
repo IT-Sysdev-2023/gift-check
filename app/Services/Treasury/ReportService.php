@@ -35,27 +35,12 @@ class ReportService extends ReportsHandler
 
 			//All Stores
 			if ($request->store === 'all') {
-				$store = Store::select('store_id as value')->where('store_status', 'active')->cursor();
-
+				$store = Store::selectStore()->cursor();
 				foreach ($store as $item) {
-					$this->setStore($item->value)->setDateOfTransactions($request);
-					$record = $this->handleRecords($request);
-
-					yield [
-						'header' => $this->pdfHeaderDate($request),
-						'data' => [...$record['data']],
-						'footer' => [...$record['footer']],
-					];
+					yield $this->handleRecords($request, $item->value);
 				}
 			} else {
-				$this->setStore($request->store)->setDateOfTransactions($request);
-				$record = $this->handleRecords($request);
-
-				yield [
-					'header' => $this->pdfHeaderDate($request),
-					'data' => [...$record['data']],
-					'footer' => [...$record['footer']],
-				];
+				yield $this->handleRecords($request, $request->store);
 			}
 		});
 
@@ -64,13 +49,15 @@ class ReportService extends ReportsHandler
 		return $pdf->output();
 	}
 
-	private function handleRecords(Request $request)
+	private function handleRecords(Request $request, string $store)
 	{
 
 		$record = collect();
 		$footerData = collect();
 
 		$reportType = collect($request->reportType);
+
+		$this->setStore($store)->setDateOfTransactions($request);
 
 		if ($this->hasRecords($request)) {
 			if ($reportType->contains('gcSales')) {
@@ -84,12 +71,14 @@ class ReportService extends ReportsHandler
 				$footerData->put('revalidationFooter', $this->gcRevalidation());
 			}
 		} else {
-			return response()->json('No Transaction at this moment!');
+
+			return 'error';
 		}
 
 		return [
-			'data' => $record,
-			'footer' => $footerData
+			'header' => $this->pdfHeaderDate($request),
+			'data' => [...$record],
+			'footer' => [...$footerData],
 		];
 	}
 }
