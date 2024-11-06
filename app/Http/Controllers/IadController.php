@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
-use App\Models\BudgetRequest;
-use App\Models\SpecialExternalGcrequest;
 use App\Models\TempValidation;
 use App\Services\Iad\IadServices;
 use Illuminate\Http\Request;
@@ -158,6 +156,9 @@ class IadController extends Controller
         return inertia('Iad/Excel/VerifiedReports', [
             'stores' => $this->iadServices->getStores(),
         ]);
+    }
+    public function generateVerifiedReports(Request $request){
+        return $this->iadServices->generateVerifiedReportExcel($request);
     }
 
 }

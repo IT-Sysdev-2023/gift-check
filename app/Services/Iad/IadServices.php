@@ -2,6 +2,7 @@
 
 namespace App\Services\Iad;
 
+use App\Exports\VerifiedExport;
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
 use App\Models\BudgetRequest;
@@ -10,7 +11,6 @@ use App\Models\CustodianSrrItem;
 use App\Models\Denomination;
 use App\Models\Document;
 use App\Models\Gc;
-use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
@@ -22,7 +22,6 @@ use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
 use App\Models\TempValidation;
 use App\Models\TransactionRevalidation;
-use App\Models\TransactionSale;
 use App\Models\User;
 use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -30,6 +29,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Iad\AuditTraits;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IadServices extends FileHandler
 {
@@ -654,5 +654,9 @@ class IadServices extends FileHandler
         });
 
         return $store;
+    }
+
+    public function generateVerifiedReportExcel($request){
+      return Excel::download(new VerifiedExport($request->all()), 'users.xlsx');
     }
 }

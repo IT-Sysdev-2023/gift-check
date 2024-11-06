@@ -624,6 +624,10 @@ Route::middleware('auth')->group(function () {
         });
         Route::name('excel.')->group(function () {
             Route::get('verified', [IadController::class, 'verifiedReports'])->name('verified');
+
+            Route::name('generate.')->group(function () {
+                Route::get('generate-verified', [IadController::class, 'generateVerifiedReports'])->name('verified');
+            });
         });
 
     });
