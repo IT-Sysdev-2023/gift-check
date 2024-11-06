@@ -3,16 +3,6 @@
 namespace App\Services\Treasury\Reports;
 
 use App\Helpers\NumberHelper;
-use App\Models\TransactionPayment;
-use App\Models\TransactionRefund;
-use App\Models\TransactionRefundDetail;
-use App\Models\TransactionStore;
-
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Benchmark;
-use Illuminate\Http\Request;
-
-
 
 class ReportsHandler extends ReportGenerator
 {
@@ -20,11 +10,11 @@ class ReportsHandler extends ReportGenerator
 	const SALE_TYPE_CARD = 2;
 	const SALE_TYPE_AR = 3;
 
-	protected function gcSales(Request $request)
+	protected function gcSales()
 	{
-		$cashSales = $this->generateSalesData($request, self::SALE_TYPE_CASH);
-		$cardSales = $this->generateSalesData($request, self::SALE_TYPE_CARD);
-		$ar = $this->generateSalesData($request, self::SALE_TYPE_AR);
+		$cashSales = $this->generateSalesData(self::SALE_TYPE_CASH);
+		$cardSales = $this->generateSalesData(self::SALE_TYPE_CARD);
+		$ar = $this->generateSalesData( self::SALE_TYPE_AR);
 
 		return [
 
@@ -35,7 +25,7 @@ class ReportsHandler extends ReportGenerator
 			'totalCardSales' => NumberHelper::currency($cardSales->sum('net')),
 
 			'ar' => $ar,
-			'totalCustomerDiscount' => NumberHelper::currency($this->generateCustomerDiscount($request)),
+			'totalCustomerDiscount' => NumberHelper::currency($this->generateCustomerDiscount()),
 			'totalAr' => NumberHelper::currency($ar->sum('net')),
 
 		];
@@ -51,10 +41,10 @@ class ReportsHandler extends ReportGenerator
 		}
 		return ['gcRevalidation' => 'No GC Revalidation Transaction'];
 	}
-	protected function refund(Request $request)
+	protected function refund()
 	{
 		$refunds = $this->fundsRecords();
-		$serviceCharge = $this->serviceCharge($request);
+		$serviceCharge = $this->serviceCharge();
 		if (!is_null($refunds)) {
 			$denomination = bcsub((string) $refunds->denomination_sum_denomination, (string) $refunds->lindisc, 2);
 			$total = bcsub($denomination, (string) $refunds->trdisc, 2);
@@ -71,9 +61,9 @@ class ReportsHandler extends ReportGenerator
 		return ['refund' => 'No Refund Transaction'];
 	}
 
-	protected function footer(Request $request)
+	protected function footer()
 	{
-		$gcSales = $this->gcSales($request);
+		$gcSales = $this->gcSales();
 		$discount = $this->generateTotalTransDiscount();
 		$grandTotal = ReportHelper::grandTotal($gcSales['cashSales'], $gcSales['cardSales'], $gcSales['ar'], $discount);
 

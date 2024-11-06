@@ -2,14 +2,8 @@
 
 namespace App\Services\Treasury;
 
-use App\Helpers\NumberHelper;
-use App\Models\Denomination;
-use App\Models\TransactionStore;
-use App\Services\Treasury\Reports\ReportHelper;
 use App\Services\Treasury\Reports\ReportsHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Benchmark;
 use Illuminate\Http\Request;
 use App\Models\Store;
 use Illuminate\Support\LazyCollection;
@@ -37,15 +31,14 @@ class ReportService extends ReportsHandler
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
 
-		$this->setDateOfTransactions($request);
-
 		$storeData = LazyCollection::make(function () use ($request) {
 
 			//All Stores
-			if ($request->store === 'all') { 
+			if ($request->store === 'all') {
 				$store = Store::select('store_id as value')->where('store_status', 'active')->cursor();
+
 				foreach ($store as $item) {
-					$this->store = $item->value;
+					$this->setStore($item->value)->setDateOfTransactions($request);
 					$record = $this->handleRecords($request);
 
 					yield [
@@ -55,7 +48,7 @@ class ReportService extends ReportsHandler
 					];
 				}
 			} else {
-				$this->store = $request->store;
+				$this->setStore($request->store)->setDateOfTransactions($request);
 				$record = $this->handleRecords($request);
 
 				yield [
@@ -81,11 +74,11 @@ class ReportService extends ReportsHandler
 
 		if ($this->hasRecords($request)) {
 			if ($reportType->contains('gcSales')) {
-				$record->put('gcSales', $this->gcSales($request));
-				$footerData->put('gcSalesFooter', $this->footer($request));
+				$record->put('gcSales', $this->gcSales());
+				$footerData->put('gcSalesFooter', $this->footer());
 			}
 			if ($reportType->contains('refund')) {
-				$footerData->put('refundFooter', $this->refund($request));
+				$footerData->put('refundFooter', $this->refund());
 			}
 			if ($reportType->contains('gcRevalidation')) {
 				$footerData->put('revalidationFooter', $this->gcRevalidation());
