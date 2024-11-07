@@ -9,7 +9,9 @@ use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
+use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Models\UserDetails;
@@ -678,6 +680,91 @@ class MarketingServices extends FileHandler
             ->get();
 
         return $barcode;
+    }
+
+    public function viewReleasedSpexGc($request)
+    {
+        $data = SpecialExternalGcrequest::select([
+            'special_external_gcrequest.spexgc_id',
+            'special_external_gcrequest.spexgc_num',
+            DB::raw("CONCAT(req.firstname, ' ', req.lastname) as reqby"),
+            'special_external_gcrequest.spexgc_datereq',
+            'special_external_gcrequest.spexgc_dateneed',
+            'special_external_gcrequest.spexgc_remarks',
+            'special_external_gcrequest.spexgc_payment',
+            'special_external_gcrequest.spexgc_paymentype',
+            'special_external_gcrequest.spexgc_receviedby',
+            'special_external_customer.spcus_acctname',
+            'special_external_customer.spcus_companyname',
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_doc',
+            'approved_request.reqap_checkedby',
+            'approved_request.reqap_approvedby',
+            'approved_request.reqap_preparedby',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(prep.firstname, ' ', prep.lastname) as prepby")
+        ])
+            ->join('users as req', 'req.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->join('users as prep', 'prep.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('special_external_gcrequest.spexgc_status', '=', 'approved')
+            ->where('special_external_gcrequest.spexgc_id', '=', $request->id)
+            ->where('approved_request.reqap_approvedtype', '=', 'Special External GC Approved')
+            ->get();
+        $data->transform(function ($item) {
+            $item->preparedBy = ucwords($item->prepby);
+            $item->requestedBy = ucwords($item->reqby);
+            $item->datereq = Date::parse($item->spexgc_datereq)->format('F d, Y');
+            $item->validity = Date::parse($item->spexgc_dateneed)->format('F d, Y');
+            return $item;
+        });
+
+        $revdetails = DB::table('approved_request')
+            ->select([
+                'approved_request.reqap_remarks',
+                'approved_request.reqap_date',
+                DB::raw("CONCAT(users.firstname, ' ', users.lastname) as rev")
+            ])
+            ->join('users', 'users.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('approved_request.reqap_trid', '=', $request->id)
+            ->where('approved_request.reqap_approvedtype', '=', 'special external gc review')
+            ->get();
+
+        $releaseDetails = ApprovedRequest::select(
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as relby")
+        )
+            ->join('users', 'users.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('approved_request.reqap_trid', $request->id)
+            ->where('approved_request.reqap_approvedtype', 'special external releasing')
+            ->get();
+        $releaseDetails->transform(function ($item) {
+            $item->releaseDate = Date::parse($item->reqap_date)->format('F d, Y');
+            return $item;
+        });
+
+        $gc = SpecialExternalGcrequestEmpAssign::select([
+            'spexgcemp_trid',
+            'spexgcemp_denom',
+            'spexgcemp_fname',
+            'spexgcemp_lname',
+            'spexgcemp_mname',
+            'spexgcemp_extname',
+            'spexgcemp_barcode'
+        ])
+            ->where('spexgcemp_trid', $request->id)
+            ->paginate(10)
+            ->withQueryString();
+
+        return [
+            'data' => $data,
+            'revdetails' => $revdetails,
+            'releaseDetails' => $releaseDetails,
+            'gc' => $gc
+        ];
     }
 
 

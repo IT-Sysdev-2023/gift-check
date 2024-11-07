@@ -13,7 +13,7 @@ import {
 </script>
 
 <template>
-    <a-sub-menu v-if="page.auth.user.usertype  === '1'" key="fad-side-bar">
+    <!-- <a-sub-menu v-if="page.auth.user.usertype  === '1'" key="fad-side-bar">
         <template #title>
             <span>
                 <SwapOutlined />
@@ -50,8 +50,8 @@ import {
             <RiseOutlined />
             <span>GC Tracking</span>
         </a-menu-item>
-    </a-sub-menu>
-    <div v-else>
+    </a-sub-menu> -->
+    <div>
         <a-menu-item key="custodian">
             <DashboardOutlined />
             <span>

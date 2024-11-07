@@ -29,6 +29,7 @@ use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\RequisitionEntry;
+use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
 use App\Models\Supplier;
@@ -2068,4 +2069,48 @@ class MarketingController extends Controller
         ]);
     }
 
+    public function countreleasedspexgc()
+    {
+        return response()->json(['count' => SpecialExternalGcrequest::where('spexgc_released', 'released')->count()]);
+    }
+
+    public function releasedspexgc()
+    {
+        $query = SpecialExternalGcrequest::join('users as req', 'req.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->join('users as rev', 'rev.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('special_external_gcrequest.spexgc_released', '=', 'released')
+            ->where('approved_request.reqap_approvedtype', '=', 'special external releasing')
+            ->select([
+                'special_external_gcrequest.spexgc_id',
+                'special_external_gcrequest.spexgc_num',
+                DB::raw("CONCAT(req.firstname, ' ', req.lastname) as reqby"),
+                'special_external_gcrequest.spexgc_datereq',
+                'special_external_gcrequest.spexgc_dateneed',
+                'special_external_customer.spcus_acctname',
+                'special_external_customer.spcus_companyname',
+                'approved_request.reqap_date',
+                DB::raw("CONCAT(rev.firstname, ' ', rev.lastname) as revby")
+            ])
+            ->orderByDesc('spexgc_id')
+            ->paginate()
+            ->withQueryString();
+        $query->transform(function ($item) {
+            $item->datereq = Date::parse($item->spexgc_datereq)->format('F d, Y');
+            $item->requestedBy = ucwords($item->reqby);
+            $item->releasedBy = ucwords($item->revby);
+            return $item;
+        });
+        return inertia('Marketing/specialgc/ReleasedSpexGc', [
+            'data' => $query
+        ]);
+    }
+
+    public function viewReleasedSpexGc(Request $request)
+    {
+        return response()->json([
+            'data' => $this->marketing->viewReleasedSpexGc($request)
+        ]);
+    }
 }

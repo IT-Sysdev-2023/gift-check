@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
-use App\Models\BudgetRequest;
-use App\Models\SpecialExternalGcrequest;
 use App\Models\TempValidation;
 use App\Services\Iad\IadServices;
 use Illuminate\Http\Request;
@@ -147,6 +145,20 @@ class IadController extends Controller
 
     public function verifiedDetails($barcode){
         return $this->iadServices->getVerifiedDetails($barcode);
+    }
+    public function verifiedsDetails($barcode){
+        return $this->iadServices->getVerifiedsDetails($barcode);
+    }
+    public function transactionTxtDetails($barcode){
+        return $this->iadServices->getTransactionText($barcode);
+    }
+    public function verifiedReports(){
+        return inertia('Iad/Excel/VerifiedReports', [
+            'stores' => $this->iadServices->getStores(),
+        ]);
+    }
+    public function generateVerifiedReports(Request $request){
+        return $this->iadServices->generateVerifiedReportExcel($request);
     }
 
 }

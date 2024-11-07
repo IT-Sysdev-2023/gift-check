@@ -2,6 +2,7 @@
 
 namespace App\Services\Iad;
 
+use App\Exports\VerifiedExport;
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
 use App\Models\BudgetRequest;
@@ -10,16 +11,17 @@ use App\Models\CustodianSrrItem;
 use App\Models\Denomination;
 use App\Models\Document;
 use App\Models\Gc;
-use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
 use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\Store;
+use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
 use App\Models\TempValidation;
-use App\Models\TransactionSale;
+use App\Models\TransactionRevalidation;
 use App\Models\User;
 use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -27,6 +29,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Iad\AuditTraits;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IadServices extends FileHandler
 {
@@ -526,16 +529,17 @@ class IadServices extends FileHandler
         $addedgc = $this->transform($traits->addedgc);
         $unusedgc = $this->transform($traits->unusedgc);
 
+        $con = (!empty($date) && $date[0] !== null);
 
         return (object) [
-            'addedgc' => !empty($request->date) ? $addedgc->values() : [],
-            'gcsold' => !empty($request->date) ? $traits->gcrelease->values() : [],
-            'unusedgc' => !empty($request->date) ? $unusedgc->values() : [],
+            'addedgc' => $con ? $addedgc->values() : [],
+            'gcsold' => $con ? $traits->gcrelease->values() : [],
+            'unusedgc' => ($con && $date[0] !== null) ? $unusedgc->values() : [],
             'begbal' => $traits->begbal->sum('subtotal'),
             'gcsoldbal' => $traits->gcrelease->sum('subtotal'),
             'unusedbal' => $traits->unusedgc->sum('subtotal'),
-            'datebackend' => !empty($request->date) ?  $request->date  : [],
-            'date' =>  !empty($request->date) ? Date::parse($request->date[0])->toFormattedDateString() . ' to ' . Date::parse($request->date[1])->toFormattedDateString() : 'No Date Selected',
+            'datebackend' => $con ?  $date  : [],
+            'date' =>  $con ? Date::parse($date[0])->toFormattedDateString() . ' to ' . Date::parse($date[1])->toFormattedDateString() : 'No Date Selected',
         ];
     }
 
@@ -555,7 +559,6 @@ class IadServices extends FileHandler
 
     public function generateAudited($data)
     {
-        // dd($data);
         $pdf = Pdf::loadView('pdf.auditstore', ['data' => $data]);
 
         return response()->json([
@@ -622,5 +625,38 @@ class IadServices extends FileHandler
         }
 
         return $store;
+    }
+    public function getVerifiedsDetails($barcode)
+    {
+        $data = TransactionRevalidation::with('trans_stores')->join()->where('reval_barcode', $barcode)->first();
+    }
+    public function getTransactionText($barcode)
+    {
+        $data = StoreEodTextfileTransaction::where('seodtt_barcode', $barcode)->get();
+
+        return $data;
+    }
+    public function getVerifiedReports()
+    {
+        // dd();
+    }
+
+    public function getStores()
+    {
+        $store = Store::get();
+
+        $store->transform(function ($item) {
+
+            return (object) [
+                'value' => $item->store_id,
+                'label' => $item->store_name,
+            ];
+        });
+
+        return $store;
+    }
+
+    public function generateVerifiedReportExcel($request){
+      return Excel::download(new VerifiedExport($request->all()), 'users.xlsx');
     }
 }

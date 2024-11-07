@@ -68,23 +68,23 @@ Route::post('add-employee-{id}', [UserDetailsController::class, 'addEmp'])->name
 //Dashboards
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard')->middleware('userType:treasury');
+    Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard')->middleware('userType:treasury,admin');
 
-    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard')->middleware('userType:retail');
+    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard')->middleware('userType:retail,admin');
 
-    Route::get('retailgroup-dashboard', [RetailGroupController::class, 'index'])->name('retailgroup.dashboard')->middleware('userType:retailgroup');
+    Route::get('retailgroup-dashboard', [RetailGroupController::class, 'index'])->name('retailgroup.dashboard')->middleware('userType:retailgroup,admin');
 
-    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard')->middleware('userType:accounting');
+    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard')->middleware('userType:accounting,admin');
 
-    Route::get('finance-dashboard', [FinanceController::class, 'index'])->name('finance.dashboard')->middleware('userType:finance');
+    Route::get('finance-dashboard', [FinanceController::class, 'index'])->name('finance.dashboard')->middleware('userType:finance,admin');
 
-    Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard')->middleware('userType:iad');
+    Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard')->middleware('userType:iad,admin');
 
-    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard')->middleware('userType:custodian');
+    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard')->middleware('userType:custodian,admin');
 
-    Route::get('eod-dashboard', [EodController::class, 'index'])->name('eod.dashboard')->middleware('userType:eod');
+    Route::get('eod-dashboard', [EodController::class, 'index'])->name('eod.dashboard')->middleware('userType:eod,admin');
 
-    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing');
+    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing,admin');
 
     Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard')->middleware('userType:admin');
 });
@@ -238,6 +238,11 @@ Route::prefix('marketing')->group(function () {
             Route::get('pending-view-details', [MarketingController::class, 'pendingspgclistview'])->name('pending.view');
             Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest'])->name('aexgcreq');
             Route::get('selected-approved-external-gc-request', [MarketingController::class, 'selectedApprovedExternalGcRequest'])->name('selectedaexgcreq');
+        });
+        Route::name('releasedspexgc.')->group(function () {
+            Route::get('count-released-spex-gc', [MarketingController::class, 'countreleasedspexgc'])->name('count');
+            Route::get('released-spex-gc',[MarketingController::class, 'releasedspexgc'])->name('releasedspexgc');
+            Route::get('view-released-spex-gc',[MarketingController::class,'viewReleasedSpexGc'])->name('viewReleasedSpexGcdetails');
         });
     });
 });
@@ -614,6 +619,15 @@ Route::middleware('auth')->group(function () {
         Route::name('versoldused.')->group(function () {
             Route::get('verified-sold-used', [IadController::class, 'verifiedSoldUsed'])->name('index');
             Route::get('get-verified-{barcode}', [IadController::class, 'verifiedDetails'])->name('verified');
+            Route::get('get-verifieds-{barcode}', [IadController::class, 'verifiedsDetails'])->name('verifieds');
+            Route::get('get-transaction-txt-{barcode}', [IadController::class, 'transactionTxtDetails'])->name('transaction');
+        });
+        Route::name('excel.')->group(function () {
+            Route::get('verified', [IadController::class, 'verifiedReports'])->name('verified');
+
+            Route::name('generate.')->group(function () {
+                Route::get('generate-verified', [IadController::class, 'generateVerifiedReports'])->name('verified');
+            });
         });
 
     });

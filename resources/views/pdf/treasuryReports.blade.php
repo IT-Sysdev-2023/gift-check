@@ -11,6 +11,10 @@
             font-size: 12px;
         }
 
+        .page-break {
+            page-break-after: always;
+        }
+
         .container {
             width: 100%;
             margin: 0 auto;
@@ -65,117 +69,147 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>{{$data['header']['store']}}</h2>
-            <h1>ALTURAS GROUP OF COMPANIES</h1>
-            <h3>GC Sales Report</h3>
-        </div>
+    @foreach ($data['stores'] as $key => $store)
+        <div class="container">
+            <div class="header">
+                <h2>{{$store['header']['store']}}</h2>
+                <h1>ALTURAS GROUP OF COMPANIES</h1>
+                <h3>GC Sales Report</h3>
+            </div>
 
-        <div class="report-dates">
+            <div class="report-dates">
 
-            @if (!empty($data['header']['transactionDate']))
-                <p>Transaction Date: {{$data['header']['transactionDate']}}</p>
-            @endif
+                @if (!empty($store['header']['transactionDate']))
+                    <p>Transaction Date: {{$store['header']['transactionDate']}}</p>
+                @endif
 
-            <span>Report Type: </span>
-            @foreach ($data['header']['reportType'] as $item)
-                {{Str::headline($item)}} {{ !$loop->last ? ',' : '' }}
-            @endforeach
-            <p>Report Created: {{$data['header']['reportCreated']}}</p>
-        </div>
+                <span>Report Type: </span>
+                @foreach ($store['header']['reportType'] as $item)
+                    {{Str::headline($item)}} {{ !$loop->last ? ',' : '' }}
+                @endforeach
+                <p>Report Created: {{$store['header']['reportCreated']}}</p>
+            </div>
 
-        <table>
-            <tr>
-                <th colspan="5">Cash Sales</th>
-            </tr>
-            <tr>
-                <th class="left">Gc Denomination</th>
-                <th>GC Sold</th>
-                <th>Sub Total</th>
-                <th>Line Disc.</th>
-                <th>Net</th>
-            </tr>
-            @foreach ($data['data']['cashSales'] as $item)
+            <table>
                 <tr>
-                    <td class="left">{{$item->denomination}}</td>
-                    <td>{{$item->cnt}}</td>
-                    <td>{{$item->densum}}</td>
-                    <td>{{$item->lineDiscount}}</td>
-                    <td>{{$item->netIncome}}</td>
+                    <th colspan="5">Cash Sales</th>
                 </tr>
-            @endforeach
-            <tr class="total">
-                <td colspan="4" class="left">Total Net:</td>
-                <td>{{$data['data']['totalCashSales']}}</td>
-            </tr>
-        </table>
-
-
-        <table>
-            <tr>
-                <th colspan="5">Card Sales</th>
-            </tr>
-            <tr>
-                <th class="left">GC Denomination</th>
-                <th>GC Sold</th>
-                <th>Sub Total</th>
-                <th>Line Disc.</th>
-                <th>Net</th>
-            </tr>
-            @foreach ($data['data']['cardSales'] as $item)
                 <tr>
-                    <td class="left">{{$item->denomination}}</td>
-                    <td>{{$item->cnt}}</td>
-                    <td>{{$item->densum}}</td>
-                    <td>{{$item->lineDiscount}}</td>
-                    <td>{{$item->netIncome}}</td>
+                    <th class="left">Gc Denomination</th>
+                    <th>GC Sold</th>
+                    <th>Sub Total</th>
+                    <th>Line Disc.</th>
+                    <th>Net</th>
                 </tr>
-            @endforeach
-            <tr class="total">
-                <td colspan="4" class="left">Total Net:</td>
-                <td>{{$data['data']['totalCardSales']}}</td>
-            </tr>
-        </table>
-        <table>
-            <tr>
-                <th colspan="5">AR</th>
-            </tr>
-            <tr>
-                <th class="left">GC Denomination</th>
-                <th>GC Sold</th>
-                <th>Sub Total</th>
-                <th>Line Disc.</th>
-                <th>Net</th>
-            </tr>
-            @foreach ($data['data']['ar'] as $item)
-                <tr>
-                    <td class="left">{{$item->denomination}}</td>
-                    <td>{{$item->cnt}}</td>
-                    <td>{{$item->densum}}</td>
-                    <td>{{$item->lineDiscount}}</td>
-                    <td>{{$item->netIncome}}</td>
-                </tr>
-            @endforeach
-            <tr class="total">
-                <td colspan="4" class="left">Customer Total Discount:</td>
-                <td>{{$data['data']['totalCustomerDiscount']}}</td>
-            </tr>
-            <tr class="total">
-                <td colspan="4" class="left">Total Net:</td>
-                <td>{{$data['data']['totalAr']}}</td>
-            </tr>
-        </table>
 
-        <table>
-            @foreach($data['footer'] as $title => $name)
+                @foreach ($store['data']['gcSales']['cashSales'] as $item)
+                    <tr>
+                        <td class="left">{{$item->denomination}}</td>
+                        <td>{{$item->cnt}}</td>
+                        <td>{{$item->densum}}</td>
+                        <td>{{$item->lineDiscount}}</td>
+                        <td>{{$item->netIncome}}</td>
+                    </tr>
+                @endforeach
                 <tr class="total">
-                    <td colspan="4" class="left">{{Str::headline($title)}}:</td>
-                    <td>{{$name}}</td>
+                    <td colspan="4" class="left">Total Net:</td>
+                    <td>{{$store['data']['gcSales']['totalCashSales']}}</td>
                 </tr>
-            @endforeach
-        </table>
-    </div>
+            </table>
+
+
+            <table>
+                <tr>
+                    <th colspan="5">Card Sales</th>
+                </tr>
+                <tr>
+                    <th class="left">GC Denomination</th>
+                    <th>GC Sold</th>
+                    <th>Sub Total</th>
+                    <th>Line Disc.</th>
+                    <th>Net</th>
+                </tr>
+                @foreach ($store['data']['gcSales']['cardSales'] as $item)
+                    <tr>
+                        <td class="left">{{$item->denomination}}</td>
+                        <td>{{$item->cnt}}</td>
+                        <td>{{$item->densum}}</td>
+                        <td>{{$item->lineDiscount}}</td>
+                        <td>{{$item->netIncome}}</td>
+                    </tr>
+                @endforeach
+                <tr class="total">
+                    <td colspan="4" class="left">Total Net:</td>
+                    <td>{{$store['data']['gcSales']['totalCardSales']}}</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th colspan="5">AR</th>
+                </tr>
+                <tr>
+                    <th class="left">GC Denomination</th>
+                    <th>GC Sold</th>
+                    <th>Sub Total</th>
+                    <th>Line Disc.</th>
+                    <th>Net</th>
+                </tr>
+                @foreach ($store['data']['gcSales']['ar'] as $item)
+                    <tr>
+                        <td class="left">{{$item->denomination}}</td>
+                        <td>{{$item->cnt}}</td>
+                        <td>{{$item->densum}}</td>
+                        <td>{{$item->lineDiscount}}</td>
+                        <td>{{$item->netIncome}}</td>
+                    </tr>
+                @endforeach
+                <tr class="total">
+                    <td colspan="4" class="left">Customer Total Discount:</td>
+                    <td>{{$store['data']['gcSales']['totalCustomerDiscount']}}</td>
+                </tr>
+                <tr class="total">
+                    <td colspan="4" class="left">Total Net:</td>
+                    <td>{{$store['data']['gcSales']['totalAr']}}</td>
+                </tr>
+            </table>
+
+
+            <table>
+                <!-- Gc Sales Footer -->
+                @foreach($store['footer']['gcSalesFooter'] as $title => $name)
+                    <tr class="total">
+                        <td colspan="4" class="left">{{Str::headline($title)}}:</td>
+                        <td>{{$name}}</td>
+                    </tr>
+                @endforeach
+            </table>
+
+            <table>
+                <!-- Refund Footer -->
+                @foreach($store['footer']['refundFooter'] as $title => $name)
+                    <tr class="total">
+                        <td colspan="4" class="left">{{Str::headline($title)}}:</td>
+                        <td>{{$name}}</td>
+                    </tr>
+                @endforeach
+            </table>
+
+            <table>
+                <!-- Revalidation Footer -->
+                @foreach($store['footer']['revalidationFooter'] as $title => $name)
+                    <tr class="total">
+                        <td colspan="4" class="left">{{Str::headline($title)}}:</td>
+                        <td>{{$name}}</td>
+                    </tr>
+                @endforeach
+            </table>
+
+
+        </div>
+        @if ($key < count($data['stores']) - 1)
+        <div class="page-break"></div>
+        @endif
+    @endforeach
 </body>
 
 </html>
