@@ -26,17 +26,17 @@ const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(["1"]);
 const curr = ref();
 
-onMounted(() => {
-    const webRoute = route().current(); //get current route in page
-    const res = webRoute?.split(".")[0]; 
-    curr.value = res;
-})
-
 const dashboardRoute = computed(() => {
     const webRoute = route().current(); //get current route in page
     const res = webRoute?.split(".")[0]; // split the routes for e.g if the current route is "treasury.ledger", this would get the treasury
     return res;
 });
+
+onMounted(() => {
+    curr.value = dashboardRoute.value;
+})
+
+
 const selectedPage = (obj) => {
     curr.value = obj.key;
     router.visit(route(obj.key + ".dashboard"));
