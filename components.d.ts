@@ -247,6 +247,7 @@ declare module 'vue' {
     InstitutionSalesIndex: typeof import('./resources/js/Pages/Treasury/Transactions/InstitutionGcSales/InstitutionSalesIndex.vue')['default']
     InstitutionSelect: typeof import('./resources/js/Components/Treasury/InstitutionSelect.vue')['default']
     IslandCityMall: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/IslandCityMall.vue')['default']
+    KandingLayout: typeof import('./resources/js/Layouts/KandingLayout.vue')['default']
     LedgerIndex: typeof import('./resources/js/Pages/RetailGroup/LedgerIndex.vue')['default']
     Ledgerx: typeof import('./resources/js/Pages/Ledgerx.vue')['default']
     LikeOutlined: typeof import('@ant-design/icons-vue')['LikeOutlined']
