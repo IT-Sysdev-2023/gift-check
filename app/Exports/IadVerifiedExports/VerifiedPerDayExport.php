@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exports;
+namespace App\Exports\IadVerifiedExports;
 
 use App\Models\Store;
 use App\Models\StoreEodTextfileTransaction;
@@ -10,14 +10,16 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Maatwebsite\Excel\Concerns\WithColumnAutoSizing;
+use Maatwebsite\Excel\Concerns\Exportable;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use Maatwebsite\Excel\Concerns\WithTitle;
 
-class VerifiedExport implements FromCollection, WithHeadings, WithStyles
+class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, WithTitle
 {
     /**
      * @return \Illuminate\Support\Collection
      */
+    use Exportable;
 
     protected $requestData;
 
@@ -26,6 +28,10 @@ class VerifiedExport implements FromCollection, WithHeadings, WithStyles
     {
         // dd($requestData);
         $this->requestData = $requestData;
+    }
+    public function title(): string
+    {
+        return 'Verified Per Day';
     }
 
     public function headings(): array
@@ -69,7 +75,6 @@ class VerifiedExport implements FromCollection, WithHeadings, WithStyles
         ]);
 
         $sheet->getStyle($range)->applyFromArray([
-
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
