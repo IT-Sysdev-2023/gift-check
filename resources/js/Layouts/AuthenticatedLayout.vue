@@ -34,14 +34,12 @@ const dashboardRoute = computed(() => {
 
 onMounted(() => {
     curr.value = dashboardRoute.value;
-})
-
+});
 
 const selectedPage = (obj) => {
     curr.value = obj.key;
     router.visit(route(obj.key + ".dashboard"));
 };
-
 </script>
 
 <template>
@@ -117,26 +115,17 @@ const selectedPage = (obj) => {
                     </div>
 
                     <AdminSidebar v-if="admin && curr === 'admin'" />
-                    <TreasurySideBar
-                        v-if="treasury || curr === 'treasury'"
-                    />
-                    <FinanceSideBar
-                        v-if="finance || curr === 'finance'"
-                    />
+                    <TreasurySideBar v-if="treasury || curr === 'treasury'" />
+                    <FinanceSideBar v-if="finance || curr === 'finance'" />
                     <CustodianSideBar
                         v-if="custodian || curr === 'custodian'"
                     />
-                    <RetailSidebar
-                        v-if="retail || curr == 'retail'"
-                    />
+                    <RetailSidebar v-if="retail || curr == 'retail'" />
                     <AccountingSideBar
                         v-if="accounting || curr == 'accounting'"
                     />
-                    
-                    
-                    <MarketingSideBar
-                        v-if="marketing || curr == 'marketing'"
-                    />
+
+                    <MarketingSideBar v-if="marketing || curr == 'marketing'" />
                     <IadSideBar v-if="iad || curr == 'iad'" />
                     <eod-sidebar v-if="eod || curr == 'eod'" />
 
@@ -268,7 +257,11 @@ const selectedPage = (obj) => {
                             </Link> -->
                             <Link
                                 class="text-white"
-                                :href="route(dashboardRoute + '.dashboard')"
+                                :href="
+                                    page.auth.user.usertype == '1'
+                                        ? route('admin.dashboard')
+                                        : route(dashboardRoute + '.dashboard')
+                                "
                             >
                                 <HomeOutlined />
                                 Home

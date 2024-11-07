@@ -12,7 +12,7 @@
                 :model="formState"
                 :label-col="labelCol"
                 :wrapper-col="wrapperCol"
-                    @finish="onSubmit"
+                @finish="onSubmit"
             >
                 <a-form-item
                     label="Store"
@@ -80,11 +80,24 @@
                     />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-                    <a-button type="primary" html-type="submit">Create</a-button>
+                    <a-button type="primary" html-type="submit"
+                        >Create</a-button
+                    >
                     <a-button style="margin-left: 10px">Cancel</a-button>
                 </a-form-item>
             </a-form>
         </a-card>
+        <a-modal :open="true" :footer="null" centered :closable="false">
+            <div>
+                <a-steps
+                :current="1"
+                :percent="50"
+                    label-placement="vertical"
+                    :items="items"
+                />
+                <br />
+            </div>
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 
@@ -94,6 +107,7 @@ import { AxiosResponse } from "axios";
 import { Dayjs } from "dayjs";
 import { useForm } from "laravel-precognition-vue";
 import { Form } from "laravel-precognition-vue/dist/types";
+import { ref } from "vue";
 
 defineProps<{
     title: string;
@@ -109,16 +123,25 @@ interface FormState {
     store: string;
     date: Dayjs;
 }
-const formState = useForm(
-    "get",
-    route("treasury.reports.generate.report"),
+const items = ref([
     {
-        reportType: [],
-        transactionDate: "",
-        store: null,
-        date: null,
-    }
-);
+        description: "Generating Header",
+    },
+    {
+        title: "In Progress",
+        status: 'process',
+    },
+    {
+        title: "Waiting",
+    },
+]);
+
+const formState = useForm("get", route("treasury.reports.generate.report"), {
+    reportType: [],
+    transactionDate: "",
+    store: null,
+    date: null,
+});
 const handleStore = (val) => {
     formState.store = val;
     formState.validate("store");
