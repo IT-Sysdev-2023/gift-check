@@ -2,15 +2,18 @@
 
 namespace App\Exports;
 
-use App\Models\Customer;
 use App\Models\Store;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreLocalServer;
 use App\Models\StoreVerification;
-use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithColumnAutoSizing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-class VerifiedExport implements FromCollection
+class VerifiedExport implements FromCollection, WithHeadings, WithStyles
 {
     /**
      * @return \Illuminate\Support\Collection
@@ -18,19 +21,78 @@ class VerifiedExport implements FromCollection
 
     protected $requestData;
 
+
     public function __construct($requestData)
     {
+        // dd($requestData);
         $this->requestData = $requestData;
     }
 
+    public function headings(): array
+    {
+        return [
+            'Date',
+            'Barcode',
+            'Denomination',
+            'Amount Redeem',
+            'Balance',
+            'Customer Name',
+            'Business Unit',
+            'Terminal #',
+            'Validation',
+            'Gc Type',
+            'Date',
+            'Time',
+        ];
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        $data = $this->getMonthYearVerifiedGc();
+
+        $rowcount = count($data);
+        $colcount = count($data[0]);
+
+        $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colcount);
+
+        $range = 'A1:' . $lastColumn . $rowcount;
+
+        $sheet->getStyle(1)->applyFromArray([
+            'font' => [
+                'bold' => true
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+        ]);
+
+        $sheet->getStyle($range)->applyFromArray([
+
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => '000000'],
+                ],
+            ],
+        ]);
+
+        for ($col = 1; $col <= $colcount; $col++) {
+            $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
+        }
+    }
+
+
     public function collection()
     {
-        $request = $this->requestData;
+        $request = collect($this->requestData);
 
         if ($request['datatype'] === 'vgc') {
 
             if ($this->checkIfExists()) {
-
+                dd(1);
                 $storeLocServer = $this->getStoreLocalServer();
 
                 if (is_null($storeLocServer)) {
@@ -42,7 +104,7 @@ class VerifiedExport implements FromCollection
                 } else {
                 }
             } else {
-                $this->getMonthYearVerifiedGc();
+                return $this->getMonthYearVerifiedGc();
             }
         }
     }
@@ -61,11 +123,12 @@ class VerifiedExport implements FromCollection
             'stlocser_db'
         )->where('stlocser_storeid', $this->requestData['store'])->first();
     }
+
     private function getMonthYearVerifiedGc()
     {
-        $request = $this->requestData;
+        $request = collect($this->requestData);
 
-        $data = StoreVerification::select(
+        $vsdata = StoreVerification::select(
             'vs_cn',
             'vs_date',
             'vs_reverifydate',
@@ -82,49 +145,71 @@ class VerifiedExport implements FromCollection
             ->where('vs_store', $request['store'])
             ->get();
 
+        $vsrevdata = StoreVerification::select(
+            'vs_cn',
+            'vs_date',
+            'vs_reverifydate',
+            'vs_barcode',
+            'vs_tf_denomination',
+            'vs_tf_purchasecredit',
+            'vs_tf_balance',
+            'vs_gctype',
+            'vs_date',
+            'vs_time',
+        )
+            ->with('customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext')
+            ->whereLike('vs_reverifydate', '%' . $request['date'] . '%')
+            ->where('vs_store', $request['store'])
+            ->get();
+
+
         $array  = [];
 
-        $data->transform(function ($item) use (&$array) {
+        $vsdata->transform(function ($item) use (&$array) {
 
             $datatxtfile = self::dataTextFile($item->vs_barcode);
-                $array[] = [
-                    'date' => $item->vs_date,
-                    'barcode' => $item->vs_barcode,
-                    'denomination' => $item->vs_tf_denomination,
-                    'purchasecred' => !is_null($item->vs_reverifydate) ? 0 : $item->vs_tf_purchasecredit,
-                    'customer' => $item->customer->full_name,
-                    'balance' =>  !is_null($item->vs_reverifydate) ? $item->vs_tf_denomination : $item->vs_tf_balance,
-                    'valid_type' =>  'VERIFIED',
-                    'gc_type' =>  self::gcTypeTransaction($item->vs_gctype),
-                    'businessunit' => $datatxtfile->bus,
-                    'terminalno' => $datatxtfile->tnum,
-                    'vsdate' => $item->vs_date,
-                    'vstime' => $item->vs_time,
-                    'purchaseamt' => $datatxtfile->puramnt,
-                ];
-                
-             if(!is_null($item->vs_reverifydate)) {
-
-                $array[] = [
-                    'date' => $item->vs_date,
-                    'barcode' => $item->vs_barcode,
-                    'denomination' => $item->vs_tf_denomination,
-                    'purchasecred' => !is_null($item->vs_reverifydate) ? 0 : $item->vs_tf_purchasecredit,
-                    'customer' => $item->customer->full_name,
-                    'balance' =>  !is_null($item->vs_reverifydate) ? $item->vs_tf_denomination : $item->vs_tf_balance,
-                    'valid_type' =>  'REVERIFIED',
-                    'gc_type' =>  self::gcTypeTransaction($item->vs_gctype),
-                    'businessunit' => $datatxtfile->bus,
-                    'terminalno' => $datatxtfile->tnum,
-                    'vsdate' => $item->vs_date,
-                    'vstime' => $item->vs_time,
-                    'purchaseamt' => $datatxtfile->puramnt,
-                ];
-            }
+            $array[] = [
+                'date' => $item->vs_date->toFormattedDateString(),
+                'barcode' => $item->vs_barcode,
+                'denomination' => $item->vs_tf_denomination,
+                'purchasecred' => !is_null($item->vs_reverifydate) ? 0 : $item->vs_tf_purchasecredit,
+                'balance' =>  !is_null($item->vs_reverifydate) ? $item->vs_tf_denomination : $item->vs_tf_balance,
+                'customer' => $item->customer->full_name,
+                'businessunit' => $datatxtfile->bus,
+                'terminalno' => $datatxtfile->tnum,
+                'valid_type' =>  'VERIFIED',
+                'gc_type' =>  self::gcTypeTransaction($item->vs_gctype),
+                'vsdate' => $item->vs_date->toFormattedDateString(),
+                'vstime' => $item->vs_time,
+                // 'purchaseamt' => $datatxtfile->puramnt,
+            ];
 
             return $array;
         });
-        dd($array);
+
+        $vsrevdata->transform(function ($item) use (&$array) {
+
+            $datatxtfile = self::dataTextFile($item->vs_barcode);
+
+            $array[] = [
+                'date' => $item->vs_date->toFormattedDateString(),
+                'barcode' => $item->vs_barcode,
+                'denomination' => $item->vs_tf_denomination,
+                'purchasecred' => $item->vs_tf_purchasecredit,
+                'balance' =>  $item->vs_tf_balance,
+                'customer' => $item->customer->full_name,
+                'businessunit' => $datatxtfile->bus,
+                'terminalno' => $datatxtfile->tnum,
+                'valid_type' =>  'REVERIFIED',
+                'gc_type' =>  self::gcTypeTransaction($item->vs_gctype),
+                'vsdate' => $item->vs_date->toFormattedDateString(),
+                'vstime' => $item->vs_time,
+                // 'purchaseamt' => $datatxtfile->puramnt,
+            ];
+
+            return $array;
+        });
+        return collect($array);
     }
 
     private static function gcTypeTransaction($type)

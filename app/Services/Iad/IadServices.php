@@ -657,6 +657,6 @@ class IadServices extends FileHandler
     }
 
     public function generateVerifiedReportExcel($request){
-      return Excel::download(new VerifiedExport($request->all()), 'users.xlsx');
+      return Excel::download((new VerifiedExport($request->all())), 'users.xlsx');
     }
 }
