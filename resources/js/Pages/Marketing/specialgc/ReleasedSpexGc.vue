@@ -168,7 +168,7 @@
                     </div>
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="Barcodes" force-render>
-                    <div style="height: 700px">
+                    <div style="height: 570px">
                         <a-table :dataSource="gc.data" :columns="gccolumns" />
                     </div>
                 </a-tab-pane>
