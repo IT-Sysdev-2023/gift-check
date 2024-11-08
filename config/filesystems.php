@@ -58,7 +58,7 @@ return [
 
         'fad' => [
             'driver' => 'local',
-            'root' => '\\\\172.16.161.206\\FAD_Stores\\FAD_STORE_DATABASE\\FAD_DIRECTORY\\GC_TEXTFILE\\New',
+            'root' => env('FAD_ROOT_PATH', '\\\\172.16.161.206\\FAD_Stores\\FAD_STORE_DATABASE\\FAD_DIRECTORY\\GC_TEXTFILE\\'),
             'permissions' => [
                 'file' => [
                     'public' => 0777,
@@ -70,6 +70,9 @@ return [
                 ],
             ],
         ],
+
+
+
 
     ],
 

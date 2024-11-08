@@ -22,6 +22,5 @@ export function UserType() {
       iad: computed(() => (userType("10")) && !userRole(10)),
       retailgroup: computed(() => (userType("8")) && !userRole(8)),
       eod: computed(() => (userType("12")) && !userRole(12)),
-      storeaccounting: computed(() => (userType("13")) && !userRole(13)),
     };
 }

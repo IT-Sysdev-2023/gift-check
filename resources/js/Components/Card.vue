@@ -3,9 +3,9 @@ export interface Props{
     title: string;
     card2?: string;
     useDefault?: boolean;
-    pending?: number;
-    approved?: number;
-    cancelled?: number;
+    pending?: number | string;
+    approved?: number | string;
+    cancelled?: number | string;
 };
 
 withDefaults(defineProps<Props>(), {

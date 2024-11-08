@@ -12,10 +12,12 @@ use App\Models\CancelledProductionRequest;
 use App\Models\Gc;
 use App\Models\InstitutPayment;
 use App\Models\Promo;
+use App\Models\SpecialExternalGcrequest;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\User;
 use App\Models\Denomination;
 use App\Models\Document;
+use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
 use App\Models\LedgerCheck;
 use App\Models\ProductionRequest;
@@ -27,6 +29,8 @@ use App\Models\PromoGcReleaseToItem;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
 use App\Models\RequisitionEntry;
+use App\Models\SpecialExternalCustomer;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
 use App\Models\Supplier;
 use App\Models\StoreVerification;
@@ -404,11 +408,32 @@ class MarketingController extends Controller
 
     public function viewTreasurySales(Request $request)
     {
-        $trId = $request->id;
-
-
+        $query = InstitutTransactionsItem::select([
+            'institut_transactions_items.instituttritems_barcode',
+            'denomination.denomination',
+            'stores.store_name',
+            'store_verification.vs_date',
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as verby"),
+            DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_lname) as customer"),
+            'store_verification.vs_tf_used',
+            'store_verification.vs_reverifydate',
+            'store_verification.vs_reverifyby',
+            'store_verification.vs_tf_balance'
+        ])
+            ->join('gc', 'gc.barcode_no', '=', 'institut_transactions_items.instituttritems_barcode')
+            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+            ->leftJoin('store_verification', 'store_verification.vs_barcode', '=', 'institut_transactions_items.instituttritems_barcode')
+            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->leftJoin('users', 'store_verification.vs_by', '=', 'users.user_id')
+            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->where('instituttritems_trid', '=', $request->id)
+            ->get();
+        $query->transform(function ($item) use ($request) {
+            $item->gcType = $request->data['insp_paymentcustomer'];
+            return $item;
+        });
         return response()->json([
-            'data' => $trId
+            'data' => $query
         ]);
     }
 
@@ -1784,7 +1809,6 @@ class MarketingController extends Controller
 
     public function submitReqForm(Request $request)
     {
-
         if ($request->data['finalize'] == 1) {
 
             if (
@@ -1838,6 +1862,7 @@ class MarketingController extends Controller
                         'requis_checked' => $request->data['checkedBy'],
                         'requis_supplierid' => $request->data['selectedSupplierId'],
                         'requis_ledgeref' => $lnumber,
+                        'requis_approved' => $request->data['approvedBy'],
                         'requis_foldersaved' => ''
                     ]);
 
@@ -1943,4 +1968,149 @@ class MarketingController extends Controller
         ]);
     }
 
+    public function selectedApprovedExternalGcRequest(Request $request)
+    {
+
+
+        $query = SpecialExternalGcrequest::select(
+            'special_external_gcrequest.spexgc_id',
+            'special_external_gcrequest.spexgc_num',
+            DB::raw("CONCAT(req.firstname, ' ', req.lastname) as reqby"),
+            'special_external_gcrequest.spexgc_datereq',
+            'special_external_gcrequest.spexgc_dateneed',
+            'special_external_gcrequest.spexgc_remarks',
+            'special_external_gcrequest.spexgc_payment',
+            'special_external_gcrequest.spexgc_paymentype',
+            'special_external_gcrequest.spexgc_payment_arnum',
+            'special_external_customer.spcus_companyname',
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_doc',
+            'approved_request.reqap_checkedby',
+            'approved_request.reqap_approvedby',
+            'approved_request.reqap_preparedby',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(prep.firstname, ' ', prep.lastname) as prepby")
+        )
+            ->join('users as req', 'req.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->join('users as prep', 'prep.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('special_external_gcrequest.spexgc_status', 'approved')
+            ->where('special_external_gcrequest.spexgc_id', $request->id)
+            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->get();
+        $query->transform(function ($item) {
+            $item->preparedby = ucwords($item->prepby);
+            $item->checkedby = ucwords($item->reqap_checkedby);
+            $item->approveby = ucwords($item->reqap_approvedby);
+            $item->requestedby = ucwords($item->reqby);
+            $item->datedRequested = Date::parse($item->spexgc_datereq)->format('F d, Y');
+            $item->datedValidity = Date::parse($item->spexgc_dateneed)->format('F d, Y');
+            $item->datedApproved = Date::parse($item->reqap_date)->format('F d, Y');
+
+            return $item;
+        });
+
+        $barcodes = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->get();
+        $barcodes->transform(function ($item) {
+            $item->holderfullname = ucwords($item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' ' . $item->spexgcemp_lname);
+            return $item;
+        });
+
+
+        return response()->json([
+            'data' => $query,
+            'barcodes' => $barcodes
+        ]);
+    }
+
+    public function getrequisition(Request $request)
+    {
+        $query = RequisitionEntry::select(
+            'requisition_entry.requis_erno',
+            'requisition_entry.requis_req',
+            'production_request.pe_date_needed',
+            'requisition_entry.requis_loc',
+            'requisition_entry.requis_dept',
+            'requisition_entry.requis_rem',
+            'requisition_entry.requis_checked',
+            'requisition_entry.requis_approved',
+            'supplier.gcs_companyname',
+            'supplier.gcs_contactperson',
+            'supplier.gcs_contactnumber',
+            'supplier.gcs_address',
+            'users.firstname',
+            'users.lastname'
+        )
+            ->join('production_request', 'requisition_entry.repuis_pro_id', '=', 'production_request.pe_id')
+            ->join('supplier', 'requisition_entry.requis_supplierid', '=', 'supplier.gcs_id')
+            ->join('users', 'users.user_id', '=', 'requisition_entry.requis_req_by')
+            ->where('requisition_entry.repuis_pro_id', $request->id)
+            ->first();
+
+        return response()->json([
+            'r' => $query ?? null
+        ]);
+    }
+
+    public function reprint(Request $request)
+    {
+        $filePath = Storage::path('public/e-requisitionform/' . $request->id . '.pdf');
+
+        if (!file_exists($filePath)) {
+            return response()->json([
+                'stream' => null
+            ]);
+        }
+        $fileContent = file_get_contents($filePath);
+
+        return response()->json([
+            'stream' => base64_encode($fileContent)
+        ]);
+    }
+
+    public function countreleasedspexgc()
+    {
+        return response()->json(['count' => SpecialExternalGcrequest::where('spexgc_released', 'released')->count()]);
+    }
+
+    public function releasedspexgc()
+    {
+        $query = SpecialExternalGcrequest::join('users as req', 'req.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->join('users as rev', 'rev.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('special_external_gcrequest.spexgc_released', '=', 'released')
+            ->where('approved_request.reqap_approvedtype', '=', 'special external releasing')
+            ->select([
+                'special_external_gcrequest.spexgc_id',
+                'special_external_gcrequest.spexgc_num',
+                DB::raw("CONCAT(req.firstname, ' ', req.lastname) as reqby"),
+                'special_external_gcrequest.spexgc_datereq',
+                'special_external_gcrequest.spexgc_dateneed',
+                'special_external_customer.spcus_acctname',
+                'special_external_customer.spcus_companyname',
+                'approved_request.reqap_date',
+                DB::raw("CONCAT(rev.firstname, ' ', rev.lastname) as revby")
+            ])
+            ->orderByDesc('spexgc_id')
+            ->paginate()
+            ->withQueryString();
+        $query->transform(function ($item) {
+            $item->datereq = Date::parse($item->spexgc_datereq)->format('F d, Y');
+            $item->requestedBy = ucwords($item->reqby);
+            $item->releasedBy = ucwords($item->revby);
+            return $item;
+        });
+        return inertia('Marketing/specialgc/ReleasedSpexGc', [
+            'data' => $query
+        ]);
+    }
+
+    public function viewReleasedSpexGc(Request $request)
+    {
+        return response()->json([
+            'data' => $this->marketing->viewReleasedSpexGc($request)
+        ]);
+    }
 }

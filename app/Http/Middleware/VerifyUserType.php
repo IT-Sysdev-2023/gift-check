@@ -15,17 +15,14 @@ class VerifyUserType
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $userType): Response
+    public function handle(Request $request, Closure $next, ...$userType): Response
     {
-        if($this->isAuthenticatedUser($userType) != $request->user()->usertype){
-            return redirect('/');
-        }
 
+    if(in_array($this->roleDashboardRoutes[$request->user()->usertype], $userType)){
         return $next($request);
     }
 
-    public function isAuthenticatedUser($type)
-    {
-       return array_search($type, $this->roleDashboardRoutes);
+    return response()->view('errors.401', [], 401);
+
     }
 }

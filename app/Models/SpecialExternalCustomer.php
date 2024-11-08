@@ -15,6 +15,10 @@ class SpecialExternalCustomer extends Model
     protected $primaryKey = 'spcus_id';
     protected $guarded = [];
     protected $table = 'special_external_customer';
+
+
+    protected $primaryKey = 'spcus_id';
+
     public $timestamps = false;
 
     public function scopeFilter(Builder $builder, $filter)

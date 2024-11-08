@@ -125,9 +125,9 @@
             <a-descriptions-item label="Total Denomination">{{
                 viewRecordData.details?.denomTotal
             }}</a-descriptions-item>
-            <a-descriptions-item label="Documents Uploaded">{{
-                viewRecordData.details?.document
-            }}</a-descriptions-item>
+            <a-descriptions-item label="Documents Uploaded">
+                <ant-image-preview :images="[viewRecordData.details?.document]"/>
+               </a-descriptions-item>
             <a-descriptions-item label="Payment Type">{{
                 viewRecordData.details?.institutr_paymenttype
             }}</a-descriptions-item>

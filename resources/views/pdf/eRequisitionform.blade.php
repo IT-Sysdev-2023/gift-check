@@ -133,7 +133,7 @@
                 <div style="text-align:center">Signature over Printed Name</div>
             </div>
             <div class="preparedBy">
-                <div style="text-align:left">Prepared by:</div>
+                <div style="text-align:left">Approved by:</div>
                 <div style="text-align:center">{{$data['approvedBy']}}</div>
                 <hr style="border: 0.5px solid #000; width: 100%; text-align: center;">
                 <div style="text-align:center">Signature over Printed Name</div>

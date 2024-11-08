@@ -2,6 +2,7 @@
 
 namespace App\Services\Iad;
 
+use App\Exports\VerifiedGcMultipleSheetExport;
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
 use App\Models\BudgetRequest;
@@ -16,16 +17,23 @@ use App\Models\RequisitionEntry;
 use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\Store;
+use App\Models\StoreEodTextfileTransaction;
+use App\Models\StoreVerification;
 use App\Models\TempValidation;
+use App\Models\TransactionRevalidation;
 use App\Models\User;
 use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use App\Traits\Iad\AuditTraits;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IadServices extends FileHandler
 {
+    use AuditTraits;
 
     public function __construct(public IadDbServices $iadDbServices)
     {
@@ -493,5 +501,162 @@ class IadServices extends FileHandler
         }
 
         return $budget;
+    }
+
+    public function getAuditStore($request)
+    {
+
+        $date = empty($request->date) ? [] : [$request->date[0], $request->date[1]];
+
+        $traits = $this->dataTraits($request, $date);
+
+        $traits->begbal->transform(function ($item) {
+            $item->subtformat = NumberHelper::currency($item->first()->denomination * $item->count());
+            $item->subtotal = $item->first()->denomination * $item->count();
+            return $item;
+        });
+
+        $traits->gcrelease->transform(function ($item) use ($date) {
+            if (!empty($date)) {
+                $item->barcodest = $this->getBarcodes($item, $date)->orderBy('barcode', 'ASC')->first()->barcode ?? null;
+                $item->barcodelt = $this->getBarcodes($item, $date)->orderBy('barcode', 'DESC')->first()->barcode ?? null;
+                $item->subtformat = NumberHelper::currency($item->denom * $item->count);
+                $item->subtotal = $item->denom * $item->count;
+                return $item;
+            }
+        });
+
+        $addedgc = $this->transform($traits->addedgc);
+        $unusedgc = $this->transform($traits->unusedgc);
+
+        $con = (!empty($date) && $date[0] !== null);
+
+        return (object) [
+            'addedgc' => $con ? $addedgc->values() : [],
+            'gcsold' => $con ? $traits->gcrelease->values() : [],
+            'unusedgc' => ($con && $date[0] !== null) ? $unusedgc->values() : [],
+            'begbal' => $traits->begbal->sum('subtotal'),
+            'gcsoldbal' => $traits->gcrelease->sum('subtotal'),
+            'unusedbal' => $traits->unusedgc->sum('subtotal'),
+            'datebackend' => $con ?  $date  : [],
+            'date' =>  $con ? Date::parse($date[0])->toFormattedDateString() . ' to ' . Date::parse($date[1])->toFormattedDateString() : 'No Date Selected',
+        ];
+    }
+
+    private static function transform($data)
+    {
+        return $data->transform(function ($item) {
+            return (object) [
+                'count' => $item->count(),
+                'barcodest' => $item->first()->barcode_no,
+                'barcodelt' => $item->last()->barcode_no,
+                'denom' => $item->first()->denomination,
+                'subtformat' => NumberHelper::currency($item->count() * $item->first()->denomination),
+                'subtotal' => $item->count() * $item->first()->denomination,
+            ];
+        });
+    }
+
+    public function generateAudited($data)
+    {
+        $pdf = Pdf::loadView('pdf.auditstore', ['data' => $data]);
+
+        return response()->json([
+            'stream' => base64_encode($pdf->output())
+        ]);
+    }
+    public function getVerifiedSoldUsedData()
+    {
+        $storeVerification  = StoreVerification::select(
+            'vs_barcode',
+            'reval_trans_id',
+            'reval_barcode',
+            'vs_tf_used',
+            'vs_tf_denomination',
+            'vs_cn',
+            'vs_gctype',
+            'vs_store',
+            'vs_reverifydate',
+            'gc_treasury_release',
+            'transaction_stores.trans_datetime',
+        )->with(
+            'customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext',
+            'store:store_id,store_name',
+            'type:gc_type_id,gctype',
+        )->leftJoin('gc', 'barcode_no', '=', 'vs_barcode')
+            ->leftJoin('transaction_revalidation', 'reval_barcode', '=', 'vs_barcode')
+            ->leftJoin('transaction_stores', 'trans_sid', '=', 'reval_trans_id')
+            ->whereRaw('1=1')
+            ->orderByDesc('vs_id')
+            ->paginate(10)->withQueryString();
+
+        $storeVerification->transform(function ($item) {
+            $item->storename = $item->store->store_name;
+            $item->customername = $item->customer->full_name;
+            $item->gctype = empty($item->gc_treasury_release) ? Str::ucfirst($item->type->gctype) :  Str::ucfirst($item->type->gctype) . " (Institutional GC)";
+
+            if ($item->vs_gctype === 1 || $item->vs_gctype === 2) {
+                if ($item->gc_treasury_release === '*') {
+                    $item->soldrel = Date::parse($this->institution($item->vs_barcode))->toFormattedDateString();
+                } else {
+                    $item->soldrel = Date::parse($this->transactionsales($item->vs_barcode))->toFormattedDateString();
+                }
+            } elseif ($item->vs_gctype === 3) {
+                $item->soldrel = Date::parse($this->special($item->vs_barcode))->toFormattedDateString();
+            } elseif ($item->vs_gctype === 4) {
+                $item->soldrel = Date::parse($this->promo($item->vs_barcode))->toFormattedDateString();
+            }
+            return $item;
+        });
+
+        return  $storeVerification;
+    }
+
+    public function getVerifiedDetails($barcode)
+    {
+        $store = StoreVerification::select('vs_by', 'vs_date', 'vs_time')
+            ->with('user:user_id,firstname,lastname')
+            ->where('vs_barcode', $barcode)
+            ->first();
+
+        if ($store) {
+            $store->time = Date::parse($store->vs_time)->format('H:i a');
+            $store->date = Date::parse($store->vs_date)->toFormattedDateString();
+        }
+
+        return $store;
+    }
+    public function getVerifiedsDetails($barcode)
+    {
+        $data = TransactionRevalidation::with('trans_stores')->join()->where('reval_barcode', $barcode)->first();
+    }
+    public function getTransactionText($barcode)
+    {
+        $data = StoreEodTextfileTransaction::where('seodtt_barcode', $barcode)->get();
+
+        return $data;
+    }
+    public function getVerifiedReports()
+    {
+        // dd();
+    }
+
+    public function getStores()
+    {
+        $store = Store::get();
+
+        $store->transform(function ($item) {
+
+            return (object) [
+                'value' => $item->store_id,
+                'label' => $item->store_name,
+            ];
+        });
+
+        return $store;
+    }
+
+    public function generateVerifiedReportExcel($request){
+      return Excel::download((new VerifiedGcMultipleSheetExport($request->all())), 'users.xlsx');
     }
 }

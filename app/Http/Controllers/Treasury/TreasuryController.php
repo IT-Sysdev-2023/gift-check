@@ -34,9 +34,9 @@ class TreasuryController extends Controller
         public GcProductionRequestService $gcProductionRequestService,
     ) {
     }
-    public function index()
+    public function index(Request $request)
     {
-        $record = $this->dashboardClass->treasuryDashboard();
+        $record = $this->dashboardClass->treasuryDashboard($request);
 
         return inertia('Treasury/TreasuryDashboard', ['data' => $record]);
     }

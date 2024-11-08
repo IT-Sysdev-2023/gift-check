@@ -16,4 +16,8 @@ class TransactionRevalidation extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public function trans_stores(){
+        $this->belongsTo(TransactionStore::class,'trans_sid','reval_trans_id');
+    }
 }

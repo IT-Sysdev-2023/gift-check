@@ -67,4 +67,7 @@ class Gc extends Model
     public function institutTransactionsItem(){
         return $this->belongsTo(InstitutTransactionsItem::class, 'barcode_no', 'instituttritems_barcode');
     }
+    public function transactionLineDiscount(){
+        return $this->belongsTo(TransactionLinediscount::class, 'barcode_no', 'trlinedis_barcode');
+    }
 }
