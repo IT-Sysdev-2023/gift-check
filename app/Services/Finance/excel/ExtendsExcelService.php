@@ -39,9 +39,10 @@ class ExtendsExcelService extends ExcelWriter
 
     public function excelWorkSheetPerBarcode($dataBarcode, $dateRange)
     {
-        $this->approvedType === 'special external releasing' ?  $headerNo  = 'Released No.' : 'Approved No';
-        $this->approvedType === 'special external releasing' ?  $headerDate  = 'Released Date.' : 'Approved Date';
-        $this->approvedType === 'special external releasing' ?  $headerGeneral  = 'Released' : 'Approved';
+        // dd($this->approvedType);
+        $headerNo =  $this->approvedType === 'special external releasing' ? 'Released No.' : 'Approved No';
+        $headerDate  =  $this->approvedType === 'special external releasing' ? 'Released Date.' : 'Approved Date';
+        $headerGeneral  =  $this->approvedType === 'special external releasing' ?  'Released' : 'Approved';
 
         $this->perBarcodeHeader = [
             "No.",
@@ -116,8 +117,8 @@ class ExtendsExcelService extends ExcelWriter
     public function excelWorkSheetPerCustomer($dataCustomer, $dateRange)
     {
 
-        $this->approvedType === 'special external releasing' ?  $headerNo  = 'Released No.' : 'Approved No.';
-        $this->approvedType === 'special external releasing' ?  $headerGeneral  = 'Released' : 'Approved';
+        $headerNo  =   $this->approvedType === 'special external releasing' ?  'Released No.' : 'Approved No.';
+        $headerGeneral  = $this->approvedType === 'special external releasing' ? 'Released' : 'Approved';
 
         $this->perCustomerHeader = [
             "No.",
@@ -208,7 +209,7 @@ class ExtendsExcelService extends ExcelWriter
     public function headerExcelBarCus($dateRange)
     {
 
-        $this->approvedType === 'special external releasing' ? $headerType  = 'RELEASING' : 'APPROVAL';
+        $headerType  =  $this->approvedType === 'special external releasing' ?  'RELEASING' : 'APPROVAL';
 
         $headerRow = 2;
         $this->getActiveSheetExcel()->setCellValue('A' . $headerRow, 'ALTURAS GROUP OF COMPANIES');

@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <a-typography-text keyboard >{{ title }}</a-typography-text>
+        <a-typography-text keyboard>{{ title }}</a-typography-text>
         <a-row :gutter="[16, 16]" class="mt-2">
             <a-col :span="8">
                 <a-card>
@@ -22,16 +22,17 @@
                 <a-divider>
                     Requisition Number
                 </a-divider>
-                <a-form-item>
-                    <a-input-number class="text-center" style="width: 100%;" size="large">
-                    </a-input-number>
+                <a-form-item has-feedback :help="form.errors.reqno"
+                    :validate-status="form.invalid('reqno') ? 'error' : ''">
+                    <a-input v-model:value="form.reqno" @change="form.validate('reqno')" class="text-center"
+                        style="width: 100%;" size="large" />
                 </a-form-item>
-                <a-button class="mt-2"  type="primary" block>
+                <a-button class="mt-2" type="primary" block @click="submit">
                     <FastForwardOutlined /> Submit Requisition Number
                 </a-button>
             </a-col>
             <a-col :span="16">
-                <a-card >
+                <a-card>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Receiving No">{{ record.data.recno
                             }}</a-descriptions-item>
@@ -99,9 +100,34 @@
 </template>
 
 <script setup>
-defineProps({
+import { useForm } from 'laravel-precognition-vue';
+import { notification } from 'ant-design-vue';
+import { router } from '@inertiajs/core';
+
+const props = defineProps({
     record: Object,
     denom: Object,
     title: String,
-})
+});
+
+const form = useForm('post', route('admin.submit.po.to.iad'), {
+    record: props.record,
+    denom: props.denom,
+    name: props.title,
+    reqno: null
+});
+
+const submit = () => {
+    form.submit({
+        onSuccess: ({ data }) => {
+            console.log(data.msg);
+            notification[data.status]({
+                message: data.msg,
+                description: data.title,
+            });
+
+            router.visit(route('admin.purchase.order.details'))
+        }
+    });
+}
 </script>

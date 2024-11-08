@@ -9,8 +9,11 @@ use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
+use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Supplier;
+use App\Models\User;
 use App\Models\UserDetails;
 use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -121,6 +124,7 @@ class MarketingServices extends FileHandler
                 'approvedBy.lastname as approvedByLastname'
             )
             ->where('pe_status', '1')
+            ->where('pe_requisition', '1')
             ->whereAny([
                 'pe_num',
                 'pe_date_request',
@@ -180,18 +184,23 @@ class MarketingServices extends FileHandler
                     ->first()
             ]);
 
-            $selectedData = $selectedData->transform(function ($item) {
+            $approvedBy = User::where('user_id', $selectedData[0]->ape_approved_by)->first();
+            $checkby = User::where('user_id', $selectedData[0]['ape_checked_by'])->first();
+
+
+            $selectedData->transform(function ($item) use ($approvedBy, $checkby) {
                 $item->DateRequested = Date::parse($item->pe_date_request)->format('Y-F-d') ?? null;
                 $item->DateNeeded = Date::parse($item->pe_date_needed)->format('Y-F-d');
                 $item->DateApproved = Date::parse($item->ape_approved_at)->format('Y-F-d');
                 $item->aprrovedPreparedBy = ucwords($item->fapproved . ' ' . $item->lapproved);
                 $item->RequestPreparedby = ucwords($item->frequest . ' ' . $item->lrequest);
+                $item->approvedBy = $approvedBy ? ucwords($approvedBy['firstname'] . ' ' . $approvedBy['lastname']) : '';
+                $item->checkby = $checkby ? ucwords($checkby['firstname'] . ' ' . $checkby['lastname']) : '';
 
                 return $item;
             })->first();
         }
-
-
+        // dd($selectedData->toArray());
         return $selectedData ?? [];
     }
 
@@ -215,13 +224,20 @@ class MarketingServices extends FileHandler
     public function generatepdfrequisition($request)
     {
 
-
         $supplier = Supplier::where('gcs_id', $request->data['selectedSupplierId'])->first();
+        function reorderName($name)
+        {
+            $nameParts = explode(', ', strtoupper($name));
+            return trim($nameParts[1] . ' ' . $nameParts[0]);
+        }
+        $approvedBy = reorderName($request->data['approvedBy']);
+        $checkedBy = reorderName($request->data['checkedBy']);
+
         $data = [
             'reqNum' => $request->data['requestNo'],
             'dateReq' => Date::parse($request->data['dateRequested'])->format('F d Y'),
-            'approvedBy' => strtoupper($request->data['approvedBy']),
-            'checkedBy' => strtoupper($request->data['checkedBy'])
+            'approvedBy' => $approvedBy,
+            'checkedBy' => $checkedBy
         ];
 
         $pdf = Pdf::loadView('pdf/eRequisitionform', [
@@ -454,6 +470,7 @@ class MarketingServices extends FileHandler
             $item->totalDenom = number_format($item->specit_denoms * $item->specit_qty, 2);
             $item->requestedBy = ucwords($item->firstname . ' ' . $item->lastname);
             $item->numbertowords = Number::spell($item->spexgc_balance) . ' peso(s)';
+            $item->totalnumbertowords = ucwords(Number::spell($item->specit_denoms * $item->specit_qty) . ' peso(s)');
             return $item;
         };
 
@@ -505,11 +522,12 @@ class MarketingServices extends FileHandler
                 'spexgc_num',
                 'spcus_companyname',
                 'reqap_approvedby',
-            ], 'like', $search . '%')
+            ], 'like', '%' . $search . '%')
             ->where('special_external_gcrequest.spexgc_status', 'approved')
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
             ->orderByDesc('special_external_gcrequest.spexgc_id')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         $query->transform(function ($item) {
             $item->dateReq = $item->spexgc_datereq->toFormattedDateString();
@@ -662,6 +680,91 @@ class MarketingServices extends FileHandler
             ->get();
 
         return $barcode;
+    }
+
+    public function viewReleasedSpexGc($request)
+    {
+        $data = SpecialExternalGcrequest::select([
+            'special_external_gcrequest.spexgc_id',
+            'special_external_gcrequest.spexgc_num',
+            DB::raw("CONCAT(req.firstname, ' ', req.lastname) as reqby"),
+            'special_external_gcrequest.spexgc_datereq',
+            'special_external_gcrequest.spexgc_dateneed',
+            'special_external_gcrequest.spexgc_remarks',
+            'special_external_gcrequest.spexgc_payment',
+            'special_external_gcrequest.spexgc_paymentype',
+            'special_external_gcrequest.spexgc_receviedby',
+            'special_external_customer.spcus_acctname',
+            'special_external_customer.spcus_companyname',
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_doc',
+            'approved_request.reqap_checkedby',
+            'approved_request.reqap_approvedby',
+            'approved_request.reqap_preparedby',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(prep.firstname, ' ', prep.lastname) as prepby")
+        ])
+            ->join('users as req', 'req.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->join('users as prep', 'prep.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('special_external_gcrequest.spexgc_status', '=', 'approved')
+            ->where('special_external_gcrequest.spexgc_id', '=', $request->id)
+            ->where('approved_request.reqap_approvedtype', '=', 'Special External GC Approved')
+            ->get();
+        $data->transform(function ($item) {
+            $item->preparedBy = ucwords($item->prepby);
+            $item->requestedBy = ucwords($item->reqby);
+            $item->datereq = Date::parse($item->spexgc_datereq)->format('F d, Y');
+            $item->validity = Date::parse($item->spexgc_dateneed)->format('F d, Y');
+            return $item;
+        });
+
+        $revdetails = DB::table('approved_request')
+            ->select([
+                'approved_request.reqap_remarks',
+                'approved_request.reqap_date',
+                DB::raw("CONCAT(users.firstname, ' ', users.lastname) as rev")
+            ])
+            ->join('users', 'users.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('approved_request.reqap_trid', '=', $request->id)
+            ->where('approved_request.reqap_approvedtype', '=', 'special external gc review')
+            ->get();
+
+        $releaseDetails = ApprovedRequest::select(
+            'approved_request.reqap_remarks',
+            'approved_request.reqap_date',
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as relby")
+        )
+            ->join('users', 'users.user_id', '=', 'approved_request.reqap_preparedby')
+            ->where('approved_request.reqap_trid', $request->id)
+            ->where('approved_request.reqap_approvedtype', 'special external releasing')
+            ->get();
+        $releaseDetails->transform(function ($item) {
+            $item->releaseDate = Date::parse($item->reqap_date)->format('F d, Y');
+            return $item;
+        });
+
+        $gc = SpecialExternalGcrequestEmpAssign::select([
+            'spexgcemp_trid',
+            'spexgcemp_denom',
+            'spexgcemp_fname',
+            'spexgcemp_lname',
+            'spexgcemp_mname',
+            'spexgcemp_extname',
+            'spexgcemp_barcode'
+        ])
+            ->where('spexgcemp_trid', $request->id)
+            ->paginate(10)
+            ->withQueryString();
+
+        return [
+            'data' => $data,
+            'revdetails' => $revdetails,
+            'releaseDetails' => $releaseDetails,
+            'gc' => $gc
+        ];
     }
 
 
