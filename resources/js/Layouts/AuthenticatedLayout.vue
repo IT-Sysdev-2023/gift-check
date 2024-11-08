@@ -6,7 +6,16 @@ import { PageWithSharedProps } from "@/types/index";
 import { computed } from "vue";
 import IadSideBar from "@/Components/IadSideBar.vue";
 import AdminSidebar from "@/Components/AdminSidebar.vue";
+import StoreAccountingSidebar from "@/Components/StoreAccountingSidebar.vue";
+import FinanceSideBar from "@/Components/FinanceSideBar.vue";
+import EodSidebar from "@/Components/EodSidebar.vue";
+import CustodianSideBar from "@/Components/CustodianSideBar.vue";
+import RetailGroupSidebar from "@/Components/RetailGroupSidebar.vue";
+import TreasurySideBar from "@/Components/TreasurySidebar.vue";
 import RetailSidebar from "@/Components/RetailSidebar.vue";
+import AccountingSideBar from "@/Components/AccountingSideBar.vue";
+import MarketingSideBar from "@/Components/MarketingSideBar.vue";
+
 import { theme } from "ant-design-vue";
 
 const page = usePage<PageWithSharedProps>().props;
@@ -21,10 +30,12 @@ const {
     marketing,
     retailgroup,
     eod,
+    storeaccounting
 } = UserType();
 
 const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(["1"]);
+
 
 const dashboardRoute = computed(() => {
     const webRoute = route().current(); //get current route in page
@@ -93,8 +104,10 @@ const dashboardRoute = computed(() => {
                     <MarketingSideBar v-if="marketing" />
                     <IadSideBar v-if="iad" />
                     <eod-sidebar v-if="eod" />
-
+                    <store-accounting-sidebar v-if="storeaccounting" />
                     <RetailGroupSidebar v-if="retailgroup" />
+
+
 
                     <a-menu-item key="menu-item-user-guide">
                         <UserOutlined />
@@ -116,11 +129,73 @@ const dashboardRoute = computed(() => {
                                 @click="() => (collapsed = !collapsed)" />
                         </p>
                         <p>
-                            <Link class="text-white " :href="route(dashboardRoute)">
+                            <Link class="text-white " :href="route('admin.dashboard')">
                             <HomeOutlined />
-                            Home
+                            HOME
                             </Link>
-                            <a-button class="text-white" type="ghost" @click="() => $inertia.post(route('logout'))">
+
+                            <Link v-if="admin" class="text-white " :href="route('treasury.dashboard')"
+                                style="margin-left: 25px; cursor: pointer;">
+                            <SwapOutlined />
+                            TREASURY
+                            </Link>
+
+                            <Link v-if="admin" class="text-white " :href="route('marketing.dashboard')"
+                                style="margin-left: 25px; cursor: pointer;">
+                            <SwapOutlined />
+                            MARKETING
+                            </Link>
+
+                            <Link v-if="admin" class="text-white " :href="route('finance.dashboard')"
+                                style="margin-left: 25px; cursor: pointer;">
+                            <SwapOutlined />
+                            FINANCE
+                            </Link>
+
+                            <Link v-if="admin" class="text-white " :href="route('custodian.dashboard')"
+                                style="margin-left: 25px; cursor: pointer;">
+                            <SwapOutlined />
+                            FAD
+                            </Link>
+
+                            <Link v-if="admin" class="text-white " :href="route('retail.dashboard')"
+                                style="margin-left: 25px; cursor: pointer;">
+                            <SwapOutlined />
+                            R-STORE
+                            </Link>
+
+                            <Link v-if="admin" class="text-white " :href="route('retailgroup.dashboard')"
+                                style="margin-left: 25px; cursor: pointer;">
+                            <SwapOutlined />
+                            R-GROUP
+                            </Link>
+
+                            <Link v-if="admin" class="text-white " :href="route('accounting.dashboard')"
+                                style="margin-left: 25px; cursor: pointer;">
+                            <SwapOutlined />
+                            ACCOUNTING
+                            </Link>
+
+                            <Link v-if="admin" class="text-white " :href="route('finance.dashboard')"
+                                style="margin-left: 25px; cursor: pointer;">
+                            <SwapOutlined />
+                            IT
+                            </Link>
+
+                            <Link v-if="admin" class="text-white " :href="route('finance.dashboard')"
+                                style="margin-left: 25px; cursor: pointer;">
+                            <SwapOutlined />
+                            CFS
+                            </Link>
+
+                            <Link v-if="admin" class="text-white " :href="route('storeaccounting.dashboard')"
+                                style="margin-left: 25px; cursor: pointer;">
+                            <SwapOutlined />
+                            S-ACCOUNTING
+                            </Link>
+
+                            <a-button class="text-white" type="ghost" @click="() => $inertia.post(route('logout'))"
+                                style="margin-left: 25px;">
                                 <PoweroffOutlined />Logout
                             </a-button>
                         </p>
@@ -141,8 +216,6 @@ const dashboardRoute = computed(() => {
 </template>
 
 <style scoped>
-
-
 #components-layout-demo-side .logo {
     height: 32px;
     margin: 16px;

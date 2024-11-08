@@ -15,5 +15,6 @@ trait DashboardRoutesTrait
         '9' => 'accounting',
         '10' => 'iad',
         '12' => 'eod',
+        '13' => 'storeaccounting',
     ];
 }

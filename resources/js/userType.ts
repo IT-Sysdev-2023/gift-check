@@ -13,14 +13,15 @@ export function UserType() {
 
     return {
       admin: computed(() => userType("1")),
-      treasury: computed(() => (userType("2") || userType("1")) && !userRole(2)),
-      retail: computed(() => (userType("7") || userType("1")) && !userRole(7)),
-      accounting: computed(() => (userType("9") || userType("1")) && !userRole(9)),
-      finance: computed(() => (userType("3") || userType("1")) && !userRole(3)),
-      custodian: computed(() => (userType("4") || userType("1")) && !userRole(4)),
-      marketing: computed(() => (userType("6") || userType("1")) && !userRole(6)),
-      iad: computed(() => (userType("10") || userType("1")) && !userRole(10)),
-      retailgroup: computed(() => (userType("8") || userType("1")) && !userRole(8)),
-      eod: computed(() => (userType("12") || userType("1")) && !userRole(12)),
+      treasury: computed(() => (userType("2")) && !userRole(2)),
+      retail: computed(() => (userType("7")) && !userRole(7)),
+      accounting: computed(() => (userType("9")) && !userRole(9)),
+      finance: computed(() => (userType("3")) && !userRole(3)),
+      custodian: computed(() => (userType("4")) && !userRole(4)),
+      marketing: computed(() => (userType("6")) && !userRole(6)),
+      iad: computed(() => (userType("10")) && !userRole(10)),
+      retailgroup: computed(() => (userType("8")) && !userRole(8)),
+      eod: computed(() => (userType("12")) && !userRole(12)),
+      storeaccounting: computed(() => (userType("13")) && !userRole(13)),
     };
 }

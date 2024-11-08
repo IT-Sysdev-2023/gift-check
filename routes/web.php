@@ -12,6 +12,7 @@ use App\Http\Controllers\EodController;
 use App\Http\Controllers\FadController;
 use App\Http\Controllers\Iad\Dashboard\SpecialExternalGcRequestController;
 use App\Http\Controllers\MarketingController;
+use App\Http\Controllers\StoreAccountingController;
 use \App\Http\Controllers\Treasury\MasterfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FinanceController;
@@ -61,25 +62,27 @@ Route::post('add-employee-{id}', [UserDetailsController::class, 'addEmp'])->name
 //Dashboards
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard')->middleware('userType:treasury');
+    Route::get('treasury-dashboard', [TreasuryController::class, 'index'])->name('treasury.dashboard');
 
-    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard')->middleware('userType:retail');
+    Route::get('retail-dashboard', [RetailController::class, 'index'])->name('retail.dashboard');
 
-    Route::get('retailgroup-dashboard', [RetailGroupController::class, 'index'])->name('retailgroup.dashboard')->middleware('userType:retailgroup');
+    Route::get('retailgroup-dashboard', [RetailGroupController::class, 'index'])->name('retailgroup.dashboard');
 
-    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard')->middleware('userType:accounting');
+    Route::get('accounting-dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard');
 
-    Route::get('finance-dashboard', [FinanceController::class, 'index'])->name('finance.dashboard')->middleware('userType:finance');
+    Route::get('finance-dashboard', [FinanceController::class, 'index'])->name('finance.dashboard');
 
-    Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard')->middleware('userType:iad');
+    Route::get('iad-dashboard', [IadController::class, 'index'])->name('iad.dashboard');
 
-    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard')->middleware('userType:custodian');
+    Route::get('custodian-dashboard', [CustodianController::class, 'index'])->name('custodian.dashboard');
 
-    Route::get('eod-dashboard', [EodController::class, 'index'])->name('eod.dashboard')->middleware('userType:eod');
+    Route::get('eod-dashboard', [EodController::class, 'index'])->name('eod.dashboard');
 
-    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing');
+    Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard');
 
-    Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard')->middleware('userType:admin');
+    Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+
+    Route::get('storeaccounting-dashboard', [StoreAccountingController::class, 'storeAccountingDashboard'])->name('storeaccounting.dashboard');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -87,6 +90,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('view-barcode-status', [AdminController::class, 'index'])->name('view.barcode.status');
     });
 });
+
 
 //Profile
 Route::middleware('auth')->group(function () {
@@ -97,16 +101,16 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')->group(function () {
     Route::name('admin.')->group(function () {
-        Route::get('add-new-fund',[AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
-        Route::get('users_add_user', [AdminController::class,'users_save_user'])->name('masterfile.user.saveUser');
-        Route::post('update-password',[AdminController::class, 'updateStoreStaffPassword'])->name('masterfile.updateStoreStaffPassword');
-        Route::post('update-store-setup',[AdminController::class, 'updateStoreStaffSetup'])->name('masterfile.updateStoreStaffSetup');
-        Route::get('denomination-setup',[AdminController::class, 'denominationSetup'])->name('masterfile.denominationSetup');
-        Route::get('credit-card-setup',[AdminController::class, 'creditCardSetup'])->name('masterfile.creditCardSetup');
-        Route::get('store-setup',[AdminController::class, 'setupStore'])->name('masterfile.setupStore');
-        Route::get('customer-setup',[AdminController::class, 'customerSetup'])->name('masterfile.customer.setup');
+        Route::get('add-new-fund', [AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
+        Route::get('users_add_user', [AdminController::class, 'users_save_user'])->name('masterfile.user.saveUser');
+        Route::post('update-password', [AdminController::class, 'updateStoreStaffPassword'])->name('masterfile.updateStoreStaffPassword');
+        Route::post('update-store-setup', [AdminController::class, 'updateStoreStaffSetup'])->name('masterfile.updateStoreStaffSetup');
+        Route::get('denomination-setup', [AdminController::class, 'denominationSetup'])->name('masterfile.denominationSetup');
+        Route::get('credit-card-setup', [AdminController::class, 'creditCardSetup'])->name('masterfile.creditCardSetup');
+        Route::get('store-setup', [AdminController::class, 'setupStore'])->name('masterfile.setupStore');
+        Route::get('customer-setup', [AdminController::class, 'customerSetup'])->name('masterfile.customer.setup');
         Route::post('update-customer-store-register', [AdminController::class, 'updateCustomerStoreRegister'])->name('masterfile.updateCustomerStoreRegister');
-        Route::post('update-institute-customer',[AdminController::class,'updateInstituteCustomer'])->name('masterfile.UpdateInstituteCustomer');
+        Route::post('update-institute-customer', [AdminController::class, 'updateInstituteCustomer'])->name('masterfile.UpdateInstituteCustomer');
         Route::get('store-staff-setup', [AdminController::class, 'storeSetup'])->name('masterfile.store.staff');
         Route::get('save-user', [AdminController::class, 'saveUser'])->name('masterfile.store.saveUser');
         Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
@@ -116,17 +120,15 @@ Route::prefix('admin')->group(function () {
             Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
             Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
             Route::get('user-reset-password', [AdminController::class, 'usersResetPassword'])->name('usersResetPassword');
-            Route::get('save-store',[AdminController::class, 'saveStore'])->name('saveStore');
-            Route::get('issue-receipt',[AdminController::class, 'issueReceipt'])->name('issueReceipt');
-            Route::get('save-credit-card',[AdminController::class, 'saveCreditCard'])->name('saveCreditCard');
-            Route::get('revolving-fund',[AdminController::class, 'revolving_fund'])->name('revolvingFund');
-            route::get('save-denomination',[AdminController::class, 'saveDenomination'])->name('saveDenomination');
+            Route::get('save-store', [AdminController::class, 'saveStore'])->name('saveStore');
+            Route::get('issue-receipt', [AdminController::class, 'issueReceipt'])->name('issueReceipt');
+            Route::get('save-credit-card', [AdminController::class, 'saveCreditCard'])->name('saveCreditCard');
+            Route::get('revolving-fund', [AdminController::class, 'revolving_fund'])->name('revolvingFund');
+            route::get('save-denomination', [AdminController::class, 'saveDenomination'])->name('saveDenomination');
             route::post('update-denomination', [AdminController::class, 'UpdateDenomination'])->name('saveUpdateDenomination');
-            route::post('update-user',[AdminController::class, 'updateUser'])->name('updateUser');
+            route::post('update-user', [AdminController::class, 'updateUser'])->name('updateUser');
             route::post('update-revolvingfund', [AdminController::class, 'updateRevolvingFund'])->name('updateRevolvingFund');
             route::post('update-special-customer', [AdminController::class, 'updateSpecialCustomer'])->name('updateSpecialCustomer');
-
-
         });
         Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
     });
@@ -496,7 +498,6 @@ Route::prefix('retailgroup')->name('retailgroup.')->group(function () {
     Route::get('approved-details-{id}', [RetailGroupController::class, 'approvedDetails'])->name('details');
 
     Route::get('legder', [RetailGroupController::class, 'ledger'])->name('ledger');
-
 });
 
 Route::prefix('custodian')->group(function () {
@@ -593,5 +594,90 @@ Route::prefix('coupon')->group(function () {
 Route::get('file-search', [ProcessFiles::class, 'barcodeSearch']);
 
 Route::get('generate-barcode', [CustodianController::class, 'generateBarcode'])->name('generaate');
+
+//Store Accounting
+Route::prefix('store-accounting')
+    ->group(
+        function () {
+            Route::name('storeaccounting.')
+                ->group(
+                    function () {
+
+                        Route::get('storeaccouting-storeeod-{id}', [StoreAccountingController::class, 'storeeod'])->name('storeeod');
+                        Route::get('store-accounting.GCNavisionPOSTransactions-{barcode}', [StoreAccountingController::class, 'GCNavisionPOSTtransactions'])->name('GCNavisionPOSTransactions');
+
+                        Route::get('storeaccouting-sales', [StoreAccountingController::class, 'storeAccoutingSales'])->name('sales');
+                        Route::get('store-accounting-view-sales-{id}', [StoreAccountingController::class, 'storeaccountingViewSales'])->name('storeAccountingViewSales');
+                        Route::get('view-sales-{barcode}', [StoreAccountingController::class, 'viewSalesPostTransaction'])->name('storeAccountingPOStransaction');
+
+                        Route::get('storeaccounting-store', [StoreAccountingController::class, 'storeAccountingStore'])->name('store');
+                        Route::get('store-accounting-view-store-{id}', [StoreAccountingController::class, 'storeAccountingViewStore'])->name('storeAccountingViewStore');
+                        Route::get('view-modal-{barcode}', [StoreAccountingController::class, 'storeAccountingViewModalStore'])->name('storeAccountingViewModal');
+
+                        Route::get('store-verified-alturasMall-{id}', [StoreAccountingController::class, 'storeVerifiedAlturasMall'])->name('alturasMall');
+                        Route::get('alturas-pos-transaction-{barcode}', [StoreAccountingController::class, 'alturasMallPosTransaction'])->name('alturasMallPosTransaction');
+
+                        Route::get('store-verified-alturasTalibon-{id}', [StoreAccountingController::class, 'storeVerifiedAlturasTalibon'])->name('alturasTalibon');
+                        Route::get('talibon-pos-transaction-{barcode}', [StoreAccountingController::class, 'talibonPosTransaction'])->name('talibonPosTransaction');
+
+                        Route::get('store-verified-islandCityMall-{id}', [StoreAccountingController::class, 'storeVerifiedIslandCityMall'])->name('islandCityMall');
+                        Route::get('island-pos-transaction-{barcode}', [StoreAccountingController::class, 'islandCityMallPosTransaction'])->name('islandCityMallPosTransaction');
+
+                        Route::get('store-verified-plazaMarcela-{id}', [StoreAccountingController::class, 'storeVerifiedPlazaMarcela'])->name('plazaMarcela');
+                        Route::get('plaza-transaction-plazaMarcela-{barcode}', [StoreAccountingController::class, 'plazaPostTransaction'])->name('plazaMarcelaPosTransaction');
+
+                        Route::get('store-verified-alturasTubigon-{id}', [StoreAccountingController::class, 'storeVerifiedAlturasTubigon'])->name('alturasTubigon');
+                        Route::get('tubigon-transaction-alturasTubigon-{barcode}', [StoreAccountingController::class, 'tubigonTransanction'])->name('TubigonPosTransaction');
+
+                        Route::get('store-verified-colonadeColon-{id}', [StoreAccountingController::class, 'storeVerifiedColonadeColon'])->name('colonadeColon');
+                        Route::get('pos-transaction-colonadeColon-{barcode}', [StoreAccountingController::class, 'transactionColonadeColon'])->name('colonadeColonPosTransaction');
+
+                        Route::get('store-verified-colonadeMandaue-{id}', [StoreAccountingController::class, 'storeVerifiedColonadeMandaue'])->name('colonadeMandaue');
+                        Route::get('pos-transaction-colonadeMandaue-{barcode}', [StoreAccountingController::class, 'transactionColonadeMandaue'])->name('colonadeMandauePosTransaction');
+
+                        Route::get('store-verified-altaCitta-{id}', [StoreAccountingController::class, 'storeVerifiedAltaCitta'])->name('altaCitta');
+                        Route::get('pos-transaction-altaCitta-{barcode}', [StoreAccountingController::class, 'transactionAltaCitta'])->name('altaCittaPosTransaction');
+
+                        Route::get('store-verified-farmersMarket-{id}', [StoreAccountingController::class, 'storeVerifiedFarmersMarket'])->name('farmersMarket');
+                        Route::get('pos-transaction-farmersMarket-{barcode}', [StoreAccountingController::class, 'transactionFarmersMarket'])->name('farmersMarketPosTransaction');
+
+                        Route::get('store-verified-ubayDistribution-{id}', [StoreAccountingController::class, 'storeVerifiedUbayDistribution'])->name('ubayDistribution');
+                        Route::get('pos-transaction-ubayDistribution-{barcode}', [StoreAccountingController::class, 'transactionUbayDistribution'])->name('ubayDistributionPosTransaction');
+
+                        Route::get('store-verified-screenville-{id}', [StoreAccountingController::class, 'storeVerifiedScreenville'])->name('screenville');
+                        Route::get('pos-transaction-screenville-{barcode}', [StoreAccountingController::class, 'transactionScreenville'])->name('screenvillePosTransaction');
+
+                        Route::get('store-verified-ascTech-{id}', [StoreAccountingController::class, 'storeVerifiedAscTech'])->name('ascTech');
+                        Route::get('pos-transaction-ascTech-{barcode}', [StoreAccountingController::class, 'transactionAscTech'])->name('ascTechPosTransaction');
+
+                        Route::get('verified-gc-report', [StoreAccountingController::class, 'verifiedGCReport'])->name('verifiedGCReport');
+                        Route::get('store-gc-purchased', [StoreAccountingController::class, 'storeGCPurchasedReport'])->name('storeGCPurchasedReport');
+                        Route::get('redeem-report-purchased', [StoreAccountingController::class, 'redeemReport'])->name('redeemReport');
+                        Route::get('verified-store-purchased', [StoreAccountingController::class, 'verifiedStore'])->name('verifiedStore');
+
+                        Route::get('spgc-approved', [StoreAccountingController::class, 'SPGCApproved'])->name('SPGCApproved');
+                        Route::get('spgc-approved-submit', [StoreAccountingController::class, 'SPGCApprovedSubmit'])->name('SPGCApprovedSubmit');
+
+
+                        Route::get('spgc-release', [StoreAccountingController::class, 'SPGCRelease'])->name('SPGCRelease');
+                        Route::get('spgc-release-submit', [StoreAccountingController::class, 'SPGCReleasedSubmit'])->name('SPGCReleasedSubmit');
+
+
+                        Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');
+                        Route::get('check-variance', [StoreAccountingController::class, 'CheckVariance'])->name('CheckVariance');
+
+
+
+
+
+
+
+
+
+                        Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
+                    }
+                );
+        }
+    );
 
 require __DIR__ . '/auth.php';
