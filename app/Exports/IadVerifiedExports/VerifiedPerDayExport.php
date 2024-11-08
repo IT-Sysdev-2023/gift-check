@@ -11,7 +11,6 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\Exportable;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
 class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, WithTitle
@@ -56,7 +55,8 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
     {
         $data = $this->getMonthYearVerifiedGc();
 
-        $rowcount = count($data);
+        $rowcount = count($data) + 1;
+
         $colcount = count($data[0]);
 
         $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colcount);
@@ -65,12 +65,7 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
 
         $sheet->getStyle(1)->applyFromArray([
             'font' => [
-                'bold' => true
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
-                'wrapText' => true,
+                'bold' => true,
             ],
         ]);
 
@@ -87,6 +82,7 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
             $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
             $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
         }
+        return $sheet;
     }
 
 
@@ -146,7 +142,13 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
             'vs_time',
         )
             ->with('customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext')
-            ->whereLike('vs_date', '%' . $request['date'] . '%')
+            ->when(str_contains($request['date'], '-'), function ($q) use ($request) {
+                $q->whereLike('vs_date', '%' . $request['date'] . '%');
+            }, function ($q) use ($request) {
+                $q->whereYear('vs_date', $request['date']);
+            })
+
+            ->whereYear('vs_date', $request['date'])
             ->where('vs_store', $request['store'])
             ->get();
 
@@ -163,7 +165,11 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
             'vs_time',
         )
             ->with('customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext')
-            ->whereLike('vs_reverifydate', '%' . $request['date'] . '%')
+            ->when(str_contains($request['date'], '-'), function ($q) use ($request) {
+                $q->whereLike('vs_reverifydate', '%' . $request['date'] . '%');
+            }, function ($q) use ($request) {
+                $q->whereYear('vs_reverifydate', $request['date']);
+            })
             ->where('vs_store', $request['store'])
             ->get();
 
@@ -173,6 +179,7 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
         $vsdata->transform(function ($item) use (&$array) {
 
             $datatxtfile = self::dataTextFile($item->vs_barcode);
+
             $array[] = [
                 'date' => $item->vs_date->toFormattedDateString(),
                 'barcode' => $item->vs_barcode,
@@ -188,9 +195,10 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
                 'vstime' => $item->vs_time,
                 // 'purchaseamt' => $datatxtfile->puramnt,
             ];
-
             return $array;
         });
+
+
 
         $vsrevdata->transform(function ($item) use (&$array) {
 
