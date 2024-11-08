@@ -5,9 +5,10 @@ import AntFormNest from "@/Components/Treasury/AntFormNest.vue";
 import { PageProps } from "../../../types/index";
 import { usePage, useForm } from "@inertiajs/vue3";
 import type { SelectProps, UploadChangeParam } from "ant-design-vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import type { FormInstance } from "ant-design-vue";
 import dayjs, { Dayjs } from "dayjs";
+import { notification } from "ant-design-vue";
 
 const dRoute = dashboardRoute();
 const props = defineProps<{
@@ -16,6 +17,7 @@ const props = defineProps<{
         value: number;
         label: string;
     }[];
+    // assignedCustomer: {};
     data: {
         data: {
             spexgc_id: number;
@@ -31,12 +33,19 @@ const props = defineProps<{
                 spcus_id: number;
                 spcus_type: number;
             };
-            specialExternalGcrequestEmpAssign: {
-                denom: number;
+            // specialExternalGcrequestEmpAssign: {
+            //     denomination: number;
+            //     id: number;
+            //     qty: number;
+            //     primary_id: number;
+            // }[];
+            specialExternalGcrequestItems: {
+                denomination: number;
                 id: number;
                 qty: number;
-                primary_id: number
+                primary_id: number;
             }[];
+            specialExternalBankPaymentInfo: any;
             spexgc_company: string;
             spexgc_payment: string;
             spexgc_payment_arnum: string;
@@ -52,7 +61,36 @@ const props = defineProps<{
 
 const page = props.data.data;
 const dateRequested = <Dayjs>dayjs(page.spexgc_datereq);
-const dateValidity = ref<Dayjs>(dayjs(page.spexgc_dateneed));
+
+const form = useForm({
+    file: null,
+    dateValidity: dayjs(page.spexgc_dateneed),
+    // denom: props.assignedCustomer,
+    // defaultAssigned: page.specialExternalGcrequestEmpAssign,
+    customer: {
+        company: page.specialExternalCustomer.spcus_companyname,
+        account: page.specialExternalCustomer.spcus_acctname,
+        value: page.specialExternalCustomer.spcus_id,
+    },
+    arNo: page.spexgc_payment_arnum,
+    paymentType: {
+        bankName: page.specialExternalBankPaymentInfo.spexgcbi_bankname ?? "",
+        accountNumber:
+            page.specialExternalBankPaymentInfo.spexgcbi_bankaccountnum ?? "",
+        checkNumber:
+            page.specialExternalBankPaymentInfo.spexgcbi_checknumber ?? "",
+        type: page.spexgc_paymentype,
+        amount: page.spexgc_payment,
+    },
+    denomination: page.specialExternalGcrequestItems,
+    remarks: page.spexgc_remarks,
+});
+
+const totalDenomination = computed(() => {
+    return form.denomination.reduce((acc, item) => {
+        return acc + item.denomination * item.qty;
+    }, 0);
+});
 
 const paymentOptions = ref<SelectProps["options"]>([
     {
@@ -64,18 +102,45 @@ const paymentOptions = ref<SelectProps["options"]>([
         label: "Check",
     },
 ]);
-const paymentTypeSelected = ref(page.spexgc_paymentype);
 const formRef = ref<FormInstance>();
 const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
-    console.log("formState: ", formState);
+
+    form.transform((data) => ({
+        ...data,
+        file: data.file?.map((item) => item.originFileObj),
+        companyId: page.spexgc_company,
+        type: page.spexgc_type,
+        reqid: page.spexgc_id,
+        totalDenom: totalDenomination.value,
+        dateValidity: dayjs(data.dateValidity).format("YYYY-MM-DD"),
+    })).post(route("treasury.special.gc.update.special"), {
+        onSuccess: ({ props }) => {
+            if (props.flash.success) {
+                notification.success({
+                    message: "Success!",
+                    description: props.flash.success,
+                });
+            }
+            if (props.flash.error) {
+                notification.error({
+                    message: "Error!",
+                    description: props.flash.error,
+                });
+            }
+        },
+    });
 };
-const formState = useForm({
-    file: null,
-});
 
 const handleUploadChange = (info: UploadChangeParam) => {
-    // formState.file = info.file;
+    form.file = info.fileList;
+};
+
+const handleCustomer = (value, obj) => {
+    form.customer = {
+        account: obj.account_name,
+        company: obj.label,
+        value: obj.value,
+    };
 };
 </script>
 <template>
@@ -98,39 +163,31 @@ const handleUploadChange = (info: UploadChangeParam) => {
                 ref="formRef"
                 name="advanced_search"
                 class="ant-advanced-search-form"
-                :model="formState"
+                :model="form"
                 @finish="onFinish"
             >
                 <a-row :gutter="24">
                     <a-col :span="8">
                         <a-form-item label="Gc Request #:">
-                            <a-input :value="page.spexgc_id" readonly></a-input>
+                            <a-input
+                                :value="page.spexgc_num"
+                                readonly
+                            ></a-input>
                         </a-form-item>
                         <a-form-item label="Date Requested:">
                             <a-date-picker disabled :value="dateRequested" />
                         </a-form-item>
+                        <a-form-item label="Date Validity:">
+                            <a-date-picker v-model:value="form.dateValidity" />
+                        </a-form-item>
 
-                        <a-form-item label="Company Name:">
-                            <a-textarea
-                                :value="
-                                    page.specialExternalCustomer
-                                        .spcus_companyname
-                                "
-                                readonly
-                            ></a-textarea>
-                        </a-form-item>
-                        <a-form-item label="Account Name:">
-                            <a-textarea
-                                :value="
-                                    page.specialExternalCustomer.spcus_acctname
-                                "
-                                readonly
-                            ></a-textarea>
-                        </a-form-item>
                         <a-form-item label="Uploaded Document">
                             <a-space wrap class="ml-2">
-                                <ant-image-preview :images="page?.document" v-if="page.document"/>
-                               
+                                <ant-image-preview
+                                    :images="page?.document"
+                                    v-if="page.document"
+                                />
+
                                 <a-tag color="error" v-else>
                                     <template #icon>
                                         <close-circle-outlined />
@@ -140,7 +197,9 @@ const handleUploadChange = (info: UploadChangeParam) => {
                             </a-space>
                         </a-form-item>
                         <a-form-item label="Upload Scan Copy">
-                            <ant-upload-image />
+                            <ant-upload-multi-image
+                                @handle-change="handleUploadChange"
+                            />
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -148,8 +207,8 @@ const handleUploadChange = (info: UploadChangeParam) => {
                             <a-row>
                                 <a-col :span="12">
                                     <a-statistic
-                                        title="Total"
-                                        :value="page.spexgc_payment"
+                                        title="Total Denomination"
+                                        :value="totalDenomination"
                                         style="margin-right: 50px"
                                     />
                                 </a-col>
@@ -164,60 +223,55 @@ const handleUploadChange = (info: UploadChangeParam) => {
                         </a-card>
                         <a-row :gutter="24">
                             <a-col :span="12">
-                                <a-form-item label="Date Validity:">
-                                    <a-date-picker
-                                        v-model:value="dateValidity"
-                                    />
+                                <a-form-item label="Company Name:">
+                                    <a-input
+                                        :value="form.customer.company"
+                                        readonly
+                                    ></a-input>
+                                </a-form-item>
+                                <a-form-item label="Account Name:">
+                                    <a-input
+                                        :value="form.customer.account"
+                                        readonly
+                                    ></a-input>
                                 </a-form-item>
                                 <a-form-item label="Search Customer:">
-                                    <ant-select :options="props.options" />
+                                    <ant-select
+                                        :options="props.options"
+                                        @handle-change="handleCustomer"
+                                    />
                                 </a-form-item>
                                 <a-form-item label="AR Number:">
                                     <a-input
-                                        :value="page.spexgc_payment_arnum"
+                                        v-model:value="form.arNo"
                                     ></a-input>
                                 </a-form-item>
 
                                 <a-form-item label="Payment Type:">
+                                    <!-- {{form.paymentType}} -->
                                     <a-space>
                                         <a-select
                                             ref="select"
-                                            v-model:value="paymentTypeSelected"
+                                            v-model:value="
+                                                form.paymentType.type
+                                            "
                                             style="width: 120px"
                                             :options="paymentOptions"
                                         ></a-select>
                                     </a-space>
                                 </a-form-item>
-                                <!-- <a-form-item label="Bank Name" v-if="page.spexgc_paymentype == 1 ">
-                            <a-input
-                                :value="page.spexgcbi_bankname"
-                                placeholder="placeholder"
-                            ></a-input>
-                        </a-form-item>
-                        <a-form-item label="Amount" v-if="page.spexgc_paymentype == 1 ">
-                            <a-input
-                                :value="page.spexgcbi_checknumber"
-                                placeholder="placeholder"
-                            ></a-input>
-                        </a-form-item> -->
-                                <a-form-item label="Amount">
-                                    <a-input
-                                        type="number"
-                                        :value="page.spexgc_payment"
-                                        placeholder="placeholder"
-                                    ></a-input>
-                                </a-form-item>
+                                <payment-type :form="form" />
                                 <a-form-item label="Remarks:">
                                     <a-textarea
-                                        :value="page.spexgc_remarks"
+                                        v-model:value="form.remarks"
                                         placeholder="placeholder"
                                     ></a-textarea>
                                 </a-form-item>
                             </a-col>
                             <a-col :span="12">
                                 <a-form-item>
-                                    <ant-form-nest
-                                        :data="page.specialExternalGcrequestEmpAssign"
+                                    <ant-form-nest-denom
+                                        :form="form"
                                     />
                                 </a-form-item>
                             </a-col>
@@ -226,13 +280,8 @@ const handleUploadChange = (info: UploadChangeParam) => {
                 </a-row>
                 <a-row>
                     <a-col :span="24" style="text-align: right">
-                        <a-button type="primary" html-type="submit"
+                        <a-button type="primary" html-type="submit" :disabled="!form.isDirty"
                             >Submit</a-button
-                        >
-                        <a-button
-                            style="margin: 0 8px"
-                            @click="() => formRef.resetFields()"
-                            >Clear</a-button
                         >
                     </a-col>
                 </a-row>

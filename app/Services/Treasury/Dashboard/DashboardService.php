@@ -2,21 +2,17 @@
 
 namespace App\Services\Treasury\Dashboard;
 
-use App\Helpers\NumberHelper;
+
 use App\Models\AllocationAdjustment;
 use App\Models\ApprovedGcrequest;
 use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
-use App\Models\InstitutEod;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
-use App\Models\PromoGcReleaseToDetail;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\StoreGcrequest;
 use App\Models\User;
-
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
@@ -25,7 +21,7 @@ class DashboardService
     {
 
     }
-    protected function budgetRequest()
+    protected function budgetRequestTreasury()
     {
         //Pending Request
         $pending = User::userTypeBudget(request()->user()->usertype)->count();
@@ -96,6 +92,10 @@ class DashboardService
 
     protected function specialGcRequest()
     {
+
+        // $segcreviewed  = numRowsWhereTwo_internal($link,'special_external_gcrequest','spexgc_id','spexgc_reviewed','spexgc_released','reviewed','');
+        $internalReviewd = SpecialExternalGcrequest::where([['spexgc_reviewed','reviewed'], ['spexgc_released',''], ['spexgc_promo', '*']])->count();
+      
         $pending = SpecialExternalGcrequest::spexgcStatus('pending')->count();
         //Approved GC
         $approved = SpecialExternalGcrequest::spexgcStatus('approved')->count();
@@ -111,7 +111,8 @@ class DashboardService
             'approved' => $approved,
             'reviewed' => $reviewed,
             'released' => $released,
-            'cancelled' => $cancelled
+            'cancelled' => $cancelled,
+            'internalReviewed'=> $internalReviewd
         ];
     }
 

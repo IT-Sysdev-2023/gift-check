@@ -66,7 +66,7 @@
                             >
                                 <a-col :span="12">
                                     <a-input
-                                        :value="item.denomination"
+                                        :value="item.denominationFormat"
                                         readonly
                                         class="text-end"
                                     />
@@ -104,11 +104,15 @@
                             />
                         </a-form-item>
 
-                        <a-form-item class="text-end mt-5">
-                            <a-button type="primary" html-type="submit"
-                                >Submit</a-button
-                            >
-                        </a-form-item>
+                        <div>
+                            <div class="flex justify-end" style="margin-right: 80px;">
+                                <a-form-item class="text-end">
+                                    <a-button type="primary" html-type="submit"
+                                        >Submit</a-button
+                                    >
+                                </a-form-item>
+                            </div>
+                        </div>
                     </a-col>
                     <a-col :span="14">
                         <a-row :gutter="16">
@@ -118,7 +122,7 @@
                                         v-for="(item, index) of denoms"
                                         :key="index"
                                         class="mt-5"
-                                        :message="`₱ ${item.denomination}`"
+                                        :message="item.denomination_format"
                                         type="success"
                                     >
                                         <template #action>
@@ -146,7 +150,7 @@
                                         v-for="(item, index) of allDenoms"
                                         :key="index"
                                         class="mt-5"
-                                        :message="`₱ ${item.denomination}`"
+                                        :message="item.denomination_format"
                                         type="warning"
                                     >
                                         <template #action>
@@ -187,7 +191,10 @@
             centered
             :footer="null"
         >
-            <a-tabs v-model:activeKey="activeScannedKey" @change="viewGcAllocationTab">
+            <a-tabs
+                v-model:activeKey="activeScannedKey"
+                @change="viewGcAllocationTab"
+            >
                 <a-tab-pane key="all" tab="All" force-render></a-tab-pane>
                 <a-tab-pane
                     v-for="denom of denoms"
@@ -274,8 +281,9 @@ const formState = useForm<{
     store: 0,
     gcType: 1,
     denomination: props.denoms.map((item) => ({
+        denominationFormat: item.denomination_format,
         denomination: item.denomination,
-        qty: 0,
+        qty: null,
         denom_id: item.denom_id,
     })),
 });
@@ -313,7 +321,6 @@ const viewGcAllocation = async () => {
     forAllocationData.value = data;
     gcAllocationModal.value = true;
 };
-
 
 const handleStoreChange = async (
     value: number,
@@ -354,7 +361,10 @@ const onSubmit = () => {
         .transform((data) => ({
             ...data,
             denomination: data.denomination.filter(
-                (item) => item.denomination !== 0 && item.qty !== 0
+                (item) =>
+                    item.denomination !== 0 &&
+                    item.qty !== 0 &&
+                    item.qty !== null
             ),
         }))
         .post(route("treasury.transactions.gcallocation.store"), {

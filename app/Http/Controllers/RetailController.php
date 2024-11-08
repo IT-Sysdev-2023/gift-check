@@ -31,11 +31,12 @@ class RetailController extends Controller
         public DashboardClass $dashboardClass
     ) {
     }
-    public function index()
+    public function index(Request $request)
     {
 
         $counts = $this->dashboardClass->retailDashboard();
 
+        $rfund = Store::where('store_id', $request->user()->store_assigned)->first();
         $gcRequest = [
             'PendingGcRequest' => $this->retail->GcPendingRequest()->count(),
             'approved' => $counts['approved'],
@@ -43,9 +44,22 @@ class RetailController extends Controller
 
         $getAvailableGc = $this->retail->getAvailableGC();
 
+        $soldGc = StoreReceivedGc::where('strec_storeid', $request->user()->store_assigned)
+            ->whereNotNull('strec_sold')
+            ->join('denomination', 'denomination.denom_id', '=', 'store_received_gc.strec_denom')
+            ->select('denomination.denomination', DB::raw('count(*) as total'))
+            ->groupBy('denomination.denom_id', 'denomination.denomination') // Group by both fields
+            ->get();
+        $currentStorebudget = number_format($rfund['r_fund'] - $getAvailableGc['total'], 2);
+
+
         return inertia('Retail/RetailDashboard', [
             'countGcRequest' => $gcRequest,
-            'availableGc' => $getAvailableGc
+            'availableGc' => $getAvailableGc['denoms'],
+            'soldGc' => $soldGc,
+            'total' => number_format($getAvailableGc['total'], 2),
+            'r_fund' => number_format($rfund['r_fund'], 2),
+            'storeBudget' => $currentStorebudget
         ]);
     }
 
@@ -103,6 +117,23 @@ class RetailController extends Controller
 
     public function gcRequestsubmit(Request $request)
     {
+        $request->validate([
+            'remarks' => 'required',
+            'quantities' => 'required'
+        ]);
+
+        $storeBudget = $this->retail->getRevolvingFund($request);
+
+        $hasPending = $this->retail->GcPendingRequest();
+
+        if (!empty($hasPending->toArray())) {
+            return back()->with([
+                'type' => 'warning',
+                'msg' => 'Warning!',
+                'description' => 'You still have pending GC Request!'
+            ]);
+        }
+
         $storeAssigned = $request->user()->store_assigned;
 
         $penum = StoreGcrequest::where('sgc_store', $storeAssigned)
@@ -110,9 +141,26 @@ class RetailController extends Controller
             ->first();
         $penumValue = ($penum ? intval($penum->sgc_num) : 0) + 1;
 
-        $denomination = collect($request->data['quantities'])->filter(function ($item) {
+        $denomination = collect($request['quantities'])->filter(function ($item) {
             return $item !== null;
         });
+
+        $total = 0;
+
+        foreach ($denomination as $key => $item) {
+            $denom = Denomination::where('denom_id', $key)->max('denomination');
+            $subt = $denom * $item;
+
+            $total += $subt;
+        }
+
+        if ($total > $storeBudget) {
+            return back()->with([
+                'type' => 'warning',
+                'msg' => 'Warning!',
+                'description' => 'Total GC Request is greater than the current store budget!'
+            ]);
+        }
 
         try {
             DB::transaction(function () use ($request, $penumValue, $denomination, $storeAssigned) {
@@ -120,9 +168,9 @@ class RetailController extends Controller
                     'sgc_num' => $penumValue,
                     'sgc_requested_by' => $request->user()->user_id,
                     'sgc_date_request' => now(),
-                    'sgc_date_needed' => Date::parse($request->data['dateNeed'])->format('Y-m-d'),
+                    'sgc_date_needed' => null,
                     'sgc_file_docno' => !is_null($request->file) ? $this->financeService->uploadFileHandler($request) : '',
-                    'sgc_remarks' => $request->data['remarks'],
+                    'sgc_remarks' => $request['remarks'],
                     'sgc_status' => '0',
                     'sgc_store' => $storeAssigned,
                     'sgc_type' => 'regular',
@@ -155,15 +203,11 @@ class RetailController extends Controller
 
     public function approvedGcRequest(Request $request)
     {
-        $checkedBy = Assignatory::get();
-
-        $record = $this->retail->details($request);
-
         return inertia('Retail/RetailApprovedGcRequest', [
             'columns' => ColumnHelper::$approved_gc_request,
             'record' => $this->retail->getDataApproved(),
-            'data' => $record,
-            'assign' => $checkedBy
+            'data' => $this->retail->details($request),
+            'assign' => Assignatory::get()
         ]);
     }
 
@@ -177,11 +221,9 @@ class RetailController extends Controller
     }
     public function pendingGcRequestList()
     {
-        $data = $this->retail->GcPendingRequest();
-        $columns = ColumnHelper::pendingGcRequest();
         return Inertia::render('Retail/GcRequest/Pending', [
-            'data' => $data,
-            'columns' => $columns
+            'data' => $this->retail->GcPendingRequest(),
+            'columns' => ColumnHelper::pendingGcRequest()
         ]);
     }
     public function submitEntry(Request $request)
@@ -314,5 +356,58 @@ class RetailController extends Controller
             'gc' => $gc
         ]);
     }
+
+    public function soldGc(Request $request)
+    {
+        $query = StoreReceivedGc::distinct()
+            ->select([
+                'store_verification.vs_barcode',
+                'store_received_gc.strec_barcode',
+                'denomination.denomination',
+                'store_verification.vs_date',
+                'store_received_gc.strec_recnum',
+                'transaction_stores.trans_number',
+                'transaction_stores.trans_type',
+                'transaction_stores.trans_datetime',
+                'stores.store_name',
+            ])
+            ->whereAny([
+                'store_received_gc.strec_barcode'
+            ], 'like', $request['barcode'] . '%')
+            ->join('denomination', 'store_received_gc.strec_denom', '=', 'denomination.denom_id')
+            ->join('transaction_sales', 'transaction_sales.sales_barcode', '=', 'store_received_gc.strec_barcode')
+            ->join('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_sales.sales_transaction_id')
+            ->leftJoin('store_verification', 'store_received_gc.strec_barcode', '=', 'store_verification.vs_barcode')
+            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->where('store_received_gc.strec_sold', '*')
+            ->where('store_received_gc.strec_return', '')
+            ->where('store_received_gc.strec_storeid', $request->user()->store_assigned)
+            ->where('transaction_sales.sales_item_status', '0')
+            ->orderBy('transaction_stores.trans_datetime', 'DESC')
+            ->paginate(10)
+            ->withQueryString();
+
+        $query->transform(function ($item) {
+            $paymentTypes = [
+                1 => 'Cash',
+                2 => 'Credit Card',
+                3 => 'AR Payment',
+                5 => 'Refund',
+                6 => 'Revalidation',
+            ];
+
+            $item->paymentType = $paymentTypes[$item->trans_type] ?? null;
+
+            $item->dateSold = Date::parse($item->trans_datetime)->format('F d Y');
+            return $item;
+        });
+
+        return inertia('Retail/SoldGcList', [
+            'data' => $query
+        ]);
+    }
+
+
+
 
 }

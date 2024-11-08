@@ -7,22 +7,7 @@
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
-        <a-card>
-            <a-row>
-                <a-col :span="12">
-                    <a-statistic
-                        title="Prepaired By"
-                        :value="$page.props.auth.user.full_name"
-                    />
-                </a-col>
-                <a-col :span="12">
-                    <a-statistic
-                        title="Current Budget"
-                        :value="remainingBudget"
-                    />
-                </a-col>
-            </a-row>
-        </a-card>
+
         <a-card title="Submit a Gift Check" class="mt-10">
             <a-form
                 ref="formRef"
@@ -39,7 +24,7 @@
                         <a-form-item label="Date Requested:" name="name">
                             <a-input v-model:value="currentDate" readonly />
                         </a-form-item>
-                        <a-form-item
+                        <!-- <a-form-item
                             label="Date Needed:"
                             name="name"
                             has-feedback
@@ -51,7 +36,7 @@
                                 v-model:value="formState.dateNeeded"
                                 @change="clearError('dateNeeded')"
                             />
-                        </a-form-item>
+                        </a-form-item> -->
                         <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                             :help="getErrorMessage('file')">
                             <ant-upload-image @handle-change="handleChange" />
@@ -68,15 +53,49 @@
                                 @input="clearError('remarks')"
                             />
                         </a-form-item>
+                        <a-form-item label="Prepared By">
+                            <a-input
+                                :value="$page.props.auth.user.full_name"
+                                readonly
+                            />
+                        </a-form-item>
+                        <div>
+                            <div class="flex justify-end" style="margin-right: 80px;">
+                                <a-form-item class="text-end">
+                                    <a-button type="primary" html-type="submit"
+                                        >Submit</a-button
+                                    >
+                                </a-form-item>
+                            </div>
+                        </div>
                     </a-col>
                     <a-col :span="14">
                         <a-card>
+                            <div>
+                                <div>
+                                    <p style="font-size: 20px">
+                                        Current Budget:
+                                        {{
+                                            Number(bud).toLocaleString(
+                                                undefined,
+                                                {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2,
+                                                }
+                                            )
+                                        }}
+                                    </p>
+                                </div>
+                            </div>
                             <a-row :gutter="16" class="text-center">
-                                <a-col :span="12">
+                                <a-col :span="8">
                                     <span>Denomination</span>
                                 </a-col>
-                                <a-col :span="12">
+                                <a-col :span="8">
                                     <span>Quantity</span>
+                                </a-col>
+                                <a-col :span="8">
+                                    <span>Pc's left</span>
                                 </a-col>
                             </a-row>
                             <a-row
@@ -85,19 +104,26 @@
                                 v-for="(item, index) of formState.denom"
                                 :key="index"
                             >
-                                <a-col :span="12">
+                                <a-col :span="8">
                                     <a-input
-                                        :value="item.denomination"
+                                        :value="item.denomination_format"
                                         readonly
                                         class="text-end"
                                     />
                                 </a-col>
-                                <a-col :span="12" style="text-align: center">
+                                <a-col :span="8" style="text-align: center">
                                     <a-input-number
                                         id="inputNumber"
                                         v-model:value="item.qty"
                                         placeholder="0"
                                         :min="0"
+                                        @change="
+                                            quantityChange(
+                                                item.qty,
+                                                item.denomination,
+                                                item
+                                            )
+                                        "
                                     >
                                         <template #upIcon>
                                             <ArrowUpOutlined />
@@ -107,6 +133,18 @@
                                         </template>
                                     </a-input-number>
                                 </a-col>
+                                <a-col :span="8">
+                                    <div style="text-align: center">
+                                        <a-input-number
+                                            :value="
+                                                Math.floor(
+                                                    bud / item.denomination
+                                                )
+                                            "
+                                            readonly
+                                        />
+                                    </div>
+                                </a-col>
                             </a-row>
                             <div
                                 class="mt-5 text-red-500 text-center"
@@ -115,12 +153,6 @@
                                 {{ formState.errors.denom }}
                             </div>
                         </a-card>
-
-                        <a-form-item class="text-end mt-5">
-                            <a-button type="primary" html-type="submit"
-                                >Submit</a-button
-                            >
-                        </a-form-item>
                     </a-col>
                 </a-row>
             </a-form>
@@ -155,10 +187,11 @@ const props = defineProps<{
     denomination: {
         data: any[];
     };
-    remainingBudget: string;
+    remainingBudget: number;
 }>();
 
 const stream = ref(null);
+const bud = ref(props.remainingBudget);
 const openIframe = ref(false);
 const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
@@ -176,24 +209,32 @@ const handleChange = (file: UploadChangeParam) => {
     formState.file = file.file;
 };
 
-const closeIframe = () =>{
-    router.visit(route('treasury.dashboard'));
-}
+const closeIframe = () => {
+    router.visit(route("treasury.dashboard"));
+};
+const previousQuantities = ref({}); // Store previous quantity for each item
+
+const quantityChange = (qty, denom, item) => {
+    const prevQty = previousQuantities.value[item.id] || 0; // Get previous qty for this item
+    const numPrev = prevQty * denom; // Previous cost
+    const numNew = qty * denom; // New cost
+
+    // Adjust the budget
+    bud.value = bud.value + numPrev - numNew;
+
+    // Update the previous quantity for this item
+    previousQuantities.value[item.id] = qty;
+};
 const onSubmit = () => {
-    formState
-        .transform((data) => ({
-            ...data,
-            dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
-        }))
-        .post(route("treasury.transactions.production.gcSubmit"), {
-            onSuccess: ({ props }) => {
-                openLeftNotification(props.flash);
-                if (props.flash.success) {
-                    stream.value = `data:application/pdf;base64,${props.flash.stream}`;
-                    openIframe.value = true;
-                }
-            },
-        });
+    formState.post(route("treasury.transactions.production.gcSubmit"), {
+        onSuccess: ({ props }) => {
+            openLeftNotification(props.flash);
+            if (props.flash.success) {
+                stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                openIframe.value = true;
+            }
+        },
+    });
 };
 const getErrorStatus = (field: string) => {
     return formState.errors[field] ? "error" : "";

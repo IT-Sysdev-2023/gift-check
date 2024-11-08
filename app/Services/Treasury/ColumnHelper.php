@@ -75,8 +75,14 @@ class ColumnHelper
         ],
         [
             'title' => 'Cancelled By',
-            'dataIndex' => ['cancelled_by', 'approved_by'],
-            'key' => 'approved_by',
+            // 'dataIndex' => ['cancelled_by', 'user', 'full_name'],
+            'dataIndex' => 'approved_by',
+
+        ],
+        [
+            'title' => 'Action',
+            // 'dataIndex' => ['cancelled_by', 'user', 'full_name'],
+            'dataIndex' => 'action',
 
         ],
     ];
@@ -91,11 +97,6 @@ class ColumnHelper
             'title' => 'Requested By',
             'dataIndex' => ['store', 'store_name'],
             'key' => 'requested_by',
-
-        ],
-        [
-            'title' => 'Date Needed',
-            'dataIndex' => 'sgc_date_needed',
 
         ],
         [
@@ -258,7 +259,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Total Denomination',
-            'dataIndex' => 'specialExternalGcrequestItems',
+            'dataIndex' => 'totalGcRequestItems',
 
         ],
         [
@@ -389,7 +390,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Recommended By',
-            'dataIndex' => ['approved_request_user','user','full_name'],
+            'dataIndex' => ['approved_request_user', 'user', 'full_name'],
             'key' => 'recommended',
             'align' => 'center'
         ],
@@ -407,6 +408,443 @@ class ColumnHelper
             'title' => 'Action',
             'dataIndex' => 'action',
             'align' => 'center'
+        ],
+    ];
+
+    public static $institution_gc_sales = [
+        [
+            'title' => 'Transaction No.',
+            'dataIndex' => 'institutrTrnum',
+
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Date',
+            'dataIndex' => 'date',
+
+        ],
+        [
+            'title' => 'Time',
+            'dataIndex' => 'time',
+
+        ],
+        [
+            'title' => 'Gc (pcs)',
+            'dataIndex' => 'institutTransactionItemCount',
+
+        ],
+        [
+            'title' => 'Total Denom',
+            'key' => 'totalDenom',
+
+        ],
+        [
+            'title' => 'Payment Type',
+            'dataIndex' => 'institutr_paymenttype',
+
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action'
+
+        ],
+    ];
+    public static $eodList = [
+
+        [
+            'title' => 'Date',
+            'key' => 'ieod_date',
+
+        ],
+        [
+            'title' => 'EOD Number',
+            'dataIndex' => 'ieod_num',
+
+        ],
+        [
+            'title' => 'EOD By',
+            'key' => 'eodBy',
+
+        ],
+        [
+            'title' => 'Actions',
+            'dataIndex' => 'action',
+            'width' => '150px'
+        ],
+    ];
+
+    public static $gcReleasingReport = [
+
+        [
+            'title' => 'Transaction #',
+            'dataIndex' => 'inspPaymentnum',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'customer',
+
+        ],
+        [
+            'title' => 'Date',
+            'dataIndex' => 'date',
+
+        ],
+        [
+            'title' => 'Time',
+            'dataIndex' => 'time',
+        ],
+        [
+            'title' => 'Total Denom',
+            'dataIndex' => 'totalAmount',
+
+        ],
+        [
+            'title' => 'Payment Type',
+            'dataIndex' => 'payment',
+        ],
+    ];
+    public static $retailGcReleasing = [
+
+        [
+            'title' => 'Gc Request #',
+            'dataIndex' => 'sgc_num',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'store_name',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'sgc_date_needed',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'dataIndex' => 'user',
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'sgc_date_request',
+
+        ],
+        [
+            'title' => 'Request Status',
+            'dataIndex' => 'payment',
+        ],
+    ];
+
+    public static $specialInternal = [
+
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Total Denom',
+            'key' => 'denom',
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'user',
+        ],
+        [
+            'title' => 'Approved By',
+            'key' => 'approved',
+        ],
+        [
+            'title' => 'Reviewed By',
+            'key' => 'reviewed',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
+        ],
+    ];
+
+    public static $specialReleasedGc = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'key' => 'requestedBy',
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Date Released',
+            'key' => 'dateReleased',
+        ],
+        [
+            'title' => 'Released By',
+            'key' => 'releasedBy',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
+
+    public static $reviewedSpecialExternal = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Total Denom',
+            'key' => 'totalDenom',
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'key' => 'requestedBy',
+        ],
+        [
+            'title' => 'Approved By',
+            'key' => 'approvedBy',
+        ],
+        [
+            'title' => 'Reviewed By',
+            'key' => 'reviewedBy',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
+
+    public static $approvedRequest = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'spexgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'spexgc_datereq',
+
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' => 'spexgc_dateneed',
+
+        ],
+        [
+            'title' => 'Customer',
+            'key' => 'customer',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'key' => 'dateApproved',
+        ],
+        [
+            'title' => 'Approved By',
+            'key' => 'approvedBy',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
+    public static $allocationAdjustment = [
+        [
+            'title' => 'Location Adjusted',
+            'key' => 'store',
+
+        ],
+        [
+            'title' => 'Gc Type',
+            'key' => 'gctype',
+
+        ],
+        [
+            'title' => 'Adjustment Type',
+            'key' => 'adjustType',
+
+        ],
+        [
+            'title' => 'Date',
+            'dataIndex' => 'aadj_datetime',
+
+        ],
+        [
+            'title' => 'Remarks',
+            'dataIndex' => 'aadj_remark',
+        ],
+        [
+            'title' => 'Adjusted By',
+            'key' => 'user',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
+
+    public static $cancelledProductionRequest = [
+        [
+            'title' => 'PR No.',
+            'key' => 'pr',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'key' => 'dateRequested',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'key' => 'dateNedded',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'key' => 'preparedBy',
+
+        ],
+        [
+            'title' => 'Date Cancelled',
+            'dataIndex' => 'cpr_at',
+        ],
+        [
+            'title' => 'Cancelled By',
+            'key' => 'cancelledBy',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
+
+    public static $customerSetup = [
+        [
+            'title' => 'Customer name',
+            'dataIndex' => 'ins_name',
+
+        ],
+        [
+            'title' => 'Customer Type',
+            'dataIndex' => 'ins_custype',
+
+        ],
+        [
+            'title' => 'Gc Type',
+            'key' => 'gcType',
+
+        ],
+        [
+            'title' => 'Date Created',
+            'dataIndex' => 'ins_date_created',
+
+        ],
+        [
+            'title' => 'Created By',
+            'key' => 'createdBy',
+        ],
+    ];
+
+    public static $specialExternalSetup = [
+        [
+            'title' => 'Company name/ Person',
+            'dataIndex' => 'spcus_companyname',
+
+        ],
+        [
+            'title' => 'Account Name',
+            'dataIndex' => 'spcus_acctname',
+
+        ],
+        [
+            'title' => 'Address',
+            'dataIndex' => 'spcus_address',
+            'ellipsis' => true,
+
+        ],
+        [
+            'title' => 'Contact Person',
+            'dataIndex' => 'spcus_cperson',
+
+        ],
+        [
+            'title' => 'Contact Number',
+            'dataIndex' => 'spcus_cnumber',
+        ],
+        [
+            'title' => 'Created By',
+            'key' => 'createdBy',
+        ],
+        [
+            'title' => 'Date Created',
+            'dataIndex' => 'spcus_at',
+        ],
+    ];
+
+    public static $paymentFundSetup = [
+        [
+            'title' => 'Name',
+            'dataIndex' => 'pay_desc',
+        ],
+        [
+            'title' => 'Date Created',
+            'dataIndex' => 'pay_dateadded',
+        ],
+        [
+            'title' => 'Created By',
+            'key' => 'user',
         ],
     ];
 }

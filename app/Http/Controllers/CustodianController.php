@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Models\Gc;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Custodian\CustodianServices;
 use App\Services\Custodian\ReprintPdf;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\File;
 
 class CustodianController extends Controller
 {
@@ -17,6 +18,7 @@ class CustodianController extends Controller
     {
         return inertia('Custodian/CustodianDashboard', [
             'count' => $this->dashboardClass->custodianDashboard(),
+            'denom' => $this->dashboardClass->custodianDashboardGetDenom(),
         ]);
     }
 
@@ -65,13 +67,14 @@ class CustodianController extends Controller
     }
     public function submitSpecialExternalGc(Request $request)
     {
+        // dd($request->all());
         return  $this->custodianservices->submitSpecialExternalGc($request);
     }
-    public function approvedGcRequest()
+    public function approvedGcRequest(Request $request)
     {
         return inertia('Custodian/ApprovedGcRequest', [
             'columns' => ColumnHelper::$approved_gc_column,
-            'record' => $this->custodianservices->approvedGcList()
+            'record' => $this->custodianservices->approvedGcList($request)
         ]);
     }
     public function setupApproval(Request $request)
@@ -85,11 +88,11 @@ class CustodianController extends Controller
     public function barcodeOrRange(Request $request)
     {
         if ($request->status == '1') {
-            $request->validate([
+            $request->validate(rules: [
                 'barcode' => 'required',
             ]);
         } else {
-            $request->validate([
+            $request->validate(rules: [
                 'barcodeStart' => 'required|lt:barcodeEnd',
                 'barcodeEnd' => 'gt:barcodeStart',
             ]);
@@ -109,7 +112,6 @@ class CustodianController extends Controller
             return inertia('Custodian/Result/GiftCheckGenerateResult', [
                 'record' =>  $this->custodianservices->getSpecialExternalGcRequest($request),
             ]);
-
         } else {
 
             return back()->with([
@@ -117,12 +119,59 @@ class CustodianController extends Controller
                 'msg' => 'Ops Barcode Not Found',
                 'title' => 'Error',
             ]);
-
         }
     }
 
     public function reprintRequest($id)
     {
         return (new ReprintPdf)->reprintRequestService($id);
+    }
+
+    public function textFileUploader()
+    {
+
+        return inertia('Custodian/TextfileUploader');
+    }
+    public function upload(Request $request)
+    {
+
+        return $this->custodianservices->upload($request);
+    }
+    public function productionIndex()
+    {
+        return inertia('Custodian/ProductionIndex', [
+            'record' => $this->custodianservices->getProductionApproved(),
+            'column' => ColumnHelper::$production_approved_column
+        ]);
+    }
+    public function productionApprovedDetails($id)
+    {
+        return $this->custodianservices->getApprovedDetails($id);
+    }
+    public function barcodeApprovedDetails(Request $request, $id)
+    {
+        return $this->custodianservices->getBarcodeApprovedDetails($request, $id);
+    }
+    public function getEveryBarcode(Request $request, $id){
+        return $this->custodianservices->getEveryBarcodeDetails($request,$id);
+    }
+    public function getRequisitionDetails($id){
+        return $this->custodianservices->getRequisitionDetailsData($id);
+    }
+
+    public function productionCancelled(){
+        return  inertia('Custodian/Cancelled/ProductionCancelled', [
+            'records' =>  $this->custodianservices->getCancelledViewing(),
+            'columns' => ColumnHelper::$cancelled_production_columns
+        ]);
+    }
+    public function productionCancelledDetails($id){
+        return $this->custodianservices->getProductionCancelledDetails($id);
+    }
+    public function getAvailableGcAllocation(){
+        return $this->custodianservices->getAvailableGcRecords();
+    }
+    public function getAvailableGc(){
+        return $this->custodianservices->getAvailableGcRecords();
     }
 }

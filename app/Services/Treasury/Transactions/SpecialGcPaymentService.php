@@ -5,15 +5,18 @@ namespace App\Services\Treasury\Transactions;
 use App\Helpers\NumberHelper;
 use App\Models\Document;
 use App\Models\SpecialExternalCustomer;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\SpecialExternalBankPaymentInfo;
 use App\Models\SpecialExternalGcrequestItem;
 use App\Rules\DenomQty;
 use Illuminate\Support\Facades\DB;
 use App\Models\SpecialExternalGcrequest;
 use Illuminate\Support\Str;
 
-class SpecialGcPaymentService extends UploadFileHandler
+class SpecialGcPaymentService extends FileHandler
 {
     public function __construct()
     {
@@ -21,7 +24,8 @@ class SpecialGcPaymentService extends UploadFileHandler
         $this->folderName = 'externalDocs';
     }
 
-    public function pending(){
+    public function pending()
+    {
         return SpecialExternalGcrequest::with(
             'user:user_id,firstname,lastname',
             'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty',
@@ -32,49 +36,34 @@ class SpecialGcPaymentService extends UploadFileHandler
                 ['special_external_gcrequest.spexgc_status', 'pending'],
                 ['special_external_gcrequest.spexgc_promo', '0']
             ])
+            ->orderByDesc('spexgc_num')
             ->paginate()
             ->withQueryString();
     }
+
+    public function pendingInternal()
+    {
+        return SpecialExternalGcrequest::with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+            ->select('spexgc_num', 'spexgc_reqby', 'spexgc_company', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
+            ->where([['special_external_gcrequest.spexgc_status', 'pending'], ['special_external_gcrequest.spexgc_promo', '*']])
+            ->paginate()->withQueryString();
+    }
     public function store(Request $request)
     {
-        
-        $request->validate([
-            'companyId' => 'required|exists:special_external_customer,spcus_id',
-            'denomination' => ['required', 'array', new DenomQty()],
-            'dateNeeded' => 'required|date',
-            'remarks' => 'required',
-            'file' => 'required',
+        $this->validateField($request);
 
-            //Check PaymentType
-            'paymentType.bankName' => 'required_if:paymentType.type,2',
-            'paymentType.accountNumber' => 'required_if:paymentType.type,2',
-            'paymentType.checkNumber' => 'required_if:paymentType.type,2',
-            
-            'paymentType.type' => 'required',
-            'paymentType.amount' => [
-                function ($attribute, $value, $fail) use ($request) {
-                    if ($request->input('paymentType.type') != 2 && (is_null($value) || $value == 0 || ($value < $request->input('total')))) {
-                        $fail('The ' . $attribute . ' is required and cannot be 0 if type is not 2.');
-                    }
-                },
-            ]
-           
-        ], [
-            'paymentType.type' => 'The payment type field is required.',
-            'paymentType.amount' => 'The selected payment amount is required.'
-
-        ]);
         return DB::transaction(function () use ($request) {
 
-            $latestId = $this->segStore($request);
+            $latestId = $this->specialExternalStore($request);
 
             $listOfDenom = $this->denominationStore($request, $latestId);
 
             //save scan image uploaded
-            $this->saveMultiFiles($request, $latestId, function ($id, $path) {
+            $this->saveMultiFiles($request, $latestId, function ($id, $path) use ($request) {
+                $gcMode = $request->switchGc ? 'Special Internal GC Request' : 'Special External GC Request';
                 Document::create([
                     'doc_trid' => $id,
-                    'doc_type' => 'Special External GC Request',
+                    'doc_type' => $gcMode,
                     'doc_fullpath' => $path
                 ]);
             });
@@ -84,9 +73,117 @@ class SpecialGcPaymentService extends UploadFileHandler
 
     }
 
-    private function segStore(Request $request)
+    public function updateSpecial(Request $request)
     {
+        $request->validate([
+            'dateValidity' => 'required',
+            'remarks' => 'required',
+            'paymentType.amount' => [
+                'required',
+                'min:1',
+                'gte:totalDenom',
+                'nullable',
+            ],
+            'denomination' => ['required', 'array', new DenomQty()],
+            'paymentType.bankName' => 'required_if:paymentType.type,2',
+            'paymentType.accountNumber' => 'required_if:paymentType.type,2',
+            'paymentType.checkNumber' => 'required_if:paymentType.type,2',
+        ]);
+
+        if (SpecialExternalCustomer::where('spcus_id', $request->customer['value'])->exists()) {
+
+            DB::transaction(function () use ($request) {
+
+                SpecialExternalGcrequest::where([['spexgc_id', $request->reqid], ['spexgc_status', 'pending']])->update([
+                    'spexgc_dateneed' => $request->dateValidity,
+                    'spexgc_remarks' => $request->remarks,
+                    'spexgc_payment_arnum' => $request->arNo,
+                    'spexgc_company' => $request->customer['value'],
+                    'spexgc_payment' => $request->paymentType['amount'],
+                    'spexgc_paymentype' => $request->paymentType['type'],
+                    'spexgc_updatedby' => $request->user()->user_id,
+                    'spexgc_updated_at' => now()
+                ]);
+
+                if ($request->paymentType['type'] == '1') { //Cash
+                    SpecialExternalBankPaymentInfo::where('spexgcbi_trans_id', $request->reqid)->delete();
+                } else {
+                    $check = SpecialExternalBankPaymentInfo::where('spexgcbi_trans_id', $request->reqid)->exists();
+
+                    if ($check) {
+                        SpecialExternalBankPaymentInfo::where('spexgcbi_trans_id', $request->reqid)->update([
+                            'spexgcbi_bankname' => $request->paymentType['bankName'],
+                            'spexgcbi_checknumber' => $request->paymentType['checkNumber'],
+                            'spexgcbi_bankaccountnum' => $request->paymentType['accountNumber']
+                        ]);
+                    } else {
+                        SpecialExternalBankPaymentInfo::create([
+                            'spexgcbi_trans_id' => $request->reqid,
+                            'spexgcbi_bankname' => $request->paymentType['bankName'],
+                            'spexgcbi_bankaccountnum' => $request->paymentType['accountNumber'],
+                            'spexgcbi_checknumber' => $request->paymentType['checkNumber']
+                        ]);
+                    }
+                }
+
+                SpecialExternalGcrequestItem::where('specit_trid', $request->reqid)->delete();
+                $filter = collect($request->denomination)->reject(function ($item) {
+                    return $item['denomination'] === 0 || $item['qty'] === 0;
+                });
+                $filter->each(function ($val) use ($request) {
+                    SpecialExternalGcrequestItem::create([
+                        'specit_denoms' => $val['denomination'],
+                        'specit_qty' => $val['qty'],
+                        'specit_trid' => $request->reqid,
+                    ]);
+                });
+
+                if ($request->has('file')) {
+                    $documents = Document::where([['doc_type', 'Special External GC Request'], ['doc_trid', $request->reqid]]);
+
+                    if ($documents->exists()) {
+                        $documents->delete();
+                    }
+                }
+
+                $this->saveMultiFiles($request, $request->reqid, function ($id, $path) {
+
+                    Document::create([
+                        'doc_trid' => $id,
+                        'doc_type' => 'Special External GC Request',
+                        'doc_fullpath' => $path
+                    ]);
+                });
+
+
+            });
+            return redirect()->back()->with('success', 'Successfully Updated!');
+        } else {
+            return redirect()->back()->with('error', 'Company dont Exists!');
+        }
+    }
+
+    public function releasingGc(string $promo)
+    {
+        return SpecialExternalGcrequest::with(['specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'user:user_id,firstname,lastname', 'approvedRequestRevied.user', 'specialExternalGcrequestEmpAssign'])
+            ->withWhereHas('approvedRequest', function ($q) {
+                $q->select('reqap_trid', 'reqap_approvedby')->where('reqap_approvedtype', 'Special External GC Approved');
+            })
+            ->select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_dateneed', 'spexgc_id', 'spexgc_datereq')
+            ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', 'reviewed'], ['spexgc_released', ''], ['spexgc_promo', $promo]])
+            ->orderByDesc('spexgc_id')
+            ->paginate()
+            ->withQueryString();
+    }
+
+
+    private function specialExternalStore(Request $request)
+    {
+        //external = false
+        //internal = true
         $gcPayment = $request->switchGc;
+
+
         $q = SpecialExternalGcrequest::create([
             'spexgc_num' => $request->trans,
             'spexgc_reqby' => $request->user()->user_id,
@@ -103,6 +200,16 @@ class SpecialGcPaymentService extends UploadFileHandler
             'spexgc_promo' => $gcPayment ? '*' : '0',
             'spexgc_payment_arnum' => $request->arNo
         ]);
+
+        //if the payment type is Check
+        if ($request->paymentType['type'] == 2) {
+            SpecialExternalBankPaymentInfo::create(attributes: [
+                'spexgcbi_trans_id' => $q->spexgc_id,
+                'spexgcbi_bankname' => $request->paymentType['bankName'],
+                'spexgcbi_bankaccountnum' => $request->paymentType['accountNumber'],
+                'spexgcbi_checknumber' => $request->paymentType['checkNumber']
+            ]);
+        }
 
         return $q->spexgc_id;
     }
@@ -123,6 +230,7 @@ class SpecialGcPaymentService extends UploadFileHandler
 
     private function dataForPdf(Request $request, $listOfDenom)
     {
+        $gcMode = $request->switchGc ? 'Special Internal Request Report' : 'Special External Request Report';
         $company = SpecialExternalCustomer::select('spcus_companyname', 'spcus_acctname')->find($request->companyId);
 
         $amount = $listOfDenom->map(function ($item) {
@@ -134,7 +242,7 @@ class SpecialGcPaymentService extends UploadFileHandler
             'company' => [
                 'name' => Str::upper('ALTURAS GROUP OF COMPANIES'),
                 'department' => Str::title('Head Office - Treasury Department'),
-                'report' => 'Special GC Releasing Report',
+                'report' => $gcMode,
             ],
 
             //SubHeader
@@ -150,5 +258,37 @@ class SpecialGcPaymentService extends UploadFileHandler
             'totalGcAmount' => NumberHelper::format($amount),
             'receivedBy' => $request->user()->full_name
         ];
+    }
+
+
+    private function validateField(Request $request)
+    {
+
+        $request->validate([
+            'companyId' => 'required|exists:special_external_customer,spcus_id',
+            'denomination' => ['required', 'array', new DenomQty()],
+            'dateNeeded' => 'required|date',
+            'remarks' => 'required',
+            'file' => 'required',
+
+            //Check PaymentType
+            'paymentType.bankName' => 'required_if:paymentType.type,2',
+            'paymentType.accountNumber' => 'required_if:paymentType.type,2',
+            'paymentType.checkNumber' => 'required_if:paymentType.type,2',
+
+            'paymentType.type' => 'required',
+            'paymentType.amount' => [
+                function ($attribute, $value, $fail) use ($request) {
+                    if ((is_null($value) || $value == 0 || ($value < $request->input('total')))) {
+                        $fail('The ' . $attribute . ' is required and cannot be 0 if type is not 2.');
+                    }
+                },
+            ]
+
+        ], [
+            'paymentType.type' => 'The payment type field is required.',
+            'paymentType.amount' => 'The selected payment amount is required.'
+
+        ]);
     }
 }

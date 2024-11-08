@@ -41,8 +41,10 @@ class BudgetRequestController extends Controller
         $record = $this->budgetRequestService->pendingRequest();
 
         return inertia(
-            'Treasury/Dashboard/PendingRequest',
+            'Treasury/Dashboard/PendingRequestTreasury',
             [
+                'regularBudget' => LedgerBudget::regularBudget(),
+                'specialBudget' => LedgerBudget::specialBudget(),
                 'currentBudget' => LedgerBudget::currentBudget(),
                 'title' => 'Update Budget Entry Form',
                 'data' => $record,
@@ -61,7 +63,7 @@ class BudgetRequestController extends Controller
     public function cancelledRequest(Request $request)
     {
         $record = $this->budgetRequestService->cancelledRequest($request);
-
+// dd($record);
         return inertia(
             'Treasury/Dashboard/TableApproved',
             [

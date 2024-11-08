@@ -14,11 +14,11 @@ use App\Models\PromoGcReleaseToItem;
 use App\Models\InstitutPayment;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PromoGcReleasingService extends UploadFileHandler
+class PromoGcReleasingService extends FileHandler
 {
     private string $sessionName;
     public function __construct()

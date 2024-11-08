@@ -100,6 +100,242 @@ class ColumnHelper
 
         ],
     ];
+    public static $approved_request_columns = [
+        [
+            'title' => 'RFPROM',
+            'dataIndex' => 'pgcreq_reqnum',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'reqdate',
+
+        ],
+        [
+            'title' => 'Date Needed',
+            'dataIndex' => 'dateneed',
+
+        ],
+        [
+            'title' => 'Total Gc',
+            'dataIndex' => 'pgcreq_total',
+
+        ],
+        [
+            'title' => 'Retail Group',
+            'dataIndex' => 'pgcreq_group',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'reqby',
+
+        ],
+        [
+            'title' => 'Recommended By',
+            'dataIndex' => 'recby',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'appby',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'view',
+            'align' =>  'center'
+
+        ],
+    ];
+    public static $cancelled_production_columns = [
+        [
+            'title' => 'Pr No',
+            'dataIndex' => 'pe_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'req_date',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'dataIndex' => 'prepby',
+
+        ],
+        [
+            'title' => 'Date Cancelled',
+            'dataIndex' => 'can_at',
+
+        ],
+        [
+            'title' => 'Cancelled By',
+            'dataIndex' => 'canby',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'view',
+            'align' => 'center',
+
+        ],
+    ];
+    public static $approved_details_column = [
+
+        [
+            'title' => 'Denomination',
+            'dataIndex' => 'denomination',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Quantity',
+            'dataIndex' => 'pe_items_quantity',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Unit',
+            'dataIndex' => 'uom',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Barcode Start',
+            'dataIndex' => 'bstart',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Barcode End',
+            'dataIndex' => 'bend',
+            'key' => 'denom_id'
+
+        ],
+        [
+            'title' => 'Subtotal',
+            'dataIndex' => 'fsubt',
+            'key' => 'denom_id'
+
+        ],
+    ];
+    public static $production_approved_column = [
+        [
+            'title' => 'Pr No.',
+            'dataIndex' => 'pe_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'pe_date_request_tran',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'reqby',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => 'ape_approved_at_tran',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'ape_approved_by',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'view',
+            'align' => 'center'
+
+        ],
+    ];
+    public static $payment_viewing_column = [
+        [
+            'title' => 'Payment No.',
+            'dataIndex' => 'insp_paymentnum',
+
+        ],
+        [
+            'title' => 'Spgc #',
+            'dataIndex' => 'insp_trid',
+
+        ],
+        [
+            'title' => 'Payment Date',
+            'dataIndex' => 'institut_date',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'spcus_companyname',
+
+        ],
+        [
+            'title' => 'Amount Paid',
+            'dataIndex' => 'institut_amountrec',
+
+        ],
+        [
+            'title' => 'Status',
+            'dataIndex' => 'spexgc_payment_stat',
+            'align' => 'center',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'view',
+            'align' => 'center',
+        ],
+    ];
+    public static $payment_gc_columns = [
+        [
+            'title' => 'RFSEGC#',
+            'dataIndex' => 'spexgc_num',
+            'align' => 'center'
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'date',
+
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' => 'validity',
+
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'reqby',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'spcus_acctname',
+
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'spexgc_balance',
+
+        ],
+        [
+            'title' => 'Status',
+            'key' => 'status',
+            'align' => 'center'
+
+        ],
+        [
+            'title' => 'Setup',
+            'key' => 'setup',
+            'align' => 'center',
+
+        ],
+    ];
     public static $approved_budget_request = [
         [
             'title' => 'Br No',
@@ -127,8 +363,8 @@ class ColumnHelper
 
         ],
         [
-            'title' => 'Approved By',
-            'dataIndex' => 'abr_approved_by',
+            'title' => 'Checked By',
+            'dataIndex' => 'checkedby',
 
         ],
         [
@@ -374,7 +610,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Approved By',
-            'dataIndex' => 'valid',
+            'dataIndex' => 'fullname',
             'align' => 'center'
         ],
         [
@@ -615,6 +851,11 @@ class ColumnHelper
             'dataIndex' => 'pay_terms',
             'align' => 'center'
         ],
+        [
+            'title' => 'Action.',
+            'key' => 'action',
+            'align' => 'center'
+        ],
 
 
     ];
@@ -625,11 +866,11 @@ class ColumnHelper
         ],
         [
             'title' => 'Date Requested',
-            'dataIndex' => 'spexgc_datereq',
+            'dataIndex' => 'datereq',
         ],
         [
             'title' => 'Date Validity',
-            'dataIndex' => 'spexgc_dateneed',
+            'dataIndex' => 'dateneeded',
         ],
         [
             'title' => 'Customer',

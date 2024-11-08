@@ -1,6 +1,7 @@
 <template>
     <div>
         <a-card title="Available GC">
+            
             <a-table size="small" bordered :dataSource="availableGc" :columns="columns" :pagination="false">
                 <template v-slot:bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'denomination'">
@@ -13,7 +14,7 @@
             </a-table>
             <div>
                 <div class="flex justify-end mt-2">
-                    <a-button @click="() => $inertia.get(route('retail.availableGcList'))" type="primary">
+                    <a-button size="small" @click="() => $inertia.get(route('retail.availableGcList'))" type="primary">
                         <SearchOutlined />View Available GC
                     </a-button>
                 </div>
@@ -27,7 +28,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 export default {
     layout: AuthenticatedLayout,
     props: {
-        availableGc: Object
+        availableGc: Object,
+        total: Object
     },
     data() {
         return {

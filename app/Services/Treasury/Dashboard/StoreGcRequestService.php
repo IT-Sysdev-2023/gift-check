@@ -12,7 +12,7 @@ use App\Models\InstitutPayment;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
 use Illuminate\Support\Facades\Date;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Gc;
@@ -20,7 +20,7 @@ use App\Models\GcLocation;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
-class StoreGcRequestService extends UploadFileHandler
+class StoreGcRequestService extends FileHandler
 {
 
 	public function __construct()
@@ -273,7 +273,6 @@ class StoreGcRequestService extends UploadFileHandler
 
 	public function releasingEntrySubmit(Request $request)
 	{
-		
 		$request->validate([
 			// 'file' => 'required',
 			'remarks' => 'required',
@@ -385,7 +384,7 @@ class StoreGcRequestService extends UploadFileHandler
 
 				$latestId = ApprovedGcrequest::create([
 					'agcr_request_id' => $reqId,
-					'agcr_approvedby' => '',
+					'agcr_approvedby' => $request->user()->user_id,
 					'agcr_checkedby' => $request->checkedBy,
 					'agcr_remarks' => $request->remarks,
 					'agcr_approved_at' => now(),
@@ -479,14 +478,12 @@ class StoreGcRequestService extends UploadFileHandler
 
 		$header_data = new ApprovedGcRequestResource(ApprovedGcrequest::where('agcr_request_relnum', $id)
 			->with([
-				'userCheckedBy:user_id,firstname,lastname',
+				'userCheckedBy:assig_id,assig_name',
 				'storeGcRequest:sgc_id,sgc_store',
 				'storeGcRequest.store:store_id,store_name',
 				'user:user_id,firstname,lastname'
 			])
 			->first());
-
-		// dd($header_data->);
 
 		$gcgroup = GcRelease::select('denomination.denomination', 'gc_release.re_barcode_no', 'gc_release.rel_id', 'denomination.denom_id')
 			->joinGcDenomination()
@@ -521,7 +518,7 @@ class StoreGcRequestService extends UploadFileHandler
 			'signatures' => [
 				'received_by' => $header_data->agcr_recby,
 				'released_by' => Str::upper($header_data->user->fullname),
-				'checked_by' => Str::upper($header_data->userCheckedBy->fullname),
+				'checked_by' => Str::upper($header_data->userCheckedBy?->assig_name),
 			],
 
 		];

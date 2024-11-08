@@ -7,6 +7,7 @@ use App\Models\StoreEod;
 use App\Models\StoreEodItem;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
+use App\Services\Documents\FileHandler;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -14,9 +15,13 @@ use Illuminate\Support\Str;
 
 use function Sodium\compare;
 
-class EodServices
+class EodServices extends FileHandler
 {
-
+    public function __construct()
+    {
+        parent::__construct();
+        $this->folderName = 'eod';
+    }
     public function getVerifiedFromStore()
     {
 
@@ -48,10 +53,10 @@ class EodServices
 
         $wholesaletime = now()->format('H:i');
 
-        $user = 'IT';
-        $password = 'itsysdev';
+        $user = 'Kenjey';
+        $password = 'ken';
 
-        exec('net use \\\172.16.43.7\Gift\\\\ /user:' . $user . ' ' . $password . ' /persistent:no');
+        exec('net use \\\172.16.42.143\Gift\\\\ /user:' . $user . ' ' . $password . ' /persistent:no');
 
 
         $store = StoreVerification::select(
@@ -91,7 +96,7 @@ class EodServices
                 ]);
             }
 
-            $ip = '\\\172.16.43.7\Gift\\';
+            $ip = '\\\172.16.42.143\Gift\\';
 
             $quickCheck = collect(File::files($ip));
 
@@ -112,27 +117,27 @@ class EodServices
                 if ($res) {
                     // dd();
 
-                    $txtfiles_temp[] =  [
-                        'ver_barcode'        => $item->vs_barcode,
-                        'ver_textfilename'     => $item->vs_tf,
-                        'ver_denom'         => $item->vs_tf_denomination,
-                        'ver_balance'         => $item->vs_tf_balance,
-                        'ver_used'            => $item->vs_tf_used,
-                        'ver_eod1'            => $item->vs_tf_eod,
-                        'txtfile_ip'        => $ip,
-                        'payto'                => $item->vs_payto
+                    $txtfiles_temp[] = [
+                        'ver_barcode' => $item->vs_barcode,
+                        'ver_textfilename' => $item->vs_tf,
+                        'ver_denom' => $item->vs_tf_denomination,
+                        'ver_balance' => $item->vs_tf_balance,
+                        'ver_used' => $item->vs_tf_used,
+                        'ver_eod1' => $item->vs_tf_eod,
+                        'txtfile_ip' => $ip,
+                        'payto' => $item->vs_payto
                     ];
                 } else {
                     if ($item->vs_payto == 'WHOLESALE') {
-                        $txtfiles_temp[] =  [
-                            'ver_barcode'        => $item->vs_barcode,
-                            'ver_textfilename'     => $item->vs_tf,
-                            'ver_denom'         => $item->vs_tf_denomination,
-                            'ver_balance'         => $item->vs_tf_balance,
-                            'ver_used'            => $item->vs_tf_used,
-                            'ver_eod1'            => $item->vs_tf_eod,
-                            'txtfile_ip'        => $ip,
-                            'payto'                => $item->vs_payto
+                        $txtfiles_temp[] = [
+                            'ver_barcode' => $item->vs_barcode,
+                            'ver_textfilename' => $item->vs_tf,
+                            'ver_denom' => $item->vs_tf_denomination,
+                            'ver_balance' => $item->vs_tf_balance,
+                            'ver_used' => $item->vs_tf_used,
+                            'ver_eod1' => $item->vs_tf_eod,
+                            'txtfile_ip' => $ip,
+                            'payto' => $item->vs_payto
                         ];
                     } else {
                         $notFoundGC[] = $item->vs_tf;
@@ -152,10 +157,11 @@ class EodServices
             }
 
             $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss) {
+                // dd($item);
 
-                if ($item['payto'] == 'WHOLESALE') {
+                if ($item['payto'] == '') {
 
-                    DB::transaction(function () use ($item, $id,  $wholesaletime) {
+                    DB::transaction(function () use ($item, $id, $wholesaletime) {
 
                         $this->updateStoreVerWholeSale($item);
 
@@ -164,6 +170,7 @@ class EodServices
                         $this->storeEodItem($item, $id);
 
                     });
+
                 } else {
 
                     $file = $item['txtfile_ip'] . '\\' . $item['ver_textfilename'];
@@ -171,7 +178,7 @@ class EodServices
 
                     if (!File::exists($file)) {
                         $rss[] = [
-                            'error' =>  'GC Barcode # ' . $item['ver_textfilename'] . ' missing.',
+                            'error' => 'GC Barcode # ' . $item['ver_textfilename'] . ' missing.',
                             'status' => 'error'
                         ];
                     }
@@ -196,6 +203,7 @@ class EodServices
                     $text = File::get($file);
 
                     $exp = explode("\n", $text);
+                    // dd($exp);
 
                     $pc = '';
                     $am = '';
@@ -220,7 +228,7 @@ class EodServices
                             $amount = $exprn[$key][1];
 
                             if ($amount < $item['ver_denom']) {
-                
+
                                 $success = $this->updateStoreVerification($item, $pc, $am, $amount);
 
                                 if ($success) {
@@ -228,9 +236,8 @@ class EodServices
                                 }
                             }
                         }
-
                         if ($key > 7) {
-                            if ($key !== '') {
+                            if ($line !== '') {
                                 $if8key = $exprn[$key];
                                 $this->storeEodTransaction($item, $if8key, $id);
                             }
@@ -272,7 +279,7 @@ class EodServices
                     }
 
                     if (File::copy($file, $fileArchive . '\\' . $item['ver_textfilename'])) {
-                        $deleted =  File::delete($file);
+                        $deleted = File::delete($file);
 
                         if (!$deleted) {
                             $rss[] = [
@@ -387,11 +394,16 @@ class EodServices
         $data->transform(function ($item) {
             $item->storename = $item->store->store_name ?? null;
             $item->fullname = $item->user->fullname;
-            $item->date =  Date::parse($item->steod_datetime)->toFormattedDateString();
-            $item->time =  Date::parse($item->steod_datetime)->format('h:i A');
+            $item->date = Date::parse($item->steod_datetime)->toFormattedDateString();
+            $item->time = Date::parse($item->steod_datetime)->format('h:i A');
             return $item;
         });
 
         return $data;
+    }
+
+    public function generatePdf(int $id)
+    {
+        return $this->retrieveFile("{$this->folderName}/treasuryEod", "eod{$id}.pdf");
     }
 }

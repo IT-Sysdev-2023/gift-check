@@ -9,12 +9,14 @@ use App\Models\BudgetRequest;
 use App\Models\CancelledBudgetRequest;
 use App\Models\LedgerBudget;
 use App\Models\PromogcPreapproved;
-use App\Services\Documents\UploadFileHandler;
+use App\Models\User;
+use App\Services\Documents\FileHandler;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Faker\Core\Number;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
-class FinanceService extends UploadFileHandler
+class FinanceService extends FileHandler
 {
     public function __construct()
     {
@@ -35,6 +37,8 @@ class FinanceService extends UploadFileHandler
 
         $data = BudgetRequest::select('br_no', 'br_id', 'br_requested_at', 'br_request', 'br_requested_needed', 'br_requested_by')
             ->with('user:user_id,firstname,lastname')->where('br_request_status', '0')
+            ->where('br_checked_by', '!=', null)
+            ->where('br_requested_by', '!=', '')
             ->paginate(10)->withQueryString();
 
         $data->transform(function ($item) {
@@ -49,15 +53,24 @@ class FinanceService extends UploadFileHandler
 
     public function budgetRequest($request)
     {
+        // dd();
         $budget = BudgetRequest::with('user:user_id,firstname,lastname,usertype', 'user.accessPage:access_no,title')
             ->where('br_id', $request->id)
             ->first();
+
+        $users = new User();
+
+        $reqby = $users->select('firstname', 'lastname')->where('user_id', $budget->br_requested_by)->value('full_name');
+        $checkby = $users->select('firstname', 'lastname')->where('user_id', $budget->br_checked_by)->value('full_name');
 
         if ($budget) {
             $budget->time = Date::parse($budget->br_requested_at)->format('h:i');
             $budget->reqdate = Date::parse($budget->br_requested_at)->toFormattedDateString();
             $budget->needed = Date::parse($budget->br_requested_needed)->toFormattedDateString();
+            $budget->reqby = $reqby;
+            $budget->checkby = $checkby;
         }
+
 
         $preApproved = PromogcPreapproved::with('user:user_id,firstname,lastname')->where('prapp_reqid', $request->id)->get();
 
@@ -79,6 +92,7 @@ class FinanceService extends UploadFileHandler
             'br_appby' => 'required',
         ]);
 
+
         if ($request->br_select == '1') {
             if ($request->br_group == '1') {
                 if ($request->br_preappby != 1) {
@@ -89,6 +103,7 @@ class FinanceService extends UploadFileHandler
                     ]);
                 }
             } else {
+
                 $this->legderBudget($request);
             }
         } else {
@@ -112,6 +127,7 @@ class FinanceService extends UploadFileHandler
                 'bdebit_amt' => $request->br_req,
                 'bledger_typeid' => $request->br_budtype,
                 'bledger_group' => $request->br_group,
+                'bledger_category' => $request->br_category
             ]);
 
             ApprovedBudgetRequest::create([
@@ -135,10 +151,13 @@ class FinanceService extends UploadFileHandler
 
                     $this->saveFile($request, $file);
 
-                    return redirect()->route('finance.budget.pending')->with([
-                        'title' => 'Approval',
-                        'msg' => 'Budget Request Successfully Approved!',
+                    $stream = $this->generatePdf($request);
+
+                    return redirect()->back()->with([
+                        'stream' => $stream,
+                        'msg' => 'SuccessFully Submitted!',
                         'status' => 'success',
+                        'title' => 'Success'
                     ]);
                 } else {
                     return back()->with([
@@ -156,6 +175,49 @@ class FinanceService extends UploadFileHandler
                 ]);
             }
         });
+    }
+
+    private function generatePdf($request)
+    {
+        $bud = BudgetRequest::where('br_id', $request->br_id)->first();
+
+        $appby = User::select('firstname', 'lastname')->where('user_id', $bud->br_requested_by)->value('full_name');
+        $checkby = User::select('firstname', 'lastname')->where('user_id', $bud->br_checked_by)->value('full_name');
+
+        $data = [
+            'pr' => $bud->br_no,
+            'budget' => NumberHelper::format(LedgerBudget::budget()),
+            'dateRequested' => today()->toFormattedDateString(),
+            'dateNeeded' => Date::parse($bud->br_requested_needed)->toFormattedDateString(),
+            'remarks' => $bud->br_remarks,
+
+            'subtitle' => 'Revolving Budget Entry Form',
+
+            'budgetRequested' => $bud->br_request,
+            //signatures
+
+            'signatures' => [
+                'preparedBy' => [
+                    'name' => $appby,
+                    'position' => 'Sr Cash Clerk'
+                ],
+                'checkedBy' => [
+                    'name' => $checkby,
+                    'position' => 'Department Head'
+                ],
+                'reviewedBy' => [
+                    'name' => $request->user()->full_name,
+                    'position' => 'Financial Analyst'
+                ],
+            ]
+        ];
+        $pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
+
+        $this->folderName = 'generatedTreasuryPdf/FinanceBudgetRequest';
+
+        $this->savePdfFile($request, $bud->br_no, $pdf->output());
+
+        return base64_encode($pdf->output());
     }
 
     private function cancelBudgetRequest($request)
@@ -212,6 +274,7 @@ class FinanceService extends UploadFileHandler
             $item->requestDate = Date::parse($item->br_requested_at)->toFormattedDateString();
             $item->approvedAt = Date::parse($item->abr_approved_at)->toFormattedDateString();
             $item->budgetReq = NumberHelper::currency($item->br_request);
+            $item->checkedby =  User::select('firstname', 'lastname')->where('user_id', $item->abr_approved_by)->value('full_name') ?? '--Mao ning Daan--';
             return $item;
         });
 
@@ -228,14 +291,15 @@ class FinanceService extends UploadFileHandler
             ->leftJoin('users', 'user_id', '=', 'abr_prepared_by')
             ->where('br_id', $id)->first();
 
-            if($data){
-                $data->apreqat = Date::parse($data->abr_approved_at)->toFormattedDateString();
-                $data->needed = Date::parse($data->br_requested_needed)->toFormattedDateString();
-                $data->reqat = Date::parse($data->br_requested_at)->toFormattedDateString();
-                $data->time = Date::parse($data->br_requested_at)->format('h:i');
-                $data->budgetReq = NumberHelper::currency($data->br_request);
-            }
-
+        if ($data) {
+            $data->apreqat = Date::parse($data->abr_approved_at)->toFormattedDateString();
+            $data->needed = Date::parse($data->br_requested_needed)->toFormattedDateString();
+            $data->reqat = Date::parse($data->br_requested_at)->toFormattedDateString();
+            $data->time = Date::parse($data->br_requested_at)->format('h:i');
+            $data->budgetReq = NumberHelper::currency($data->br_request);
+            $data->checkedby =  User::select('firstname', 'lastname')->where('user_id', $data->abr_approved_by)->value('full_name');
+            $data->appby =  User::select('firstname', 'lastname')->where('user_id', $data->abr_checked_by)->value('full_name');
+        }
         return $data;
     }
 }

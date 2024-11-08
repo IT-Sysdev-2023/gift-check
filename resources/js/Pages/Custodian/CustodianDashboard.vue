@@ -4,10 +4,10 @@
             <special-external-gc-request :count="count"/>
         </a-col>
         <a-col :span="8">
-
+            <production-request />
         </a-col>
         <a-col :span="8">
-
+            <available-gc-allocation-card  :denom="denom"/>
         </a-col>
     </a-row>
 </template>
@@ -18,6 +18,7 @@ export default {
     layout: AuthenticatedLayout,
     props: {
         count: Array,
+        denom: Object,
     }
 
 }

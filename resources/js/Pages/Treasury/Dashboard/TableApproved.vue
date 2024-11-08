@@ -58,6 +58,11 @@ const { highlightText } = highlighten();
                         {{ record[column.dataIndex[0]][column.dataIndex[1]] }}
                     </span>
                 </template>
+                <template v-if="column.dataIndex === 'approved_by'">
+                    <span>
+                        {{ record.cancelled_request?.user.full_name }}
+                    </span>
+                </template>
 
                 <template v-if="column.dataIndex === 'action'">
                     <a-button

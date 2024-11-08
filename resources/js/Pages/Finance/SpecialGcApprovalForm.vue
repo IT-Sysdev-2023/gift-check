@@ -31,23 +31,10 @@
                                         <a-textarea v-model:value="form.approveRemarks"></a-textarea>
                                     </a-form-item>
                                     <a-form-item label="Checked By:">
-                                        <a-select v-model:value="form.checkedBy" placeholder="Select an option">
-                                            <a-select-option v-for="item in checkedBy" :key="item.assig_name"
-                                                :value="item.assig_name">
-                                                {{ item.assig_name }}
-                                            </a-select-option>
-                                        </a-select>
+                                       <a-input v-model:value="form.checkedBy"/>
                                     </a-form-item>
-                                    <a-form-item label="Approved By:">
-                                        <a-select v-model:value="form.approvedBy" placeholder="Select an option">
-                                            <a-select-option v-for="item in checkedBy" :key="item.assig_name"
-                                                :value="item.assig_name">
-                                                {{ item.assig_name }}
-                                            </a-select-option>
-                                        </a-select>
-                                    </a-form-item>
-                                    <a-form-item label="Prepared By">
-                                        <a-input v-model:value="form.preparedBy" readonly></a-input>
+                                    <a-form-item label="Approved By">
+                                        <a-input v-model:value="form.approvedBy" readonly></a-input>
                                     </a-form-item>
                                     <a-form-item label="Upload Document">
                                         <a-upload-dragger :before-upload="() => false" :max-count="1"
@@ -147,8 +134,8 @@
                                     </a-form>
                                 </a-col>
                             </a-row>
-                            <a-form-item label="Requested by">
-                                <a-input v-model:value="data[0].fullname" readonly></a-input>
+                            <a-form-item label="Prepared by">
+                                <a-input v-model:value="data[0].prepby" readonly></a-input>
                             </a-form-item>
                         </a-card>
                     </a-col>
@@ -179,7 +166,6 @@ export default {
     layout: AuthenticatedLayout,
     props: {
         data: Object,
-        checkedBy: Object,
         type: String,
         currentBudget: String,
         gcHolder: Object,
@@ -200,12 +186,11 @@ export default {
                 dateApproved: dayjs(),
                 dateCancelled: dayjs(),
                 approveRemarks: '',
-                checkedBy: '',
-                approvedBy: '',
+                checkedBy: this.data[0].checkby,
                 budget: this.currentBudget,
                 formattedbudget: this.currentBudget.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
                 cancelledBy: this.data[0].fullname,
-                preparedBy: this.data[0].fullname,
+                approvedBy: this.$page.props.auth.user.full_name,
 
             }
         }
@@ -231,6 +216,7 @@ export default {
         },
         submitForm() {
             this.$inertia.post(route('finance.pendingGc.approval.submit'), {
+                type: this.type,
                 data: this.data,
                 formData: this.form,
                 file: this.file,

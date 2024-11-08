@@ -59,7 +59,7 @@ export default {
             this.open = false;
         },
         viewDetails(data) {
-            axios.get(route('view.treasury.sales'), {
+            axios.get(route('marketing.treasurysales.view.treasury.sales'), {
                 params: {
                     id: data.insp_trid,
                 }

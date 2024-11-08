@@ -29,7 +29,7 @@ return [
     */
 
     'disks' => [
-   
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
@@ -56,7 +56,20 @@ return [
             'throw' => false,
         ],
 
-
+        'fad' => [
+            'driver' => 'local',
+            'root' => '\\\\172.16.161.206\\FAD_Stores\\FAD_STORE_DATABASE\\FAD_DIRECTORY\\GC_TEXTFILE\\New',
+            'permissions' => [
+                'file' => [
+                    'public' => 0777,
+                    'private' => 0600,
+                ],
+                'dir' => [
+                    'public' => 0777,
+                    'private' => 0700,
+                ],
+            ],
+        ],
 
     ],
 

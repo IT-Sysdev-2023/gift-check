@@ -1,5 +1,5 @@
 <template>
-    <a-row class="flex justify-between mt-5" align="middle">
+    <a-row class="flex justify-between mt-5" align="middle" v-if="datarecords !== undefined">
         <a-col>
             <a-typography-text>{{ `Showing ${datarecords?.from || 0} to ${datarecords?.to || 0} of ${datarecords?.total.toLocaleString()}
                 records` }}
@@ -26,7 +26,6 @@ export default {
     },
     props: {
         datarecords: Object,
-
     },
 }
 </script>

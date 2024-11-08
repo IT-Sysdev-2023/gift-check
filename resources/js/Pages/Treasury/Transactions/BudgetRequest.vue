@@ -8,7 +8,7 @@
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
 
-        <a-card title="Submit a Gift Check" class="mt-10">
+        <a-card title=" Revolving Budget Entry Form" class="mt-10">
             <a-form
                 :model="formState"
                 :label-col="{ span: 7 }"
@@ -26,7 +26,7 @@
                         >
                             <a-input v-model:value="currentDate" readonly />
                         </a-form-item>
-                        <a-form-item
+                        <!-- <a-form-item
                             label="Date Needed:"
                             name="dateNeeded"
                             has-feedback
@@ -38,7 +38,7 @@
                                 v-model:value="formState.dateNeeded"
                                 @change="clearError('dateNeeded')"
                             />
-                        </a-form-item>
+                        </a-form-item> -->
                         <a-form-item
                             label="Budget:"
                             name="budget"
@@ -59,12 +59,26 @@
                                 @change="clearError('budget')"
                             />
                         </a-form-item>
+                        <a-form-item
+                            label="Budget Category:"
+                            name="cat"
+                            :validate-status="getErrorStatus('category')"
+                            :help="getErrorMessage('category')"
+                        >
+                            <ant-select
+                                :options="[
+                                    { label: 'Regular Gc', value: 'regular' },
+                                    { label: 'Special Gc', value: 'special' },
+                                ]"
+                                @handle-change="categoryHandler"
+                            />
+                        </a-form-item>
                         <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                         :help="getErrorMessage('file')">
                             <ant-upload-image @handle-change="handleChange" />
                         </a-form-item> -->
                         <a-form-item
-                            label="Remarks:."
+                            label="Remarks"
                             name="name"
                             has-feedback
                             :validate-status="getErrorStatus('remarks')"
@@ -75,26 +89,41 @@
                                 @input="clearError('remarks')"
                             />
                         </a-form-item>
-
-                        <a-form-item class="text-end mt-5">
-                            <a-button type="primary" html-type="submit"
-                                >Submit</a-button
-                            >
+                        <a-form-item label="Prepared By">
+                            <a-input
+                                :value="page.auth.user.full_name"
+                                readonly
+                            />
                         </a-form-item>
+                        <div>
+                            <div class="flex justify-end mx-9">
+                                <a-form-item class="text-end ">
+                                    <a-button type="primary" html-type="submit"
+                                        >Submit</a-button
+                                    >
+                                </a-form-item>
+                            </div>
+                        </div>
                     </a-col>
                     <a-col :span="14">
                         <a-card>
                             <a-row>
-                                <a-col :span="12">
+                                <a-col :span="8">
                                     <a-statistic
-                                        title="Current Budget"
-                                        :value="remainingBudget"
+                                        title="Regular Gc Budget"
+                                        :value="regularBudget"
                                     />
                                 </a-col>
-                                <a-col :span="12">
+                                <a-col :span="8">
                                     <a-statistic
-                                        title="Prepaired By"
-                                        :value="page.auth.user.full_name"
+                                        title="Special Gc Budget"
+                                        :value="specialBudget"
+                                    />
+                                </a-col>
+                                <a-col :span="8">
+                                    <a-statistic
+                                        title="Total Budget"
+                                        :value="remainingBudget"
                                     />
                                 </a-col>
                             </a-row>
@@ -103,11 +132,25 @@
                 </a-row>
             </a-form>
         </a-card>
+        <a-modal
+            v-model:open="openIframe"
+            style="width: 70%; top: 50px"
+            :footer="null"
+            :afterClose="closeIframe"
+        >
+            <iframe
+                class="mt-7"
+                :src="stream"
+                width="100%"
+                height="600px"
+            ></iframe>
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import type { UploadChangeParam } from "ant-design-vue";
+import { ref } from "vue";
 import dayjs, { Dayjs } from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import type { UploadFile } from "ant-design-vue";
@@ -119,11 +162,14 @@ interface FormStateGc {
     budget: number;
     remarks: string;
     dateNeeded: null;
+    category: string;
 }
 
 const props = defineProps<{
     title?: string;
     remainingBudget: string;
+    regularBudget: string;
+    specialBudget: string;
     br: string;
 }>();
 
@@ -139,27 +185,33 @@ const formState = useForm<FormStateGc>({
     budget: 0,
     file: null,
     remarks: "",
+    category: null,
 });
 
+const stream = ref(null);
+const openIframe = ref(false);
 const { openLeftNotification } = onProgress();
 const handleChange = (file: UploadChangeParam) => {
     formState.file = file.file;
 };
 
 const onSubmit = () => {
-    formState
-        .transform((data) => ({
-            ...data,
-            dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
-        }))
-        .post(route("treasury.transactions.budgetRequestSubmission"), {
-            onSuccess: ({ props }) => {
-                openLeftNotification(props.flash);
-                if (props.flash.success) {
-                    router.visit(route("treasury.dashboard"));
-                }
-            },
-        });
+    formState.post(route("treasury.transactions.budgetRequestSubmission"), {
+        onSuccess: ({ props }) => {
+            openLeftNotification(props.flash);
+            if (props.flash.success) {
+                stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                openIframe.value = true;
+            }
+        },
+    });
+};
+
+const categoryHandler = (cat: string) => {
+    formState.category = cat;
+};
+const closeIframe = () => {
+    router.visit(route("treasury.dashboard"));
 };
 const getErrorStatus = (field: string) => {
     return formState.errors[field] ? "error" : "";

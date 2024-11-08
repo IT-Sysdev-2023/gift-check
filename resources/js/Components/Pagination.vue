@@ -1,5 +1,5 @@
 <template>
-    <a-row class="flex justify-between" align="middle">
+    <a-row class="flex justify-between" align="middle" v-if="datarecords !== undefined">
         <a-col>
             <a-typography-text>{{ `Showing ${datarecords?.from || 0} to ${datarecords?.to || 0} of
                 ${datarecords?.total.toLocaleString()}
@@ -12,8 +12,6 @@
                     <a-button style="border-radius: 2px;" :type="link.active ? 'primary' : 'default'"
                         v-html="link.label" @click="paginate(link)" />
                 </template>
-
-                <a-select></a-select>
 
             </a-config-provider>
         </a-col>

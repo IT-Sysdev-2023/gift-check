@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Models\BudgetRequest;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\TempValidation;
 use App\Services\Iad\IadServices;
@@ -18,7 +19,8 @@ class IadController extends Controller
         // numRowsWhereTwo($link,'special_external_gcrequest','spexgc_id','spexgc_status','spexgc_reviewed','approved','')
 
         return inertia('Iad/IadDashboard', [
-            'count' => $this->dashboardClass->iadDashboard()
+            'count' => $this->dashboardClass->iadDashboard(),
+            'budgetrequest' => $this->dashboardClass->budgetRequest(),
         ]);
     }
 
@@ -33,7 +35,20 @@ class IadController extends Controller
     public function setupReceiving(Request $request)
     {
 
+        // dd($request->all());
+
+
         $data =  $this->iadServices->setupReceivingtxt($request);
+
+
+        if (empty($data->requisFormDenom)) {
+
+            return redirect()->back()->with([
+                'status' => 'error',
+                'msg' => 'Requistion Not Found!',
+                'title' => 'Not Found!'
+            ]);
+        }
 
         return inertia('Iad/SetupReceiving', [
             'denomination' => $this->iadServices->getDenomination($data->requisFormDenom, $request),
@@ -105,4 +120,15 @@ class IadController extends Controller
             'record' => $this->iadServices->getReceivedDetails($id),
         ]);
     }
+    public function approveBudget(Request $request, $id)
+    {
+       return $this->iadServices->updateBudgetRequest($request, $id);
+
+    }
+    public function details($id){
+        return response()->json([
+            'record' => $this->iadServices->getDetails($id),
+        ]);
+    }
+    
 }

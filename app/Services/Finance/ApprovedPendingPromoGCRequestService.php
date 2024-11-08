@@ -11,10 +11,10 @@ use App\Models\ApprovedRequest;
 use App\Models\LedgerBudget;
 use App\Models\PromoGcRequest;
 use App\Models\PromoGcRequestItem;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use Illuminate\Support\Facades\DB;
 
-class ApprovedPendingPromoGCRequestService extends UploadFileHandler
+class ApprovedPendingPromoGCRequestService extends FileHandler
 {
     public function __construct()
     {
@@ -24,7 +24,6 @@ class ApprovedPendingPromoGCRequestService extends UploadFileHandler
     }
     public function pendingPromoGCRequestIndex($request)
     {
-        // dd();
         return inertia('Finance/PendingPromoGcRequest', [
             'data' => self::getPromoRequest($request),
             'columns' => ColumnHelper::app_pend_request_columns(true),
@@ -37,7 +36,6 @@ class ApprovedPendingPromoGCRequestService extends UploadFileHandler
 
     public static function getPromoRequest($request)
     {
-        // dd();
         $data = PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
             ->selectPromoRequest()
             ->whereFilterForPending()
@@ -53,7 +51,6 @@ class ApprovedPendingPromoGCRequestService extends UploadFileHandler
 
     public static function getRequestDetails($request)
     {
-
         $data = PromoGcRequest::selectPendingRequest()->with([
             'userReqby' => function ($query) {
                 $query->select('usertype', 'user_id', 'firstname', 'lastname');
@@ -72,6 +69,7 @@ class ApprovedPendingPromoGCRequestService extends UploadFileHandler
 
     public function approvedPromoGCRequestIndex($request)
     {
+        // dd();
         return inertia('Finance/ApprovedPromoGcRequest', [
             'data' => PromoGcRequestResource::collection(
                 PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
@@ -95,8 +93,9 @@ class ApprovedPendingPromoGCRequestService extends UploadFileHandler
 
         $data->transform(function ($item) {
             $item->subt = $item->denomination->denomination * $item->pgcreqi_qty;
-            $item->subtotal = NumberHelper::formatterFloat($item->denomination->denomination * $item->pgcreqi_qty);
-            $item->denomination->denomination = NumberHelper::formatterFloat($item->denomination->denomination);
+            $item->subtotal = NumberHelper::currency($item->denomination->denomination * $item->pgcreqi_qty);
+            $item->denom = NumberHelper::currency($item->denomination->denomination);
+            $item->denomformat = NumberHelper::formatterFloat($item->denomination->denomination);
             return $item;
         });
         return (object)[

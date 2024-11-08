@@ -15,12 +15,12 @@ class DocumentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
+        $filename = str_replace('//', '/', $this->doc_fullpath);
         return [
             'uid' => $this->doc_id,
             'name' => basename($this->doc_fullpath),
             // 'doc_type' => $this->doc_type,
-            'url' => "/storage/{$this->doc_fullpath}",
+            'url' => "/storage/{$filename}",
         ];
     }
 }

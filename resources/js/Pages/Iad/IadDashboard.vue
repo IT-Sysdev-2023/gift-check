@@ -29,7 +29,11 @@
                     @container2-event="gcReceived"
                 />
             </a-col>
+            <a-col :span="8">
+               <for-approval-pending :budget="budgetrequest"/>
+            </a-col>
         </a-row>
+
     </AuthenticatedLayout>
 </template>
 <script setup lang="ts">
@@ -38,6 +42,7 @@ import { router } from "@inertiajs/vue3";
 
 defineProps<{
     count: any;
+    budgetrequest: any
 }>();
 const approvedGcForReview = () => {
     router.get(route("iad.special.external.approvedGc"));

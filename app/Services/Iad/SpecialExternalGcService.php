@@ -7,7 +7,7 @@ use App\Models\ApprovedRequest;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
-use App\Services\Documents\UploadFileHandler;
+use App\Services\Documents\FileHandler;
 use App\Services\Iad\IadDashboardService;
 use App\Services\Treasury\ColumnHelper;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Rmunate\Utilities\SpellNumber;
 
-class SpecialExternalGcService extends UploadFileHandler
+class SpecialExternalGcService extends FileHandler
 {
 
     public function __construct()
@@ -29,7 +29,7 @@ class SpecialExternalGcService extends UploadFileHandler
         return SpecialExternalGcrequest::with(
             'user:user_id,firstname,lastname',
             'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
-            'hasManySpecialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty'
+            'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty'
         )
             ->select(
                 'spexgc_company',
@@ -58,7 +58,7 @@ class SpecialExternalGcService extends UploadFileHandler
             'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
             'approvedRequest:reqap_id,reqap_trid,reqap_preparedby,reqap_date,reqap_remarks,reqap_doc,reqap_checkedby,reqap_approvedby',
             'approvedRequest.user:user_id,firstname,lastname',
-            'hasManySpecialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty',
+            'specialExternalGcrequestItems:specit_trid,specit_denoms,specit_qty',
             'document:doc_id,doc_trid,doc_fullpath,doc_type'
         );
     }
@@ -163,9 +163,10 @@ class SpecialExternalGcService extends UploadFileHandler
                     return redirect()->back()->with('error', 'Request already reviewed');
                 }
             });
+        }else{            
+            return redirect()->back()->with('error', 'Please scan the Gc first!');
         }
 
-        return redirect()->back()->with('error', 'Please scan the Gc first!');
     }
 
     public function reprint($id)

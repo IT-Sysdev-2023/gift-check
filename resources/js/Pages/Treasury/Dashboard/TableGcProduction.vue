@@ -516,7 +516,6 @@ export default {
             const url = route("treasury.production.request.download.document", {
                 file: file,
             });
-            console.log(url);
             axios
                 .get(url, { responseType: "blob" })
                 .then((response) => {

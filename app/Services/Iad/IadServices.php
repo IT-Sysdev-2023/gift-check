@@ -4,11 +4,13 @@ namespace App\Services\Iad;
 
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
+use App\Models\BudgetRequest;
 use App\Models\CustodianSrr;
 use App\Models\CustodianSrrItem;
 use App\Models\Denomination;
 use App\Models\Document;
 use App\Models\Gc;
+use App\Models\LedgerBudget;
 use App\Models\ProductionRequestItem;
 use App\Models\RequisitionEntry;
 use App\Models\RequisitionForm;
@@ -16,20 +18,30 @@ use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\TempValidation;
 use App\Models\User;
+use App\Services\Documents\FileHandler;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
-class IadServices
+class IadServices extends FileHandler
 {
-    public function __construct(public IadDbServices $iadDbServices) {}
+
+    public function __construct(public IadDbServices $iadDbServices)
+    {
+        parent::__construct();
+    }
     public function gcReceivingIndex()
     {
-        return RequisitionForm::where('used', null)->get();
+        return RequisitionForm::where('used', null)
+            ->orderByDesc('id')
+            ->get();
     }
 
 
     public function setupReceivingtxt($request)
     {
+        // dd();
         $isEntry = RequisitionEntry::where('requis_erno', $request->requisId)->exists();
 
         $requisform = RequisitionForm::with('requisFormDenom')->where('req_no', $request->requisId)->first();
@@ -57,9 +69,12 @@ class IadServices
 
     public function getDenomination($denom, $request)
     {
+        // dd($denom);
 
 
         $requisProId = self::getRequistionNo($request->requisId) ?? null;
+
+        // dd(1);
 
 
         $data =  Denomination::select('denomination', 'denom_fad_item_number', 'denom_code', 'denom_id')
@@ -413,22 +428,70 @@ class IadServices
         ];
     }
 
-    public function getReceivedDetailsView()
+    public function updateBudgetRequest($request, $id)
     {
+        $update = BudgetRequest::where('br_id', $id)->update([
+            'br_checked_by' => request()->user()->user_id,
+        ]);
 
-        //         $select = 'COUNT(custodian_srr_items.cssitem_barcode) as cnt,
-        //         denomination.denomination';
-        // $where = 'custodian_srr_items.cssitem_recnum='.$id.'
-        //             GROUP BY
-        //                 denomination.denomination';
-        // $join = 'INNER JOIN
-        //             gc
-        //         ON
-        //             gc.barcode_no = custodian_srr_items.cssitem_barcode
-        //         INNER JOIN
-        //             denomination
-        //         ON
-        //             denomination.denom_id = gc.denom_id';
-        // $limit = '';
+        if ($update) {
+            $stream = $this->generatePdf($request, $id);
+            return redirect()->back()->with([
+                'stream' => $stream,
+                'msg' => 'SuccessFully Submitted!',
+                'title' => 'Success',
+                'status' => 'success',
+            ]);
+        }
+    }
+
+    private function generatePdf($request, $id)
+    {
+        $bud = BudgetRequest::where('br_id', $id)->first();
+
+        $appby = User::select('firstname', 'lastname')->where('user_id', $bud->br_requested_by)->first();
+
+        $data = [
+            'pr' => $bud->br_no,
+            'budget' => NumberHelper::format(LedgerBudget::budget()),
+            'dateRequested' => today()->toFormattedDateString(),
+            'dateNeeded' => Date::parse($bud->br_requested_needed)->toFormattedDateString(),
+            'remarks' => $bud->br_remarks,
+
+            'subtitle' => 'Revolving Budget Entry Form',
+
+            'budgetRequested' => $bud->br_request,
+            //signatures
+
+            'signatures' => [
+                'preparedBy' => [
+                    'name' => $appby->full_name,
+                    'position' => 'Sr Cash Clerk'
+                ],
+                'checkedBy' => [
+                    'name' => $request->user()->full_name,
+                    'position' => 'Department Head'
+                ]
+            ]
+        ];
+        $pdf = Pdf::loadView('pdf.giftcheck', ['data' => $data]);
+
+        $this->folderName = 'generatedTreasuryPdf/BudgetRequest';
+
+        $this->savePdfFile($request, $bud->br_no, $pdf->output());
+
+        return base64_encode($pdf->output());
+    }
+
+    public function getDetails($id)
+    {
+        $budget = BudgetRequest::where('br_id', $id)->first();
+
+        if ($budget) {
+            $budget->requested = Date::parse($budget->br_requested_at)->toFormattedDateString();
+            $budget->reqby = User::select('firstname', 'lastname')->where('user_id', $budget->br_requested_by)->value('full_name');
+        }
+
+        return $budget;
     }
 }

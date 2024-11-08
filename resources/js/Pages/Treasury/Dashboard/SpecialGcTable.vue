@@ -25,18 +25,20 @@ const { highlightText } = highlighten();
                 />
             </div>
         </div>
-        <a-tabs v-model:activeKey="activeKeyTab" type="card">
-            <a-tab-pane key="1" :tab="title">
+        <a-tabs
+            v-model:activeKey="activeKeyTab"
+            type="card"
+        >
+            <a-tab-pane key="1" tab="Pending Special External GC Request">
                 <a-table
-                    :data-source="data.data"
+                    :data-source="externalData.data"
                     :columns="columns"
                     :loading="onLoading"
                     bordered
                     size="small"
                     :pagination="false"
                 >
-                    <template #title>
-                    </template>
+                    <template #title> </template>
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex">
                             <span
@@ -69,16 +71,57 @@ const { highlightText } = highlighten();
                         </template>
                     </template>
                 </a-table>
+                <pagination-resource class="mt-5" :datarecords="externalData" />
             </a-tab-pane>
-            <a-tab-pane key="2" tab="Tab 2">Content of Tab Pane 2</a-tab-pane>
+            <a-tab-pane key="2" tab="Pending Special Internal GC Request">
+                <a-table
+                    :data-source="internalData.data"
+                    :columns="columns"
+                    bordered
+                    size="small"
+                    :pagination="false"
+                >
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex">
+                            <span
+                                v-html="
+                                    highlightText(
+                                        record[column.dataIndex],
+                                        form.search
+                                    )
+                                "
+                            >
+                            </span>
+                        </template>
+                        <template v-if="column.key">
+                            <span>
+                                <!-- for the dynamic implementation of object properties, just add a key in column-->
+                                {{ getValue(record, column.dataIndex) }}
+                            </span>
+                        </template>
+                        <template v-if="column.dataIndex === 'action'">
+                            <a-button
+                                type="primary"
+                                size="small"
+                                @click="viewHandler(record.spexgc_id)"
+                            >
+                                <template #icon>
+                                    <FileSearchOutlined />
+                                </template>
+                                Update
+                            </a-button>
+                        </template>
+                    </template>
+                </a-table>
+                <pagination-resource class="mt-5" :datarecords="internalData" />
+            </a-tab-pane>
         </a-tabs>
-
-        <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
+import { router } from "@inertiajs/vue3";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
@@ -88,9 +131,10 @@ export default {
     layout: AuthenticatedLayout,
     props: {
         title: String,
-        data: Object,
+        externalData: Object,
         columns: Array,
         filters: Object,
+        internalData: Object,
     },
     data() {
         return {
@@ -115,7 +159,7 @@ export default {
             return dataIndex.reduce((acc, index) => acc[index], record);
         },
         viewHandler(id) {
-            this.$inertia.get(route('treasury.special.gc.update.pending', id));
+            this.$inertia.get(route("treasury.special.gc.update.pending", id));
         },
     },
 

@@ -35,27 +35,21 @@
                         <a-form-item label="Remarks:" name="remarks">
                             <a-textarea v-model:value="form.InputRemarks" />
                         </a-form-item>
-                        <a-form-item label="Checked By:">
-                            <a-select v-model:value="form.checkedBy" placeholder="Select an option">
-                                <a-select-option v-for="item in checkedBy" :key="item.assig_name"
-                                    :value="item.assig_name">
-                                    {{ item.assig_name }}
-                                </a-select-option>
-                            </a-select>
-                        </a-form-item>
-                        <a-form-item label="Approved By:">
-                            <a-select v-model:value="form.approvedBy" placeholder="Select an option">
-                                <a-select-option v-for="item in checkedBy" :key="item.assig_name"
-                                    :value="item.assig_name">
-                                    {{ item.assig_name }}
-                                </a-select-option>
-                            </a-select>
-                        </a-form-item>
                         <a-form-item label="Prepared By">
                             <a-input v-model:value="form.preparedBy" readonly />
                         </a-form-item>
+                        <a-form-item label="Approved By:">
+                            <a-input v-model:value="form.approvedBy" readonly />
+                        </a-form-item>
+                        <a-form-item label="Reviewed By:">
+                            <a-input v-model:value="form.reviewedBy" readonly />
+                        </a-form-item>
+
                     </div>
                     <div v-if="form.status == '2'">
+                        <a-form-item label="Cancel Remarks">
+                            <a-textarea v-model:value="form.cancelremarks"/>
+                        </a-form-item>
                         <a-form-item label="Date Cancelled">
                             <a-input v-model:value="form.dateApproved" readonly />
                         </a-form-item>
@@ -77,17 +71,8 @@
                         <a-form-item label="Date Requested">
                             <a-input v-model:value="form.dateRequested" readonly />
                         </a-form-item>
-                        <a-form-item label="Date Needed">
-                            <a-input v-model:value="form.dateNeeded" readonly />
-                        </a-form-item>
-                        <a-form-item label="Requested Document">
-                            <a-image style="height: 100px;" :src="'/storage/productionRequestFile/' + data[0].pe_file_docno"></a-image>
-                        </a-form-item>
                         <a-form-item label="Remarks">
                             <a-input v-model:value="form.remarks" readonly />
-                        </a-form-item>
-                        <a-form-item label="Requested by">
-                            <a-input v-model:value="form.requestedBy" readonly />
                         </a-form-item>
                     </a-form>
                     <a-table :dataSource="barcodes" :columns="barcodeColumns" :pagination="false" />
@@ -104,12 +89,19 @@
             </a-button>
         </template>
     </a-modal>
+
+    <a-modal v-model:open="openIframe" style="width: 70%; top: 50px" :footer="null">
+        <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
+    </a-modal>
+
+
 </template>
 
 <script>
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
 import { PicRightOutlined } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue';
+import axios from "axios";
 import dayjs from "dayjs";
 
 export default {
@@ -119,13 +111,14 @@ export default {
         columns: Object,
         barcodes: Object,
         barcodeColumns: Object,
-        checkedBy: Object,
     },
     data() {
         return {
+            stream: null,
+            openIframe: false,
             open: false,
             form: {
-                id: this.data[0].pe_id,
+                id: this.data[0]?.pe_id,
                 pe_no: '',
                 department: '',
                 dateRequested: '',
@@ -134,14 +127,18 @@ export default {
                 remarks: '',
                 requestedBy: '',
                 requestedById: '',
+                cancelremarks: '',
                 total: '',
                 status: '1',
                 checkedBy: '',
                 approvedBy: '',
-                preparedById: this.$page.props.auth.user.user_id,
-                preparedBy: this.$page.props.auth.user.full_name,
+                approvedById: '',
+                preparedById: '',
+                preparedBy: '',
                 dateApproved: dayjs(),
                 dateCancelled: dayjs(),
+                reviewedBy: this.$page.props.auth.user.full_name,
+                reviewedById: this.$page.props.auth.user.user_id,
             }
         }
     },
@@ -150,35 +147,44 @@ export default {
             this.selectedRow(record);
         },
         selectedRow(data) {
+            axios.get(route('marketing.pendingRequest.getSigners'), {
+                params: {
+                    id: this.data[0]?.pe_id,
+                }
+            }).then((response) => {
+                this.form.approvedBy = response.data.response.approvedBy.employee_name;
+                this.form.approvedById = response.data.response.approvedById;
+            });
+
+
+
             this.open = true;
             this.form.pe_no = data.pe_num;
             this.form.department = data.title;
             this.form.dateRequested = data.dateReq;
             this.form.dateNeeded = data.dateneed;
             this.form.remarks = data.pe_remarks;
-            this.form.requestedBy = data.requestedBy;
-            this.form.requestedById = data.pe_requested_by;
+            this.form.preparedBy = data.requestedBy;
+            this.form.preparedById = data.pe_requested_by;
             this.form.total = data.total;
             this.form.dateneed = data.dateneed;
             this.$inertia.get(route('marketing.pendingRequest.pending.request'), {
-                id: data.pe_id
+                id: data?.pe_id
             }, {
                 preserveState: true
             })
         },
         submitReqForm() {
             this.$inertia.post(route('marketing.pendingRequest.submit.request'), {
-                data: this.form
+                data: this.form,
+                barcode: this.barcodes
             }, {
                 onSuccess: (response) => {
-                    console.log(response);
                     if (response.props.flash.type == 'success') {
-                        notification[response.props.flash.type]({
-                            message: response.props.flash.msg,
-                            description: response.props.flash.description,
-                        });
-                        // this.$inertia.get(route('marketing.dashboard'))
-                        window.location.href ='/marketing-dashboard'
+                        this.open = false;
+                        this.stream = `data:application/pdf;base64,${response.props.flash.stream}`;
+                        this.openIframe = true;
+
                     } else {
                         notification[response.props.flash.type]({
                             message: response.props.flash.msg,
@@ -193,7 +199,6 @@ export default {
         closeModal() {
             this.open = false;
         },
-
     }
 }
 </script>

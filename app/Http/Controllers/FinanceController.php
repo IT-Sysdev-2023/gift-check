@@ -15,7 +15,6 @@ use App\Models\LedgerSpgc;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
-use App\Services\Documents\UploadFileHandler;
 use App\Services\Finance\ApprovedPendingPromoGCRequestService;
 use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
@@ -26,6 +25,7 @@ use App\Services\Treasury\LedgerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 use function PHPUnit\Framework\isNull;
@@ -75,6 +75,7 @@ class FinanceController extends Controller
             ])
         ]);
     }
+    
 
     public function approvedAndReleasedSpgc(Request $request)
     {
@@ -253,28 +254,35 @@ class FinanceController extends Controller
             $budget = $currentBudget->total_debit - $currentBudget->total_credit;
         }
 
-
-
-        $checkedBy = Assignatory::where('assig_dept', $request->user()->usertype)
-            ->orWhere('assig_dept', 1)
-            ->get();
-
-        $query = SpecialExternalGcRequest::join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+        $query = SpecialExternalGcRequest::join('users as preparedby', 'preparedby.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('users as checker', 'checker.user_id', '=', 'special_external_gcrequest.spexgc_addempaddby')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
-            ->join('access_page', 'access_page.access_no', '=', 'users.usertype')
+            ->join('access_page', 'access_page.access_no', '=', 'preparedby.usertype')
             ->where('special_external_gcrequest.spexgc_status', 'pending')
             ->where('special_external_gcrequest.spexgc_id', $id)
+            ->select(
+                'special_external_gcrequest.*',
+                'preparedby.firstname as preparedby_firstname',
+                'preparedby.lastname as preparedby_lastname',
+                'checker.firstname as checker_first',
+                'checker.lastname as checker_lastname',
+                'special_external_customer.*',
+                'access_page.*'
+            )
             ->get();
+
+
+
         $query->transform(function ($item) {
             $item->specialExternalGcrequestItemsHasMany->each(function ($subitem) {
 
                 $subitem->subtotal = (float) $subitem->specit_denoms * (float) $subitem->specit_qty;
                 return $subitem;
             });
-
             $item->total = $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
 
-            $item->fullname = ucwords($item->firstname . ' ' . $item->lastname);
+            $item->prepby = ucwords($item->preparedby_firstname . ' ' . $item->preparedby_lastname);
+            $item->checkby = ucwords($item->checker_first . ' ' . $item->checker_lastname);
             $item->dateRequeted = Date::parse($item->spexgc_datereq)->format('Y-F-d');
             $item->dateNeed = Date::parse($item->spexgc_dateneed)->format('Y-F-d');
 
@@ -285,7 +293,6 @@ class FinanceController extends Controller
         return Inertia::render('Finance/SpecialGcApprovalForm', [
             'data' => $query,
             'type' => $gcType,
-            'checkedBy' => $checkedBy,
             'currentBudget' => $budget,
             'gcHolder' => $gcHolder,
             'columns' => ColumnHelper::getColumns($columns),
@@ -297,7 +304,9 @@ class FinanceController extends Controller
         $id = $request->formData['id'];
         $totalDenom = $request->data[0]['total'];
         $reqType = SpecialExternalGcrequest::select('spexgc_type')->where('spexgc_id', $id)->first();
-        $currentbudget = intval($request->currentBudget);
+        $currentbudget = LedgerBudget::whereNull('bledger_category')->get();
+        $debit = $currentbudget->sum('bdebit_amt');
+        $credit = $currentbudget->sum('bcredit_amt');
         $customer = SpecialExternalGcrequest::select('spexgc_company')->where('spexgc_id', $id)->get();
         $ledgerBudgetNum = LedgerBudget::select('bledger_no')->orderByDesc('bledger_id')->first();
         $nextLedgerBudgetNum = (int) $ledgerBudgetNum->bledger_no + 1;
@@ -308,7 +317,7 @@ class FinanceController extends Controller
             $cust = ($customer[0]->spexgc_company == 342 || $customer[0]->spexgc_company == 341) ? 'dti' : '';
 
             if ($request->formData['status'] == '1') {
-                if ($totalDenom > $currentbudget) {
+                if ($totalDenom > ($debit - $credit)) {
                     return back()->with([
                         'type' => 'error',
                         'msg' => 'Opps!',
@@ -338,15 +347,29 @@ class FinanceController extends Controller
                             'reqap_date' => now(),
                             'reqap_doc' => !is_null($request->file) ? $this->financeService->uploadFileHandler($request) : ''
                         ]);
-
                         LedgerBudget::create([
                             'bledger_no' => $nextLedgerBudgetNum,
                             'bledger_trid' => $id,
                             'bledger_datetime' => now(),
                             'bledger_type' => 'RFGCSEGC',
                             'bcus_guide' => $cust,
-                            'bcredit_amt' => $totalDenom
+                            'bcredit_amt' => $totalDenom,
+                            'bledger_category' => 'special'
                         ]);
+                        if ($request['type'] === 'internal') {
+                            LedgerSpgc::create([
+                                'spgcledger_no' => $nextLedgerBudgetNum,
+                                'spgcledger_trid' => $id,
+                                'spgcledger_datetime' => now(),
+                                'spgcledger_type' => 'RFGCSEGC',
+                                'spgcledger_credit' => $totalDenom,
+                                'spgcledger_typeid' => '0',
+                                'spgcledger_group' => '0',
+                                'spgcledger_debit' => '0',
+                                'spgctag' => '0',
+                            ]);
+                        }
+
 
                         if ($reqType->spexgc_type == '2') {
                             $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
@@ -383,13 +406,13 @@ class FinanceController extends Controller
                         'description' => 'Request approved successfuly.'
                     ]);
                 }
+            } else {
+                return back()->with([
+                    'type' => 'error',
+                    'msg' => 'Opps!',
+                    'description' => 'Request already approved/cancelled.'
+                ]);
             }
-        } else {
-            return back()->with([
-                'type' => 'error',
-                'msg' => 'Opps!',
-                'description' => 'Request already approved/cancelled.'
-            ]);
         }
     }
 
@@ -499,7 +522,7 @@ class FinanceController extends Controller
         $barcode = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->get();
 
         $barcode->transform(function ($item) {
-            $item->fullname = ucwords($item->spexgcemp_fname.' '.$item->spexgcemp_mname.' '.$item->spexgcemp_lname);
+            $item->fullname = ucwords($item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' ' . $item->spexgcemp_lname);
             return $item;
         });
 
@@ -509,5 +532,27 @@ class FinanceController extends Controller
             'barcodes' => $barcode
         ]);
     }
+    public function reprint($id)
+    {
+        $files = Storage::files('public/generatedTreasuryPdf/FinanceBudgetRequest');
 
+        $filePath = null;
+
+        foreach ($files as $file) {
+            if (strpos($file, $id) !== false) {
+                $filePath = $file;
+                break;
+            }
+        }
+
+        if ($filePath) {
+            return Storage::download($filePath);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'msg' => 'File not found',
+            'title' => 'Not Found!'
+        ], 404);
+    }
 }

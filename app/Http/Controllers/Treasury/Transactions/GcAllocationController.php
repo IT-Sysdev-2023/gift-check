@@ -49,12 +49,11 @@ class GcAllocationController extends Controller
             'gcType' => 'not_in:0',
             'denomination' => ['required', 'array', new DenomQty()],
         ]);
-
         $denom = collect($request->denomination);
 
-        $denom->each(function ($item) use ($request) {
+        DB::transaction(function () use ($request, $denom) {
 
-            DB::transaction(function () use ($item, $request) {
+            $denom->each(function ($item) use ($request) {
                 $gc = Gc::where([
                     ['gc_validated', '*'],
                     ['denom_id', $item['denom_id']],
@@ -81,7 +80,6 @@ class GcAllocationController extends Controller
                     ]);
                 });
             });
-
         });
         return redirect()->back()->with('success', 'Success mate!');
 
@@ -145,12 +143,12 @@ class GcAllocationController extends Controller
             ->select('denom_id', 'barcode_no')
             ->where([['gc_validated', '*'], ['gc_allocated', ''], ['gc_ispromo', ''], ['gc_treasury_release', '']])
             ->filterDenomination($request)
-            ->paginate()
+            ->paginate(5)
             ->withQueryString();
 
 
         return response()->json([
-            'data' => GcResource::collection($record->items()),
+            'data' => GcResource::collection(resource: $record->items()),
             'from' => $record->firstItem(),
             'to' => $record->lastItem(),
             'total' => $record->total(),

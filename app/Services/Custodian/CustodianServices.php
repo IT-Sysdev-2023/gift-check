@@ -2,24 +2,56 @@
 
 namespace App\Services\Custodian;
 
+use App\Helpers\ColumnHelper;
+use App\Helpers\NumberHelper;
 use App\Helpers\NumberInWordsHelper;
 use App\Http\Resources\CustodianSrrResource;
 use App\Http\Resources\SpecialGcRequestResource;
 use App\Models\BarcodeChecker;
+use App\Models\CancelledProductionRequest;
 use App\Models\CustodianSrr;
+use App\Models\Denomination;
 use App\Models\Document;
 use App\Models\Gc;
+use App\Models\ProductionRequest;
+use App\Models\ProductionRequestItem;
+use App\Models\RequisitionEntry;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\User;
 use Illuminate\Support\Facades\Date;
 use App\Services\Custodian\CustodianDbServices;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Milon\Barcode\DNS1D;
+use Illuminate\Support\Str;
 
 class CustodianServices
 {
-    public function __construct(public CustodianDbServices $custodianDbServices) {}
+    protected $formatter;
+
+    public function __construct(public CustodianDbServices $custodianDbServices)
+    {
+        $this->formatter = [
+            '0',
+            'GC E-REQUISITION NO',
+            'Receiving No',
+            'Transaction Date',
+            'Reference No',
+            'Purchase Order No',
+            'Purchase Date',
+            'Reference PO No',
+            'Payment Terms',
+            'Location Code',
+            'Department Code',
+            'Supplier Name',
+            'Mode of Payment',
+            'Remarks',
+            'Prepared By',
+            'Checked By',
+            'SRR Type',
+        ];
+    }
     public function barcodeChecker()
     {
         $data = BarcodeChecker::with(
@@ -148,6 +180,7 @@ class CustodianServices
 
     public function specialExternalGcSetup($request)
     {
+        // dd();
 
         $data = SpecialExternalGcrequest::selectFilterSetup()
             ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalGcrequestItemsHasMany:specit_trid,specit_denoms,specit_qty')
@@ -156,6 +189,7 @@ class CustodianServices
             ->get();
 
         $count = 1;
+
         $data->transform(function ($item) use (&$count) {
 
             $item->specialExternalGcrequestItemsHasMany->each(function ($subitem) use (&$count) {
@@ -163,12 +197,17 @@ class CustodianServices
                 $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
                 return $subitem;
             });
-            $item->numberinwords = Number::spell($item->spexgc_payment);
+            $item->dateneeded = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
+            $item->datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();
+
+            $item->numberinwords = Number::spell($item->spexgc_payment) . ' pesos';
 
             $item->total =  $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
 
             return $item;
         });
+
+        // dd($data->toArray());
 
         return $data;
     }
@@ -188,11 +227,12 @@ class CustodianServices
         ]);
     }
 
-    public function approvedGcList()
+    public function approvedGcList($request)
     {
         $data = SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
             ->selectFilterApproved()
             ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
+            ->where('spexgc_promo', $request->promo ?? '0')
             ->where('spexgc_status', 'approved')
             ->where('reqap_approvedtype', 'Special External GC Approved')
             ->orderByDesc('spexgc_num')
@@ -203,8 +243,8 @@ class CustodianServices
 
             $item->company = $item->specialExternalCustomer->spcus_companyname;
 
-            $item->spexgc_datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();
-            $item->spexgc_dateneed = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
+            $item->datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();
+            $item->dateneeded = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
             $item->reqap_date = Date::parse($item->reqap_date)->toFormattedDateString();
 
             return $item;
@@ -229,9 +269,11 @@ class CustodianServices
             ->where('spexgc_id', $request->id)
             ->first();
 
-
-        if($special){
+        if ($special) {
             $special->image = $special->approvedRequest->reqap_doc;
+            $special->dateneeded = Date::parse($special->spexgc_dateneed)->toFormattedDateString();
+            $special->datereq = Date::parse($special->spexgc_datereq)->toFormattedDateString();
+            $special->dateapp = Date::parse($special->approvedRequest->reqap_date)->toFormattedDateString();
         }
 
         if ($special) {
@@ -305,5 +347,297 @@ class CustodianServices
         });
 
         return $data;
+    }
+
+    public function upload($request)
+    {
+        if ($request->file[0]['originFileObj']->isValid()) {
+
+            $path = $request->file[0]['originFileObj']->getRealPath();
+            $contents = file_get_contents($path);
+        }
+
+        $exp = $this->explode($contents);
+
+        $collection2 = collect($exp);
+
+        $missingKeys = collect($this->formatter)->filter(function ($value) use ($collection2) {
+            return !$collection2->has($value);
+        });
+
+        if ($missingKeys->isEmpty()) {
+            $this->insertIntoDatabase($exp);
+        } else {
+            return redirect()->back()->with([
+                'msg' => 'Not a valid format',
+                'data' => $missingKeys,
+                'status' => 'error',
+                'title' => 'Invalid Format'
+            ]);
+        }
+    }
+
+    public function insertIntoDatabase($exp)
+    {
+        dd($exp);
+    }
+
+    private  function explode($data)
+    {
+        $lines = explode("\n", $data);
+
+        $parsedData = [];
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            if (!empty($line)) {
+
+                if (strpos($line, '|') !== false) {
+                    list($key, $value) = explode('|', $line);
+                    $parsedData[trim($key)] = trim($value);
+                } else {
+                    $parsedData[] = $line;
+                }
+            }
+        }
+
+        return $parsedData;
+    }
+
+    public function getProductionApproved()
+    {
+        $data = ProductionRequest::select(
+            'pe_id',
+            'pe_num',
+            'pe_date_request',
+            'ape_approved_at',
+            'pe_date_needed',
+            'firstname',
+            'ape_approved_by',
+            'lastname',
+        )->join('approved_production_request', 'ape_pro_request_id', '=', 'pe_id')
+            ->join('users', 'user_id', 'pe_requested_by')
+            ->where('pe_status', '1')
+            ->orderByDesc('pe_id')
+            ->get();
+
+        $data->transform(function ($item) {
+            $item->pe_date_request_tran = Date::parse($item->pe_date_request)->toFormattedDateString();
+            $item->ape_approved_at_tran = Date::parse($item->ape_approved_at)->toFormattedDateString();
+            $item->reqby = Str::ucfirst($item->firstname) . ' ' .  Str::ucfirst($item->lastname);
+
+            return $item;
+        });
+
+        return $data;
+    }
+
+    public function getApprovedDetails($id)
+    {
+        return (object) [
+            'items' => $this->getPeDenomination($id),
+            'column' => ColumnHelper::$approved_details_column,
+            'approved' => $this->approved($id),
+        ];
+    }
+
+    private function getPeDenomination($id)
+    {
+        $data = ProductionRequestItem::join('denomination', 'denom_id', '=', 'pe_items_denomination')
+            ->where('pe_items_request_id', $id)
+            ->get();
+
+        $data->transform(function ($item) use ($id) {
+            $item->bstart = Gc::where('denom_id', $item->pe_items_denomination)->where('pe_entry_gc', $id)->orderByDesc('barcode_no')->value('barcode_no');
+            $item->bend = Gc::where('denom_id', $item->pe_items_denomination)->where('pe_entry_gc', $id)->orderBy('barcode_no')->value('barcode_no');
+            $item->fsubt = NumberHelper::currency($item->denomination * $item->pe_items_quantity);
+            $item->nfsubt = $item->denomination * $item->pe_items_quantity;
+            $item->uom = 'pc(s)';
+            return $item;
+        });
+
+        $total = $data->sum('nfsubt');
+
+        return (object) [
+            'data' => $data,
+            'total' => NumberHelper::currency($total),
+        ];
+    }
+
+    private function approved($id)
+    {
+        return ProductionRequest::selectFilterApproved()
+            ->join('approved_production_request', 'ape_pro_request_id', '=', 'pe_id')
+            ->join('users as reqby', 'reqby.user_id', '=', 'pe_requested_by')
+            ->join('users as appby', 'appby.user_id', '=', 'ape_preparedby')
+            ->where('pe_id', $id)
+            ->first();
+    }
+
+    public function getBarcodeApprovedDetails($request, $id)
+    {
+        $data = Gc::select('denomination.denomination', 'gc.denom_id')
+            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+            ->where('pe_entry_gc', $id)
+            ->where('gc_validated', $request->status === null ? '' : $request->status)
+            ->get()
+            ->groupBy('denomination');
+
+        $data->transform(function ($item, $key) {
+            return [
+                'denom_id' => $item[0]->denom_id
+            ];
+        });
+
+        return response()->json([
+            'record' => $data,
+        ]);
+    }
+
+    public function getEveryBarcodeDetails($request, $id)
+    {
+
+        $data =  Gc::select('denomination.denomination', 'barcode_no', 'gc.denom_id')
+            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+            ->where('gc_validated', $request->status === null ? '' : $request->status)
+            ->where('gc.denom_id', $request->key)
+            ->where('pe_entry_gc', $id)
+            ->get();
+
+        return response()->json([
+            'record' => $data
+        ]);
+    }
+    public function getRequisitionDetailsData($id)
+    {
+        return RequisitionEntry::select(
+            'requis_erno',
+            'requis_req',
+            'pe_date_needed',
+            'requis_loc',
+            'requis_dept',
+            'requis_rem',
+            'requis_checked',
+            'requis_approved',
+            'gcs_companyname',
+            'gcs_contactperson',
+            'gcs_contactnumber',
+            'gcs_address',
+            'firstname',
+            'lastname',
+        )->join('production_request', 'pe_id', '=', 'repuis_pro_id')
+            ->join('supplier', 'gcs_id', '=', 'requis_supplierid')
+            ->join('users', 'user_id', '=', 'requis_req_by')
+            ->where('repuis_pro_id', $id)
+            ->first();
+    }
+
+    public function getCancelledViewing()
+    {
+
+        $data = CancelledProductionRequest::select(
+            'pe_id',
+            'pe_num',
+            'pe_date_request',
+            'cpr_at',
+            'req.firstname as rfname',
+            'req.lastname as rlname',
+            'can.firstname as cfname',
+            'can.lastname as clname',
+        )
+            ->join('production_request', 'pe_id', '=', 'cpr_pro_id')
+            ->join('users as req', 'req.user_id', '=', 'pe_requested_by')
+            ->join('users as can', 'can.user_id', '=', 'cpr_by')
+            ->orderByDesc('cpr_id')
+            ->get();
+
+        $data->transform(function ($item) {
+
+            $item->req_date = Date::parse($item->pe_date_request)->toFormattedDateString();
+            $item->can_at = Date::parse($item->cpr_at)->toFormattedDateString();
+            $item->prepby = Str::ucfirst($item->rfname) . ' ,' . Str::ucfirst($item->rlname);
+            $item->canby = Str::ucfirst($item->cfname) . ' ,' . Str::ucfirst($item->clname);
+
+            return $item;
+        });
+
+        return $data;
+    }
+    public function getProductionCancelledDetails($id)
+    {
+        $data = ProductionRequest::select(
+            'pe_num',
+            'pe_requested_by',
+            'pe_date_request',
+            'remarks',
+            'cpr_at',
+            'req.firstname as rfname',
+            'req.lastname as rlname',
+            'can.firstname as cfname',
+            'can.lastname as clname',
+        )
+            ->join('cancelled_production_request', 'cpr_pro_id', '=', 'pe_id')
+            ->join('users as req', 'req.user_id', '=', 'pe_requested_by')
+            ->join('users as can', 'can.user_id', '=', 'cpr_by')
+            ->where('pe_status', '2')
+            ->where('pe_id', $id)
+            ->first();
+
+        if ($data) {
+            $data->req_date = Date::parse($data->pe_date_request)->toFormattedDateString();
+            $data->can_at = Date::parse($data->cpr_at)->toFormattedDateString();
+            $data->prepby = Str::ucfirst($data->rfname) . ' ,' . Str::ucfirst($data->rlname);
+            $data->canby = Str::ucfirst($data->cfname) . ' ,' . Str::ucfirst($data->clname);
+        }
+
+        $barcode = ProductionRequestItem::select(
+            'pe_items_request_id',
+            'pe_items_denomination',
+        )
+            ->where('pe_items_request_id', $id)
+            ->join('denomination', 'pe_items_denomination', '=', 'denom_id')
+            ->get();
+
+        $barcode->transform(function ($item) use ($id) {
+            $item->start = Gc::where('pe_entry_gc', $id)->where('denom_id', $item->pe_items_denomination)->orderBy('barcode_no')->value('barcode_no');
+            $item->end = Gc::where('pe_entry_gc', $id)->where('denom_id', $item->pe_items_denomination)->orderByDesc('barcode_no')->value('barcode_no');
+            return $item;
+        });
+
+        return (object) [
+            'data' => $data,
+            'barcode' => $barcode,
+        ];
+    }
+    public function getAvailableGcRecords()
+    {
+        $data = Gc::select(
+            'barcode_no',
+            'denom_id',
+            'csrr_prepared_by',
+            'cssitem_recnum',
+            'csrr_datetime',
+            'csrr_id'
+        )
+            ->join('custodian_srr_items', 'cssitem_barcode', '=', 'barcode_no')
+            ->join('custodian_srr', 'csrr_id', '=', 'cssitem_recnum')
+            ->where('gc_validated', '*')
+            ->where('gc_allocated', '')
+            ->where('gc_ispromo', '')
+            ->where('gc_treasury_release', '')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->valBy = User::select('firstname', 'lastname')->where('user_id', $item->csrr_prepared_by)->value('full_name');
+            $item->date = Date::parse($item->csrr_datetime)->toFormattedDateString();
+            $item->denom = Denomination::select('denomination')->where('denom_id', $item->denom_id)->value('denomination_format');
+            return $item;
+        });
+
+        return $data;
+
+
     }
 }

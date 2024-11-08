@@ -11,7 +11,7 @@
             <a-row>
                 <a-col :span="12">
                     <a-statistic
-                        title="Prepaired By"
+                        title="Prepared By"
                         :value="$page.props.auth.user.full_name"
                     />
                 </a-col>
@@ -39,7 +39,7 @@
                         <a-form-item label="Date Requested:" name="name">
                             <a-input v-model:value="currentDate" readonly />
                         </a-form-item>
-                        <a-form-item
+                        <!-- <a-form-item
                             label="Date Needed:"
                             name="name"
                             has-feedback
@@ -51,15 +51,15 @@
                                 v-model:value="formState.dateNeeded"
                                 @change="clearError('dateNeeded')"
                             />
-                        </a-form-item>
-                        <a-form-item
+                        </a-form-item> -->
+                        <!-- <a-form-item
                             label="Upload Scan Copy.:"
                             name="name"
                             :validate-status="getErrorStatus('file')"
                             :help="getErrorMessage('file')"
                         >
                             <ant-upload-image @handle-change="handleChange" />
-                        </a-form-item>
+                        </a-form-item> -->
                         <a-form-item
                             label="Uploaded image preview:"
                             v-if="record.data.pe_file_docno"
@@ -152,7 +152,7 @@ const formState = useForm({
     denom: [...props.denomination.data],
     file: null,
     remarks: props.record.data.pe_remarks,
-    dateNeeded: dayjs(props.record.data.pe_date_needed),
+    dateNeeded: props.record.data.pe_date_needed,
 });
 
 const imagePreview = [
@@ -169,10 +169,6 @@ const handleChange = (file: UploadChangeParam) => {
 
 const onSubmit = () => {
     formState
-        .transform((data) => ({
-            ...data,
-            dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
-        }))
         .post(route("treasury.production.request.pendingSubmission"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);

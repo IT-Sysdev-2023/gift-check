@@ -30,7 +30,9 @@ use Inertia\Inertia;
 
 class RetailServices
 {
-    public function __construct(public RetailDbServices $dbservices) {}
+    public function __construct(public RetailDbServices $dbservices)
+    {
+    }
     public function getDataApproved()
     {
         $data = ApprovedGcrequest::select(
@@ -50,6 +52,7 @@ class RetailServices
             ->whereHas('storeGcRequest', function ($query) {
                 $query->where('sgc_store', request()->user()->store_assigned);
             })
+            ->leftJoin('users', 'users.user_id', '=', 'approved_gcrequest.agcr_approvedby')
             ->orderByDesc('agcr_request_relnum')
             ->paginate(10)->withQueryString();
 
@@ -58,7 +61,6 @@ class RetailServices
             $item->agcr_date = $item->agcr_approved_at->toFormattedDateString();
             $item->storename = $item->storeGcRequest->store->store_name;
             $item->fullname = $item->user->full_name;
-
             return $item;
         });
 
@@ -309,8 +311,9 @@ class RetailServices
                 $found = true;
                 $gctype = 1;
             }
-            if (StoreReceivedGc::where('strec_barcode', $request->barcode)
-                ->where('strec_sold', '*')->where('strec_return', '')->exists()
+            if (
+                StoreReceivedGc::where('strec_barcode', $request->barcode)
+                    ->where('strec_sold', '*')->where('strec_return', '')->exists()
             ) {
                 $found = true;
                 $gctype = 1;
@@ -357,7 +360,8 @@ class RetailServices
                     'msg' => 'GC is blocked and not allowed to used.',
                 ]);
             }
-        };
+        }
+        ;
 
         if (!$found) {
 
@@ -467,7 +471,7 @@ class RetailServices
                     } else {
                         return back()->with([
                             'msg' => 'Invalid Customer Information',
-                            'title' => 'Its seems like customer didnt match, Customer: ' .  $this->customerName(self::equalCustomer($request)),
+                            'title' => 'Its seems like customer didnt match, Customer: ' . $this->customerName(self::equalCustomer($request)),
                             'status' => 'error',
                             'error' => 'invalidcustomer',
                             'data' => $revalidated,
@@ -486,6 +490,7 @@ class RetailServices
 
                 $enddt = Date::parse($dtrelease)->addDays($days)->format('Y-m-d');
 
+
                 if ($enddt > today()) {
 
                     return back()->with([
@@ -494,7 +499,7 @@ class RetailServices
                         'title' => 'Expired'
                     ]);
                 }
-                $lost  = self::lostGcQuery($request);
+                $lost = self::lostGcQuery($request);
 
                 if (!empty($lost) && empty($lost->lostgcb_status)) {
                     return back()->with([
@@ -539,7 +544,7 @@ class RetailServices
             } else {
                 // dd();
 
-                $lost  = self::lostGcQuery($request);
+                $lost = self::lostGcQuery($request);
 
                 if (!empty($lost) && empty($lost->lostgcb_status)) {
                     return back()->with([
@@ -561,7 +566,13 @@ class RetailServices
                     }
 
                     if ($request->payment != 'WHOLESALE') {
-                        $this->dbservices->createtextfile($request, $data);
+
+                        $success = $this->dbservices->createtextfile($request, $data);
+
+                        if ($success) {
+                            $this->dbservices->createtextfileSecondaryPath($request, $data);
+                        }
+
                     }
 
                     if ($isRevalidateGC) {
@@ -603,7 +614,7 @@ class RetailServices
     }
     private static function lostGcQuery($request)
     {
-        return  LostGcBarcode::join('lost_gc_details', 'lostgcd_id', '=', 'lostgcb_repid')
+        return LostGcBarcode::join('lost_gc_details', 'lostgcd_id', '=', 'lostgcb_repid')
             ->where('lostgcb_barcode', $request->barcode)->first();
     }
     private static function specialDenomination($request)
@@ -618,7 +629,7 @@ class RetailServices
     }
     private static function verifyQueryData($request)
     {
-        return  StoreVerification::select('vs_date', 'vs_tf_used')
+        return StoreVerification::select('vs_date', 'vs_tf_used')
             ->join('stores', 'store_id', '=', 'vs_store')
             ->join('users', 'user_id', '=', 'vs_by')
             ->join('customers', 'cus_id', '=', 'vs_cn')
@@ -693,6 +704,8 @@ class RetailServices
 
     public function getAvailableGC()
     {
+        $total = 0;
+        $subtotal = 0;
         $counts = [];
         $denoms = Denomination::where('denom_type', 'RSGC')
             ->where('denom_status', 'active')
@@ -711,8 +724,26 @@ class RetailServices
             $denom->count = $counts[$denom->denom_id] ?? 0;
         }
 
+        foreach ($denoms as $item) {
+            // dump($item->denomination);
+            //  dump(  $item->count);
+            $subtotal = $item->denomination * $item->count;
+            $total += $subtotal;
+        }
+        $data = [
+            'denoms' => $denoms,
+            'total' => $total
+        ];
+        return $data;
+    }
 
+    public function getRevolvingFund($request)
+    {
+        $rfund = Store::where('store_id', $request->user()->store_assigned)->first();
+        $getAvailableGc = self::getAvailableGC();
 
-        return $denoms;
+        $storeBudget = $rfund['r_fund'] - $getAvailableGc['total'];
+
+        return $storeBudget;
     }
 }

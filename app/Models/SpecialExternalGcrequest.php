@@ -22,8 +22,8 @@ class SpecialExternalGcrequest extends Model
     protected function casts(): array
     {
         return [
-            'spexgc_dateneed' => 'date',
-            'spexgc_datereq' => 'date'
+            'spexgc_dateneed' => 'datetime',
+            'spexgc_datereq' => 'datetime'
         ];
     }
 
@@ -61,18 +61,19 @@ class SpecialExternalGcrequest extends Model
     {
         return $this->belongsTo(SpecialExternalCustomer::class, 'spexgc_company', 'spcus_id');
     }
+
     public function specialExternalGcrequestItems()
     {
-        return $this->hasOne(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
+        return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
     }
     public function specialExternalGcrequestItemsHasMany()
     {
         return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
     }
-    public function hasManySpecialExternalGcrequestItems()
-    {
-        return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
-    }
+    // public function hasManySpecialExternalGcrequestItems()
+    // {
+    //     return $this->hasMany(SpecialExternalGcrequestItem::class, 'specit_trid', 'spexgc_id');
+    // }
     public function user()
     {
         return $this->belongsTo(User::class, 'spexgc_reqby', 'user_id');
@@ -100,6 +101,10 @@ class SpecialExternalGcrequest extends Model
     {
         return $this->belongsTo(ApprovedRequest::class, 'spexgc_id', 'reqap_trid');
     }
+    public function approvedRequestRevied()
+    {
+        return $this->belongsTo(ApprovedRequest::class, 'spexgc_id', 'reqap_trid')->where('reqap_approvedtype','special external gc review');
+    }
     public function approvedRequest1()
     {
         return $this->hasOne(ApprovedRequest::class, 'reqap_trid', 'spexgc_id');
@@ -107,7 +112,7 @@ class SpecialExternalGcrequest extends Model
 
     public function specialExternalBankPaymentInfo(): HasOne
     {
-        return $this->hasOne(SpecialExternalBankPaymentInfo::class, 'spexgcbi_trid', 'spexgc_id');
+        return $this->hasOne(SpecialExternalBankPaymentInfo::class, 'spexgcbi_trans_id', 'spexgc_id');
     }
 
     public function document()
@@ -173,6 +178,59 @@ class SpecialExternalGcrequest extends Model
             'spexgc_num',
             'spexgc_id',
         );
-
+    }
+    public function scopeSelectExternalRequestEvery(Builder $query)
+    {
+        return $query->select(
+            'spexgc_id',
+            'spexgc_num',
+            'spexgc_datereq',
+            'spexgc_dateneed',
+            'spcus_acctname',
+            'spcus_companyname',
+            'spexgc_company',
+            'spcus_id',
+            'spexgc_balance',
+            'spexgc_payment_stat',
+            'reqap_date',
+            'reqap_remarks',
+            'reqap_approvedtype',
+            'spexgc_reviewed',
+            'spexgc_released',
+            'spexgc_payment_stat',
+            'spexgc_payment',
+            'spexgc_remarks',
+            'spexgc_reqby',
+            'reqby.firstname as fn',
+            'reqby.lastname as ln',
+            'prepby.firstname',
+            'prepby.lastname',
+            'title',
+            'reqap_checkedby',
+            'reqap_approvedby',
+        );
+    }
+    public function scopeSelectExternalRequestAll(Builder $query)
+    {
+        return $query->select(
+            'spexgc_id',
+            'spexgc_num',
+            'spexgc_datereq',
+            'spexgc_dateneed',
+            'spcus_acctname',
+            'spcus_companyname',
+            'spexgc_company',
+            'spcus_id',
+            'spexgc_balance',
+            'spexgc_payment_stat',
+            'reqap_date',
+            'reqap_approvedtype',
+            'spexgc_reviewed',
+            'spexgc_released',
+            'spexgc_payment_stat',
+            'spexgc_reqby',
+            'reqby.firstname',
+            'reqby.lastname',
+        );
     }
 }
