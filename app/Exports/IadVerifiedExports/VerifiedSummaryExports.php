@@ -81,55 +81,80 @@ class VerifiedSummaryExports implements FromCollection, WithTitle, WithEvents, W
 
         $request = $this->requestData;
 
-        $data = StoreVerification::with('customer:cus_id,cus_fname,cus_mname,cus_namext,cus_lname')
+        $vsdata = StoreVerification::select(
+            'vs_date',
+            'vs_cn',
+            'vs_tf_denomination',
+            'vs_tf_balance',
+            'vs_tf_purchasecredit'
+        )->with('customer:cus_id,cus_fname,cus_mname,cus_namext,cus_lname')
             ->when(str_contains($request['date'], '-'), function ($q) use ($request) {
                 $q->whereLike('vs_date', '%' . $request['date'] . '%')
                     ->orWhereLike('vs_reverifydate', '%' . $request['date'] . '%');
             }, function ($q) use ($request) {
                 $q->whereYear('vs_date', $request['date'])
-                ->orWhere('vs_reverifydate', fn ($q) => $q->whereYear('vs_reverifydate', $request['date']));
+                    ->orWhere('vs_reverifydate', fn($q) => $q->whereYear('vs_reverifydate', $request['date']));
             })
             ->where('vs_store', $request['store'])
             ->get()
             ->groupBy('vs_date');
 
-            $array = [];
 
-            $data->transform(function ($item, $key) use (&$array){
-                $array[] = [
-                    'date' => Date::parse($key)->toFormattedDateString(),
-                    'totalver' => $item->sum('vs_tf_denomination'),
-                    'balance' => $item->sum('vs_tf_balance'),
-                    'redeem' => $item->sum('vs_tf_purchasecredit'),
-                ];
+        $revdata = StoreVerification::select(
+            'vs_date',
+            'vs_cn',
+            'vs_tf_denomination',
+            'vs_reverifydate',
+            'vs_tf_balance',
+            'vs_tf_purchasecredit'
+        )->with('customer:cus_id,cus_fname,cus_mname,cus_namext,cus_lname')
+            ->when(str_contains($request['date'], '-'), function ($q) use ($request) {
+                $q->whereLike('vs_reverifydate', '%' . $request['date'] . '%');
+            }, function ($q) use ($request) {
+                $q->whereYear('vs_reverifydate', $request['date']);
+            })
+            ->where('vs_store', $request['store'])
+            ->get()
+            ->groupBy('vs_date');
 
-                return $array;
+        $array = [];
+
+        $vsdata->transform(function ($item, $key) use (&$array) {
+            // dd($item->sum('vs_tf_denomination'));
+            $array[] = [
+                'date' => $key,
+                'totalver' => $item->sum('vs_tf_denomination'),
+                'balance' => $item->sum('vs_tf_balance'),
+                'redeem' => $item->sum('vs_tf_purchasecredit'),
+            ];
+
+            return $array;
+        });
+
+        $revdata->transform(function ($item, $itemkey) use (&$array) {
+
+           return collect($array)->each(function ($each, $eachkey) use (&$item, &$itemkey) {
+
+                if ($itemkey === $each['date']) {
+
+                    $total = $item->sum('vs_tf_denomination') + $each['totalver'];
+                    $totalbal = $item->sum('vs_tf_balance') + $each['balance'];
+                    $totalred = $item->sum('vs_tf_purchasecredit') + $each['redeem'];
+
+                    $each[$eachkey]['totalver'] = $total;
+                    $each[$eachkey]['balance'] = $totalbal;
+                    $each[$eachkey]['redeem'] = $totalred;
+
+                    return false;
+                }
+
+                return $each;
             });
-            dd($array);
-        //     $link->query(
-        //         "SELECT
-        //             DATE(store_verification.vs_date) as datever,
-        //             IFNULL(SUM(store_verification.vs_tf_denomination),00.0) as totverifiedgc,
-        //             IFNULL(SUM(store_verification.vs_tf_balance),00.0) as balance,
-        //             IFNULL(SUM(store_verification.vs_tf_purchasecredit),00.0) as redeem
-        //         FROM
-        //             store_verification
-        //         LEFT JOIN
-        //             customers
-        //         ON
-        //             customers.cus_id = store_verification.vs_cn
-        //         WHERE
-        //             ((YEAR(vs_date) = '$year'
-        //         AND
-        //             MONTH(vs_date) = '$month')
-        //         OR
-        //             (YEAR(vs_reverifydate) = '$year'
-        //         AND
-        //             MONTH(vs_reverifydate) = '$month'))
-        //         AND
-        //             vs_store='$stcus'
-        //         GROUP BY vs_date
-        // ");
+
+            return $array;
+        });
+
+        dd($array);
     }
 
     public function styles(Worksheet $sheet)
