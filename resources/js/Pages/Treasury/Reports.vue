@@ -112,7 +112,7 @@
                 </div>
                 <a-steps
                     :current="items.data.active"
-                    :percent="50"
+                    :percent="items.percentage"
                     label-placement="vertical"
                     :items="[
                         {
@@ -197,8 +197,8 @@ onMounted(() => {
         "TreasuryReportEvent",
         (e) => {
             items.value = e;
-            console.log(e);
-            if (e.percentage === 100) {
+            
+            if (e.percentage === 100 ||(formState.store !== 'all' && e.data.active === 3)) {
                 eventReceived();
             }
         }
