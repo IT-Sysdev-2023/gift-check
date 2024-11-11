@@ -1861,19 +1861,52 @@ class StoreAccountingController extends Controller
         return Inertia::render('StoreAccounting/VerifiedGCReport');
     }
 
+    public function verifiedGcSubmit(Request $request)
+    {
+       
+        dd($request->toArray());
+    }
+
+    public function verifiedGcYearlySubmit(Request $request)
+    {
+        dd($request->toArray());
+    }
     public function storeGCPurchasedReport()
     {
         return Inertia::render('StoreAccounting/StoreGCPurchased');
     }
+    
+    public function billingMonthlySubmit(Request $request){
+        dd($request->toArray());
+    }
 
+    public function billingYearlySubmit(Request $request){
+        dd($request->toArray());
+    }
     public function redeemReport()
     {
         return Inertia::render('StoreAccounting/SPGCRedeemReport');
     }
 
+    public function monthlyRedeemSubmit(Request $request){
+        dd($request->toArray());
+    }
+
+    public function yearlyRedeemSubmit(Request $request){
+        dd($request->toArray());
+    }
+
     public function verifiedStore()
     {
         return Inertia::render('StoreAccounting/VerifiedStore');
+    }
+
+    public function puchasedMonthlySubmit (Request $request){
+        dd($request->toArray());
+    }
+
+    public function purchasedYearlySubmit (Request $request){
+        dd($request->toArray());
     }
 
     public function SPGCApproved(Request $request)
@@ -1884,7 +1917,7 @@ class StoreAccountingController extends Controller
 
     public function SPGCApprovedSubmit(Request $request)
     {
-       
+
         $startDateData = $request->input('spgcStartDate');
         $endDateData = $request->input('spgcEndDate');
 
@@ -1895,10 +1928,8 @@ class StoreAccountingController extends Controller
                 'start' => $formattedStartDate,
                 'end' => $formattedEndDate
             ];
-            $fromDate = "From: {$selectedDate['start']} ";
-            $toDate = "To: {$selectedDate['end']} ";
-
-
+            $fromDate = "{$selectedDate['start']} ";
+            $toDate = "{$selectedDate['end']} ";
         }
 
 
@@ -1953,10 +1984,10 @@ class StoreAccountingController extends Controller
         // }
 
         // Add ordering and retrieve the results
-     
 
 
-        
+
+
         $databar1 = DB::table('special_external_gcrequest_emp_assign')
             ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
             ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
@@ -2054,18 +2085,18 @@ class StoreAccountingController extends Controller
                 'start' => $formattedStartDate,
                 'end' => $formattedEndDate
             ];
-            $fromDate = "From: {$selectedDate['start']}";
-            $toDate = "To: {$selectedDate['end']}";
+            $fromDate = "{$selectedDate['start']}";
+            $toDate = "{$selectedDate['end']}";
         }
 
         $datacus1 = DB::table('special_external_gcrequest_emp_assign')
-        ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-        ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
-        ->join('users as reqby', 'reqby.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
-        ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
-        ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
-        ->where('special_external_gcrequest_emp_assign.spexgc_status', '!=', 'inactive')
-        ->whereBetween(DB::raw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d')"), [$startDateData, $endDateData])
+            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->join('users as reqby', 'reqby.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->where('special_external_gcrequest_emp_assign.spexgc_status', '!=', 'inactive')
+            ->whereBetween(DB::raw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d')"), [$startDateData, $endDateData])
             ->select(
                 DB::raw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom), 0.00) as totdenom"),
                 DB::raw("IFNULL(COUNT(special_external_gcrequest_emp_assign.spexgcemp_barcode), 0) as totcnt"),
@@ -2090,11 +2121,11 @@ class StoreAccountingController extends Controller
             ->get();
 
         $databar1 = DB::table('special_external_gcrequest_emp_assign')
-        ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-        ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
-        ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
-        ->where('special_external_gcrequest_emp_assign.spexgc_status', '!=', 'inactive')
-        ->whereBetween(DB::raw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d')"), [$startDateData, $endDateData])
+            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->where('special_external_gcrequest_emp_assign.spexgc_status', '!=', 'inactive')
+            ->whereBetween(DB::raw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d')"), [$startDateData, $endDateData])
             ->select(
                 'special_external_gcrequest_emp_assign.spexgcemp_denom',
                 DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname,

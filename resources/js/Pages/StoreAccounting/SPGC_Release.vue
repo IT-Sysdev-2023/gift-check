@@ -2,7 +2,7 @@
     <a-card>
         <span style="margin-left: 50%; color: #1e90ff; font-weight: bold">
             <ExportOutlined />
-            Release GC Reports
+            RELEASE GC REPORTS
         </span>
         <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc;">
             <a-tabs>
@@ -78,7 +78,7 @@
         </a-card>
 
 
-        <a-card style="width: 12.5%; position: absolute; top: 45px; border: 1px solid #dcdcdc;">
+        <a-card style="width: 15%; position: absolute; top: 45px; border: 1px solid #dcdcdc;">
             <div style="font-weight: bold; font-size: small;">
                 <ExportOutlined />
                 Release GC Reports
@@ -89,7 +89,7 @@
             <div>
                 <a-form-item :validate-status="spgcData.errors.startDate ? 'error' : ''"
                     :help="spgcData.errors.startDate">
-                    <a-date-picker allow-clear v-model:value="spgcData.startDate" style="border:1px solid #1e90ff; width: 100%;">
+                    <a-date-picker allow-clear v-model:value="spgcData.startDate" style="width: 100%;">
                     </a-date-picker>
                 </a-form-item>
             </div>
@@ -98,26 +98,36 @@
             </div>
             <div>
                 <a-form-item :validate-status="spgcData.errors.endDate ? 'error' : ''" :help="spgcData.errors.endDate">
-                    <a-date-picker allow-clear v-model:value="spgcData.endDate" style="border:1px solid #1e90ff; width: 100%;">
+                    <a-date-picker allow-clear v-model:value="spgcData.endDate" style="width: 100%;">
 
                     </a-date-picker>
                 </a-form-item>
             </div>
             <div style="margin-top: 15px;">
-                <a-button style="background-color: #1e90ff; color:white; width: 100%; font-size: 1em;" @click="submitReleaseButton">
+                <a-button style="background-color: #1e90ff; color:white; width: 100%; font-size: 1em;"
+                    @click="submitReleaseButton">
                     <SendOutlined /> Submit
                 </a-button>
             </div>
-            <div style="margin-top: 20%;">
-                    <div style="color:green; font-weight: bold;">
-                        Date Selected:
-                    </div>
+            <div style="margin-top: 15%;">
+                <div style="color:#1e90ff; font-weight: bold;">
+                    Date Selected:
+                </div>
+                <div style="margin-top: 5px;">
                     <span style="color:red;">
                         <div>
+                            <span style="color:green; font-weight: bold;">
+                                FROM:
+                            </span>
                             {{ fromDate }}
                         </div>
+                        <span style="color:green; font-weight: bold;"> 
+                            TO:
+                        </span>
                         {{ toDate }}
                     </span>
+                </div>
+
             </div>
 
         </a-card>

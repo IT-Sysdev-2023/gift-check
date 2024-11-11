@@ -8,14 +8,14 @@
                 </span>
             </template>
             <a-card>
-                <div>
+                <div style="font-weight: bold;">
                     Customer Name:
                 </div>
 
                 <a-form-item :validate-status="varianceData.errors.customerName ? 'error' : ''"
                     :help="varianceData.errors.customerName" style="width: 35%;">
 
-                    <a-select v-model:value="varianceData.customerName" style="border: 1px solid #1e90ff; background-color: #1e90ff;">
+                    <a-select v-model:value="varianceData.customerName">
                         <a-select-option v-for="item in customer"
                             :key="`${item.spcus_companyname}-${item.spcus_acctname}`"
                             :value="`${item.spcus_companyname} - ${item.spcus_acctname}`">

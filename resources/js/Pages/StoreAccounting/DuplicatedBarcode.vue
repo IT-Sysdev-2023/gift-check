@@ -76,7 +76,6 @@
 <script>
 // import { defineComponent } from '@vue/composition-api'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import AltaCita from '../Marketing/VerifiedGCperStore/AltaCita.vue';
 
 export default {
     layout: AuthenticatedLayout,

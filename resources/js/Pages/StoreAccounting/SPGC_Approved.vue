@@ -79,48 +79,54 @@
             </a-card>
         </div>
 
-        <a-card style="width:12.5%; border: 1px solid #dcdcdc; position: absolute; top: 45px;">
+        <a-card style="width:15%; border: 1px solid #dcdcdc; position: absolute; top: 45px;">
 
             <div style="font-weight: bold; font-size: small;">
                 <LikeOutlined />
                 Approved GC Reports
 
             </div>
-            
+
             <div style="font-weight: bold; margin-top: 30px;">Start Date:</div>
             <div>
                 <a-form-item for="spgcStartDate" :validate-status="spgcform.errors.spgcStartDate ? 'error' : ''"
                     :help="spgcform.errors.spgcStartDate">
-                    <a-date-picker allow-clear v-model:value="spgcform.spgcStartDate"
-                        style=" border: 1px solid #1e90ff; width:100%;" />
+                    <a-date-picker allow-clear v-model:value="spgcform.spgcStartDate" style=" width:100%;" />
                 </a-form-item>
             </div>
             <div style="font-weight: bold;">End Date:</div>
             <div>
                 <a-form-item for="spgcEndDate" :validate-status="spgcform.errors.spgcEndDate ? 'error' : ''"
                     :help="spgcform.errors.spgcEndDate">
-                    <a-date-picker allow-clear v-model:value="spgcform.spgcEndDate"
-                        style=" border: 1px solid #1e90ff; width: 100%;" />
+                    <a-date-picker allow-clear v-model:value="spgcform.spgcEndDate" style=" width: 100%;" />
                 </a-form-item>
             </div>
 
-            <div style="margin-top: 20%;">
+            <div style="margin-top: 15px;">
                 <a-button style="background-color: #1e90ff; color: white; width: 100%; font-size: 1em;"
                     @click="spgcSubmit">
                     <SendOutlined /> Submit
                 </a-button>
             </div>
-            <div style="margin-top: 20%;">
-                <div style="font-weight: bold; color:green">
+            <div style="margin-top: 15%;">
+                <div style="font-weight: bold; color:#1e90ff">
                     Date Selected:
                 </div>
-                <span style="color:red;">
-                    <div>
-                        {{ fromDate }}
-                    </div>
-                    {{ toDate }}
-                    <!-- {{ finalDateSelectedExcel }} -->
-                </span>
+                <div style="margin-top: 5px;">
+                    <span style="color:red;">
+                        <div>
+                            <span style="color:green; font-weight: bold;">
+                                FROM:
+                            </span>
+                            {{ fromDate }}
+                        </div>
+                        <span style="color:green; font-weight: bold;">
+                            TO:
+                        </span>
+                        {{ toDate }}
+                        <!-- {{ finalDateSelectedExcel }} -->
+                    </span>
+                </div>
             </div>
         </a-card>
 
@@ -150,7 +156,7 @@ export default {
         dataBarcode: Array,
         fromDate: String,
         toDate: String
-        
+
     },
     data() {
         return {
@@ -162,7 +168,7 @@ export default {
 
                 errors: {}
             },
-           
+
             perCustomerTable: [
                 {
                     title: 'Date Requested',
@@ -241,7 +247,7 @@ export default {
                 spgcEndDate: endDate,
             };
 
-        
+
             console.log('Submitting with values:', submitData);
             this.$inertia.get(route('storeaccounting.SPGCApprovedSubmit', submitData));
 
