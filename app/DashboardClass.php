@@ -138,7 +138,6 @@ class DashboardClass extends DashboardService
                 ->whereFilterForPending()
                 ->selectPromoRequest()
                 ->count(),
-
         ];
     }
     public function budgetRequest()
