@@ -75,7 +75,7 @@ class FinanceController extends Controller
             ])
         ]);
     }
-    
+
 
     public function approvedAndReleasedSpgc(Request $request)
     {
@@ -407,10 +407,17 @@ class FinanceController extends Controller
                     ]);
                 }
             } else {
+                SpecialExternalGcrequest::where('spexgc_id', $id)
+                    ->where('spexgc_status', 'pending')
+                    ->update([
+                        'spexgc_status' => 'cancelled',
+                        'cancelRemarks' => $request->formData['cancelledRemarks'],
+                        'cancelledBy' => $request->formData['cancelledBy']
+                    ]);
                 return back()->with([
-                    'type' => 'error',
-                    'msg' => 'Opps!',
-                    'description' => 'Request already approved/cancelled.'
+                    'type' => 'success',
+                    'msg' => 'Cancelled!',
+                    'description' => 'The request was successfully canceled.'
                 ]);
             }
         }

@@ -83,54 +83,17 @@
                                     </a-form-item>
                                     <a-form-item label="Remarks">
                                         <a-textarea
-                                            v-model:value="form.approveRemarks"
+                                            v-model:value="form.cancelledRemarks"
                                         ></a-textarea>
                                     </a-form-item>
                                     <a-form-item label="Checked By:">
-                                        <a-input v-model:value="form.checkedBy" readonly/>
+                                        <a-input
+                                            v-model:value="form.checkedBy"
+                                            readonly
+                                        />
                                     </a-form-item>
                                     <div>
-                                        <div v-if="form.status == '1'">
-                                            <a-form-item label="Approved By:">
-                                                <a-select
-                                                    v-model:value="
-                                                        form.approvedBy
-                                                    "
-                                                    placeholder="Select an option"
-                                                >
-                                                    <a-select-option
-                                                        v-for="item in checkedBy"
-                                                        :key="item.assig_name"
-                                                        :value="item.assig_name"
-                                                    >
-                                                        {{ item.assig_name }}
-                                                    </a-select-option>
-                                                </a-select>
-                                            </a-form-item>
-
-                                            <a-form-item
-                                                label="Upload Document"
-                                            >
-                                                <a-upload
-                                                    name="file"
-                                                    :before-upload="() => false"
-                                                    :max-count="1"
-                                                    @change="handleImageChange"
-                                                    @drop="handleDrop"
-                                                >
-                                                    <p
-                                                        class="ant-upload-drag-icon"
-                                                    >
-                                                        <inbox-outlined></inbox-outlined>
-                                                    </p>
-                                                    <p class="ant-upload-text">
-                                                        Click or drag file to
-                                                        this area to upload
-                                                    </p>
-                                                </a-upload>
-                                            </a-form-item>
-                                        </div>
-                                        <div v-else>
+                                        <div>
                                             <a-form-item label="Cancelled By">
                                                 <a-input
                                                     v-model:value="
@@ -287,6 +250,7 @@ export default {
                 dateApproved: dayjs(),
                 dateCancelled: dayjs(),
                 approveRemarks: "",
+                cancelledRemarks: "",
                 checkedBy: this.data[0].checkby,
                 budget: this.currentBudget,
                 formattedbudget: this.currentBudget.toLocaleString(undefined, {
