@@ -60,7 +60,6 @@
             </a-badge>
 
         </div>
-
         <div class="card" style="background-color: #758694">
             <svg class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -69,18 +68,20 @@
             </svg>
 
             <div class="icon-container">
-                <CloseCircleFilled />
+                <CheckCircleFilled />
             </div>
             <div class="message-text-container">
                 <p class="message-text text-white">Cancelled</p>
-                <p class="sub-text text-white">All Cancel Request</p>
+                <p class="sub-text text-white">All Cancelled Request</p>
             </div>
-            <a-button :count="count.cancel">
-                <template #icon>
-                    <FolderFilled />
-                </template>
-                View
-            </a-button>
+            <a-badge :count="count.cancel" :overflow-count="999">
+                <a-button @click="() => $inertia.get(route('finance.approvedGc.approved'))">
+                    <template #icon>
+                        <FolderFilled />
+                    </template>
+                    View
+                </a-button>
+            </a-badge>
         </div>
     </a-card>
 </template>
