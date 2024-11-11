@@ -2,6 +2,7 @@
 
 namespace App\Services\Treasury;
 
+use App\Events\TreasuryReportEvent;
 use App\Services\Treasury\Reports\ReportsHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -10,6 +11,8 @@ use Illuminate\Support\LazyCollection;
 
 class ReportService extends ReportsHandler
 {
+
+
 	public static function reports() //storesalesreport.php
 	{
 
@@ -31,19 +34,30 @@ class ReportService extends ReportsHandler
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
 
-		$storeData = LazyCollection::make(function () use ($request) {
 
-			//All Stores
-			if ($request->store === 'all') {
-				$store = Store::selectStore()->cursor();
-				foreach ($store as $item) {
-					yield $this->handleRecords($request, $item->value);
-				}
-			} else {
-				yield $this->handleRecords($request, $request->store);
+		//Dont touch this otherwise you're f*cked!
+		//Dont put this in LazyCollection otherwise the realtime fire twice
+		$storeData = [];
+
+		//All Stores
+		if ($request->store === 'all') {
+			$store = Store::selectStore()->cursor();
+
+			$percentage = 1;
+
+			$this->progress['progress']['totalRow'] = count($store);
+
+			foreach ($store as $item) {
+				$this->progress['progress']['currentRow'] = $percentage++;
+				TreasuryReportEvent::dispatch($request->user(), $this->progress);
+
+				$storeData[] = $this->handleRecords($request, $item->value);
 			}
-		});
+		} else {
+			$storeData[] = $this->handleRecords($request, $request->store);
+		}
 
+		// $this->dispatchProgress("Finishing Up!", true);
 		$pdf = Pdf::loadView('pdf.treasuryReports', ['data' => ['stores' => $storeData]]);
 
 		return $pdf->output();
@@ -51,14 +65,12 @@ class ReportService extends ReportsHandler
 
 	private function handleRecords(Request $request, string $store)
 	{
-
 		$record = collect();
 		$footerData = collect();
 
 		$reportType = collect($request->reportType);
 
 		$this->setStore($store)->setDateOfTransactions($request);
-
 		if ($this->hasRecords($request)) {
 			if ($reportType->contains('gcSales')) {
 				$record->put('gcSales', $this->gcSales());
@@ -71,7 +83,6 @@ class ReportService extends ReportsHandler
 				$footerData->put('revalidationFooter', $this->gcRevalidation());
 			}
 		} else {
-
 			return 'error';
 		}
 

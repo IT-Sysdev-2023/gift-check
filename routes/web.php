@@ -418,7 +418,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('/', [ReportsController::class,'reports'])->name('index');
-            Route::get('generate-report', [ReportsController::class,'generateReports'])->name('generate.report')->middleware([HandlePrecognitiveRequests::class]);
+            Route::post('generate-report', [ReportsController::class,'generateReports'])->name('generate.report')->middleware([HandlePrecognitiveRequests::class]);
 
         });
 

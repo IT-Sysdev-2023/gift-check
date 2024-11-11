@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Services\Treasury\Reports;
+use App\Events\TreasuryReportEvent;
 use App\Helpers\NumberHelper;
 use App\Models\TransactionPayment;
 use App\Models\TransactionRefund;
 use App\Models\TransactionRefundDetail;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Date;
@@ -17,14 +19,50 @@ use App\Models\Store;
 use Illuminate\Support\LazyCollection;
 class ReportGenerator
 {
-
+	protected $headerProgress;
+	protected $progress;
 	protected $transactionDate;
 	protected bool $isDateRange;
+	
+
 	protected $store;
 
+	public function __construct()
+	{
+
+		$this->progress = [
+			'active' => 0,
+			'store' => '',
+			'progress' => [
+				'currentRow' => 0,
+				'totalRow' => 0,
+			],
+			'info' => []
+		];
+	}
+	public function dispatchProgress($descrip)
+	{
+		// return $status[$currentStatus];
+		//Broadcasting
+		// if (!empty($this->progress['info'])) {
+		// 	if($this->progress['store'] === ReportHelper::storeName($this->store)){
+		// 		$this->progress['info'][]['title'] = $descrip; //Append Existing array
+		// 	}else{
+		// 		$this->progress['info'] = [['title' => $descrip]]; //Initialize set of Data
+		// 	}
+		// } else {
+		// 	$this->progress['info'][] = ['title' => $descrip];
+		// }
+
+		$this->progress['store'] = ReportHelper::storeName($this->store);
+		$this->progress['active'] = $descrip;
+
+		TreasuryReportEvent::dispatch(Auth::user(), $this->progress);
+	}
 	protected function setStore($store)
 	{
 		$this->store = $store;
+
 		return $this;
 	}
 
@@ -48,6 +86,9 @@ class ReportGenerator
 	}
 	protected function pdfHeaderDate(Request $request)
 	{
+
+
+		$this->dispatchProgress(ReportHelper::GENERATING_HEADER);
 		$store = Store::where('store_id', $this->store)->value('store_name');
 
 		$header = collect([
@@ -60,10 +101,12 @@ class ReportGenerator
 
 		$header->put('transactionDate', $transDateHeader);
 
+		
 		return $header;
 	}
 	protected function generateSalesData(int $type): LazyCollection
 	{
+
 		$transactionLines = TransactionLinediscount::select('gc.denom_id as denom', DB::raw('SUM(trlinedis_discamt) as discount'))
 			->join('gc', 'gc.barcode_no', '=', 'transaction_linediscount.trlinedis_barcode')
 			->groupBy('gc.denom_id');
@@ -98,6 +141,8 @@ class ReportGenerator
 	}
 	protected function generateCustomerDiscount()
 	{
+
+
 		return TransactionStore::selectRaw("COALESCE(SUM(transaction_payment.payment_internal_discount), 0) AS customerDiscount")
 			->join('transaction_payment', 'transaction_payment.payment_trans_num', '=', 'transaction_stores.trans_sid')
 			->where([['transaction_stores.trans_type', '3'], ['transaction_stores.trans_store', $this->store]])
@@ -118,9 +163,11 @@ class ReportGenerator
 				fn(Builder $q) => $q->whereDate('trans_datetime', $this->transactionDate)
 			)->value('total');
 	}
-	
+
 	protected function hasRecords(Request $request): bool
 	{
+		$this->dispatchProgress(ReportHelper::CHECKING_RECORDS);
+
 		return TransactionStore::whereHas('ledgerStore')
 			->where('trans_store', $this->store)
 			->when((in_array('gcSales', $request->reportType)) ?? null, function ($q) use ($request) {

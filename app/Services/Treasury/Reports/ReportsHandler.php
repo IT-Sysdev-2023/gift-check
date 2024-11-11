@@ -10,23 +10,28 @@ class ReportsHandler extends ReportGenerator
 	const SALE_TYPE_CARD = 2;
 	const SALE_TYPE_AR = 3;
 
+	private $cashSales;
+	private $cardSales;
+	private $ar;
+
 	protected function gcSales()
 	{
-		$cashSales = $this->generateSalesData(self::SALE_TYPE_CASH);
-		$cardSales = $this->generateSalesData(self::SALE_TYPE_CARD);
-		$ar = $this->generateSalesData( self::SALE_TYPE_AR);
+		$this->dispatchProgress(ReportHelper::GENERATING_SALES_DATA);
+		$this->cashSales = $this->generateSalesData(self::SALE_TYPE_CASH);
+		$this->cardSales = $this->generateSalesData(self::SALE_TYPE_CARD);
+		$this->ar = $this->generateSalesData(self::SALE_TYPE_AR);
 
 		return [
 
-			'cashSales' => $cashSales,
-			'totalCashSales' => NumberHelper::currency($cashSales->sum('net')),
+			'cashSales' => $this->cashSales,
+			'totalCashSales' => NumberHelper::currency($this->cashSales->sum('net')),
 
-			'cardSales' => $cardSales,
-			'totalCardSales' => NumberHelper::currency($cardSales->sum('net')),
+			'cardSales' => $this->cardSales,
+			'totalCardSales' => NumberHelper::currency($this->cardSales->sum('net')),
 
-			'ar' => $ar,
+			'ar' => $this->ar,
 			'totalCustomerDiscount' => NumberHelper::currency($this->generateCustomerDiscount()),
-			'totalAr' => NumberHelper::currency($ar->sum('net')),
+			'totalAr' => NumberHelper::currency($this->ar->sum('net')),
 
 		];
 	}
@@ -63,9 +68,9 @@ class ReportsHandler extends ReportGenerator
 
 	protected function footer()
 	{
-		$gcSales = $this->gcSales();
+		$this->dispatchProgress(ReportHelper::GENERATING_FOOTER_DATA);
 		$discount = $this->generateTotalTransDiscount();
-		$grandTotal = ReportHelper::grandTotal($gcSales['cashSales'], $gcSales['cardSales'], $gcSales['ar'], $discount);
+		$grandTotal = ReportHelper::grandTotal($this->cashSales, $this->cardSales, $this->ar, $discount);
 
 		return [
 			'totalTransactionDiscount' => NumberHelper::currency($discount),

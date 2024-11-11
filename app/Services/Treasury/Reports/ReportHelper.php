@@ -2,11 +2,22 @@
 
 namespace App\Services\Treasury\Reports;
 
+use App\Models\Store;
 use Illuminate\Support\Facades\Date;
 use App\Models\TransactionStore;
 
 class ReportHelper
 {
+    const CHECKING_RECORDS = 0;
+	const GENERATING_SALES_DATA = 1;
+	const GENERATING_FOOTER_DATA = 2;
+	const GENERATING_HEADER = 3;
+    // public static $constantNames = [
+    //     self::CHECKING_RECORDS => 'Checking Records',
+    //     self::GENERATING_SALES_DATA => 'Generating Sales Data',
+    //     self::GENERATING_FOOTER_DATA => 'Generating Footer Data',
+    //     self::GENERATING_HEADER => 'Generating Header',
+    // ];
     public static function grandTotal($cashSales, $cardSales, $ar, $discount)
     {
         $cashSales = (string) $cashSales->sum('net');
@@ -49,5 +60,8 @@ class ReportHelper
             ->selectRaw('MIN(trans_datetime) as start, MAX(trans_datetime) as end')->first();
 
         return !is_null($transactions->start) ? [$transactions->start, $transactions->end] : null;
+    }
+    public static function storeName($store){
+        return Store::select('store_name')->where('store_id', $store)->value('store_name');
     }
 }
