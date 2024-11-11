@@ -5,6 +5,7 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use App\Exports\IadVerifiedExports\VerifiedPerDayExport;
+use App\Exports\IadVerifiedExports\VerifiedSummaryExports;
 
 class VerifiedGcMultipleSheetExport implements WithMultipleSheets
 {
@@ -26,6 +27,7 @@ class VerifiedGcMultipleSheetExport implements WithMultipleSheets
     {
         return [
             new VerifiedPerDayExport($this->requestData),
+            new VerifiedSummaryExports($this->requestData),
         ];
     }
 }
