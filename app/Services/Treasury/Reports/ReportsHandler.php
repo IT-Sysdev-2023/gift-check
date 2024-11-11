@@ -3,6 +3,9 @@
 namespace App\Services\Treasury\Reports;
 
 use App\Helpers\NumberHelper;
+use App\Models\InstitutEod;
+use App\Models\StoreEod;
+use Illuminate\Support\Facades\Date;
 
 class ReportsHandler extends ReportGenerator
 {
@@ -34,6 +37,26 @@ class ReportsHandler extends ReportGenerator
 			'totalAr' => NumberHelper::currency($this->ar->sum('net')),
 
 		];
+	}
+
+	protected function eodRecords()
+	{
+		$query = InstitutEod::select('ieod_by', 'ieod_id', 'ieod_num', 'ieod_date')
+			->with('user:user_id,firstname,lastname');
+
+		if ($this->isDateRange) {
+			$query->whereBetween('ieod_date', $this->transactionDate);
+		} else {
+			$query->whereDate('ieod_date', $this->transactionDate);
+		}
+
+		return $query->limit(10)->get()->transform(function ($item) {
+            $item->fullname = $item->user->fullname;
+            $item->ieod_date = Date::parse($item->ieod_date)->toFormattedDateString();
+            return $item;
+        });
+
+
 	}
 
 	protected function gcRevalidation(): array

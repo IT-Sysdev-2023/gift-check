@@ -3,6 +3,7 @@
 namespace App\Services\Treasury;
 
 use App\Events\TreasuryReportEvent;
+use App\Models\StoreEod;
 use App\Services\Treasury\Reports\ReportsHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class ReportService extends ReportsHandler
 		return $record;
 	}
 
-	public function generatePdf(Request $request)
+	public function generateGcPdf(Request $request)
 	{
 
 		$request->validate([
@@ -58,7 +59,31 @@ class ReportService extends ReportsHandler
 		}
 
 		// $this->dispatchProgress("Finishing Up!", true);
-		$pdf = Pdf::loadView('pdf.treasuryReports', ['data' => ['stores' => $storeData]]);
+		$pdf = Pdf::loadView('pdf.treasuryReport', ['data' => ['stores' => $storeData]]);
+
+		return $pdf->output();
+	}
+
+	public function generateEodPdf(Request $request)
+	{
+		$request->validate([
+			"transactionDate" => "required",
+			"date" => 'required_if:transactionDate,dateRange',
+		]);
+
+		// $data = InstitutEod::select('ieod_by', 'ieod_id', 'ieod_num', 'ieod_date')
+		// ->with('user:user_id,firstname,lastname')
+		// ->orderByDesc('ieod_date')
+		// ->filter($request)
+		// ->paginate()
+		// ->withQueryString();
+
+		$storeData = [];
+
+			$storeData = $this->handleEodRecords($request);
+		
+		dd($storeData);
+		$pdf = Pdf::loadView('pdf.treasuryEodReport', ['data' =>  $storeData]);
 
 		return $pdf->output();
 	}
@@ -90,6 +115,24 @@ class ReportService extends ReportsHandler
 			'header' => $this->pdfHeaderDate($request),
 			'data' => [...$record],
 			'footer' => [...$footerData],
+		];
+	}
+	private function handleEodRecords(Request $request)
+	{
+		$record = collect();
+
+		$this->setDateOfTransactionsEod($request);
+
+		if ($this->hasEodRecords($request)) {
+			$record->put('records', $this->eodRecords());
+
+		} else {
+			return 'error';
+		}
+
+		return [
+			'header' => $this->pdfHeaderDate($request),
+			'records' => [...$record],
 		];
 	}
 }

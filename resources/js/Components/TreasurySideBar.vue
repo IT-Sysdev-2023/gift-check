@@ -226,6 +226,9 @@ const setActiveTab = computed(() => {
             <a-menu-item key="treasury.reports.index">
                 <Link :href="route('treasury.reports.index')"> GC Report</Link></a-menu-item
             >
+            <a-menu-item key="treasury.reports.eod">
+                <Link :href="route('treasury.reports.eod')"> EOD Report</Link></a-menu-item
+            >
         </a-sub-menu>
     </a-menu>
 </template>

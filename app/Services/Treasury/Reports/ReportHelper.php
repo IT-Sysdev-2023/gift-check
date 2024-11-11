@@ -2,16 +2,18 @@
 
 namespace App\Services\Treasury\Reports;
 
+use App\Models\InstitutEod;
 use App\Models\Store;
+use App\Models\StoreEod;
 use Illuminate\Support\Facades\Date;
 use App\Models\TransactionStore;
 
 class ReportHelper
 {
     const CHECKING_RECORDS = 0;
-	const GENERATING_SALES_DATA = 1;
-	const GENERATING_FOOTER_DATA = 2;
-	const GENERATING_HEADER = 3;
+    const GENERATING_SALES_DATA = 1;
+    const GENERATING_FOOTER_DATA = 2;
+    const GENERATING_HEADER = 3;
     // public static $constantNames = [
     //     self::CHECKING_RECORDS => 'Checking Records',
     //     self::GENERATING_SALES_DATA => 'Generating Sales Data',
@@ -61,7 +63,15 @@ class ReportHelper
 
         return !is_null($transactions->start) ? [$transactions->start, $transactions->end] : null;
     }
-    public static function storeName($store){
+
+    public static function allTransactionDateEod()
+    {
+        $transactions = InstitutEod::selectRaw('MIN(ieod_date) as start, MAX(ieod_date) as end')->first();
+
+        return !is_null($transactions->start) ? [$transactions->start, $transactions->end] : null;
+    }
+    public static function storeName($store)
+    {
         return Store::select('store_name')->where('store_id', $store)->value('store_name');
     }
 }

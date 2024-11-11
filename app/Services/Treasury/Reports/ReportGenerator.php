@@ -3,6 +3,8 @@
 namespace App\Services\Treasury\Reports;
 use App\Events\TreasuryReportEvent;
 use App\Helpers\NumberHelper;
+use App\Models\InstitutEod;
+use App\Models\StoreEod;
 use App\Models\TransactionPayment;
 use App\Models\TransactionRefund;
 use App\Models\TransactionRefundDetail;
@@ -23,7 +25,7 @@ class ReportGenerator
 	protected $progress;
 	protected $transactionDate;
 	protected bool $isDateRange;
-	
+
 
 	protected $store;
 
@@ -66,6 +68,23 @@ class ReportGenerator
 		return $this;
 	}
 
+	protected function setDateOfTransactionsEod(Request $request){
+		$this->isDateRange = in_array($request->transactionDate, ['dateRange', 'thisWeek', 'currentMonth', 'allTransactions']);
+
+		$date = match ($request->transactionDate) {
+			'today' => now(),
+			'yesterday' => Date::yesterday(),
+			'dateRange' => [$request->date[0], $request->date[1]],
+			'thisWeek' => [now()->startOfWeek(), now()->endOfWeek()],
+			'currentMonth' => [now()->startOfMonth(), now()->endOfMonth()],
+			'allTransactions' => ReportHelper::allTransactionDateEod(),
+			default => null
+		};
+
+		$this->transactionDate = $date;
+
+		return $this;
+	}
 	protected function setDateOfTransactions(Request $request)
 	{
 		$this->isDateRange = in_array($request->transactionDate, ['dateRange', 'thisWeek', 'currentMonth', 'allTransactions']);
@@ -94,14 +113,13 @@ class ReportGenerator
 		$header = collect([
 			'reportCreated' => now()->toFormattedDateString(),
 			'store' => $store,
-			'reportType' => $request->reportType
 		]);
 
 		$transDateHeader = ReportHelper::transactionDateLabel($this->isDateRange, $this->transactionDate);
 
 		$header->put('transactionDate', $transDateHeader);
 
-		
+
 		return $header;
 	}
 	protected function generateSalesData(int $type): LazyCollection
@@ -191,6 +209,15 @@ class ReportGenerator
 			->exists();
 	}
 
+	protected function hasEodRecords(Request $request)
+	{
+		if ($this->isDateRange) {
+			$query = InstitutEod::whereBetween('ieod_date', $this->transactionDate);
+		} else {
+			$query = InstitutEod::whereDate('ieod_date', $this->transactionDate);
+		}
+		return $query->exists();
+	}
 	protected function fundsRecords()
 	{
 		return TransactionRefund::selectRaw(

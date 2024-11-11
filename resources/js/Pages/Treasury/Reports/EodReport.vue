@@ -22,29 +22,7 @@
                 >
                     <ant-select :options="store" @handle-change="handleStore" />
                 </a-form-item>
-                <a-form-item
-                    label="Report Type"
-                    has-feedback
-                    :validate-status="
-                        formState.invalid('reportType') ? 'error' : ''
-                    "
-                    :help="formState.errors.reportType"
-                >
-                    <a-checkbox-group
-                        v-model:value="formState.reportType"
-                        @change="formState.validate('reportType')"
-                    >
-                        <a-checkbox value="gcSales" name="type"
-                            >Gc Sales</a-checkbox
-                        >
-                        <a-checkbox value="gcRevalidation" name="type"
-                            >Gc Revalidation</a-checkbox
-                        >
-                        <a-checkbox value="refund" name="type"
-                            >Gc Refund</a-checkbox
-                        >
-                    </a-checkbox-group>
-                </a-form-item>
+               
                 <a-form-item
                     label="Transaction Date"
                     has-feedback
@@ -81,7 +59,7 @@
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
                     <a-button type="primary" html-type="submit"
-                        >Create</a-button
+                        >Generate</a-button
                     >
                     <a-button style="margin-left: 10px">Cancel</a-button>
                 </a-form-item>
@@ -92,7 +70,7 @@
             :footer="null"
             centered
             width="700px"
-            title="Generating Record"
+            title="Generating Report"
             :afterClose="leaveChannel"
         >
             <div class="flex justify-center flex-col items-center">
@@ -213,8 +191,7 @@ const leaveChannel = () => {
     window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);
 };
 
-const formState = useForm("post", route("treasury.reports.generate.report"), {
-    reportType: [],
+const formState = useForm("post", route("treasury.reports.generate.eod"), {
     transactionDate: "",
     store: null,
     date: null,
