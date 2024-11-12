@@ -17,9 +17,9 @@
 
                     <a-select v-model:value="varianceData.customerName">
                         <a-select-option v-for="item in customer"
-                            :key="`${item.spcus_companyname}-${item.spcus_acctname}`"
-                            :value="`${item.spcus_companyname} - ${item.spcus_acctname}`">
-                            {{ `${item.spcus_companyname} - ${item.spcus_acctname}` }}
+                            :key="`${item.spcus_companyname}* ${item.spcus_acctname}`"
+                            :value="`${item.spcus_companyname} * ${item.spcus_acctname}`">
+                            {{ `${item.spcus_companyname} * ${item.spcus_acctname}` }}
                         </a-select-option>
                     </a-select>
                 </a-form-item>
@@ -58,16 +58,17 @@ export default {
         generateButton() {
             this.varianceData.errors = {};
 
+            const { customerName } = this.varianceData;
+
             if (!this.varianceData.customerName) {
                 this.varianceData.errors.customerName = "Customer Name field is required";
                 return;
             }
-
-
-            this.$inertia.get(route('CheckVariance'), {
-                customerData: this.varianceData.customerName
-
-            })
+            const varianceData = {
+                customerName
+            }
+            console.log(varianceData);
+            this.$inertia.get(route('storeaccounting.checkVarianceSubmit'),varianceData)
         }
     }
 

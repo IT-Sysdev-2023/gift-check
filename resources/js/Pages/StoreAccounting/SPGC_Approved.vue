@@ -6,6 +6,7 @@
             APPROVED GC REPORTS
         </span>
         <div>
+
             <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc">
                 <a-tabs>
                     <a-tab-pane key="1">
@@ -30,19 +31,29 @@
                                     Generate EXCEL
                                 </a-button>
                             </span>
-                            <!-- <span style="font-weight: bold; margin-left: 30%;">
+                            <span style="font-weight: bold; margin-left: 30%;">
                                 Search:
-                                <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
+                                <a-input allow-clear v-model:value="spgcApprovedSearchPerCustomer" placeholder="Input search here!"
                                     style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
+                            </span>
+                            <!-- <span style="font-weight: bold; margin-left: 3%;">
+                                <a-button @click="genEx" style="background-color:green; color:white ">
+                                    <FileExcelOutlined />
+                                    Generate EXCEL Dummy
+                                </a-button>
                             </span> -->
+
                             <div style="color:red; margin-left: 40%;">
                                 Table showing per customer
                             </div>
                             <div style="margin-top: 20px;">
-                                <a-table :columns="perCustomerTable" :data-source="dataCustomer" size="small">
+                                <!-- {{ dataCustomer }}  -->
+                                <a-table :columns="perCustomerTable" :data-source="records.dataCustomer.data"
+                                    :pagination="false" size="small">
                                 </a-table>
                             </div>
-                            <!-- <pagination :datarecords="dataCustomer" class="mt-5" /> -->
+                            <pagination :datarecords="records.dataCustomer" class="mt-5" />
+
                         </a-card>
                     </a-tab-pane>
                     <a-tab-pane key="2">
@@ -60,23 +71,32 @@
                                 </a-button>
                             </span>
                             <span style="font-weight: bold; margin-left: 3%;">
-                                <a-button @click="generateExcel" style="background-color:green; color:white ">
+                                <a-button @click="generateExcelPerBarcode" style="background-color:green; color:white ">
                                     <FileExcelOutlined />
                                     Generate EXCEL
                                 </a-button>
+                            </span>
+                            <span style="font-weight: bold; margin-left: 30%;">
+                                Search:
+                                <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
+                                    style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
                             </span>
                             <div style="color:red; margin-left: 40%;">
                                 Table showing per barcode
                             </div>
                             <div style="margin-top: 20px;">
-                                <a-table :columns="perBarcodeTable" :data-source="dataBarcode" size="small">
+                                <a-table :columns="perBarcodeTable" :data-source="records.dataBarcode.data"
+                                    :pagination="false" size="small">
                                 </a-table>
                             </div>
+                            <pagination :datarecords="records.dataBarcode" class="mt-5" />
+
 
                         </a-card>
                     </a-tab-pane>
                 </a-tabs>
             </a-card>
+
         </div>
 
         <a-card style="width:15%; border: 1px solid #dcdcdc; position: absolute; top: 45px;">
@@ -118,12 +138,16 @@
                             <span style="color:green; font-weight: bold;">
                                 FROM:
                             </span>
-                            {{ fromDate }}
+                            <span style="margin-left: 5px;">
+                                {{ records.fromDate }}
+                            </span>
                         </div>
                         <span style="color:green; font-weight: bold;">
                             TO:
                         </span>
-                        {{ toDate }}
+                        <span style="margin-left: 5px;">
+                            {{ records.toDate }}
+                        </span>
                         <!-- {{ finalDateSelectedExcel }} -->
                     </span>
                 </div>
@@ -144,7 +168,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 // import dayjs from 'dayjs';
 import Pagination from '@/Components/Pagination.vue';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { ExclamationCircleOutlined, WindowsFilled } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
 import { Modal } from 'ant-design-vue';
 
@@ -152,16 +176,13 @@ export default {
     components: { Pagination },
     layout: AuthenticatedLayout,
     props: {
-        dataCustomer: Object,
-        dataBarcode: Array,
-        fromDate: String,
-        toDate: String
-
+        records: Object,
     },
     data() {
         return {
 
-            spgcApprovedSearch: '',
+            spgcApprovedSearch: this.dataBarcode,
+            spgcApprovedSearchPerCustomer: this.dataCustomer,
             spgcform: {
                 spgcStartDate: '',
                 spgcEndDate: '',
@@ -216,18 +237,37 @@ export default {
     watch: {
         spgcApprovedSearch(search) {
             console.log(search);
-            this.$inertia.get(route('storeaccounting.SPGCApprovedSubmit'), {
+            const formData = {
                 search: search,
-                date: this.spgcform
+                spgcStartDate: this.records.fromDate,
+                spgcEndDate: this.records.toDate
+            };
+
+            this.$inertia.get(route('storeaccounting.SPGCApproved', formData), {
+                
             }, {
                 preserveState: true
-            })
+            });
+        },
+        spgcApprovedSearchPerCustomer(search) {
+            console.log(search);
+            const perCustomerSearch = {
+                customerSearch: search,
+                spgcStartDate: this.records.fromDate,
+                spgcEndDate: this.records.toDate
+            };
+            this.$inertia.get(route('storeaccounting.SPGCApproved', perCustomerSearch), {
+                
+            }, {
+                preserveState:true
+            });
         }
 
     },
 
     methods: {
         spgcSubmit() {
+            // alert('kanding')
             this.spgcform.errors = {};
             const { spgcStartDate, spgcEndDate } = this.spgcform;
 
@@ -238,7 +278,6 @@ export default {
             if (!endDate) this.spgcform.errors.spgcEndDate = 'End date field is required.';
 
             if (this.spgcform.errors.spgcStartDate || this.spgcform.errors.spgcEndDate) {
-                console.error('Start Date and End Date are required');
                 return;
             }
 
@@ -249,21 +288,26 @@ export default {
 
 
             console.log('Submitting with values:', submitData);
-            this.$inertia.get(route('storeaccounting.SPGCApprovedSubmit', submitData));
+            this.$inertia.get(route('storeaccounting.SPGCApproved', submitData));
 
 
+        },
+        genEx() {
+            window.location.href = route('storeaccounting.dummy', {
+                datatype: 'sending',
+            });
         },
 
         generatePdf() {
             Modal.confirm({
-                title: 'Confirmation',
+                title: 'Notification',
                 icon: createVNode(ExclamationCircleOutlined),
-                content: 'Are you sure you want to generate PDF?',
+                content: 'UNDER MAINTENANCE, STAY TUNE FOR UPCOMING UPDATES!',
                 okText: 'Yes',
                 okType: 'danger',
                 cancelText: 'No',
                 onOk() {
-                    console.log('OK');
+                    console.log('Okay');
                 },
                 onCancel() {
                     console.log('Cancel');
@@ -274,12 +318,34 @@ export default {
             Modal.confirm({
                 title: 'Confirmation',
                 icon: createVNode(ExclamationCircleOutlined),
-                content: 'Are you sure you want to generate EXCEL?',
+                content: 'Are you sure you want to generate EXCEL per customer?',
                 okText: 'Yes',
                 okType: 'danger',
                 cancelText: 'No',
-                onOk() {
-                    console.log('OK');
+                onOk: () => {
+                    window.location.href = route('storeaccounting.SPGCApprovedExcel', {
+                        startDate: this.records.fromDate,
+                        endDate: this.records.toDate
+                    })
+                },
+                onCancel() {
+                    console.log('Cancel');
+                },
+            });
+        },
+        generateExcelPerBarcode() {
+            Modal.confirm({
+                title: 'Confirmation',
+                icon: createVNode(ExclamationCircleOutlined),
+                content: 'Are you sure you want to generate EXCEL per barcode?',
+                okText: 'Yes',
+                okType: 'danger',
+                cancelText: 'No',
+                onOk: () => {
+                    window.location.href = route('storeaccounting.SPGCApprovedExcel', {
+                        startDate: this.records.fromDate,
+                        endDate: this.records.toDate
+                    })
                 },
                 onCancel() {
                     console.log('Cancel');
