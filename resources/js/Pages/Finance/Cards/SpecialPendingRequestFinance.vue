@@ -75,7 +75,7 @@
                 <p class="sub-text text-white">All Cancelled Request</p>
             </div>
             <a-badge :count="count.cancel" :overflow-count="999">
-                <a-button @click="() => $inertia.get(route('finance.approvedGc.approved'))">
+                <a-button @click="() => $inertia.get(route('finance.cancelledSpecialExternalGC.list'))">
                     <template #icon>
                         <FolderFilled />
                     </template>

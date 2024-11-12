@@ -492,6 +492,10 @@ Route::prefix('finance')->group(function () {
             Route::get('approved-budget-details-{id}', [FinanceController::class, 'approvedBudgetDetails'])->name('approved.details');
             Route::get('reprint-{id}', [FinanceController::class, 'reprint'])->name('reprint');
         });
+
+        Route::name('cancelledSpecialExternalGC.')->group(function(){
+            Route::get('cancelled-especial-external-gc',[FinanceController::class, 'list'])->name('list');
+        });
     });
 
     Route::get('/download/{filename}', function ($filename) {
