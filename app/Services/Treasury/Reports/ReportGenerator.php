@@ -74,7 +74,8 @@ class ReportGenerator
 		return $this;
 	}
 
-	protected function setDateOfTransactionsEod(Request $request){
+	protected function setDateOfTransactionsEod(Request $request)
+	{
 		$this->isDateRange = in_array($request->transactionDate, ['dateRange', 'thisWeek', 'currentMonth', 'allTransactions']);
 
 		$date = match ($request->transactionDate) {
@@ -113,10 +114,11 @@ class ReportGenerator
 	{
 		$this->dispatchProgress(ReportHelper::GENERATING_HEADER);
 		$store = Store::where('store_id', $this->store)->value('store_name');
-
+		
 		$header = collect([
 			'reportCreated' => now()->toFormattedDateString(),
 			'store' => $store,
+			'reportType' => $request->reportType
 		]);
 
 		$transDateHeader = ReportHelper::transactionDateLabel($this->isDateRange, $this->transactionDate);
@@ -127,8 +129,9 @@ class ReportGenerator
 		return $header;
 	}
 
-	protected function pdfEodHeaderDate(){
-		
+	protected function pdfEodHeaderDate()
+	{
+
 		$header = collect([
 			'reportCreated' => now()->toFormattedDateString(),
 		]);
@@ -202,7 +205,6 @@ class ReportGenerator
 	protected function hasRecords(Request $request): bool
 	{
 		$this->dispatchProgress(ReportHelper::CHECKING_RECORDS);
-
 		return TransactionStore::whereHas('ledgerStore')
 			->where('trans_store', $this->store)
 			->when((in_array('gcSales', $request->reportType)) ?? null, function ($q) use ($request) {

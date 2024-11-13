@@ -25,9 +25,8 @@
         <a-table :data-source="data.data" :columns="columns" :pagination="false">
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'action'">
-                    <a-button title="view" @mouseover="moveButton" @click="viewEODList(record)"
-                        :style="{ color: 'white', backgroundColor: '#1e90ff', top: `${buttonPosition.top}px`, left: `${buttonPosition.left}px`, position: 'relative' }"
-                        class="moving-button">
+                    <a-button title="view"  @click="viewEODList(record)"
+                        style="color:white; background-color: #1e90ff;">
                         <EyeOutlined />
                     </a-button>
                 </template>
@@ -120,15 +119,15 @@ export default {
             })
 
         },
-        moveButton() {
+        // moveButton() {
          
-            const newTop = Math.floor(Math.random() * 200 - 100); 
-            const newLeft = Math.floor(Math.random() * 200 - 100); 
-            this.buttonPosition = {
-                top: this.buttonPosition.top + newTop,
-                left: this.buttonPosition.left + newLeft
-            };
-        }
+        //     const newTop = Math.floor(Math.random() * 200 - 100); 
+        //     const newLeft = Math.floor(Math.random() * 200 - 100); 
+        //     this.buttonPosition = {
+        //         top: this.buttonPosition.top + newTop,
+        //         left: this.buttonPosition.left + newLeft
+        //     };
+        // }
     }
 
 }
@@ -137,8 +136,8 @@ export default {
 
 
 </script>
-<style scoped>
+<!-- <style scoped>
 .moving-button {
     transition: top 0.3s ease, left 0.3s ease;
 }
-</style>
+</style> -->

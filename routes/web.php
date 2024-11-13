@@ -419,7 +419,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('gc-report', [ReportsController::class,'gcReport'])->name('index');
             Route::get('eod-report', [ReportsController::class,'eodReport'])->name('eod');
-            Route::post('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc')->middleware([HandlePrecognitiveRequests::class]);
+            Route::get('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc');
             Route::get('generate-eod-report', [ReportsController::class,'generateEodReports'])->name('generate.eod');
 
         });
@@ -751,6 +751,7 @@ Route::prefix('store-accounting')
                         Route::get('spgc-release', [StoreAccountingController::class, 'SPGCRelease'])->name('SPGCRelease');
                         Route::get('spgc-release-submit', [StoreAccountingController::class, 'SPGCReleasedSubmit'])->name('SPGCReleasedSubmit');
                         Route::get('spgc-release-excel', [StoreAccountingController::class, 'releaseExcel'])->name('releaseExcel');
+                        Route::get('spgc-release-perBarcode-excel', [StoreAccountingController::class, 'releasePerBarcodeExcel'])->name('releasePerBarcodeExcel');
 
 
                         Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');
