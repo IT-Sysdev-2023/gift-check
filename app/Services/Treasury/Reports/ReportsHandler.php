@@ -2,7 +2,12 @@
 
 namespace App\Services\Treasury\Reports;
 
+use App\Events\TreasuryReportEvent;
 use App\Helpers\NumberHelper;
+use App\Models\InstitutEod;
+use App\Models\StoreEod;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 
 class ReportsHandler extends ReportGenerator
 {
@@ -10,25 +15,57 @@ class ReportsHandler extends ReportGenerator
 	const SALE_TYPE_CARD = 2;
 	const SALE_TYPE_AR = 3;
 
+	private $cashSales;
+	private $cardSales;
+	private $ar;
+
 	protected function gcSales()
 	{
-		$cashSales = $this->generateSalesData(self::SALE_TYPE_CASH);
-		$cardSales = $this->generateSalesData(self::SALE_TYPE_CARD);
-		$ar = $this->generateSalesData( self::SALE_TYPE_AR);
+		$this->dispatchProgress(ReportHelper::GENERATING_SALES_DATA);
+		$this->cashSales = $this->generateSalesData(self::SALE_TYPE_CASH);
+		$this->cardSales = $this->generateSalesData(self::SALE_TYPE_CARD);
+		$this->ar = $this->generateSalesData(self::SALE_TYPE_AR);
 
 		return [
 
-			'cashSales' => $cashSales,
-			'totalCashSales' => NumberHelper::currency($cashSales->sum('net')),
+			'cashSales' => $this->cashSales,
+			'totalCashSales' => NumberHelper::currency($this->cashSales->sum('net')),
 
-			'cardSales' => $cardSales,
-			'totalCardSales' => NumberHelper::currency($cardSales->sum('net')),
+			'cardSales' => $this->cardSales,
+			'totalCardSales' => NumberHelper::currency($this->cardSales->sum('net')),
 
-			'ar' => $ar,
+			'ar' => $this->ar,
 			'totalCustomerDiscount' => NumberHelper::currency($this->generateCustomerDiscount()),
-			'totalAr' => NumberHelper::currency($ar->sum('net')),
+			'totalAr' => NumberHelper::currency($this->ar->sum('net')),
 
 		];
+	}
+
+	protected function eodRecords()
+	{
+		$this->dispatchProgressEod(2);
+		$query = InstitutEod::select('ieod_by', 'ieod_id', 'ieod_num', 'ieod_date')
+			->with('user:user_id,firstname,lastname');
+
+		if ($this->isDateRange) {
+			$query->whereBetween('ieod_date', $this->transactionDate);
+		} else {
+			$query->whereDate('ieod_date', $this->transactionDate);
+		}
+
+		$percentage = 1;
+
+		$this->progress['progress']['totalRow'] = $query->count();
+
+		return $query->cursor()->map(function ($item) use (&$percentage) {
+			//Dispatch
+			$this->progress['progress']['currentRow'] = $percentage++;
+			TreasuryReportEvent::dispatch(Auth::user(), $this->progress);
+
+            $item->fullname = $item->user->fullname;
+            $item->date = $item->ieod_date->toDayDateTimeString();
+            return $item;
+        });
 	}
 
 	protected function gcRevalidation(): array
@@ -63,9 +100,9 @@ class ReportsHandler extends ReportGenerator
 
 	protected function footer()
 	{
-		$gcSales = $this->gcSales();
+		$this->dispatchProgress(ReportHelper::GENERATING_FOOTER_DATA);
 		$discount = $this->generateTotalTransDiscount();
-		$grandTotal = ReportHelper::grandTotal($gcSales['cashSales'], $gcSales['cardSales'], $gcSales['ar'], $discount);
+		$grandTotal = ReportHelper::grandTotal($this->cashSales, $this->cardSales, $this->ar, $discount);
 
 		return [
 			'totalTransactionDiscount' => NumberHelper::currency($discount),

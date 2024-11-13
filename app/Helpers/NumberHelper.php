@@ -9,16 +9,16 @@ use Illuminate\Support\Number;
 
 class NumberHelper
 {
-    public static function float(string $number) : float | int
+    public static function float(string $number): float|int
     {
-        return (float) str_replace(['₱',','], '', $number);
+        return (float) str_replace(['₱', ','], '', $number);
     }
 
-    public static function format(mixed $number) : string
+    public static function format(mixed $number, int $scale =2): string
     {
-        return number_format($number, 2);
+        return number_format($number, $scale);
     }
-    public static function toLocaleString(mixed $number) : string
+    public static function toLocaleString(mixed $number): string
     {
         return number_format($number);
     }
@@ -34,12 +34,17 @@ class NumberHelper
         return Number::currency($amount, in: $currency, locale: $locale);
     }
 
-    public static function percentage($current, $total){
+    public static function percentage($current, $total)
+    {
+        if ($total == 0) {
+            return 0;
+        }
         $percent = ($current / $total) * 100;
-        return self::format($percent);
+        return (float) self::format($percent, 0);
     }
 
-    public static function leadingZero(int $num, string $format = "%04d"){
+    public static function leadingZero(int $num, string $format = "%04d")
+    {
         return sprintf($format, $num);
     }
 

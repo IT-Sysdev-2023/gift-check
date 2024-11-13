@@ -12,7 +12,7 @@
     </a-row>
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
-             <PromoGCViewCard :count="count"></PromoGCViewCard>
+             <PromoGcViewCard :count="count"></PromoGCViewCard>
         </a-col>
         <a-col :span="8">
             <special-pending-request-finance :count="count.specialGcRequest" :pendingExGcRequest :columns
@@ -27,6 +27,7 @@
 </template>
 <script>
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
+import PromoGcViewCard from "./Cards/PromoGcViewCard.vue";
 export default {
     layout: Authenticatedlayout,
     props: {

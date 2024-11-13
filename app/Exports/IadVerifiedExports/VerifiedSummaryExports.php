@@ -2,9 +2,10 @@
 
 namespace App\Exports\IadVerifiedExports;
 
+use App\Helpers\NumberHelper;
 use App\Models\StoreVerification;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithTitle;
@@ -36,28 +37,19 @@ class VerifiedSummaryExports implements FromCollection, WithTitle, WithEvents, W
     public function headings(): array
     {
         return [
-            'Date',
-            'Barcode',
-            'Denomination',
-            'Amount Redeem',
-            'Balance',
-            'Customer Name',
-            'Business Unit',
-            'Terminal #',
-            'Validation',
-            'Gc Type',
-            'Date',
-            'Time',
+            'DATE',
+            'TOTAL GC VERIFIED',
+            'TOTAL GC AMOUNT REDEEM',
+            'BALANCE',
+            'TOTAL GC PURCHASE BASED ON POS',
+            'VARIANCE',
+            'REMARKS',
         ];
     }
 
     public function collection()
     {
-        dd($this->getDataStoreVerifivation());
-        $data[] = [
-            'data' => 'kanding',
-            'kanding' => 'kanding',
-        ];
+        $data = $this->getDataStoreVerifivation();
 
         return collect($data);
     }
@@ -76,60 +68,91 @@ class VerifiedSummaryExports implements FromCollection, WithTitle, WithEvents, W
         ];
     }
 
-    private function getDataStoreVerifivation(): Builder
+    private function getDataStoreVerifivation()
     {
 
         $request = $this->requestData;
 
-        $data = StoreVerification::with('customer:cus_id,cus_fname,cus_mname,cus_namext,cus_lname')
+        $vsdata = StoreVerification::select(
+            'vs_date',
+            'vs_cn',
+            'vs_tf_denomination',
+            'vs_tf_balance',
+            'vs_tf_purchasecredit',
+            'vs_store'
+        )->with('customer:cus_id,cus_fname,cus_mname,cus_namext,cus_lname')
             ->when(str_contains($request['date'], '-'), function ($q) use ($request) {
                 $q->whereLike('vs_date', '%' . $request['date'] . '%')
                     ->orWhereLike('vs_reverifydate', '%' . $request['date'] . '%');
             }, function ($q) use ($request) {
                 $q->whereYear('vs_date', $request['date'])
-                ->orWhere('vs_reverifydate', fn ($q) => $q->whereYear('vs_reverifydate', $request['date']));
+                    ->orWhere('vs_reverifydate', fn($q) => $q->whereYear('vs_reverifydate', $request['date']));
             })
-            ->where('vs_store', $request['store'])
             ->get()
+            ->where('vs_store', $request['store'])
             ->groupBy('vs_date');
 
-            $array = [];
-
-            $data->transform(function ($item, $key) use (&$array){
-                $array[] = [
-                    'date' => Date::parse($key)->toFormattedDateString(),
-                    'totalver' => $item->sum('vs_tf_denomination'),
-                    'balance' => $item->sum('vs_tf_balance'),
-                    'redeem' => $item->sum('vs_tf_purchasecredit'),
+        $revdata =  DB::table('store_verification')
+            ->whereYear('vs_reverifydate', '=', '2019')
+            ->whereMonth('vs_reverifydate', '=', '01')
+            ->where('vs_store', '=', '1')
+            ->get()
+            ->groupBy('vs_date')
+            ->map(function ($group) {
+                return [
+                    'daterev' => $group->value('vs_reverifydate'),
+                    'totalrev' => $group->sum('vs_tf_denomination'),
+                    'balance' => $group->sum('vs_tf_balance'),
+                    'redeem' => $group->sum('vs_tf_purchasecredit'),
                 ];
-
-                return $array;
             });
-            dd($array);
-        //     $link->query(
-        //         "SELECT
-        //             DATE(store_verification.vs_date) as datever,
-        //             IFNULL(SUM(store_verification.vs_tf_denomination),00.0) as totverifiedgc,
-        //             IFNULL(SUM(store_verification.vs_tf_balance),00.0) as balance,
-        //             IFNULL(SUM(store_verification.vs_tf_purchasecredit),00.0) as redeem
-        //         FROM
-        //             store_verification
-        //         LEFT JOIN
-        //             customers
-        //         ON
-        //             customers.cus_id = store_verification.vs_cn
-        //         WHERE
-        //             ((YEAR(vs_date) = '$year'
-        //         AND
-        //             MONTH(vs_date) = '$month')
-        //         OR
-        //             (YEAR(vs_reverifydate) = '$year'
-        //         AND
-        //             MONTH(vs_reverifydate) = '$month'))
-        //         AND
-        //             vs_store='$stcus'
-        //         GROUP BY vs_date
-        // ");
+
+        $array = [];
+
+        $vsdata->transform(function ($item, $key) use (&$array) {
+
+            $array[] = [
+                'date' => $key,
+                'totalver' => $this->numberHelperFormat($item->sum('vs_tf_denomination')),
+                'redeem' => $this->numberHelperFormat($item->sum('vs_tf_purchasecredit')),
+                'balance' => $this->numberHelperFormat($item->sum('vs_tf_balance')),
+            ];
+
+            return $array;
+        });
+
+        $appendArray = collect($array)->transform(function ($item) use ($revdata) {
+
+            $parseDate = Date::parse($item['date'])->format('Y-m-d');
+
+            $isExists = $revdata->where(function ($value) use (&$parseDate) {
+                $dateRev = Date::parse($value['daterev'])->format('Y-m-d');
+                return $dateRev === $parseDate;
+            });
+
+
+            if ($isExists->isNotEmpty()) {
+
+                $total =  $this->numberHelperFormat($isExists->sum('totalrev') + (float) $item['totalver']);
+                $totalbal = $this->numberHelperFormat($isExists->sum('balance') + (float) $item['balance']);
+                $totalred = $this->numberHelperFormat($isExists->sum('redeem') + (float) $item['redeem']);
+
+                $item['totalver'] = $total;
+                $item['redeem'] = $totalred;
+                $item['balance'] = $totalbal;
+            }
+            return $item;
+        });
+
+        $appendArray->transform(function ($item) {
+            return (object)[
+                'date' => Date::parse($item['date'])->toFormattedDateString(),
+                'totalver' => NumberHelper::format($item['totalver']),
+                'redeem' => NumberHelper::format($item['redeem']),
+                'balance' => NumberHelper::format($item['balance']),
+            ];
+        });
+        return collect($appendArray);
     }
 
     public function styles(Worksheet $sheet)
@@ -139,6 +162,42 @@ class VerifiedSummaryExports implements FromCollection, WithTitle, WithEvents, W
                 'bold' => true,
             ],
         ]);
+
+        $data = $this->getDataStoreVerifivation();
+
+        $rowcount = $data->count();
+
+        $colcount = count($this->headings());
+
+        $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colcount);
+
+
+
+        $range = 'A8:' . $lastColumn  . $rowcount + 8;
+
+
+
+        $sheet->getStyle($range)->applyFromArray([
+            'font' => [
+                'size' => 9,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => '000000'],
+                ],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, // Center horizontally
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER, // Center vertically
+            ],
+        ]);
+
+        for ($col = 1; $col <= $colcount; $col++) {
+            $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
+        }
+
 
         return [
             'A1' => [
@@ -177,5 +236,9 @@ class VerifiedSummaryExports implements FromCollection, WithTitle, WithEvents, W
                 ],
             ],
         ];
+    }
+    private function numberHelperFormat($number)
+    {
+        return number_format($number, 1, '.', '');
     }
 }

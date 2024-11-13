@@ -3,10 +3,6 @@ import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 window.Pusher = Pusher;
 
-// window.Echo.channel("delivery").listen("PackageSent", (event) => {
-//     console.log(event);
-// });
-
 export default new Echo({
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY,

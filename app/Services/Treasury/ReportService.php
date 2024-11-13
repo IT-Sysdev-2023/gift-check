@@ -2,6 +2,8 @@
 
 namespace App\Services\Treasury;
 
+use App\Events\TreasuryReportEvent;
+use App\Models\StoreEod;
 use App\Services\Treasury\Reports\ReportsHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -10,6 +12,8 @@ use Illuminate\Support\LazyCollection;
 
 class ReportService extends ReportsHandler
 {
+
+
 	public static function reports() //storesalesreport.php
 	{
 
@@ -21,7 +25,7 @@ class ReportService extends ReportsHandler
 		return $record;
 	}
 
-	public function generatePdf(Request $request)
+	public function generateGcPdf(Request $request)
 	{
 
 		$request->validate([
@@ -30,35 +34,61 @@ class ReportService extends ReportsHandler
 			"store" => 'required',
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
+		//Dont touch this otherwise you're f*cked!
+		//Dont put this in LazyCollection otherwise the realtime fire twice
+		$storeData = [];
 
-		$storeData = LazyCollection::make(function () use ($request) {
+		//All Stores
+		if ($request->store === 'all') {
+			$store = Store::selectStore()->cursor();
 
-			//All Stores
-			if ($request->store === 'all') {
-				$store = Store::selectStore()->cursor();
-				foreach ($store as $item) {
-					yield $this->handleRecords($request, $item->value);
-				}
-			} else {
-				yield $this->handleRecords($request, $request->store);
+			$percentage = 1;
+
+			$this->progress['progress']['totalRow'] = count($store);
+
+			foreach ($store as $item) {
+				$this->progress['progress']['currentRow'] = $percentage++;
+				TreasuryReportEvent::dispatch($request->user(), $this->progress);
+
+				$storeData[] = $this->handleRecords($request, $item->value);
 			}
-		});
+		} else {
+			$storeData[] = $this->handleRecords($request, $request->store);
+		}
 
-		$pdf = Pdf::loadView('pdf.treasuryReports', ['data' => ['stores' => $storeData]]);
+		// $this->dispatchProgress("Finishing Up!", true);
+		$pdf = Pdf::loadView('pdf.treasuryReport', ['data' => ['stores' => $storeData]]);
 
 		return $pdf->output();
 	}
 
-	private function handleRecords(Request $request, string $store)
+	public function generateEodPdf(Request $request)
 	{
 
+		$request->validate([
+			"transactionDate" => "required",
+			"date" => 'required_if:transactionDate,dateRange',
+		]);
+		
+		$storeData = [];
+
+		$storeData = $this->handleEodRecords($request);
+
+		if ($storeData === 'error') {
+			return response()->json(['message' => 'No Record Found in selected transaction date'], 404);
+		}
+		$pdf = Pdf::loadView('pdf.treasuryEodReport', ['data' => $storeData]);
+
+		return $pdf->output();
+	}
+	private function handleRecords(Request $request, string $store)
+	{
 		$record = collect();
 		$footerData = collect();
 
 		$reportType = collect($request->reportType);
 
 		$this->setStore($store)->setDateOfTransactions($request);
-
 		if ($this->hasRecords($request)) {
 			if ($reportType->contains('gcSales')) {
 				$record->put('gcSales', $this->gcSales());
@@ -71,7 +101,6 @@ class ReportService extends ReportsHandler
 				$footerData->put('revalidationFooter', $this->gcRevalidation());
 			}
 		} else {
-
 			return 'error';
 		}
 
@@ -79,6 +108,23 @@ class ReportService extends ReportsHandler
 			'header' => $this->pdfHeaderDate($request),
 			'data' => [...$record],
 			'footer' => [...$footerData],
+		];
+	}
+	private function handleEodRecords(Request $request)
+	{
+		$record = collect();
+
+		$this->setDateOfTransactionsEod($request);
+
+		if ($this->hasEodRecords($request)) {
+			$record->put('records', $this->eodRecords());
+		} else {
+			return 'error';
+		}
+
+		return [
+			'header' => $this->pdfEodHeaderDate(),
+			...$record,
 		];
 	}
 }

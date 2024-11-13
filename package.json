@@ -27,6 +27,7 @@
         "ant-design-vue": "~4.2.5",
         "dayjs": "^1.11.13",
         "laravel-precognition-vue": "^0.5.10",
+        "laravel-precognition-vue-inertia": "^0.5.13",
         "lodash": "^4.17.21",
         "number-to-words": "^1.2.4",
         "tailwindcss": "^3.4.13",

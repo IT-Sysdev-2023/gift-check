@@ -81,19 +81,53 @@
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
                     <a-button type="primary" html-type="submit"
-                        >Create</a-button
+                        >Generate</a-button
                     >
                     <a-button style="margin-left: 10px">Cancel</a-button>
                 </a-form-item>
             </a-form>
         </a-card>
-        <a-modal :open="true" :footer="null" centered :closable="false">
-            <div>
+        <a-modal
+            v-model:open="loadingProgress"
+            :footer="null"
+            centered
+            width="700px"
+            title="Generating Report"
+            :afterClose="leaveChannel"
+        >
+            <div class="flex justify-center flex-col items-center">
+                <div class="py-8 flex flex-col items-center space-y-3">
+                    <a-progress
+                        type="circle"
+                        :size="[150, 150]"
+                        :stroke-color="{
+                            '0%': '#108ee9',
+                            '100%': '#87d068',
+                        }"
+                        :percent="parseFloat(items.percentage)"
+                    />
+                    <a-typography-title :level="3">{{
+                        items.data.store
+                    }}</a-typography-title>
+                </div>
                 <a-steps
-                :current="1"
-                :percent="50"
+                    :current="items.data.active"
+                    :percent="items.percentage"
                     label-placement="vertical"
-                    :items="items"
+                    :items="[
+                        {
+                            title: 'Checking Records',
+                        },
+                        {
+                            title: 'Generating Sales Data',
+                        },
+                        {
+                            title: 'Generating Footer Data',
+                        },
+                        {
+                            title: 'Generating Header',
+                        },
+                    ]"
                 />
                 <br />
             </div>
@@ -106,9 +140,12 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { AxiosResponse } from "axios";
 import { Dayjs } from "dayjs";
 import { useForm } from "laravel-precognition-vue";
-import { Form } from "laravel-precognition-vue/dist/types";
-import { ref } from "vue";
+import { PageWithSharedProps } from "@/types/index";
+import { usePage } from "@inertiajs/vue3";
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import { notification } from "ant-design-vue";
 
+const page = usePage<PageWithSharedProps>().props;
 defineProps<{
     title: string;
     store: {
@@ -117,26 +154,66 @@ defineProps<{
     }[];
 }>();
 
-interface FormState {
-    reportType: string[];
-    transactionDate: string;
-    store: string;
-    date: Dayjs;
-}
-const items = ref([
-    {
-        description: "Generating Header",
-    },
-    {
-        title: "In Progress",
-        status: 'process',
-    },
-    {
-        title: "Waiting",
-    },
-]);
+// interface FormState {
+//     reportType: string[];
+//     transactionDate: string;
+//     store: string;
+//     date: Dayjs;
+// }
 
-const formState = useForm("get", route("treasury.reports.generate.report"), {
+const loadingProgress = ref<boolean>(false);
+const items = ref<{
+    percentage: string;
+    data: {
+        active: number;
+
+        store: string;
+        isDone: boolean;
+        info: {
+            description: string;
+        }[];
+    };
+}>({
+    percentage: "",
+    data: {
+        active: 0,
+        store: "",
+        isDone: false,
+        info: [
+            {
+                description: "Loading Please wait!",
+            },
+        ],
+    },
+});
+
+let eventReceived; // Holds the resolve function of the promise
+const waitForEvent = new Promise((resolve) => {
+    eventReceived = resolve; // Set the resolve function for later
+});
+
+onMounted(() => {
+    window.Echo.private(`treasury-report.${page.auth.user.user_id}`).listen(
+        "TreasuryReportEvent",
+        (e) => {
+            items.value = e;
+            
+            if (e.percentage === 100 ||(formState.store !== 'all' && e.data.active === 3)) {
+                eventReceived();
+            }
+        }
+    );
+});
+
+onBeforeUnmount(() => {
+    leaveChannel();
+});
+
+const leaveChannel = () => {
+    window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);
+};
+
+const formState = useForm("post", route("treasury.reports.generate.gc"), {
     reportType: [],
     transactionDate: "",
     store: null,
@@ -146,18 +223,25 @@ const handleStore = (val) => {
     formState.store = val;
     formState.validate("store");
 };
-const onSubmit = () => {
+const onSubmit = async () => {
     formState
         .submit({
             responseType: "blob",
         })
-        .then((response: AxiosResponse) => {
+        .then(async (response: AxiosResponse) => {
+            loadingProgress.value = true;
+            await waitForEvent;
+
             const file = new Blob([response.data], { type: "application/pdf" });
             const fileURL = URL.createObjectURL(file);
             window.open(fileURL, "_blank"); // Open the PDF in a new tab
         })
-        .catch((error) => {
-            alert("An error occurred.");
+        .catch(() => {
+            notification.error({
+                message: "Error",
+                description:
+                    "Something Went wrong, please check all the fields!",
+            });
         });
 };
 const labelCol = { style: { width: "150px" } };
