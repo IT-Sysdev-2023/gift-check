@@ -26,6 +26,13 @@ Setup
 - cp .env.example .env
 - php artisan key:generate
 
+for running in development
+when using sail:
+sail up
+sail bun dev
+sail artisan queue:listen
+sail aritsan reverb:start
+
 ## GC Sponsors
 
 We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
