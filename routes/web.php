@@ -736,12 +736,14 @@ Route::prefix('store-accounting')
 
 
                         Route::get('spgc-approved', [StoreAccountingController::class, 'SPGCApproved'])->name('SPGCApproved');
-                        Route::get('generate-excel-dummy', [StoreAccountingController::class, 'SPGCExcel'])->name('SPGCApprovedExcel');
+                        Route::get('generate-excel-perCustomer', [StoreAccountingController::class, 'SPGCExcel'])->name('SPGCApprovedExcel');
                         Route::get('spgc-approved-submit', [StoreAccountingController::class, 'SPGCApprovedSubmit'])->name('SPGCApprovedSubmit');
+                        Route::get('generate-excel-perBarcode', [StoreAccountingController::class, 'SPGCApprovedExcelPerBarcode'])->name('SPGCApprovedExcelPerBarcode');
 
 
                         Route::get('spgc-release', [StoreAccountingController::class, 'SPGCRelease'])->name('SPGCRelease');
                         Route::get('spgc-release-submit', [StoreAccountingController::class, 'SPGCReleasedSubmit'])->name('SPGCReleasedSubmit');
+                        Route::get('spgc-release-excel', [StoreAccountingController::class, 'releaseExcel'])->name('releaseExcel');
 
 
                         Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');

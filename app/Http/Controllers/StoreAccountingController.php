@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\ExcelExport;
+// use App\Exports\ExcelExport;
+use App\Exports\SPGCApprovedExcel\ExcelExport;
+use App\Exports\SPGCApprovedExcel\perBarcodeExcel;
+use App\Exports\SPGCReleasedExcel\releasePerCustomer;
 use Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -1924,9 +1927,11 @@ class StoreAccountingController extends Controller
     {
 
         return Inertia::render('StoreAccounting/SPGC_Approved', [
-            'records' => $this->SPGCApprovedSubmit($request)
+            'records' => $this->SPGCApprovedSubmit($request),
+            'message' => $this->SPGCExcel($request)
         ]);
     }
+
 
     public function SPGCApprovedSubmit(Request $request)
     {
@@ -1963,7 +1968,7 @@ class StoreAccountingController extends Controller
                         ->orWhereRaw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') LIKE ?", ["%$searchTerm%"]);
                 });
             })
-          
+
             ->groupBy(
                 'special_external_gcrequest.spexgc_num',
                 'special_external_gcrequest.spexgc_datereq',
@@ -2026,27 +2031,66 @@ class StoreAccountingController extends Controller
         ];
     }
 
-    public function SPGCRelease()
+    public function SPGCExcel(Request $request)
+
     {
-        return Inertia::render('StoreAccounting/SPGC_Release');
+        // dd($request->toArray());
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+
+        if (!$startDate || !$endDate) {
+            $message = 'Please select Start date and End date first';
+
+            return (array) [
+                'message' => $message
+            ];
+        }
+
+        return Excel::download(new ExcelExport($request->toArray()), 'users.xlsx');
     }
 
+    public function SPGCApprovedExcelPerBarcode(Request $request)
+    {
+        // dd();
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+
+        if (!$startDate || !$endDate) {
+            $message = 'Please select Start date and End date first';
+
+            return (array) [
+                'message' => $message
+            ];
+        }
+        return Excel::download(new perBarcodeExcel($request->toArray()), 'users.xlsx');
+    }
+
+    public function SPGCRelease(Request $request)
+    {
+        return Inertia::render('StoreAccounting/SPGC_Release', [
+            'data' => $this->SPGCReleasedSubmit($request)
+        ]);
+    }
 
     public function SPGCReleasedSubmit(Request $request)
     {
         $startDateData = $request->input('startDate');
         $endDateData = $request->input('endDate');
+        // dd($endDateData = $request->input('endDate'));
 
-        if ($startDateData && $endDateData) {
-            $formattedStartDate = Carbon::createFromFormat('Y-m-d', $startDateData)->format('F d, Y');
-            $formattedEndDate = Carbon::createFromFormat('Y-m-d', $endDateData)->format('F d, Y');
-            $selectedDate = [
-                'start' => $formattedStartDate,
-                'end' => $formattedEndDate
-            ];
-            $fromDate = "{$selectedDate['start']}";
-            $toDate = "{$selectedDate['end']}";
-        }
+        $searchQuery = $request->input('perCustomer', '');
+        // dd($searchQuery);
+
+        // if ($startDateData && $endDateData) {
+        //     $formattedStartDate = Carbon::createFromFormat('Y-m-d', $startDateData)->format('F d, Y');
+        //     $formattedEndDate = Carbon::createFromFormat('Y-m-d', $endDateData)->format('F d, Y');
+        //     $selectedDate = [
+        //         'start' => $formattedStartDate,
+        //         'end' => $formattedEndDate
+        //     ];
+        //     $fromDate = "{$selectedDate['start']}";
+        //     $toDate = "{$selectedDate['end']}";
+        // }
 
         $datacus1 = DB::table('special_external_gcrequest_emp_assign')
             ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
@@ -2066,6 +2110,13 @@ class StoreAccountingController extends Controller
                 'special_external_customer.spcus_acctname',
                 'special_external_customer.spcus_companyname'
             )
+            ->when($searchQuery, function ($query) use ($searchQuery) {
+                $query->where(function ($query) use ($searchQuery) {
+                    $query->where('special_external_gcrequest.spexgc_num', 'like', '%' . $searchQuery . '%')
+                        ->orWhereRaw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') LIKE ?", ["%$searchQuery%"])
+                        ->orWhere('special_external_customer.spcus_companyname', 'like', '%' . $searchQuery . '%');
+                });
+            })
             ->groupBy(
                 'special_external_gcrequest.spexgc_num',
                 'special_external_gcrequest.spexgc_datereq',
@@ -2077,7 +2128,8 @@ class StoreAccountingController extends Controller
             )
 
             ->orderBy('special_external_gcrequest.spexgc_datereq')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         $databar1 = DB::table('special_external_gcrequest_emp_assign')
             ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
@@ -2098,16 +2150,22 @@ class StoreAccountingController extends Controller
                 DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') as daterel")
             )
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
-        return Inertia::render('StoreAccounting/SPGC_Release', [
+        return (object) [
             'dataCustomer' => $datacus1,
             'dataBarcode' => $databar1,
-            'fromDate' => $fromDate,
-            'endDate' => $toDate,
-
-        ]);
+            'fromDate' => $startDateData,
+            'endDate' => $endDateData,
+        ];
     }
+
+    public function releaseExcel(Request $request){
+        // dd($request->toArray());
+        return Excel::download(new releasePerCustomer($request->toArray()), 'users.xlsx');
+    }
+
     public function DuplicatedBarcodes()
     {
         return Inertia::render('StoreAccounting/DuplicatedBarcode');
@@ -2124,12 +2182,5 @@ class StoreAccountingController extends Controller
     public function checkVarianceSubmit(Request $request)
     {
         dd($request->toArray());
-    }
-
-    public function SPGCExcel(Request $request)
-
-    {
-        // dd();
-        return Excel::download(new ExcelExport($request->toArray()), 'users.xlsx');
     }
 }

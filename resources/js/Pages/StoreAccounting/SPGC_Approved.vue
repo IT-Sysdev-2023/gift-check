@@ -1,6 +1,6 @@
 <template>
     <a-card>
-        <span style="margin-left: 50%; color:#1e90ff; font-weight: bold;">
+        <span style="margin-left: 50%; color:green; font-weight: bold;">
             <LikeOutlined />
 
             APPROVED GC REPORTS
@@ -81,6 +81,7 @@
                                 <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
                                     style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
                             </span>
+        
                             <div style="color:red; margin-left: 40%;">
                                 Table showing per barcode
                             </div>
@@ -148,16 +149,25 @@
                         <span style="margin-left: 5px;">
                             {{ records.toDate }}
                         </span>
+
                         <!-- {{ finalDateSelectedExcel }} -->
                     </span>
                 </div>
             </div>
         </a-card>
+        <!-- <a-button @click="sample">
+            modal
+        </a-button> -->
 
     </a-card>
+    <!-- <a-modal v-model:open="messageModal" @click="ok">
+        <span>
+            {{ message }}
+        </span>
+    </a-modal> -->
 
 
-
+<!-- {{ message }} -->
     <!-- {{ dataBarcode }} -->
     <!-- {{ search }} -->
     <!-- {{ dataCustomer }} -->
@@ -170,17 +180,18 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import { ExclamationCircleOutlined, WindowsFilled } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
-import { Modal } from 'ant-design-vue';
+import { message, Modal } from 'ant-design-vue';
 
 export default {
     components: { Pagination },
     layout: AuthenticatedLayout,
     props: {
         records: Object,
+        message: Array
     },
     data() {
         return {
-
+            messageModal: false,
             spgcApprovedSearch: this.dataBarcode,
             spgcApprovedSearchPerCustomer: this.dataCustomer,
             spgcform: {
@@ -292,11 +303,11 @@ export default {
 
 
         },
-        genEx() {
-            window.location.href = route('storeaccounting.dummy', {
-                datatype: 'sending',
-            });
-        },
+        // genEx() {
+        //     window.location.href = route('storeaccounting.dummy', {
+        //         datatype: 'sending',
+        //     });
+        // },
 
         generatePdf() {
             Modal.confirm({
@@ -318,7 +329,7 @@ export default {
             Modal.confirm({
                 title: 'Confirmation',
                 icon: createVNode(ExclamationCircleOutlined),
-                content: 'Are you sure you want to generate EXCEL per customer?',
+                content: 'Are you sure you want to generate EXCEL per CUSTOMER?',
                 okText: 'Yes',
                 okType: 'danger',
                 cancelText: 'No',
@@ -337,12 +348,12 @@ export default {
             Modal.confirm({
                 title: 'Confirmation',
                 icon: createVNode(ExclamationCircleOutlined),
-                content: 'Are you sure you want to generate EXCEL per barcode?',
+                content: 'Are you sure you want to generate EXCEL per BARCODE?',
                 okText: 'Yes',
                 okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    window.location.href = route('storeaccounting.SPGCApprovedExcel', {
+                    window.location.href = route('storeaccounting.SPGCApprovedExcelPerBarcode', {
                         startDate: this.records.fromDate,
                         endDate: this.records.toDate
                     })
@@ -351,7 +362,14 @@ export default {
                     console.log('Cancel');
                 },
             });
-        }
+        },
+        // sample() {
+        //     this.messageModal = true;
+        // },
+        // ok(e) {
+        //     console.log(e);
+        //     this.messageModal = false;
+        // }
 
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exports;
+namespace App\Exports\SPGCApprovedExcel;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -9,7 +9,8 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-class ExcelExport implements FromCollection, WithHeadings, WithStyles, WithTitle
+use  Maatwebsite\Excel\Concerns\ShouldAutoSize;
+class ExcelExport implements FromCollection, WithHeadings, WithStyles, WithTitle, ShouldAutoSize
 {
     /**
      * @return \Illuminate\Support\Collection
@@ -34,36 +35,41 @@ class ExcelExport implements FromCollection, WithHeadings, WithStyles, WithTitle
 
         ];
     }
+    
     public function styles(Worksheet $sheet)
     {
-        $rowcount =$this->getDataPerCustomer($this->requestedData)->count() + 1;
+        return [
+            1 => ['font' => ['bold' => 'true','Sans-serif' => 'true']],
+            'A1:Z1000' => ['alignment'=>['horizontal' => 'left']]
+        ];
+        // $rowcount =$this->getDataPerCustomer($this->requestedData)->count() + 1;
 
-        $colcount = count($this->headings());
+        // $colcount = count($this->headings());
 
-        $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colcount);
+        // $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colcount);
 
-        $range = 'A1:' . $lastColumn . $rowcount;
+        // $range = 'A1:' . $lastColumn . $rowcount;
 
-        $sheet->getStyle(1)->applyFromArray([
-            'font' => [
-                'bold' => true,
-            ],
-        ]);
+        // $sheet->getStyle(1)->applyFromArray([
+        //     'font' => [
+        //         'bold' => true,
+        //     ],
+        // ]);
 
 
-        $sheet->getStyle($range)->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => ['argb' => '000000'],
-                ],
-            ],
-        ]);
+        // $sheet->getStyle($range)->applyFromArray([
+        //     'borders' => [
+        //         'allBorders' => [
+        //             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        //             'color' => ['argb' => '000000'],
+        //         ],
+        //     ],
+        // ]);
 
-        for ($col = 1; $col <= $colcount; $col++) {
-            $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-            $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
-        }
+        // for ($col = 1; $col <= $colcount; $col++) {
+        //     $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+        //     $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
+        // }
 
 
     }
