@@ -184,6 +184,7 @@ declare module 'vue' {
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     Dashboard: typeof import('./resources/js/Pages/Dashboard.vue')['default']
     DashboardOutlined: typeof import('@ant-design/icons-vue')['DashboardOutlined']
+    DatabaseOutlined: typeof import('@ant-design/icons-vue')['DatabaseOutlined']
     DeleteUserForm: typeof import('./resources/js/Pages/Profile/Partials/DeleteUserForm.vue')['default']
     DenominationSetup: typeof import('./resources/js/Pages/Admin/Masterfile/DenominationSetup.vue')['default']
     Description: typeof import('./resources/js/Pages/Treasury/Description.vue')['default']
@@ -203,6 +204,7 @@ declare module 'vue' {
     Errors: typeof import('./resources/js/Pages/Finance/Cards/Errors.vue')['default']
     ExclamationCircleFilled: typeof import('@ant-design/icons-vue')['ExclamationCircleFilled']
     ExclamationCircleOutlined: typeof import('@ant-design/icons-vue')['ExclamationCircleOutlined']
+    ExportOutlined: typeof import('@ant-design/icons-vue')['ExportOutlined']
     EyeFilled: typeof import('@ant-design/icons-vue')['EyeFilled']
     EyeOutlined: typeof import('@ant-design/icons-vue')['EyeOutlined']
     FarmersMarket: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/FarmersMarket.vue')['default']
@@ -387,6 +389,7 @@ declare module 'vue' {
     SetupReceiving: typeof import('./resources/js/Pages/Iad/SetupReceiving.vue')['default']
     SetupRecommendation: typeof import('./resources/js/Pages/RetailGroup/SetupRecommendation.vue')['default']
     SetupStore: typeof import('./resources/js/Pages/Admin/Masterfile/SetupStore.vue')['default']
+    ShoppingOutlined: typeof import('@ant-design/icons-vue')['ShoppingOutlined']
     ShrinkOutlined: typeof import('@ant-design/icons-vue')['ShrinkOutlined']
     SmileTwoTone: typeof import('@ant-design/icons-vue')['SmileTwoTone']
     SoldGc: typeof import('./resources/js/Pages/Retail/Cards/SoldGc.vue')['default']
@@ -449,6 +452,7 @@ declare module 'vue' {
     VerifyEmail: typeof import('./resources/js/Pages/Auth/VerifyEmail.vue')['default']
     ViewAllocatedGcModal: typeof import('./resources/js/Components/Treasury/ViewAllocatedGcModal.vue')['default']
     ViewApprovedGcTable: typeof import('./resources/js/Pages/Iad/Dashboard/ViewApprovedGcTable.vue')['default']
+    WarningOutlined: typeof import('@ant-design/icons-vue')['WarningOutlined']
     Welcome: typeof import('./resources/js/Pages/Welcome.vue')['default']
   }
 }
