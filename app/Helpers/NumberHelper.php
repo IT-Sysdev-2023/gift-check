@@ -14,9 +14,9 @@ class NumberHelper
         return (float) str_replace(['₱', ','], '', $number);
     }
 
-    public static function format(mixed $number): string
+    public static function format(mixed $number, int $scale =2): string
     {
-        return number_format($number, 2);
+        return number_format($number, $scale);
     }
     public static function toLocaleString(mixed $number): string
     {
@@ -40,7 +40,7 @@ class NumberHelper
             return 0;
         }
         $percent = ($current / $total) * 100;
-        return (float) self::format($percent);
+        return (float) self::format($percent, 0);
     }
 
     public static function leadingZero(int $num, string $format = "%04d")

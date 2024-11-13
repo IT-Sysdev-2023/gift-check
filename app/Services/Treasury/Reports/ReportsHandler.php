@@ -2,9 +2,11 @@
 
 namespace App\Services\Treasury\Reports;
 
+use App\Events\TreasuryReportEvent;
 use App\Helpers\NumberHelper;
 use App\Models\InstitutEod;
 use App\Models\StoreEod;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 
 class ReportsHandler extends ReportGenerator
@@ -41,6 +43,7 @@ class ReportsHandler extends ReportGenerator
 
 	protected function eodRecords()
 	{
+		$this->dispatchProgressEod(2);
 		$query = InstitutEod::select('ieod_by', 'ieod_id', 'ieod_num', 'ieod_date')
 			->with('user:user_id,firstname,lastname');
 
@@ -50,13 +53,19 @@ class ReportsHandler extends ReportGenerator
 			$query->whereDate('ieod_date', $this->transactionDate);
 		}
 
-		return $query->limit(10)->get()->transform(function ($item) {
+		$percentage = 1;
+
+		$this->progress['progress']['totalRow'] = $query->count();
+
+		return $query->cursor()->map(function ($item) use (&$percentage) {
+			//Dispatch
+			$this->progress['progress']['currentRow'] = $percentage++;
+			TreasuryReportEvent::dispatch(Auth::user(), $this->progress);
+
             $item->fullname = $item->user->fullname;
-            $item->ieod_date = Date::parse($item->ieod_date)->toFormattedDateString();
+            $item->date = $item->ieod_date->toDayDateTimeString();
             return $item;
         });
-
-
 	}
 
 	protected function gcRevalidation(): array

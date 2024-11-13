@@ -34,8 +34,6 @@ class ReportService extends ReportsHandler
 			"store" => 'required',
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
-
-
 		//Dont touch this otherwise you're f*cked!
 		//Dont put this in LazyCollection otherwise the realtime fire twice
 		$storeData = [];
@@ -66,28 +64,23 @@ class ReportService extends ReportsHandler
 
 	public function generateEodPdf(Request $request)
 	{
+
 		$request->validate([
 			"transactionDate" => "required",
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
-
-		// $data = InstitutEod::select('ieod_by', 'ieod_id', 'ieod_num', 'ieod_date')
-		// ->with('user:user_id,firstname,lastname')
-		// ->orderByDesc('ieod_date')
-		// ->filter($request)
-		// ->paginate()
-		// ->withQueryString();
-
+		
 		$storeData = [];
 
-			$storeData = $this->handleEodRecords($request);
-		
-		dd($storeData);
-		$pdf = Pdf::loadView('pdf.treasuryEodReport', ['data' =>  $storeData]);
+		$storeData = $this->handleEodRecords($request);
+
+		if ($storeData === 'error') {
+			return response()->json(['message' => 'No Record Found in selected transaction date'], 404);
+		}
+		$pdf = Pdf::loadView('pdf.treasuryEodReport', ['data' => $storeData]);
 
 		return $pdf->output();
 	}
-
 	private function handleRecords(Request $request, string $store)
 	{
 		$record = collect();
@@ -125,14 +118,13 @@ class ReportService extends ReportsHandler
 
 		if ($this->hasEodRecords($request)) {
 			$record->put('records', $this->eodRecords());
-
 		} else {
 			return 'error';
 		}
 
 		return [
-			'header' => $this->pdfHeaderDate($request),
-			'records' => [...$record],
+			'header' => $this->pdfEodHeaderDate(),
+			...$record,
 		];
 	}
 }

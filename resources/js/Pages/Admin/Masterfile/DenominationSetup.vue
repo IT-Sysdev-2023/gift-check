@@ -82,7 +82,7 @@
                 placeholder="FAD Item #" />
         </a-form-item>
     </a-modal>
-    {{ data }}
+    <!-- {{ data }} -->
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';

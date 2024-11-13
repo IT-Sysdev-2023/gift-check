@@ -14,27 +14,8 @@
                 :wrapper-col="wrapperCol"
                 @finish="onSubmit"
             >
-                <a-form-item
-                    label="Store"
-                    has-feedback
-                    :validate-status="formState.invalid('store') ? 'error' : ''"
-                    :help="formState.errors.store"
-                >
-                    <ant-select :options="store" @handle-change="handleStore" />
-                </a-form-item>
-               
-                <a-form-item
-                    label="Transaction Date"
-                    has-feedback
-                    :validate-status="
-                        formState.invalid('transactionDate') ? 'error' : ''
-                    "
-                    :help="formState.errors.transactionDate"
-                >
-                    <a-radio-group
-                        v-model:value="formState.transactionDate"
-                        @change="formState.validate('transactionDate')"
-                    >
+                <a-form-item label="Transaction Date" has-feedback>
+                    <a-radio-group v-model:value="formState.transactionDate">
                         <a-radio value="today">Today</a-radio>
                         <a-radio value="yesterday">Yesterday</a-radio>
                         <a-radio value="thisWeek">This Week</a-radio>
@@ -48,14 +29,8 @@
                 <a-form-item
                     label="Date Range"
                     v-if="formState.transactionDate === 'dateRange'"
-                    has-feedback
-                    :validate-status="formState.invalid('date') ? 'error' : ''"
-                    :help="formState.errors.date"
                 >
-                    <a-range-picker
-                        v-model:value="formState.date"
-                        @change="formState.validate('date')"
-                    />
+                    <a-range-picker v-model:value="formState.date" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
                     <a-button type="primary" html-type="submit"
@@ -84,9 +59,9 @@
                         }"
                         :percent="parseFloat(items.percentage)"
                     />
-                    <a-typography-title :level="3">{{
-                        items.data.store
-                    }}</a-typography-title>
+                    <a-typography-title :level="3">
+                        Please wait....
+                    </a-typography-title>
                 </div>
                 <a-steps
                     :current="items.data.active"
@@ -97,13 +72,10 @@
                             title: 'Checking Records',
                         },
                         {
-                            title: 'Generating Sales Data',
-                        },
-                        {
-                            title: 'Generating Footer Data',
-                        },
-                        {
                             title: 'Generating Header',
+                        },
+                        {
+                            title: 'Generating Records',
                         },
                     ]"
                 />
@@ -115,9 +87,7 @@
 
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { AxiosResponse } from "axios";
-import { Dayjs } from "dayjs";
-import { useForm } from "laravel-precognition-vue";
+import axios, { AxiosResponse } from "axios";
 import { PageWithSharedProps } from "@/types/index";
 import { usePage } from "@inertiajs/vue3";
 import { onBeforeUnmount, onMounted, ref } from "vue";
@@ -126,10 +96,6 @@ import { notification } from "ant-design-vue";
 const page = usePage<PageWithSharedProps>().props;
 defineProps<{
     title: string;
-    store: {
-        label: string;
-        value: string;
-    }[];
 }>();
 
 // interface FormState {
@@ -144,8 +110,6 @@ const items = ref<{
     percentage: string;
     data: {
         active: number;
-
-        store: string;
         isDone: boolean;
         info: {
             description: string;
@@ -155,7 +119,6 @@ const items = ref<{
     percentage: "",
     data: {
         active: 0,
-        store: "",
         isDone: false,
         info: [
             {
@@ -165,9 +128,9 @@ const items = ref<{
     },
 });
 
-let eventReceived; // Holds the resolve function of the promise
+let eventReceived;
 const waitForEvent = new Promise((resolve) => {
-    eventReceived = resolve; // Set the resolve function for later
+    eventReceived = resolve;
 });
 
 onMounted(() => {
@@ -175,13 +138,46 @@ onMounted(() => {
         "TreasuryReportEvent",
         (e) => {
             items.value = e;
-            
-            if (e.percentage === 100 ||(formState.store !== 'all' && e.data.active === 3)) {
+            if (e.percentage === 100 && e.data.active === 2) {
                 eventReceived();
             }
         }
     );
 });
+
+const formState = ref({
+    transactionDate: "",
+    date: null,
+});
+
+const onSubmit = async () => {
+    
+    axios
+        .get(route("treasury.reports.generate.eod"), {
+            params: { ...formState.value },
+            responseType: 'blob'
+        })
+        .then(async (response: AxiosResponse) => {
+            loadingProgress.value = true;
+
+            await waitForEvent;
+
+            const file = new Blob([response.data], { type: "application/pdf" });
+            const fileURL = URL.createObjectURL(file);
+            window.open(fileURL, "_blank"); // Open the PDF in a new tab
+        })
+        .catch((e) => {
+            let message = 'please check all the fields';
+            if(e.status === 404){
+                message = 'there was no transaction on this selected date!';
+            }
+            notification.error({
+                message: "Error",
+                description:
+                    `Something Went wrong,  ${message}`,
+            });
+        });
+};
 
 onBeforeUnmount(() => {
     leaveChannel();
@@ -191,36 +187,6 @@ const leaveChannel = () => {
     window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);
 };
 
-const formState = useForm("post", route("treasury.reports.generate.eod"), {
-    transactionDate: "",
-    store: null,
-    date: null,
-});
-const handleStore = (val) => {
-    formState.store = val;
-    formState.validate("store");
-};
-const onSubmit = async () => {
-    formState
-        .submit({
-            responseType: "blob",
-        })
-        .then(async (response: AxiosResponse) => {
-            loadingProgress.value = true;
-            await waitForEvent;
-
-            const file = new Blob([response.data], { type: "application/pdf" });
-            const fileURL = URL.createObjectURL(file);
-            window.open(fileURL, "_blank"); // Open the PDF in a new tab
-        })
-        .catch(() => {
-            notification.error({
-                message: "Error",
-                description:
-                    "Something Went wrong, please check all the fields!",
-            });
-        });
-};
 const labelCol = { style: { width: "150px" } };
 const wrapperCol = { span: 14 };
 </script>

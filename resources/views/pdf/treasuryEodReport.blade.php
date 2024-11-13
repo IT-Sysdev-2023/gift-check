@@ -71,9 +71,8 @@
 <body>
         <div class="container">
             <div class="header">
-                <h2>{{$data['header']['store']}}</h2>
                 <h1>ALTURAS GROUP OF COMPANIES</h1>
-                <h3>GC Sales Report</h3>
+                <h3>GC EOD Report</h3>
             </div>
 
             <div class="report-dates">
@@ -91,9 +90,9 @@
                     <th>Eod By</th>
                 </tr>
 
-                @foreach ($data['data']['records'] as $item)
+                @foreach ($data['records'] as $item)
                     <tr>
-                        <td class="left">{{$item->ieod_date}}</td>
+                        <td class="left">{{$item->date}}</td>
                         <td>{{$item->ieod_num}}</td>
                         <td>{{$item->fullname}}</td>
                     </tr>
@@ -101,9 +100,6 @@
             </table>
 
         </div>
-        <!-- @if ($key < count($data['stores']) - 1)
-        <div class="page-break"></div>
-        @endif -->
 </body>
 
 </html>

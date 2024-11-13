@@ -25,7 +25,6 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
 
     public function __construct($requestData)
     {
-        // dd($requestData);
         $this->requestData = $requestData;
     }
     public function title(): string
@@ -36,18 +35,18 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
     public function headings(): array
     {
         return [
-            'Date',
-            'Barcode',
-            'Denomination',
-            'Amount Redeem',
-            'Balance',
-            'Customer Name',
-            'Business Unit',
-            'Terminal #',
-            'Validation',
-            'Gc Type',
-            'Date',
-            'Time',
+            'DATE',
+            'BARCODE',
+            'DENOMINATION',
+            'AMOUNT REDEEM',
+            'BALANCE',
+            'CUSTOMER NAME',
+            'BUSINESS UNIT',
+            'TERMINAL #',
+            'VALIDATION',
+            'GC TYPE',
+            'DATE',
+            'TIME',
         ];
     }
 
@@ -70,6 +69,9 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
         ]);
 
         $sheet->getStyle($range)->applyFromArray([
+            'font' => [
+                'size' => 9,
+            ],
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,

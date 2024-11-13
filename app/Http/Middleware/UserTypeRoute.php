@@ -19,6 +19,7 @@ class UserTypeRoute
         '9' => 'accounting.dashboard',
         '10' => 'iad.dashboard',
         '12' => 'eod.dashboard',
+        '13' => 'storeaccounting.dashboard',
     ];
     /**
      * Handle an incoming request.
