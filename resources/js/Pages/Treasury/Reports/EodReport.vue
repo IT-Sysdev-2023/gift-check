@@ -36,7 +36,6 @@
                     <a-button type="primary" html-type="submit" :loading="loadingButton"
                         >Generate</a-button
                     >
-                    <a-button style="margin-left: 10px">Cancel</a-button>
                 </a-form-item>
             </a-form>
         </a-card>

@@ -10,7 +10,7 @@ import FinanceSideBar from "@/Components/FinanceSideBar.vue";
 import EodSidebar from "@/Components/EodSidebar.vue";
 import CustodianSideBar from "@/Components/CustodianSideBar.vue";
 import RetailGroupSidebar from "@/Components/RetailGroupSidebar.vue";
-import TreasurySideBar from "@/Components/TreasurySidebar.vue";
+import TreasurySideBar from "@/Components/TreasurySideBar.vue";
 import RetailSidebar from "@/Components/RetailSidebar.vue";
 import { computed } from "vue";
 

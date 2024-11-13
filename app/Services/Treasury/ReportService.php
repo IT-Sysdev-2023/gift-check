@@ -68,9 +68,6 @@ class ReportService extends ReportsHandler
 			"transactionDate" => "required",
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
-
-		$storeData = [];
-
 		$storeData = $this->handleEodRecords($request);
 
 		if ($storeData === 'error') {
