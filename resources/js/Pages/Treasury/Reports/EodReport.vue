@@ -33,7 +33,7 @@
                     <a-range-picker v-model:value="formState.date" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-                    <a-button type="primary" html-type="submit"
+                    <a-button type="primary" html-type="submit" :loading="loadingButton"
                         >Generate</a-button
                     >
                     <a-button style="margin-left: 10px">Cancel</a-button>
@@ -41,12 +41,12 @@
             </a-form>
         </a-card>
         <a-modal
-            v-model:open="loadingProgress"
+            :open="loadingProgress"
             :footer="null"
             centered
             width="700px"
             title="Generating Report"
-            :afterClose="leaveChannel"
+            :closable="false"
         >
             <div class="flex justify-center flex-col items-center">
                 <div class="py-8 flex flex-col items-center space-y-3">
@@ -104,7 +104,7 @@ defineProps<{
 //     store: string;
 //     date: Dayjs;
 // }
-
+const loadingButton = ref<boolean>(false);
 const loadingProgress = ref<boolean>(false);
 const items = ref<{
     percentage: string;
@@ -139,6 +139,7 @@ onMounted(() => {
         (e) => {
             items.value = e;
             if (e.percentage === 100 && e.data.active === 2) {
+                loadingButton.value = false;
                 eventReceived();
             }
         }
@@ -151,7 +152,7 @@ const formState = ref({
 });
 
 const onSubmit = async () => {
-    
+    loadingButton.value = true;
     axios
         .get(route("treasury.reports.generate.eod"), {
             params: { ...formState.value },

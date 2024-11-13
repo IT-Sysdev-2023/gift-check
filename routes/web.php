@@ -419,7 +419,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('gc-report', [ReportsController::class,'gcReport'])->name('index');
             Route::get('eod-report', [ReportsController::class,'eodReport'])->name('eod');
-            Route::post('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc')->middleware([HandlePrecognitiveRequests::class]);
+            Route::get('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc');
             Route::get('generate-eod-report', [ReportsController::class,'generateEodReports'])->name('generate.eod');
 
         });

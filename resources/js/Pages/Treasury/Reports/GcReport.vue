@@ -14,26 +14,11 @@
                 :wrapper-col="wrapperCol"
                 @finish="onSubmit"
             >
-                <a-form-item
-                    label="Store"
-                    has-feedback
-                    :validate-status="formState.invalid('store') ? 'error' : ''"
-                    :help="formState.errors.store"
-                >
+                <a-form-item label="Store">
                     <ant-select :options="store" @handle-change="handleStore" />
                 </a-form-item>
-                <a-form-item
-                    label="Report Type"
-                    has-feedback
-                    :validate-status="
-                        formState.invalid('reportType') ? 'error' : ''
-                    "
-                    :help="formState.errors.reportType"
-                >
-                    <a-checkbox-group
-                        v-model:value="formState.reportType"
-                        @change="formState.validate('reportType')"
-                    >
+                <a-form-item label="Report Type">
+                    <a-checkbox-group v-model:value="formState.reportType">
                         <a-checkbox value="gcSales" name="type"
                             >Gc Sales</a-checkbox
                         >
@@ -45,18 +30,8 @@
                         >
                     </a-checkbox-group>
                 </a-form-item>
-                <a-form-item
-                    label="Transaction Date"
-                    has-feedback
-                    :validate-status="
-                        formState.invalid('transactionDate') ? 'error' : ''
-                    "
-                    :help="formState.errors.transactionDate"
-                >
-                    <a-radio-group
-                        v-model:value="formState.transactionDate"
-                        @change="formState.validate('transactionDate')"
-                    >
+                <a-form-item label="Transaction Date">
+                    <a-radio-group v-model:value="formState.transactionDate">
                         <a-radio value="today">Today</a-radio>
                         <a-radio value="yesterday">Yesterday</a-radio>
                         <a-radio value="thisWeek">This Week</a-radio>
@@ -70,14 +45,8 @@
                 <a-form-item
                     label="Date Range"
                     v-if="formState.transactionDate === 'dateRange'"
-                    has-feedback
-                    :validate-status="formState.invalid('date') ? 'error' : ''"
-                    :help="formState.errors.date"
                 >
-                    <a-range-picker
-                        v-model:value="formState.date"
-                        @change="formState.validate('date')"
-                    />
+                    <a-range-picker v-model:value="formState.date" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
                     <a-button type="primary" html-type="submit"
@@ -88,12 +57,12 @@
             </a-form>
         </a-card>
         <a-modal
-            v-model:open="loadingProgress"
+            :open="loadingProgress"
             :footer="null"
             centered
             width="700px"
             title="Generating Report"
-            :afterClose="leaveChannel"
+            :closable="false"
         >
             <div class="flex justify-center flex-col items-center">
                 <div class="py-8 flex flex-col items-center space-y-3">
@@ -137,7 +106,7 @@
 
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Dayjs } from "dayjs";
 import { useForm } from "laravel-precognition-vue";
 import { PageWithSharedProps } from "@/types/index";
@@ -197,35 +166,32 @@ onMounted(() => {
         "TreasuryReportEvent",
         (e) => {
             items.value = e;
-            
-            if (e.percentage === 100 ||(formState.store !== 'all' && e.data.active === 3)) {
+            if (
+                e.percentage === 100 ||
+                (formState.value.store !== "all" && e.data.active === 3)
+            ) {
                 eventReceived();
             }
         }
     );
 });
 
-onBeforeUnmount(() => {
-    leaveChannel();
-});
-
-const leaveChannel = () => {
-    window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);
+const handleStore = (val) => {
+    formState.value.store = val;
 };
 
-const formState = useForm("post", route("treasury.reports.generate.gc"), {
+const formState = ref({
     reportType: [],
     transactionDate: "",
     store: null,
     date: null,
 });
-const handleStore = (val) => {
-    formState.store = val;
-    formState.validate("store");
-};
 const onSubmit = async () => {
-    formState
-        .submit({
+    axios
+        .get(route("treasury.reports.generate.gc"), {
+            params: {
+                ...formState.value,
+            },
             responseType: "blob",
         })
         .then(async (response: AxiosResponse) => {
@@ -236,14 +202,45 @@ const onSubmit = async () => {
             const fileURL = URL.createObjectURL(file);
             window.open(fileURL, "_blank"); // Open the PDF in a new tab
         })
-        .catch(() => {
+        .catch((e) => {
+            let message = "please check all the fields";
+            if (e.status === 404) {
+                message = "there was no transaction on this selected date!";
+            }
             notification.error({
                 message: "Error",
-                description:
-                    "Something Went wrong, please check all the fields!",
+                description: `Something Went wrong,  ${message}`,
             });
         });
+    // formState
+    //     .submit({
+    //         responseType: "blob",
+    //     })
+    // .then(async (response: AxiosResponse) => {
+    //     loadingProgress.value = true;
+    //     await waitForEvent;
+
+    //     const file = new Blob([response.data], { type: "application/pdf" });
+    //     const fileURL = URL.createObjectURL(file);
+    //     window.open(fileURL, "_blank"); // Open the PDF in a new tab
+    // })
+    // .catch(() => {
+    //     notification.error({
+    //         message: "Error",
+    //         description:
+    //             "Something Went wrong, please check all the fields!",
+    //     });
+    // });
 };
+
+onBeforeUnmount(() => {
+    leaveChannel();
+});
+
+const leaveChannel = () => {
+    window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);
+};
+
 const labelCol = { style: { width: "150px" } };
 const wrapperCol = { span: 14 };
 </script>
