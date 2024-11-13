@@ -27,11 +27,11 @@ Setup
 - php artisan key:generate
 
 for running in development
-when using sail:
-sail up
-sail bun dev
-sail artisan queue:listen
-sail aritsan reverb:start
+in Sail/Docker:
+- sail up
+- sail bun dev
+- sail artisan queue:listen
+- sail aritsan reverb:start
 
 ## GC Sponsors
 
