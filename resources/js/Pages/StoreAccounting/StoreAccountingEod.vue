@@ -1,0 +1,227 @@
+<template>
+
+    <div style="font-weight: bold; margin-left: 70%;">
+        Search:
+        <a-input allow-clear v-model:value="searchTerm" placeholder="Input search here!"
+            style="width:60%; border: 1px solid #1e90ff;" />
+    </div>
+
+    <span style="font-weight: bold;">
+        Select
+        <a-select id="select_entries" v-model:value="dataForSelectEntries.select_entries" placeholder="10"
+            @change="dashboardViewSelectEntries" style="background-color: #1e90ff; border: 1px solid #1e90ff">
+            <a-select-option value="10">10</a-select-option>
+            <a-select-option value="20">20</a-select-option>
+            <a-select-option value="50">50</a-select-option>
+            <a-select-option value="100">100</a-select-option>
+
+        </a-select>
+        entries
+    </span>
+
+
+
+    <a-tabs>
+        <a-tab-pane key="EOD View" style="background-color: #b0c4de;">
+            <div style="padding: 20px; font-weight: bold;">
+                EOD Date: {{ selectedEODDate }}
+            </div>
+            <a-table :data-source="data.data" :columns="searchColumns" :pagination="false">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'search'">
+                        <a-button title="search" @click="searchEODView(record)"
+                            style="color:white; background-color: #1e90ff;" class=" me-2 me-sm-5">
+                            <SearchOutlined />
+                        </a-button>
+                    </template>
+                </template>
+            </a-table>
+            <pagination :datarecords="data" :id="selectedEODDate" class="mt-5" />
+        </a-tab-pane>
+    </a-tabs>
+
+    <a-modal v-model:open="modalForGCNavisionPOSTransactions" style="width:100%;" @ok="modalBackButton">
+        <div style="font-weight: bold; font-size: large; background-color: #b0c4de; padding:20px;">
+            GC Navision POS Transactions - Barcode # {{ selectedBarcode }}
+        </div>
+        <a-table size="small" :data-source="modalData" :columns="GCNavisionPOSTransactions" />
+    </a-modal>
+    <a-modal v-model:open="errorModal"
+        style=" width:50%; align-items: center; font-weight: bold; text-align: center; font-size: 50px;">
+        {{ errorMessage }}
+    </a-modal>
+    <!-- {{ errorMessage }} -->
+    <!-- {{ data }} -->
+</template>
+
+<script>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Modal } from 'ant-design-vue';
+import { DatabaseOutlined } from '@ant-design/icons-vue';
+import Pagination from '@/Components/Pagination.vue';
+// import ErrorMessage from '@/Pages/StoreAccounting/ErrorMessage.vue';
+export default {
+    layout: AuthenticatedLayout,
+    props: {
+        data: Object,
+        pagination: String,
+        search: String,
+        eodDate: String,
+        ideod: Number
+    },
+    // components: {
+    //     ErrorMessage,
+    // },
+
+    data() {
+        return {
+            errorMessage: null,
+            dataForSelectEntries: {
+                select_entries: this.pagination
+            },
+
+            modalData: {},
+            selectedBarcode: {},
+            searchTerm: this.search,
+            selectedEODDate: this.eodDate,
+            modalForGCNavisionPOSTransactions: false,
+            errorModal: false,
+
+            GCNavisionPOSTransactions: [
+                {
+                    title: 'Textfile Line',
+                    dataIndex: 'seodtt_line',
+                    key: 'seodtt_line'
+                },
+                {
+                    title: 'Credit Limit',
+                    dataIndex: 'seodtt_creditlimit'
+                },
+                {
+                    title: 'Cred. Pur. Amt + Add-on',
+                    dataIndex: 'seodtt_credpuramt'
+                },
+                {
+                    title: 'Add-on Amt',
+                    dataIndex: 'seodtt_addonamt'
+                },
+                {
+                    title: 'Remaining Balance',
+                    dataIndex: 'seodtt_balance'
+                },
+                {
+                    title: 'Transaction #',
+                    dataIndex: 'seodtt_transno'
+                },
+                {
+                    title: 'Time of Cred Tranx',
+                    dataIndex: 'seodtt_timetrnx'
+                },
+                {
+                    title: 'Bus. Unit',
+                    dataIndex: 'seodtt_bu'
+                },
+                {
+                    title: 'Terminal #',
+                    dataIndex: 'seodtt_terminalno'
+                },
+                {
+                    title: 'Ackslip #',
+                    dataIndex: 'seodtt_ackslipno'
+                },
+                {
+                    title: 'seodtt_crditpurchaseamt',
+                    dataIndex: 'seodtt_crditpurchaseamt'
+                }
+
+
+            ],
+            searchColumns: [
+                {
+                    title: 'Barcode #',
+                    dataIndex: 'vs_barcode'
+
+                },
+                {
+                    title: 'Denomination',
+                    dataIndex: 'vs_tf_denomination'
+
+                },
+                {
+                    title: 'Date/Time Verified',
+                    dataIndex: 'storeEodDateTime'
+                },
+                {
+                    title: 'Verified By',
+                    dataIndex: 'users_fullname'
+                },
+                {
+                    title: 'Customer Name',
+                    dataIndex: 'cus_fullname'
+                },
+                {
+                    title: 'Store',
+                    dataIndex: 'store_name'
+                },
+                {
+                    title: 'Balance',
+                    dataIndex: 'vs_tf_balance'
+                },
+                {
+                    title: 'Action',
+                    dataIndex: 'search'
+                }
+
+            ],
+        }
+
+    },
+    watch: {
+        searchTerm(search) {
+            this.$inertia.get(route('storeaccounting.storeeod', this.ideod), {
+                search: search,
+
+                eodDate: this.selectedEODDate,
+
+            }, {
+                preserveState: true,
+
+            })
+        }
+    },
+
+    methods: {
+        dashboardViewSelectEntries(value) {
+            this.$inertia.get(route('storeaccounting.storeeod', this.ideod), {
+                value: value,
+                eodDate: this.selectedEODDate
+            }, {
+                preserveState: true,
+
+            })
+
+        },
+        async searchEODView(rec) {
+            try {
+                const response = await axios.get(route('storeaccounting.GCNavisionPOSTransactions', rec.vs_barcode));
+                this.modalData = response.data;
+                this.selectedBarcode = rec.vs_barcode
+                this.modalForGCNavisionPOSTransactions = true;
+                this.errorMessage = null;
+
+            } catch (error) {
+                this.errorMessage = error.response?.data?.message || 'KUPAL KABA?';
+                this.errorModal = true;
+            }
+            
+        },
+
+        modalBackButton() {
+            this.modalForGCNavisionPOSTransactions = false
+        },
+        
+    }
+
+}
+
+</script>
