@@ -165,6 +165,8 @@ onMounted(() => {
         "TreasuryReportEvent",
         (e) => {
             items.value = e;
+
+            console.log(e);
             if (
                 e.percentage === 100 ||
                 (formState.value.store !== "all" && e.data.active === 3)
