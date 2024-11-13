@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Exports\IadVerifiedExports\PerGcTypeAndBuExports;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use App\Exports\IadVerifiedExports\VerifiedPerDayExport;
@@ -26,8 +27,9 @@ class VerifiedGcMultipleSheetExport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            new VerifiedPerDayExport($this->requestData),
-            new VerifiedSummaryExports($this->requestData),
+            // new VerifiedPerDayExport($this->requestData),
+            // new VerifiedSummaryExports($this->requestData),
+            new PerGcTypeAndBuExports($this->requestData),
         ];
     }
 }
