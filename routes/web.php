@@ -2,6 +2,7 @@
 
 use App\Console\Commands\ProcessFiles;
 use App\Http\Controllers\AccountingController;
+use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\CouponController;
@@ -461,8 +462,13 @@ Route::prefix('accounting')->name('accounting.')->group(function () {
         Route::get('payment-viewing', [AccountingController::class, 'paymentViewing'])->name('viewing');
         Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
     });
-});
 
+    Route::prefix('reports')->name('reports.')->group(function() {
+        Route::get('spgc-report-approved', [AccountingReportController::class, 'spgcApprovedReport'])->name('special.gc.approved');
+        Route::get('generate-spgc-report-approved', [AccountingReportController::class, 'generateApprovedReport'])->name('generate.special.gc.approved');
+        Route::get('spgc-report-released', [AccountingReportController::class, 'spgcReleasedReport'])->name('special.gc.released');
+    });
+});
 
 //Finance
 Route::prefix('finance')->group(function () {
