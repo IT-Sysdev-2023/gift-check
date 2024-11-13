@@ -562,4 +562,9 @@ class FinanceController extends Controller
             'title' => 'Not Found!'
         ], 404);
     }
+
+    public function list()
+    {
+        dd(1);
+    }
 }
