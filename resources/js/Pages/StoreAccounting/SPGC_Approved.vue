@@ -25,6 +25,7 @@
                                     Generate PDF
                                 </a-button>
                             </span>
+
                             <span style="font-weight: bold; margin-left: 3%;">
                                 <a-button @click="generateExcel" style="background-color:green; color:white ">
                                     <FileExcelOutlined />
@@ -33,7 +34,8 @@
                             </span>
                             <span style="font-weight: bold; margin-left: 30%;">
                                 Search:
-                                <a-input allow-clear v-model:value="spgcApprovedSearchPerCustomer" placeholder="Input search here!"
+                                <a-input allow-clear v-model:value="spgcApprovedSearchPerCustomer"
+                                    placeholder="Input search here!"
                                     style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
                             </span>
                             <!-- <span style="font-weight: bold; margin-left: 3%;">
@@ -42,6 +44,17 @@
                                     Generate EXCEL Dummy
                                 </a-button>
                             </span> -->
+                            <div style="margin-top: 10px;margin-left: 30px;">
+                                <span style="color:red; font-style: oblique;">
+                                    <span v-if="message">
+                                        <WarningOutlined />
+                                    </span>
+                                    {{ this.message }}
+                                </span>
+                            </div>
+
+
+
 
                             <div style="color:red; margin-left: 40%;">
                                 Table showing per customer
@@ -81,7 +94,16 @@
                                 <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
                                     style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
                             </span>
-        
+                            <div style="margin-top: 10px;margin-left: 30px;">
+                                <span style="color:red; font-style: oblique;">
+                                    <span v-if="message">
+                                        <WarningOutlined />
+                                    </span>
+                                    {{ this.message }}
+                                </span>
+                            </div>
+
+
                             <div style="color:red; margin-left: 40%;">
                                 Table showing per barcode
                             </div>
@@ -167,11 +189,7 @@
     </a-modal> -->
 
 
-<!-- {{ message }} -->
-    <!-- {{ dataBarcode }} -->
-    <!-- {{ search }} -->
-    <!-- {{ dataCustomer }} -->
-    <!-- {{ periodcover }}  -->
+    <!-- {{ message }} -->
 </template>
 
 <script>
@@ -187,10 +205,10 @@ export default {
     layout: AuthenticatedLayout,
     props: {
         records: Object,
-        message: Array
     },
     data() {
         return {
+            message:'',
             messageModal: false,
             spgcApprovedSearch: this.dataBarcode,
             spgcApprovedSearchPerCustomer: this.dataCustomer,
@@ -334,6 +352,11 @@ export default {
                 okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
+                    if (this.records.fromDate === null || this.records.toDate === null) {
+                        console.log("Please select date first");
+                        this.message = "Please select start date and end date first!";
+                        return;
+                    }
                     window.location.href = route('storeaccounting.SPGCApprovedExcel', {
                         startDate: this.records.fromDate,
                         endDate: this.records.toDate
@@ -353,6 +376,10 @@ export default {
                 okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
+                    if (this.records.fromDate === null || this.records.toDate === null) {
+                        this.message = "Please select start date and end date first!";
+                        return;
+                    }
                     window.location.href = route('storeaccounting.SPGCApprovedExcelPerBarcode', {
                         startDate: this.records.fromDate,
                         endDate: this.records.toDate

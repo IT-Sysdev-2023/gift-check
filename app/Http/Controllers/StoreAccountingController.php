@@ -1927,8 +1927,7 @@ class StoreAccountingController extends Controller
     {
 
         return Inertia::render('StoreAccounting/SPGC_Approved', [
-            'records' => $this->SPGCApprovedSubmit($request),
-            'message' => $this->SPGCExcel($request)
+            'records' => $this->SPGCApprovedSubmit($request)
         ]);
     }
 
@@ -2035,16 +2034,16 @@ class StoreAccountingController extends Controller
 
     {
         // dd($request->toArray());
-        $startDate = $request->startDate;
-        $endDate = $request->endDate;
+        // $startDate = $request->startDate;
+        // $endDate = $request->endDate;
 
-        if (!$startDate || !$endDate) {
-            $message = 'Please select Start date and End date first';
+        // if (!$startDate || !$endDate) {
+        //     $message = 'Please select Start date and End date first';
 
-            return (array) [
-                'message' => $message
-            ];
-        }
+        //     return (array) [
+        //         'message' => $message
+        //     ];
+        // }
 
         return Excel::download(new ExcelExport($request->toArray()), 'users.xlsx');
     }
@@ -2052,16 +2051,16 @@ class StoreAccountingController extends Controller
     public function SPGCApprovedExcelPerBarcode(Request $request)
     {
         // dd();
-        $startDate = $request->startDate;
-        $endDate = $request->endDate;
+        // $startDate = $request->startDate;
+        // $endDate = $request->endDate;
 
-        if (!$startDate || !$endDate) {
-            $message = 'Please select Start date and End date first';
+        // if (!$startDate || !$endDate) {
+        //     $message = 'Please select Start date and End date first';
 
-            return (array) [
-                'message' => $message
-            ];
-        }
+        //     return (array) [
+        //         'message' => $message
+        //     ];
+        // }
         return Excel::download(new perBarcodeExcel($request->toArray()), 'users.xlsx');
     }
 
@@ -2164,6 +2163,10 @@ class StoreAccountingController extends Controller
     public function releaseExcel(Request $request){
         // dd($request->toArray());
         return Excel::download(new releasePerCustomer($request->toArray()), 'users.xlsx');
+    }
+
+    public function releasePerBarcodeExcel(Request $request){
+        return Excel::download(new )
     }
 
     public function DuplicatedBarcodes()

@@ -751,6 +751,7 @@ Route::prefix('store-accounting')
                         Route::get('spgc-release', [StoreAccountingController::class, 'SPGCRelease'])->name('SPGCRelease');
                         Route::get('spgc-release-submit', [StoreAccountingController::class, 'SPGCReleasedSubmit'])->name('SPGCReleasedSubmit');
                         Route::get('spgc-release-excel', [StoreAccountingController::class, 'releaseExcel'])->name('releaseExcel');
+                        Route::get('spgc-release-perBarcode-excel', [StoreAccountingController::class, 'releasePerBarcodeExcel'])->name('releasePerBarcodeExcel');
 
 
                         Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');
