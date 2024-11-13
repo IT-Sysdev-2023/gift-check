@@ -412,7 +412,8 @@ class FinanceController extends Controller
                     ->update([
                         'spexgc_status' => 'cancelled',
                         'cancelRemarks' => $request->formData['cancelledRemarks'],
-                        'cancelledBy' => $request->formData['cancelledBy']
+                        'cancelledBy' => $request->formData['cancelledBy'],
+                        'cancelledDate' => now()
                     ]);
                 return back()->with([
                     'type' => 'success',
@@ -565,6 +566,13 @@ class FinanceController extends Controller
 
     public function list()
     {
-        dd(1);
+        $data = SpecialExternalGcrequest::where('spexgc_status', 'cancelled')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', 'special_external_gcrequest.spexgc_company')
+            ->get();
+
+        return inertia('Marketing/specialgc/Cancelledspexgc', [
+            'data' => $data
+        ]);
+
     }
 }
