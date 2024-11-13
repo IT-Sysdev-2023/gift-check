@@ -428,6 +428,8 @@ declare module 'vue' {
     SpecialExternalGcSetup: typeof import('./resources/js/Pages/Treasury/Masterfile/SpecialExternalGcSetup.vue')['default']
     SpecialExtPayment: typeof import('./resources/js/Pages/Treasury/Transactions/SpecialGcPayment/SpecialExtPayment.vue')['default']
     SpecialGcApprovalForm: typeof import('./resources/js/Pages/Finance/SpecialGcApprovalForm.vue')['default']
+    SpecialGcApprovedReport: typeof import('./resources/js/Pages/Accounting/Reports/SpecialGcApprovedReport.vue')['default']
+    SpecialGcApprovedReports: typeof import('./resources/js/Pages/Accounting/Reports/SpecialGcApprovedReports.vue')['default']
     SpecialGcPending: typeof import('./resources/js/Pages/Finance/SpecialGcPending.vue')['default']
     SpecialGcRequestHolder: typeof import('./resources/js/Pages/Custodian/SpecialGcRequestHolder.vue')['default']
     SpecialGcRequestSetup: typeof import('./resources/js/Pages/Custodian/SpecialGcRequestSetup.vue')['default']

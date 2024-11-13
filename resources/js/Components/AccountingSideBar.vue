@@ -72,10 +72,10 @@ const page = usePage<PageWithSharedProps>().props;
                 </span>
             </template>
             <a-menu-item key="spgcapproved">
-                <DollarOutlined /> SPGC Approved
+                <Link :href="route('accounting.reports.special.gc.approved')"><DollarOutlined /> SPGC Approved</Link>
             </a-menu-item>
             <a-menu-item key="spgcreleased">
-                <DollarOutlined /> SPGC Released
+                <Link :href="route('accounting.reports.special.gc.released')"><DollarOutlined /> SPGC Released</Link>
             </a-menu-item>
         </a-sub-menu>
     </div>
