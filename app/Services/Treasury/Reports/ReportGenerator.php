@@ -61,6 +61,12 @@ class ReportGenerator
 
 		TreasuryReportEvent::dispatch(Auth::user(), $this->progress);
 	}
+	public function dispatchProgressEod($descrip)
+	{
+		$this->progress['active'] = $descrip;
+
+		TreasuryReportEvent::dispatch(Auth::user(), $this->progress);
+	}
 	protected function setStore($store)
 	{
 		$this->store = $store;
@@ -105,8 +111,6 @@ class ReportGenerator
 	}
 	protected function pdfHeaderDate(Request $request)
 	{
-
-
 		$this->dispatchProgress(ReportHelper::GENERATING_HEADER);
 		$store = Store::where('store_id', $this->store)->value('store_name');
 
@@ -119,6 +123,19 @@ class ReportGenerator
 
 		$header->put('transactionDate', $transDateHeader);
 
+
+		return $header;
+	}
+
+	protected function pdfEodHeaderDate(){
+		
+		$header = collect([
+			'reportCreated' => now()->toFormattedDateString(),
+		]);
+
+		$transDateHeader = ReportHelper::transactionDateLabel($this->isDateRange, $this->transactionDate);
+
+		$header->put('transactionDate', $transDateHeader);
 
 		return $header;
 	}
@@ -211,6 +228,7 @@ class ReportGenerator
 
 	protected function hasEodRecords(Request $request)
 	{
+		$this->dispatchProgressEod(ReportHelper::CHECKING_RECORDS);
 		if ($this->isDateRange) {
 			$query = InstitutEod::whereBetween('ieod_date', $this->transactionDate);
 		} else {
@@ -229,7 +247,7 @@ class ReportGenerator
 		)
 			->whereHas(
 				'transactionStore',
-				fn(Builder $q) => $q->where('trans_store', $this->store)->when(
+				fn(Builder $q): Builder => $q->where('trans_store', $this->store)->when(
 					$this->isDateRange,
 					fn(Builder $q) => $q->whereBetween('trans_datetime', $this->transactionDate),
 					fn(Builder $q) => $q->whereDate('trans_datetime', $this->transactionDate)
