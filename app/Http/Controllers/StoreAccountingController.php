@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+// use App\Exports\ExcelExport;
+use App\Exports\SPGCApprovedExcel\ExcelExport;
+use App\Exports\SPGCApprovedExcel\perBarcodeExcel;
+use App\Exports\SPGCReleasedExcel\releasePerCustomer;
 use Exception;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Carbon\Carbon;
 use App\Models\User;
 use Inertia\Inertia;
@@ -30,6 +37,7 @@ use App\Models\StoreEodTextfileTransaction;
 use App\Models\SpecialExternalGcrequestItem;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StoreAccountingController extends Controller
 {
@@ -1861,14 +1869,43 @@ class StoreAccountingController extends Controller
         return Inertia::render('StoreAccounting/VerifiedGCReport');
     }
 
+    public function verifiedGcSubmit(Request $request)
+    {
+
+        dd($request->toArray());
+    }
+
+    public function verifiedGcYearlySubmit(Request $request)
+    {
+        dd($request->toArray());
+    }
     public function storeGCPurchasedReport()
     {
         return Inertia::render('StoreAccounting/StoreGCPurchased');
     }
 
+    public function billingMonthlySubmit(Request $request)
+    {
+        dd($request->toArray());
+    }
+
+    public function billingYearlySubmit(Request $request)
+    {
+        dd($request->toArray());
+    }
     public function redeemReport()
     {
         return Inertia::render('StoreAccounting/SPGCRedeemReport');
+    }
+
+    public function monthlyRedeemSubmit(Request $request)
+    {
+        dd($request->toArray());
+    }
+
+    public function yearlyRedeemSubmit(Request $request)
+    {
+        dd($request->toArray());
     }
 
     public function verifiedStore()
@@ -1876,30 +1913,34 @@ class StoreAccountingController extends Controller
         return Inertia::render('StoreAccounting/VerifiedStore');
     }
 
+    public function puchasedMonthlySubmit(Request $request)
+    {
+        dd($request->toArray());
+    }
+
+    public function purchasedYearlySubmit(Request $request)
+    {
+        dd($request->toArray());
+    }
+
     public function SPGCApproved(Request $request)
     {
 
-        return Inertia::render('StoreAccounting/SPGC_Approved');
+        return Inertia::render('StoreAccounting/SPGC_Approved', [
+            'records' => $this->SPGCApprovedSubmit($request),
+            'message' => $this->SPGCExcel($request)
+        ]);
     }
+
 
     public function SPGCApprovedSubmit(Request $request)
     {
-       
+        // dd();
         $startDateData = $request->input('spgcStartDate');
         $endDateData = $request->input('spgcEndDate');
 
-        if ($startDateData && $endDateData) {
-            $formattedStartDate = Carbon::createFromFormat('Y-m-d', $startDateData)->format('F d, Y');
-            $formattedEndDate = Carbon::createFromFormat('Y-m-d', $endDateData)->format('F d, Y');
-            $selectedDate = [
-                'start' => $formattedStartDate,
-                'end' => $formattedEndDate
-            ];
-            $fromDate = "From: {$selectedDate['start']} ";
-            $toDate = "To: {$selectedDate['end']} ";
-
-
-        }
+        $searchTerm = $request->input('customerSearch', '');
+        // dd($searchQuery = $request->input('customerSearch', ''));
 
 
         $datacus1 = DB::table('special_external_gcrequest_emp_assign')
@@ -1920,6 +1961,162 @@ class StoreAccountingController extends Controller
                 'special_external_customer.spcus_acctname',
                 'special_external_customer.spcus_companyname'
             )
+            ->when($searchTerm, function ($query) use ($searchTerm) {
+                $query->where(function ($query) use ($searchTerm) {
+                    $query->where('spcus_companyname', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('spexgc_num', 'like', '%' . $searchTerm . '%')
+                        ->orWhereRaw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') LIKE ?", ["%$searchTerm%"]);
+                });
+            })
+
+            ->groupBy(
+                'special_external_gcrequest.spexgc_num',
+                'special_external_gcrequest.spexgc_datereq',
+                'approved_request.reqap_date',
+                'reqby.firstname',
+                'reqby.lastname',
+                'special_external_customer.spcus_acctname',
+                'special_external_customer.spcus_companyname'
+            )
+
+            ->orderByDesc('special_external_gcrequest.spexgc_datereq')
+            ->paginate(10)
+            ->withQueryString();
+
+
+        $searchQuery = $request->input('search', '');
+
+
+        $databar1 = DB::table('special_external_gcrequest_emp_assign')
+            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->where('special_external_gcrequest_emp_assign.spexgc_status', '!=', 'inactive')
+            ->whereBetween(DB::raw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d')"), [$startDateData, $endDateData])
+            ->select(
+                'special_external_gcrequest_emp_assign.spexgcemp_denom',
+                DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname,
+                 ' ',special_external_gcrequest_emp_assign.spexgcemp_mname,
+                 ' ',special_external_gcrequest_emp_assign.spexgcemp_lname ) AS customer_name"),
+                'special_external_gcrequest_emp_assign.voucher',
+                'special_external_gcrequest_emp_assign.spexgcemp_extname',
+                'special_external_gcrequest_emp_assign.spexgcemp_barcode',
+                'special_external_gcrequest.spexgc_num',
+                DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') as datereq"),
+                DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') as daterel")
+            )
+            ->when($searchQuery, function ($query) use ($searchQuery) {
+                $query->where(function ($query) use ($searchQuery) {
+                    $query->where('spexgcemp_barcode', 'like', '%' . $searchQuery . '%')
+                        ->orWhereRaw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname,
+                                        ' ',special_external_gcrequest_emp_assign.spexgcemp_mname,
+                                        ' ',special_external_gcrequest_emp_assign.spexgcemp_lname) LIKE ? ", ["%$searchQuery%"])
+                        ->orWhere('spexgcemp_denom', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('spexgc_num', 'like', '%' . $searchQuery . '%')
+                        ->orWhereRaw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') LIKE ?",  ["%$searchQuery%"])
+                        ->orWhereRaw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') LIKE ?", ["%$searchQuery%"]);
+                });
+            })
+            ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
+            ->paginate(10)
+            ->withQueryString();
+
+
+
+        return (object) [
+            'dataCustomer' => $datacus1,
+            'dataBarcode' => $databar1,
+            'fromDate' => $startDateData,
+            'toDate' => $endDateData
+        ];
+    }
+
+    public function SPGCExcel(Request $request)
+
+    {
+        // dd($request->toArray());
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+
+        if (!$startDate || !$endDate) {
+            $message = 'Please select Start date and End date first';
+
+            return (array) [
+                'message' => $message
+            ];
+        }
+
+        return Excel::download(new ExcelExport($request->toArray()), 'users.xlsx');
+    }
+
+    public function SPGCApprovedExcelPerBarcode(Request $request)
+    {
+        // dd();
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+
+        if (!$startDate || !$endDate) {
+            $message = 'Please select Start date and End date first';
+
+            return (array) [
+                'message' => $message
+            ];
+        }
+        return Excel::download(new perBarcodeExcel($request->toArray()), 'users.xlsx');
+    }
+
+    public function SPGCRelease(Request $request)
+    {
+        return Inertia::render('StoreAccounting/SPGC_Release', [
+            'data' => $this->SPGCReleasedSubmit($request)
+        ]);
+    }
+
+    public function SPGCReleasedSubmit(Request $request)
+    {
+        $startDateData = $request->input('startDate');
+        $endDateData = $request->input('endDate');
+        // dd($endDateData = $request->input('endDate'));
+
+        $searchQuery = $request->input('perCustomer', '');
+        // dd($searchQuery);
+
+        // if ($startDateData && $endDateData) {
+        //     $formattedStartDate = Carbon::createFromFormat('Y-m-d', $startDateData)->format('F d, Y');
+        //     $formattedEndDate = Carbon::createFromFormat('Y-m-d', $endDateData)->format('F d, Y');
+        //     $selectedDate = [
+        //         'start' => $formattedStartDate,
+        //         'end' => $formattedEndDate
+        //     ];
+        //     $fromDate = "{$selectedDate['start']}";
+        //     $toDate = "{$selectedDate['end']}";
+        // }
+
+        $datacus1 = DB::table('special_external_gcrequest_emp_assign')
+            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
+            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->join('users as reqby', 'reqby.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+            ->where('special_external_gcrequest_emp_assign.spexgc_status', '!=', 'inactive')
+            ->whereBetween(DB::raw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d')"), [$startDateData, $endDateData])
+            ->select(
+                DB::raw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom), 0.00) as totdenom"),
+                DB::raw("IFNULL(COUNT(special_external_gcrequest_emp_assign.spexgcemp_barcode), 0) as totcnt"),
+                'special_external_gcrequest.spexgc_num',
+                DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') as datereq"),
+                DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') as daterel"),
+                DB::raw("CONCAT(reqby.firstname, ' ', reqby.lastname) as trby"),
+                'special_external_customer.spcus_acctname',
+                'special_external_customer.spcus_companyname'
+            )
+            ->when($searchQuery, function ($query) use ($searchQuery) {
+                $query->where(function ($query) use ($searchQuery) {
+                    $query->where('special_external_gcrequest.spexgc_num', 'like', '%' . $searchQuery . '%')
+                        ->orWhereRaw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') LIKE ?", ["%$searchQuery%"])
+                        ->orWhere('special_external_customer.spcus_companyname', 'like', '%' . $searchQuery . '%');
+                });
+            })
             ->groupBy(
                 'special_external_gcrequest.spexgc_num',
                 'special_external_gcrequest.spexgc_datereq',
@@ -1931,32 +2128,9 @@ class StoreAccountingController extends Controller
             )
 
             ->orderBy('special_external_gcrequest.spexgc_datereq')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
-        // $searchData = $request->input('search', '');
-        // // dd($searchData);
-
-        // if ($searchData) {
-        //     $datacus1 = $datacus1->where(function ($query) use ($searchData) {
-        //         if (!empty($searchData['companyName'])) {
-        //             $query->where('special_external_customer.spcus_companyname', 'like', '%' . $searchData['companyName'] . '%');
-        //         }
-
-        //         if (!empty($searchData['startDate']) && !empty($searchData['endDate'])) {
-        //             $query->whereBetween('special_external_gcrequest.spexgc_datereq', [$searchData['startDate'], $searchData['endDate']]);
-        //         } elseif (!empty($searchData['startDate'])) {
-        //             $query->where('special_external_gcrequest.spexgc_datereq', '>=', $searchData['startDate']);
-        //         } elseif (!empty($searchData['endDate'])) {
-        //             $query->where('special_external_gcrequest.spexgc_datereq', '<=', $searchData['endDate']);
-        //         }
-        //     });
-        // }
-
-        // Add ordering and retrieve the results
-     
-
-
-        
         $databar1 = DB::table('special_external_gcrequest_emp_assign')
             ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
             ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
@@ -1976,147 +2150,22 @@ class StoreAccountingController extends Controller
                 DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') as daterel")
             )
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
-        return Inertia::render('StoreAccounting/SPGC_Approved', [
+        return (object) [
             'dataCustomer' => $datacus1,
             'dataBarcode' => $databar1,
-            'fromDate' => $fromDate,
-            'toDate' => $toDate
-
-        ]);
+            'fromDate' => $startDateData,
+            'endDate' => $endDateData,
+        ];
     }
 
-    // public function ExcelApprovedSubmit(Request $request)
-    // {
-    //     // dd();
-    //     $startDateData = $request->input('spgcStartDate');
-    //     $endDateData = $request->input('spgcEndDate');
-
-    //     if ($startDateData && $endDateData) {
-    //         $formattedStartDate = Carbon::createFromFormat('Y-m-d', $startDateData)->format('F d, Y');
-    //         $formattedEndDate = Carbon::createFromFormat('Y-m-d', $endDateData)->format('F d, Y');
-    //         $selectedDate = [
-    //             'start' => $formattedStartDate,
-    //             'end' => $formattedEndDate
-    //         ];
-    //         $finalDateSelected = "From: {$selectedDate['start']} To: {$selectedDate['end']}";
-    //     }
-
-    //     $data1 = DB::table('special_external_gcrequest_emp_assign')
-    //         ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-    //         ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
-    //         ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
-    //         ->where('special_external_gcrequest_emp_assign.spexgc_status', '!=', 'inactive')
-    //         ->whereBetween(DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y')"), [$startDateData, $endDateData])
-    //         ->select(
-    //             'special_external_gcrequest_emp_assign.spexgcemp_denom',
-    //             'special_external_gcrequest_emp_assign.spexgcemp_fname',
-    //             'special_external_gcrequest_emp_assign.spexgcemp_lname',
-    //             'special_external_gcrequest_emp_assign.spexgcemp_mname',
-    //             'special_external_gcrequest_emp_assign.spexgcemp_extname',
-    //             'special_external_gcrequest_emp_assign.spexgcemp_barcode',
-    //             'special_external_gcrequest_emp_assign.voucher',
-    //             'special_external_gcrequest.spexgc_num'
-    //         )
-    //         ->orderBy('special_external_gcrequest.spexgc_datereq', 'ASC')
-    //         ->get();
-
-    //     $data2 = DB::table('special_external_gcrequest')
-    //         ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
-    //         ->join('users as reqby', 'reqby.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
-    //         ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
-    //         ->get();
-
-
-    //     return Inertia::render('StoreAccounting/SPGC_Approved', [
-    //         'data1' => $data1,
-    //         'data2' => $data2,
-    //         'finalDateSelectedExcel' => $finalDateSelected
-    //     ]);
-    // }
-
-    public function SPGCRelease()
-    {
-        return Inertia::render('StoreAccounting/SPGC_Release');
+    public function releaseExcel(Request $request){
+        // dd($request->toArray());
+        return Excel::download(new releasePerCustomer($request->toArray()), 'users.xlsx');
     }
 
-
-    public function SPGCReleasedSubmit(Request $request)
-    {
-        $startDateData = $request->input('startDate');
-        $endDateData = $request->input('endDate');
-
-        if ($startDateData && $endDateData) {
-            $formattedStartDate = Carbon::createFromFormat('Y-m-d', $startDateData)->format('F d, Y');
-            $formattedEndDate = Carbon::createFromFormat('Y-m-d', $endDateData)->format('F d, Y');
-            $selectedDate = [
-                'start' => $formattedStartDate,
-                'end' => $formattedEndDate
-            ];
-            $fromDate = "From: {$selectedDate['start']}";
-            $toDate = "To: {$selectedDate['end']}";
-        }
-
-        $datacus1 = DB::table('special_external_gcrequest_emp_assign')
-        ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-        ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
-        ->join('users as reqby', 'reqby.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
-        ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
-        ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
-        ->where('special_external_gcrequest_emp_assign.spexgc_status', '!=', 'inactive')
-        ->whereBetween(DB::raw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d')"), [$startDateData, $endDateData])
-            ->select(
-                DB::raw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom), 0.00) as totdenom"),
-                DB::raw("IFNULL(COUNT(special_external_gcrequest_emp_assign.spexgcemp_barcode), 0) as totcnt"),
-                'special_external_gcrequest.spexgc_num',
-                DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') as datereq"),
-                DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') as daterel"),
-                DB::raw("CONCAT(reqby.firstname, ' ', reqby.lastname) as trby"),
-                'special_external_customer.spcus_acctname',
-                'special_external_customer.spcus_companyname'
-            )
-            ->groupBy(
-                'special_external_gcrequest.spexgc_num',
-                'special_external_gcrequest.spexgc_datereq',
-                'approved_request.reqap_date',
-                'reqby.firstname',
-                'reqby.lastname',
-                'special_external_customer.spcus_acctname',
-                'special_external_customer.spcus_companyname'
-            )
-
-            ->orderBy('special_external_gcrequest.spexgc_datereq')
-            ->get();
-
-        $databar1 = DB::table('special_external_gcrequest_emp_assign')
-        ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-        ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
-        ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
-        ->where('special_external_gcrequest_emp_assign.spexgc_status', '!=', 'inactive')
-        ->whereBetween(DB::raw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d')"), [$startDateData, $endDateData])
-            ->select(
-                'special_external_gcrequest_emp_assign.spexgcemp_denom',
-                DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname,
-                 ' ',special_external_gcrequest_emp_assign.spexgcemp_mname,
-                 ' ',special_external_gcrequest_emp_assign.spexgcemp_lname ) AS customer_name"),
-                'special_external_gcrequest_emp_assign.voucher',
-                'special_external_gcrequest_emp_assign.spexgcemp_extname',
-                'special_external_gcrequest_emp_assign.spexgcemp_barcode',
-                'special_external_gcrequest.spexgc_num',
-                DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') as datereq"),
-                DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') as daterel")
-            )
-            ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
-            ->get();
-
-        return Inertia::render('StoreAccounting/SPGC_Release', [
-            'dataCustomer' => $datacus1,
-            'dataBarcode' => $databar1,
-            'fromDate' => $fromDate,
-            'toDate' => $toDate
-        ]);
-    }
     public function DuplicatedBarcodes()
     {
         return Inertia::render('StoreAccounting/DuplicatedBarcode');
@@ -2128,5 +2177,10 @@ class StoreAccountingController extends Controller
         return Inertia::render('StoreAccounting/CheckVariance', [
             'customer' => $companyName
         ]);
+    }
+
+    public function checkVarianceSubmit(Request $request)
+    {
+        dd($request->toArray());
     }
 }

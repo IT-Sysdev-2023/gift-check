@@ -1,8 +1,8 @@
 <template>
     <a-card>
-        <span style="margin-left: 50%; color: #1e90ff; font-weight: bold">
+        <span style="margin-left: 50%; color: blue; font-weight: bold">
             <ExportOutlined />
-            Release GC Reports
+            RELEASE GC REPORTS
         </span>
         <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc;">
             <a-tabs>
@@ -27,15 +27,22 @@
                                 Generate EXCEL
                             </a-button>
                         </span>
+                        <span style="font-weight: bold; margin-left: 30%;">
+                            Search:
+                            <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
+                                style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
+                        </span>
                         <div style="margin-left: 40%;">
                             <span style="color: red;">
                                 Table showing per customer
                             </span>
                         </div>
                         <div style="margin-top: 20px;">
-                            <a-table :columns="perCustomerReleaseTable" :data-source="dataCustomer" size="small">
+                            <a-table :columns="perCustomerReleaseTable" :data-source="data.dataCustomer.data"
+                                :pagination="false" size="small">
 
                             </a-table>
+                            <pagination :datarecords="data.dataCustomer" class="mt-5" />
                         </div>
                     </a-card>
                 </a-tab-pane>
@@ -56,10 +63,15 @@
                             </a-button>
                         </span>
                         <span style="font-weight: bold; margin-left: 3%;">
-                            <a-button @click="perCustomerExcel" style="background-color:green; color:white ">
+                            <a-button @click="perBarcodeExcel" style="background-color:green; color:white ">
                                 <FileExcelOutlined />
                                 Generate EXCEL
                             </a-button>
+                        </span>
+                        <span style="font-weight: bold; margin-left: 30%;">
+                            Search:
+                            <a-input allow-clear v-model:value="spgcApprovedSearchPerBarcode" placeholder="Input search here!"
+                                style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
                         </span>
                         <div style="margin-left: 40%;">
                             <span style="color: red;">
@@ -67,9 +79,11 @@
                             </span>
                         </div>
                         <div style="margin-top: 20px;">
-                            <a-table :columns="perBarcodeReleaseTable" :data-source="dataBarcode" size="small">
+                            <a-table :columns="perBarcodeReleaseTable" :data-source="data.dataBarcode.data"
+                                :pagination="false" size="small">
 
                             </a-table>
+                            <pagination :datarecords="data.dataBarcode" class="mt-5" />
                         </div>
                     </a-card>
                 </a-tab-pane>
@@ -78,7 +92,7 @@
         </a-card>
 
 
-        <a-card style="width: 12.5%; position: absolute; top: 45px; border: 1px solid #dcdcdc;">
+        <a-card style="width: 15%; position: absolute; top: 45px; border: 1px solid #dcdcdc;">
             <div style="font-weight: bold; font-size: small;">
                 <ExportOutlined />
                 Release GC Reports
@@ -89,7 +103,7 @@
             <div>
                 <a-form-item :validate-status="spgcData.errors.startDate ? 'error' : ''"
                     :help="spgcData.errors.startDate">
-                    <a-date-picker allow-clear v-model:value="spgcData.startDate" style="border:1px solid #1e90ff; width: 100%;">
+                    <a-date-picker allow-clear v-model:value="spgcData.startDate" style="width: 100%;">
                     </a-date-picker>
                 </a-form-item>
             </div>
@@ -98,26 +112,36 @@
             </div>
             <div>
                 <a-form-item :validate-status="spgcData.errors.endDate ? 'error' : ''" :help="spgcData.errors.endDate">
-                    <a-date-picker allow-clear v-model:value="spgcData.endDate" style="border:1px solid #1e90ff; width: 100%;">
+                    <a-date-picker allow-clear v-model:value="spgcData.endDate" style="width: 100%;">
 
                     </a-date-picker>
                 </a-form-item>
             </div>
             <div style="margin-top: 15px;">
-                <a-button style="background-color: #1e90ff; color:white; width: 100%; font-size: 1em;" @click="submitReleaseButton">
+                <a-button style="background-color: #1e90ff; color:white; width: 100%; font-size: 1em;"
+                    @click="submitReleaseButton">
                     <SendOutlined /> Submit
                 </a-button>
             </div>
-            <div style="margin-top: 20%;">
-                    <div style="color:green; font-weight: bold;">
-                        Date Selected:
-                    </div>
+            <div style="margin-top: 15%;">
+                <div style="color:#1e90ff; font-weight: bold;">
+                    Date Selected:
+                </div>
+                <div style="margin-top: 5px;">
                     <span style="color:red;">
                         <div>
-                            {{ fromDate }}
+                            <span style="color:green; font-weight: bold;">
+                                FROM:
+                            </span>
+                            {{ data.fromDate }}
                         </div>
-                        {{ toDate }}
+                        <span style="color:green; font-weight: bold;">
+                            TO:
+                        </span>
+                        {{ data.endDate }}
                     </span>
+                </div>
+
             </div>
 
         </a-card>
@@ -134,19 +158,18 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
 import { Modal } from 'ant-design-vue';
+import Pagination from '@/Components/Pagination.vue';
 
 export default {
+    components: { Pagination },
     layout: AuthenticatedLayout,
     props: {
-        dataCustomer: Object,
-        dataBarcode: Object,
-        // selectedDate: String,
-        fromDate: String,
-        toDate: String
+        data: Object
     },
 
     data() {
         return {
+            spgcApprovedSearch: this.dataCustomer,
             perCustomerReleaseTable: [
                 {
                     title: 'Date Requested',
@@ -172,7 +195,7 @@ export default {
                 },
                 {
                     title: 'Barcode',
-                    dataIndex:'spexgcemp_barcode'
+                    dataIndex: 'spexgcemp_barcode'
                 },
                 {
                     title: 'Denom',
@@ -199,6 +222,22 @@ export default {
             }
         }
     },
+    watch: {
+        spgcApprovedSearch(search) {
+            // alert(1)
+            console.log(search);
+            const searchData = {
+                perCustomer: search,
+                startDate: this.data.fromDate,
+                endDate: this.data.endDate
+            };
+            this.$inertia.get(route('storeaccounting.SPGCRelease', searchData), {
+                
+            }, {
+                preserveState: true
+            });
+        }
+    },
     methods: {
         submitReleaseButton() {
             this.spgcData.errors = {};
@@ -222,7 +261,7 @@ export default {
 
             console.log('data', submitData);
 
-            this.$inertia.get(route('storeaccounting.SPGCReleasedSubmit', submitData));
+            this.$inertia.get(route('storeaccounting.SPGCRelease', submitData));
         },
         perCustumerPdf() {
             Modal.confirm({
@@ -248,8 +287,11 @@ export default {
                 okText: 'Yes',
                 okType: 'danger',
                 cancelText: 'No',
-                onOk() {
-                    console.log('OK');
+                onOk:()=> {
+                    window.location.href = route('storeaccounting.releaseExcel', {
+                        startDate: this.data.fromDate,
+                        endDate: this.data.endDate
+                   })
                 },
                 onCancel() {
                     console.log('Cancel');

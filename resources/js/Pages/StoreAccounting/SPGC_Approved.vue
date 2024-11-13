@@ -1,11 +1,12 @@
 <template>
     <a-card>
-        <span style="margin-left: 50%; color:#1e90ff; font-weight: bold;">
+        <span style="margin-left: 50%; color:green; font-weight: bold;">
             <LikeOutlined />
 
             APPROVED GC REPORTS
         </span>
         <div>
+
             <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc">
                 <a-tabs>
                     <a-tab-pane key="1">
@@ -30,19 +31,29 @@
                                     Generate EXCEL
                                 </a-button>
                             </span>
-                            <!-- <span style="font-weight: bold; margin-left: 30%;">
+                            <span style="font-weight: bold; margin-left: 30%;">
                                 Search:
-                                <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
+                                <a-input allow-clear v-model:value="spgcApprovedSearchPerCustomer" placeholder="Input search here!"
                                     style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
+                            </span>
+                            <!-- <span style="font-weight: bold; margin-left: 3%;">
+                                <a-button @click="genEx" style="background-color:green; color:white ">
+                                    <FileExcelOutlined />
+                                    Generate EXCEL Dummy
+                                </a-button>
                             </span> -->
+
                             <div style="color:red; margin-left: 40%;">
                                 Table showing per customer
                             </div>
                             <div style="margin-top: 20px;">
-                                <a-table :columns="perCustomerTable" :data-source="dataCustomer" size="small">
+                                <!-- {{ dataCustomer }}  -->
+                                <a-table :columns="perCustomerTable" :data-source="records.dataCustomer.data"
+                                    :pagination="false" size="small">
                                 </a-table>
                             </div>
-                            <!-- <pagination :datarecords="dataCustomer" class="mt-5" /> -->
+                            <pagination :datarecords="records.dataCustomer" class="mt-5" />
+
                         </a-card>
                     </a-tab-pane>
                     <a-tab-pane key="2">
@@ -60,74 +71,103 @@
                                 </a-button>
                             </span>
                             <span style="font-weight: bold; margin-left: 3%;">
-                                <a-button @click="generateExcel" style="background-color:green; color:white ">
+                                <a-button @click="generateExcelPerBarcode" style="background-color:green; color:white ">
                                     <FileExcelOutlined />
                                     Generate EXCEL
                                 </a-button>
                             </span>
+                            <span style="font-weight: bold; margin-left: 30%;">
+                                Search:
+                                <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
+                                    style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
+                            </span>
+        
                             <div style="color:red; margin-left: 40%;">
                                 Table showing per barcode
                             </div>
                             <div style="margin-top: 20px;">
-                                <a-table :columns="perBarcodeTable" :data-source="dataBarcode" size="small">
+                                <a-table :columns="perBarcodeTable" :data-source="records.dataBarcode.data"
+                                    :pagination="false" size="small">
                                 </a-table>
                             </div>
+                            <pagination :datarecords="records.dataBarcode" class="mt-5" />
+
 
                         </a-card>
                     </a-tab-pane>
                 </a-tabs>
             </a-card>
+
         </div>
 
-        <a-card style="width:12.5%; border: 1px solid #dcdcdc; position: absolute; top: 45px;">
+        <a-card style="width:15%; border: 1px solid #dcdcdc; position: absolute; top: 45px;">
 
             <div style="font-weight: bold; font-size: small;">
                 <LikeOutlined />
                 Approved GC Reports
 
             </div>
-            
+
             <div style="font-weight: bold; margin-top: 30px;">Start Date:</div>
             <div>
                 <a-form-item for="spgcStartDate" :validate-status="spgcform.errors.spgcStartDate ? 'error' : ''"
                     :help="spgcform.errors.spgcStartDate">
-                    <a-date-picker allow-clear v-model:value="spgcform.spgcStartDate"
-                        style=" border: 1px solid #1e90ff; width:100%;" />
+                    <a-date-picker allow-clear v-model:value="spgcform.spgcStartDate" style=" width:100%;" />
                 </a-form-item>
             </div>
             <div style="font-weight: bold;">End Date:</div>
             <div>
                 <a-form-item for="spgcEndDate" :validate-status="spgcform.errors.spgcEndDate ? 'error' : ''"
                     :help="spgcform.errors.spgcEndDate">
-                    <a-date-picker allow-clear v-model:value="spgcform.spgcEndDate"
-                        style=" border: 1px solid #1e90ff; width: 100%;" />
+                    <a-date-picker allow-clear v-model:value="spgcform.spgcEndDate" style=" width: 100%;" />
                 </a-form-item>
             </div>
 
-            <div style="margin-top: 20%;">
+            <div style="margin-top: 15px;">
                 <a-button style="background-color: #1e90ff; color: white; width: 100%; font-size: 1em;"
                     @click="spgcSubmit">
                     <SendOutlined /> Submit
                 </a-button>
             </div>
-            <div style="margin-top: 20%;">
-                <div style="font-weight: bold; color:green">
+            <div style="margin-top: 15%;">
+                <div style="font-weight: bold; color:#1e90ff">
                     Date Selected:
                 </div>
-                <span style="color:red;">
-                    <div>
-                        {{ fromDate }}
-                    </div>
-                    {{ toDate }}
-                    <!-- {{ finalDateSelectedExcel }} -->
-                </span>
+                <div style="margin-top: 5px;">
+                    <span style="color:red;">
+                        <div>
+                            <span style="color:green; font-weight: bold;">
+                                FROM:
+                            </span>
+                            <span style="margin-left: 5px;">
+                                {{ records.fromDate }}
+                            </span>
+                        </div>
+                        <span style="color:green; font-weight: bold;">
+                            TO:
+                        </span>
+                        <span style="margin-left: 5px;">
+                            {{ records.toDate }}
+                        </span>
+
+                        <!-- {{ finalDateSelectedExcel }} -->
+                    </span>
+                </div>
             </div>
         </a-card>
+        <!-- <a-button @click="sample">
+            modal
+        </a-button> -->
 
     </a-card>
+    <!-- <a-modal v-model:open="messageModal" @click="ok">
+        <span>
+            {{ message }}
+        </span>
+    </a-modal> -->
 
 
-
+<!-- {{ message }} -->
     <!-- {{ dataBarcode }} -->
     <!-- {{ search }} -->
     <!-- {{ dataCustomer }} -->
@@ -138,31 +178,29 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 // import dayjs from 'dayjs';
 import Pagination from '@/Components/Pagination.vue';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { ExclamationCircleOutlined, WindowsFilled } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
-import { Modal } from 'ant-design-vue';
+import { message, Modal } from 'ant-design-vue';
 
 export default {
     components: { Pagination },
     layout: AuthenticatedLayout,
     props: {
-        dataCustomer: Object,
-        dataBarcode: Array,
-        fromDate: String,
-        toDate: String
-        
+        records: Object,
+        message: Array
     },
     data() {
         return {
-
-            spgcApprovedSearch: '',
+            messageModal: false,
+            spgcApprovedSearch: this.dataBarcode,
+            spgcApprovedSearchPerCustomer: this.dataCustomer,
             spgcform: {
                 spgcStartDate: '',
                 spgcEndDate: '',
 
                 errors: {}
             },
-           
+
             perCustomerTable: [
                 {
                     title: 'Date Requested',
@@ -210,18 +248,37 @@ export default {
     watch: {
         spgcApprovedSearch(search) {
             console.log(search);
-            this.$inertia.get(route('storeaccounting.SPGCApprovedSubmit'), {
+            const formData = {
                 search: search,
-                date: this.spgcform
+                spgcStartDate: this.records.fromDate,
+                spgcEndDate: this.records.toDate
+            };
+
+            this.$inertia.get(route('storeaccounting.SPGCApproved', formData), {
+                
             }, {
                 preserveState: true
-            })
+            });
+        },
+        spgcApprovedSearchPerCustomer(search) {
+            console.log(search);
+            const perCustomerSearch = {
+                customerSearch: search,
+                spgcStartDate: this.records.fromDate,
+                spgcEndDate: this.records.toDate
+            };
+            this.$inertia.get(route('storeaccounting.SPGCApproved', perCustomerSearch), {
+                
+            }, {
+                preserveState:true
+            });
         }
 
     },
 
     methods: {
         spgcSubmit() {
+            // alert('kanding')
             this.spgcform.errors = {};
             const { spgcStartDate, spgcEndDate } = this.spgcform;
 
@@ -232,7 +289,6 @@ export default {
             if (!endDate) this.spgcform.errors.spgcEndDate = 'End date field is required.';
 
             if (this.spgcform.errors.spgcStartDate || this.spgcform.errors.spgcEndDate) {
-                console.error('Start Date and End Date are required');
                 return;
             }
 
@@ -241,23 +297,28 @@ export default {
                 spgcEndDate: endDate,
             };
 
-        
+
             console.log('Submitting with values:', submitData);
-            this.$inertia.get(route('storeaccounting.SPGCApprovedSubmit', submitData));
+            this.$inertia.get(route('storeaccounting.SPGCApproved', submitData));
 
 
         },
+        // genEx() {
+        //     window.location.href = route('storeaccounting.dummy', {
+        //         datatype: 'sending',
+        //     });
+        // },
 
         generatePdf() {
             Modal.confirm({
-                title: 'Confirmation',
+                title: 'Notification',
                 icon: createVNode(ExclamationCircleOutlined),
-                content: 'Are you sure you want to generate PDF?',
+                content: 'UNDER MAINTENANCE, STAY TUNE FOR UPCOMING UPDATES!',
                 okText: 'Yes',
                 okType: 'danger',
                 cancelText: 'No',
                 onOk() {
-                    console.log('OK');
+                    console.log('Okay');
                 },
                 onCancel() {
                     console.log('Cancel');
@@ -268,18 +329,47 @@ export default {
             Modal.confirm({
                 title: 'Confirmation',
                 icon: createVNode(ExclamationCircleOutlined),
-                content: 'Are you sure you want to generate EXCEL?',
+                content: 'Are you sure you want to generate EXCEL per CUSTOMER?',
                 okText: 'Yes',
                 okType: 'danger',
                 cancelText: 'No',
-                onOk() {
-                    console.log('OK');
+                onOk: () => {
+                    window.location.href = route('storeaccounting.SPGCApprovedExcel', {
+                        startDate: this.records.fromDate,
+                        endDate: this.records.toDate
+                    })
                 },
                 onCancel() {
                     console.log('Cancel');
                 },
             });
-        }
+        },
+        generateExcelPerBarcode() {
+            Modal.confirm({
+                title: 'Confirmation',
+                icon: createVNode(ExclamationCircleOutlined),
+                content: 'Are you sure you want to generate EXCEL per BARCODE?',
+                okText: 'Yes',
+                okType: 'danger',
+                cancelText: 'No',
+                onOk: () => {
+                    window.location.href = route('storeaccounting.SPGCApprovedExcelPerBarcode', {
+                        startDate: this.records.fromDate,
+                        endDate: this.records.toDate
+                    })
+                },
+                onCancel() {
+                    console.log('Cancel');
+                },
+            });
+        },
+        // sample() {
+        //     this.messageModal = true;
+        // },
+        // ok(e) {
+        //     console.log(e);
+        //     this.messageModal = false;
+        // }
 
     }
 }

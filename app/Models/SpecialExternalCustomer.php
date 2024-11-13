@@ -12,7 +12,7 @@ class SpecialExternalCustomer extends Model
     use HasFactory;
 
     const UPDATED_AT = 'spcus_at';
-    protected $primaryKey = 'spcus_id';
+    // protected $primaryKey = 'spcus_id';
     protected $guarded = [];
     protected $table = 'special_external_customer';
 
