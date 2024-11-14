@@ -503,6 +503,7 @@ Route::prefix('finance')->group(function () {
 
         Route::name('cancelledSpecialExternalGC.')->group(function(){
             Route::get('cancelled-especial-external-gc',[FinanceController::class, 'list'])->name('list');
+            Route::get('view-cancelled-especial-external-gc',[FinanceController::class, 'view'])->name('view');
         });
     });
 
