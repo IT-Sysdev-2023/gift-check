@@ -193,7 +193,7 @@ class InstitutionGcSalesService extends FileHandler
         $checkamt = 0;
         $docname = '';
         $cash = 0;
-        
+
         if ($request->paymentType['type'] === 'cash') {
             $totalamtrec = $request->paymentType['amount'] ?? 0;
             $cash = $totalamtrec;
@@ -301,9 +301,11 @@ class InstitutionGcSalesService extends FileHandler
 
                 $data = $this->dataForPdf($request, $change, $totalamtrec);
                 $request->session()->forget($this->sessionName);
-                $pdf = Pdf::loadView('pdf.institution', ['data' => $data]);
 
+                $pdf = Pdf::loadView('pdf.institution', ['data' => $data]);
                 $pdf->setPaper('A3');
+
+                $this->savePdfFile($request, $request->releasingNo, $pdf->output());
 
                 $stream = base64_encode($pdf->output());
 
@@ -317,14 +319,52 @@ class InstitutionGcSalesService extends FileHandler
 
     }
 
-    public function printAr($id) {
+    public function printAr($id)
+    {
         $this->folderName = "reports/treasury_ar_report";
         return $this->retrieveFile($this->folderName, "arreport{$id}.pdf");
     }
 
-    public function reprint($id) {
-        $this->folderName = "reports/treasury_releasing_institutions";
-        return $this->retrieveFile($this->folderName, "gcinst{$id}.pdf");
+    public function reprint(Request $request, $id)
+    {
+        $getFiles = $this->getFilesFromDirectory();
+
+        $file = collect($getFiles)->filter(function ($file) use ($request, $id) {
+            return Str::startsWith(basename($file), "{$request->user()->user_id}-{$id}");
+        });
+
+        return $this->retrieveFile($this->folderName, basename($file->first()));
+    }
+
+    public function transactionDetails(int|string $id)
+    {
+        $record = InstitutTransaction::select(
+            'institutr_id',
+            'institutr_cusid',
+            'institutr_trby',
+            'institutr_trnum',
+            'institutr_receivedby',
+            'institutr_date',
+            'institutr_remarks',
+            'institutr_paymenttype'
+        )
+            ->where('institutr_id', $id)
+            ->with([
+                'institutCustomer:ins_id,ins_name',
+                'institutPayment:insp_trid,institut_bankname,institut_bankaccountnum,institut_checknumber,institut_amountrec',
+                'user:user_id,firstname,lastname',
+                'institutTransactionItem',
+                'document',
+            ])
+            ->first();
+
+        // Separate query for paginating the relationship
+        $institutTransactionItems = $record->institutTransactionItem()->with('gc.denomination');
+
+        return (object) [
+            'record' => $record,
+            'denomination' => $institutTransactionItems
+        ];
     }
     private function dataForPdf($request, $change, $cash)
     {

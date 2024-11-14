@@ -67,37 +67,15 @@ class InstitutionGcSalesController extends Controller
 
     public function transactionDetails($id)
     {
-        $record = InstitutTransaction::select(
-            'institutr_id',
-            'institutr_cusid',
-            'institutr_trby',
-            'institutr_trnum',
-            'institutr_receivedby',
-            'institutr_date',
-            'institutr_remarks',
-            'institutr_paymenttype'
-        )
-            ->where('institutr_id', $id)
-            ->with([
-                'institutCustomer:ins_id,ins_name',
-                'institutPayment:insp_trid,institut_bankname,institut_bankaccountnum,institut_checknumber,institut_amountrec',
-                'user:user_id,firstname,lastname',
-                'institutTransactionItem',
-                'document',
-            ])
-            ->first();
-
-        // Separate query for paginating the relationship
-        $institutTransactionItems = $record->institutTransactionItem()->with('gc.denomination')->paginate(5);
-
-        return response()->json(['details' => new InstitutTransactionResource($record), 'denominationTable' => $institutTransactionItems]);
+        $data = $this->institutionGcSalesService->transactionDetails($id);
+        return response()->json(['details' => new InstitutTransactionResource($data->record), 'denominationTable' => $data->denomination->paginate(5)]);
     }
 
     public function printAr($id){
         return $this->institutionGcSalesService->printAr($id);
     }
 
-    public function reprint($id){
-        return $this->institutionGcSalesService->reprint($id);
+    public function reprint(Request $request, $id){
+        return $this->institutionGcSalesService->reprint($request, $id);
     }
 }

@@ -73,7 +73,7 @@
                             type="primary"
                             size="small"
                             ghost
-                            @click="reprint(record.institutrId)"
+                            @click="reprint(record.institutrTrnum)"
                         >
                             <template #icon>
                                 <AuditOutlined />
