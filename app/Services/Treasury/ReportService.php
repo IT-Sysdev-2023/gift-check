@@ -27,13 +27,13 @@ class ReportService extends ReportsHandler
 
 	public function generateGcPdf(Request $request)
 	{
-
 		$request->validate([
 			"reportType" => 'required',
 			"transactionDate" => "required",
 			"store" => 'required',
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
+
 		//Dont touch this otherwise you're f*cked!
 		//Dont put this in LazyCollection otherwise the realtime fire twice
 		$storeData = [];
@@ -56,7 +56,6 @@ class ReportService extends ReportsHandler
 			$storeData[] = $this->handleRecords($request, $request->store);
 		}
 
-		// $this->dispatchProgress("Finishing Up!", true);
 		$pdf = Pdf::loadView('pdf.treasuryReport', ['data' => ['stores' => $storeData]]);
 
 		return $pdf->output();
@@ -69,9 +68,6 @@ class ReportService extends ReportsHandler
 			"transactionDate" => "required",
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
-		
-		$storeData = [];
-
 		$storeData = $this->handleEodRecords($request);
 
 		if ($storeData === 'error') {
@@ -89,11 +85,14 @@ class ReportService extends ReportsHandler
 		$reportType = collect($request->reportType);
 
 		$this->setStore($store)->setDateOfTransactions($request);
-		if ($this->hasRecords($request)) {
+
+		if (!is_null($this->transactionDate) && $this->hasRecords($request)) {
+
 			if ($reportType->contains('gcSales')) {
 				$record->put('gcSales', $this->gcSales());
 				$footerData->put('gcSalesFooter', $this->footer());
 			}
+
 			if ($reportType->contains('refund')) {
 				$footerData->put('refundFooter', $this->refund());
 			}
@@ -101,7 +100,10 @@ class ReportService extends ReportsHandler
 				$footerData->put('revalidationFooter', $this->gcRevalidation());
 			}
 		} else {
-			return 'error';
+			$this->dispatchProgress(3);
+			return [
+				'error' => 'No Transactions'
+			];
 		}
 
 		return [
@@ -109,6 +111,9 @@ class ReportService extends ReportsHandler
 			'data' => [...$record],
 			'footer' => [...$footerData],
 		];
+
+
+
 	}
 	private function handleEodRecords(Request $request)
 	{
