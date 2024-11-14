@@ -74,7 +74,6 @@ export default {
             this.$inertia.get(route('finance.pen.promo.request'), {
                 id: id,
                 activeKey: '2',
-
             })
         },
         handleChange(key) {

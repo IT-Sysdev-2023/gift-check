@@ -27,9 +27,9 @@ class VerifiedGcMultipleSheetExport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            new VerifiedPerDayExport($this->requestData),
-            new VerifiedSummaryExports($this->requestData),
-            // new PerGcTypeAndBuExports($this->requestData),
+            // new VerifiedPerDayExport($this->requestData),
+            // new VerifiedSummaryExports($this->requestData),
+            new PerGcTypeAndBuExports($this->requestData),
         ];
     }
 }
