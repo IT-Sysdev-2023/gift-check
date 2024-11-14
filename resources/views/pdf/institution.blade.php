@@ -24,7 +24,7 @@
 
         <div class="denomination">
             @foreach ($data['barcode'] as $denomination => $items)
-            <p><strong>Denomination: {{ $denomination }}</strong></td>
+            <p><strong>Denomination: ₱ {{ $denomination }}</strong></td>
                 <table class="gc-codes">
                     @foreach ($items as $index => $barcode)
                         @if ($index % 5 == 0)
@@ -64,9 +64,9 @@
 </body>
 <style>
     body {
-        font-family: Arial, sans-serif;
+        font-family: 'DejaVu Sans', Arial, sans-serif;
+        font-size: 12px;
     }
-
     .report {
         text-align: center;
     }

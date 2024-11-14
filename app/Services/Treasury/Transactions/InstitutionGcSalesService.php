@@ -303,11 +303,11 @@ class InstitutionGcSalesService extends FileHandler
                 $request->session()->forget($this->sessionName);
 
                 $pdf = Pdf::loadView('pdf.institution', ['data' => $data]);
-                $pdf->setPaper('A3');
 
-                $this->savePdfFile($request, $request->releasingNo, $pdf->output());
+                $output = $pdf->output();
+                $this->savePdfFile($request, $request->releasingNo, $output);
 
-                $stream = base64_encode($pdf->output());
+                $stream = base64_encode($output);
 
                 return redirect()->back()->with(['stream' => $stream, 'success' => 'Submission success']);
             } else {
@@ -394,9 +394,9 @@ class InstitutionGcSalesService extends FileHandler
             'summary' => [
                 'total_no_of_gc' => $barcode->count(),
                 'payment_type' => Str::title($request->paymentType['type']),
-                'cash_received' => NumberHelper::format($cash),
-                'total_gc_amount' => NumberHelper::format($request->totalDenomination),
-                'change' => NumberHelper::format($change),
+                'cash_received' => NumberHelper::currency($cash),
+                'total_gc_amount' => NumberHelper::currency($request->totalDenomination),
+                'change' => NumberHelper::currency($change),
                 'paymentFund' => PaymentFund::find($request->paymentFund)->pay_desc,
             ],
 
