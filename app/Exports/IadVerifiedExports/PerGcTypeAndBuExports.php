@@ -222,8 +222,11 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
         ];
 
         $data = $this->getMonthYearVerifiedGc($this->requestedData);
+        dd($data);
 
         $cntarr = count($data);
+
+        dd($cntarr);
         $cnter = 0;
 
         collect($data)->each(function ($item) use (

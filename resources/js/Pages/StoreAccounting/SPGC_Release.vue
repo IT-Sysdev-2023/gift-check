@@ -32,6 +32,14 @@
                             <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
                                 style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
                         </span>
+                        <div style="margin-top: 10px;margin-left: 30px;">
+                            <span style="color:red; font-style: oblique;">
+                                <span v-if="message">
+                                    <WarningOutlined />
+                                </span>
+                                {{ this.message }}
+                            </span>
+                        </div>
                         <div style="margin-left: 40%;">
                             <span style="color: red;">
                                 Table showing per customer
@@ -70,9 +78,18 @@
                         </span>
                         <span style="font-weight: bold; margin-left: 30%;">
                             Search:
-                            <a-input allow-clear v-model:value="spgcApprovedSearchPerBarcode" placeholder="Input search here!"
+                            <a-input allow-clear v-model:value="spgcApprovedSearchPerBarcode"
+                                placeholder="Input search here!"
                                 style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
                         </span>
+                        <div style="margin-top: 10px;margin-left: 30px;">
+                            <span style="color:red; font-style: oblique;">
+                                <span v-if="message">
+                                    <WarningOutlined />
+                                </span>
+                                {{ this.message }}
+                            </span>
+                        </div>
                         <div style="margin-left: 40%;">
                             <span style="color: red;">
                                 Table showing per barcode
@@ -169,6 +186,7 @@ export default {
 
     data() {
         return {
+            message:'',
             spgcApprovedSearch: this.dataCustomer,
             perCustomerReleaseTable: [
                 {
@@ -287,11 +305,38 @@ export default {
                 okText: 'Yes',
                 okType: 'danger',
                 cancelText: 'No',
-                onOk:()=> {
+                onOk: () => {
+                    if (this.data.fromDate === null || this.data.endDate === null) {
+                        this.message = "Please select start data and end date first!";
+                        return;
+                    }
                     window.location.href = route('storeaccounting.releaseExcel', {
                         startDate: this.data.fromDate,
                         endDate: this.data.endDate
                    })
+                },
+                onCancel() {
+                    console.log('Cancel');
+                },
+            });
+        },
+        perBarcodeExcel() {
+            Modal.confirm({
+                title: 'Confirmation',
+                icon: createVNode(ExclamationCircleOutlined),
+                content: 'Are you sure you want to generate EXCEL?',
+                okText: 'Yes',
+                okType: 'danger',
+                cancelText: 'No',
+                onOk: () => {
+                    if (this.data.fromDate === null || this.data.endDate === null) {
+                        this.message = "Please select start data and end date first!";
+                        return;
+                    }
+                    window.location.href = route('storeaccounting.releasePerBarcodeExcel', {
+                        startDate: this.data.fromDate,
+                        endDate: this.data.endDate
+                    })
                 },
                 onCancel() {
                     console.log('Cancel');

@@ -2,6 +2,7 @@
 
 use App\Console\Commands\ProcessFiles;
 use App\Http\Controllers\AccountingController;
+use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\CouponController;
@@ -419,7 +420,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('gc-report', [ReportsController::class,'gcReport'])->name('index');
             Route::get('eod-report', [ReportsController::class,'eodReport'])->name('eod');
-            Route::post('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc')->middleware([HandlePrecognitiveRequests::class]);
+            Route::get('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc');
             Route::get('generate-eod-report', [ReportsController::class,'generateEodReports'])->name('generate.eod');
 
         });
@@ -461,8 +462,13 @@ Route::prefix('accounting')->name('accounting.')->group(function () {
         Route::get('payment-viewing', [AccountingController::class, 'paymentViewing'])->name('viewing');
         Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
     });
-});
 
+    Route::prefix('reports')->name('reports.')->group(function() {
+        Route::get('spgc-report-approved', [AccountingReportController::class, 'spgcApprovedReport'])->name('special.gc.approved');
+        Route::get('generate-spgc-report-approved', [AccountingReportController::class, 'generateApprovedReport'])->name('generate.special.gc.approved');
+        Route::get('spgc-report-released', [AccountingReportController::class, 'spgcReleasedReport'])->name('special.gc.released');
+    });
+});
 
 //Finance
 Route::prefix('finance')->group(function () {
@@ -752,6 +758,7 @@ Route::prefix('store-accounting')
                         Route::get('spgc-release', [StoreAccountingController::class, 'SPGCRelease'])->name('SPGCRelease');
                         Route::get('spgc-release-submit', [StoreAccountingController::class, 'SPGCReleasedSubmit'])->name('SPGCReleasedSubmit');
                         Route::get('spgc-release-excel', [StoreAccountingController::class, 'releaseExcel'])->name('releaseExcel');
+                        Route::get('spgc-release-perBarcode-excel', [StoreAccountingController::class, 'releasePerBarcodeExcel'])->name('releasePerBarcodeExcel');
 
 
                         Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');

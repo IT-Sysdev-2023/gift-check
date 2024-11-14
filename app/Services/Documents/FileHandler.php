@@ -72,9 +72,10 @@ class FileHandler
         }
     }
 
-    protected function savePdfFile(Request $request, string | int $identifier, $pdf)
+    protected function savePdfFile(Request $request, string|int $identifier, $pdf, $date = null)
     {
-        $filename = "{$request->user()->user_id}-{$identifier}-" . now()->format('Y-m-d-His') . ".pdf";
+        $date = $date ?: now()->format('Y-m-d-His');
+        $filename = "{$request->user()->user_id}-{$identifier}-" . $date . ".pdf";
         return $this->disk->put("{$this->folder()}{$filename}", $pdf);
     }
 
@@ -88,7 +89,10 @@ class FileHandler
             return response()->json('File Not Found on the Server', 404);
         }
     }
-    
+
+    protected function getFilesFromDirectory(){
+        return $this->disk->files($this->folder());
+    }
     public function download(string $file)
     {
         if ($this->disk->exists($this->folder() . $file)) {
