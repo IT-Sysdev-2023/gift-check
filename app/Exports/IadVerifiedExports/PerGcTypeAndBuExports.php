@@ -146,9 +146,67 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
     }
     public function collection()
     {
+        $rows = collect();
+
         $data = $this->getDataPerGCTypeAndBu();
 
-        return collect($data);
+        $data->each(function ($item) use (&$rows) {
+
+            $date = $item[0]['arr_perdate'];
+
+            $rows->push([
+                $date,
+                'REGULAR',
+                $item[0]['regular'],
+                $item[0]['terminalreg'][0]['amtSM'],
+                $item[0]['terminalreg'][0]['amtHF'],
+                $item[0]['terminalreg'][0]['amtMP'],
+                $item[0]['terminalreg'][0]['amtFR'],
+                $item[0]['terminalreg'][0]['amtSOD'],
+                $item[0]['terminalreg'][0]['amtWS'],
+            ]);
+
+            $rows->push([
+                '',
+                'SPECIAL EXTERNAL',
+                $item[0]['special'],
+                $item[0]['terminalspec'][0]['amtSM'],
+                $item[0]['terminalspec'][0]['amtHF'],
+                $item[0]['terminalspec'][0]['amtMP'],
+                $item[0]['terminalspec'][0]['amtFR'],
+                $item[0]['terminalspec'][0]['amtSOD'],
+                $item[0]['terminalspec'][0]['amtWS'],
+            ]);
+
+            $rows->push([
+                '',
+                'BEAM AND GO',
+                $item[0]['bng'],
+                $item[0]['terminalbng'][0]['amtSM'],
+                $item[0]['terminalbng'][0]['amtHF'],
+                $item[0]['terminalbng'][0]['amtMP'],
+                $item[0]['terminalbng'][0]['amtFR'],
+                $item[0]['terminalbng'][0]['amtSOD'],
+                $item[0]['terminalbng'][0]['amtWS'],
+            ]);
+
+
+            $rows->push([
+                '',
+                'PROMOTIONAL GC',
+                $item[0]['promo'],
+                $item[0]['terminalpromo'][0]['amtSM'],
+                $item[0]['terminalpromo'][0]['amtHF'],
+                $item[0]['terminalpromo'][0]['amtMP'],
+                $item[0]['terminalpromo'][0]['amtFR'],
+                $item[0]['terminalpromo'][0]['amtSOD'],
+                $item[0]['terminalpromo'][0]['amtWS'],
+            ]);
+
+
+        });
+        return $rows;
+
     }
 
     private function getDataPerGCTypeAndBu()
@@ -161,11 +219,6 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
         $regulargc = 0;
         $bng       = 0;
         $promo     = 0;
-
-        $arr_special = [];
-        $arr_regular = [];
-        $arr_terbng = [];
-        $arr_promo  = [];
 
         $type = [
             'hasSM' => false,
@@ -222,75 +275,73 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
         ];
 
         $data = $this->getMonthYearVerifiedGc($this->requestedData);
-        dd($data);
 
         $cntarr = count($data);
 
-        dd($cntarr);
         $cnter = 0;
 
         collect($data)->each(function ($item) use (
-            $type,
+            &$type,
             &$cnter,
             &$arr_terspecial,
-            $specialgc,
-            $regulargc,
-            $arr_terbng,
-            $bng,
-            $promo,
-            $arr_terpromo,
-            $datedisplay,
+            &$specialgc,
+            &$regulargc,
+            &$arr_terbng,
+            &$bng,
+            &$promo,
+            &$arr_terpromo,
+            &$datedisplay,
             &$arr_terregular,
             &$cntarr,
+            &$arr_perdate,
         ) {
             // dd(!empty($item['date']));
             $explodedTerminalNo = explode(",", $item['terminalno']);
 
             $purchase = explode(",", $item['purchasecred']);
 
-            // dd($purchase);
 
-            foreach ($explodedTerminalNo as $index => $term) {
-                // dump($index);
-
-                // $term = explode("-", $term);
+            foreach ($explodedTerminalNo as $index => $terminal) {
 
 
-                // switch (trim($term[0])) {
-                //     case 'SM':
-                //         $hasSM = true;
-                //         $type['amtSM'] += $purchase[$index];
-                //         break;
+                $term = explode("-", $explodedTerminalNo[$index]);
 
-                //     case 'HF':
-                //         $hasHF = true;
-                //         $type['amtHF'] += $purchase[$index];
-                //         break;
 
-                //     case 'MP':
-                //         $hasMP = true;
-                //         $type['amtMP'] += $purchase[$index];
-                //         break;
+                switch (trim($term[0])) {
+                    case 'SM':
+                        $hasSM = true;
+                        $type['amtSM'] += $purchase[0];
+                        break;
 
-                //     case 'FR':
-                //         $hasFR = true;
-                //         $type['amtFR'] += $purchase[$index];
-                //         break;
+                    case 'HF':
+                        $hasHF = true;
+                        $type['amtHF'] += $purchase[0];
+                        break;
 
-                //     case 'SOD':
-                //         $hasSOD = true;
-                //         $type['amtSOD'] += $purchase[$index];
-                //         break;
+                    case 'MP':
+                        $hasMP = true;
+                        $type['amtMP'] += $purchase[0];
+                        break;
 
-                //     case 'WHOLESALE':
-                //         $hasWS = true;
-                //         $type['amtWS'] += $purchase[$index];
-                //         break;
-                // }
+                    case 'FR':
+                        $hasFR = true;
+                        $type['amtFR'] += $purchase[0];
+                        break;
+
+                    case 'SOD':
+                        $hasSOD = true;
+                        $type['amtSOD'] += $purchase[0];
+                        break;
+
+                    case 'WHOLESALE':
+                        $hasWS = true;
+                        $type['amtWS'] += $purchase[0];
+                        break;
+                }
             }
 
 
-            if (!empty($item['date'])) {
+            if ($datedisplay !== $item['date']) {
 
                 if ($cnter === 1) {
 
@@ -305,6 +356,7 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                         $arr_terspecial[0]['amtFR'] += $type['amtFR'];
                         $arr_terspecial[0]['amtSOD'] += $type['amtSOD'];
                         $arr_terspecial[0]['amtWS'] += $type['amtWS'];
+
                         $specialgc += $item['purchasecred'];
                     }
 
@@ -316,6 +368,7 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                         $arr_terregular[0]['amtFR'] += $type['amtFR'];
                         $arr_terregular[0]['amtSOD'] += $type['amtSOD'];
                         $arr_terregular[0]['amtWS'] += $type['amtWS'];
+
                         $regulargc += $item['purchasecred'];
                     }
                     if ($item['gc_type'] === 'BEAM AND GO') {
@@ -326,6 +379,7 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                         $arr_terbng[0]['amtFR'] += $type['amtFR'];
                         $arr_terbng[0]['amtSOD'] += $type['amtSOD'];
                         $arr_terbng[0]['amtWS'] += $type['amtWS'];
+
                         $bng += $item['purchasecred'];
                     }
                     if ($item['gc_type'] === 'PROMOTIONAL GC') {
@@ -336,22 +390,22 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                         $arr_terpromo[0]['amtFR'] += $type['amtFR'];
                         $arr_terpromo[0]['amtSOD'] += $type['amtSOD'];
                         $arr_terpromo[0]['amtWS'] += $type['amtWS'];
+
                         $promo += $item['purchasecred'];
                     }
                 } else {
-
-                    $arr_perdate[] =  array(
+                    // dd($regulargc);
+                    $arr_perdate[] = [
                         'arr_perdate'   =>  $datedisplay,
-                        'regular'       =>  $regulargc,
-                        'special'       =>  $specialgc,
-                        'bng'           =>  $bng,
-                        'promo'         =>  $promo,
-                        'terminalreg'   =>  $arr_terregular,
-                        'terminalspec'  =>  $arr_terspecial,
-                        'terminalbng'   =>  $arr_terbng,
-                        'terminalpromo' =>  $arr_terpromo
-                    );
-
+                        'regular'       =>  $regulargc === 0 ? '0' : $regulargc,
+                        'special'       =>  $specialgc === 0 ? '0' : $specialgc,
+                        'bng'           =>  $bng === 0 ? '0.0' : $bng,
+                        'promo'         =>  $promo === 0 ? '0.0' : $promo,
+                        'terminalreg'   =>  $arr_terregular === 0 ? '0.0' : $arr_terregular,
+                        'terminalspec'  =>  $arr_terspecial === 0 ? '0.0' : $arr_terspecial,
+                        'terminalbng'   =>  $arr_terbng === 0 ? '0.0' : $arr_terbng,
+                        'terminalpromo' =>  $arr_terpromo === 0 ? '0.0' : $arr_terpromo
+                    ];
 
                     $arr_terspecial[0]['amtSM'] = 0;
                     $arr_terspecial[0]['amtHF'] = 0;
@@ -407,6 +461,7 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                         $arr_terregular[0]['amtFR'] += $type['amtFR'];
                         $arr_terregular[0]['amtSOD'] += $type['amtSOD'];
                         $arr_terregular[0]['amtWS'] += $type['amtWS'];
+
                         $regulargc += $item['purchasecred'];
                     }
                     if ($item['gc_type'] === 'BEAM AND GO') {
@@ -430,9 +485,9 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                         $promo += $item['purchasecred'];
                     }
                 }
+
+                // dd($arr_perdate);
             } else {
-
-
                 if ($item['gc_type'] === 'SPECIAL EXTERNAL') {
 
                     $arr_terspecial[0]['amtSM'] += $type['amtSM'];
@@ -485,27 +540,24 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                 $cnter++;
 
 
-                if($cntarr === $cnter)
-                {
-                    $arr_perdate[] =  array(
+                if ($cntarr === $cnter) {
+
+                    $arr_perdate[] =  [
                         'arr_perdate'   =>  $datedisplay,
-                        'regular'       =>  $regulargc,
-                        'special'       =>  $specialgc,
-                        'bng'           =>  $bng,
-                        'promo'         =>  $promo,
-                        'terminalreg'   =>  $arr_terregular,
-                        'terminalspec'  =>  $arr_terspecial,
-                        'terminalbng'   =>  $arr_terbng,
-                        'terminalpromo' =>  $arr_terpromo
-                    );
+                        'regular'       =>  $regulargc === 0 ? '0' : $regulargc,
+                        'special'       =>  $specialgc === 0 ? '0' : $specialgc,
+                        'bng'           =>  $bng === 0 ? '0.0' : $bng,
+                        'promo'         =>  $promo === 0 ? '0.0' : $promo,
+                        'terminalreg'   =>  $arr_terregular === 0 ? '0.0' : $arr_terregular,
+                        'terminalspec'  =>  $arr_terspecial === 0 ? '0.0' : $arr_terspecial,
+                        'terminalbng'   =>  $arr_terbng === 0 ? '0.0' : $arr_terbng,
+                        'terminalpromo' =>  $arr_terpromo === 0 ? '0.0' : $arr_terpromo
+                    ];
                 }
-
-
             }
-
-            return $arr_perdate;
         });
 
-        dd($data->toArray());
+        return collect($arr_perdate)->groupBy('arr_perdate')->values();
+
     }
 }
