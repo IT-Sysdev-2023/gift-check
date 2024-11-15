@@ -370,6 +370,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('view-transaction-details-{id}', [InstitutionGcSalesController::class, 'transactionDetails'])->name('transactionDetails');
                 Route::get('print-ar-{id}', [InstitutionGcSalesController::class, 'printAr'])->name('printAr');
                 Route::get('reprint-{id}', [InstitutionGcSalesController::class, 'reprint'])->name('reprint');
+                Route::get('generate-excel-{id}', [InstitutionGcSalesController::class, 'generateExcel'])->name('excel');
             });
 
             //Institution Gc Refund

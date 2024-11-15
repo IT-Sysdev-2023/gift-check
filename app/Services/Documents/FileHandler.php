@@ -3,7 +3,7 @@
 namespace App\Services\Documents;
 
 use App\Models\BudgetRequest;
-use App\Models\Document;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -71,14 +71,17 @@ class FileHandler
             }
         }
     }
-
+    protected function saveExcelFile($request, $identifier, $model ){
+        $date = now()->format('Y-m-d-His');
+        $filename = "{$request->user()->user_id}-{$identifier}-" . $date . ".xlsx";
+        return  Excel::store($model, "{$this->folder()}{$filename}", 'public'); 
+    }
     protected function savePdfFile(Request $request, string|int $identifier, $pdf, $date = null)
     {
         $date = $date ?: now()->format('Y-m-d-His');
         $filename = "{$request->user()->user_id}-{$identifier}-" . $date . ".pdf";
         return $this->disk->put("{$this->folder()}{$filename}", $pdf);
     }
-
     protected function retrieveFile(string $folder, string $filename)
     {
         $file = "{$folder}/{$filename}";
