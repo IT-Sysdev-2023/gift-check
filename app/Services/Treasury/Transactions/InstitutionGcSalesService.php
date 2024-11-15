@@ -227,7 +227,6 @@ class InstitutionGcSalesService extends FileHandler
             $cash = $request->paymentType['amount'] ?? '';
             $totalamtrec = $cash;
         }
-        $this->testing($request, $totalamtrec);
         $customerid = $request->customer;
         $relnumlatest = InstitutTransaction::where('institutr_trtype', 'sales')->max('institutr_trnum');
         $relnum = $relnumlatest ? $relnumlatest + 1 : 1;
@@ -401,7 +400,7 @@ class InstitutionGcSalesService extends FileHandler
             ],
 
             //Barcodes
-            'barcode' => $gr->toArray(),
+            'barcode' => $gr,
 
             //Subfooter
             'summary' => [
