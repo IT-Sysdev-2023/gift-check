@@ -78,4 +78,8 @@ class InstitutionGcSalesController extends Controller
     public function reprint(Request $request, $id){
         return $this->institutionGcSalesService->reprint($request, $id);
     }
+
+    public function generateExcel(Request $request, $id){
+        return $this->institutionGcSalesService->excel($request, $id);
+    }
 }

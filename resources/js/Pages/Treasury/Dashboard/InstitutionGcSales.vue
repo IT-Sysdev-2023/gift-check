@@ -125,9 +125,14 @@
             <a-descriptions-item label="Total Denomination">{{
                 viewRecordData.details?.denomTotal
             }}</a-descriptions-item>
-            <a-descriptions-item label="Documents Uploaded">
-                <ant-image-preview :images="[viewRecordData.details?.document]"/>
-               </a-descriptions-item>
+            <a-descriptions-item
+                label="Documents Uploaded"
+                v-if="viewRecordData.details?.document"
+            >
+                <ant-image-preview
+                    :images="[viewRecordData.details?.document]"
+                />
+            </a-descriptions-item>
             <a-descriptions-item label="Payment Type">{{
                 viewRecordData.details?.institutr_paymenttype
             }}</a-descriptions-item>
@@ -187,7 +192,9 @@ export default {
                 this.viewRecordData.denominationTable = data.denominationTable;
             }
         },
-        exportExcel(id) {},
+        async exportExcel(id) {
+            window.location.href = route("treasury.transactions.institution.gc.sales.excel", id);
+        },
         reprint(id) {
             const url = route(
                 "treasury.transactions.institution.gc.sales.reprint",
@@ -261,12 +268,15 @@ export default {
                     id
                 )
             );
+
             this.viewRecordData = data;
             this.viewModal = true;
         },
 
         handleChangeDateRange(_, dateRange) {
-            this.$inertia.get(route(route().current()), { date: dateRange },
+            this.$inertia.get(
+                route(route().current()),
+                { date: dateRange },
                 {
                     preserveState: true,
                 }
