@@ -91,11 +91,9 @@ class InstitutTransactionExport implements FromCollection, WithEvents, WithCusto
                     $s = collect($i)->search(fn($arr) => Str::contains($arr, ['Denomination', 'No']));
 
                     $gap = $key + 8; // 8 is gap from the header
-    
                     if ($s !== false) {
                         $sheet->getStyle('H' . $gap)->getFont()->setBold(true);
                     } else {
-
                         $sheet->getStyle('H' . $gap . ':L' . $gap)
                             ->getNumberFormat()
                             ->setFormatCode(NumberFormat::FORMAT_NUMBER);
@@ -120,7 +118,7 @@ class InstitutTransactionExport implements FromCollection, WithEvents, WithCusto
                
                 $this->setFooterValue($sheet, $highestRow += 1, 'Payment Fund: ', $this->records['summary']['paymentFund']);
 
-                //Signatures 
+                //SIGNATURES 
                 $sheet->setCellValue('H' . $highestRow += 2, 'Signatures:');
                 $sheet->getStyle('H' . $highestRow)->getFont()->setBold(true);
                 

@@ -71,10 +71,13 @@ class FileHandler
             }
         }
     }
-    protected function saveExcelFile($request, $identifier, $model ){
+    protected function saveExcelFile($request, $identifier, $model)
+    {
         $date = now()->format('Y-m-d-His');
         $filename = "{$request->user()->user_id}-{$identifier}-" . $date . ".xlsx";
-        return  Excel::store($model, "{$this->folder()}{$filename}", 'public'); 
+        $folderName = $this->folder() . 'excel/';
+        
+        return Excel::store($model, "{$folderName}{$filename}", 'public');
     }
     protected function savePdfFile(Request $request, string|int $identifier, $pdf, $date = null)
     {
@@ -93,7 +96,8 @@ class FileHandler
         }
     }
 
-    protected function getFilesFromDirectory(){
+    protected function getFilesFromDirectory()
+    {
         return $this->disk->files($this->folder());
     }
     public function download(string $file)

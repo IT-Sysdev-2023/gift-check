@@ -157,7 +157,6 @@ class InstitutionGcSalesService extends FileHandler
 
     public function store(Request $request)
     {
-        $this->testing($request, 0);
         $request->validate([
             // 'file' => 'required',
             'remarks' => 'required',
@@ -322,13 +321,13 @@ class InstitutionGcSalesService extends FileHandler
         }
 
     }
-    public function testing(Request $request, $tot){
+    // public function testing(Request $request, $tot){
 
-        $change = $tot - $request->totalDenomination;
-        $data = $this->dataForPdfTest($request, $change, $tot);
-        $this->saveExcelFile($request, $request->releasingNo, $this->dataForExcel($data));
-        dd(1);
-    }
+    //     $change = $tot - $request->totalDenomination;
+    //     $data = $this->dataForPdfTest($request, $change, $tot);
+    //     $this->saveExcelFile($request, $request->releasingNo, $this->dataForExcel($data));
+    //     dd(1);
+    // }
     public function printAr($id)
     {
         $this->folderName = "reports/treasury_ar_report";
