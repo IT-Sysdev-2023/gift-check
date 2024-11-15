@@ -76,7 +76,7 @@ trait VerifiedTraits
                 'gc_type' =>  self::gcTypeTransaction($item->vs_gctype),
                 'vsdate' => $item->vs_date->toFormattedDateString(),
                 'vstime' => $item->vs_time,
-                // 'purchaseamt' => $datatxtfile->puramnt,
+                'purchaseamt' => $datatxtfile->puramnt,
             ];
             return $array;
         });
@@ -100,7 +100,7 @@ trait VerifiedTraits
                 'gc_type' =>  self::gcTypeTransaction($item->vs_gctype),
                 'vsdate' => $item->vs_date->toFormattedDateString(),
                 'vstime' => $item->vs_time,
-                // 'purchaseamt' => $datatxtfile->puramnt,
+                'purchaseamt' => $datatxtfile->puramnt,
             ];
 
             return $array;
