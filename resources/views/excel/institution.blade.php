@@ -14,23 +14,23 @@
 
         <table class="gc-codes">
             <tr>
-                <td><strong>GC Rel. No.:</strong>{{ $data['subheader']['gc_rel_no']}} </td>
-                <td><strong>Released Date:</strong> {{ $data['subheader']['date_released']}}</td>
+                <td colspan="2" align="center"><strong>GC Rel. No.: </strong>{{ $data['subheader']['gc_rel_no']}} </td>
+                <td colspan="12" align="center"><strong>Released Date: </strong> {{ $data['subheader']['date_released']}}</td>
             </tr>
             <tr>
-                <td><strong>Customer:</strong> {{ $data['subheader']['customer'] }}</td>
+                <td colspan="2" align="center"><strong>Customer:</strong> {{ $data['subheader']['customer'] }}</td>
             </tr>
         </table>
 
-        <div class="denomination">
+         <div class="denomination">
             @foreach ($data['barcode'] as $denomination => $items)
-            <p><strong>Denomination: ₱ {{ $denomination }}</strong></p>
+            <p colspan="2"><strong>Denomination: ₱ {{ $denomination }}</strong></p>
                 <table class="gc-codes">
                     @foreach ($items as $index => $barcode)
                         @if ($index % 5 == 0)
                             <tr>
                         @endif
-                        <td>{{ $barcode['barcode'] }}</td>
+                        <td colspan="2" align="center">•{{ $barcode['barcode'] }}</td>
                         @if (($index + 1) % 5 == 0 || $index + 1 == count($items))
                             </tr>
                         @endif
@@ -44,7 +44,7 @@
         <div class="summary">
             @foreach($data['summary'] as $title => $items)
                 @if($items)
-                <p><strong>{{Str::headline($title)}}:</strong> {{ $items}}</p>
+                <p colspan="2" align="center"><strong>{{Str::headline($title)}}:</strong> {{ $items}}</p>
                 @endif
             @endforeach
         </div>
@@ -64,8 +64,7 @@
 </body>
 <style>
     body {
-        font-family: 'DejaVu Sans', Arial, sans-serif;
-        font-size: 12px;
+        font-family: Arial, sans-serif;
     }
     .report {
         text-align: center;

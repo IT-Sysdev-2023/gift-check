@@ -239,6 +239,7 @@ Route::prefix('marketing')->group(function () {
             Route::get('pending-view-details', [MarketingController::class, 'pendingspgclistview'])->name('pending.view');
             Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest'])->name('aexgcreq');
             Route::get('selected-approved-external-gc-request', [MarketingController::class, 'selectedApprovedExternalGcRequest'])->name('selectedaexgcreq');
+            Route::get('cancelled-especial-external-list', [MarketingController::class, 'cancelledspexgclist'])->name('cancelledspexgclsit');
         });
         Route::name('releasedspexgc.')->group(function () {
             Route::get('count-released-spex-gc', [MarketingController::class, 'countreleasedspexgc'])->name('count');
@@ -370,6 +371,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('view-transaction-details-{id}', [InstitutionGcSalesController::class, 'transactionDetails'])->name('transactionDetails');
                 Route::get('print-ar-{id}', [InstitutionGcSalesController::class, 'printAr'])->name('printAr');
                 Route::get('reprint-{id}', [InstitutionGcSalesController::class, 'reprint'])->name('reprint');
+                Route::get('generate-excel-{id}', [InstitutionGcSalesController::class, 'generateExcel'])->name('excel');
             });
 
             //Institution Gc Refund
@@ -503,6 +505,7 @@ Route::prefix('finance')->group(function () {
 
         Route::name('cancelledSpecialExternalGC.')->group(function(){
             Route::get('cancelled-especial-external-gc',[FinanceController::class, 'list'])->name('list');
+            Route::get('view-cancelled-especial-external-gc',[FinanceController::class, 'view'])->name('view');
         });
     });
 

@@ -74,11 +74,11 @@ const form = useForm({
     },
     arNo: page.spexgc_payment_arnum,
     paymentType: {
-        bankName: page.specialExternalBankPaymentInfo.spexgcbi_bankname ?? "",
+        bankName: page.specialExternalBankPaymentInfo?.spexgcbi_bankname ?? "",
         accountNumber:
-            page.specialExternalBankPaymentInfo.spexgcbi_bankaccountnum ?? "",
+            page.specialExternalBankPaymentInfo?.spexgcbi_bankaccountnum ?? "",
         checkNumber:
-            page.specialExternalBankPaymentInfo.spexgcbi_checknumber ?? "",
+            page.specialExternalBankPaymentInfo?.spexgcbi_checknumber ?? "",
         type: page.spexgc_paymentype,
         amount: page.spexgc_payment,
     },

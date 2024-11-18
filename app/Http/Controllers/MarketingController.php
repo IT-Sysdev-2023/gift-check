@@ -2113,4 +2113,17 @@ class MarketingController extends Controller
             'data' => $this->marketing->viewReleasedSpexGc($request)
         ]);
     }
+
+    public function cancelledspexgclist(Request $request)
+    {
+        return inertia('Marketing/specialgc/Cancelledspexgc', [
+            'data' => SpecialExternalGcrequest::where('spexgc_status', 'cancelled')
+                ->join('special_external_customer', 'special_external_customer.spcus_id', 'special_external_gcrequest.spexgc_company')
+                ->whereAny([
+                    'spexgc_id',
+                ], 'like', $request->data . '%')
+                ->paginate()
+                ->withQueryString()
+        ]);
+    }
 }

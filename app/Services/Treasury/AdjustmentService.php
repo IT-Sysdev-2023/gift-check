@@ -82,10 +82,13 @@ class AdjustmentService extends FileHandler
             "adjustmentType" => 'required'
         ]);
 
-        $isExist = DB::table('budgetadjustment')->join('users', 'users.user_id', '=', 'budgetadjustment.adj_requested_by')
-            ->where('users.usertype', $request->user()->usertype)->where('budgetadjustment.adj_request_status', 0)->exists();
-        if ($isExist) {
-            return back()->with('error', 'You have pending budget request.');
+        $isExist = DB::table('budgetadjustment')
+        ->join('users', 'users.user_id', '=', 'budgetadjustment.adj_requested_by')
+            ->where('users.usertype', $request->user()->usertype)->where('budgetadjustment.adj_request_status', 0)
+            ->get();
+        
+            if ($isExist) {
+            return back()->with('error', 'You have pending budget adjustment request.');
         }
 
         try {

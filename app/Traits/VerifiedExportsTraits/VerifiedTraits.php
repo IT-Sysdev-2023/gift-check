@@ -2,15 +2,17 @@
 
 namespace App\Traits\VerifiedExportsTraits;
 
+use App\Events\VerifiedExcelReports\VerifiedExcelReports;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
+use Illuminate\Support\Facades\Auth;
 
 trait VerifiedTraits
 {
     //
-    private function getMonthYearVerifiedGc($request)
+    private function getMonthYearVerifiedGc($requests, $sheet)
     {
-        $request = collect($request);
+        $request = collect($requests);
 
         $vsdata = StoreVerification::select(
             'vs_cn',
@@ -30,8 +32,6 @@ trait VerifiedTraits
             }, function ($q) use ($request) {
                 $q->whereYear('vs_date', $request['date']);
             })
-
-            ->whereYear('vs_date', $request['date'])
             ->where('vs_store', $request['store'])
             ->get();
 
@@ -53,13 +53,17 @@ trait VerifiedTraits
             }, function ($q) use ($request) {
                 $q->whereYear('vs_reverifydate', $request['date']);
             })
+            // ->whereYear('vs_reverifydate', $request['date'])
             ->where('vs_store', $request['store'])
             ->get();
 
 
         $array  = [];
+        $count = 1;
 
-        $vsdata->transform(function ($item) use (&$array) {
+        $vCount = $vsdata->count();
+
+        $vsdata->transform(function ($item) use (&$array, &$count, $vCount) {
 
             $datatxtfile = self::dataTextFile($item->vs_barcode);
 
@@ -76,19 +80,28 @@ trait VerifiedTraits
                 'gc_type' =>  self::gcTypeTransaction($item->vs_gctype),
                 'vsdate' => $item->vs_date->toFormattedDateString(),
                 'vstime' => $item->vs_time,
-                // 'purchaseamt' => $datatxtfile->puramnt,
+                'purchaseamt' => $datatxtfile->puramnt,
             ];
+
+
+            VerifiedExcelReports::dispatch('Searching for verified barcodes ' . $item->vs_barcode .' ... ', $count++, $vCount, Auth::user());
             return $array;
+
+
         });
 
+        $countrev = 1;
+
+        $vsrevCount = $vsrevdata->count();
 
 
-        $vsrevdata->transform(function ($item) use (&$array) {
+
+        $vsrevdata->transform(function ($item) use (&$array, &$countrev, $vsrevCount) {
 
             $datatxtfile = self::dataTextFile($item->vs_barcode);
 
             $array[] = [
-                'date' => $item->vs_date->toFormattedDateString(),
+                'date' => $item->vs_reverifydate->toFormattedDateString(),
                 'barcode' => $item->vs_barcode,
                 'denomination' => $item->vs_tf_denomination,
                 'purchasecred' => $item->vs_tf_purchasecredit,
@@ -100,11 +113,14 @@ trait VerifiedTraits
                 'gc_type' =>  self::gcTypeTransaction($item->vs_gctype),
                 'vsdate' => $item->vs_date->toFormattedDateString(),
                 'vstime' => $item->vs_time,
-                // 'purchaseamt' => $datatxtfile->puramnt,
+                'purchaseamt' => $datatxtfile->puramnt,
             ];
+
+            VerifiedExcelReports::dispatch('Searching for reverified barcodes ' . $item->vs_barcode .' ... ', $countrev++, $vsrevCount, Auth::user());
 
             return $array;
         });
+        // dd($array);
         return collect($array);
     }
 

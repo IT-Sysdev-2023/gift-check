@@ -3,7 +3,7 @@
 namespace App\Services\Documents;
 
 use App\Models\BudgetRequest;
-use App\Models\Document;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -14,15 +14,15 @@ class FileHandler
 {
 
     protected string $folderName = '';
-    private $disk;
+    protected $disk;
     public function __construct()
     {
         $this->disk = Storage::disk('public');
     }
 
-    private function folder()
+    protected function folder()
     {
-        return "$this->folderName/";
+        return Str::finish($this->folderName, '/');
     }
 
     protected function replaceFile(Request $request)
@@ -72,12 +72,12 @@ class FileHandler
         }
     }
 
-    protected function savePdfFile(Request $request, string | int $identifier, $pdf)
+    protected function savePdfFile(Request $request, string|int $identifier, $pdf, $date = null)
     {
-        $filename = "{$request->user()->user_id}-{$identifier}-" . now()->format('Y-m-d-His') . ".pdf";
+        $date = $date ?: now()->format('Y-m-d-His');
+        $filename = "{$request->user()->user_id}-{$identifier}-" . $date . ".pdf";
         return $this->disk->put("{$this->folder()}{$filename}", $pdf);
     }
-
     protected function retrieveFile(string $folder, string $filename)
     {
         $file = "{$folder}/{$filename}";
@@ -88,11 +88,18 @@ class FileHandler
             return response()->json('File Not Found on the Server', 404);
         }
     }
-    
-    public function download(string $file)
+    protected function getFilesFromDirectory(?string $subfolder = null)
     {
-        if ($this->disk->exists($this->folder() . $file)) {
-            return $this->disk->download($this->folder() . $file);
+        $trim = Str::finish($this->folder() . $subfolder, '/');
+        $path = $subfolder ? $trim : $this->folder();
+        return $this->disk->files($path);
+    }
+    public function download(string $file, ?string $subfolder = null)
+    {
+        $filename = Str::start($file, '/');
+        $fullpath = $this->folder() . $subfolder . $filename;
+        if ($this->disk->exists($fullpath)) {
+            return $this->disk->download($fullpath);
         } else {
             return response()->json(['error' => 'File Not Found'], 404);
         }

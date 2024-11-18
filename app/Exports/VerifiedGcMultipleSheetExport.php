@@ -29,7 +29,7 @@ class VerifiedGcMultipleSheetExport implements WithMultipleSheets
         return [
             new VerifiedPerDayExport($this->requestData),
             new VerifiedSummaryExports($this->requestData),
-            // new PerGcTypeAndBuExports($this->requestData),
+            new PerGcTypeAndBuExports($this->requestData),
         ];
     }
 }
