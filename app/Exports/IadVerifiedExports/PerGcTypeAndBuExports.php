@@ -12,8 +12,11 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents, WithTitle, WithStyles
+class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents, WithTitle, WithStyles, ShouldAutoSize
 {
     /**
      * @return \Illuminate\Support\Collection
@@ -55,6 +58,9 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                 'bold' => true,
             ],
         ]);
+
+        $lastRow = $this->collectionData()->count() + 8;
+
 
         // $data = $this->getDataStoreVerifivation();
 
@@ -128,6 +134,14 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                     'size' => 8,
                 ],
             ],
+            "A8:J{$lastRow}" => [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'color' => ['argb' => '000000'], // Black border
+                    ],
+                ],
+            ],
         ];
     }
     public function registerEvents(): array
@@ -145,6 +159,12 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
         ];
     }
     public function collection()
+    {
+        $rows = $this->collectionData();
+        return $rows;
+    }
+
+    private function collectionData()
     {
         $rows = collect();
 
@@ -203,6 +223,7 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                 $item[0]['terminalpromo'][0]['amtWS'],
             ]);
         });
+
         return $rows;
     }
 
@@ -212,10 +233,10 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
 
         $datedisplay = "";
 
-        $specialgc = 0;
-        $regulargc = 0;
-        $bng       = 0;
-        $promo     = 0;
+        $specialgc = '0';
+        $regulargc = '0';
+        $bng       = '0';
+        $promo     = '0';
 
         $type = [
             'hasSM' => false,
@@ -225,50 +246,50 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
             'hasSOD'  => false,
             'hasWS'  => false,
 
-            'amtSM' => 0,
-            'amtHF' => 0,
-            'amtMP' => 0,
-            'amtFR' => 0,
-            'amtSOD'  => 0,
-            'amtWS'  => 0,
+            'amtSM' => '0',
+            'amtHF' => '0',
+            'amtMP' => '0',
+            'amtFR' => '0',
+            'amtSOD'  => '0',
+            'amtWS'  => '0',
         ];
 
 
         $arr_terspecial[] =  [
-            'amtSM'   =>    0,
-            'amtHF'   =>    0,
-            'amtMP'   =>    0,
-            'amtFR'   =>    0,
-            'amtSOD'  =>    0,
-            'amtWS'   =>    0
+            'amtSM'   =>    '0',
+            'amtHF'   =>    '0',
+            'amtMP'   =>    '0',
+            'amtFR'   =>    '0',
+            'amtSOD'  =>    '0',
+            'amtWS'   =>    '0'
         ];
 
         $arr_terregular[] =  [
-            'amtSM'   =>    0,
-            'amtHF'   =>    0,
-            'amtMP'   =>    0,
-            'amtFR'   =>    0,
-            'amtSOD'  =>    0,
-            'amtWS'   =>    0
+            'amtSM'   =>    '0',
+            'amtHF'   =>    '0',
+            'amtMP'   =>    '0',
+            'amtFR'   =>    '0',
+            'amtSOD'  =>    '0',
+            'amtWS'   =>    '0'
 
         ];
 
         $arr_terbng[] =  [
-            'amtSM'   =>    0,
-            'amtHF'   =>    0,
-            'amtMP'   =>    0,
-            'amtFR'   =>    0,
-            'amtSOD'  =>    0,
-            'amtWS'   =>    0
+            'amtSM'   =>    '0',
+            'amtHF'   =>    '0',
+            'amtMP'   =>    '0',
+            'amtFR'   =>    '0',
+            'amtSOD'  =>    '0',
+            'amtWS'   =>    '0'
         ];
 
         $arr_terpromo[] =  [
-            'amtSM'   =>    0,
-            'amtHF'   =>    0,
-            'amtMP'   =>    0,
-            'amtFR'   =>    0,
-            'amtSOD'  =>    0,
-            'amtWS'   =>    0
+            'amtSM'   =>    '0',
+            'amtHF'   =>    '0',
+            'amtMP'   =>    '0',
+            'amtFR'   =>    '0',
+            'amtSOD'  =>    '0',
+            'amtWS'   =>    '0'
         ];
 
         $data = $this->getMonthYearVerifiedGc($this->requestedData);
@@ -433,8 +454,8 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
 
                     $arr_perdate[] = [
                         'arr_perdate'   =>  $datedisplay,
-                        'regular'       =>  $regulargc === 0 ? '0' : $regulargc,
-                        'special'       =>  $specialgc === 0 ? '0' : $specialgc,
+                        'regular'       =>  $regulargc === 0 ? '0.0' : $regulargc,
+                        'special'       =>  $specialgc === 0 ? '0.0' : $specialgc,
                         'bng'           =>  $bng === 0 ? '0.0' : $bng,
                         'promo'         =>  $promo === 0 ? '0.0' : $promo,
                         'terminalreg'   =>  $arr_terregular,
@@ -445,40 +466,40 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
 
                     // dd(collect($arr_perdate));
 
-                    $arr_terspecial[0]['amtSM'] = 0;
-                    $arr_terspecial[0]['amtHF'] = 0;
-                    $arr_terspecial[0]['amtMP'] = 0;
-                    $arr_terspecial[0]['amtFR'] = 0;
-                    $arr_terspecial[0]['amtSOD'] = 0;
-                    $arr_terspecial[0]['amtWS'] = 0;
+                    $arr_terspecial[0]['amtSM'] = '0';
+                    $arr_terspecial[0]['amtHF'] = '0';
+                    $arr_terspecial[0]['amtMP'] = '0';
+                    $arr_terspecial[0]['amtFR'] = '0';
+                    $arr_terspecial[0]['amtSOD'] = '0';
+                    $arr_terspecial[0]['amtWS'] = '0';
 
-                    $arr_terregular[0]['amtSM'] = 0;
-                    $arr_terregular[0]['amtHF'] = 0;
-                    $arr_terregular[0]['amtMP'] = 0;
-                    $arr_terregular[0]['amtFR'] = 0;
-                    $arr_terregular[0]['amtSOD'] = 0;
-                    $arr_terregular[0]['amtWS'] = 0;
+                    $arr_terregular[0]['amtSM'] = '0';
+                    $arr_terregular[0]['amtHF'] = '0';
+                    $arr_terregular[0]['amtMP'] = '0';
+                    $arr_terregular[0]['amtFR'] = '0';
+                    $arr_terregular[0]['amtSOD'] = '0';
+                    $arr_terregular[0]['amtWS'] = '0';
 
-                    $arr_terbng[0]['amtSM'] = 0;
-                    $arr_terbng[0]['amtHF'] = 0;
-                    $arr_terbng[0]['amtMP'] = 0;
-                    $arr_terbng[0]['amtFR'] = 0;
-                    $arr_terbng[0]['amtSOD'] = 0;
-                    $arr_terbng[0]['amtWS'] = 0;
+                    $arr_terbng[0]['amtSM'] = '0';
+                    $arr_terbng[0]['amtHF'] = '0';
+                    $arr_terbng[0]['amtMP'] = '0';
+                    $arr_terbng[0]['amtFR'] = '0';
+                    $arr_terbng[0]['amtSOD'] = '0';
+                    $arr_terbng[0]['amtWS'] = '0';
 
-                    $arr_terpromo[0]['amtSM'] = 0;
-                    $arr_terpromo[0]['amtHF'] = 0;
-                    $arr_terpromo[0]['amtMP'] = 0;
-                    $arr_terpromo[0]['amtFR'] = 0;
-                    $arr_terpromo[0]['amtSOD'] = 0;
-                    $arr_terpromo[0]['amtWS'] = 0;
+                    $arr_terpromo[0]['amtSM'] = '0';
+                    $arr_terpromo[0]['amtHF'] = '0';
+                    $arr_terpromo[0]['amtMP'] = '0';
+                    $arr_terpromo[0]['amtFR'] = '0';
+                    $arr_terpromo[0]['amtSOD'] = '0';
+                    $arr_terpromo[0]['amtWS'] = '0';
 
                     $datedisplay = $item['date'];
 
-                    $specialgc = 0;
-                    $regulargc = 0;
-                    $bng       = 0;
-                    $promo     = 0;
+                    $specialgc = '0';
+                    $regulargc = '0';
+                    $bng       = '0';
+                    $promo     = '0';
 
                     if ($item['gc_type'] === 'SPECIAL EXTERNAL') {
 
@@ -497,11 +518,11 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
 
 
                         $arr_terregular[0]['amtSM'] += $type['amtSM'];
-                        $arr_terregular[0]['amtHF'] += $type['amtHF'];
+                        $arr_terregular[0]['amtHF'] += $type['amtHF'] ;
                         $arr_terregular[0]['amtMP'] += $type['amtMP'];
                         $arr_terregular[0]['amtFR'] += $type['amtFR'];
                         $arr_terregular[0]['amtSOD'] += $type['amtSOD'];
-                        $arr_terregular[0]['amtWS'] += $type['amtWS'];
+                        $arr_terregular[0]['amtWS'] += $type['amtWS'] ;
 
                         $regulargc += $item['purchasecred'];
                     }
@@ -542,12 +563,12 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
 
                 if ($item['gc_type'] === 'REGULAR') {
                     // dump($type['amtSM']);
-                    $arr_terregular[0]['amtSM'] += $type['amtSM'];
-                    $arr_terregular[0]['amtHF'] += $type['amtHF'];
-                    $arr_terregular[0]['amtMP'] += $type['amtMP'];
-                    $arr_terregular[0]['amtFR'] += $type['amtFR'];
-                    $arr_terregular[0]['amtSOD'] += $type['amtSOD'];
-                    $arr_terregular[0]['amtWS'] += $type['amtWS'];
+                    $arr_terregular[0]['amtSM'] += $type['amtSM'] ;
+                    $arr_terregular[0]['amtHF'] += $type['amtHF'] ;
+                    $arr_terregular[0]['amtMP'] += $type['amtMP'] ;
+                    $arr_terregular[0]['amtFR'] += $type['amtFR'] ;
+                    $arr_terregular[0]['amtSOD'] += $type['amtSOD'] ;
+                    $arr_terregular[0]['amtWS'] += $type['amtWS'] ;
                     $regulargc += $item['purchasecred'];
                 }
                 if ($item['gc_type'] === 'BEAM AND GO') {
@@ -572,12 +593,12 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                 }
 
 
-                $amtSM = 0;
-                $amtHF = 0;
-                $amtMP = 0;
-                $amtFR = 0;
-                $amtSOD = 0;
-                $amtWS  = 0;
+                $type['amtSM'] = '0';
+                $type['amtHF'] = '0';
+                $type['amtMP'] = '0';
+                $type['amtFR']= '0';
+                $type['amtSOD'] = '0';
+                $type['amtWS']  = '0';
                 $cnter++;
 
 
@@ -585,8 +606,8 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
 
                     $arr_perdate[] =  [
                         'arr_perdate'   =>  $datedisplay,
-                        'regular'       =>  $regulargc === 0 ? '0' : $regulargc,
-                        'special'       =>  $specialgc === 0 ? '0' : $specialgc,
+                        'regular'       =>  $regulargc === 0 ? '0.0' : $regulargc,
+                        'special'       =>  $specialgc === 0 ? '0.0' : $specialgc,
                         'bng'           =>  $bng === 0 ? '0.0' : $bng,
                         'promo'         =>  $promo === 0 ? '0.0' : $promo,
                         'terminalreg'   =>  $arr_terregular,
@@ -598,5 +619,11 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
             }
         });
         return collect($arr_perdate)->groupBy('arr_perdate')->values();
+    }
+    public function columnFormats(): array
+    {
+        return [
+            'F' => NumberFormat::FORMAT_NUMBER, // Column B as a number
+        ];
     }
 }
