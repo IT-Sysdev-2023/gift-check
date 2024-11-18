@@ -567,17 +567,14 @@ class FinanceController extends Controller
 
     public function list(Request $request)
     {
-
-        $data = SpecialExternalGcrequest::where('spexgc_status', 'cancelled')
-            ->join('special_external_customer', 'special_external_customer.spcus_id', 'special_external_gcrequest.spexgc_company')
-            ->whereAny([
-                'spexgc_id',
-            ], 'like', $request->data.'%')
-            ->paginate()
-            ->withQueryString();
-
         return inertia('Marketing/specialgc/Cancelledspexgc', [
-            'data' => $data
+            'data' => SpecialExternalGcrequest::where('spexgc_status', 'cancelled')
+                ->join('special_external_customer', 'special_external_customer.spcus_id', 'special_external_gcrequest.spexgc_company')
+                ->whereAny([
+                    'spexgc_id',
+                ], 'like', $request->data . '%')
+                ->paginate()
+                ->withQueryString()
         ]);
 
     }
