@@ -36,7 +36,7 @@
                 :cancelled="specialgcount.cancelled"
                 pRoute="marketing.special-gc.pending"
                 aRoute="marketing.special-gc.aexgcreq"
-                cRoute=""
+                cRoute="marketing.special-gc.cancelledspexgclsit"
                 spexgcreleased
             />
         </a-col>

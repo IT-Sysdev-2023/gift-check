@@ -239,6 +239,7 @@ Route::prefix('marketing')->group(function () {
             Route::get('pending-view-details', [MarketingController::class, 'pendingspgclistview'])->name('pending.view');
             Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest'])->name('aexgcreq');
             Route::get('selected-approved-external-gc-request', [MarketingController::class, 'selectedApprovedExternalGcRequest'])->name('selectedaexgcreq');
+            Route::get('cancelled-especial-external-list', [MarketingController::class, 'cancelledspexgclist'])->name('cancelledspexgclsit');
         });
         Route::name('releasedspexgc.')->group(function () {
             Route::get('count-released-spex-gc', [MarketingController::class, 'countreleasedspexgc'])->name('count');
