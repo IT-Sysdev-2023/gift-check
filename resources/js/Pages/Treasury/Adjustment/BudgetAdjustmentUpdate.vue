@@ -8,7 +8,7 @@
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
 
-        <a-card title="Budget Adjustment Entry Form" class="mt-10">
+        <a-card title="Update Budget Adjustment Entry Form" class="mt-10">
             <a-form
                 :model="formState"
                 :label-col="{ span: 7 }"
@@ -18,7 +18,7 @@
                 <a-row>
                     <a-col :span="10">
                         <a-form-item label="Adj. No." name="name">
-                            <a-input :value="adjustmentNo" readonly />
+                            <a-input :value="data.adjustmentNo" readonly />
                         </a-form-item>
                         <a-form-item
                             label="Date Requested:"
@@ -34,11 +34,17 @@
                         >
                             <ant-select
                                 :options="[
-                                    { label: 'Negative Entry', value: 'negative' },
-                                    { label: 'Positive Entry', value: 'positive' },
+                                    {
+                                        label: 'Negative Entry',
+                                        value: 'negative',
+                                    },
+                                    {
+                                        label: 'Positive Entry',
+                                        value: 'positive',
+                                    },
                                 ]"
                                 @handle-change="categoryHandler"
-                                :value="'negative'"
+                                :value="formState.adjustmentType"
                             />
                         </a-form-item>
                         <a-form-item
@@ -61,9 +67,11 @@
                                 @change="clearError('budget')"
                             />
                         </a-form-item>
-                          <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
-                        :help="getErrorMessage('file')">
-                            <ant-upload-image @handle-change="handleChange" />
+                        <a-form-item label="Uploaded Image.:">
+                            <ant-upload-image
+                                :images="[{ url: data.file }]"
+                                @handle-change="handleChange"
+                            />
                         </a-form-item>
                         <a-form-item
                             label="Remarks"
@@ -85,9 +93,9 @@
                         </a-form-item>
                         <div>
                             <div class="flex justify-end mx-9">
-                                <a-form-item class="text-end ">
+                                <a-form-item class="text-end">
                                     <a-button type="primary" html-type="submit"
-                                        >Submit</a-button
+                                        >Update</a-button
                                     >
                                 </a-form-item>
                             </div>
@@ -120,19 +128,6 @@
                 </a-row>
             </a-form>
         </a-card>
-        <!-- <a-modal
-            v-model:open="openIframe"
-            style="width: 70%; top: 50px"
-            :footer="null"
-            :afterClose="closeIframe"
-        >
-            <iframe
-                class="mt-7"
-                :src="stream"
-                width="100%"
-                height="600px"
-            ></iframe>
-        </a-modal> -->
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
@@ -145,30 +140,36 @@ import type { UploadFile } from "ant-design-vue";
 import { PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
 interface FormStateGc {
-    adjustmentNo: string | null
     file: UploadFile;
     budget: number;
     remarks: string;
-    adjustmentType: string | null
+    adjustmentType: string | null;
 }
 
 const props = defineProps<{
     title?: string;
-    adjustmentNo: string;
+    data: {
+        adjustmentNo: string;
+        requestedAt: string;
+        type: string;
+        remarks: string;
+        preparedBy: string;
+        budget: number;
+        file: string;
+    };
     remainingBudget: string;
     regularBudget: string;
     specialBudget: string;
 }>();
 
 const page = usePage<PageWithSharedProps>().props;
-const currentDate = dayjs().format("MMM DD, YYYY");
+const currentDate = dayjs(props.data.requestedAt).format("MMM DD, YYYY");
 
 const formState = useForm<FormStateGc>({
-    adjustmentNo: props.adjustmentNo,
-    budget: 0,
+    budget: props.data.budget,
     file: null,
-    remarks: "",
-    adjustmentType: 'negative',
+    remarks: props.data.remarks,
+    adjustmentType: props.data.type,
 });
 
 const { openLeftNotification } = onProgress();
@@ -177,17 +178,19 @@ const handleChange = (file: UploadChangeParam) => {
 };
 
 const onSubmit = () => {
-    formState.post(route("treasury.adjustment.budgetAdjustmentSubmission"), {
-        onSuccess: ({ props }) => {
-            openLeftNotification(props.flash);
-            if (props.flash.success) {
-                formState.reset();
-                window.location.reload();
-                // stream.value = `data:application/pdf;base64,${props.flash.stream}`;
-                // openIframe.value = true;
-            }
-        },
-    });
+    formState.post(
+        route("treasury.adjustment.budgetAdjustmentUpdateSubmission"),
+        {
+            onSuccess: ({ props }) => {
+                openLeftNotification(props.flash);
+                if (props.flash.success) {
+                    router.visit(route("treasury.dashboard"));
+                    // stream.value = `data:application/pdf;base64,${props.flash.stream}`;
+                    // openIframe.value = true;
+                }
+            },
+        }
+    );
 };
 
 const categoryHandler = (cat: string) => {

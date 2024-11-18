@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Treasury;
 
 use App\Models\Store;
-use App\Models\StoreEod;
+use Illuminate\Routing\Controller;
 use App\Services\Treasury\ReportService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
 
 class ReportsController extends Controller
 {

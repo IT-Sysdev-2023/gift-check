@@ -13,6 +13,7 @@ use App\Models\SpecialExternalGcrequest;
 use App\Models\StoreGcrequest;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
@@ -80,9 +81,7 @@ class DashboardService
 
     protected function adjustments()
     {
-        //Budget
-        $budget = BudgetAdjustment::count();
-        //Allocation
+        $budget = DB::table('budgetadjustment')->count();
         $allocation = AllocationAdjustment::count();
 
         return (object) [
