@@ -158,7 +158,10 @@ class IadController extends Controller
         ]);
     }
     public function generateVerifiedReports(Request $request){
-        ini_set('memory_limit', '1024M'); 
+
+        ini_set('memory_limit', '1024M');
+        set_time_limit(300);
+        
         return $this->iadServices->generateVerifiedReportExcel($request);
     }
 
