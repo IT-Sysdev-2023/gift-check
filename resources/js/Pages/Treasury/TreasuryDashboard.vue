@@ -219,9 +219,9 @@ const reviewedGcReleasing = () => routeTo("special.gc", "reviewedGcReleasing")
 const approvedRequest = () => routeTo("special.gc", "approvedRequest")
 
 //Adjustment
-const budgetAdjustments = () => routeTo('adjustment', 'budgetAdjustments')
-
+const budgetAdjustments = () => routeTo('adjustment', 'budgetAdjustmentsUpdate')
 const allocationAdjustment = () => routeTo('adjustment', 'allocation')
+
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");
 const eodList = () => routeTo("transactions.eod", "eodList");
