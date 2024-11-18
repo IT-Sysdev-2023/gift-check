@@ -8,7 +8,7 @@
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
 
-        <a-card title=" Revolving Budget Entry Form" class="mt-10">
+        <a-card title="Budget Adjustment Entry Form" class="mt-10">
             <a-form
                 :model="formState"
                 :label-col="{ span: 7 }"
@@ -38,6 +38,7 @@
                                     { label: 'Positive Entry', value: 'positive' },
                                 ]"
                                 @handle-change="categoryHandler"
+                                :value="'negative'"
                             />
                         </a-form-item>
                         <a-form-item
