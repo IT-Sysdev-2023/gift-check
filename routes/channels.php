@@ -10,3 +10,4 @@ Broadcast::channel('generating-app-release-reports.{id}', fn(User $user, $id) =>
 Broadcast::channel('generating-excel-events.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
 Broadcast::channel('spgc-ledger-excel.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
 Broadcast::channel('treasury-report.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
+Broadcast::channel('generate-verified-excel.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
