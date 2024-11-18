@@ -42,7 +42,13 @@ class FileHandler
 
         return $request->document ?? '';
     }
-
+    protected function destroyFile(Request $request, $file)
+    {
+        //delete old image
+        if ($request->hasFile('file')) {
+            return $this->disk->delete($this->folder() . $file);
+        }
+    }
 
     protected function createFileName(Request $request)
     {
