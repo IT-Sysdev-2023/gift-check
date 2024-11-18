@@ -2,8 +2,10 @@
 
 namespace App\Exports\IadVerifiedExports;
 
+use App\Events\VerifiedExcelReports\VerifiedExcelReports;
 use App\Models\User;
 use App\Traits\VerifiedExportsTraits\VerifiedTraits;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -59,43 +61,39 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
             ],
         ]);
 
-        $lastRow = $this->collectionData()->count() + 8;
 
 
-        // $data = $this->getDataStoreVerifivation();
+        $rowcount = $this->collectionData()->count();
+        $colcount = count($this->headings());
 
-        // $rowcount = $data->count();
-
-        // $colcount = count($this->headings());
-
-        // $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colcount);
+        $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colcount);
 
 
 
-        // $range = 'A8:' . $lastColumn  . $rowcount + 8;
+        $range = 'A8:' . $lastColumn  . $rowcount + 8;
 
 
 
-        // $sheet->getStyle($range)->applyFromArray([
-        //     'font' => [
-        //         'size' => 9,
-        //     ],
-        //     'borders' => [
-        //         'allBorders' => [
-        //             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-        //             'color' => ['argb' => '000000'],
-        //         ],
-        //     ],
-        //     'alignment' => [
-        //         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, // Center horizontally
-        //         'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER, // Center vertically
-        //     ],
-        // ]);
+        $sheet->getStyle($range)->applyFromArray([
+            'font' => [
+                'size' => 9,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => '000000'],
+                ],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, // Center horizontally
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER, // Center vertically
+            ],
+        ]);
 
-        // for ($col = 1; $col <= $colcount; $col++) {
-        //     $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-        //     $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
-        // }
+        for ($col = 1; $col <= $colcount; $col++) {
+            $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
+        }
 
 
         return [
@@ -132,14 +130,6 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                     'bold' => true,
                     'name' => 'Fira Code',
                     'size' => 8,
-                ],
-            ],
-            "A8:J{$lastRow}" => [
-                'borders' => [
-                    'allBorders' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                        'color' => ['argb' => '000000'], // Black border
-                    ],
                 ],
             ],
         ];
@@ -292,8 +282,9 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
             'amtWS'   =>    '0'
         ];
 
-        $data = $this->getMonthYearVerifiedGc($this->requestedData);
+        $data = $this->getMonthYearVerifiedGc($this->requestedData, 'per bu');
 
+        VerifiedExcelReports::dispatch('Done', 1, 1, Auth::user(), true);
         $cntarr = count($data);
 
         $cnter = 0;
@@ -323,76 +314,43 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
 
                 foreach ($explodedTerminalNo as $index => $terminal) {
 
-                    $term = explode("-", $explodedTerminalNo[0]);
+                    $term = explode("-", $explodedTerminalNo[$index]);
 
                     if (trim($term[0]) === 'SM') {
                         $hasSM = true;
-                        //$arr_terspecial[0]['amtSM'] += $purchase[$i];
-                        $type['amtSM'] += (float)$purchase[0];
-                        // var_dump(1);
+
+                        $type['amtSM'] += (float)$purchase[0] ?? '0';
+
                     }
                     if (trim($term[0]) === 'HF') {
                         $hasSM = true;
-                        //$arr_terspecial[0]['amtSM'] += $purchase[$i];
-                        $type['amtHF'] += (float)$purchase[0];
-                        // var_dump(1);
+
+                        $type['amtHF'] += (float)$purchase[0] ?? '0';
+
                     }
                     if (trim($term[0]) === 'MP') {
                         $hasSM = true;
-                        //$arr_terspecial[0]['amtSM'] += $purchase[$i];
-                        $type['amtMP'] += (float)$purchase[0];
-                        // var_dump(1);
-                    }
+
+                        $type['amtMP'] += (float)$purchase[0] ?? '0';
+               }
                     if (trim($term[0]) === 'FR') {
                         $hasSM = true;
-                        //$arr_terspecial[0]['amtSM'] += $purchase[$i];
-                        $type['amtFR'] += (float)$purchase[0];
+
+                        $type['amtFR'] += (float)$purchase[0] ?? '0';
                         // var_dump(1);
                     }
                     if (trim($term[0]) === 'SOD') {
                         $hasSM = true;
-                        //$arr_terspecial[0]['amtSM'] += $purchase[$i];
-                        $type['amtSOD'] += (float)$purchase[0];
-                        // var_dump(1);
+
+                        $type['amtSOD'] += (float)$purchase[0] ?? '0';
+
                     }
                     if (trim($term[0]) === 'WHOLESALE') {
                         $hasSM = true;
-                        //$arr_terspecial[0]['amtSM'] += $purchase[$i];
-                        $type['amtWS'] += (float)$purchase[0];
-                        // var_dump(1);
+
+                        $type['amtWS'] += (float)$purchase[0] ?? '0';
+
                     }
-
-                    // switch (trim($term[0])) {
-                    //     case 'SM':
-                    //         $hasSM = true;
-                    //         $type['amtSM'] += (float)$purchase[0];
-                    //         break;
-
-                    //     case 'HF':
-                    //         $hasHF = true;
-                    //         $type['amtHF'] += (float)$purchase[0];
-                    //         break;
-
-                    //     case 'MP':
-                    //         $hasMP = true;
-                    //         $type['amtMP'] += (float)$purchase[0];
-                    //         break;
-
-                    //     case 'FR':
-                    //         $hasFR = true;
-                    //         $type['amtFR'] += (float)$purchase[0];
-                    //         break;
-
-                    //     case 'SOD':
-                    //         $hasSOD = true;
-                    //         $type['amtSOD'] += (float)$purchase[0];
-                    //         break;
-
-                    //     case 'WHOLESALE':
-                    //         $hasWS = true;
-                    //         $type['amtWS'] += (float)$purchase[0];
-                    //         break;
-                    // }
                 }
             }
 
@@ -618,6 +576,7 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                 }
             }
         });
+        // dd($arr_perdate);
         return collect($arr_perdate)->groupBy('arr_perdate')->values();
     }
     public function columnFormats(): array

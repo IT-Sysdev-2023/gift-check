@@ -54,7 +54,7 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
 
     public function styles(Worksheet $sheet)
     {
-        $data = $this->getMonthYearVerifiedGc($this->requestData);
+        $data = $this->getMonthYearVerifiedGc($this->requestData, 'Perday');
 
         $rowcount = count($data) + 1;
 
@@ -109,7 +109,8 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
                 } else {
                 }
             } else {
-                return $this->getMonthYearVerifiedGc($this->requestData);
+                return $this->getMonthYearVerifiedGc($this->requestData, 'Kanding Sheet');
+               
             }
         }
     }
