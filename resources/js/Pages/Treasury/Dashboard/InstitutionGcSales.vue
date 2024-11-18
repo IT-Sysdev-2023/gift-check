@@ -84,7 +84,7 @@
                             type="primary"
                             size="small"
                             ghost
-                            @click="exportExcel(record.institutrId)"
+                            @click="exportExcel(record.institutrTrnum)"
                         >
                             <template #icon>
                                 <FileExcelOutlined />

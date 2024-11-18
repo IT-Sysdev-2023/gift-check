@@ -12,6 +12,7 @@ use App\Models\InstitutTransaction;
 use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
 use App\Models\PaymentFund;
+use App\Services\Documents\ExportHandler;
 use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use App\Models\Gc;
@@ -307,8 +308,10 @@ class InstitutionGcSalesService extends FileHandler
                 $pdf = Pdf::loadView('pdf.institution', ['data' => $data]);
                 $output = $pdf->output();
 
-                $this->savePdfFile($request, $request->releasingNo, $output);
-                $this->saveExcelFile($request, $request->releasingNo, $this->dataForExcel($data));
+                (new ExportHandler($this->folderName))
+                    ->createExcelFileName($request->user()->user_id, $request->releasingNo)
+                    ->exportToExcel( $this->dataForExcel($data))
+                    ->exportToPdf($output);
 
                 $stream = base64_encode($output);
 
@@ -321,13 +324,6 @@ class InstitutionGcSalesService extends FileHandler
         }
 
     }
-    // public function testing(Request $request, $tot){
-
-    //     $change = $tot - $request->totalDenomination;
-    //     $data = $this->dataForPdfTest($request, $change, $tot);
-    //     $this->saveExcelFile($request, $request->releasingNo, $this->dataForExcel($data));
-    //     dd(1);
-    // }
     public function printAr($id)
     {
         $this->folderName = "reports/treasury_ar_report";
@@ -375,49 +371,18 @@ class InstitutionGcSalesService extends FileHandler
             'denomination' => $institutTransactionItems
         ];
     }
+    public function excel(Request $request, $id){
+        $getFiles = $this->getFilesFromDirectory('excel');
+
+        $file = collect($getFiles)->filter(function ($file) use ($request, $id) {
+            return Str::startsWith(basename($file), "{$request->user()->user_id}-{$id}");
+        });
+
+        return $this->download(basename($file->first()), 'excel');
+    }
+    
     private function dataForExcel($data){
         return new InstitutTransactionExport($data);
-    }
-    private function dataForPdfTest($request, $change, $cash)
-    {
-        $barcode = collect($request->session()->get($this->sessionName, []));
-        $gr = $barcode->groupBy(fn($item) => $item['denomination'])->sortKeys();
-
-        return [
-            //Header
-            'company' => [
-                'name' => Str::upper('ALTURAS GROUP OF COMPANIES'),
-                'department' => Str::title('Head Office - Treasury Department'),
-                'report' => 'Institution GC Releasing Report',
-            ],
-
-            //SubHeader
-            'subheader' => [
-                'gc_rel_no' => 1212,
-                'date_released' => today()->toFormattedDateString(),
-                'customer' => "Customer",
-            ],
-
-            //Barcodes
-            'barcode' => $gr,
-
-            //Subfooter
-            'summary' => [
-                'total_no_of_gc' => $barcode->count(),
-                'payment_type' => 'typ',
-                'cash_received' => 01,
-                'total_gc_amount' => 1,
-                'change' => 1,
-                'paymentFund' => 'fund',
-            ],
-
-            //Signatures
-            'signatures' => [
-                'prepared_released_by' => Str::upper($request->user()->full_name),
-                'checked_by' => "assing",
-                'received_by' => 'Recieved',
-            ],
-        ];
     }
     private function dataForPdf($request, $change, $cash)
     {
@@ -460,8 +425,5 @@ class InstitutionGcSalesService extends FileHandler
             ],
         ];
     }
-    public function excel(Request $request, $id){
-        $export = new InstitutTransactionExport($this->transactionDetails($id)->record);
-        return Excel::download($export, 'invoices.xlsx');
-    }
+  
 }
