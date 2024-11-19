@@ -332,6 +332,7 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('approved-request', [SpecialGcRequestController::class, 'approvedRequest'])->name('approvedRequest');
             Route::get('cancelled-request', [SpecialGcRequestController::class, 'cancelledRequest'])->name('cancelledRequest');
+            Route::get('view-cancelled-request-{id}', [SpecialGcRequestController::class, 'viewCancelledRequest'])->name('viewCancelledRequest');
             Route::get('view-approved-request-{id}', [SpecialGcRequestController::class, 'viewApprovedRequest'])->name('viewApprovedRequest');
         });
         Route::prefix('transactions')->name('transactions.')->group(function () {
