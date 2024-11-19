@@ -129,6 +129,8 @@ const generate = () => {
     });
 
 }
+
+
 const handleChangeDataType = (value: string) => {
     vergc.value = value;
 }

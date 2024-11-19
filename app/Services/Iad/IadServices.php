@@ -652,11 +652,14 @@ class IadServices extends FileHandler
                 'label' => $item->store_name,
             ];
         });
- 
+
         return $store;
     }
 
-    public function generateVerifiedReportExcel($request){
-      return Excel::download((new VerifiedGcMultipleSheetExport($request->all())), 'users.xlsx');
+    public function generateVerifiedReportExcel($request)
+    {
+        $rec = new VerifiedGcMultipleSheetExport($request->all());
+
+        return Excel::download($rec, 'users.xlsx');
     }
 }
