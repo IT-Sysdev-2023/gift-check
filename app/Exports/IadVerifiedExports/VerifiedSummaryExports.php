@@ -3,7 +3,10 @@
 namespace App\Exports\IadVerifiedExports;
 
 use App\Helpers\NumberHelper;
+use App\Models\Store;
+use App\Models\StoreLocalServer;
 use App\Models\StoreVerification;
+use App\Traits\VerifiedExportsTraits\VerifiedTraits;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -23,6 +26,8 @@ class VerifiedSummaryExports implements FromCollection, WithTitle, WithEvents, W
      */
 
     use Exportable;
+
+    use VerifiedTraits;
 
     protected $requestData;
 
@@ -49,6 +54,7 @@ class VerifiedSummaryExports implements FromCollection, WithTitle, WithEvents, W
 
     public function collection()
     {
+
         $data = $this->getDataStoreVerifivation();
 
         return collect($data);
@@ -70,32 +76,47 @@ class VerifiedSummaryExports implements FromCollection, WithTitle, WithEvents, W
 
     private function getDataStoreVerifivation()
     {
+        // dd();
 
         $request = $this->requestData;
 
-        $vsdata = StoreVerification::select(
+        $database = [];
+
+        $storeLocServer = $this->getStoreLocalServer();
+
+        if ($request['datatype'] === 'vgc') {
+
+            if ($this->checkIfExists()) {
+                // dd();
+                $database = $this->getLocalServerData($storeLocServer)->table('store_verification');
+            } else {
+                $database = new StoreVerification();
+            }
+        }
+
+        $vsdata = $database->select(
             'vs_date',
             'vs_cn',
             'vs_tf_denomination',
             'vs_tf_balance',
             'vs_tf_purchasecredit',
             'vs_store'
-        )->with('customer:cus_id,cus_fname,cus_mname,cus_namext,cus_lname')
-            ->when(str_contains($request['date'], '-'), function ($q) use ($request) {
-                $q->whereLike('vs_date', '%' . $request['date'] . '%')
-                    ->orWhereLike('vs_reverifydate', '%' . $request['date'] . '%');
-            }, function ($q) use ($request) {
-                $q->whereYear('vs_date', $request['date'])
-                    ->orWhere('vs_reverifydate', fn($q) => $q->whereYear('vs_reverifydate', $request['date']));
-            })
-            ->get()
+        )->when(str_contains($request['date'], '-'), function ($q) use ($request) {
+            $q->whereLike('vs_date', '%' . $request['date'] . '%')
+                ->orWhereLike('vs_reverifydate', '%' . $request['date'] . '%');
+        }, function ($q) use ($request) {
+            $q->whereYear('vs_date', $request['date'])
+                ->orWhere('vs_reverifydate', fn($q) => $q->whereYear('vs_reverifydate', $request['date']));
+        })->get()
             ->where('vs_store', $request['store'])
             ->groupBy('vs_date');
 
-        $revdata =  DB::table('store_verification')
-            ->whereYear('vs_reverifydate', '=', '2019')
-            ->whereMonth('vs_reverifydate', '=', '01')
-            ->where('vs_store', '=', '1')
+        $revdata =  $database->when(str_contains($request['date'], '-'), function ($q) use ($request) {
+            $q->whereLike('vs_reverifydate', '%' . $request['date'] . '%');
+        }, function ($q) use ($request) {
+            $q->whereYear('vs_reverifydate', $request['date']);
+        })
+            ->where('vs_store', $request['store'])
             ->get()
             ->groupBy('vs_date')
             ->map(function ($group) {
@@ -152,6 +173,7 @@ class VerifiedSummaryExports implements FromCollection, WithTitle, WithEvents, W
                 'balance' => NumberHelper::format($item['balance']),
             ];
         });
+
         return collect($appendArray);
     }
 
@@ -240,5 +262,21 @@ class VerifiedSummaryExports implements FromCollection, WithTitle, WithEvents, W
     private function numberHelperFormat($number)
     {
         return number_format($number, 1, '.', '');
+    }
+
+
+    public function checkIfExists()
+    {
+        return Store::where('store_id', $this->requestData['store'])->where('has_local', 1)->exists();
+    }
+
+    public function getStoreLocalServer()
+    {
+        return StoreLocalServer::select(
+            'stlocser_ip',
+            'stlocser_username',
+            'stlocser_password',
+            'stlocser_db'
+        )->where('stlocser_storeid', $this->requestData['store'])->first();
     }
 }
