@@ -15,6 +15,7 @@ use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
+use App\Models\StoreGcrequest;
 use App\Rules\DenomQty;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
@@ -334,6 +335,21 @@ class SpecialGcRequestController extends Controller
             'title' => 'Special External Gc Requests',
             'records' => new SpecialExternalGcRequestResource($data),
             'barcodes' => $barcodes
+        ]);
+    }
+
+    public function cancelledRequest(Request $request)
+    {
+        $record = StoreGcrequest::joinCancelledGcStore()
+            ->select('sgc_id', 'sgc_num', 'sgc_date_request', 'sgc_store', 'sgc_requested_by')    
+        ->where([['sgc_status', 0], ['sgc_cancel', '*']])->get();
+
+        dd($record);
+        return inertia('Treasury/Dashboard/SpecialGc/CancelledSpecialGcRequest', [
+            'title' => 'Cancelled Special Gc Request',
+            'filters' => $request->only(['date', 'search']),
+            'data' => SpecialExternalGcRequestResource::collection($record),
+            'columns' => ColumnHelper::$specialReleasedGc
         ]);
     }
 

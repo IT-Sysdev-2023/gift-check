@@ -151,7 +151,7 @@
                                 <a-table
                                     bordered
                                     :pagination="false"
-                                    :data-source="scannedBc.data"
+                                    :data-source="scannedBc?.data"
                                     :columns="tableColumns"
                                 >
                                     <template #bodyCell="{ record, column }">
@@ -226,7 +226,7 @@ const props = defineProps<{
     checkBy: { label: string; value: number; date: string }[];
     releasingNo: number;
     scannedBc: {
-        data: any[];
+        data?: any[];
     };
     totalScannedDenomination: number;
 }>();

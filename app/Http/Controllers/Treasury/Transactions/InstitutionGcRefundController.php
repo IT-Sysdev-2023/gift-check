@@ -15,4 +15,9 @@ class InstitutionGcRefundController extends Controller
             'column' => []
         ]);
     }
+
+    public function store(Request $request)
+    {
+        
+    }
 }

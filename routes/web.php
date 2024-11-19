@@ -317,6 +317,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('view-released-gc-{id}', [SpecialGcRequestController::class, 'viewReleasedGc'])->name('viewReleasedGc');
 
             Route::get('approved-request', [SpecialGcRequestController::class, 'approvedRequest'])->name('approvedRequest');
+            Route::get('cancelled-request', [SpecialGcRequestController::class, 'cancelledRequest'])->name('cancelledRequest');
             Route::get('view-approved-request-{id}', [SpecialGcRequestController::class, 'viewApprovedRequest'])->name('viewApprovedRequest');
         });
         Route::prefix('transactions')->name('transactions.')->group(function () {
@@ -377,6 +378,8 @@ Route::middleware(['auth'])->group(function () {
             //Institution Gc Refund
             Route::prefix('institution-gc-refund')->name('intitution.refund.')->group(function () {
                 Route::get('/', [InstitutionGcRefundController::class, 'index'])->name('index');
+
+                Route::post('refund-submission', [InstitutionGcRefundController::class, 'store'])->name('refund');
             });
 
             //special gc payment

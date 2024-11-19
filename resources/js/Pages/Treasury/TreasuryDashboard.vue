@@ -89,16 +89,19 @@
                                 :cancelled="data?.specialGcRequest?.cancelled"
                                 @pending-event="specialGcPending"
                                 @approved-event="approvedRequest"
+                                @cancelled-event="cancelledSpecialRequest"
                             >
                                 <CardBadge
                                     :count="data?.specialGcRequest?.released"
                                     title="Released GC"
-                                     @event="specialReleasedGc"
+                                    @event="specialReleasedGc"
                                 />
                                 <CardBadge
-                                    :count="data?.specialGcRequest?.internalReviewed"
+                                    :count="
+                                        data?.specialGcRequest?.internalReviewed
+                                    "
                                     title="Reviewed GC For Releasing(Internal/ External)"
-                                     @event="gcReleasing"
+                                    @event="gcReleasing"
                                 />
                             </Card>
                             <Card title="Adjustment">
@@ -106,12 +109,12 @@
                                     <CardBadge
                                         :count="data?.adjustment?.budget"
                                         title="Budget Adjustment"
-                                         @event="budgetAdjustments"
+                                        @event="budgetAdjustments"
                                     />
                                     <CardBadge
                                         :count="data?.adjustment?.allocation"
                                         title="Allocation Adjustment"
-                                         @event="allocationAdjustment"
+                                        @event="allocationAdjustment"
                                     />
                                 </template>
                             </Card>
@@ -174,7 +177,7 @@ defineProps<{
             approved: number;
             cancelled: number;
             released: number;
-            internalReviewed: number
+            internalReviewed: number;
         };
         adjustment: {
             budget: number;
@@ -182,9 +185,9 @@ defineProps<{
         };
         eod: number;
         budget: {
-            totalBudget: number,
-            regularBudget: number,
-            specialBudget: number
+            totalBudget: number;
+            regularBudget: number;
+            specialBudget: number;
         };
         institutionGcSales: number;
     };
@@ -214,13 +217,15 @@ const cancelledProductionRequest = () =>
 //Special GC Request
 const specialGcPending = () => routeTo("special.gc", "pending");
 const gcReleasing = () => routeTo("special.gc", "gcReleasing");
-const specialReleasedGc = () => routeTo("special.gc", "specialReleasedGc")
-const reviewedGcReleasing = () => routeTo("special.gc", "reviewedGcReleasing")
-const approvedRequest = () => routeTo("special.gc", "approvedRequest")
+const specialReleasedGc = () => routeTo("special.gc", "specialReleasedGc");
+const reviewedGcReleasing = () => routeTo("special.gc", "reviewedGcReleasing");
+const approvedRequest = () => routeTo("special.gc", "approvedRequest");
+const cancelledSpecialRequest = () => routeTo("special.gc", "cancelledRequest");
 
 //Adjustment
-const budgetAdjustments = () => routeTo('adjustment', 'budgetAdjustmentsUpdate')
-const allocationAdjustment = () => routeTo('adjustment', 'allocation')
+const budgetAdjustments = () =>
+    routeTo("adjustment", "budgetAdjustmentsUpdate");
+const allocationAdjustment = () => routeTo("adjustment", "allocation");
 
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");

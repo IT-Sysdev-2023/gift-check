@@ -123,7 +123,6 @@ class AdjustmentService extends FileHandler
         $imageToDestroy = $data->adj_file_docno;
         $image = '';
         if ($request->hasFile('file')) { //if new file is set
-
             $image = $this->createFileName($request);
         } else if (isset($request->file['url'])) { //if the stock file is removed
             $image = '';
