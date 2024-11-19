@@ -652,7 +652,7 @@ class IadServices extends FileHandler
                 'label' => $item->store_name,
             ];
         });
-
+ 
         return $store;
     }
 
