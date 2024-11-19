@@ -36,15 +36,23 @@
                 </a-col>
                 <a-col :span="12">
                     <a-card class="mt-5">
-                        <div class="flex justify-center">
-                            <a-progress type="circle" :stroke-color="{
-                                '0%': '#108ee9',
-                                '100%': '#87d068',
-                            }" :percent="progressBar?.percentage" />
+                        <div v-if="isGenerating" class="mt-5">
+                            <div class="flex justify-center">
+                                <a-progress type="circle" :stroke-color="{
+                                    '0%': '#108ee9',
+                                    '100%': '#87d068',
+                                }" :percent="progressBar?.percentage" />
+                            </div>
+                            <br>
+                            <p class="text-center">{{ progressBar?.message }}</p>
                         </div>
-                        <br>
-                        <p class="text-center">{{ progressBar?.message }}</p>
-
+                        <div v-else>
+                            <div class="flex justify-center">
+                                <img style="height:180px;" src="../../../../../public/images/excel.gif" alt="">
+                            </div>
+                            <br>
+                            <p class="text-center">Please fill all the fields to generate!</p>
+                        </div>
                     </a-card>
                 </a-col>
             </a-row>
