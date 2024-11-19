@@ -10,8 +10,12 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class perBarcodeExcel implements FromCollection, WithHeadings, WithTitle, WithStyles, ShouldAutoSize
+
+class perBarcodeExcel implements FromCollection, WithHeadings, WithTitle, WithStyles, ShouldAutoSize, WithEvents, WithStartRow
 {
     /**
      * @return \Illuminate\Support\Collection
@@ -24,9 +28,49 @@ class perBarcodeExcel implements FromCollection, WithHeadings, WithTitle, WithSt
         $this->generatedData = $request;
     }
 
+    public function startRow(): int
+    {
+        return 7; 
+    }
+
     public function title(): string
     {
         return 'Per Barcode';
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+
+                $sheet->setCellValue('A1', 'ALTURAS GROUP OF COMPANIES');
+                $sheet->setCellValue('A2', 'HEAD OFFICE FINANCE DEPARTMENT');
+                $sheet->setCellValue('A3', 'SPECIAL EXTERNAL GC REPORT- RELEASING');
+                $sheet->setCellValue('A4', 'Start Date: ' . $this->generatedData['startDate']);
+                $sheet->setCellValue('A5', 'End Date: ' . $this->generatedData['endDate']);
+
+                $sheet->mergeCells('A1:F1');
+                $sheet->mergeCells('A2:F2');
+                $sheet->mergeCells('A3:F3');
+                $sheet->mergeCells('A4:F4');
+                $sheet->mergeCells('A5:F5');
+
+                $sheet->getStyle('A1:A5')->getAlignment()
+                    ->setHorizontal('center')
+                    ->setVertical('center');
+                $sheet->getStyle('A1:A5')->getFont()->setBold(true);
+
+                $headings = $this->headings();
+                $column = 'A';
+                foreach ($headings as $heading) {
+                    $sheet->setCellValue($column . '6', $heading);
+                    $sheet->getStyle($column . '6')->getAlignment()->setHorizontal('center');
+                    $sheet->getStyle($column . '6')->getFont()->setBold(true);
+                    $column++;
+                }
+            },
+        ];
     }
 
     public function headings(): array
@@ -53,7 +97,9 @@ class perBarcodeExcel implements FromCollection, WithHeadings, WithTitle, WithSt
     public function collection()
     {
         $perBarcode = $this->getAllDataPerBarcode($this->generatedData);
-        return collect($perBarcode);
+        $paddingRows = collect(array_fill(0, 6, ['', '', '', '']));
+        $dataWithPadding = $paddingRows->concat(collect($perBarcode));
+        return collect($dataWithPadding);
 
         // return User::all();
     }

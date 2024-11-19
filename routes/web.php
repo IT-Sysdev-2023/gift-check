@@ -417,11 +417,10 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::prefix('reports')->name('reports.')->group(function () {
-            Route::get('gc-report', [ReportsController::class,'gcReport'])->name('index');
-            Route::get('eod-report', [ReportsController::class,'eodReport'])->name('eod');
-            Route::post('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc')->middleware([HandlePrecognitiveRequests::class]);
-            Route::get('generate-eod-report', [ReportsController::class,'generateEodReports'])->name('generate.eod');
-
+            Route::get('gc-report', [ReportsController::class, 'gcReport'])->name('index');
+            Route::get('eod-report', [ReportsController::class, 'eodReport'])->name('eod');
+            Route::post('generate-gc-report', [ReportsController::class, 'generateGcReports'])->name('generate.gc')->middleware([HandlePrecognitiveRequests::class]);
+            Route::get('generate-eod-report', [ReportsController::class, 'generateEodReports'])->name('generate.eod');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
@@ -495,8 +494,8 @@ Route::prefix('finance')->group(function () {
             Route::get('reprint-{id}', [FinanceController::class, 'reprint'])->name('reprint');
         });
 
-        Route::name('cancelledSpecialExternalGC.')->group(function(){
-            Route::get('cancelled-especial-external-gc',[FinanceController::class, 'list'])->name('list');
+        Route::name('cancelledSpecialExternalGC.')->group(function () {
+            Route::get('cancelled-especial-external-gc', [FinanceController::class, 'list'])->name('list');
         });
     });
 
@@ -745,19 +744,24 @@ Route::prefix('store-accounting')
                         Route::get('spgc-approved', [StoreAccountingController::class, 'SPGCApproved'])->name('SPGCApproved');
                         Route::get('generate-excel-perCustomer', [StoreAccountingController::class, 'SPGCExcel'])->name('SPGCApprovedExcel');
                         Route::get('spgc-approved-submit', [StoreAccountingController::class, 'SPGCApprovedSubmit'])->name('SPGCApprovedSubmit');
-                        Route::get('generate-excel-perBarcode', [StoreAccountingController::class, 'SPGCApprovedExcelPerBarcode'])->name('SPGCApprovedExcelPerBarcode');
+                        Route::get('spgc-approved-pdf', [StoreAccountingController::class, 'pdfApproved'])->name('pdfApprovedSubmit');
+                        Route::get('spgc-approved-excel-barcode', [StoreAccountingController::class, 'excelPerBarcode'])->name('excelPerBarcode');
+
+
 
 
                         Route::get('spgc-release', [StoreAccountingController::class, 'SPGCRelease'])->name('SPGCRelease');
                         Route::get('spgc-release-submit', [StoreAccountingController::class, 'SPGCReleasedSubmit'])->name('SPGCReleasedSubmit');
                         Route::get('spgc-release-excel', [StoreAccountingController::class, 'releaseExcel'])->name('releaseExcel');
-                        Route::get('spgc-release-perBarcode-excel', [StoreAccountingController::class, 'releasePerBarcodeExcel'])->name('releasePerBarcodeExcel');
+                        Route::get('spgc-release-pdf', [StoreAccountingController::class, 'releasePdf'])->name('releasePdf');
+
 
 
                         Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');
+                        Route::get('duplicate-barcode', [StoreAccountingController::class, 'duplicateExcel'])->name('duplicateExcel');
 
                         Route::get('check-variance', [StoreAccountingController::class, 'CheckVariance'])->name('CheckVariance');
-                        Route::get('variance-submit', [StoreAccountingController::class, 'checkVarianceSubmit'])->name('checkVarianceSubmit');
+                        Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
 
 
 

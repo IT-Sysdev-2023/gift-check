@@ -1,6 +1,6 @@
 <template>
     <a-card>
-        <span style="margin-left: 50%; color:green; font-weight: bold;">
+        <span style="margin-left: 45%; font-weight: bold;">
             <LikeOutlined />
 
             APPROVED GC REPORTS
@@ -9,41 +9,79 @@
 
             <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc">
                 <a-tabs>
-                    <a-tab-pane key="1">
+                    <a-tab-pane key="3">
                         <template #tab>
                             <span style="font-weight: bold;">
-                                <CustomerServiceOutlined />
-                                Per Customer
+                                <span style="color:red">
+                                    <FilePdfOutlined />
+                                </span>
+                                PDF Per Customer
                             </span>
                         </template>
                         <a-card style="margin-top: 5px;">
-
-
-                            <span style="font-weight: bold;">
+                            <span style="font-weight: bold; margin-left: 3%;">
                                 <a-button @click="generatePdf" style="background-color:#b22222; color:white ">
                                     <FilePdfOutlined />
                                     Generate PDF
                                 </a-button>
                             </span>
 
-                            <span style="font-weight: bold; margin-left: 3%;">
-                                <a-button @click="generateExcel" style="background-color:green; color:white ">
-                                    <FileExcelOutlined />
-                                    Generate EXCEL
-                                </a-button>
-                            </span>
-                            <span style="font-weight: bold; margin-left: 30%;">
+                            <span style="font-weight: bold; margin-left: 46.4%;">
                                 Search:
-                                <a-input allow-clear v-model:value="spgcApprovedSearchPerCustomer"
+                                <a-input allow-clear v-model:value="pdfPerCustomerSearch"
                                     placeholder="Input search here!"
                                     style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
                             </span>
-                            <!-- <span style="font-weight: bold; margin-left: 3%;">
-                                <a-button @click="genEx" style="background-color:green; color:white ">
-                                    <FileExcelOutlined />
-                                    Generate EXCEL Dummy
+                            <div style="margin-top: 10px;margin-left: 30px;">
+                                <span style="color:red; font-style: oblique;">
+                                    <span v-if="message">
+                                        <WarningOutlined />
+                                    </span>
+                                    {{ this.message }}
+                                </span>
+                            </div>
+                            <div style="padding: 10px; background-color: #b0c4de;">
+                                <span style="font-weight: bold; margin-left: 30%;">
+                                    <span style="color:red">
+                                        <FilePdfOutlined />
+                                    </span>
+                                    Table showing PDF per customer
+                                </span>
+                            </div>
+                            <div style="margin-top: 20px;">
+
+                                <a-table :columns="pdfPerCustomer" :data-source="records.pdfPerCustomer.data"
+                                    :pagination="false" size="small">
+                                </a-table>
+                            </div>
+                            <pagination :datarecords="records.pdfPerCustomer" class="mt-5" />
+
+                        </a-card>
+                    </a-tab-pane>
+                    <a-tab-pane key="4">
+                        <template #tab>
+                            <span style="font-weight: bold;">
+                                <span style="color:red">
+                                    <FilePdfOutlined />
+                                </span>
+                                PDF Per Barcode
+                            </span>
+                        </template>
+                        <a-card style="margin-top: 5px;">
+
+
+                            <span style="font-weight: bold; margin-left: 3%;">
+                                <a-button @click="generatePdf" style="background-color:#b22222; color:white ">
+                                    <FilePdfOutlined />
+                                    Generate PDF
                                 </a-button>
-                            </span> -->
+                            </span>
+                            <span style="font-weight: bold; margin-left: 46.4%;">
+                                Search:
+                                <a-input allow-clear v-model:value="pdfPerBarcodeSearch"
+                                    placeholder="Input search here!"
+                                    style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
+                            </span>
                             <div style="margin-top: 10px;margin-left: 30px;">
                                 <span style="color:red; font-style: oblique;">
                                     <span v-if="message">
@@ -56,8 +94,74 @@
 
 
 
-                            <div style="color:red; margin-left: 40%;">
-                                Table showing per customer
+                            <div style="padding: 10px; background-color: #b0c4de;">
+                                <span style="font-weight: bold; margin-left: 30%;">
+                                    <span style="color:red">
+                                        <FilePdfOutlined />
+                                    </span>
+                                    Table showing PDF per barcode
+                                </span>
+                            </div>
+                            <div style="margin-top: 20px;">
+                                <!-- {{ dataCustomer }}  -->
+                                <a-table :columns="pdfPerBarcode" :data-source="records.pdfPerBarcode.data"
+                                    :pagination="false" size="small">
+                                </a-table>
+                            </div>
+                            <pagination :datarecords="records.pdfPerBarcode" class="mt-5" />
+
+                        </a-card>
+                    </a-tab-pane>
+                    <a-tab-pane key="1">
+                        <template #tab>
+                            <span style="font-weight: bold;">
+                                <span style="color: #006400">
+                                    <FileExcelOutlined />
+                                </span>
+                                EXCEL Per Customer
+                            </span>
+                        </template>
+                        <a-card style="margin-top: 5px;">
+
+
+                            <!-- <span style="font-weight: bold;">
+                                <a-button @click="generatePdf" style="background-color:#b22222; color:white ">
+                                    <FilePdfOutlined />
+                                    Generate PDF
+                                </a-button>
+                            </span> -->
+
+                            <span style="font-weight: bold; margin-left: 3%;">
+                                <a-button @click="generateExcel" style="background-color:green; color:white ">
+                                    <FileExcelOutlined />
+                                    Generate EXCEL
+                                </a-button>
+                            </span>
+                            <span style="font-weight: bold; margin-left: 45%;">
+                                Search:
+                                <a-input allow-clear v-model:value="spgcApprovedSearchPerCustomer"
+                                    placeholder="Input search here!"
+                                    style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
+                            </span>
+                            <div style="margin-top: 10px;margin-left: 30px;">
+                                <span style="color:red; font-style: oblique;">
+                                    <span v-if="message">
+                                        <WarningOutlined />
+                                    </span>
+                                    {{ this.message }}
+                                </span>
+                            </div>
+
+
+
+
+                            <div style="padding: 10px; background-color: #b0c4de;">
+                                <span style="font-weight: bold; margin-left: 30%;">
+                                    <span style="color:#006400">
+                                        <FileExcelOutlined />
+                                    </span>
+                                    Table showing EXCEL per customer
+                                </span>
                             </div>
                             <div style="margin-top: 20px;">
                                 <!-- {{ dataCustomer }}  -->
@@ -69,27 +173,30 @@
 
                         </a-card>
                     </a-tab-pane>
+
                     <a-tab-pane key="2">
                         <template #tab>
                             <span style="font-weight: bold;">
-                                <BarcodeOutlined />
-                                Per Barcode
+                                <span style="color: #006400">
+                                    <FileExcelOutlined />
+                                </span>
+                                EXCEL Per Barcode
                             </span>
                         </template>
                         <a-card style="margin-top: 5px;">
-                            <span style="font-weight: bold;">
+                            <!-- <span style="font-weight: bold;">
                                 <a-button @click="generatePdf" style="background-color:#b22222; color:white ">
                                     <FilePdfOutlined />
                                     Generate PDF
                                 </a-button>
-                            </span>
+                            </span> -->
                             <span style="font-weight: bold; margin-left: 3%;">
-                                <a-button @click="generateExcelPerBarcode" style="background-color:green; color:white ">
+                                <a-button @click="generateExcel" style="background-color:green; color:white ">
                                     <FileExcelOutlined />
                                     Generate EXCEL
                                 </a-button>
                             </span>
-                            <span style="font-weight: bold; margin-left: 30%;">
+                            <span style="font-weight: bold; margin-left: 45%;">
                                 Search:
                                 <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
                                     style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
@@ -104,8 +211,13 @@
                             </div>
 
 
-                            <div style="color:red; margin-left: 40%;">
-                                Table showing per barcode
+                            <div style="padding: 10px; background-color: #b0c4de;">
+                                <span style="font-weight: bold; margin-left: 30%;">
+                                    <span style="color:#006400">
+                                        <FileExcelOutlined />
+                                    </span>
+                                    Table showing EXCEL per barcode
+                                </span>
                             </div>
                             <div style="margin-top: 20px;">
                                 <a-table :columns="perBarcodeTable" :data-source="records.dataBarcode.data"
@@ -152,7 +264,7 @@
                 </a-button>
             </div>
             <div style="margin-top: 15%;">
-                <div style="font-weight: bold; color:#1e90ff">
+                <div style="font-weight: bold;">
                     Date Selected:
                 </div>
                 <div style="margin-top: 5px;">
@@ -168,7 +280,7 @@
                         <span style="color:green; font-weight: bold;">
                             TO:
                         </span>
-                        <span style="margin-left: 5px;">
+                        <span style="margin-left: 25px;">
                             {{ records.toDate }}
                         </span>
 
@@ -182,14 +294,10 @@
         </a-button> -->
 
     </a-card>
-    <!-- <a-modal v-model:open="messageModal" @click="ok">
-        <span>
-            {{ message }}
-        </span>
-    </a-modal> -->
 
 
-    <!-- {{ message }} -->
+
+    <!-- {{ records. }} -->
 </template>
 
 <script>
@@ -199,6 +307,7 @@ import Pagination from '@/Components/Pagination.vue';
 import { ExclamationCircleOutlined, WindowsFilled } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
 import { message, Modal } from 'ant-design-vue';
+import { notification } from 'ant-design-vue';
 
 export default {
     components: { Pagination },
@@ -208,7 +317,9 @@ export default {
     },
     data() {
         return {
-            message:'',
+            message: '',
+            pdfPerBarcodeSearch: this.pdfPerBarcode,
+            pdfPerCustomerSearch: this.pdfPerCustomer,
             messageModal: false,
             spgcApprovedSearch: this.dataBarcode,
             spgcApprovedSearchPerCustomer: this.dataCustomer,
@@ -218,6 +329,51 @@ export default {
 
                 errors: {}
             },
+            pdfPerCustomer: [
+                {
+                    title: 'Date Requestd',
+                    dataIndex: 'datereq',
+                },
+                {
+                    title: 'Company',
+                    dataIndex: 'spcus_companyname'
+                },
+                {
+                    title: 'Approval #',
+                    dataIndex: 'spexgc_num'
+                },
+                {
+                    title: 'Total Amount',
+                    dataIndex: 'totdenom'
+                }
+
+            ],
+            pdfPerBarcode: [
+                {
+                    title: 'Date Request',
+                    dataIndex: 'datereq'
+                },
+                {
+                    title: 'Denomination',
+                    dataIndex: 'spexgcemp_denom'
+                },
+                {
+                    title: 'Customer',
+                    dataIndex: 'spexgcemp_lname'
+                },
+                {
+                    title: 'Barcode',
+                    dataIndex: 'spexgcemp_barcode'
+                },
+                {
+                    title: 'Approval #',
+                    dataIndex: 'spexgc_num'
+                },
+                {
+                    title: 'Date Release',
+                    dataIndex: 'daterel'
+                },
+            ],
 
             perCustomerTable: [
                 {
@@ -273,7 +429,7 @@ export default {
             };
 
             this.$inertia.get(route('storeaccounting.SPGCApproved', formData), {
-                
+
             }, {
                 preserveState: true
             });
@@ -286,17 +442,42 @@ export default {
                 spgcEndDate: this.records.toDate
             };
             this.$inertia.get(route('storeaccounting.SPGCApproved', perCustomerSearch), {
+
+            }, {
+                preserveState: true
+            });
+        },
+        pdfPerCustomerSearch(search) {
+            console.log(search);
+            const pdfPerCustomer = {
+                pdfCustomerSearch: search,
+                spgcStartDate: this.records.fromDate,
+                spgcEndDate: this.records.toDate
+            };
+            this.$inertia.get(route('storeaccounting.SPGCApproved', pdfPerCustomer), {
+
+            }, {
+                preserveState: true
+            })
+        },
+        pdfPerBarcodeSearch(search) {
+            console.log(search);
+            const pdfPerBarcode = {
+                pdfPerBarcodeSearch: search,
+                spgcStartDate: this.records.fromDate,
+                spgcEndDate: this.records.toDate
+            };
+            this.$inertia.get(route('storeaccounting.SPGCApproved', pdfPerBarcode), {
                 
             }, {
-                preserveState:true
-            });
+                preserveState: true
+            })
         }
 
     },
 
     methods: {
         spgcSubmit() {
-            // alert('kanding')
             this.spgcform.errors = {};
             const { spgcStartDate, spgcEndDate } = this.spgcform;
 
@@ -315,28 +496,39 @@ export default {
                 spgcEndDate: endDate,
             };
 
-
             console.log('Submitting with values:', submitData);
             this.$inertia.get(route('storeaccounting.SPGCApproved', submitData));
 
 
         },
-        // genEx() {
-        //     window.location.href = route('storeaccounting.dummy', {
-        //         datatype: 'sending',
-        //     });
-        // },
 
         generatePdf() {
             Modal.confirm({
                 title: 'Notification',
-                icon: createVNode(ExclamationCircleOutlined),
-                content: 'UNDER MAINTENANCE, STAY TUNE FOR UPCOMING UPDATES!',
+                content: 'Are you sure you want to generate PDF!',
                 okText: 'Yes',
                 okType: 'danger',
                 cancelText: 'No',
-                onOk() {
-                    console.log('Okay');
+                onOk: () => {
+                    if (this.records.fromDate === null || this.records.toDate === null) {
+                        const openNotificationWithIcon = (type) => {
+                            notification[type]({
+                                message: 'File Selection Required',
+                                description: 'Please select start and end date first',
+                                placement: 'topRight'
+                            });
+                        };
+                        openNotificationWithIcon('warning');
+                        return;
+                    }
+                    const hide = message.loading('Generating in progress..', 0);
+                    
+                    window.location.href = route('storeaccounting.pdfApprovedSubmit', {
+                        startDate: this.records.fromDate,
+                        endDate: this.records.toDate
+                    },);
+                    setTimeout(hide, 16000);
+
                 },
                 onCancel() {
                     console.log('Cancel');
@@ -346,58 +538,36 @@ export default {
         generateExcel() {
             Modal.confirm({
                 title: 'Confirmation',
-                icon: createVNode(ExclamationCircleOutlined),
                 content: 'Are you sure you want to generate EXCEL per CUSTOMER?',
                 okText: 'Yes',
                 okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
                     if (this.records.fromDate === null || this.records.toDate === null) {
-                        console.log("Please select date first");
-                        this.message = "Please select start date and end date first!";
+                        const openNotificationWithIcon = (type) => {
+                            notification[type]({
+                                message: 'File Selection Required',
+                                description: 'Please select start and end date first',
+                                placement: 'topRight'
+                            });
+                        };
+                        openNotificationWithIcon('warning');
                         return;
                     }
+                    const hide = message.loading('Generating in progress..', 0)
+
                     window.location.href = route('storeaccounting.SPGCApprovedExcel', {
                         startDate: this.records.fromDate,
                         endDate: this.records.toDate
-                    })
-                },
-                onCancel() {
-                    console.log('Cancel');
-                },
-            });
-        },
-        generateExcelPerBarcode() {
-            Modal.confirm({
-                title: 'Confirmation',
-                icon: createVNode(ExclamationCircleOutlined),
-                content: 'Are you sure you want to generate EXCEL per BARCODE?',
-                okText: 'Yes',
-                okType: 'danger',
-                cancelText: 'No',
-                onOk: () => {
-                    if (this.records.fromDate === null || this.records.toDate === null) {
-                        this.message = "Please select start date and end date first!";
-                        return;
-                    }
-                    window.location.href = route('storeaccounting.SPGCApprovedExcelPerBarcode', {
-                        startDate: this.records.fromDate,
-                        endDate: this.records.toDate
-                    })
-                },
-                onCancel() {
-                    console.log('Cancel');
-                },
-            });
-        },
-        // sample() {
-        //     this.messageModal = true;
-        // },
-        // ok(e) {
-        //     console.log(e);
-        //     this.messageModal = false;
-        // }
+                    });
+                    setTimeout(hide, 2500);
 
+                },
+                onCancel() {
+                    console.log('Cancel');
+                },
+            });
+        },
     }
 }
 </script>
