@@ -37,6 +37,8 @@ use App\Http\Controllers\Treasury\Transactions\RetailGcReleasingController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Controllers\UserDetailsController;
+use App\Models\InstitutEod;
+use App\Models\InstitutPayment;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -58,6 +60,18 @@ Route::fallback(function () {
 });
 Route::get('kanding', function () {
     return Storage::disk('fad')->files();
+});
+Route::get('kanding-hinuktan', function () {
+    $insti = InstitutPayment::select('insp_id')->where('institut_eodid', '0')->get();
+        if ($insti->isNotEmpty()) {
+            DB::transaction(function () {
+                $eod_num = InstitutEod::orderByDesc('ieod_id')->value('ieod_num');
+
+                $incre = $eod_num ? $eod_num + 1 : 1;
+                dd($incre);
+
+            });
+        }
 });
 
 
@@ -317,6 +331,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('view-released-gc-{id}', [SpecialGcRequestController::class, 'viewReleasedGc'])->name('viewReleasedGc');
 
             Route::get('approved-request', [SpecialGcRequestController::class, 'approvedRequest'])->name('approvedRequest');
+            Route::get('cancelled-request', [SpecialGcRequestController::class, 'cancelledRequest'])->name('cancelledRequest');
+            Route::get('view-cancelled-request-{id}', [SpecialGcRequestController::class, 'viewCancelledRequest'])->name('viewCancelledRequest');
             Route::get('view-approved-request-{id}', [SpecialGcRequestController::class, 'viewApprovedRequest'])->name('viewApprovedRequest');
         });
         Route::prefix('transactions')->name('transactions.')->group(function () {
@@ -377,6 +393,8 @@ Route::middleware(['auth'])->group(function () {
             //Institution Gc Refund
             Route::prefix('institution-gc-refund')->name('intitution.refund.')->group(function () {
                 Route::get('/', [InstitutionGcRefundController::class, 'index'])->name('index');
+
+                Route::post('refund-submission', [InstitutionGcRefundController::class, 'store'])->name('refund');
             });
 
             //special gc payment

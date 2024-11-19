@@ -64,6 +64,7 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
 
 
         $rowcount = $this->collectionData()->count();
+
         $colcount = count($this->headings());
 
         $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colcount);
@@ -219,6 +220,7 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
 
     private function getDataPerGCTypeAndBu()
     {
+
         $arr_perdate = [];
 
         $datedisplay = "";
@@ -285,6 +287,7 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
         $data = $this->getMonthYearVerifiedGc($this->requestedData, 'per bu');
 
         VerifiedExcelReports::dispatch('Done', 1, 1, Auth::user(), true);
+
         $cntarr = count($data);
 
         $cnter = 0;
@@ -576,7 +579,7 @@ class PerGcTypeAndBuExports implements FromCollection, WithHeadings, WithEvents,
                 }
             }
         });
-        // dd($arr_perdate);
+
         return collect($arr_perdate)->groupBy('arr_perdate')->values();
     }
     public function columnFormats(): array

@@ -120,7 +120,7 @@ class AdjustmentService extends FileHandler
     public function budgetUpdateSubmission(Request $request)
     {
         $data = DB::table('budgetadjustment')->first();
-
+        $imageToDestroy = $data->adj_file_docno;
         $image = '';
         if ($request->hasFile('file')) { //if new file is set
             $image = $this->createFileName($request);
@@ -142,8 +142,10 @@ class AdjustmentService extends FileHandler
                 'adj_type' => userDepartment($request->user())
             ]);
 
-        if($isSuccess){
+        if ($isSuccess) {
             $this->saveFile($request, $image);
+            $this->destroyFile($request, $imageToDestroy);
+
             return redirect()->back()->with('success', 'Successfully Update');
         }
         return redirect()->back()->with('error', 'SOmething Went wrong with the server!');

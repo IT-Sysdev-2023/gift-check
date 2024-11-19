@@ -847,4 +847,38 @@ class ColumnHelper
             'key' => 'user',
         ],
     ];
+    public static $cancelledGcRequest = [
+        [
+            'title' => 'Req. #',
+            'dataIndex' => 'sgc_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'sgc_date_request',
+
+        ],
+        [
+            'title' => 'Retail Store',
+            'key' => 'store',
+
+        ],
+        [
+            'title' => 'Prepared By',
+            'key' => 'user',
+        ],
+        [
+            'title' => 'Date Cancelled',
+            'key' => 'dateCancelled',
+
+        ],
+        [
+            'title' => 'Cancelled By',
+            'key' => 'cancelledBy',
+        ],
+        [
+            'title' => 'Actions',
+            'key' => 'action',
+        ],
+    ];
 }

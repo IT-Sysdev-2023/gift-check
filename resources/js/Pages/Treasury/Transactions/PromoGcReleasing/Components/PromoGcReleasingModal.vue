@@ -242,7 +242,6 @@ const page = usePage<PageWithSharedProps>().props;
 const emit = defineEmits<{
     (e: "update:open", value: boolean): void;
 }>();
-
 //Data/Variables
 const formState = useForm({
     file: null,
@@ -257,8 +256,8 @@ const formState = useForm({
         checkAmount: "",
         customer: "",
     },
-    checkedBy: props.data?.approved_request_user?.user?.full_name,
-    approvedBy: props.data?.approved_by_type,
+    checkedBy: '',
+    approvedBy: '',
 });
 const releasingNo = ref("");
 const today = dayjs().format("YYYY-MMM-DD HH:mm:ss a");
@@ -385,6 +384,17 @@ watch(
         if (newValue) {
             releasingNo.value = newValue.promo_releasing_no;
             denominationTableData.value = newValue.denomination;
+        }
+    },
+    { immediate: true }
+);
+
+watch(
+    () => props?.data,
+    (newValue) => {
+        if (newValue) {
+            formState.checkedBy = newValue?.approved_request_user?.user?.full_name;
+            formState.approvedBy = newValue?.approved_by_type;
         }
     },
     { immediate: true }

@@ -162,6 +162,7 @@ declare module 'vue' {
     CancelledPR: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/CancelledPR.vue')['default']
     CancelledProduction: typeof import('./resources/js/Pages/Treasury/Dashboard/GcProduction/CancelledProduction.vue')['default']
     CancelledRequest: typeof import('./resources/js/Pages/Marketing/PromoGCRequest/CancelledRequest.vue')['default']
+    CancelledSpecialGcRequest: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGc/CancelledSpecialGcRequest.vue')['default']
     Cancelledspexgc: typeof import('./resources/js/Pages/Marketing/specialgc/Cancelledspexgc.vue')['default']
     Card: typeof import('./resources/js/Components/Card.vue')['default']
     CardBadge: typeof import('./resources/js/Components/CardBadge.vue')['default']

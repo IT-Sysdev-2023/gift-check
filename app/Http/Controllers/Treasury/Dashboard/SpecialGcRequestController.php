@@ -6,6 +6,7 @@ use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SpecialExternalGcrequestEmpAssignResource;
 use App\Http\Resources\SpecialExternalGcRequestResource;
+use App\Http\Resources\StoreGcRequestResource;
 use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
 use App\Models\LedgerBudget;
@@ -15,6 +16,8 @@ use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
+use App\Models\StoreGcrequest;
+use App\Models\StoreRequestItem;
 use App\Rules\DenomQty;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
@@ -335,6 +338,28 @@ class SpecialGcRequestController extends Controller
             'records' => new SpecialExternalGcRequestResource($data),
             'barcodes' => $barcodes
         ]);
+    }
+
+    public function cancelledRequest(Request $request)
+    {
+        $record = StoreGcrequest::joinCancelledGcStore()
+            ->select('sgc_id', 'sgc_num', 'sgc_date_request', 'sgc_store', 'sgc_requested_by')    
+        ->where([['sgc_status', 0], ['sgc_cancel', '*']])->paginate();
+
+        return inertia('Treasury/Dashboard/SpecialGc/CancelledSpecialGcRequest', [
+            'title' => 'Cancelled Special Gc Request',
+            'filters' => $request->only(['date', 'search']),
+            'data' => StoreGcRequestResource::collection($record),
+            'columns' => ColumnHelper::$cancelledGcRequest
+        ]);
+    }
+
+    public function viewCancelledRequest(Request $request, $id)
+    {
+        $cancelled = StoreGcrequest::joinCancelledGcStore()->where('store_gcrequest.sgc_id', $id)->first();
+        $denomination = StoreRequestItem::with('denomination')->where('sri_items_requestid', $id)->paginate();
+
+        return response()->json(['info' => new StoreGcRequestResource($cancelled), 'denomination' => $denomination]);
     }
 
     private function options()
