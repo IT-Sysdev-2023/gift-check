@@ -6,7 +6,6 @@ use App\Events\TreasuryReportEvent;
 use App\Helpers\NumberHelper;
 use App\Models\InstitutEod;
 use App\Models\StoreEod;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 
@@ -20,13 +19,9 @@ class ReportsHandler extends ReportGenerator
 	private $cardSales;
 	private $ar;
 
-	public function __construct(){
-		parent::__construct();
-	}
-
-	protected function gcSales(User $user)
+	protected function gcSales()
 	{
-		$this->dispatchProgress(ReportHelper::GENERATING_SALES_DATA, $user);
+		$this->dispatchProgress(ReportHelper::GENERATING_SALES_DATA);
 		$this->cashSales = $this->generateSalesData(self::SALE_TYPE_CASH);
 		$this->cardSales = $this->generateSalesData(self::SALE_TYPE_CARD);
 		$this->ar = $this->generateSalesData(self::SALE_TYPE_AR);
@@ -103,9 +98,9 @@ class ReportsHandler extends ReportGenerator
 		return ['refund' => 'No Refund Transaction'];
 	}
 
-	protected function footer(User $user)
+	protected function footer()
 	{
-		$this->dispatchProgress(ReportHelper::GENERATING_FOOTER_DATA, $user);
+		$this->dispatchProgress(ReportHelper::GENERATING_FOOTER_DATA);
 		$discount = $this->generateTotalTransDiscount();
 		$grandTotal = ReportHelper::grandTotal($this->cashSales, $this->cardSales, $this->ar, $discount);
 

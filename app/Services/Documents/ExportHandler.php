@@ -9,16 +9,12 @@ class ExportHandler extends FileHandler
 {
 
     private $filename;
-    public function __construct()
+    public function __construct(string $folder)
     {
         parent::__construct();
-        // $this->folderName = $folder;
-    }
-    public function setFolder(string $folder){
         $this->folderName = $folder;
-        return $this;
     }
-    public function setFileName($id, $identifier)
+    public function createExcelFileName($id, $identifier)
     {
         $date = now()->format('Y-m-d-His');
         $this->filename = "{$id}-{$identifier}-" . $date;

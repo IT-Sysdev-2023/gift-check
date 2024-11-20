@@ -343,8 +343,8 @@ class SpecialGcRequestController extends Controller
     public function cancelledRequest(Request $request)
     {
         $record = StoreGcrequest::joinCancelledGcStore()
-            ->select('sgc_id', 'sgc_num', 'sgc_date_request', 'sgc_store', 'sgc_requested_by')
-            ->where([['sgc_status', 0], ['sgc_cancel', '*']])->paginate();
+            ->select('sgc_id', 'sgc_num', 'sgc_date_request', 'sgc_store', 'sgc_requested_by')    
+        ->where([['sgc_status', 0], ['sgc_cancel', '*']])->paginate();
 
         return inertia('Treasury/Dashboard/SpecialGc/CancelledSpecialGcRequest', [
             'title' => 'Cancelled Special Gc Request',
@@ -357,18 +357,9 @@ class SpecialGcRequestController extends Controller
     public function viewCancelledRequest(Request $request, $id)
     {
         $cancelled = StoreGcrequest::joinCancelledGcStore()->where('store_gcrequest.sgc_id', $id)->first();
- 
-        $denomination = StoreRequestItem::join('denomination', 'denomination.denom_id', '=', 'store_request_items.sri_items_denomination')
-            ->select(DB::raw('store_request_items.sri_items_quantity * denomination.denomination as total'), 'store_request_items.sri_items_quantity', 'denomination.denomination')
-            ->where('store_request_items.sri_items_requestid', $id);
+        $denomination = StoreRequestItem::with('denomination')->where('sri_items_requestid', $id)->paginate();
 
-        $total = NumberHelper::currency($denomination->get()->sum( 'total'));
-
-        return response()->json([
-            'info' => new StoreGcRequestResource($cancelled),
-            'denomination' => $denomination->paginate(5),
-            'total' => $total
-        ]);
+        return response()->json(['info' => new StoreGcRequestResource($cancelled), 'denomination' => $denomination]);
     }
 
     private function options()

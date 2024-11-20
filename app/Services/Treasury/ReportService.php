@@ -3,7 +3,6 @@
 namespace App\Services\Treasury;
 
 use App\Events\TreasuryReportEvent;
-use App\Jobs\GcReport;
 use App\Models\StoreEod;
 use App\Services\Treasury\Reports\ReportsHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -34,7 +33,32 @@ class ReportService extends ReportsHandler
 			"store" => 'required',
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
-		GcReport::dispatch($request->all());
+
+		//Dont touch this otherwise you're f*cked!
+		//Dont put this in LazyCollection otherwise the realtime fire twice
+		$storeData = [];
+
+		//All Stores
+		if ($request->store === 'all') {
+			$store = Store::selectStore()->cursor();
+
+			$percentage = 1;
+
+			$this->progress['progress']['totalRow'] = count($store);
+
+			foreach ($store as $item) {
+				$this->progress['progress']['currentRow'] = $percentage++;
+				TreasuryReportEvent::dispatch($request->user(), $this->progress);
+
+				$storeData[] = $this->handleRecords($request, $item->value);
+			}
+		} else {
+			$storeData[] = $this->handleRecords($request, $request->store);
+		}
+
+		$pdf = Pdf::loadView('pdf.treasuryReport', ['data' => ['stores' => $storeData]]);
+
+		return $pdf->output();
 	}
 
 	public function generateEodPdf(Request $request)
@@ -53,7 +77,44 @@ class ReportService extends ReportsHandler
 
 		return $pdf->output();
 	}
-	
+	private function handleRecords(Request $request, string $store)
+	{
+		$record = collect();
+		$footerData = collect();
+
+		$reportType = collect($request->reportType);
+
+		$this->setStore($store)->setDateOfTransactions($request);
+
+		if (!is_null($this->transactionDate) && $this->hasRecords($request)) {
+
+			if ($reportType->contains('gcSales')) {
+				$record->put('gcSales', $this->gcSales());
+				$footerData->put('gcSalesFooter', $this->footer());
+			}
+
+			if ($reportType->contains('refund')) {
+				$footerData->put('refundFooter', $this->refund());
+			}
+			if ($reportType->contains('gcRevalidation')) {
+				$footerData->put('revalidationFooter', $this->gcRevalidation());
+			}
+		} else {
+			$this->dispatchProgress(3);
+			return [
+				'error' => 'No Transactions'
+			];
+		}
+
+		return [
+			'header' => $this->pdfHeaderDate($request),
+			'data' => [...$record],
+			'footer' => [...$footerData],
+		];
+
+
+
+	}
 	private function handleEodRecords(Request $request)
 	{
 		$record = collect();

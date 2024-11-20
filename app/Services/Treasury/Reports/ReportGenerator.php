@@ -8,17 +8,16 @@ use App\Models\StoreEod;
 use App\Models\TransactionPayment;
 use App\Models\TransactionRefund;
 use App\Models\TransactionRefundDetail;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Http\Request;
 use App\Models\TransactionStore;
 use App\Models\TransactionLinediscount;
 use App\Models\TransactionSale;
 use App\Models\Store;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\LazyCollection;
 class ReportGenerator
 {
@@ -34,6 +33,7 @@ class ReportGenerator
 	{
 
 		$this->progress = [
+			'active' => 0,
 			'store' => '',
 			'progress' => [
 				'currentRow' => 0,
@@ -42,15 +42,28 @@ class ReportGenerator
 			'info' => []
 		];
 	}
-	public function dispatchProgress($descrip, $user)
+	public function dispatchProgress($descrip)
 	{
+		// return $status[$currentStatus];
+		//Broadcasting
+		// if (!empty($this->progress['info'])) {
+		// 	if($this->progress['store'] === ReportHelper::storeName($this->store)){
+		// 		$this->progress['info'][]['title'] = $descrip; //Append Existing array
+		// 	}else{
+		// 		$this->progress['info'] = [['title' => $descrip]]; //Initialize set of Data
+		// 	}
+		// } else {
+		// 	$this->progress['info'][] = ['title' => $descrip];
+		// }
+
 		$this->progress['store'] = ReportHelper::storeName($this->store);
-		$this->progress['info'] = $descrip;
-		TreasuryReportEvent::dispatch($user, $this->progress);
+		$this->progress['active'] = $descrip;
+
+		TreasuryReportEvent::dispatch(Auth::user(), $this->progress);
 	}
 	public function dispatchProgressEod($descrip)
 	{
-		$this->progress['info'] = $descrip;
+		$this->progress['active'] = $descrip;
 
 		TreasuryReportEvent::dispatch(Auth::user(), $this->progress);
 	}
@@ -61,7 +74,7 @@ class ReportGenerator
 		return $this;
 	}
 
-	protected function setDateOfTransactionsEod( $request)
+	protected function setDateOfTransactionsEod(Request $request)
 	{
 		$this->isDateRange = in_array($request->transactionDate, ['dateRange', 'thisWeek', 'currentMonth', 'allTransactions']);
 
@@ -79,7 +92,7 @@ class ReportGenerator
 
 		return $this;
 	}
-	protected function setDateOfTransactions($request)
+	protected function setDateOfTransactions(Request $request)
 	{
 		$this->isDateRange = in_array($request->transactionDate, ['dateRange', 'thisWeek', 'currentMonth', 'allTransactions']);
 
@@ -97,9 +110,9 @@ class ReportGenerator
 
 		return $this;
 	}
-	protected function pdfHeaderDate($request, User $user)
+	protected function pdfHeaderDate(Request $request)
 	{
-		$this->dispatchProgress(ReportHelper::GENERATING_HEADER, $user);
+		$this->dispatchProgress(ReportHelper::GENERATING_HEADER);
 		$store = Store::where('store_id', $this->store)->value('store_name');
 		
 		$header = collect([
@@ -189,9 +202,9 @@ class ReportGenerator
 			)->value('total');
 	}
 
-	protected function hasRecords($request, User $user): bool
+	protected function hasRecords(Request $request): bool
 	{
-		$this->dispatchProgress(ReportHelper::CHECKING_RECORDS, $user);
+		$this->dispatchProgress(ReportHelper::CHECKING_RECORDS);
 		return TransactionStore::whereHas('ledgerStore')
 			->where('trans_store', $this->store)
 			->when((in_array('gcSales', $request->reportType)) ?? null, function ($q) use ($request) {
@@ -215,7 +228,7 @@ class ReportGenerator
 			->exists();
 	}
 
-	protected function hasEodRecords($request)
+	protected function hasEodRecords(Request $request)
 	{
 		$this->dispatchProgressEod(ReportHelper::CHECKING_RECORDS);
 		if ($this->isDateRange) {
