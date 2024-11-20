@@ -116,7 +116,7 @@ class releasePerBarcode implements FromCollection, ShouldAutoSize, WithHeadings,
                 'special_external_gcrequest_emp_assign.spexgcemp_denom',
                 DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname,
                  ' ', special_external_gcrequest_emp_assign.spexgcemp_mname,
-                 ' ', special_external_gcrequest_emp_assign.spexgcemp_lname )"),
+                 ' ', special_external_gcrequest_emp_assign.spexgcemp_lname ) as customer"),
                 'special_external_gcrequest.spexgc_num',
                 DB::raw("DATE_FORMAT(approved_request.reqap_date, '%M %d %Y') as dateRequest1")
             )

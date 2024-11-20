@@ -27,11 +27,11 @@
         }
     </style>
 </head>
-{{ $hello }}  {{ $hi }}
-{{-- <body>
+{{-- {{ $releasePerCustomer }}  {{ $releasePerBarcode }} --}}
+<body>
     <h1 class="center-text">ALTURAS GROUP OF COMPANIES</h1>
     <h1 class="center-text">HEAD OFFICE FINANCE DEPARTMENT</h1>
-    <h1 class="center-text">SPECIAL EXTERNAL GC REPORT- APPROVAL</h1>
+    <h1 class="center-text">SPECIAL EXTERNAL GC REPORT- RELEASE</h1>
     <h1 class="center-text">PER CUSTOMER</h1>
 
     <table>
@@ -39,18 +39,20 @@
             <tr>
                 <th>Date Requested</th>
                 <th>Company</th>
-                <th>Approval #</th>
-                <th>Total Amount</th>
+                <th>Releasing Number</th>
+                <th>Denomination</th>
+                <th>Date Release</th>
             </tr>
 
         </thead>
         <tbody>
-            @foreach ($dataPerCustomer as $customer)
+            @foreach ($releasePerCustomer as $customer)
                 <tr>
                     <td>{{ $customer->datereq }}</td>
                     <td>{{ $customer->spcus_companyname }}</td>
                     <td>{{ $customer->spexgc_num }}</td>
                     <td>{{ $customer->totdenom }}</td>
+                    <td>{{ $customer->daterel }}</td>
                 </tr>
                 @endforeach
         </tbody>
@@ -73,7 +75,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($dataPerBarcode as $barcode)
+            @foreach ($releasePerBarcode as $barcode)
                 <tr>
                     <td>{{ $barcode->datereq }}</td>
                     <td>{{ $barcode->spexgcemp_denom }}</td>
@@ -85,5 +87,5 @@
                 @endforeach
         </tbody>
     </table>
-</body> --}}
+</body>
 </html>

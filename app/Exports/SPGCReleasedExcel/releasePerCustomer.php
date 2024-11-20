@@ -125,7 +125,7 @@ class releasePerCustomer implements FromCollection, WithHeadings, WithTitle, Wit
                 'special_external_customer.spcus_acctname',
                 'special_external_customer.spcus_companyname'
             )
-            ->orderBy('special_external_gcrequest.spexgc_datereq')
+            ->orderBy('special_external_gcrequest.spexgc_datereq', 'asc')
             ->get();
     }
 }

@@ -1,41 +1,49 @@
 <template>
-    <a-tabs>
-        <a-tab-pane key="1">
-            <template #tab>
-                <span>
-                    <CheckOutlined />
-                    Check Variances
-                </span>
-            </template>
-            <a-card>
-                <div style="font-weight: bold;">
-                    Customer Name:
-                </div>
 
-                <a-form-item :validate-status="varianceData.errors.customerName ? 'error' : ''"
-                    :help="varianceData.errors.customerName">
+    <div style="font-weight: bold; margin-left: 15%;">
+        <span>CHECK VARIANCES</span>
+    </div>
+    <a-card style="width: 40%; margin-top: 10px;">
+        <div style="font-weight: bold;">
+            Customer Name:
+        </div>
 
-                    <a-select v-model:value="varianceData.customerName" style="width: 40%;">
-                        <a-select-option v-for="item in companyNameList" :key="item.spcus_id" :value="item.spcus_id">
-                            {{ `${item.spcus_companyname} * ${item.spcus_acctname}` }}
-                        </a-select-option>
-                    </a-select>
-                </a-form-item>
-                <div v-if="formatted" style="margin-top: 20px;">
-                    <span style="color:#1e90ff; font-weight: bold;">
-                        Selected Customer Name:
-                    </span>
-                    <span style="color:red; margin-left: 5px; text-decoration: underline;">
-                        {{ formatted }}
-                    </span>
-                </div>
-                <a-button style="background-color: green; color:white; margin-top: 10px;" @click="SelectCustomerName">
+        <a-form-item :validate-status="varianceData.errors.customerName ? 'error' : ''"
+            :help="varianceData.errors.customerName">
+
+            <a-select v-model:value="varianceData.customerName">
+                <a-select-option v-for="item in companyNameList" :key="item.spcus_id" :value="item.spcus_id">
+                    {{ `${item.spcus_companyname} * ${item.spcus_acctname}` }}
+                </a-select-option>
+            </a-select>
+        </a-form-item>
+        <div style="margin-top: 20px;">
+            <span style="color:#1e90ff; font-weight: bold;">
+                Selected Customer Name:
+            </span>
+            <span style="color:red; margin-left: 5px; text-decoration: underline;">
+                {{ this.selectedFormat }}
+            </span>
+        </div>
+        <a-button style="background-color: green; color:white; margin-top: 10px;" @click="SelectCustomerName">
+            <FileExcelOutlined />
+            Generate
+        </a-button>
+    </a-card>
+    <!-- <a-card style="width: 60%; margin-left: 37%; position: absolute; top: 24px;">
+            <div>
+                <a-button style="background-color: green; color:white; margin-top: 10px;" @click="generateExcelButton">
                     <FileExcelOutlined />
                     Generate Excel
                 </a-button>
-            </a-card>
-        </a-tab-pane>
-    </a-tabs>
+            </div>
+            <a-table :columns="varianceTable" :data-source="customer.tagbilaranData" size="small" style="margin-top: 10px;">
+
+            </a-table>
+        </a-card> -->
+
+
+    <!-- {{ tagbilaranData }} -->
     <!-- {{ formatted }} -->
 </template>
 
@@ -45,15 +53,18 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
 import { Modal, message } from 'ant-design-vue';
 import { notification } from 'ant-design-vue';
+import Pagination from '@/Components/Pagination.vue';
 
 
 export default {
+    components: { Pagination },
     layout: AuthenticatedLayout,
     props: {
         companyNameList: {
             type: Array,
             required: true,
         },
+        customer: Object
     },
     data() {
         return {
@@ -62,6 +73,32 @@ export default {
                 errors: {}
             }),
             selectedFormat: '',
+            varianceTable: [
+                {
+                    title: 'Barcode',
+                    dataIndex: 'spexgcemp_barcode'
+                },
+                {
+                    title: 'Denomination',
+                    dataIndex: 'spexgcemp_denom'
+                },
+                {
+                    title: 'Customer Name',
+                    dataIndex: 'customerName'
+                },
+                {
+                    title: 'Verify Date',
+                    dataIndex: 'vs_date'
+                },
+                {
+                    title: 'Store',
+                    dataIndex: 'store_name'
+                },
+                {
+                    title: 'Transaction No',
+                    dataIndex: 'seodtt_transno'
+                },
+            ],
         }
     },
     computed: {
@@ -80,24 +117,39 @@ export default {
         },
     },
     methods: {
+        // SelectCustomerName() {
+        //     this.varianceData.errors = {};
+
+        //     if (!this.varianceData.customerName) {
+        //         this.varianceData.errors.customerName = "Customer Name field is required";
+        //         return;
+        //     }
+        //     const varianceData = {
+        //         customerName: this.varianceData.customerName,
+        //         formatCusName: this.selectedFormat,
+        //     };
+
+        //     Modal.confirm({
+        //         title: 'Confirmation',
+        //         icon: createVNode(ExclamationCircleOutlined),
+        //         content: 'Are you sure you want to generate EXCEL?',
+        //         okText: 'Yes',
+        //         okType: 'danger',
+        //         cancelText: 'No',
+        //         onOk: () => {
+        //             window.location.href = route('storeaccounting.CheckVariance', varianceData);
+        //         },
+        //         onCancel() {
+        //             console.log('Cancel');
+        //         },
+        //     });
+        // },
         SelectCustomerName() {
             this.varianceData.errors = {};
-
             if (!this.varianceData.customerName) {
                 this.varianceData.errors.customerName = "Customer Name field is required";
-            }
-            if (!this.varianceData.customerName) {
-                const openNotificationWithIcon = (type) => {
-                    notification[type]({
-                        message: 'File Selection Required',
-                        description: 'Please select customer name first before generating',
-                        placement: 'topRight'
-                    });
-                };
-                openNotificationWithIcon('warning');
                 return;
             }
-           
             const varianceData = {
                 customerName: this.varianceData.customerName,
                 formatCusName: this.selectedFormat,
@@ -111,25 +163,19 @@ export default {
                 okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    const key = 'spgcSubmitMessage';
-                    message.loading({
-                        content: 'Generating...',
-                        key,
+                    const hide = message.loading('Generating in progress..', 0)
+
+                    window.location.href = route('storeaccounting.varianceExcelExport', varianceData, {
+
                     });
-                    setTimeout(() => {
-                        message.success({
-                            content: 'Generated successfully!',
-                            key,
-                            duration: 10,
-                        });
-                    }, 1000);
-                    window.location.href = route('storeaccounting.varianceExcelExport', varianceData);
+                    setTimeout(hide, 2000);
                 },
+
                 onCancel() {
                     console.log('Cancel');
                 },
             });
-        },
+        }
     },
 };
 </script>

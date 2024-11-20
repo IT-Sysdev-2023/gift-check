@@ -7,17 +7,19 @@
                     Duplicated Report (CEBU)
                 </span>
             </template>
-            <a-card>
+            <a-card style="width: 25%;">
                 <span :style="{ fontSize: iconSize + 'px' }">
                     <FileSearchOutlined />
                 </span>
                 <input type="file" ref="fileInput" style="display: none;" @change="handleFileChange" />
 
                 <a-button @click="ChooseFileCebu" style="background-color: #1e90ff; color: white;">
+                    <SearchOutlined />
                     Choose File
                 </a-button>
                 <div v-if="!cebuFileName && !message" style="color:red;">
                     No file selected
+
                 </div>
                 <div v-if="!cebuFileName" style="color:red">
                     {{ this.message }}
@@ -32,15 +34,16 @@
                     </div>
                 </div>
                 <div style="margin-top: 20px;">
-                    <a-button @click="cebuReportButton" style="background-color: green; color: white">Check
-                        Duplicates</a-button>
+                    <a-button @click="cebuReportButton" style="background-color: green; color: white">
+                        <CheckOutlined />
+                        Check Duplicates
+                    </a-button>
                 </div>
 
                 <div style="color:red; margin-top: 20px;">
                     <WarningOutlined />
-                    Note: Upload Textfile Only!
+                    Note: Upload Textfile Only.
                 </div>
-
             </a-card>
 
         </a-tab-pane>
@@ -51,13 +54,14 @@
                     Duplicated Report (ALTA CITTA)
                 </span>
             </template>
-            <a-card>
+            <a-card style="width: 25%">
                 <span :style="{ fontSize: iconSize + 'px' }">
                     <FileSearchOutlined />
                 </span>
                 <input type="file" ref="fileInput" style="display: none;" @change="handleAltaCittaFileChange" />
 
                 <a-button @click="chooseFileAltaCitta" style="background-color: #1e90ff; color: white;">
+                    <SearchOutlined />
                     Choose File
                 </a-button>
                 <div v-if="!altaCittaFileName">
@@ -74,26 +78,24 @@
                     </div>
                 </div>
 
-                <!-- <div style="font-size: small; color: red;" >
-                    {{ altaCittaFileName ? altaCittaFileName : "No file selected" }}
-                </div> -->
 
                 <div style="margin-top: 20px;">
-                    <a-button @click="altaCittaReportButton" style="background-color: green; color: white">Check
-                        Duplicates</a-button>
+                    <a-button @click="altaCittaReportButton" style="background-color: green; color: white">
+                        <CheckOutlined />
+                        Check Duplicates
+                    </a-button>
                 </div>
 
                 <div style="color:red; margin-top: 20px;">
                     <WarningOutlined />
                     Note: Upload file with CSV extension ONLY.
                 </div>
-
             </a-card>
+
         </a-tab-pane>
     </a-tabs>
 </template>
 <script>
-// import { defineComponent } from '@vue/composition-api'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { ExclamationCircleOutlined, WindowsFilled } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
@@ -108,7 +110,7 @@ export default {
             message: '',
             cebuFileName: '',
             altaCittaFileName: '',
-            iconSize: 80
+            iconSize: 80,
         }
     },
     methods: {
@@ -133,7 +135,7 @@ export default {
                 const openNotificationWithIcon = (type) => {
                     notification[type]({
                         message: 'File Selection Required',
-                        description: 'Please choose a file first before checking duplicates!',
+                        description: 'Please choose file first before checking duplicates!',
                         placement: 'topRight'
                     });
                 };
@@ -163,7 +165,6 @@ export default {
 
             Modal.confirm({
                 title: 'Confirmation',
-                icon: createVNode(ExclamationCircleOutlined),
                 content: 'Are you sure you want to check DUPLICATE BARCODE?',
                 okText: 'Yes',
                 okType: 'danger',
@@ -188,13 +189,14 @@ export default {
                 },
             });
         },
+       
         altaCittaReportButton() {
 
             if (!this.altaCittaFileName) {
                 const openNotificationWithIcon = (type) => {
                     notification[type]({
                         message: 'File Selection Required',
-                        description: 'Please choose a file first before checking duplicates!',
+                        description: 'Please choose file first before checking duplicates!',
                         placement: 'topRight'
                     });
                 };

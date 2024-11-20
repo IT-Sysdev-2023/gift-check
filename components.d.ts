@@ -218,6 +218,7 @@ declare module 'vue' {
     Errors: typeof import('./resources/js/Pages/Finance/Cards/Errors.vue')['default']
     ExclamationCircleFilled: typeof import('@ant-design/icons-vue')['ExclamationCircleFilled']
     ExclamationCircleOutlined: typeof import('@ant-design/icons-vue')['ExclamationCircleOutlined']
+    ExclamationOutlined: typeof import('@ant-design/icons-vue')['ExclamationOutlined']
     ExportOutlined: typeof import('@ant-design/icons-vue')['ExportOutlined']
     EyeFilled: typeof import('@ant-design/icons-vue')['EyeFilled']
     EyeOutlined: typeof import('@ant-design/icons-vue')['EyeOutlined']

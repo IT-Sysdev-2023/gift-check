@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-// use App\Exports\ExcelExport;
 use Exception;
 use Carbon\Carbon;
 use App\Models\User;
@@ -10,12 +9,10 @@ use Inertia\Inertia;
 use App\Models\Store;
 use App\Models\Customer;
 use App\Models\StoreEod;
-
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\GcRelease;
 use App\Models\StoreStaff;
 use App\Models\Denomination;
-
 use App\Models\StoreEodItem;
 use Illuminate\Http\Request;
 use App\Models\InstitutPayment;
@@ -47,6 +44,7 @@ use App\Exports\SPGCVarianceExcel\VarianceCombinationExcel;
 use App\Exports\DuplicateBarcodeExcel\allDuplicateExcel;
 use App\Exports\SPGCApprovedExcel\allApprovedExcel;
 use App\Exports\SPGCReleasedExcel\allReleasedExcel;
+use App\Exports\VerifiedGCReportMonthly\allVerifiedReport;
 
 class StoreAccountingController extends Controller
 {
@@ -1881,7 +1879,7 @@ class StoreAccountingController extends Controller
     public function verifiedGcSubmit(Request $request)
     {
 
-        dd($request->toArray());
+        return excel::download(new allVerifiedReport($request->all()), 'Verified Report.xlsx');
     }
 
     public function verifiedGcYearlySubmit(Request $request)
@@ -2213,13 +2211,13 @@ class StoreAccountingController extends Controller
             ->whereRaw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d') >= ?", [$startDateData])
             ->whereRaw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d') <= ?", [$endDateData])
             ->select(
-            'special_external_gcrequest.spexgc_num',
-            'special_external_customer.spcus_acctname',
-            'special_external_customer.spcus_companyname',
-            DB::raw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom),0.00) AS totdenom"),
-            DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') AS daterel"),
-            DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') AS datereq"),
-            DB::raw("CONCAT(reqby.firstname,' ',reqby.lastname) AS trby")
+                'special_external_gcrequest.spexgc_num',
+                'special_external_customer.spcus_acctname',
+                'special_external_customer.spcus_companyname',
+                DB::raw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom),0.00) AS totdenom"),
+                DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') AS daterel"),
+                DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') AS datereq"),
+                DB::raw("CONCAT(reqby.firstname,' ',reqby.lastname) AS trby")
             )
             ->when($searchQuery, function ($query) use ($searchQuery) {
                 $query->where(function ($query) use ($searchQuery) {
@@ -2351,13 +2349,12 @@ class StoreAccountingController extends Controller
                         ->orWhere('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'like', '%' . $pdfBarcodeQuery . '%')
                         ->orWhere('special_external_gcrequest_emp_assign.spexgcemp_lname', 'like', '%' . $pdfBarcodeQuery . '%')
                         ->orWhere('special_external_gcrequest.spexgc_num', 'like', '%' . $pdfBarcodeQuery . '%');
-
                 });
             })
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
             ->paginate(10)
             ->withQueryString();
-            // dd($pdfPerBarcode);
+        // dd($pdfPerBarcode);
 
 
         return (object) [
@@ -2379,7 +2376,7 @@ class StoreAccountingController extends Controller
     public function releasePdf(Request $request)
     {
 
-        ini_set('memory_limit', '1024M');
+        ini_set('memory_limit', '4096M');
         set_time_limit(300);
 
         $startDate = $request->startDate;
@@ -2436,15 +2433,17 @@ class StoreAccountingController extends Controller
             )
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
             ->get();
+        // dd($perBarcode);
 
 
-
-        $pdf = Pdf::loadView('pdf.release', ['hello' => $perCustomer, 'hi' => $perBarcode]);
+        $pdf = Pdf::loadView('pdf.release', ['releasePerCustomer' => $perCustomer, 'releasePerBarcode' => $perBarcode]);
+        ini_set('memory_limit', '4096M');
+        set_time_limit(300);
 
         return $pdf->download('Release-file.pdf');
     }
 
-    public function DuplicatedBarcodes()
+    public function DuplicatedBarcodes(Request $request)
     {
         return Inertia::render('StoreAccounting/DuplicatedBarcode');
     }
@@ -2457,7 +2456,7 @@ class StoreAccountingController extends Controller
     }
     public function CheckVariance(Request $request)
     {
-        // dd();
+        // dd($this->CheckVarianceSubmit($request));
 
         $companyNameList = SpecialExternalCustomer::select(
             'spcus_id',
@@ -2467,9 +2466,60 @@ class StoreAccountingController extends Controller
             ->orderBy('spcus_companyname', 'ASC')
             ->get();
         return Inertia::render('StoreAccounting/CheckVariance', [
-            'companyNameList' => $companyNameList,
+            'companyNameList' => $companyNameList
         ]);
     }
+
+    // public function CheckVarianceSubmit(Request $request)
+    // {
+    //     //    dd($request->toArray());
+    //     $customerName = $request->customerName;
+    //     $formatCusName = $request->formatCusName;
+    //     // dd($customerName = $request->customerName,
+    //     // $formatCusName = $request->formatCusName);
+
+    //     $tagbilaran = DB::table('special_external_gcrequest_emp_assign')
+    //         ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
+    //         ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
+    //         ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+    //         ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+    //         ->where('special_external_gcrequest.spexgc_company', $customerName)
+    //         ->select(
+    //             'special_external_gcrequest_emp_assign.spexgcemp_barcode',
+    //             'special_external_gcrequest_emp_assign.spexgcemp_denom',
+    //             DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) AS customerName"),
+    //             'store_verification.vs_date',
+    //             'stores.store_name',
+    //             'store_eod_textfile_transactions.seodtt_transno'
+    //         )
+    //         ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
+    //     ->get();
+
+
+    //     $talibon = DB::table('special_external_gcrequest_emp_assign')
+    //         ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
+    //         ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
+    //         ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+    //         ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+    //         ->where('special_external_gcrequest.spexgc_company', $customerName)
+    //         ->select(
+    //             'special_external_gcrequest_emp_assign.spexgcemp_barcode',
+    //             'special_external_gcrequest_emp_assign.spexgcemp_denom',
+    //             DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) AS customerName"),
+    //             'store_verification.vs_date',
+    //             'stores.store_name',
+    //             'store_eod_textfile_transactions.seodtt_transno'
+    //         )
+    //         ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
+    //         ->get();
+    //     // dd($talibon);
+    //     return (object) [
+    //         'tagbilaranData' => $tagbilaran,
+    //         'selectedCustomer' => $customerName,
+    //         'formatCusName' => $formatCusName,
+    //         'talibonData' => $talibon
+    //     ];
+    // }
 
     public function varianceExcelExport(Request $request)
     {
