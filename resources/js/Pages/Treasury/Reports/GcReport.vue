@@ -49,7 +49,7 @@
                     <a-range-picker v-model:value="formState.date" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-                    <a-button type="primary" html-type="submit" :loading="loadingProgress"
+                    <a-button type="primary" html-type="submit"
                         >Generate</a-button
                     >
                 </a-form-item>
