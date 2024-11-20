@@ -40,6 +40,7 @@ use App\Http\Controllers\UserDetailsController;
 use App\Models\InstitutEod;
 use App\Models\InstitutPayment;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -661,9 +662,11 @@ Route::middleware('auth')->group(function () {
         });
         Route::name('excel.')->group(function () {
             Route::get('verified', [IadController::class, 'verifiedReports'])->name('verified');
+            Route::get('purchased', [IadController::class, 'purchasedReports'])->name('purchased');
 
             Route::name('generate.')->group(function () {
                 Route::get('generate-verified', [IadController::class, 'generateVerifiedReports'])->name('verified');
+                Route::get('generate-purchased', [IadController::class, 'generatePurchasedReports'])->name('purchased');
             });
         });
     });

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 
 class IadController extends Controller
 {
+
     public function __construct(public IadServices $iadServices, public DashboardClass $dashboardClass) {}
 
     public function index()
@@ -20,6 +21,11 @@ class IadController extends Controller
             'count' => $this->dashboardClass->iadDashboard(),
             'budgetrequest' => $this->dashboardClass->budgetRequest(),
         ]);
+    }
+
+    public function setLimitAndTime(){
+        ini_set('memory_limit', '1024M');
+        set_time_limit(300);
     }
 
     public function receivingIndex()
@@ -158,11 +164,17 @@ class IadController extends Controller
         ]);
     }
     public function generateVerifiedReports(Request $request){
-
-        ini_set('memory_limit', '1024M');
-        set_time_limit(300);
-        
+        $this->setLimitAndTime();
         return $this->iadServices->generateVerifiedReportExcel($request);
     }
 
+    public function purchasedReports(){
+        return inertia('Iad/Excel/PurchasedReports', [
+            'stores' => $this->iadServices->getStores(),
+        ]);
+    }
+    public function generatePurchasedReports(Request $request){
+        $this->setLimitAndTime();
+        return $this->iadServices->generatePurchasedReportsExcel($request);
+    }
 }
