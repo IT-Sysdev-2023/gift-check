@@ -26,35 +26,10 @@
                         />
                     </div>
                     <div class="flex justify-end">
-                        <!-- <a-button
-                            type="primary"
-                            size="small"
-                            :disabled="items.percentage !== 100"
-                        >
-                            <template #icon>
-                                <DownloadOutlined />
-                            </template>
-                            Download
-                        </a-button> -->
                         <span
                             >{{ items.data.store }} -
                             {{ items.data.info }}</span
                         >
-                    </div>
-                </a-card>
-
-                <a-card>
-                    <div class="flex justify-between">
-                        <span>Generating Report, pls wait...</span>
-                        <a-button
-                            type="primary"
-                            size="small"
-                        >
-                            <template #icon>
-                                <DownloadOutlined />
-                            </template>
-                            Download
-                        </a-button>
                     </div>
                 </a-card>
             </a-space>
