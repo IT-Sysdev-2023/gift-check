@@ -97,11 +97,12 @@ class ReportService extends ReportsHandler
 					'file' => $item,
 					'filename' => Str::of(basename($item))->basename('.' . $extension),
 					'extension' => $extension,
+					'date' => $generatedAt->toDayDateTimeString(), // for Sorting
 					'icon' => $extension === 'pdf' ? 'pdf.png' : 'excel.png',
 					'generatedAt' => $generatedAt->diffForHumans(),
 					'expiration' => $generatedAt->addDays(2)->diffForHumans(),
 				];
-			})->sortBy('generatedAt')->values()
+			})->sortByDesc('date')->values()
 		]);
 	}
 	public function download(Request $request)
