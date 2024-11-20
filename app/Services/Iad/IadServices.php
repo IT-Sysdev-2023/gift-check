@@ -2,6 +2,7 @@
 
 namespace App\Services\Iad;
 
+use App\Exports\IadPurchased\PurchasedExports;
 use App\Exports\VerifiedGcMultipleSheetExport;
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
@@ -659,6 +660,12 @@ class IadServices extends FileHandler
     public function generateVerifiedReportExcel($request)
     {
         $rec = new VerifiedGcMultipleSheetExport($request->all());
+
+        return Excel::download($rec, 'users.xlsx');
+    }
+
+    public function generatePurchasedReportsExcel($request){
+        $rec = new PurchasedExports($request->all());
 
         return Excel::download($rec, 'users.xlsx');
     }

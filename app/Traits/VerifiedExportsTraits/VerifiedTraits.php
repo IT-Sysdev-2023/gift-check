@@ -272,8 +272,6 @@ trait VerifiedTraits
     {
 
         $request = collect($requests);
-        // dd();
-
 
         try {
 
