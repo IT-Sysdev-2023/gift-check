@@ -32,4 +32,12 @@ class ReportsController extends Controller
     public function generateEodReports(Request $request){
         return $this->reportService->generateEodPdf($request);
     }
+
+    public function listOfGeneratedReports(Request $request){
+        return $this->reportService->generatedReports($request);
+    }
+    public function downloadGeneratedReport(Request $request)
+    {
+        return $this->reportService->download($request);
+    }
 }

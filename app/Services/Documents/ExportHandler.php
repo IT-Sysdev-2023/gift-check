@@ -3,7 +3,6 @@
 namespace App\Services\Documents;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 class ExportHandler extends FileHandler
 {

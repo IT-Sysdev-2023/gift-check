@@ -109,11 +109,9 @@ const onSubmit = async () => {
         .get(route("treasury.reports.generate.gc"), {
             params: {
                 ...formState.value,
-            },
-            responseType: "blob",
+            }
         })
         .then(() => {
-            
             loadingProgress.value = true;
         })
         .catch((e) => {

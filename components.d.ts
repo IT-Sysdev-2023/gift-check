@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: typeof import('ant-design-vue/es')['Alert']
+    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
@@ -251,6 +252,8 @@ declare module 'vue' {
     GcReleasingView: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGc/Components/GcReleasingView.vue')['default']
     GcReport: typeof import('./resources/js/Pages/Treasury/Reports/GcReport.vue')['default']
     GcSalesReport: typeof import('./resources/js/Pages/Treasury/Dashboard/Eod/GcSalesReport.vue')['default']
+    GeneratedReportFloat: typeof import('./resources/js/Components/GeneratedReportFloat.vue')['default']
+    GeneratedReports: typeof import('./resources/js/Pages/Treasury/Reports/GeneratedReports.vue')['default']
     GiftCheck: typeof import('./resources/js/Pages/Treasury/Transactions/ProductionRequest/GiftCheck.vue')['default']
     GiftCheckGenerateResult: typeof import('./resources/js/Pages/Custodian/Result/GiftCheckGenerateResult.vue')['default']
     GiftTwoTone: typeof import('@ant-design/icons-vue')['GiftTwoTone']
@@ -277,6 +280,7 @@ declare module 'vue' {
     LineChartOutlined: typeof import('@ant-design/icons-vue')['LineChartOutlined']
     Link: typeof import('@inertiajs/vue3')['Link']
     ListOfEod: typeof import('./resources/js/Pages/Eod/ListOfEod.vue')['default']
+    ListOfGeneratedReports: typeof import('./resources/js/Pages/Treasury/Reports/ListOfGeneratedReports.vue')['default']
     LockOutlined: typeof import('@ant-design/icons-vue')['LockOutlined']
     Login: typeof import('./resources/js/Pages/Login.vue')['default']
     LoginX: typeof import('./resources/js/Pages/Auth/LoginX.vue')['default']

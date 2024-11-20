@@ -334,7 +334,7 @@ class InstitutionGcSalesService extends FileHandler
     {
         $getFiles = $this->getFilesFromDirectory();
 
-        $file = collect($getFiles)->filter(function ($file) use ($request, $id) {
+        $file = $getFiles->filter(function ($file) use ($request, $id) {
             return Str::startsWith(basename($file), "{$request->user()->user_id}-{$id}");
         });
 
@@ -374,7 +374,7 @@ class InstitutionGcSalesService extends FileHandler
     public function excel(Request $request, $id){
         $getFiles = $this->getFilesFromDirectory('excel');
 
-        $file = collect($getFiles)->filter(function ($file) use ($request, $id) {
+        $file = $getFiles->filter(function ($file) use ($request, $id) {
             return Str::startsWith(basename($file), "{$request->user()->user_id}-{$id}");
         });
 
