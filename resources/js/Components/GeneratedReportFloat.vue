@@ -25,7 +25,14 @@
                             :percent="items.percentage"
                         />
                     </div>
-                    <div class="flex justify-end">
+                    <div class="flex justify-between">
+                        <a-button type="primary" size="small" @click="fileLocation" :disabled="items.percentage !== 100">
+                            <template #icon>
+                                <FolderOutlined />
+                            </template>
+                            Open
+                        </a-button>
+
                         <span
                             >{{ items.data.store }} -
                             {{ items.data.info }}</span
@@ -73,6 +80,10 @@ onMounted(() => {
         }
     );
 });
+
+const fileLocation = () => {
+    router.visit(route('treasury.reports.generatedReports'));
+}
 </script>
 
 <style lang="scss" scoped></style>
