@@ -52,7 +52,7 @@ class GcReport extends ReportsHandler implements ShouldQueue
 
                 $storeData[] = self::handleRecords($this->request, $item->value);
             }
-            
+
         } else {
             $storeData[] = self::handleRecords($this->request, $this->request->store);
             $this->progress['progress']['totalRow'] = 1;
@@ -63,11 +63,11 @@ class GcReport extends ReportsHandler implements ShouldQueue
         $pdf = Pdf::loadView('pdf.treasuryReport', ['data' => ['stores' => $storeData]]);
         $transDateHeader = ReportHelper::transactionDateLabel($this->isDateRange, $this->transactionDate);
 
-
         (new ExportHandler())
             ->setFolder('Reports/' . $this->roleDashboardRoutes[$this->user->usertype] . '/')
             ->setFilename('Gc Report-' . $this->user->user_id, $transDateHeader)
-            ->exportToPdf($pdf->output());
+            ->exportToPdf($pdf->output())
+            ->deleteFileIn(now()->addDays(2));
     }
     private function handleRecords($request, string $store)
     {
