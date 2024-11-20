@@ -11,7 +11,10 @@ function getBase64(file: File) {
     });
 }
 
-const props = defineProps<{ images?: any[] }>();
+const props = withDefaults(defineProps<{ images?: any[] }>(), {
+    images: (): any[] => [], 
+});
+
 
 const fileList = ref(props.images);
 
