@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('pe_num')->index('pe_num');
             $table->integer('pe_requested_by');
             $table->dateTime('pe_date_request');
-            $table->date('pe_date_needed');
+            $table->date('pe_date_needed')->nullable();
             $table->string('pe_file_docno', 40);
             $table->text('pe_remarks');
             $table->integer('pe_generate_code')->default(0);

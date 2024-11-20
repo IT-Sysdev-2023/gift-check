@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal('bcredit_amt', 12)->default(0);
             $table->integer('btag')->default(0);
             $table->string('bcus_guide', 7)->default('');
+            $table->enum('bledger_category', ['regular', 'special'])->nullable();
         });
     }
 

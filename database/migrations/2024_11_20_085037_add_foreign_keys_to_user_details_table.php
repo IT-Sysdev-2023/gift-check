@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('coupon_denomination', function (Blueprint $table) {
-            $table->tinyIncrements('id');
-            $table->string('coup_barcode_start', 50)->default('0');
-            $table->string('coup_status', 50);
-            $table->integer('coup_cby');
-            $table->timestamps();
+        Schema::table('user_details', function (Blueprint $table) {
+            $table->foreign(['user_id'])->references(['user_id'])->on('users')->onUpdate('restrict')->onDelete('cascade');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('coupon_denomination');
+        Schema::table('user_details', function (Blueprint $table) {
+            $table->dropForeign('user_details_user_id_foreign');
+        });
     }
 };

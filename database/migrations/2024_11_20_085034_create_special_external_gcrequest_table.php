@@ -18,6 +18,8 @@ return new class extends Migration
             $table->dateTime('spexgc_datereq');
             $table->date('spexgc_dateneed');
             $table->text('spexgc_remarks');
+            $table->string('cancelledBy', 50)->nullable();
+            $table->string('cancelRemarks')->nullable();
             $table->string('spexgc_status', 100);
             $table->string('spexgc_promo', 1);
             $table->integer('spexgc_paid')->default(0);
@@ -37,6 +39,7 @@ return new class extends Migration
             $table->string('spexgc_addemp', 10)->nullable();
             $table->dateTime('spexgc_addempdate')->nullable();
             $table->integer('spexgc_addempaddby')->default(0);
+            $table->dateTime('cancelledDate')->nullable();
         });
     }
 

@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('purchase_orderdetails', function (Blueprint $table) {
-            $table->integer('purchorderdet_ref', true);
+            $table->increments('purchorderdet_ref');
             $table->integer('purchorderdet_mnlno');
             $table->integer('purchorderdet_fadrecno');
             $table->date('purchorderdet_trandate');
-            $table->string('purchorderdet_refno', 50)->default('');
-            $table->string('purchorderdet_purono', 50)->default('');
+            $table->integer('purchorderdet_refno');
+            $table->integer('purchorderdet_purono');
             $table->date('purchorderdet_purdate');
-            $table->string('purchorderdet_refpono', 50)->default('0');
+            $table->integer('purchorderdet_refpono')->default(0);
             $table->integer('purchorderdet_payterms');
             $table->string('purchorderdet_locode', 40);
             $table->string('purchorderdet_deptcode', 50);

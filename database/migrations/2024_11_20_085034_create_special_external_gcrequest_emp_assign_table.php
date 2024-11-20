@@ -18,8 +18,8 @@ return new class extends Migration
             $table->decimal('spexgcemp_denom', 12)->index('spexgcemp_denom');
             $table->string('spexgcemp_fname', 30)->default('');
             $table->string('spexgcemp_lname', 40)->default('');
-            $table->string('spexgcemp_mname', 30)->nullable()->default('');
-            $table->string('spexgcemp_extname', 10)->nullable()->default('');
+            $table->string('spexgcemp_mname', 30)->default('');
+            $table->string('spexgcemp_extname', 10)->default('');
             $table->string('voucher', 300)->default('');
             $table->string('bunit', 100)->default('');
             $table->string('address', 300)->default('');

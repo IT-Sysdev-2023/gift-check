@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('ss_lastname', 50);
             $table->string('ss_status', 8);
             $table->string('ss_username', 50)->index('ss_username');
-            $table->string('ss_password')->index('ss_password');
+            $table->string('ss_password', 32)->index('ss_password');
             $table->string('ss_idnumber', 12)->index('ss_idnumber');
             $table->string('ss_usertype', 50);
             $table->integer('ss_store')->index('ss_store');

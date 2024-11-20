@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('gcs_contactperson', 100);
             $table->string('gcs_contactnumber', 30);
             $table->string('gcs_address', 100);
-            $table->boolean('gcs_status')->default(false);
+            $table->integer('gcs_status');
         });
     }
 

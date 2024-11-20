@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('cus_address')->nullable();
             $table->string('cus_mobile', 15)->nullable();
             $table->integer('cus_store_register');
-            $table->dateTime('cus_register_at');
+            $table->date('cus_register_at');
             $table->integer('cus_register_by');
             $table->string('cus_store_updated', 5)->default('');
             $table->dateTime('cus_updated_at')->nullable();

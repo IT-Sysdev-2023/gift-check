@@ -17,11 +17,12 @@ return new class extends Migration
             $table->integer('spgcledger_trid');
             $table->dateTime('spgcledger_datetime');
             $table->string('spgcledger_type', 30);
-            $table->integer('spgcledger_typeid')->default(0);
-            $table->integer('spgcledger_group')->default(0);
+            $table->integer('spgcledger_typeid')->nullable()->default(0);
+            $table->integer('spgcledger_group')->nullable()->default(0);
             $table->decimal('spgcledger_debit', 12)->nullable();
-            $table->decimal('spgcledger_credit', 12)->nullable();
-            $table->integer('spgctag')->nullable();
+            $table->decimal('spgcledger_credit', 12)->nullable()->default(0);
+            $table->integer('spgctag')->nullable()->default(0);
+            $table->boolean('spgcnew')->nullable()->default(true);
         });
     }
 

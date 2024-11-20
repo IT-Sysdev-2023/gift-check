@@ -26,6 +26,7 @@ return new class extends Migration
             $table->integer('pgcreq_tagged');
             $table->string('pgcreq_relstatus', 100)->nullable();
             $table->string('pgcreq_updateby', 11)->nullable();
+            $table->string('cancellremarks')->nullable();
             $table->dateTime('pgcreq_updatedate')->nullable();
         });
     }

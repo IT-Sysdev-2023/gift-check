@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('ape_id', true);
             $table->integer('ape_pro_request_id');
             $table->string('ape_approved_by', 60);
-            $table->string('ape_checked_by', 60);
+            $table->string('ape_checked_by', 60)->nullable();
             $table->integer('ape_preparedby');
             $table->text('ape_remarks');
             $table->dateTime('ape_approved_at');

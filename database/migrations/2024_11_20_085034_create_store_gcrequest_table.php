@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('sgc_num');
             $table->integer('sgc_requested_by');
             $table->dateTime('sgc_date_request');
-            $table->date('sgc_date_needed');
+            $table->date('sgc_date_needed')->nullable();
             $table->string('sgc_file_docno', 50);
             $table->text('sgc_remarks');
             $table->integer('sgc_status');

@@ -15,9 +15,10 @@ return new class extends Migration
             $table->integer('cpr_id', true);
             $table->integer('cpr_pro_id');
             $table->integer('cpr_isrequis_cancel');
-            $table->integer('cpr_ldgerid');
+            $table->integer('cpr_ldgerid')->nullable();
             $table->dateTime('cpr_at');
             $table->integer('cpr_by');
+            $table->string('remarks')->nullable();
         });
     }
 

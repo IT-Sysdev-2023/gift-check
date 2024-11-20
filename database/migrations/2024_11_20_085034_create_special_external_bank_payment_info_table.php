@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('special_external_bank_payment_info', function (Blueprint $table) {
-            $table->integer('spexgcbi_trid')->primary();
+            $table->integer('spexgcbi_id', true);
+            $table->integer('spexgcbi_trans_id')->nullable();
             $table->string('spexgcbi_bankname', 100);
             $table->string('spexgcbi_bankaccountnum', 100);
             $table->string('spexgcbi_checknumber', 100);

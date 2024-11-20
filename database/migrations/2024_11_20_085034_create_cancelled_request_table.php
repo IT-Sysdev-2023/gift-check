@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('reqcan_doc', 50);
             $table->integer('reqcan_checkedby')->nullable();
             $table->integer('reqcan_approvedby')->nullable();
-            $table->integer('reqcan_preparedby');
+            $table->integer('reqcan_preparedby')->nullable();
             $table->date('reqcan_date');
         });
     }

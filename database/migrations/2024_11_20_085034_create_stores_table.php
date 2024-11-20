@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('store_bng', 5);
             $table->boolean('has_local');
             $table->string('store_initial', 10);
+            $table->integer('r_fund')->nullable()->default(0);
         });
     }
 

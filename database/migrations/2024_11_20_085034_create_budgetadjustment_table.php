@@ -22,8 +22,8 @@ return new class extends Migration
             $table->text('adj_remarks');
             $table->string('adj_request_status', 11);
             $table->integer('adj_type');
-            $table->integer('adj_group');
-            $table->string('adj_preapprovedby', 30);
+            $table->integer('adj_group')->nullable();
+            $table->string('adj_preapprovedby', 30)->nullable();
         });
     }
 

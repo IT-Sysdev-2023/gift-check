@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('promo_ledger', function (Blueprint $table) {
             $table->integer('promled_id', true);
             $table->string('promled_desc', 40);
-            $table->decimal('promled_debit', 12)->nullable();
+            $table->decimal('promled_debit', 12);
             $table->decimal('promled_credit', 12)->nullable();
             $table->integer('promled_trid');
         });

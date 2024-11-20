@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('requis_erno');
             $table->string('requis_rmno', 11)->default('');
             $table->date('requis_req');
-            $table->date('requis_need');
+            $table->date('requis_need')->nullable();
             $table->string('requis_loc', 20);
             $table->string('requis_dept', 20);
             $table->text('requis_rem');
