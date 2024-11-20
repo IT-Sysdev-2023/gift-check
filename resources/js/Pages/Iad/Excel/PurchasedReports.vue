@@ -6,9 +6,9 @@
                     style="width: 400px;" :options="selectedType">
                 </a-select>
             </div>
-            <a-row :gutter="[16, 16]">
+            <a-row class="mt-5" :gutter="[16, 16]">
                 <a-col :span="12">
-                    <a-card class="mt-5">
+                    <a-card>
                         <a-row :gutter="[16, 16]">
                             <a-col :span="12">
 
@@ -27,7 +27,7 @@
                                     ref="select" style="width: 100%;" :options="datatype">
                                 </a-select>
                                 <a-select placeholder="Select Store" v-model:value="storeData"
-                                    :disabled="vergc !== 'vgc'" class="mb-5" ref="select" style="width: 100%;"
+                                    :disabled="purchase !== 'vgc'" class="mb-5" ref="select" style="width: 100%;"
                                     :options="selectedStores">
                                 </a-select>
                             </a-col>
@@ -35,54 +35,39 @@
                     </a-card>
                 </a-col>
                 <a-col :span="12">
-                    <a-card class="mt-5">
-                        <div v-if="isGenerating" class="mt-5">
-                            <div class="flex justify-center">
-                                <a-progress type="circle" :stroke-color="{
-                                    '0%': '#108ee9',
-                                    '100%': '#87d068',
-                                }" :percent="progressBar?.percentage" />
-                            </div>
-                            <br>
-                            <p class="text-center">{{ progressBar?.message }}</p>
-                        </div>
-                        <div v-else>
-                            <div class="flex justify-center">
-                                <img style="height:180px;" src="../../../../../public/images/excel.gif" alt="">
-                            </div>
-                            <br>
-                            <p class="text-center">Please fill all the fields to generate!</p>
-                        </div>
+                    <a-card>
+
                     </a-card>
                 </a-col>
             </a-row>
         </a-card>
     </AuthenticatedLayout>
 </template>
+
 <script setup lang="ts">
+
+import axios from 'axios';
 import { ref, onMounted } from 'vue';
-import type { SelectProps } from 'ant-design-vue';
 import type { Dayjs } from 'dayjs';
-import { PageWithSharedProps } from '@/types';
-import { usePage } from '@inertiajs/vue3';
+import type { SelectProps } from 'ant-design-vue';
 
-const date = ref<Dayjs>();
-
-const vergc = ref<string>('');
 
 const selected = ref<string>('0');
 
-const isGenerating = ref<boolean>(false);
+const date = ref<Dayjs>();
 
-const progressBar = ref<{
-    percentage: number,
-    message: string,
-    currentRow: number,
-    totalRows: number,
-}>();
+const purchase = ref<string>('');
 
 const storeData = ref<number>();
 
+
+const handleDateChange = (obj: any, str: any) => {
+    date.value = str;
+}
+
+const handleChangeDataType = (value: string) => {
+    purchase.value = value;
+}
 
 interface Records {
     stores: {
@@ -90,28 +75,23 @@ interface Records {
         label: string
     }[],
 };
-const page = usePage<PageWithSharedProps>().props;
 
 const props = defineProps<Records>();
 
 const selectedStores = ref<SelectProps['options']>(props.stores);
 
-const handleDateChange = (obj: any, str: any) => {
-    date.value = str;
-}
 
 const selectedType = ref<SelectProps['options']>([
     {
         value: '0',
-        label: 'Verified Gc Report Monthly',
+        label: 'Billing Between Stores and Bu Monthly',
     },
     {
         value: '1',
-        label: 'Verified Gc Report Yearly',
+        label: 'Billing Between Stores and Bu Yearly',
     },
 
 ]);
-
 
 const datatype = ref<SelectProps['options']>([
     {
@@ -120,30 +100,34 @@ const datatype = ref<SelectProps['options']>([
     },
 ]);
 
-
-const generate = () => {
-
-    window.location.href = route('iad.excel.generate.verified', {
-        datatype: vergc.value,
-        store: storeData.value,
-        date: date.value,
-    });
-
-}
-
-
-const handleChangeDataType = (value: string) => {
-    vergc.value = value;
-}
-
-onMounted(() => {
-    window.Echo.private(`generate-verified-excel.${page.auth.user.user_id}`)
-        .listen(".generate-ver-excel", (e) => {
-            console.log(e);
-
-            progressBar.value = e;
-            isGenerating.value = true;
+const generate = async () => {
+    try {
+        const response = await axios.get(route('iad.excel.generate.purchased', {
+            datatype: purchase.value,
+            store: storeData.value,
+            date: date.value,
+        }), {
+            
+            responseType: 'blob', // Ensures the response is treated as a Blob
         });
-})
+
+        // Create a URL for the Blob and trigger a download
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+
+        // Optionally set a filename
+        link.setAttribute('download', 'verified_report.xlsx');
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error generating the file:', error);
+    }
+};
+
 
 </script>

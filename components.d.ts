@@ -347,6 +347,7 @@ declare module 'vue' {
     PromoList: typeof import('./resources/js/Pages/Marketing/PromoList.vue')['default']
     PromoRequestTable: typeof import('./resources/js/Pages/Finance/Tables/PromoRequestTable.vue')['default']
     PromoStatus: typeof import('./resources/js/Pages/Marketing/PromoStatus.vue')['default']
+    PurchasedReports: typeof import('./resources/js/Pages/Iad/Excel/PurchasedReports.vue')['default']
     PurchaseOrderDetails: typeof import('./resources/js/Pages/Admin/PurchaseOrderDetails.vue')['default']
     PurchaseOrderDrawer: typeof import('./resources/js/Pages/Admin/Drawer/PurchaseOrderDrawer.vue')['default']
     PurchaseOrders: typeof import('./resources/js/Pages/Admin/Modals/PurchaseOrders.vue')['default']
