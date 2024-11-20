@@ -52,6 +52,7 @@ class GcReport extends ReportsHandler implements ShouldQueue
 
                 $storeData[] = self::handleRecords($this->request, $item->value);
             }
+            
         } else {
             $storeData[] = self::handleRecords($this->request, $this->request->store);
             $this->progress['progress']['totalRow'] = 1;

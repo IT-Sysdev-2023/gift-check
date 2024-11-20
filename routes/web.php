@@ -445,6 +445,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc');
             Route::get('generate-eod-report', [ReportsController::class,'generateEodReports'])->name('generate.eod');
 
+            Route::get('list-of-generated-reports', [ReportsController::class,'listOfGeneratedReports'])->name('generatedReports');
+            Route::get('download-generated-report', [ReportsController::class,'downloadGeneratedReport'])->name('download.gc');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');

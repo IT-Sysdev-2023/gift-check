@@ -53,9 +53,6 @@ class HandleInertiaRequests extends Middleware
                     'countSession' => $request->session()->get('countSession') ?? 0,
                     'denominationSession' => $request->session()->get('denominationSession') ?? 0,
                     'scanGc' => $request->session()->get('scanGc') ?? [],
-
-                    //Barcode Scan Allocation Session
-                    // 'scanBarcodeGcAlloc' => $request->session()->get('scanReviewGC'),
                 ];
             },
             'pendingPrRequest' => ProductionRequest::select('pe_id', 'pe_num')
@@ -66,7 +63,7 @@ class HandleInertiaRequests extends Middleware
                     'allocation' => $request->session()->get('scanReviewGC') ?? [],
                     'promo' => $request->session()->get('scannedPromo') ?? [],
                 ];
-            }
+            },
         ];
     }
 }
