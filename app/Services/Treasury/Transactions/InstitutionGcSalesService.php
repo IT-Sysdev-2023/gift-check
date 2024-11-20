@@ -308,8 +308,9 @@ class InstitutionGcSalesService extends FileHandler
                 $pdf = Pdf::loadView('pdf.institution', ['data' => $data]);
                 $output = $pdf->output();
 
-                (new ExportHandler($this->folderName))
-                    ->createExcelFileName($request->user()->user_id, $request->releasingNo)
+                (new ExportHandler())
+                    ->setFolder($this->folderName)
+                    ->setFileName($request->user()->user_id, $request->releasingNo)
                     ->exportToExcel( $this->dataForExcel($data))
                     ->exportToPdf($output);
 
