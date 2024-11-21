@@ -10,4 +10,7 @@ class LostGcBarcode extends Model
     use HasFactory;
 
     protected $primaryKey = 'lostgcb_id';
+
+    protected $guarded = [];
+    public $timestamps = false;
 }

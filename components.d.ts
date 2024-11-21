@@ -278,6 +278,7 @@ declare module 'vue' {
     Login: typeof import('./resources/js/Pages/Login.vue')['default']
     LoginX: typeof import('./resources/js/Pages/Auth/LoginX.vue')['default']
     LogoutOutlined: typeof import('@ant-design/icons-vue')['LogoutOutlined']
+    LostGc: typeof import('./resources/js/Pages/Retail/LostGc.vue')['default']
     ManagerKeyModal: typeof import('./resources/js/Pages/Manager/ManagerKeyModal.vue')['default']
     ManageSupplier: typeof import('./resources/js/Pages/Marketing/ManageSupplier.vue')['default']
     MarketingDashboard: typeof import('./resources/js/Pages/Marketing/MarketingDashboard.vue')['default']

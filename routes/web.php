@@ -544,6 +544,10 @@ Route::prefix('retail')->group(function () {
         });
         Route::get('AvailableGc', [RetailController::class, 'availableGcList'])->name('availableGcList');
         Route::get('soldGc', [RetailController::class, 'soldGc'])->name('soldGc');
+    
+
+        Route::get('lostGc', [RetailController::class, 'lostGC'])->name('lostGc');
+        Route::post('submit-lost-gc',[RetailController::class, 'submitLostGc'])->name('submit-lost-gc')->middleware([HandlePrecognitiveRequests::class]);
     });
 });
 Route::prefix('retailgroup')->name('retailgroup.')->group(function () {

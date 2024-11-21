@@ -10,4 +10,6 @@ class LostGcDetail extends Model
     use HasFactory;
 
     protected $primaryKey = 'lostgcd_id';
+    protected $guarded = [];
+    public $timestamps = false;
 }
