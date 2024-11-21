@@ -5,13 +5,14 @@ namespace App\Exports\IadPurchased;
 use App\Models\Store;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreLocalServer;
-use App\Models\StoreVerification;
 use App\Traits\VerifiedExportsTraits\VerifiedTraits;
-use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\WithEvents;
 
-class PurchasedExports implements FromView
+
+class PurchasedExports implements FromView, WithEvents
 {
     use VerifiedTraits;
     /**
@@ -29,7 +30,27 @@ class PurchasedExports implements FromView
             'data' => $this->getVerificationData(),
         ]);
     }
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
 
+                $sheet = $event->sheet->getDelegate();
+
+                foreach (range('A', $sheet->getHighestColumn()) as $column) {
+                    $sheet->getColumnDimension($column)->setAutoSize(true);
+                }
+
+                $sheet->getStyle('A1:M1')->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'size' => 10,
+                    ],
+                ]);
+
+            },
+        ];
+    }
     public function getVerificationData()
     {
         $request = collect($this->request);
@@ -95,6 +116,8 @@ class PurchasedExports implements FromView
             ->get();
 
         $data->transform(function ($row) use ($query) {
+
+            // dd($row->seodtt_bu);
             $purchasecred = 0;
             $balance = 0;
 
@@ -102,7 +125,6 @@ class PurchasedExports implements FromView
 
                 $purchasecred = 0;
                 $balance = $row->vs_tf_denomination;
-
             } else {
 
                 $bdata = $this->getGCTextfileTR($row->sales_barcode, $query);
@@ -118,10 +140,7 @@ class PurchasedExports implements FromView
                 'barcode'       =>  $row->sales_barcode,
                 'denomination'  =>  $row->vs_tf_denomination,
                 'purchasecred'  =>  $purchasecred,
-                'cus_fname'     =>  $row->cus_fname,
-                'cus_lname'     =>  $row->cus_lname,
-                'cus_mname'     =>  $row->cus_mname,
-                'cus_namext'    =>  $row->cus_namext,
+                'fullname'     =>  $row->cus_fname . ' ',$row->cus_lname . ' , ' . $row->cus_mname . ' ' .  $row->cus_namext,
                 'balance'       =>  $balance,
                 'valid_type'    =>  'VERIFIED',
                 'gc_type'       =>  self::gcTypeTransaction($row->vs_gctype),
@@ -134,16 +153,47 @@ class PurchasedExports implements FromView
                 'trans_store'   =>  $row->trans_store,
                 'vs_store'      =>  $row->vs_store,
                 'trans_number'  =>  $row->seodtt_transno,
-                'trans_datetime' =>  $row->trans_datetime
+                'trans_datetime' =>  $row->trans_datetime,
+                'storepurchased' => $this->storePurchasedSwitchCase($row->trans_store),
+                'busnessunited' => $this->businessUnitSwitchCase($row->seodtt_bu),
             ];
         });
 
         return $data;
     }
+    private function businessUnitSwitchCase($seod)
+    {
+        $type = explode("-", $seod);
 
+        $transaction = [
+            'ICM' => 'ISLAND CITY MALL',
+            'PM' => 'PLAZA MARCELA',
+            'ASC' => 'ALTURAS MALL',
+            'TAL' => 'ALTURAS TALIBON',
+            'TUB' => 'ALTURAS TUBIGON',
+            'COLC' => 'COLONNADE COLON',
+            'COLM' => 'COLONNADE MANDAUE',
+        ];
+
+        return $transaction[$type[0]] ?? null;
+    }
+    private function storePurchasedSwitchCase($type)
+    {
+        $transaction = [
+            '1' => 'ALTURAS MALL',
+            '2' => 'ALTURAS TALIBON',
+            '3' => 'ISLAND CITY MALL',
+            '4' => 'PLAZA MARCELA',
+            '6' => 'COLONNADE COLON',
+            '7' => 'COLONNADE MANDAUE',
+            '8' => 'ALTA CITA',
+        ];
+
+        return $transaction[$type] ?? null;
+    }
     private static function gcTypeTransaction($type)
     {
-
+// ALA WABALO
         $transaction = [
             '1' => 'REGULAR',
             '3' => 'SPECIAL EXTERNAL',
