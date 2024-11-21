@@ -2,6 +2,7 @@ import './bootstrap';
 import '../css/app.css';
 
 import { createApp, h, DefineComponent } from 'vue';
+import { createPinia } from 'pinia'
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
@@ -17,6 +18,7 @@ createInertiaApp({
         const app = createApp({ render: () => h(App, props) });
         app.use(plugin);
         app.use(ZiggyVue);
+        app.use(createPinia())
         app.use(antdv);
         app.config.globalProperties.$ws = ws;
         app.mount(el);
