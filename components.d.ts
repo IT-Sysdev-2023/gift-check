@@ -185,14 +185,8 @@ declare module 'vue' {
     ColonadeMandaue: typeof import('./resources/js/Pages/StoreAccounting/ColonadeMandaue.vue')['default']
     ColonadeMandauePosTransaction: typeof import('./resources/js/Pages/StoreAccounting/ColonadeMandauePosTransaction.vue')['default']
     ConfirmPassword: typeof import('./resources/js/Pages/Auth/ConfirmPassword.vue')['default']
-<<<<<<< HEAD
-=======
     ContainerOutlined: typeof import('@ant-design/icons-vue')['ContainerOutlined']
-<<<<<<< HEAD
     copy: typeof import('./resources/js/Pages/Treasury/Adjustment/BudgetAdjustment copy.vue')['default']
-=======
->>>>>>> gamale
->>>>>>> 8407a9780994198b3f3f2e4a653167f1cdf8c7e6
     CopyOutlined: typeof import('@ant-design/icons-vue')['CopyOutlined']
     CouponTransaction: typeof import('./resources/js/Pages/Treasury/Coupon/CouponTransaction.vue')['default']
     CreateEntryGc: typeof import('./resources/js/Pages/Retail/Modals/CreateEntryGc.vue')['default']
@@ -288,14 +282,8 @@ declare module 'vue' {
     LineChartOutlined: typeof import('@ant-design/icons-vue')['LineChartOutlined']
     Link: typeof import('@inertiajs/vue3')['Link']
     ListOfEod: typeof import('./resources/js/Pages/Eod/ListOfEod.vue')['default']
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
     ListOfGeneratedReports: typeof import('./resources/js/Pages/Treasury/Reports/ListOfGeneratedReports.vue')['default']
-=======
->>>>>>> gamale
     LoadingOutlined: typeof import('@ant-design/icons-vue')['LoadingOutlined']
->>>>>>> 8407a9780994198b3f3f2e4a653167f1cdf8c7e6
     LockOutlined: typeof import('@ant-design/icons-vue')['LockOutlined']
     Login: typeof import('./resources/js/Pages/Login.vue')['default']
     LoginX: typeof import('./resources/js/Pages/Auth/LoginX.vue')['default']
@@ -311,11 +299,8 @@ declare module 'vue' {
     MoneyCollectOutlined: typeof import('@ant-design/icons-vue')['MoneyCollectOutlined']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     NotFoundResult: typeof import('./resources/js/Pages/Iad/Components/NotFoundResult.vue')['default']
-<<<<<<< HEAD
-    OrderedListOutlined: typeof import('@ant-design/icons-vue')['OrderedListOutlined']
-=======
     NotificationOutlined: typeof import('@ant-design/icons-vue')['NotificationOutlined']
->>>>>>> gamale
+    OrderedListOutlined: typeof import('@ant-design/icons-vue')['OrderedListOutlined']
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
     PaginationAxios: typeof import('./resources/js/Components/PaginationAxios.vue')['default']
     PaginationAxiosSmall: typeof import('./resources/js/Components/PaginationAxiosSmall.vue')['default']
