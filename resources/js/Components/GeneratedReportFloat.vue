@@ -1,17 +1,20 @@
 <template>
-    <a-float-button-group
+    <a-float-button-group 
         trigger="click"
         :style="{ right: '24px' }"
         v-model:open="openGeneratedReport"
     >
+
+    <!-- YOURE VISITING THIS PAGE.., THIS MEANS YOU HAVE REACH THE LEVEL OF A SENIOR PROGRAMMER LOL -->
+     
         <template #icon>
             <a-badge dot :offset="[0, -12]">
                 <ExclamationCircleOutlined style="font-size: 20px" />
             </a-badge>
         </template>
-        <a-card class="card-admin-style">
+        <a-card class="card-admin-style" style="height: 250px;">
             <template #title>
-                <span>Generated Report</span>
+                <span>Queue Reports</span>
             </template>
             <a-space direction="vertical" style="width: 100%">
                 <a-card>
@@ -25,36 +28,18 @@
                             :percent="items.percentage"
                         />
                     </div>
-                    <div class="flex justify-end">
-                        <!-- <a-button
-                            type="primary"
-                            size="small"
-                            :disabled="items.percentage !== 100"
-                        >
+                    <div class="flex justify-between">
+                        <a-button type="primary" size="small" @click="fileLocation" :disabled="items.percentage !== 100">
                             <template #icon>
-                                <DownloadOutlined />
+                                <FolderOutlined />
                             </template>
-                            Download
-                        </a-button> -->
+                            Open
+                        </a-button>
+
                         <span
                             >{{ items.data.store }} -
                             {{ items.data.info }}</span
                         >
-                    </div>
-                </a-card>
-
-                <a-card>
-                    <div class="flex justify-between">
-                        <span>Generating Report, pls wait...</span>
-                        <a-button
-                            type="primary"
-                            size="small"
-                        >
-                            <template #icon>
-                                <DownloadOutlined />
-                            </template>
-                            Download
-                        </a-button>
                     </div>
                 </a-card>
             </a-space>
@@ -70,7 +55,7 @@ import { PageWithSharedProps } from "@/types/index";
 const page = usePage<PageWithSharedProps>().props;
 
 const openGeneratedReport = ref(false);
-
+const openFloat = ref(false);
 const items = ref<{
     percentage: number;
     data: {
@@ -93,11 +78,16 @@ onMounted(() => {
     window.Echo.private(`treasury-report.${page.auth.user.user_id}`).listen(
         "TreasuryReportEvent",
         (e) => {
+            openFloat.value = true;
             openGeneratedReport.value = true;
             items.value = e;
         }
     );
 });
+
+const fileLocation = () => {
+    router.visit(route('treasury.reports.generatedReports'));
+}
 </script>
 
 <style lang="scss" scoped></style>

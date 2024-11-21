@@ -48,11 +48,11 @@ class ReportGenerator
 		$this->progress['info'] = $descrip;
 		TreasuryReportEvent::dispatch($user, $this->progress);
 	}
-	public function dispatchProgressEod($descrip)
+	public function dispatchProgressEod($descrip, $user)
 	{
 		$this->progress['info'] = $descrip;
 
-		TreasuryReportEvent::dispatch(Auth::user(), $this->progress);
+		TreasuryReportEvent::dispatch($user, $this->progress);
 	}
 	protected function setStore($store)
 	{
@@ -215,9 +215,9 @@ class ReportGenerator
 			->exists();
 	}
 
-	protected function hasEodRecords($request)
+	protected function hasEodRecords(User $user)
 	{
-		$this->dispatchProgressEod(ReportHelper::CHECKING_RECORDS);
+		$this->dispatchProgressEod(ReportHelper::CHECKING_RECORDS, $user);
 		if ($this->isDateRange) {
 			$query = InstitutEod::whereBetween('ieod_date', $this->transactionDate);
 		} else {

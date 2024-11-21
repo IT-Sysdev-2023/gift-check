@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ColumnHelper;
 use App\Http\Resources\InstitutPaymentResource;
+use App\Jobs\EodScheduler;
 use App\Models\InstitutEod;
 use App\Models\InstitutPayment;
 use App\Models\StoreEod;
@@ -88,5 +89,9 @@ class EodController extends Controller
             'data' => InstitutPaymentResource::collection($data),
             'columns' => \App\Services\Treasury\ColumnHelper::$gcReleasingReport
         ]);
+    }
+
+    public function toEndOfDay(){
+       EodScheduler::dispatch();
     }
 }

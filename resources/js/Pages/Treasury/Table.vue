@@ -35,7 +35,7 @@ const { highlightText } = highlighten();
                     <template #icon>
                         <FileExcelOutlined />
                     </template>
-                    {{ isGenerating ? 'Generating Excel on Progress...' :' GC Ledger Excel Report' }}
+                    {{ isGenerating ? 'Generating Excel on Progress...' :' GC Budget Ledger Report' }}
                 </a-button>
             </div>
         </div>

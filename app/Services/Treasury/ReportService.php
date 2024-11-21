@@ -3,6 +3,7 @@
 namespace App\Services\Treasury;
 
 use App\Events\TreasuryReportEvent;
+use App\Jobs\EodReport;
 use App\Jobs\GcReport;
 use App\Models\StoreEod;
 use App\Services\Documents\FileHandler;
@@ -45,38 +46,19 @@ class ReportService extends ReportsHandler
 
 	public function generateEodPdf(Request $request)
 	{
-
 		$request->validate([
 			"transactionDate" => "required",
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
-		$storeData = $this->handleEodRecords($request);
-
-		if ($storeData === 'error') {
-			return response()->json(['message' => 'No Record Found in selected transaction date'], 404);
-		}
-		$pdf = Pdf::loadView('pdf.treasuryEodReport', ['data' => $storeData]);
-
-		return $pdf->output();
-	}
-
-	private function handleEodRecords(Request $request)
-	{
-		$record = collect();
-
 		$this->setDateOfTransactionsEod($request);
 
-		if ($this->hasEodRecords($request)) {
-			$record->put('records', $this->eodRecords());
-		} else {
-			return 'error';
+		if(!$this->hasEodRecords($request->user())){
+			return response()->json(['error' => 'No Transaction For this Date']);
 		}
-
-		return [
-			'header' => $this->pdfEodHeaderDate(),
-			...$record,
-		];
+		EodReport::dispatch($request->all());
+		// return $pdf->output();
 	}
+
 	public function generatedReports(Request $request)
 	{
 
@@ -97,11 +79,12 @@ class ReportService extends ReportsHandler
 					'file' => $item,
 					'filename' => Str::of(basename($item))->basename('.' . $extension),
 					'extension' => $extension,
+					'date' => $generatedAt->toDayDateTimeString(), // for Sorting
 					'icon' => $extension === 'pdf' ? 'pdf.png' : 'excel.png',
 					'generatedAt' => $generatedAt->diffForHumans(),
 					'expiration' => $generatedAt->addDays(2)->diffForHumans(),
 				];
-			})->sortBy('generatedAt')->values()
+			})->sortByDesc('date')->values()
 		]);
 	}
 	public function download(Request $request)

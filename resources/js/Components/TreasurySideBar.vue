@@ -163,13 +163,13 @@ const setActiveTab = computed(() => {
                     Special Gc Payment</Link
                 ></a-menu-item
             >
-            <a-menu-item key="treasury.coupon.transactions.special.index">
+            <!-- <a-menu-item key="treasury.coupon.transactions.special.index">
                 <Link
                     :href="route('treasury.coupon.transactions.special.index')"
                 >
                     Coupon Gc Payment</Link
                 ></a-menu-item
-            >
+            > -->
             <a-menu-item key="treasury.transactions.eod.gcSales">
                 <Link :href="route('treasury.transactions.eod.gcSales')">
                     GC Sales Report (EOD)</Link

@@ -11,10 +11,8 @@ use App\Services\Treasury\Reports\ReportHelper;
 use App\Services\Treasury\Reports\ReportsHandler;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class GcReport extends ReportsHandler implements ShouldQueue
 {
@@ -50,11 +48,11 @@ class GcReport extends ReportsHandler implements ShouldQueue
                 $this->progress['progress']['currentRow'] = $percentage++;
                 TreasuryReportEvent::dispatch($this->user, $this->progress);
 
-                $storeData[] = self::handleRecords($this->request, $item->value);
+                $storeData[] = $this->handleRecords( $item->value);
             }
-            
+
         } else {
-            $storeData[] = self::handleRecords($this->request, $this->request->store);
+            $storeData[] = $this->handleRecords( $this->request->store);
             $this->progress['progress']['totalRow'] = 1;
             $this->progress['progress']['currentRow'] = 1;
             TreasuryReportEvent::dispatch($this->user, $this->progress);
@@ -63,23 +61,23 @@ class GcReport extends ReportsHandler implements ShouldQueue
         $pdf = Pdf::loadView('pdf.treasuryReport', ['data' => ['stores' => $storeData]]);
         $transDateHeader = ReportHelper::transactionDateLabel($this->isDateRange, $this->transactionDate);
 
-
         (new ExportHandler())
             ->setFolder('Reports/' . $this->roleDashboardRoutes[$this->user->usertype] . '/')
             ->setFilename('Gc Report-' . $this->user->user_id, $transDateHeader)
-            ->exportToPdf($pdf->output());
+            ->exportToPdf($pdf->output())
+            ->deleteFileIn(now()->addDays(2));
     }
-    private function handleRecords($request, string $store)
+    private function handleRecords(string $store)
     {
 
         $record = collect();
         $footerData = collect();
 
-        $reportType = collect($request->reportType);
+        $reportType = collect($this->request->reportType);
 
-        $this->setStore($store)->setDateOfTransactions($request);
+        $this->setStore($store)->setDateOfTransactions($this->request);
 
-        if (!is_null($this->transactionDate) && $this->hasRecords($request, $this->user)) {
+        if (!is_null($this->transactionDate) && $this->hasRecords($this->request, $this->user)) {
 
             if ($reportType->contains('gcSales')) {
                 $record->put('gcSales', $this->gcSales($this->user));
@@ -99,7 +97,7 @@ class GcReport extends ReportsHandler implements ShouldQueue
         }
 
         return [
-            'header' => $this->pdfHeaderDate($request, $this->user),
+            'header' => $this->pdfHeaderDate($this->request, $this->user),
             'data' => [...$record],
             'footer' => [...$footerData],
         ];
