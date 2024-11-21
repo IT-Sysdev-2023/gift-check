@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Jobs\GenerateVarianceExcel;
 use Carbon\Carbon;
 use App\Models\User;
 use Inertia\Inertia;
@@ -1985,7 +1986,7 @@ class StoreAccountingController extends Controller
                 'special_external_customer.spcus_companyname'
             )
 
-            ->orderByDesc('special_external_gcrequest.spexgc_datereq')
+            ->orderByDesc('special_external_gcrequest.spexgc_datereq', 'ASC')
             ->paginate(10)
             ->withQueryString();
 
@@ -2465,61 +2466,106 @@ class StoreAccountingController extends Controller
         )
             ->orderBy('spcus_companyname', 'ASC')
             ->get();
+        // dd($companyNameList);
+
         return Inertia::render('StoreAccounting/CheckVariance', [
+            'variance' => $this->CheckVarianceSubmit ($request),
             'companyNameList' => $companyNameList
         ]);
     }
 
-    // public function CheckVarianceSubmit(Request $request)
-    // {
-    //     //    dd($request->toArray());
-    //     $customerName = $request->customerName;
-    //     $formatCusName = $request->formatCusName;
-    //     // dd($customerName = $request->customerName,
-    //     // $formatCusName = $request->formatCusName);
-
-    //     $tagbilaran = DB::table('special_external_gcrequest_emp_assign')
-    //         ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-    //         ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
-    //         ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
-    //         ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
-    //         ->where('special_external_gcrequest.spexgc_company', $customerName)
-    //         ->select(
-    //             'special_external_gcrequest_emp_assign.spexgcemp_barcode',
-    //             'special_external_gcrequest_emp_assign.spexgcemp_denom',
-    //             DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) AS customerName"),
-    //             'store_verification.vs_date',
-    //             'stores.store_name',
-    //             'store_eod_textfile_transactions.seodtt_transno'
-    //         )
-    //         ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
-    //     ->get();
+    public function CheckVarianceSubmit(Request $request)
+    {
 
 
-    //     $talibon = DB::table('special_external_gcrequest_emp_assign')
-    //         ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-    //         ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
-    //         ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
-    //         ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
-    //         ->where('special_external_gcrequest.spexgc_company', $customerName)
-    //         ->select(
-    //             'special_external_gcrequest_emp_assign.spexgcemp_barcode',
-    //             'special_external_gcrequest_emp_assign.spexgcemp_denom',
-    //             DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) AS customerName"),
-    //             'store_verification.vs_date',
-    //             'stores.store_name',
-    //             'store_eod_textfile_transactions.seodtt_transno'
-    //         )
-    //         ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
-    //         ->get();
-    //     // dd($talibon);
-    //     return (object) [
-    //         'tagbilaranData' => $tagbilaran,
-    //         'selectedCustomer' => $customerName,
-    //         'formatCusName' => $formatCusName,
-    //         'talibonData' => $talibon
-    //     ];
-    // }
+        $companyNameList = SpecialExternalCustomer::select(
+            'spcus_id',
+            'spcus_companyname',
+            'spcus_acctname'
+        )
+            ->orderBy('spcus_companyname', 'ASC')
+            ->get();
+        // dd($companyNameList);
+
+        $customerName = $request->customerName;
+        $formatCusName = $request->formatCusName;
+
+
+        $tagbSearch = $request->tagbSearch;
+        // dd($tagbSearch);
+        $tagbilaran = DB::table('special_external_gcrequest_emp_assign')
+            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
+            ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
+            ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->where('special_external_gcrequest.spexgc_company', $customerName)
+            ->select(
+                'special_external_gcrequest_emp_assign.spexgcemp_barcode',
+                'special_external_gcrequest_emp_assign.spexgcemp_denom',
+                DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) AS customerName"),
+                'store_verification.vs_date',
+                'stores.store_name',
+                'store_eod_textfile_transactions.seodtt_transno'
+            )
+            ->when($tagbSearch, function ($query) use ($tagbSearch) {
+                $query->where(function ($query) use ($tagbSearch) {
+                    $query->where('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'like', '%'. $tagbSearch. '%')
+                    ->orWhere('special_external_gcrequest_emp_assign.spexgcemp_denom', 'like', '%' . $tagbSearch . '%')
+                    ->orWhereRaw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) like ?", ["%$tagbSearch%"] )
+                    ->orWhere('store_verification.vs_date', 'like', '%' . $tagbSearch . '%')
+                    ->orWhere('stores.store_name', 'like', '%' . $tagbSearch . '%')
+                    ->orWhere('store_eod_textfile_transactions.seodtt_transno', 'like', '%' . $tagbSearch . '%');
+                });
+            })
+            ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
+        // ->get();
+
+            ->paginate(10)
+            ->withQueryString();
+
+
+        $talibonSearch = $request->talibonSearch;
+
+        $talibon = DB::table('special_external_gcrequest_emp_assign')
+            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
+            ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
+            ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->where('special_external_gcrequest.spexgc_company', $customerName)
+            ->select(
+                'special_external_gcrequest_emp_assign.spexgcemp_barcode',
+                'special_external_gcrequest_emp_assign.spexgcemp_denom',
+                DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) AS customerName"),
+                'store_verification.vs_date',
+                'stores.store_name',
+                'store_eod_textfile_transactions.seodtt_transno'
+            )
+            ->when($talibonSearch, function ($query) use ($talibonSearch) {
+                $query->where(function ($query) use ($talibonSearch) {
+                $query->where('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'like', '%' . $talibonSearch . '%')
+                    ->orWhere('special_external_gcrequest_emp_assign.spexgcemp_denom', 'like', '%' . $talibonSearch . '%')
+                    ->orWhereRaw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) like ?", ["%$talibonSearch%"])
+                    ->orWhere('store_verification.vs_date', 'like', '%' . $talibonSearch . '%')
+                    ->orWhere('stores.store_name', 'like', '%' . $talibonSearch . '%')
+                    ->orWhere('store_eod_textfile_transactions.seodtt_transno', 'like', '%' . $talibonSearch . '%');
+                });
+            })
+            ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
+            // ->get();
+            ->paginate(10)
+            ->withQueryString();
+
+        // dd($talibon);
+        return (object) [
+            'companyNameList' => $companyNameList,
+            'talibonSearch' => $talibonSearch,
+            'tagbSearch' => $tagbSearch,
+            'tagbilaranData' => $tagbilaran,
+            'selectedCustomer' => $customerName,
+            'formatCusName' => $formatCusName,
+            'talibonData' => $talibon
+        ];
+    }
 
     public function varianceExcelExport(Request $request)
     {

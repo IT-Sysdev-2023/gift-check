@@ -1,7 +1,9 @@
 <template>
     <a-card>
         <span style="margin-left: 45%; font-weight: bold">
-            <ExportOutlined />
+            <span style="color:green">
+                <ExportOutlined />
+            </span>
             RELEASE GC REPORTS
         </span>
         <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc;">
@@ -25,8 +27,7 @@
                         </span>
                         <span style="font-weight: bold; margin-left: 46.4%;">
                             Search:
-                            <a-input allow-clear v-model:value="pdfPerCustomerSearch"
-                                placeholder="Input search here!"
+                            <a-input allow-clear v-model:value="pdfPerCustomerSearch" placeholder="Input search here!"
                                 style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
                         </span>
                         <div style="margin-top: 10px;margin-left: 30px;">
@@ -46,8 +47,8 @@
                             </span>
                         </div>
                         <div style="margin-top: 20px;">
-                            <a-table :columns="pdfPerCustomer" :data-source="data.pdfPerCustomer.data" :pagination="false"
-                                size="small">
+                            <a-table :columns="pdfPerCustomer" :data-source="data.pdfPerCustomer.data"
+                                :pagination="false" size="small">
                             </a-table>
                             <pagination :datarecords="data.pdfPerCustomer" class="mt-5" />
                         </div>
@@ -73,8 +74,7 @@
                         </span>
                         <span style="font-weight: bold; margin-left: 46.4%;">
                             Search:
-                            <a-input allow-clear v-model:value="pdfPerBarcodeSearch"
-                                placeholder="Input search here!"
+                            <a-input allow-clear v-model:value="pdfPerBarcodeSearch" placeholder="Input search here!"
                                 style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
                         </span>
                         <div style="margin-top: 10px;margin-left: 30px;">
@@ -134,15 +134,15 @@
                         </div>
                         <div style="padding: 10px; background-color: #b0c4de;">
                             <span style="font-weight: bold; margin-left: 30%;">
-                                <span style="color:red">
-                                    <FilePdfOutlined />
+                                <span style="color:green">
+                                    <FileExcelOutlined />
                                 </span>
                                 Table showing EXCEL per customer
                             </span>
                         </div>
                         <div style="margin-top: 20px;">
                             <a-table :columns=" perCustomerReleaseTable" :data-source="data.dataCustomer.data"
-                            :pagination="false" size="small">
+                                :pagination="false" size="small">
 
                             </a-table>
                             <pagination :datarecords="data.dataCustomer" class="mt-5" />
@@ -183,8 +183,8 @@
                         </div>
                         <div style="padding: 10px; background-color: #b0c4de;">
                             <span style="font-weight: bold; margin-left: 30%;">
-                                <span style="color:red">
-                                    <FilePdfOutlined />
+                                <span style="color:green">
+                                    <FileExcelOutlined />
                                 </span>
                                 Table showing EXCEL per barcode
                             </span>
@@ -205,7 +205,9 @@
 
         <a-card style="width: 15%; position: absolute; top: 45px; border: 1px solid #dcdcdc;">
             <div style="font-weight: bold; font-size: small;">
-                <ExportOutlined />
+                <span style="color:green">
+                    <ExportOutlined />
+                </span>
                 Release GC Reports
             </div>
             <div style="font-weight: bold; margin-top: 30px;">

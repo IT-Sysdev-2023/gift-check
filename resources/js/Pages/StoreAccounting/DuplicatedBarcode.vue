@@ -1,99 +1,131 @@
 <template>
-    <a-tabs>
-        <a-tab-pane key="1">
-            <template #tab>
-                <span style="font-weight: bold;">
-                    <TagsOutlined />
-                    Duplicated Report (CEBU)
-                </span>
-            </template>
-            <a-card style="width: 25%;">
-                <span :style="{ fontSize: iconSize + 'px' }">
-                    <FileSearchOutlined />
-                </span>
-                <input type="file" ref="fileInput" style="display: none;" @change="handleFileChange" />
-
-                <a-button @click="ChooseFileCebu" style="background-color: #1e90ff; color: white;">
-                    <SearchOutlined />
-                    Choose File
-                </a-button>
-                <div v-if="!cebuFileName && !message" style="color:red;">
-                    No file selected
-
-                </div>
-                <div v-if="!cebuFileName" style="color:red">
-                    {{ this.message }}
-                </div>
-                <div v-if="cebuFileName" style="width: 40%; max-width: 40%;">
-                    <span style="color:#1e90ff; font-weight: bold;">
-                        Selected File:
+    <a-card>
+        <a-tabs>
+            <a-tab-pane key="1">
+                <template #tab>
+                    <span style="font-weight: bold;">
+                        <span style="color:green">
+                            <TagsOutlined />
+                        </span>
+                        Duplicated Report (CEBU)
                     </span>
-                    <div style="font-size: small; color:green; text-decoration: underline;">{{ cebuFileName ?
-                        cebuFileName
-                        : "No file selected" }}
+                </template>
+                <a-card style="width: 25%;">
+                    <div style="margin-left: 50px;">
+                        <span style="color:green">
+                            <TagsOutlined />
+                        </span>
+                        <span style="font-weight: bold;">
+                            Duplicate Barcodes
+                        </span>
+                        <div style="margin-left: 50px; color:#1e90ff; font-weight: bold;">
+                            Cebu
+                        </div>
                     </div>
-                </div>
-                <div style="margin-top: 20px;">
-                    <a-button @click="cebuReportButton" style="background-color: green; color: white">
-                        <CheckOutlined />
-                        Check Duplicates
-                    </a-button>
-                </div>
+                    <div style="margin-top: 20px;">
+                        <span :style="{ fontSize: iconSize + 'px' }">
+                            <FileSearchOutlined />
+                        </span>
+                        <input type="file" ref="fileInput" style="display: none;" @change="handleFileChange" />
 
-                <div style="color:red; margin-top: 20px;">
-                    <WarningOutlined />
-                    Note: Upload Textfile Only.
-                </div>
-            </a-card>
+                        <a-button @click="ChooseFileCebu" style="background-color: #1e90ff; color: white;">
+                            <LoadingOutlined />
+                            Choose File
+                        </a-button>
+                        <div v-if="!cebuFileName && !message" style="color:red;">
+                            No file selected
 
-        </a-tab-pane>
-        <a-tab-pane key="2">
-            <template #tab>
-                <span style="font-weight: bold;">
-                    <TagsOutlined />
-                    Duplicated Report (ALTA CITTA)
-                </span>
-            </template>
-            <a-card style="width: 25%">
-                <span :style="{ fontSize: iconSize + 'px' }">
-                    <FileSearchOutlined />
-                </span>
-                <input type="file" ref="fileInput" style="display: none;" @change="handleAltaCittaFileChange" />
+                        </div>
+                        <div v-if="!cebuFileName" style="color:red">
+                            {{ this.message }}
+                        </div>
+                        <div v-if="cebuFileName" style="width: 40%; max-width: 40%;">
+                            <span style="color:#1e90ff; font-weight: bold;">
+                                Selected File:
+                            </span>
+                            <div style="text-decoration: underline;">
+                                {{ cebuFileName }}
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <a-button @click="cebuReportButton" style="background-color: green; color: white">
+                                <CheckOutlined />
+                                Check Duplicates
+                            </a-button>
+                        </div>
 
-                <a-button @click="chooseFileAltaCitta" style="background-color: #1e90ff; color: white;">
-                    <SearchOutlined />
-                    Choose File
-                </a-button>
-                <div v-if="!altaCittaFileName">
-                    <span style="color:red">
-                        No file selected
-                    </span>
-                </div>
-                <div v-if="altaCittaFileName" style=" width: 40%; max-width: 40%;">
-                    <span style="color:#1e90ff; font-weight: bold;">
-                        Selected file:
-                    </span>
-                    <div style="color:green">
-                        {{ altaCittaFileName }}
+                        <div style="color:red; margin-top: 20px;">
+                            <WarningOutlined />
+                            Note: Upload Textfile Only.
+                        </div>
                     </div>
-                </div>
+                </a-card>
+
+            </a-tab-pane>
+            <a-tab-pane key="2">
+                <template #tab>
+                    <span style="font-weight: bold;">
+                        <span style="color:green">
+                            <TagsOutlined />
+                        </span>
+                        Duplicated Report (ALTA CITTA)
+                    </span>
+                </template>
+                <a-card style="width: 25%">
+                    <div style="margin-left: 50px;">
+                        <span style="color:green">
+                            <TagsOutlined />
+                        </span>
+                        <span style="font-weight: bold;">
+                            Duplicate Barcodes
+                        </span>
+                        <div style="margin-left: 50px; color:#1e90ff; font-weight: bold;">
+                            Alta Citta
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <span :style="{ fontSize: iconSize + 'px' }">
+                            <FileSearchOutlined />
+                        </span>
+                        <input type="file" ref="fileInput" style="display: none;" @change="handleAltaCittaFileChange" />
+
+                        <a-button @click="chooseFileAltaCitta" style="background-color: #1e90ff; color: white;">
+                            <LoadingOutlined />
+                            Choose File
+                        </a-button>
+                        <div v-if="!altaCittaFileName">
+                            <span style="color:red">
+                                No file selected
+                            </span>
+                        </div>
+                        <div v-if="altaCittaFileName" style=" width: 40%; max-width: 40%;">
+                            <span style="color:#1e90ff; font-weight: bold;">
+                                Selected file:
+                            </span>
+                            <div style="text-decoration: underline">
+                                {{ altaCittaFileName }}
+                            </div>
+                        </div>
 
 
-                <div style="margin-top: 20px;">
-                    <a-button @click="altaCittaReportButton" style="background-color: green; color: white">
-                        <CheckOutlined />
-                        Check Duplicates
-                    </a-button>
-                </div>
+                        <div style="margin-top: 20px;">
+                            <a-button @click="altaCittaReportButton" style="background-color: green; color: white">
+                                <CheckOutlined />
+                                Check Duplicates
+                            </a-button>
+                        </div>
 
-                <div style="color:red; margin-top: 20px;">
-                    <WarningOutlined />
-                    Note: Upload file with CSV extension ONLY.
-                </div>
-            </a-card>
+                        <div style="color:red; margin-top: 20px;">
+                            <WarningOutlined />
+                            Note: Upload Textfile Only.
+                        </div>
+                    </div>
+                </a-card>
 
-        </a-tab-pane>
-    </a-tabs>
+            </a-tab-pane>
+        </a-tabs>
+    </a-card>
+
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -170,19 +202,10 @@ export default {
                 okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    const key = 'spgcSubmitMessage';
-                    message.loading({
-                        content: 'Generating...',
-                        key,
-                    });
-                    setTimeout(() => {
-                        message.success({
-                            content: 'Generated successfully!',
-                            key,
-                            duration: 10,
-                        });
-                    }, 1000);
-                    window.location.href = route('storeaccounting.duplicateExcel', cebuData)
+                    const hide = message.loading('Generating in progress..', 0)
+
+                    window.location.href = route('storeaccounting.duplicateExcel', cebuData);
+                    setTimeout(hide, 1500);
                 },
                 onCancel() {
                     console.log('Cancel');
@@ -231,19 +254,10 @@ export default {
                 okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    const key = 'spgcSubmitMessage';
-                    message.loading({
-                        content: 'Generating...',
-                        key,
-                    });
-                    setTimeout(() => {
-                        message.success({
-                            content: 'Generated successfully!',
-                            key,
-                            duration: 10,
-                        });
-                    }, 1000);
+                    const hide = message.loading('Generating in progress..', 0)
+
                     window.location.href = route('storeaccounting.duplicateExcel', altaCittaData)
+                    setTimeout(hide, 1500);
                 },
                 onCancel() {
                     console.log('Cancel');

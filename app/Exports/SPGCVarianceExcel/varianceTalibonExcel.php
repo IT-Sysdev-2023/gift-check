@@ -27,6 +27,13 @@ class varianceTalibonExcel implements FromCollection, WithHeadings, WithTitle, S
         $talibonData = $this->VarianceTalibonData($this->TalibonData);
 
         $variances2Formatted = [];
+        $paddingRows = [
+            ['', '', '', '', '', '', ''], // Row 1
+            ['', '', '', '', '', '', ''], // Row 2
+            ['', '', '', '', '', '', ''], // Row 3
+            ['', '', '', '', '', '', ''], // Row 4
+            ['', '', '', '', '', '', ''], // Row 5
+        ];
 
         foreach ($talibonData as $row) {
             // Set status based on vs_date and seodtt_transno
@@ -53,7 +60,7 @@ class varianceTalibonExcel implements FromCollection, WithHeadings, WithTitle, S
             ];
         }
 
-        return collect($variances2Formatted);
+        return collect(array_merge($paddingRows, $variances2Formatted));
     }
 
     private function VarianceTalibonData($request)
@@ -80,8 +87,8 @@ class varianceTalibonExcel implements FromCollection, WithHeadings, WithTitle, S
     {
         $data = $this->collection();
         $rowCount = count($data);
-
-        $range = 'A1:Z' . ($rowCount + 1);
+        $lastColumn = chr(65 + count($this->headings()) - 1);
+        $range = 'A6:' . $lastColumn . ($rowCount + 6);
 
         return [
             1 => ['font' => ['bold' => true]],
@@ -117,6 +124,8 @@ class varianceTalibonExcel implements FromCollection, WithHeadings, WithTitle, S
                     $event->sheet->getStyle($column . '5')->getFont()->setBold(true);
                     $column++;
                 }
+                $event->sheet->getStyle('A5:H5')->getAlignment()->setVertical('center');
+                $event->sheet->getRowDimension(5)->setRowHeight(20);
             }
         ];
     }

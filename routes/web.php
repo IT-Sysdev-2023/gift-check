@@ -761,6 +761,7 @@ Route::prefix('store-accounting')
                         Route::get('duplicate-barcode-excel', [StoreAccountingController::class, 'duplicateExcel'])->name('duplicateExcel');
 
                         Route::get('check-variance', [StoreAccountingController::class, 'CheckVariance'])->name('CheckVariance');
+                        Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                         Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
 
 

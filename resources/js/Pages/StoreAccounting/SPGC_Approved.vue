@@ -1,15 +1,17 @@
 <template>
     <a-card>
         <span style="margin-left: 45%; font-weight: bold;">
-            <LikeOutlined />
+            <span style="color:green">
+                <LikeOutlined />
 
+            </span>
             APPROVED GC REPORTS
         </span>
         <div>
 
             <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc">
                 <a-tabs>
-                    <a-tab-pane key="3">
+                    <a-tab-pane key="1">
                         <template #tab>
                             <span style="font-weight: bold;">
                                 <span style="color:red">
@@ -55,10 +57,11 @@
                                 </a-table>
                             </div>
                             <pagination :datarecords="records.pdfPerCustomer" class="mt-5" />
-
                         </a-card>
                     </a-tab-pane>
-                    <a-tab-pane key="4">
+                    <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+                    <a-tab-pane key="2">
                         <template #tab>
                             <span style="font-weight: bold;">
                                 <span style="color:red">
@@ -90,10 +93,6 @@
                                     {{ this.message }}
                                 </span>
                             </div>
-
-
-
-
                             <div style="padding: 10px; background-color: #b0c4de;">
                                 <span style="font-weight: bold; margin-left: 30%;">
                                     <span style="color:red">
@@ -112,7 +111,9 @@
 
                         </a-card>
                     </a-tab-pane>
-                    <a-tab-pane key="1">
+                    <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+                    <a-tab-pane key="3">
                         <template #tab>
                             <span style="font-weight: bold;">
                                 <span style="color: #006400">
@@ -152,12 +153,9 @@
                                 </span>
                             </div>
 
-
-
-
                             <div style="padding: 10px; background-color: #b0c4de;">
                                 <span style="font-weight: bold; margin-left: 30%;">
-                                    <span style="color:#006400">
+                                    <span style="color:green">
                                         <FileExcelOutlined />
                                     </span>
                                     Table showing EXCEL per customer
@@ -173,8 +171,9 @@
 
                         </a-card>
                     </a-tab-pane>
+                    <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
-                    <a-tab-pane key="2">
+                    <a-tab-pane key="4">
                         <template #tab>
                             <span style="font-weight: bold;">
                                 <span style="color: #006400">
@@ -213,7 +212,7 @@
 
                             <div style="padding: 10px; background-color: #b0c4de;">
                                 <span style="font-weight: bold; margin-left: 30%;">
-                                    <span style="color:#006400">
+                                    <span style="color:green">
                                         <FileExcelOutlined />
                                     </span>
                                     Table showing EXCEL per barcode
@@ -237,7 +236,10 @@
         <a-card style="width:15%; border: 1px solid #dcdcdc; position: absolute; top: 45px;">
 
             <div style="font-weight: bold; font-size: small;">
-                <LikeOutlined />
+                <span style="color:green">
+                    <LikeOutlined />
+
+                </span>
                 Approved GC Reports
 
             </div>

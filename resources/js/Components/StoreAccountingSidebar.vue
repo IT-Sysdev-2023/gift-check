@@ -173,27 +173,27 @@
     <a-sub-menu key="storeAccounting.reports">
         <template #title>
             <span>
-                <WarningOutlined />
+                <ContainerOutlined />
                 <span>Reports </span>
             </span>
         </template>
         <a-menu-item class="menu-item" @click="() => $inertia.get(route('storeaccounting.SPGCApproved'))"
             key="SPGCApproved">
-            <DatabaseOutlined />
+            <LikeOutlined />
             <span>
                 SPGC Approved
             </span>
         </a-menu-item>
         <a-menu-item class="menu-item" @click="() => $inertia.get(route('storeaccounting.SPGCRelease'))"
             key="SPGCRelease">
-            <DatabaseOutlined />
+            <ExportOutlined />
             <span>
                 SPGC Release
             </span>
         </a-menu-item>
         <a-menu-item class="menu-item" @click="() => $inertia.get(route('storeaccounting.DuplicatedBarcodes'))"
             key="DuplicatedBarcodes">
-            <DatabaseOutlined />
+            <TagsOutlined />
             <span>
                 Duplicate Barcodes
             </span>

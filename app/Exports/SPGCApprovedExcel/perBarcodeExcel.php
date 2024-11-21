@@ -46,7 +46,7 @@ class perBarcodeExcel implements FromCollection, WithHeadings, WithTitle, WithSt
 
                 $sheet->setCellValue('A1', 'ALTURAS GROUP OF COMPANIES');
                 $sheet->setCellValue('A2', 'HEAD OFFICE FINANCE DEPARTMENT');
-                $sheet->setCellValue('A3', 'SPECIAL EXTERNAL GC REPORT- RELEASING');
+                $sheet->setCellValue('A3', 'SPECIAL EXTERNAL GC REPORT- APPROVED');
                 $sheet->setCellValue('A4', 'Start Date: ' . $this->generatedData['startDate']);
                 $sheet->setCellValue('A5', 'End Date: ' . $this->generatedData['endDate']);
 

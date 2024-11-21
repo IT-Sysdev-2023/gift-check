@@ -27,6 +27,13 @@ class VarianceExcel implements FromCollection, ShouldAutoSize, WithTitle, WithSt
     {
         $data = $this->VarianceExcelQuery($this->VarianceData);
         $tagbilaranData = [];
+        $paddingRows = [
+            ['', '', '', '', '', '', ''], // Row 1
+            ['', '', '', '', '', '', ''], // Row 2
+            ['', '', '', '', '', '', ''], // Row 3
+            ['', '', '', '', '', '', ''], // Row 4
+            ['', '', '', '', '', '', ''], // Row 5
+        ];
         foreach ($data as $row) {
             $row->status = $this->getStatus($row->vs_date, $row->seodtt_transno);
             $row->verifydate = $row->vs_date ? Carbon::parse($row->vs_date)->format('Y-m-d') : 'N/A';
@@ -46,7 +53,7 @@ class VarianceExcel implements FromCollection, ShouldAutoSize, WithTitle, WithSt
             ];
         }
 
-        return collect($tagbilaranData);
+        return collect(array_merge($paddingRows, $tagbilaranData));
     }
 
     private function VarianceExcelQuery($request)
@@ -102,7 +109,7 @@ class VarianceExcel implements FromCollection, ShouldAutoSize, WithTitle, WithSt
         $data = $this->collection();
         $rowCount = count($data);
         $lastColumn = chr(65 + count($this->headings()) - 1);
-        $range = 'A1:' . $lastColumn . ($rowCount + 4);
+        $range = 'A6:' . $lastColumn . ($rowCount + 5);
 
         return [
             1 => ['font' => ['bold' => true]],
@@ -137,6 +144,8 @@ class VarianceExcel implements FromCollection, ShouldAutoSize, WithTitle, WithSt
                     $event->sheet->getStyle($column . '5')->getFont()->setBold(true);
                     $column++;
                 }
+                $event->sheet->getStyle('A5:H5')->getAlignment()->setVertical('center');
+                $event->sheet->getRowDimension(5)->setRowHeight(20);
             }
         ];
     }

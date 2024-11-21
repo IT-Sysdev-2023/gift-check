@@ -48,7 +48,7 @@ class releasePerBarcode implements FromCollection, ShouldAutoSize, WithHeadings,
 
                 $sheet->setCellValue('A1', 'ALTURAS GROUP OF COMPANIES');
                 $sheet->setCellValue('A2', 'HEAD OFFICE FINANCE DEPARTMENT');
-                $sheet->setCellValue('A3', 'SPECIAL EXTERNAL GC REPORT- APPROVAL');
+                $sheet->setCellValue('A3', 'SPECIAL EXTERNAL GC REPORT- RELEASE');
                 $sheet->setCellValue('A4', 'Start Date: ' . $this->perBarcodeData['startDate']);
                 $sheet->setCellValue('A5', 'End Date: ' . $this->perBarcodeData['endDate']);
 
