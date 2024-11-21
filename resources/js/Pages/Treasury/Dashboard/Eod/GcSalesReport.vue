@@ -24,6 +24,9 @@ const { highlightText } = highlighten();
                     style="width: 300px"
                 />
             </div>
+            <a-button @click="handleEndOfDay">
+                End OF Day
+            </a-button>
         </div>
 
         <a-table
@@ -93,6 +96,7 @@ import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
+import axios from "axios";
 
 export default {
     layout: AuthenticatedLayout,
@@ -143,6 +147,9 @@ export default {
                     }
                 });
         },
+        async handleEndOfDay(){
+            await axios.post(route('treasury.transactions.eod.setToEod'))
+        }
     },
 
     watch: {

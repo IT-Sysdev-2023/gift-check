@@ -410,6 +410,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
 
                 Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
+                Route::post('gc-sales-report-eod', [EodController::class, 'toEndOfDay'])->name('setToEod');
             });
         });
         Route::prefix('masterfile')->name('masterfile.')->group(function () {

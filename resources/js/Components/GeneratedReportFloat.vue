@@ -1,5 +1,5 @@
 <template>
-    <a-float-button-group
+    <a-float-button-group v-if="openFloat"
         trigger="click"
         :style="{ right: '24px' }"
         v-model:open="openGeneratedReport"
@@ -52,7 +52,7 @@ import { PageWithSharedProps } from "@/types/index";
 const page = usePage<PageWithSharedProps>().props;
 
 const openGeneratedReport = ref(false);
-
+const openFloat = ref(false);
 const items = ref<{
     percentage: number;
     data: {
@@ -75,6 +75,7 @@ onMounted(() => {
     window.Echo.private(`treasury-report.${page.auth.user.user_id}`).listen(
         "TreasuryReportEvent",
         (e) => {
+            openFloat.value = true;
             openGeneratedReport.value = true;
             items.value = e;
         }
