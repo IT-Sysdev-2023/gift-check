@@ -20,7 +20,8 @@ class ReportsHandler extends ReportGenerator
 	private $cardSales;
 	private $ar;
 
-	public function __construct(){
+	public function __construct()
+	{
 		parent::__construct();
 	}
 
@@ -46,9 +47,9 @@ class ReportsHandler extends ReportGenerator
 		];
 	}
 
-	protected function eodRecords()
+	protected function eodRecords(User $user)
 	{
-		$this->dispatchProgressEod(2);
+
 		$query = InstitutEod::select('ieod_by', 'ieod_id', 'ieod_num', 'ieod_date')
 			->with('user:user_id,firstname,lastname');
 
@@ -62,15 +63,16 @@ class ReportsHandler extends ReportGenerator
 
 		$this->progress['progress']['totalRow'] = $query->count();
 
-		return $query->cursor()->map(function ($item) use (&$percentage) {
+		return $query->cursor()->map(function ($item) use (&$percentage, $user) {
 			//Dispatch
+			$this->dispatchProgressEod($item->ieod_date->toDayDateTimeString(), $user);
 			$this->progress['progress']['currentRow'] = $percentage++;
-			TreasuryReportEvent::dispatch(Auth::user(), $this->progress);
+			TreasuryReportEvent::dispatch($user, $this->progress);
 
-            $item->fullname = $item->user->fullname;
-            $item->date = $item->ieod_date->toDayDateTimeString();
-            return $item;
-        });
+			$item->fullname = $item->user->fullname;
+			$item->date = $item->ieod_date->toDayDateTimeString();
+			return $item;
+		});
 	}
 
 	protected function gcRevalidation(): array

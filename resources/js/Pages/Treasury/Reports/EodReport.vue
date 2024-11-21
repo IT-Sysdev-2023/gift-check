@@ -33,54 +33,12 @@
                     <a-range-picker v-model:value="formState.date" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-                    <a-button type="primary" html-type="submit" :loading="loadingButton"
+                    <a-button type="primary" html-type="submit"
                         >Generate</a-button
                     >
                 </a-form-item>
             </a-form>
         </a-card>
-        <a-modal
-            :open="loadingProgress"
-            :footer="null"
-            centered
-            width="700px"
-            title="Generating Report"
-            :closable="false"
-        >
-            <div class="flex justify-center flex-col items-center">
-                <div class="py-8 flex flex-col items-center space-y-3">
-                    <a-progress
-                        type="circle"
-                        :size="[150, 150]"
-                        :stroke-color="{
-                            '0%': '#108ee9',
-                            '100%': '#87d068',
-                        }"
-                        :percent="parseFloat(items.percentage)"
-                    />
-                    <a-typography-title :level="3">
-                        Please wait....
-                    </a-typography-title>
-                </div>
-                <a-steps
-                    :current="items.data.active"
-                    :percent="items.percentage"
-                    label-placement="vertical"
-                    :items="[
-                        {
-                            title: 'Checking Records',
-                        },
-                        {
-                            title: 'Generating Header',
-                        },
-                        {
-                            title: 'Generating Records',
-                        },
-                    ]"
-                />
-                <br />
-            </div>
-        </a-modal>
     </AuthenticatedLayout>
 </template>
 
@@ -105,45 +63,7 @@ defineProps<{
 // }
 const loadingButton = ref<boolean>(false);
 const loadingProgress = ref<boolean>(false);
-const items = ref<{
-    percentage: string;
-    data: {
-        active: number;
-        isDone: boolean;
-        info: {
-            description: string;
-        }[];
-    };
-}>({
-    percentage: "",
-    data: {
-        active: 0,
-        isDone: false,
-        info: [
-            {
-                description: "Loading Please wait!",
-            },
-        ],
-    },
-});
 
-let eventReceived;
-const waitForEvent = new Promise((resolve) => {
-    eventReceived = resolve;
-});
-
-onMounted(() => {
-    window.Echo.private(`treasury-report.${page.auth.user.user_id}`).listen(
-        "TreasuryReportEvent",
-        (e) => {
-            items.value = e;
-            if (e.percentage === 100 && e.data.active === 2) {
-                loadingButton.value = false;
-                eventReceived();
-            }
-        }
-    );
-});
 
 const formState = ref({
     transactionDate: "",
@@ -155,18 +75,14 @@ const onSubmit = async () => {
     axios
         .get(route("treasury.reports.generate.eod"), {
             params: { ...formState.value },
-            responseType: 'blob'
         })
-        .then(async (response: AxiosResponse) => {
-            loadingProgress.value = true;
+        .then( (e) => {
+            console.log(e, 'sdsd');
+            // loadingProgress.value = true;
 
-            await waitForEvent;
-
-            const file = new Blob([response.data], { type: "application/pdf" });
-            const fileURL = URL.createObjectURL(file);
-            window.open(fileURL, "_blank"); // Open the PDF in a new tab
         })
         .catch((e) => {
+            console.log(e);
             let message = 'please check all the fields';
             if(e.status === 404){
                 message = 'there was no transaction on this selected date!';

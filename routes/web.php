@@ -780,19 +780,25 @@ Route::prefix('store-accounting')
                         Route::get('spgc-approved', [StoreAccountingController::class, 'SPGCApproved'])->name('SPGCApproved');
                         Route::get('generate-excel-perCustomer', [StoreAccountingController::class, 'SPGCExcel'])->name('SPGCApprovedExcel');
                         Route::get('spgc-approved-submit', [StoreAccountingController::class, 'SPGCApprovedSubmit'])->name('SPGCApprovedSubmit');
-                        Route::get('generate-excel-perBarcode', [StoreAccountingController::class, 'SPGCApprovedExcelPerBarcode'])->name('SPGCApprovedExcelPerBarcode');
+                        Route::get('spgc-approved-pdf', [StoreAccountingController::class, 'pdfApproved'])->name('pdfApprovedSubmit');
+                        Route::get('spgc-approved-excel-barcode', [StoreAccountingController::class, 'excelPerBarcode'])->name('excelPerBarcode');
+
+
 
 
                         Route::get('spgc-release', [StoreAccountingController::class, 'SPGCRelease'])->name('SPGCRelease');
                         Route::get('spgc-release-submit', [StoreAccountingController::class, 'SPGCReleasedSubmit'])->name('SPGCReleasedSubmit');
                         Route::get('spgc-release-excel', [StoreAccountingController::class, 'releaseExcel'])->name('releaseExcel');
-                        Route::get('spgc-release-perBarcode-excel', [StoreAccountingController::class, 'releasePerBarcodeExcel'])->name('releasePerBarcodeExcel');
+                        Route::get('spgc-release-pdf', [StoreAccountingController::class, 'releasePdf'])->name('releasePdf');
+
 
 
                         Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');
+                        Route::get('duplicate-barcode-excel', [StoreAccountingController::class, 'duplicateExcel'])->name('duplicateExcel');
 
                         Route::get('check-variance', [StoreAccountingController::class, 'CheckVariance'])->name('CheckVariance');
-                        Route::get('variance-submit', [StoreAccountingController::class, 'checkVarianceSubmit'])->name('checkVarianceSubmit');
+                        Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
+                        Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
 
 
 

@@ -15,7 +15,7 @@ class StoreRequestItem extends Model
     public $timestamps=false;
 
     public function denomination(){
-        return $this->hasMany(Denomination::class, 'denom_id', 'sri_items_denomination');
+        return $this->hasOne(Denomination::class, 'denom_id', 'sri_items_denomination');
     }
 
    

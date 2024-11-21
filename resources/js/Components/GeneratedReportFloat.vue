@@ -1,17 +1,20 @@
 <template>
-    <a-float-button-group v-if="openFloat"
+    <a-float-button-group 
         trigger="click"
         :style="{ right: '24px' }"
         v-model:open="openGeneratedReport"
     >
+
+    <!-- YOURE VISITING THIS PAGE.., THIS MEANS YOU HAVE REACH THE LEVEL OF A SENIOR PROGRAMMER LOL -->
+     
         <template #icon>
             <a-badge dot :offset="[0, -12]">
                 <ExclamationCircleOutlined style="font-size: 20px" />
             </a-badge>
         </template>
-        <a-card class="card-admin-style">
+        <a-card class="card-admin-style" style="height: 250px;">
             <template #title>
-                <span>Generated Report</span>
+                <span>Queue Reports</span>
             </template>
             <a-space direction="vertical" style="width: 100%">
                 <a-card>
