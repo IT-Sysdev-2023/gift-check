@@ -10,7 +10,6 @@
         "dompdf/dompdf": "^2.0.3",
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/framework": "^11.0",
-        "laravel/horizon": "^5.29",
         "laravel/pulse": "^1.2",
         "laravel/reverb": "@beta",
         "laravel/sanctum": "^4.0",
