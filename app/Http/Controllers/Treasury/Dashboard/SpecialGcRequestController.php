@@ -357,9 +357,17 @@ class SpecialGcRequestController extends Controller
     public function viewCancelledRequest(Request $request, $id)
     {
         $cancelled = StoreGcrequest::joinCancelledGcStore()->where('store_gcrequest.sgc_id', $id)->first();
-        $denomination = StoreRequestItem::with('denomination')->where('sri_items_requestid', $id)->paginate();
+        $denomination = StoreRequestItem::join('denomination', 'denomination.denom_id', '=', 'store_request_items.sri_items_denomination')
+        ->select(DB::raw('store_request_items.sri_items_quantity * denomination.denomination as total'), 'store_request_items.sri_items_quantity', 'denomination.denomination')
+        ->where('store_request_items.sri_items_requestid', $id);
 
-        return response()->json(['info' => new StoreGcRequestResource($cancelled), 'denomination' => $denomination]);
+    $total = NumberHelper::currency($denomination->get()->sum( 'total'));
+
+        return response()->json([
+            'info' => new StoreGcRequestResource($cancelled),
+            'denomination' => $denomination->paginate(5),
+            'total' => $total
+        ]);
     }
 
     private function options()
