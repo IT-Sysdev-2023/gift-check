@@ -21,7 +21,7 @@ class TreasuryReportEvent implements ShouldBroadcast
      * Create a new event instance.
      */
     protected $percentage;
-    public function __construct(public User $user, protected $progress)
+    public function __construct(public User $user, protected $progress, protected string $reportId)
     {
         $this->percentage = NumberHelper::percentage($progress['progress']['currentRow'], $progress['progress']['totalRow']);
     }
@@ -41,6 +41,7 @@ class TreasuryReportEvent implements ShouldBroadcast
     {
         return [
             'id' => $this->user->user_id,
+            'reportId' => $this->reportId,
             'data' => $this->progress,
             'percentage' => $this->percentage,
         ];

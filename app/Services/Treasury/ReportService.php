@@ -50,6 +50,7 @@ class ReportService extends ReportsHandler
 			"transactionDate" => "required",
 			"date" => 'required_if:transactionDate,dateRange',
 		]);
+
 		$this->setDateOfTransactionsEod($request);
 
 		if(!$this->hasEodRecords($request->user())){

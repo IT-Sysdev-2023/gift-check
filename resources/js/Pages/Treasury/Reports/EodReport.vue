@@ -33,7 +33,7 @@
                     <a-range-picker v-model:value="formState.date" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-                    <a-button type="primary" html-type="submit"
+                    <a-button type="primary" html-type="submit" :loading="loadingButton"
                         >Generate</a-button
                     >
                 </a-form-item>
@@ -62,22 +62,27 @@ defineProps<{
 //     date: Dayjs;
 // }
 const loadingButton = ref<boolean>(false);
-const loadingProgress = ref<boolean>(false);
-
 
 const formState = ref({
     transactionDate: "",
     date: null,
 });
+const startTimeout = () =>  {
+    loadingButton.value = true;
+      setTimeout(() => {
+        loadingButton.value = false;
+      }, 3000); // 2 seconds delay
+}
 
 const onSubmit = async () => {
-    loadingButton.value = true;
+    startTimeout();
+    localStorage.setItem('isFloatOpen', 'true');
     axios
         .get(route("treasury.reports.generate.eod"), {
             params: { ...formState.value },
         })
         .then( (e) => {
-            console.log(e, 'sdsd');
+            console.log('sdsd');
             // loadingProgress.value = true;
 
         })

@@ -67,7 +67,7 @@ class ReportsHandler extends ReportGenerator
 			//Dispatch
 			$this->dispatchProgressEod($item->ieod_date->toDayDateTimeString(), $user);
 			$this->progress['progress']['currentRow'] = $percentage++;
-			TreasuryReportEvent::dispatch($user, $this->progress);
+			TreasuryReportEvent::dispatch($user, $this->progress, $this->reportId);
 
 			$item->fullname = $item->user->fullname;
 			$item->date = $item->ieod_date->toDayDateTimeString();

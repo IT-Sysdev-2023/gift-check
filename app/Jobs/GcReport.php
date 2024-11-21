@@ -45,17 +45,18 @@ class GcReport extends ReportsHandler implements ShouldQueue
 
             $this->progress['progress']['totalRow'] = count($store);
             foreach ($store as $item) {
-                $this->progress['progress']['currentRow'] = $percentage++;
-                TreasuryReportEvent::dispatch($this->user, $this->progress);
-
                 $storeData[] = $this->handleRecords( $item->value);
+
+                $this->progress['progress']['currentRow'] = $percentage++;
+                TreasuryReportEvent::dispatch($this->user, $this->progress, $this->reportId);
             }
 
         } else {
             $storeData[] = $this->handleRecords( $this->request->store);
+
             $this->progress['progress']['totalRow'] = 1;
             $this->progress['progress']['currentRow'] = 1;
-            TreasuryReportEvent::dispatch($this->user, $this->progress);
+            TreasuryReportEvent::dispatch($this->user, $this->progress, $this->reportId);
         }
 
         $pdf = Pdf::loadView('pdf.treasuryReport', ['data' => ['stores' => $storeData]]);
