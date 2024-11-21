@@ -57,6 +57,8 @@ class PurchasedExports implements FromView, WithEvents
 
         $query = [];
 
+        $local = null;
+
         $storeLocServer = $this->getStoreLocalServer();
 
         if ($request['datatype'] === 'vgc') {
@@ -71,9 +73,11 @@ class PurchasedExports implements FromView, WithEvents
                     ]);
                     // dd();
                 } else {
+                    $local = 0;
                     $query = $this->getLocalServerData($storeLocServer)->table('store_eod_textfile_transactions');
                 }
             } else {
+                $local = 1;
                 $query = new StoreEodTextfileTransaction();
             }
         }
@@ -110,10 +114,15 @@ class PurchasedExports implements FromView, WithEvents
             }, function ($q) use ($request) {
                 $q->whereYear('vs_date', $request['date']);
             })
-            ->where('trans_store', $request['store'])
+            ->when($local === 0, function ($query) use ($request) {
+                $query->where('vs_store', $request['store']);
+            }, function ($query) use ($request) {
+                $query->where('trans_store', $request['store']);
+            })
             ->whereRaw("stores.store_initial != SUBSTRING(store_eod_textfile_transactions.seodtt_bu, 1, 5)")
             ->orderBy('trans_sid', 'ASC')
             ->get();
+
 
         $data->transform(function ($row) use ($query) {
 
@@ -121,7 +130,7 @@ class PurchasedExports implements FromView, WithEvents
             $purchasecred = 0;
             $balance = 0;
 
-            if ($row->daterev != '') {
+            if ($row->vs_reverifydate != '') {
 
                 $purchasecred = 0;
                 $balance = $row->vs_tf_denomination;
@@ -158,6 +167,7 @@ class PurchasedExports implements FromView, WithEvents
                 'busnessunited' => $this->businessUnitSwitchCase($row->seodtt_bu),
             ];
         });
+        dd($data->toArray());
 
         return $data;
     }
@@ -231,12 +241,15 @@ class PurchasedExports implements FromView, WithEvents
         $tnum = "";
 
         if ($data->count() > 0) {
+            // dd();
             if ($data->count() === 1) {
+                // dd();
                 $data->each(function ($item) use (&$puramnt, &$bus, &$tnum) {
                     $puramnt .= $item->seodtt_credpuramt;
                     $bus .= $item->seodtt_bu;
                     $tnum .= $item->seodtt_terminalno;
                 });
+
             } else {
                 $data->each(function ($item, $index) use ($data, &$puramt, &$bus, &$tnum) {
 
@@ -248,6 +261,7 @@ class PurchasedExports implements FromView, WithEvents
                 });
             }
         }
+
 
         return (object) [
             'puramnt' => $puramnt,

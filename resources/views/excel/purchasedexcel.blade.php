@@ -29,7 +29,7 @@
         <tbody>
             @foreach ($data as $item)
                 <tr>
-                    <td style="border: 1px solid black; font-size: 10px">{{ $item->date }}</td>
+                    <td style="border: 1px solid black; font-size: 10px">{{ $item->trans_datetime }}</td>
                     <td style="border: 1px solid black; font-size: 10px">{{ $item->barcode }}</td>
                     <td style="border: 1px solid black; font-size: 10px">{{ $item->denomination }}</td>
                     <td style="border: 1px solid black; font-size: 10px">{{ $item->purchasecred }}</td>
