@@ -60,7 +60,7 @@
 
    <h1 class="center-text">ALTURAS GROUP OF COMPANIES</h1>
     <h1 class="center-text">HEAD OFFICE FINANCE DEPARTMENT</h1>
-    <h1 class="center-text">SPECIAL EXTERNAL GC REPORT- APPROVAL</h1>
+    <h1 class="center-text">SPECIAL EXTERNAL GC REPORT- RELEASE</h1>
     <h1 class="center-text">PER BARCODE</h1>
     
     <table>
