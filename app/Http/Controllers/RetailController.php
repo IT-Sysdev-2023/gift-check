@@ -6,7 +6,11 @@ use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Models\Assignatory;
 use App\Models\Denomination;
+use App\Models\Gc;
 use App\Models\GcLocation;
+use App\Models\LostGcBarcode;
+use App\Models\LostGcDetail;
+use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Store;
 use App\Models\StoreGcrequest;
 use App\Models\StoreReceivedGc;
@@ -17,6 +21,7 @@ use App\Services\Admin\AdminServices;
 use App\Services\Finance\FinanceService;
 use App\Services\RetailStore\RetailServices;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -373,7 +378,7 @@ class RetailController extends Controller
             ])
             ->whereAny([
                 'store_received_gc.strec_barcode'
-            ], 'like', '%'.$request['barcode'] . '%')
+            ], 'like', '%' . $request['barcode'] . '%')
             ->join('denomination', 'store_received_gc.strec_denom', '=', 'denomination.denom_id')
             ->join('transaction_sales', 'transaction_sales.sales_barcode', '=', 'store_received_gc.strec_barcode')
             ->join('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_sales.sales_transaction_id')
@@ -407,6 +412,97 @@ class RetailController extends Controller
         ]);
     }
 
+    public function lostGC(Request $request)
+    {
+        $lostGCnumber = LostGcDetail::where('lostgcd_storeid', $request->user()->store_assigned)
+            ->count() + 1 ?? 1;
+        $lostgc = LostGcBarcode::select('lostgcb_barcode', 'lostgcb_denom')
+            ->whereAny([
+            ], 'like', $request->q . '%')
+            ->get();
+
+        return inertia('Retail/LostGc', [
+            'lostGCnumber' => $lostGCnumber,
+            'barcodes' => $lostgc
+        ]);
+    }
+
+    public function submitLostGc(Request $request)
+    {
+        $lostBarcode = [];
+
+        $request->validate([
+            'dateLost' => 'required',
+            'owner' => 'required',
+            'address' => 'required',
+            'contact' => 'required|numeric',
+            'remarks' => 'required',
+            'lostbarcode' => 'required|numeric',
+        ]);
+        
+        $checkifexist = LostGcBarcode::where('lostgcb_barcode', $request['lostbarcode'])->exists();
+        $reggc = Gc::where('barcode_no', $request['lostbarcode'])->exists();
+        $spgc = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', $request['lostbarcode'])->exists();
+
+        if ($checkifexist) {
+            return back()->with([
+                'msg' => "Warning",
+                'description' => "Barcode Already Added to the Lost Barcode Table",
+                'type' => "warning",
+            ]);
+        } elseif ($reggc) {
+            $reggc = Gc::where('barcode_no', $request['lostbarcode'])
+                ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+                ->first();
+            $lostBarcode = [
+                'id' => $reggc['gc_id'],
+                'barcode' => $reggc['barcode_no'],
+                'denom' => $reggc['denomination'],
+                'type' => 'regular'
+            ];
+        } elseif ($spgc) {
+            $gc = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', $request['lostbarcode'])->first();
+            $lostBarcode = [
+                'id' => $gc['spexgcemp_id'],
+                'barcode' => $gc['spexgcemp_barcode'],
+                'denom' => $gc['spexgcemp_denom'],
+                'type' => 'special'
+            ];
+        } else {
+            return back()->with([
+                'msg' => "Error",
+                'description' => "Barcode Not Found",
+                'type' => "error",
+            ]);
+        }
+
+        DB::transaction(function () use ($request, $lostBarcode) {
+            LostGcDetail::create([
+                'lostgcd_repnum' => $request['lostGCnumber'],
+                'lostgcd_storeid' => $request->user()->store_assigned,
+                'lostgcd_owname' => $request['owner'],
+                'lostgcd_address' => $request['address'],
+                'lostgcd_contactnum' => $request['contact'],
+                'lostgcd_datereported' => now(),
+                'lostgcd_datelost' => $request['dateLost'],
+                'lostcd_remarks' => $request['remarks'],
+                'lostgcd_prepby' => $request->user()->user_id,
+                'lostcd_type' => $lostBarcode['type'],
+            ]);
+
+            LostGcBarcode::create([
+                'lostgcb_barcode' => $lostBarcode['barcode'],
+                'lostgcb_denom' => $lostBarcode['denom'],
+                'lostgcb_repid' => $lostBarcode['id']
+            ]);
+        });
+
+        return back()->with([
+            'msg' => "Success",
+            'description' => "Barcode Added to Lost Barcode List",
+            'type' => "success",
+        ]);
+    }
 
 
 
