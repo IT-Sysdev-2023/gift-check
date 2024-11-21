@@ -2,19 +2,26 @@
 
 namespace App\Services\Documents;
 
+use App\Jobs\DeleteFile;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 class ExportHandler extends FileHandler
 {
 
     private $filename;
-    public function __construct(string $folder)
+    private string $fullPath;
+    public function __construct()
     {
         parent::__construct();
-        $this->folderName = $folder;
     }
-    public function createExcelFileName($id, $identifier)
+    public function setFolder(string $folder){
+        $this->folderName = $folder;
+        return $this;
+    }
+    public function setFileName($id, $identifier)
     {
         $date = now()->format('Y-m-d-His');
         $this->filename = "{$id}-{$identifier}-" . $date;
@@ -31,8 +38,14 @@ class ExportHandler extends FileHandler
 
     public function exportToPdf($pdf)
     {
-        $filename = $this->filename . ".pdf";
-        return $this->disk->put("{$this->folder()}{$filename}", $pdf);
+        $filename = $this->folder() . $this->filename . '.pdf';
+        $this->disk->put($filename, $pdf);
+        $this->fullPath = $filename;
+        return $this;
+    }
+
+    public function deleteFileIn($date){
+        DeleteFile::dispatch($this->fullPath)->delay($date);
     }
 
 }

@@ -184,11 +184,11 @@ const setActiveTab = computed(() => {
                     <span>Adjustments</span>
                 </span>
             </template>
-            <a-menu-item key="treasury.adjustment.budgetAdjustments">
+            <!-- <a-menu-item key="treasury.adjustment.budgetAdjustments">
                 <Link :href="route('treasury.adjustment.budgetAdjustments')">
                     Budget Adjustments</Link
                 ></a-menu-item
-            >
+            > -->
             <a-menu-item key="treasury.adjustment.allocation.allocationSetup">
                 <Link
                     :href="
@@ -228,6 +228,9 @@ const setActiveTab = computed(() => {
             >
             <a-menu-item key="treasury.reports.eod">
                 <Link :href="route('treasury.reports.eod')"> EOD Report</Link></a-menu-item
+            >
+            <a-menu-item key="treasury.reports.generatedReports">
+                <Link :href="route('treasury.reports.generatedReports')"> Generated Reports</Link></a-menu-item
             >
         </a-sub-menu>
     </a-menu>

@@ -60,6 +60,7 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
         if ($request['datatype'] === 'vgc') {
 
             if ($this->checkIfExists()) {
+                // dd();
                 $storeLocServer = $this->getStoreLocalServer();
                 $data = $this->getMonthYearVerifiedGcLocalServer($request, $storeLocServer);
             } else {
@@ -117,8 +118,9 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
                         'status' => 'error',
                         'message' => 'Server not found',
                     ]);
+                    // dd();
                 } else {
-
+                    // dd();
                     return $this->getMonthYearVerifiedGcLocalServer($request, $storeLocServer);
                 }
             } else {

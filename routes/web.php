@@ -40,6 +40,7 @@ use App\Http\Controllers\UserDetailsController;
 use App\Models\InstitutEod;
 use App\Models\InstitutPayment;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -409,6 +410,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
 
                 Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
+                Route::post('gc-sales-report-eod', [EodController::class, 'toEndOfDay'])->name('setToEod');
             });
         });
         Route::prefix('masterfile')->name('masterfile.')->group(function () {
@@ -445,6 +447,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc');
             Route::get('generate-eod-report', [ReportsController::class,'generateEodReports'])->name('generate.eod');
 
+            Route::get('list-of-generated-reports', [ReportsController::class,'listOfGeneratedReports'])->name('generatedReports');
+            Route::get('download-generated-report', [ReportsController::class,'downloadGeneratedReport'])->name('download.gc');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
@@ -659,9 +663,11 @@ Route::middleware('auth')->group(function () {
         });
         Route::name('excel.')->group(function () {
             Route::get('verified', [IadController::class, 'verifiedReports'])->name('verified');
+            Route::get('purchased', [IadController::class, 'purchasedReports'])->name('purchased');
 
             Route::name('generate.')->group(function () {
                 Route::get('generate-verified', [IadController::class, 'generateVerifiedReports'])->name('verified');
+                Route::get('generate-purchased', [IadController::class, 'generatePurchasedReports'])->name('purchased');
             });
         });
     });

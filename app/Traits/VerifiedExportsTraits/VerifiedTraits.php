@@ -270,13 +270,12 @@ trait VerifiedTraits
 
     public function getMonthYearVerifiedGcLocalServer($requests, $stlocal)
     {
-        $request = collect($requests);
 
+        $request = collect($requests);
 
         try {
 
             $connection = $this->getLocalServerData($stlocal);
-
 
 
             $vsdate = $connection->table('store_verification')
@@ -331,6 +330,7 @@ trait VerifiedTraits
                 ->get();
 
             $array = [];
+
             $count = 1;
 
             $vsdate->transform(function ($item) use (&$array, $stlocal, $vsdate, &$count) {

@@ -19,7 +19,6 @@ class FileHandler
     {
         $this->disk = Storage::disk('public');
     }
-
     protected function folder()
     {
         return Str::finish($this->folderName, '/');
@@ -94,11 +93,11 @@ class FileHandler
             return response()->json('File Not Found on the Server', 404);
         }
     }
-    protected function getFilesFromDirectory(?string $subfolder = null)
+    public function getFilesFromDirectory(?string $subfolder = null)
     {
         $trim = Str::finish($this->folder() . $subfolder, '/');
         $path = $subfolder ? $trim : $this->folder();
-        return $this->disk->files($path);
+        return collect($this->disk->files($path));
     }
     public function download(string $file, ?string $subfolder = null)
     {

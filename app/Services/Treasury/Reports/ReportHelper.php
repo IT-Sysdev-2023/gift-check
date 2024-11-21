@@ -10,16 +10,10 @@ use App\Models\TransactionStore;
 
 class ReportHelper
 {
-    const CHECKING_RECORDS = 0;
-    const GENERATING_SALES_DATA = 1;
-    const GENERATING_FOOTER_DATA = 2;
-    const GENERATING_HEADER = 3;
-    // public static $constantNames = [
-    //     self::CHECKING_RECORDS => 'Checking Records',
-    //     self::GENERATING_SALES_DATA => 'Generating Sales Data',
-    //     self::GENERATING_FOOTER_DATA => 'Generating Footer Data',
-    //     self::GENERATING_HEADER => 'Generating Header',
-    // ];
+    const CHECKING_RECORDS = '...checking records';
+    const GENERATING_SALES_DATA = '...generating sales records';
+    const GENERATING_FOOTER_DATA = '...generating Footer';
+    const GENERATING_HEADER = '...generating header';
     public static function grandTotal($cashSales, $cardSales, $ar, $discount)
     {
         $cashSales = (string) $cashSales->sum('net');

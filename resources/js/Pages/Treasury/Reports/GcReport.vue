@@ -55,51 +55,7 @@
                 </a-form-item>
             </a-form>
         </a-card>
-        <a-modal
-            :open="loadingProgress"
-            :footer="null"
-            centered
-            width="700px"
-            title="Generating Report"
-            :closable="false"
-        >
-            <div class="flex justify-center flex-col items-center">
-                <div class="py-8 flex flex-col items-center space-y-3">
-                    <a-progress
-                        type="circle"
-                        :size="[150, 150]"
-                        :stroke-color="{
-                            '0%': '#108ee9',
-                            '100%': '#87d068',
-                        }"
-                        :percent="parseFloat(items.percentage)"
-                    />
-                    <a-typography-title :level="3">{{
-                        items.data.store
-                    }}</a-typography-title>
-                </div>
-                <a-steps
-                    :current="items.data.active"
-                    :percent="items.percentage"
-                    label-placement="vertical"
-                    :items="[
-                        {
-                            title: 'Checking Records',
-                        },
-                        {
-                            title: 'Generating Sales Data',
-                        },
-                        {
-                            title: 'Generating Footer Data',
-                        },
-                        {
-                            title: 'Generating Header',
-                        },
-                    ]"
-                />
-                <br />
-            </div>
-        </a-modal>
+       
     </AuthenticatedLayout>
 </template>
 
@@ -130,52 +86,13 @@ defineProps<{
 // }
 
 const loadingProgress = ref<boolean>(false);
-const items = ref<{
-    percentage: string;
-    data: {
-        active: number;
 
-        store: string;
-        isDone: boolean;
-        info: {
-            description: string;
-        }[];
-    };
-}>({
-    percentage: "",
-    data: {
-        active: 0,
-        store: "",
-        isDone: false,
-        info: [
-            {
-                description: "Loading Please wait!",
-            },
-        ],
-    },
-});
 
-let eventReceived; // Holds the resolve function of the promise
-const waitForEvent = new Promise((resolve) => {
-    eventReceived = resolve; // Set the resolve function for later
-});
+// let eventReceived; // Holds the resolve function of the promise
+// const waitForEvent = new Promise((resolve) => {
+//     eventReceived = resolve; // Set the resolve function for later
+// });
 
-onMounted(() => {
-    window.Echo.private(`treasury-report.${page.auth.user.user_id}`).listen(
-        "TreasuryReportEvent",
-        (e) => {
-            items.value = e;
-
-            console.log(e);
-            if (
-                e.percentage === 100 ||
-                (formState.value.store !== "all" && e.data.active === 3)
-            ) {
-                eventReceived();
-            }
-        }
-    );
-});
 
 const handleStore = (val) => {
     formState.value.store = val;
@@ -188,20 +105,14 @@ const formState = ref({
     date: null,
 });
 const onSubmit = async () => {
-    axios
+    await axios
         .get(route("treasury.reports.generate.gc"), {
             params: {
                 ...formState.value,
-            },
-            responseType: "blob",
+            }
         })
-        .then(async (response: AxiosResponse) => {
+        .then(() => {
             loadingProgress.value = true;
-            await waitForEvent;
-
-            const file = new Blob([response.data], { type: "application/pdf" });
-            const fileURL = URL.createObjectURL(file);
-            window.open(fileURL, "_blank"); // Open the PDF in a new tab
         })
         .catch((e) => {
             let message = "please check all the fields";
@@ -213,25 +124,6 @@ const onSubmit = async () => {
                 description: `Something Went wrong,  ${message}`,
             });
         });
-    // formState
-    //     .submit({
-    //         responseType: "blob",
-    //     })
-    // .then(async (response: AxiosResponse) => {
-    //     loadingProgress.value = true;
-    //     await waitForEvent;
-
-    //     const file = new Blob([response.data], { type: "application/pdf" });
-    //     const fileURL = URL.createObjectURL(file);
-    //     window.open(fileURL, "_blank"); // Open the PDF in a new tab
-    // })
-    // .catch(() => {
-    //     notification.error({
-    //         message: "Error",
-    //         description:
-    //             "Something Went wrong, please check all the fields!",
-    //     });
-    // });
 };
 
 onBeforeUnmount(() => {

@@ -73,54 +73,63 @@ const { highlightText } = highlighten();
         </a-table>
 
         <pagination-resource class="mt-5" :datarecords="data" />
-        
     </a-card>
     <a-modal
-            v-model:open="showModal"
-            title="More Details"
-            style="width: 1000px"
-            centered
-            :footer="null"
-        >
-        {{ moreDetails.denomination }}
-          
-            <a-table
-                bordered
-                size="small"
-                :pagination="false"
-                :columns="[
-                  
-                    {
-                        title: 'Denomination',
-                        key: 'denom',
-                    },
-                    {
-                        title: 'Quantity',
-                        dataIndex: 'qty',
-                    },
-                ]"
-                :data-source="moreDetails?.denomination.data"
+        v-model:open="showModal"
+        style="width: 1000px"
+        centered
+        :footer="null"
+    >
+        <a-descriptions bordered title="More Details">
+            <a-descriptions-item label="Request #"
+                >{{ moreDetails.info?.sgc_num }}</a-descriptions-item
             >
-                <template #bodyCell="{ column, record }">
-                    <!-- <template v-if="column.key == 'denom'">
-                        {{ record.denomination.denomination_format }}
-                    </template>
-                    <template v-if="column.key == 'date'">
-                        {{ record.custodianSrrItems.custodiaSsr?.date_rec }}
-                    </template>
-                    <template v-if="column.key == 'validate'">
-                        {{
-                            record.custodianSrrItems.custodiaSsr?.user
-                                ?.full_name
-                        }}
-                    </template> -->
+            <a-descriptions-item label="Date Requested">{{ moreDetails.info?.sgc_date_request }}</a-descriptions-item>
+            <a-descriptions-item label="Retail Store">{{ moreDetails.info?.store.store_name }}</a-descriptions-item>
+            <a-descriptions-item label="Date Needed">{{ moreDetails.info?.sgc_date_needed }}</a-descriptions-item>
+            <a-descriptions-item label="Requested Remarks">{{ moreDetails.info?.sgc_remarks }}</a-descriptions-item>
+            <a-descriptions-item label="Requested Prepared By">{{ moreDetails.info?.user.full_name }}</a-descriptions-item>
+            <a-descriptions-item label="Date Cancelled">{{ moreDetails.info?.cancelledStoreGcRequest.csgr_at }}</a-descriptions-item>
+            <a-descriptions-item label="Cancelled By">{{ moreDetails.info?.cancelledStoreGcRequest?.user.full_name }}</a-descriptions-item>
+        </a-descriptions>
+        <a-table
+        class="mt-10"
+            bordered
+            size="small"
+            :pagination="false"
+            :columns="[
+                {
+                    title: 'Denomination',
+                    key: 'denom',
+                },
+                {
+                    title: 'Quantity',
+                    dataIndex: 'sri_items_quantity',
+                },
+            ]"
+            :data-source="moreDetails?.denomination.data"
+        >
+            <template #bodyCell="{ column, record }">
+                <template v-if="column.key == 'denom'">
+                    ₱{{ record.denomination }}
                 </template>
-            </a-table>
-            <!-- <pagination-axios
-                :datarecords="moreDetails?.denomination"
-                @on-pagination="forAllocationPagination"
-            /> -->
-        </a-modal>
+            </template>
+            <template #summary>
+                <a-table-summary-row>
+                    <a-table-summary-cell>Total</a-table-summary-cell>
+                    <a-table-summary-cell>
+                        <a-typography-text type="danger">{{
+                            moreDetails?.total
+                        }}</a-typography-text>
+                    </a-table-summary-cell>
+                </a-table-summary-row>
+            </template>
+        </a-table>
+        <pagination-axios
+            :datarecords="moreDetails?.denomination"
+            @on-pagination="paginationFun"
+        />
+    </a-modal>
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
@@ -143,6 +152,7 @@ export default {
             descriptionRecord: [],
             showModal: false,
             moreDetails: {},
+            total: null,
             form: {
                 search: this.filters.search,
                 date: this.filters.date
@@ -157,6 +167,20 @@ export default {
             const res = webRoute?.split(".")[0];
             return res + ".dashboard";
         },
+        totals() {
+            let totalBorrow = 0;
+            this.moreDetails.denomination.data.forEach(
+                ({ denomination, qty }) => {
+                    const floatAmount = denomination.denomination * qty;
+                    totalBorrow += floatAmount;
+                }
+            );
+            //format with sign
+            return new Intl.NumberFormat("en-PH", {
+                style: "currency",
+                currency: "PHP",
+            }).format(totalBorrow);
+        },
     },
     methods: {
         async viewRecord(id) {
@@ -164,26 +188,14 @@ export default {
                 route("treasury.special.gc.viewCancelledRequest", id)
             );
             this.moreDetails = data;
+            this.total = data.denomination;
             this.showModal = true;
-            // const url = route("treasury.transactions.eod.pdf", { id: id });
-
-            // axios
-            //     .get(url, { responseType: "blob" })
-            //     .then((response) => {
-            //         const file = new Blob([response.data], {
-            //             type: "application/pdf",
-            //         });
-            //         const fileURL = URL.createObjectURL(file);
-            //         window.open(fileURL, "_blank");
-            //     })
-            //     .catch((error) => {
-            //         if (error.response && error.response.status === 404) {
-            //             alert("Pdf Not available");
-            //         } else {
-            //             console.error(error);
-            //             alert("An error occurred while generating the PDF.");
-            //         }
-            //     });
+        },
+        async paginationFun(link) {
+            if (link.url) {
+                const { data } = await axios.get(link.url);
+                this.moreDetails.denomination = data.denomination;
+            }
         },
     },
 
