@@ -36,11 +36,22 @@
                 </a-col>
                 <a-col :span="12">
                     <a-card class="mt-5">
-                        <div class="flex justify-center">
-                            <a-progress  type="circle" :stroke-color="{
-                            '0%': '#108ee9',
-                            '100%': '#87d068',
-                        }" :percent="100" />
+                        <div v-if="isGenerating" class="mt-5">
+                            <div class="flex justify-center">
+                                <a-progress type="circle" :stroke-color="{
+                                    '0%': '#108ee9',
+                                    '100%': '#87d068',
+                                }" :percent="progressBar?.percentage" />
+                            </div>
+                            <br>
+                            <p class="text-center">{{ progressBar?.message }}</p>
+                        </div>
+                        <div v-else>
+                            <div class="flex justify-center">
+                                <img style="height:180px;" src="../../../../../public/images/excel.gif" alt="">
+                            </div>
+                            <br>
+                            <p class="text-center">Please fill all the fields to generate!</p>
                         </div>
                     </a-card>
                 </a-col>
@@ -49,15 +60,26 @@
     </AuthenticatedLayout>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import type { SelectProps } from 'ant-design-vue';
 import type { Dayjs } from 'dayjs';
+import { PageWithSharedProps } from '@/types';
+import { usePage } from '@inertiajs/vue3';
 
 const date = ref<Dayjs>();
 
 const vergc = ref<string>('');
 
 const selected = ref<string>('0');
+
+const isGenerating = ref<boolean>(false);
+
+const progressBar = ref<{
+    percentage: number,
+    message: string,
+    currentRow: number,
+    totalRows: number,
+}>();
 
 const storeData = ref<number>();
 
@@ -68,6 +90,7 @@ interface Records {
         label: string
     }[],
 };
+const page = usePage<PageWithSharedProps>().props;
 
 const props = defineProps<Records>();
 
@@ -107,8 +130,20 @@ const generate = () => {
     });
 
 }
+
+
 const handleChangeDataType = (value: string) => {
     vergc.value = value;
 }
+
+onMounted(() => {
+    window.Echo.private(`generate-verified-excel.${page.auth.user.user_id}`)
+        .listen(".generate-ver-excel", (e) => {
+            console.log(e);
+
+            progressBar.value = e;
+            isGenerating.value = true;
+        });
+})
 
 </script>

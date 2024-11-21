@@ -18,6 +18,7 @@ use App\Services\Treasury\AdjustmentService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class AdjustmentController extends Controller
@@ -52,11 +53,39 @@ class AdjustmentController extends Controller
         ]);
     }
 
+    public function budgetAdjustmentsUpdate(Request $request)
+    {
+        $adjustmentNo = DB::table('budgetadjustment')
+            ->select('adj_no', 'adj_requested_at', 'adjust_type', 'adj_remarks', 'adj_file_docno', 'users.firstname', 'users.lastname', 'adj_request')
+            ->join('users', 'users.user_id', '=', 'budgetadjustment.adj_requested_by')->first();
+
+        return inertia('Treasury/Adjustment/BudgetAdjustmentUpdate', [
+            'title' => 'Budget Adjustment',
+            'data' => (object) [
+                'adjustmentNo' => NumberHelper::leadingZero($adjustmentNo->adj_no),
+                'requestedAt' => $adjustmentNo->adj_requested_at,
+                'type' => $adjustmentNo->adjust_type,
+                'remarks' => $adjustmentNo->adj_remarks,
+                'file' => '/storage/Adjustment/Budget/' . $adjustmentNo->adj_file_docno,
+                'preparedBy' => "{$adjustmentNo->firstname} {$adjustmentNo->lastname}",
+                'budget' => $adjustmentNo->adj_request
+            ],
+
+            'remainingBudget' => LedgerBudget::currentBudget(),
+            'regularBudget' => LedgerBudget::regularBudget(),
+            'specialBudget' => LedgerBudget::specialBudget()
+        ]);
+    }
+
     public function storeBudgetAdjustment(Request $request)
     {
         return $this->adjustmentService->storeBudgetAdjustment($request);
     }
 
+    public function budgetAdjustmentsUpdateSubmission(Request $request)
+    {
+        return $this->adjustmentService->budgetUpdateSubmission($request);
+    }
     public function allocationSetup()
     {
 
@@ -83,9 +112,6 @@ class AdjustmentController extends Controller
             'title' => 'Allocation Setup'
         ]);
     }
-
-
-
     public function allocationSetupStore(Request $request)
     {
         $request->validate([

@@ -8,7 +8,7 @@
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
 
-        <a-card title=" Revolving Budget Entry Form" class="mt-10">
+        <a-card title="Budget Adjustment Entry Form" class="mt-10">
             <a-form
                 :model="formState"
                 :label-col="{ span: 7 }"
@@ -38,6 +38,7 @@
                                     { label: 'Positive Entry', value: 'positive' },
                                 ]"
                                 @handle-change="categoryHandler"
+                                :value="'negative'"
                             />
                         </a-form-item>
                         <a-form-item
@@ -161,21 +162,14 @@ const props = defineProps<{
 
 const page = usePage<PageWithSharedProps>().props;
 const currentDate = dayjs().format("MMM DD, YYYY");
-const disabledDate = (current: Dayjs) => {
-    // Can not select days before today and today
-    return current && current < dayjs().startOf("day");
-};
+
 const formState = useForm<FormStateGc>({
     adjustmentNo: props.adjustmentNo,
     budget: 0,
     file: null,
     remarks: "",
-    adjustmentType: null,
+    adjustmentType: 'negative',
 });
-
-const stream = ref(null);
-const openIframe = ref(false);
-
 
 const { openLeftNotification } = onProgress();
 const handleChange = (file: UploadChangeParam) => {
@@ -188,6 +182,7 @@ const onSubmit = () => {
             openLeftNotification(props.flash);
             if (props.flash.success) {
                 formState.reset();
+                window.location.reload();
                 // stream.value = `data:application/pdf;base64,${props.flash.stream}`;
                 // openIframe.value = true;
             }

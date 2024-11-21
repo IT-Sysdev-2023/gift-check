@@ -2166,7 +2166,7 @@ class StoreAccountingController extends Controller
     }
 
     public function releasePerBarcodeExcel(Request $request){
-        return Excel::download(new )
+        return Excel::download(new releasePerCustomer($request->toArray()), 'users.xlsx');
     }
 
     public function DuplicatedBarcodes()

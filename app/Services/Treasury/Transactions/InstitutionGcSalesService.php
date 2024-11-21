@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Treasury\Transactions;
+use App\Exports\InstitutTransactionExport;
 use App\Helpers\ArrayHelper;
 use App\Helpers\NumberHelper;
 use App\Models\Assignatory;
@@ -11,12 +12,14 @@ use App\Models\InstitutTransaction;
 use App\Models\InstitutTransactionsItem;
 use App\Models\LedgerBudget;
 use App\Models\PaymentFund;
+use App\Services\Documents\ExportHandler;
 use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
 use App\Models\Gc;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 class InstitutionGcSalesService extends FileHandler
 {
     private string $sessionName;
@@ -193,7 +196,7 @@ class InstitutionGcSalesService extends FileHandler
         $checkamt = 0;
         $docname = '';
         $cash = 0;
-        
+
         if ($request->paymentType['type'] === 'cash') {
             $totalamtrec = $request->paymentType['amount'] ?? 0;
             $cash = $totalamtrec;
@@ -224,7 +227,6 @@ class InstitutionGcSalesService extends FileHandler
             $cash = $request->paymentType['amount'] ?? '';
             $totalamtrec = $cash;
         }
-
         $customerid = $request->customer;
         $relnumlatest = InstitutTransaction::where('institutr_trtype', 'sales')->max('institutr_trnum');
         $relnum = $relnumlatest ? $relnumlatest + 1 : 1;
@@ -300,12 +302,19 @@ class InstitutionGcSalesService extends FileHandler
                 });
 
                 $data = $this->dataForPdf($request, $change, $totalamtrec);
+
                 $request->session()->forget($this->sessionName);
+
                 $pdf = Pdf::loadView('pdf.institution', ['data' => $data]);
+                $output = $pdf->output();
 
-                $pdf->setPaper('A3');
+                (new ExportHandler())
+                    ->setFolder($this->folderName)
+                    ->setFileName($request->user()->user_id, $request->releasingNo)
+                    ->exportToExcel($this->dataForExcel($data))
+                    ->exportToPdf($output);
 
-                $stream = base64_encode($pdf->output());
+                $stream = base64_encode($output);
 
                 return redirect()->back()->with(['stream' => $stream, 'success' => 'Submission success']);
             } else {
@@ -316,19 +325,70 @@ class InstitutionGcSalesService extends FileHandler
         }
 
     }
-
-    public function printAr($id) {
+    public function printAr($id)
+    {
         $this->folderName = "reports/treasury_ar_report";
         return $this->retrieveFile($this->folderName, "arreport{$id}.pdf");
     }
 
-    public function reprint($id) {
-        $this->folderName = "reports/treasury_releasing_institutions";
-        return $this->retrieveFile($this->folderName, "gcinst{$id}.pdf");
+    public function reprint(Request $request, $id)
+    {
+        $getFiles = $this->getFilesFromDirectory();
+
+        $file = $getFiles->filter(function ($file) use ($request, $id) {
+            return Str::startsWith(basename($file), "{$request->user()->user_id}-{$id}");
+        });
+
+        return $this->retrieveFile($this->folderName, basename($file->first()));
+    }
+
+    public function transactionDetails(int|string $id)
+    {
+        $record = InstitutTransaction::select(
+            'institutr_id',
+            'institutr_cusid',
+            'institutr_trby',
+            'institutr_trnum',
+            'institutr_receivedby',
+            'institutr_date',
+            'institutr_remarks',
+            'institutr_paymenttype'
+        )
+            ->where('institutr_id', $id)
+            ->with([
+                'institutCustomer:ins_id,ins_name',
+                'institutPayment:insp_trid,institut_bankname,institut_bankaccountnum,institut_checknumber,institut_amountrec',
+                'user:user_id,firstname,lastname',
+                'institutTransactionItem',
+                'document',
+            ])
+            ->first();
+
+        // Separate query for paginating the relationship
+        $institutTransactionItems = $record->institutTransactionItem()->with('gc.denomination');
+
+        return (object) [
+            'record' => $record,
+            'denomination' => $institutTransactionItems
+        ];
+    }
+    public function excel(Request $request, $id)
+    {
+        $getFiles = $this->getFilesFromDirectory('excel');
+
+        $file = $getFiles->filter(function ($file) use ($request, $id) {
+            return Str::startsWith(basename($file), "{$request->user()->user_id}-{$id}");
+        });
+
+        return $this->download(basename($file->first()), 'excel');
+    }
+
+    private function dataForExcel($data)
+    {
+        return new InstitutTransactionExport($data);
     }
     private function dataForPdf($request, $change, $cash)
     {
-
         $barcode = collect($request->session()->get($this->sessionName, []));
         $gr = $barcode->groupBy(fn($item) => $item['denomination'])->sortKeys();
 
@@ -354,9 +414,9 @@ class InstitutionGcSalesService extends FileHandler
             'summary' => [
                 'total_no_of_gc' => $barcode->count(),
                 'payment_type' => Str::title($request->paymentType['type']),
-                'cash_received' => NumberHelper::format($cash),
-                'total_gc_amount' => NumberHelper::format($request->totalDenomination),
-                'change' => NumberHelper::format($change),
+                'cash_received' => NumberHelper::currency($cash),
+                'total_gc_amount' => NumberHelper::currency($request->totalDenomination),
+                'change' => NumberHelper::currency($change),
                 'paymentFund' => PaymentFund::find($request->paymentFund)->pay_desc,
             ],
 
@@ -368,4 +428,5 @@ class InstitutionGcSalesService extends FileHandler
             ],
         ];
     }
+
 }

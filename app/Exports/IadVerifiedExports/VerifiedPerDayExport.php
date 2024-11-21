@@ -54,7 +54,19 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
 
     public function styles(Worksheet $sheet)
     {
-        $data = $this->getMonthYearVerifiedGc($this->requestData);
+        $data = [];
+        $request = $this->requestData;
+
+        if ($request['datatype'] === 'vgc') {
+
+            if ($this->checkIfExists()) {
+                // dd();
+                $storeLocServer = $this->getStoreLocalServer();
+                $data = $this->getMonthYearVerifiedGcLocalServer($request, $storeLocServer);
+            } else {
+                $data = $this->getMonthYearVerifiedGc($this->requestData, 'Kanding Sheet');
+            }
+        }
 
         $rowcount = count($data) + 1;
 
@@ -97,7 +109,7 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
         if ($request['datatype'] === 'vgc') {
 
             if ($this->checkIfExists()) {
-                dd(1);
+
                 $storeLocServer = $this->getStoreLocalServer();
 
                 if (is_null($storeLocServer)) {
@@ -106,10 +118,13 @@ class VerifiedPerDayExport implements FromCollection, WithHeadings, WithStyles, 
                         'status' => 'error',
                         'message' => 'Server not found',
                     ]);
+                    // dd();
                 } else {
+                    // dd();
+                    return $this->getMonthYearVerifiedGcLocalServer($request, $storeLocServer);
                 }
             } else {
-                return $this->getMonthYearVerifiedGc($this->requestData);
+                return $this->getMonthYearVerifiedGc($this->requestData, 'Kanding Sheet');
             }
         }
     }

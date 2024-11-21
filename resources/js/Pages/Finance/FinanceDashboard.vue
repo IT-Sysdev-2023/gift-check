@@ -27,7 +27,6 @@
 </template>
 <script>
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";
-import PromoGcViewCard from "./Cards/PromoGcViewCard.vue";
 export default {
     layout: Authenticatedlayout,
     props: {

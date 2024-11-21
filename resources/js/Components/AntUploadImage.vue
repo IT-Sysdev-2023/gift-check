@@ -11,7 +11,12 @@ function getBase64(file: File) {
     });
 }
 
-const fileList = ref([]);
+const props = withDefaults(defineProps<{ images?: any[] }>(), {
+    images: (): any[] => [], 
+});
+
+
+const fileList = ref(props.images);
 
 //IMAGE UPLOAD
 const previewVisible = ref(false);
@@ -48,7 +53,7 @@ const handleUploadChange = (info: UploadChangeParam) => {
             @change="handleUploadChange"
             :max-count="1"
         >
-            <div v-if="fileList.length == 0">
+            <div v-if="fileList?.length == 0">
                 <plus-outlined />
                 <div style="margin-top: 8px">Upload</div>
             </div>

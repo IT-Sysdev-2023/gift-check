@@ -6,6 +6,7 @@ use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SpecialExternalGcrequestEmpAssignResource;
 use App\Http\Resources\SpecialExternalGcRequestResource;
+use App\Http\Resources\StoreGcRequestResource;
 use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
 use App\Models\LedgerBudget;
@@ -15,6 +16,8 @@ use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
+use App\Models\StoreGcrequest;
+use App\Models\StoreRequestItem;
 use App\Rules\DenomQty;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
@@ -334,6 +337,36 @@ class SpecialGcRequestController extends Controller
             'title' => 'Special External Gc Requests',
             'records' => new SpecialExternalGcRequestResource($data),
             'barcodes' => $barcodes
+        ]);
+    }
+
+    public function cancelledRequest(Request $request)
+    {
+        $record = StoreGcrequest::joinCancelledGcStore()
+            ->select('sgc_id', 'sgc_num', 'sgc_date_request', 'sgc_store', 'sgc_requested_by')    
+        ->where([['sgc_status', 0], ['sgc_cancel', '*']])->paginate();
+
+        return inertia('Treasury/Dashboard/SpecialGc/CancelledSpecialGcRequest', [
+            'title' => 'Cancelled Special Gc Request',
+            'filters' => $request->only(['date', 'search']),
+            'data' => StoreGcRequestResource::collection($record),
+            'columns' => ColumnHelper::$cancelledGcRequest
+        ]);
+    }
+
+    public function viewCancelledRequest(Request $request, $id)
+    {
+        $cancelled = StoreGcrequest::joinCancelledGcStore()->where('store_gcrequest.sgc_id', $id)->first();
+        $denomination = StoreRequestItem::join('denomination', 'denomination.denom_id', '=', 'store_request_items.sri_items_denomination')
+        ->select(DB::raw('store_request_items.sri_items_quantity * denomination.denomination as total'), 'store_request_items.sri_items_quantity', 'denomination.denomination')
+        ->where('store_request_items.sri_items_requestid', $id);
+
+    $total = NumberHelper::currency($denomination->get()->sum( 'total'));
+
+        return response()->json([
+            'info' => new StoreGcRequestResource($cancelled),
+            'denomination' => $denomination->paginate(5),
+            'total' => $total
         ]);
     }
 

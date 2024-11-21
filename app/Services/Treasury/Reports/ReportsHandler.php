@@ -6,6 +6,7 @@ use App\Events\TreasuryReportEvent;
 use App\Helpers\NumberHelper;
 use App\Models\InstitutEod;
 use App\Models\StoreEod;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 
@@ -19,9 +20,14 @@ class ReportsHandler extends ReportGenerator
 	private $cardSales;
 	private $ar;
 
-	protected function gcSales()
+	public function __construct()
 	{
-		$this->dispatchProgress(ReportHelper::GENERATING_SALES_DATA);
+		parent::__construct();
+	}
+
+	protected function gcSales(User $user)
+	{
+		$this->dispatchProgress(ReportHelper::GENERATING_SALES_DATA, $user);
 		$this->cashSales = $this->generateSalesData(self::SALE_TYPE_CASH);
 		$this->cardSales = $this->generateSalesData(self::SALE_TYPE_CARD);
 		$this->ar = $this->generateSalesData(self::SALE_TYPE_AR);
@@ -41,9 +47,9 @@ class ReportsHandler extends ReportGenerator
 		];
 	}
 
-	protected function eodRecords()
+	protected function eodRecords(User $user)
 	{
-		$this->dispatchProgressEod(2);
+
 		$query = InstitutEod::select('ieod_by', 'ieod_id', 'ieod_num', 'ieod_date')
 			->with('user:user_id,firstname,lastname');
 
@@ -57,15 +63,16 @@ class ReportsHandler extends ReportGenerator
 
 		$this->progress['progress']['totalRow'] = $query->count();
 
-		return $query->cursor()->map(function ($item) use (&$percentage) {
+		return $query->cursor()->map(function ($item) use (&$percentage, $user) {
 			//Dispatch
+			$this->dispatchProgressEod($item->ieod_date->toDayDateTimeString(), $user);
 			$this->progress['progress']['currentRow'] = $percentage++;
-			TreasuryReportEvent::dispatch(Auth::user(), $this->progress);
+			TreasuryReportEvent::dispatch($user, $this->progress);
 
-            $item->fullname = $item->user->fullname;
-            $item->date = $item->ieod_date->toDayDateTimeString();
-            return $item;
-        });
+			$item->fullname = $item->user->fullname;
+			$item->date = $item->ieod_date->toDayDateTimeString();
+			return $item;
+		});
 	}
 
 	protected function gcRevalidation(): array
@@ -98,9 +105,9 @@ class ReportsHandler extends ReportGenerator
 		return ['refund' => 'No Refund Transaction'];
 	}
 
-	protected function footer()
+	protected function footer(User $user)
 	{
-		$this->dispatchProgress(ReportHelper::GENERATING_FOOTER_DATA);
+		$this->dispatchProgress(ReportHelper::GENERATING_FOOTER_DATA, $user);
 		$discount = $this->generateTotalTransDiscount();
 		$grandTotal = ReportHelper::grandTotal($this->cashSales, $this->cardSales, $this->ar, $discount);
 

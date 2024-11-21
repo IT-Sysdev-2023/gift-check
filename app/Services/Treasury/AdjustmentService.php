@@ -69,7 +69,6 @@ class AdjustmentService extends FileHandler
             ->unique('denom_id')
             ->values();
 
-        // dd($denominations);
         return response()->json(['record' => $record, 'denoms' => $denominations]);
     }
 
@@ -77,15 +76,19 @@ class AdjustmentService extends FileHandler
     {
         $request->validate([
             "adjustmentNo" => "required",
-            "budget" => "required",
+            "budget" => "required|not_in:0",
             "remarks" => "required",
             "adjustmentType" => 'required'
         ]);
 
-        $isExist = DB::table('budgetadjustment')->join('users', 'users.user_id', '=', 'budgetadjustment.adj_requested_by')
-            ->where('users.usertype', $request->user()->usertype)->where('budgetadjustment.adj_request_status', 0)->exists();
+        $isExist = DB::table('budgetadjustment')
+            ->join('users', 'users.user_id', '=', 'budgetadjustment.adj_requested_by')
+            ->where('users.usertype', $request->user()->usertype)
+            ->where('budgetadjustment.adj_request_status', 0)
+            ->exists();
+
         if ($isExist) {
-            return back()->with('error', 'You have pending budget request.');
+            return back()->with('error', 'You have pending budget adjustment request.');
         }
 
         try {
@@ -112,5 +115,40 @@ class AdjustmentService extends FileHandler
             return redirect()->back()->with('error', "Something went wrong {$e}");
 
         }
+    }
+
+    public function budgetUpdateSubmission(Request $request)
+    {
+        $data = DB::table('budgetadjustment')->first();
+        $imageToDestroy = $data->adj_file_docno;
+        $image = '';
+        if ($request->hasFile('file')) { //if new file is set
+            $image = $this->createFileName($request);
+        } else if (isset($request->file['url'])) { //if the stock file is removed
+            $image = '';
+        } else { //if the file is untouch keep the filename in database
+            $image = $data->adj_file_docno;
+        }
+        $isSuccess = DB::table('budgetadjustment')->where('adj_id', $data->adj_id)
+            ->update([
+                'adj_request' => $request->budget,
+                'adj_no' => $data->adj_no,
+                'adj_requested_by' => $request->user()->user_id,
+                'adj_requested_at' => $data->adj_requested_at,
+                'adj_file_docno' => $image,
+                'adjust_type' => $request->adjustmentType,
+                'adj_remarks' => $request->remarks,
+                'adj_request_status' => '0',
+                'adj_type' => userDepartment($request->user())
+            ]);
+
+        if ($isSuccess) {
+            $this->saveFile($request, $image);
+            $this->destroyFile($request, $imageToDestroy);
+
+            return redirect()->back()->with('success', 'Successfully Update');
+        }
+        return redirect()->back()->with('error', 'SOmething Went wrong with the server!');
+
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Console\Commands\ProcessFiles;
 use App\Http\Controllers\AccountingController;
+use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BudgetAdjustmentController;
 use App\Http\Controllers\CouponController;
@@ -12,7 +13,7 @@ use App\Http\Controllers\EodController;
 use App\Http\Controllers\FadController;
 use App\Http\Controllers\Iad\Dashboard\SpecialExternalGcRequestController;
 use App\Http\Controllers\MarketingController;
-use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\Treasury\ReportsController;
 use \App\Http\Controllers\Treasury\MasterfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FinanceController;
@@ -36,7 +37,10 @@ use App\Http\Controllers\Treasury\Transactions\RetailGcReleasingController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Controllers\UserDetailsController;
+use App\Models\InstitutEod;
+use App\Models\InstitutPayment;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -57,6 +61,18 @@ Route::fallback(function () {
 });
 Route::get('kanding', function () {
     return Storage::disk('fad')->files();
+});
+Route::get('kanding-hinuktan', function () {
+    $insti = InstitutPayment::select('insp_id')->where('institut_eodid', '0')->get();
+        if ($insti->isNotEmpty()) {
+            DB::transaction(function () {
+                $eod_num = InstitutEod::orderByDesc('ieod_id')->value('ieod_num');
+
+                $incre = $eod_num ? $eod_num + 1 : 1;
+                dd($incre);
+
+            });
+        }
 });
 
 
@@ -238,6 +254,7 @@ Route::prefix('marketing')->group(function () {
             Route::get('pending-view-details', [MarketingController::class, 'pendingspgclistview'])->name('pending.view');
             Route::get('approved-external-gc-request', [MarketingController::class, 'ApprovedExternalGcRequest'])->name('aexgcreq');
             Route::get('selected-approved-external-gc-request', [MarketingController::class, 'selectedApprovedExternalGcRequest'])->name('selectedaexgcreq');
+            Route::get('cancelled-especial-external-list', [MarketingController::class, 'cancelledspexgclist'])->name('cancelledspexgclsit');
         });
         Route::name('releasedspexgc.')->group(function () {
             Route::get('count-released-spex-gc', [MarketingController::class, 'countreleasedspexgc'])->name('count');
@@ -315,6 +332,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('view-released-gc-{id}', [SpecialGcRequestController::class, 'viewReleasedGc'])->name('viewReleasedGc');
 
             Route::get('approved-request', [SpecialGcRequestController::class, 'approvedRequest'])->name('approvedRequest');
+            Route::get('cancelled-request', [SpecialGcRequestController::class, 'cancelledRequest'])->name('cancelledRequest');
+            Route::get('view-cancelled-request-{id}', [SpecialGcRequestController::class, 'viewCancelledRequest'])->name('viewCancelledRequest');
             Route::get('view-approved-request-{id}', [SpecialGcRequestController::class, 'viewApprovedRequest'])->name('viewApprovedRequest');
         });
         Route::prefix('transactions')->name('transactions.')->group(function () {
@@ -369,11 +388,14 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('view-transaction-details-{id}', [InstitutionGcSalesController::class, 'transactionDetails'])->name('transactionDetails');
                 Route::get('print-ar-{id}', [InstitutionGcSalesController::class, 'printAr'])->name('printAr');
                 Route::get('reprint-{id}', [InstitutionGcSalesController::class, 'reprint'])->name('reprint');
+                Route::get('generate-excel-{id}', [InstitutionGcSalesController::class, 'generateExcel'])->name('excel');
             });
 
             //Institution Gc Refund
             Route::prefix('institution-gc-refund')->name('intitution.refund.')->group(function () {
                 Route::get('/', [InstitutionGcRefundController::class, 'index'])->name('index');
+
+                Route::post('refund-submission', [InstitutionGcRefundController::class, 'store'])->name('refund');
             });
 
             //special gc payment
@@ -388,6 +410,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('generate-pdf-{id}', [EodController::class, 'generatePdf'])->name('pdf');
 
                 Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
+                Route::post('gc-sales-report-eod', [EodController::class, 'toEndOfDay'])->name('setToEod');
             });
         });
         Route::prefix('masterfile')->name('masterfile.')->group(function () {
@@ -413,15 +436,19 @@ Route::middleware(['auth'])->group(function () {
             Route::get('allocation-details-{id}', [AdjustmentController::class, 'viewAllocationAdjustment'])->name('viewAllocation');
 
             Route::get('budget-adjustment', [AdjustmentController::class, 'budgetAdjustments'])->name('budgetAdjustments');
+            Route::get('budget-adjustment-update', [AdjustmentController::class, 'budgetAdjustmentsUpdate'])->name('budgetAdjustmentsUpdate');
+            Route::post('budget-adjustment-update-submission', [AdjustmentController::class, 'budgetAdjustmentsUpdateSubmission'])->name('budgetAdjustmentUpdateSubmission');
             Route::post('budget-adjustment-submission', [AdjustmentController::class, 'storeBudgetAdjustment'])->name('budgetAdjustmentSubmission');
         });
 
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('gc-report', [ReportsController::class,'gcReport'])->name('index');
             Route::get('eod-report', [ReportsController::class,'eodReport'])->name('eod');
-            Route::post('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc')->middleware([HandlePrecognitiveRequests::class]);
+            Route::get('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc');
             Route::get('generate-eod-report', [ReportsController::class,'generateEodReports'])->name('generate.eod');
 
+            Route::get('list-of-generated-reports', [ReportsController::class,'listOfGeneratedReports'])->name('generatedReports');
+            Route::get('download-generated-report', [ReportsController::class,'downloadGeneratedReport'])->name('download.gc');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
@@ -461,8 +488,13 @@ Route::prefix('accounting')->name('accounting.')->group(function () {
         Route::get('payment-viewing', [AccountingController::class, 'paymentViewing'])->name('viewing');
         Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
     });
-});
 
+    Route::prefix('reports')->name('reports.')->group(function() {
+        Route::get('spgc-report-approved', [AccountingReportController::class, 'spgcApprovedReport'])->name('special.gc.approved');
+        Route::get('generate-spgc-report-approved', [AccountingReportController::class, 'generateApprovedReport'])->name('generate.special.gc.approved');
+        Route::get('spgc-report-released', [AccountingReportController::class, 'spgcReleasedReport'])->name('special.gc.released');
+    });
+});
 
 //Finance
 Route::prefix('finance')->group(function () {
@@ -497,6 +529,7 @@ Route::prefix('finance')->group(function () {
 
         Route::name('cancelledSpecialExternalGC.')->group(function(){
             Route::get('cancelled-especial-external-gc',[FinanceController::class, 'list'])->name('list');
+            Route::get('view-cancelled-especial-external-gc',[FinanceController::class, 'view'])->name('view');
         });
     });
 
@@ -630,9 +663,11 @@ Route::middleware('auth')->group(function () {
         });
         Route::name('excel.')->group(function () {
             Route::get('verified', [IadController::class, 'verifiedReports'])->name('verified');
+            Route::get('purchased', [IadController::class, 'purchasedReports'])->name('purchased');
 
             Route::name('generate.')->group(function () {
                 Route::get('generate-verified', [IadController::class, 'generateVerifiedReports'])->name('verified');
+                Route::get('generate-purchased', [IadController::class, 'generatePurchasedReports'])->name('purchased');
             });
         });
     });

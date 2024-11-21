@@ -15,6 +15,7 @@ use App\Models\LedgerSpgc;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
+use App\Models\User;
 use App\Services\Finance\ApprovedPendingPromoGCRequestService;
 use App\Services\Finance\ApprovedReleasedPdfExcelService;
 use App\Services\Finance\ApprovedReleasedReportService;
@@ -564,15 +565,32 @@ class FinanceController extends Controller
         ], 404);
     }
 
-    public function list()
+    public function list(Request $request)
     {
-        $data = SpecialExternalGcrequest::where('spexgc_status', 'cancelled')
-            ->join('special_external_customer', 'special_external_customer.spcus_id', 'special_external_gcrequest.spexgc_company')
-            ->get();
-
         return inertia('Marketing/specialgc/Cancelledspexgc', [
-            'data' => $data
+            'data' => SpecialExternalGcrequest::where('spexgc_status', 'cancelled')
+                ->join('special_external_customer', 'special_external_customer.spcus_id', 'special_external_gcrequest.spexgc_company')
+                ->whereAny([
+                    'spexgc_id',
+                ], 'like', $request->data . '%')
+                ->paginate()
+                ->withQueryString()
         ]);
 
+    }
+
+    public function view(Request $request)
+    {
+
+
+        $data = SpecialExternalGcrequest::where('spexgc_status', 'cancelled')
+            ->where('special_external_gcrequest.spexgc_id', $request->id)
+            ->join('special_external_customer', 'special_external_customer.spcus_id', 'special_external_gcrequest.spexgc_company')
+            ->first();
+        $requestedBy = User::where('user_id', $data['spexgc_reqby'])->first();
+
+        $data['requested_by'] = $requestedBy['full_name'];
+
+        return response()->json($data);
     }
 }
