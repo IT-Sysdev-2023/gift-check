@@ -2,42 +2,43 @@
 
 namespace App\Exports\SPGCReleasedExcel;
 
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
 
 
 
-class releasePerCustomer implements FromCollection, WithHeadings, WithTitle, WithStyles, ShouldAutoSize, WithEvents, WithStartRow
+class releasePerBarcode implements FromCollection, ShouldAutoSize, WithHeadings, WithTitle, WithStyles, WithEvents, WithStartRow
 {
     /**
      * @return \Illuminate\Support\Collection
      */
-    protected $releaseData;
+    protected $perBarcodeData;
     public function __construct($request)
     {
-        $this->releaseData = $request;
+        $this->perBarcodeData = $request;
+
+        // dd($this->perBarcodeData);
+    }
+    public function title(): string
+    {
+        return 'Per Barcode';
     }
 
     public function startRow(): int
     {
         return 7;
     }
-   
 
-    public function title(): string
-    {
-        return 'Per Customer';
-    }
+
 
     public function registerEvents(): array
     {
@@ -47,15 +48,15 @@ class releasePerCustomer implements FromCollection, WithHeadings, WithTitle, Wit
 
                 $sheet->setCellValue('A1', 'ALTURAS GROUP OF COMPANIES');
                 $sheet->setCellValue('A2', 'HEAD OFFICE FINANCE DEPARTMENT');
-                $sheet->setCellValue('A3', 'SPECIAL EXTERNAL GC REPORT- Releasing');
-                $sheet->setCellValue('A4', 'Start Date: ' . $this->releaseData['startDate']);
-                $sheet->setCellValue('A5', 'End Date: ' . $this->releaseData['endDate']);
+                $sheet->setCellValue('A3', 'SPECIAL EXTERNAL GC REPORT- RELEASE');
+                $sheet->setCellValue('A4', 'Start Date: ' . $this->perBarcodeData['startDate']);
+                $sheet->setCellValue('A5', 'End Date: ' . $this->perBarcodeData['endDate']);
 
-                $sheet->mergeCells('A1:D1');
-                $sheet->mergeCells('A2:D2');
-                $sheet->mergeCells('A3:D3');
-                $sheet->mergeCells('A4:D4');
-                $sheet->mergeCells('A5:D5');
+                $sheet->mergeCells('A1:F1');
+                $sheet->mergeCells('A2:F2');
+                $sheet->mergeCells('A3:F3');
+                $sheet->mergeCells('A4:F4');
+                $sheet->mergeCells('A5:F5');
 
                 $sheet->getStyle('A1:A5')->getAlignment()
                     ->setHorizontal('center')
@@ -86,46 +87,40 @@ class releasePerCustomer implements FromCollection, WithHeadings, WithTitle, Wit
     {
         return [
             'Date Requested',
-            'Company',
-            'RELEASING #',
-            'Total Denomination'
+            'Barcode',
+            'Denomination',
+            'Customer',
+            'Approval #',
+            'Date Approved'
         ];
     }
 
     public function collection()
     {
-        $perCustomer =  $this->releasedPerCustomerData($this->releaseData);
+        $perBarcodeRelease = $this->releasePerBarcodeData($this->perBarcodeData);
         $paddingRows = collect(array_fill(0, 6, ['', '', '', '']));
-        $dataWithPadding = $paddingRows->concat(collect($perCustomer));
+        $dataWithPadding = $paddingRows->concat(collect($perBarcodeRelease));
         return collect($dataWithPadding);
     }
 
-    private function releasedPerCustomerData($request)
+    private function releasePerBarcodeData($request)
     {
         return DB::table('special_external_gcrequest_emp_assign')
             ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
             ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
-            ->join('users as reqby', 'reqby.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
-            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
             ->where('approved_request.reqap_approvedtype', 'special external releasing')
-            ->whereRaw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d') >= ?", [$this->releaseData['startDate']])
-            ->whereRaw("DATE_FORMAT(approved_request.reqap_date, '%Y-%m-%d') <= ?", [$this->releaseData['endDate']])
-            ->select([
-            DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') as datereq"),
-                'special_external_customer.spcus_companyname',
-            'special_external_gcrequest.spexgc_num',
-                DB::raw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom), 0.00) as totdenom"),
-            ])
-            ->groupBy(
+            ->whereBetween('approved_request.reqap_date', [$this->perBarcodeData['startDate'], $this->perBarcodeData['endDate']])
+            ->select(
+                DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%M %d %Y') as dateRequest0"),
+                'special_external_gcrequest_emp_assign.spexgcemp_barcode',
+                'special_external_gcrequest_emp_assign.spexgcemp_denom',
+                DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname,
+                 ' ', special_external_gcrequest_emp_assign.spexgcemp_mname,
+                 ' ', special_external_gcrequest_emp_assign.spexgcemp_lname ) as customer"),
                 'special_external_gcrequest.spexgc_num',
-                'special_external_gcrequest.spexgc_datereq',
-                'approved_request.reqap_date',
-                'reqby.firstname',
-                'reqby.lastname',
-                'special_external_customer.spcus_acctname',
-                'special_external_customer.spcus_companyname'
+                DB::raw("DATE_FORMAT(approved_request.reqap_date, '%M %d %Y') as dateRequest1")
             )
-            ->orderBy('special_external_gcrequest.spexgc_datereq', 'asc')
+            ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode')
             ->get();
     }
 }

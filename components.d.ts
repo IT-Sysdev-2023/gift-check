@@ -187,7 +187,10 @@ declare module 'vue' {
     ColonadeMandauePosTransaction: typeof import('./resources/js/Pages/StoreAccounting/ColonadeMandauePosTransaction.vue')['default']
     ConfirmPassword: typeof import('./resources/js/Pages/Auth/ConfirmPassword.vue')['default']
     ContainerOutlined: typeof import('@ant-design/icons-vue')['ContainerOutlined']
+<<<<<<< HEAD
     copy: typeof import('./resources/js/Pages/Treasury/Adjustment/BudgetAdjustment copy.vue')['default']
+=======
+>>>>>>> gamale
     CopyOutlined: typeof import('@ant-design/icons-vue')['CopyOutlined']
     CouponTransaction: typeof import('./resources/js/Pages/Treasury/Coupon/CouponTransaction.vue')['default']
     CreateEntryGc: typeof import('./resources/js/Pages/Retail/Modals/CreateEntryGc.vue')['default']
@@ -223,6 +226,7 @@ declare module 'vue' {
     Errors: typeof import('./resources/js/Pages/Finance/Cards/Errors.vue')['default']
     ExclamationCircleFilled: typeof import('@ant-design/icons-vue')['ExclamationCircleFilled']
     ExclamationCircleOutlined: typeof import('@ant-design/icons-vue')['ExclamationCircleOutlined']
+    ExclamationOutlined: typeof import('@ant-design/icons-vue')['ExclamationOutlined']
     ExportOutlined: typeof import('@ant-design/icons-vue')['ExportOutlined']
     EyeFilled: typeof import('@ant-design/icons-vue')['EyeFilled']
     EyeOutlined: typeof import('@ant-design/icons-vue')['EyeOutlined']
@@ -282,7 +286,10 @@ declare module 'vue' {
     LineChartOutlined: typeof import('@ant-design/icons-vue')['LineChartOutlined']
     Link: typeof import('@inertiajs/vue3')['Link']
     ListOfEod: typeof import('./resources/js/Pages/Eod/ListOfEod.vue')['default']
+<<<<<<< HEAD
     ListOfGeneratedReports: typeof import('./resources/js/Pages/Treasury/Reports/ListOfGeneratedReports.vue')['default']
+=======
+>>>>>>> gamale
     LoadingOutlined: typeof import('@ant-design/icons-vue')['LoadingOutlined']
     LockOutlined: typeof import('@ant-design/icons-vue')['LockOutlined']
     Login: typeof import('./resources/js/Pages/Login.vue')['default']
@@ -299,7 +306,11 @@ declare module 'vue' {
     MoneyCollectOutlined: typeof import('@ant-design/icons-vue')['MoneyCollectOutlined']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     NotFoundResult: typeof import('./resources/js/Pages/Iad/Components/NotFoundResult.vue')['default']
+<<<<<<< HEAD
     OrderedListOutlined: typeof import('@ant-design/icons-vue')['OrderedListOutlined']
+=======
+    NotificationOutlined: typeof import('@ant-design/icons-vue')['NotificationOutlined']
+>>>>>>> gamale
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
     PaginationAxios: typeof import('./resources/js/Components/PaginationAxios.vue')['default']
     PaginationAxiosSmall: typeof import('./resources/js/Components/PaginationAxiosSmall.vue')['default']
@@ -408,6 +419,7 @@ declare module 'vue' {
     SearchEmployee: typeof import('./resources/js/Pages/SearchEmployee.vue')['default']
     SearchOutlined: typeof import('@ant-design/icons-vue')['SearchOutlined']
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
+    SelectOutlined: typeof import('@ant-design/icons-vue')['SelectOutlined']
     SendOutlined: typeof import('@ant-design/icons-vue')['SendOutlined']
     SettingOutlined: typeof import('@ant-design/icons-vue')['SettingOutlined']
     SetupApproval: typeof import('./resources/js/Pages/Custodian/SetupApproval.vue')['default']
