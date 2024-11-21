@@ -9,7 +9,7 @@
                         Verified GC Reports (Monthly)
                     </span>
                 </template>
-                <a-card>
+                <a-card style="width: 30%;">
                     <div style="margin-top: 20px;">
                         <a-form-item :validate-status="GCDataTypeMonthly.errors.dataTypeMonthly ? 'error' : ''"
                             :help="GCDataTypeMonthly.errors.dataTypeMonthly">
@@ -17,10 +17,9 @@
                                 Data Type:
                             </div>
 
-                            <a-select style=" width: 30%;" placeholder="Select"
-                                v-model:value="GCDataTypeMonthly.dataTypeMonthly">
+                            <a-select placeholder="Select" v-model:value="GCDataTypeMonthly.dataTypeMonthly">
                                 <a-select-option value="">---Select---</a-select-option>
-                                <a-select-option value="verifiedgc">Verified GC</a-select-option>
+                                <a-select-option value="verifiedGC">Verified GC</a-select-option>
                             </a-select>
 
                         </a-form-item>
@@ -30,41 +29,40 @@
                             <div>
                                 Store:
                             </div>
-                            <a-select v-model:value="GCDataTypeMonthly.selectedStoreMonthly" style="width: 30%;"
-                                placeholder="Select Store">
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Alturas Mall">Alturas
+                            <a-select v-model:value="GCDataTypeMonthly.selectedStoreMonthly" placeholder="Select Store">
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="1">Alturas
                                     Mall</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Alturas Talibon">Alturas
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="2">Alturas
                                     Talibon</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Island City Mall">Island City
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="3">Island City
                                     Mall</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Plaza Marcela">Plaza
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="4">Plaza
                                     Marcela</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Alturas Tubigon">Alturas
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="5">Alturas
                                     Tubigon</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Colonade Colon">Colonade
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="6">Colonade
                                     Colon</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Colonade Mandaue">Colonade
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="7">Colonade
                                     Mandaue</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Alta Citta">Alta
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="8">Alta
                                     Citta</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Farmers Market">Farmers
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="9">Farmers
                                     Market</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Ubay Distribution Center">Ubay Distribution Center</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Screenville">Screenville</a-select-option>
-                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedgc'"
-                                    value="Asc Tech">Asc
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="10">Ubay Distribution Center</a-select-option>
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="11">Screenville</a-select-option>
+                                <a-select-option v-if="GCDataTypeMonthly.dataTypeMonthly === 'verifiedGC'"
+                                    value="12">Asc
                                     Tech</a-select-option>
                             </a-select>
                         </a-form-item>
@@ -75,20 +73,19 @@
                                 Month:
 
                             </div>
-                            <a-select style="width: 30%; " placeholder="Select Month"
-                                v-model:value="GCDataTypeMonthly.month">
-                                <a-select-option value="January">January</a-select-option>
-                                <a-select-option value="February">February</a-select-option>
-                                <a-select-option value="March">March</a-select-option>
-                                <a-select-option value="April">April</a-select-option>
-                                <a-select-option value="May">May</a-select-option>
-                                <a-select-option value="June">June</a-select-option>
-                                <a-select-option value="July">July</a-select-option>
-                                <a-select-option value="August">August</a-select-option>
-                                <a-select-option value="September">September</a-select-option>
-                                <a-select-option value="October">October</a-select-option>
-                                <a-select-option value="November">November</a-select-option>
-                                <a-select-option value="December">December</a-select-option>
+                            <a-select placeholder="Select Month" v-model:value="GCDataTypeMonthly.month">
+                                <a-select-option value="1">January</a-select-option>
+                                <a-select-option value="2">February</a-select-option>
+                                <a-select-option value="3">March</a-select-option>
+                                <a-select-option value="4">April</a-select-option>
+                                <a-select-option value="5">May</a-select-option>
+                                <a-select-option value="6">June</a-select-option>
+                                <a-select-option value="7">July</a-select-option>
+                                <a-select-option value="8">August</a-select-option>
+                                <a-select-option value="9">September</a-select-option>
+                                <a-select-option value="10">October</a-select-option>
+                                <a-select-option value="11">November</a-select-option>
+                                <a-select-option value="12">December</a-select-option>
 
                             </a-select>
                         </a-form-item>
@@ -100,8 +97,7 @@
 
                             </div>
 
-                            <a-select style="width: 30%; " placeholder="Select Year"
-                                v-model:value="GCDataTypeMonthly.yearMonthly">
+                            <a-select placeholder="Select Year" v-model:value="GCDataTypeMonthly.yearMonthly">
                                 <a-select-option value="2017">2017</a-select-option>
                                 <a-select-option value="2018">2018</a-select-option>
                                 <a-select-option value="2019">2019</a-select-option>
@@ -115,7 +111,7 @@
                         </a-form-item>
                     </div>
                     <a-button @click="submitGCReportsMonthly" style="background-color: #1e90ff; color:white">
-                        <SendOutlined /> Submit
+                        <FilePdfOutlined /> Generate
                     </a-button>
                 </a-card>
 
@@ -223,6 +219,9 @@
 <script>
 // import { defineComponent } from '@vue/composition-api'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { createVNode } from 'vue';
+import { Modal } from 'ant-design-vue';
 
 export default {
     layout: AuthenticatedLayout,
@@ -265,7 +264,19 @@ export default {
                 selectedStoreMonthly: selectedStoreMonthly
             }
             console.log(monthlyData);
-            this.$inertia.get(route('storeaccounting.verifiedGcSubmit'), monthlyData);
+            Modal.confirm({
+                title: 'Confirmation',
+                content: 'Are you sure you want to generate?',
+                okText: 'Yes',
+                okType: 'danger',
+                cancelText: 'No',
+                onOk:()=> {
+                    window.location.href = route('storeaccounting.verifiedGcSubmit', monthlyData)
+                },
+                onCancel() {
+                    console.log('Cancel');
+                },
+            });
         },
         submitGCReportsYearly() {
             this.GCDataTypeYearly.errors = {};
