@@ -68,18 +68,16 @@ const formState = ref({
 });
 
 const state = useQueueState();
+
 const onSubmit = async () => {
 
     state.setGenerateButton(true);
     state.setFloatButton(true);
     state.setOpenFloat(true);
 
-    axios
+    await axios
         .get(route("treasury.reports.generate.eod"), {
             params: { ...formState.value },
-        })
-        .then(() => {
-        
         })
         .catch((e) => {
             let message = 'please check all the fields';
@@ -94,9 +92,9 @@ const onSubmit = async () => {
         });
 };
 
-onBeforeUnmount(() => {
-    leaveChannel();
-});
+// onBeforeUnmount(() => {
+//     leaveChannel();
+// });
 
 const leaveChannel = () => {
     window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);
