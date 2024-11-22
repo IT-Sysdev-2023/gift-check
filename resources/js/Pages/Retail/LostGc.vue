@@ -57,7 +57,7 @@
                             <a-table bordered size="small" :dataSource="barcodes" :columns="columns">
                                 <template v-slot:bodyCell="{ column, record }">
                                     <template v-if="column.dataIndex === 'view'">
-                                        <a-button type="dashed">
+                                        <a-button type="dashedh  hh">
                                             <EyeOutlined />
                                         </a-button>
                                     </template> 
