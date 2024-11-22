@@ -1,9 +1,9 @@
 <template>
     <a-float-button-group
-        v-if="openFloat"
+        v-if="state.isFloatButtonVisible"
         trigger="click"
         :style="{ right: '24px' }"
-        v-model:open="openGeneratedReport"
+        v-model:open="state.isFloatOpen"
     >
         <!-- YOURE VISITING THIS PAGE.., THIS MEANS YOU HAVE REACH THE LEVEL OF A SENIOR PROGRAMMER -->
 
@@ -17,7 +17,11 @@
                 <span>Queue Reports</span>
             </template>
             <div style="height: 200px; overflow-y: auto; padding-right: 8px">
-                <a-space direction="vertical" style="width: 100%;" class="flex; flex-col-reverse">
+                <a-space
+                    direction="vertical"
+                    style="width: 100%"
+                    class="flex; flex-col-reverse"
+                >
                     <a-card
                         v-for="(progress, reportId) in reportProgress"
                         :key="reportId"
@@ -61,9 +65,10 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { PageWithSharedProps } from "@/types/index";
+import { useQueueState } from "@/Stores/queue-state";
 
 const page = usePage<PageWithSharedProps>().props;
 
@@ -80,20 +85,15 @@ interface ReportProgress {
     percentage: number;
     data: ProgressData;
 }
-
-const openGeneratedReport = ref(false);
-const openFloat = ref(false);
 const reportProgress = reactive<Record<string, ReportProgress>>({});
 
-const handleOpenFloat = (e) => {
-    console.log(e);
-};
+const state = useQueueState();
+
 onMounted(() => {
     window.Echo.private(`treasury-report.${page.auth.user.user_id}`).listen(
         "TreasuryReportEvent",
         (e) => {
-            openFloat.value = true;
-            openGeneratedReport.value = true;
+            state.setGenerateButton(false);
 
             reportProgress[e.reportId] = {
                 reportType: e.reportType,
@@ -105,6 +105,7 @@ onMounted(() => {
 });
 
 const fileLocation = () => {
+    state.setFloatButton(false);
     router.visit(route("treasury.reports.generatedReports"));
 };
 </script>

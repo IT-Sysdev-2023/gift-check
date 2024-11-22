@@ -20,5 +20,5 @@
         "resources/js/**/*.ts",
         "resources/js/**/*.d.ts",
         "resources/js/**/*.vue"
-, "resources/js/Store/queue-state.js"    ]
+, "resources/js/Stores/queue-state.js"    ]
 }

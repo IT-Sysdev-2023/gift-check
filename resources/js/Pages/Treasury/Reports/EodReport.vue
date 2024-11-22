@@ -33,7 +33,7 @@
                     <a-range-picker v-model:value="formState.date" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-                    <a-button type="primary" html-type="submit" :loading="loadingButton"
+                    <a-button type="primary" html-type="submit" :loading="state.isGenerateVisible"
                         >Generate</a-button
                     >
                 </a-form-item>
@@ -49,6 +49,7 @@ import { PageWithSharedProps } from "@/types/index";
 import { usePage } from "@inertiajs/vue3";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { notification } from "ant-design-vue";
+import { useQueueState } from '@/Stores/queue-state';
 
 const page = usePage<PageWithSharedProps>().props;
 defineProps<{
@@ -61,33 +62,26 @@ defineProps<{
 //     store: string;
 //     date: Dayjs;
 // }
-const loadingButton = ref<boolean>(false);
-
 const formState = ref({
     transactionDate: "",
     date: null,
 });
-const startTimeout = () =>  {
-    loadingButton.value = true;
-      setTimeout(() => {
-        loadingButton.value = false;
-      }, 3000); // 2 seconds delay
-}
 
+const state = useQueueState();
 const onSubmit = async () => {
-    startTimeout();
-    localStorage.setItem('isFloatOpen', 'true');
+
+    state.setGenerateButton(true);
+    state.setFloatButton(true);
+    state.setOpenFloat(true);
+
     axios
         .get(route("treasury.reports.generate.eod"), {
             params: { ...formState.value },
         })
-        .then( (e) => {
-            console.log('sdsd');
-            // loadingProgress.value = true;
-
+        .then(() => {
+        
         })
         .catch((e) => {
-            console.log(e);
             let message = 'please check all the fields';
             if(e.status === 404){
                 message = 'there was no transaction on this selected date!';
