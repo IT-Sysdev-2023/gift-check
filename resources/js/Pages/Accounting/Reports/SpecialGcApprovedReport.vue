@@ -57,8 +57,14 @@ const form = ref<{ extension: string; dateRange: [Dayjs, Dayjs] }>({
 const generate = () => {
     axios
         .get(route("accounting.reports.generate.special.gc.approved"), {
-            params: { ...form.value },
-            responseType: 'blob'
+            params: {
+                format: form.value.extension,
+                date: [
+                    form.value.dateRange[0].format("YYYY-MM-DD"),
+                    form.value.dateRange[1].format("YYYY-MM-DD"),
+                ],
+            },
+            responseType: "blob",
         })
         .then(async (response: AxiosResponse) => {
             // loadingProgress.value = true;
@@ -70,14 +76,13 @@ const generate = () => {
             window.open(fileURL, "_blank"); // Open the PDF in a new tab
         })
         .catch((e) => {
-            let message = 'please check all the fields';
-            if(e.status === 404){
-                message = 'there was no transaction on this selected date!';
+            let message = "please check all the fields";
+            if (e.status === 404) {
+                message = "there was no transaction on this selected date!";
             }
             notification.error({
                 message: "Error",
-                description:
-                    `Something Went wrong,  ${message}`,
+                description: `Something Went wrong,  ${message}`,
             });
         });
 };
