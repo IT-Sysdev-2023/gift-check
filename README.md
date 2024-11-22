@@ -11,8 +11,9 @@
 
 Gif Check is a web application with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling.
 
-Looking For Maintainers
--Batak mag code
+Looking For Maintainers 
+- Batak mag code
+- d mugamit og chatGpt
 
 Requirements
 - Node js 18
@@ -30,7 +31,7 @@ for running in development
 in Sail/Docker:
 - sail up
 - sail bun dev
-- sail artisan queue:listen
+- sail artisan horizon/ queue:work
 - sail aritsan reverb:start
 
 ## GC Sponsors
