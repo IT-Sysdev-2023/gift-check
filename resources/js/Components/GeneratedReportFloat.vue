@@ -22,7 +22,9 @@
                     style="width: 100%"
                     class="flex; flex-col-reverse"
                 >
-                <a-skeleton :loading="Object.keys(reportProgress).length === 0" />
+                    <a-skeleton
+                        :loading="Object.keys(reportProgress).length === 0"
+                    />
                     <a-card
                         v-for="(progress, reportId) in reportProgress"
                         :key="reportId"
@@ -69,7 +71,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { PageWithSharedProps } from "@/types/index";
-import { useQueueState } from "@/Stores/queue-state";
+import { useQueueState } from "@/stores/queue-state";
 
 const page = usePage<PageWithSharedProps>().props;
 
@@ -94,7 +96,6 @@ onMounted(() => {
     window.Echo.private(`treasury-report.${page.auth.user.user_id}`).listen(
         "TreasuryReportEvent",
         (e) => {
-
             state.setGenerateButton(false);
             reportProgress[e.reportId] = {
                 reportType: e.reportType,
@@ -105,8 +106,11 @@ onMounted(() => {
     );
 });
 const fileLocation = () => {
-    
-    if(Object.values(reportProgress).every(report => report.percentage === 100)){
+    if (
+        Object.values(reportProgress).every(
+            (report) => report.percentage === 100
+        )
+    ) {
         state.setFloatButton(false);
     }
     router.visit(route("treasury.reports.generatedReports"));

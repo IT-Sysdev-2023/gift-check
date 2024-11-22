@@ -49,13 +49,15 @@
                     <a-range-picker v-model:value="formState.date" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-                    <a-button type="primary" html-type="submit" :loading="state.isGenerateVisible"
+                    <a-button
+                        type="primary"
+                        html-type="submit"
+                        :loading="state.isGenerateVisible"
                         >Generate</a-button
                     >
                 </a-form-item>
             </a-form>
         </a-card>
-       
     </AuthenticatedLayout>
 </template>
 
@@ -68,7 +70,7 @@ import { PageWithSharedProps } from "@/types/index";
 import { usePage } from "@inertiajs/vue3";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { notification } from "ant-design-vue";
-import { useQueueState } from '@/Stores/queue-state';
+import { useQueueState } from "@/stores/queue-state";
 
 const page = usePage<PageWithSharedProps>().props;
 defineProps<{
@@ -98,7 +100,6 @@ const formState = ref({
 const state = useQueueState();
 
 const onSubmit = async () => {
-
     state.setGenerateButton(true);
     state.setFloatButton(true);
     state.setOpenFloat(true);
@@ -107,7 +108,7 @@ const onSubmit = async () => {
         .get(route("treasury.reports.generate.gc"), {
             params: {
                 ...formState.value,
-            }
+            },
         })
         .catch((e) => {
             let message = "please check all the fields";
