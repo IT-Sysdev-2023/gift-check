@@ -19,6 +19,7 @@ use App\Models\TransactionLinediscount;
 use App\Models\TransactionSale;
 use App\Models\Store;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Support\LazyCollection;
 class ReportGenerator
 {
@@ -29,12 +30,14 @@ class ReportGenerator
 
 
 	protected $store;
+	protected $reportId;
 
 	public function __construct()
 	{
-
+		$this->reportId = now()->toImmutable()->toISOString();
 		$this->progress = [
 			'store' => '',
+			'name' => '',
 			'progress' => [
 				'currentRow' => 0,
 				'totalRow' => 0,
@@ -46,13 +49,15 @@ class ReportGenerator
 	{
 		$this->progress['store'] = ReportHelper::storeName($this->store);
 		$this->progress['info'] = $descrip;
-		TreasuryReportEvent::dispatch($user, $this->progress);
+		$this->progress['name'] = 'Gc Report';
+		TreasuryReportEvent::dispatch($user, $this->progress, $this->reportId);
 	}
 	public function dispatchProgressEod($descrip, $user)
 	{
 		$this->progress['info'] = $descrip;
+		$this->progress['name'] = 'Eod Report';
 
-		TreasuryReportEvent::dispatch($user, $this->progress);
+		TreasuryReportEvent::dispatch($user, $this->progress, $this->reportId);
 	}
 	protected function setStore($store)
 	{
@@ -60,6 +65,13 @@ class ReportGenerator
 
 		return $this;
 	}
+	// protected function setReportId()
+	// {
+	// 	$this->reportId = now()->toImmutable()->toISOString();
+
+	// 	return $this;
+	// }
+
 
 	protected function setDateOfTransactionsEod( $request)
 	{
@@ -217,7 +229,7 @@ class ReportGenerator
 
 	protected function hasEodRecords(User $user)
 	{
-		$this->dispatchProgressEod(ReportHelper::CHECKING_RECORDS, $user);
+		// $this->dispatchProgressEod(ReportHelper::CHECKING_RECORDS, $user);
 		if ($this->isDateRange) {
 			$query = InstitutEod::whereBetween('ieod_date', $this->transactionDate);
 		} else {

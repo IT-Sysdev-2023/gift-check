@@ -33,7 +33,10 @@
                     <a-range-picker v-model:value="formState.date" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-                    <a-button type="primary" html-type="submit"
+                    <a-button
+                        type="primary"
+                        html-type="submit"
+                        :loading="state.isGenerateVisible"
                         >Generate</a-button
                     >
                 </a-form-item>
@@ -49,6 +52,7 @@ import { PageWithSharedProps } from "@/types/index";
 import { usePage } from "@inertiajs/vue3";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { notification } from "ant-design-vue";
+import { useQueueState } from "@/stores/queue-state";
 
 const page = usePage<PageWithSharedProps>().props;
 defineProps<{
@@ -61,43 +65,37 @@ defineProps<{
 //     store: string;
 //     date: Dayjs;
 // }
-const loadingButton = ref<boolean>(false);
-const loadingProgress = ref<boolean>(false);
-
-
 const formState = ref({
     transactionDate: "",
     date: null,
 });
 
+const state = useQueueState();
+
 const onSubmit = async () => {
-    loadingButton.value = true;
-    axios
+    state.setGenerateButton(true);
+    state.setFloatButton(true);
+    state.setOpenFloat(true);
+
+    await axios
         .get(route("treasury.reports.generate.eod"), {
             params: { ...formState.value },
         })
-        .then( (e) => {
-            console.log(e, 'sdsd');
-            // loadingProgress.value = true;
-
-        })
         .catch((e) => {
-            console.log(e);
-            let message = 'please check all the fields';
-            if(e.status === 404){
-                message = 'there was no transaction on this selected date!';
+            let message = "please check all the fields";
+            if (e.status === 404) {
+                message = "there was no transaction on this selected date!";
             }
             notification.error({
                 message: "Error",
-                description:
-                    `Something Went wrong,  ${message}`,
+                description: `Something Went wrong,  ${message}`,
             });
         });
 };
 
-onBeforeUnmount(() => {
-    leaveChannel();
-});
+// onBeforeUnmount(() => {
+//     leaveChannel();
+// });
 
 const leaveChannel = () => {
     window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);

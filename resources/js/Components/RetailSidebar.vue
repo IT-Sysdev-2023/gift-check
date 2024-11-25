@@ -39,7 +39,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item @click="() => $inertia.get(route('retial.'))" key="GCVerification">GC Verification</a-menu-item>
             <a-menu-item key="GCTransfer">GC Transfer</a-menu-item>
             <a-menu-item key="StoreEOD">Store EOD</a-menu-item>
-            <a-menu-item key="LostGC">Lost GC</a-menu-item>
+            <a-menu-item key="LostGC" @click="()=> $inertia.get(route('retail.lostGc'))">Lost GC</a-menu-item>
             <a-menu-item key="SupplierGC">Supplier GC</a-menu-item>
         </a-sub-menu>
 
@@ -109,7 +109,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item @click="() => $inertia.get(route('retail.verification.index'))" key="GCVerification">GC Verification</a-menu-item>
             <a-menu-item key="GCTransfer">GC Transfer</a-menu-item>
             <a-menu-item key="StoreEOD">Store EOD</a-menu-item>
-            <a-menu-item key="LostGC">Lost GC</a-menu-item>
+            <a-menu-item key="LostGC" @click="()=> $inertia.get(route('retail.lostGc'))">Lost GC</a-menu-item>
             <a-menu-item key="SupplierGC">Supplier GC</a-menu-item>
         </a-sub-menu>
 

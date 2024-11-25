@@ -8,17 +8,20 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use App\DashboardRoutesTrait;
 class ExportHandler extends FileHandler
 {
-
+    use DashboardRoutesTrait;
     private $filename;
     private string $fullPath;
     public function __construct()
     {
         parent::__construct();
     }
-    public function setFolder(string $folder){
-        $this->folderName = $folder;
+
+    public function setFolder(string $folder)
+    {
+        $this->folderName = Str::finish($folder, '/');
         return $this;
     }
     public function setFileName($id, $identifier)
@@ -26,6 +29,12 @@ class ExportHandler extends FileHandler
         $date = now()->format('Y-m-d-His');
         $this->filename = "{$id}-{$identifier}-" . $date;
 
+        return $this;
+    }
+
+    public function setSubfolderAsUsertype(int $userType)
+    {
+        $this->folderName = Str::finish($this->folderName . $this->roleDashboardRoutes[$userType], '/');
         return $this;
     }
 
@@ -44,7 +53,8 @@ class ExportHandler extends FileHandler
         return $this;
     }
 
-    public function deleteFileIn($date){
+    public function deleteFileIn($date)
+    {
         DeleteFile::dispatch($this->fullPath)->delay($date);
     }
 

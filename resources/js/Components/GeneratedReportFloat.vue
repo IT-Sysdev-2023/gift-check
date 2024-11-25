@@ -1,93 +1,120 @@
 <template>
-    <a-float-button-group 
+    <a-float-button-group
+        v-if="state.isFloatButtonVisible"
         trigger="click"
         :style="{ right: '24px' }"
-        v-model:open="openGeneratedReport"
+        v-model:open="state.isFloatOpen"
     >
+        <!-- YOURE VISITING THIS PAGE.., THIS MEANS YOU HAVE REACH THE LEVEL OF A SENIOR PROGRAMMER -->
 
-    <!-- YOURE VISITING THIS PAGE.., THIS MEANS YOU HAVE REACH THE LEVEL OF A SENIOR PROGRAMMER LOL -->
-     
         <template #icon>
             <a-badge dot :offset="[0, -12]">
                 <ExclamationCircleOutlined style="font-size: 20px" />
             </a-badge>
         </template>
-        <a-card class="card-admin-style" style="height: 250px;">
+        <a-card class="card-admin-style" style="height: 250px">
             <template #title>
                 <span>Queue Reports</span>
             </template>
-            <a-space direction="vertical" style="width: 100%">
-                <a-card>
-                    <span>Generating Report, pls wait...</span>
-                    <div>
-                        <a-progress
-                            :stroke-color="{
-                                '0%': '#108ee9',
-                                '100%': '#87d068',
-                            }"
-                            :percent="items.percentage"
-                        />
-                    </div>
-                    <div class="flex justify-between">
-                        <a-button type="primary" size="small" @click="fileLocation" :disabled="items.percentage !== 100">
-                            <template #icon>
-                                <FolderOutlined />
-                            </template>
-                            Open
-                        </a-button>
-
+            <div style="height: 200px; overflow-y: auto; padding-right: 8px">
+                <a-space
+                    direction="vertical"
+                    style="width: 100%"
+                    class="flex; flex-col-reverse"
+                >
+                    <a-skeleton
+                        :loading="Object.keys(reportProgress).length === 0"
+                    />
+                    <a-card
+                        v-for="(progress, reportId) in reportProgress"
+                        :key="reportId"
+                    >
                         <span
-                            >{{ items.data.store }} -
-                            {{ items.data.info }}</span
+                            >Generating {{ progress.data.name }}, pls
+                            wait...</span
                         >
-                    </div>
-                </a-card>
-            </a-space>
+                        <div>
+                            <a-progress
+                                :stroke-color="{
+                                    '0%': '#108ee9',
+                                    '100%': '#87d068',
+                                }"
+                                :percent="progress.percentage"
+                            />
+                        </div>
+                        <div class="flex justify-between">
+                            <a-button
+                                type="primary"
+                                size="small"
+                                @click="fileLocation"
+                                :disabled="progress.percentage !== 100"
+                            >
+                                <template #icon>
+                                    <FolderOutlined />
+                                </template>
+                                Locate
+                            </a-button>
+
+                            <span
+                                >{{ progress.data.store }} -
+                                {{ progress.data.info }}</span
+                            >
+                        </div>
+                    </a-card>
+                </a-space>
+            </div>
         </a-card>
     </a-float-button-group>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { PageWithSharedProps } from "@/types/index";
+import { useQueueState } from "@/stores/queue-state";
 
 const page = usePage<PageWithSharedProps>().props;
 
-const openGeneratedReport = ref(false);
-const openFloat = ref(false);
-const items = ref<{
+interface ProgressData {
+    currentRow: number;
+    name: string;
+    totalRow: number;
+    store: string;
+    info: string;
+}
+
+interface ReportProgress {
+    reportType: string;
     percentage: number;
-    data: {
-        active: number;
-        store: string;
-        isDone: boolean;
-        info: string;
-    };
-}>({
-    percentage: 0,
-    data: {
-        active: 0,
-        store: "",
-        isDone: false,
-        info: "Loading Please wait!",
-    },
-});
+    data: ProgressData;
+}
+
+const reportProgress = reactive<Record<string, ReportProgress>>({});
+const state = useQueueState();
 
 onMounted(() => {
     window.Echo.private(`treasury-report.${page.auth.user.user_id}`).listen(
         "TreasuryReportEvent",
         (e) => {
-            openFloat.value = true;
-            openGeneratedReport.value = true;
-            items.value = e;
+            state.setGenerateButton(false);
+            reportProgress[e.reportId] = {
+                reportType: e.reportType,
+                percentage: e.percentage,
+                data: e.data,
+            };
         }
     );
 });
-
 const fileLocation = () => {
-    router.visit(route('treasury.reports.generatedReports'));
-}
+    if (
+        Object.values(reportProgress).every(
+            (report) => report.percentage === 100
+        )
+    ) {
+        state.setFloatButton(false);
+    }
+    router.visit(route("treasury.reports.generatedReports"));
+};
 </script>
 
 <style lang="scss" scoped></style>

@@ -49,13 +49,15 @@
                     <a-range-picker v-model:value="formState.date" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-                    <a-button type="primary" html-type="submit"
+                    <a-button
+                        type="primary"
+                        html-type="submit"
+                        :loading="state.isGenerateVisible"
                         >Generate</a-button
                     >
                 </a-form-item>
             </a-form>
         </a-card>
-       
     </AuthenticatedLayout>
 </template>
 
@@ -68,6 +70,7 @@ import { PageWithSharedProps } from "@/types/index";
 import { usePage } from "@inertiajs/vue3";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { notification } from "ant-design-vue";
+import { useQueueState } from "@/stores/queue-state";
 
 const page = usePage<PageWithSharedProps>().props;
 defineProps<{
@@ -78,21 +81,10 @@ defineProps<{
     }[];
 }>();
 
-// interface FormState {
-//     reportType: string[];
-//     transactionDate: string;
-//     store: string;
-//     date: Dayjs;
-// }
-
-const loadingProgress = ref<boolean>(false);
-
-
 // let eventReceived; // Holds the resolve function of the promise
 // const waitForEvent = new Promise((resolve) => {
 //     eventReceived = resolve; // Set the resolve function for later
 // });
-
 
 const handleStore = (val) => {
     formState.value.store = val;
@@ -104,15 +96,19 @@ const formState = ref({
     store: null,
     date: null,
 });
+
+const state = useQueueState();
+
 const onSubmit = async () => {
+    state.setGenerateButton(true);
+    state.setFloatButton(true);
+    state.setOpenFloat(true);
+
     await axios
         .get(route("treasury.reports.generate.gc"), {
             params: {
                 ...formState.value,
-            }
-        })
-        .then(() => {
-            loadingProgress.value = true;
+            },
         })
         .catch((e) => {
             let message = "please check all the fields";
@@ -126,9 +122,9 @@ const onSubmit = async () => {
         });
 };
 
-onBeforeUnmount(() => {
-    leaveChannel();
-});
+// onBeforeUnmount(() => {
+//     leaveChannel();
+// });
 
 const leaveChannel = () => {
     window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);

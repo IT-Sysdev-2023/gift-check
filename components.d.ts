@@ -111,7 +111,6 @@ declare module 'vue' {
     AreaChartOutlined: typeof import('@ant-design/icons-vue')['AreaChartOutlined']
     AResult: typeof import('ant-design-vue/es')['Result']
     ARow: typeof import('ant-design-vue/es')['Row']
-    ArrowDownOutlined: typeof import('@ant-design/icons-vue')['ArrowDownOutlined']
     ArrowLeftOutlined: typeof import('@ant-design/icons-vue')['ArrowLeftOutlined']
     ArrowsAltOutlined: typeof import('@ant-design/icons-vue')['ArrowsAltOutlined']
     ArrowUpOutlined: typeof import('@ant-design/icons-vue')['ArrowUpOutlined']
@@ -175,7 +174,6 @@ declare module 'vue' {
     ClearOutlined: typeof import('@ant-design/icons-vue')['ClearOutlined']
     ClockCircleOutlined: typeof import('@ant-design/icons-vue')['ClockCircleOutlined']
     CloseCircleFilled: typeof import('@ant-design/icons-vue')['CloseCircleFilled']
-    CloseCircleOutlined: typeof import('@ant-design/icons-vue')['CloseCircleOutlined']
     CloseOutlined: typeof import('@ant-design/icons-vue')['CloseOutlined']
     CloudDownloadOutlined: typeof import('@ant-design/icons-vue')['CloudDownloadOutlined']
     CloudUploadOutlined: typeof import('@ant-design/icons-vue')['CloudUploadOutlined']
@@ -185,16 +183,8 @@ declare module 'vue' {
     ColonadeMandaue: typeof import('./resources/js/Pages/StoreAccounting/ColonadeMandaue.vue')['default']
     ColonadeMandauePosTransaction: typeof import('./resources/js/Pages/StoreAccounting/ColonadeMandauePosTransaction.vue')['default']
     ConfirmPassword: typeof import('./resources/js/Pages/Auth/ConfirmPassword.vue')['default']
-<<<<<<< HEAD
-=======
     ContainerOutlined: typeof import('@ant-design/icons-vue')['ContainerOutlined']
     copy: typeof import('./resources/js/Pages/Treasury/Adjustment/BudgetAdjustment copy.vue')['default']
-<<<<<<< HEAD
-=======
-=======
->>>>>>> gamale
->>>>>>> 8407a9780994198b3f3f2e4a653167f1cdf8c7e6
->>>>>>> 04bfbcd2c003d6bcba9c5e158c8294ba59cdc886
     CopyOutlined: typeof import('@ant-design/icons-vue')['CopyOutlined']
     CouponTransaction: typeof import('./resources/js/Pages/Treasury/Coupon/CouponTransaction.vue')['default']
     CreateEntryGc: typeof import('./resources/js/Pages/Retail/Modals/CreateEntryGc.vue')['default']
@@ -211,7 +201,6 @@ declare module 'vue' {
     DatabaseOutlined: typeof import('@ant-design/icons-vue')['DatabaseOutlined']
     DeleteUserForm: typeof import('./resources/js/Pages/Profile/Partials/DeleteUserForm.vue')['default']
     DenominationSetup: typeof import('./resources/js/Pages/Admin/Masterfile/DenominationSetup.vue')['default']
-    DeploymentUnitOutlined: typeof import('@ant-design/icons-vue')['DeploymentUnitOutlined']
     Description: typeof import('./resources/js/Pages/Treasury/Description.vue')['default']
     DollarCircleOutlined: typeof import('@ant-design/icons-vue')['DollarCircleOutlined']
     DollarOutlined: typeof import('@ant-design/icons-vue')['DollarOutlined']
@@ -230,7 +219,6 @@ declare module 'vue' {
     Errors: typeof import('./resources/js/Pages/Finance/Cards/Errors.vue')['default']
     ExclamationCircleFilled: typeof import('@ant-design/icons-vue')['ExclamationCircleFilled']
     ExclamationCircleOutlined: typeof import('@ant-design/icons-vue')['ExclamationCircleOutlined']
-    ExclamationOutlined: typeof import('@ant-design/icons-vue')['ExclamationOutlined']
     ExportOutlined: typeof import('@ant-design/icons-vue')['ExportOutlined']
     EyeFilled: typeof import('@ant-design/icons-vue')['EyeFilled']
     EyeOutlined: typeof import('@ant-design/icons-vue')['EyeOutlined']
@@ -242,7 +230,6 @@ declare module 'vue' {
     FilePdfOutlined: typeof import('@ant-design/icons-vue')['FilePdfOutlined']
     FileProtectOutlined: typeof import('@ant-design/icons-vue')['FileProtectOutlined']
     FileSearchOutlined: typeof import('@ant-design/icons-vue')['FileSearchOutlined']
-    FileSyncOutlined: typeof import('@ant-design/icons-vue')['FileSyncOutlined']
     FileTextOutlined: typeof import('@ant-design/icons-vue')['FileTextOutlined']
     FinanceDashboard: typeof import('./resources/js/Pages/Finance/FinanceDashboard.vue')['default']
     FinanceSideBar: typeof import('./resources/js/Components/FinanceSideBar.vue')['default']
@@ -290,19 +277,13 @@ declare module 'vue' {
     LineChartOutlined: typeof import('@ant-design/icons-vue')['LineChartOutlined']
     Link: typeof import('@inertiajs/vue3')['Link']
     ListOfEod: typeof import('./resources/js/Pages/Eod/ListOfEod.vue')['default']
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 04bfbcd2c003d6bcba9c5e158c8294ba59cdc886
     ListOfGeneratedReports: typeof import('./resources/js/Pages/Treasury/Reports/ListOfGeneratedReports.vue')['default']
     LoadingOutlined: typeof import('@ant-design/icons-vue')['LoadingOutlined']
->>>>>>> 8407a9780994198b3f3f2e4a653167f1cdf8c7e6
     LockOutlined: typeof import('@ant-design/icons-vue')['LockOutlined']
     Login: typeof import('./resources/js/Pages/Login.vue')['default']
     LoginX: typeof import('./resources/js/Pages/Auth/LoginX.vue')['default']
     LogoutOutlined: typeof import('@ant-design/icons-vue')['LogoutOutlined']
+    LostGc: typeof import('./resources/js/Pages/Retail/LostGc.vue')['default']
     ManagerKeyModal: typeof import('./resources/js/Pages/Manager/ManagerKeyModal.vue')['default']
     ManageSupplier: typeof import('./resources/js/Pages/Marketing/ManageSupplier.vue')['default']
     MarketingDashboard: typeof import('./resources/js/Pages/Marketing/MarketingDashboard.vue')['default']
@@ -342,8 +323,6 @@ declare module 'vue' {
     PendingRequestTreasury: typeof import('./resources/js/Pages/Treasury/Dashboard/PendingRequestTreasury.vue')['default']
     PicLeftOutlined: typeof import('@ant-design/icons-vue')['PicLeftOutlined']
     PicRightOutlined: typeof import('@ant-design/icons-vue')['PicRightOutlined']
-    PictureOutlined: typeof import('@ant-design/icons-vue')['PictureOutlined']
-    PieChartOutlined: typeof import('@ant-design/icons-vue')['PieChartOutlined']
     PlazaMarcela: typeof import('./resources/js/Pages/StoreAccounting/PlazaMarcela.vue')['default']
     PlazaMarcelaPosTransaction: typeof import('./resources/js/Pages/StoreAccounting/PlazaMarcelaPosTransaction.vue')['default']
     PlusOutlined: typeof import('@ant-design/icons-vue')['PlusOutlined']
@@ -424,7 +403,6 @@ declare module 'vue' {
     SearchEmployee: typeof import('./resources/js/Pages/SearchEmployee.vue')['default']
     SearchOutlined: typeof import('@ant-design/icons-vue')['SearchOutlined']
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
-    SelectOutlined: typeof import('@ant-design/icons-vue')['SelectOutlined']
     SendOutlined: typeof import('@ant-design/icons-vue')['SendOutlined']
     SettingOutlined: typeof import('@ant-design/icons-vue')['SettingOutlined']
     SetupApproval: typeof import('./resources/js/Pages/Custodian/SetupApproval.vue')['default']
@@ -511,7 +489,6 @@ declare module 'vue' {
     VerifiedDetailsModal: typeof import('./resources/js/Pages/Iad/Modals/VerifiedDetailsModal.vue')['default']
     VerifiedGc: typeof import('./resources/js/Pages/Eod/VerifiedGc.vue')['default']
     VerifiedGCReport: typeof import('./resources/js/Pages/StoreAccounting/VerifiedGCReport.vue')['default']
-    VerifiedOutlined: typeof import('@ant-design/icons-vue')['VerifiedOutlined']
     VerifiedReports: typeof import('./resources/js/Pages/Iad/Excel/VerifiedReports.vue')['default']
     VerifiedSoldUsedGc: typeof import('./resources/js/Pages/Iad/VerifiedSoldUsedGc.vue')['default']
     VerifiedStore: typeof import('./resources/js/Pages/StoreAccounting/VerifiedStore.vue')['default']
