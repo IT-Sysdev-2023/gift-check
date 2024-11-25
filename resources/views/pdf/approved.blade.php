@@ -20,7 +20,6 @@
             padding: 10px;
             text-align: left;
             font-size: x-small;
-            font-weight: bold
         }
         .center-text {
             text-align: center; 
