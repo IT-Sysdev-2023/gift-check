@@ -59,33 +59,26 @@ class ReportService
     private function perCustomerRecord($date)
     {
         $data = SpecialExternalGcrequestEmpAssign::selectRaw("
-        COALESCE(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom), 0) AS totDenom,
-        COALESCE(COUNT(special_external_gcrequest_emp_assign.spexgcemp_barcode), 0) AS totcnt,
-        special_external_gcrequest.spexgc_num,
-        special_external_gcrequest.spexgc_datereq as datereq,
-        approved_request.reqap_date as daterel,
-        special_external_customer.spcus_acctname
-        ")
-            ->where([
-                ['approved_request.reqap_approvedtype', 'Special External GC Approved'],
-                ['special_external_gcrequest_emp_assign.spexgc_status', '<>', 'inactive']
-            ])
-            ->whereBetween('approved_request.reqap_date', [$date[0], $date[1]])
-            ->orderBy('special_external_gcrequest.spexgc_datereq')
-            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
-
-            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+                    COALESCE(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom), 0) AS totDenom,
+                    COALESCE(COUNT(special_external_gcrequest_emp_assign.spexgcemp_barcode), 0) AS totcnt,
+                    special_external_gcrequest.spexgc_num,
+                    special_external_gcrequest.spexgc_datereq as datereq,
+                    approved_request.reqap_date as daterel,
+                    special_external_customer.spcus_acctname
+            ")
+            ->joinDataAndGetOnTables()
+            ->specialApproved($date)
             ->groupBy(
                 'special_external_gcrequest.spexgc_datereq',
                 'special_external_gcrequest.spexgc_num',
                 'approved_request.reqap_date',
                 'special_external_customer.spcus_acctname',
-            )->get();
+            )
+            ->orderBy('special_external_gcrequest.spexgc_datereq')
+            ->cursor();
 
-        
         return $data->map(function ($item) {
-           
+
             $item->datereq = Date::parse($item->datereq)->toFormattedDateString();
             $item->daterel = Date::parse($item->daterel)->toFormattedDateString();
             $item->totDenom = NumberHelper::currency($item->totDenom);
@@ -96,30 +89,26 @@ class ReportService
 
     public function perBarcode($date)
     {
-        $data = SpecialExternalGcrequestEmpAssign::selectRaw("
-        special_external_gcrequest_emp_assign.spexgcemp_denom,
-        special_external_gcrequest_emp_assign.spexgcemp_fname,
-        special_external_gcrequest_emp_assign.spexgcemp_lname,
-        special_external_gcrequest_emp_assign.spexgcemp_mname,
-        special_external_gcrequest_emp_assign.voucher,
-        special_external_gcrequest_emp_assign.spexgcemp_extname,
-        special_external_gcrequest_emp_assign.spexgcemp_barcode,
+        $data = SpecialExternalGcrequestEmpAssign::select(
+            'special_external_gcrequest_emp_assign.spexgcemp_denom',
+            'special_external_gcrequest_emp_assign.spexgcemp_fname',
+            'special_external_gcrequest_emp_assign.spexgcemp_lname',
+            'special_external_gcrequest_emp_assign.spexgcemp_mname',
+            'special_external_gcrequest_emp_assign.voucher',
+            'special_external_gcrequest_emp_assign.spexgcemp_extname',
+            'special_external_gcrequest_emp_assign.spexgcemp_barcode',
 
-        special_external_gcrequest.spexgc_num,    
-        DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') as datereq,
-        DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') as daterel
-        ")
-            ->where([
-                ['approved_request.reqap_approvedtype', 'Special External GC Approved'],
-                ['special_external_gcrequest_emp_assign.spexgc_status', '<>', 'inactive'],
-            ])->whereBetween('approved_request.reqap_date', [$date[0], $date[1]])
-            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-            ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
-            // ->orderBy(' special_external_gcrequest_emp_assign.spexgcemp_barcode')
-            ->get();
+            'special_external_gcrequest.spexgc_num',
+            'special_external_gcrequest.spexgc_datereq as datereq',
+            'approved_request.reqap_date as daterel'
+        )
+            ->joinDataBarTables()
+            ->specialApproved($date)
+            ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode')
+            ->cursor();
 
         $count = 1;
-        return $data->map(function ($item)  use (&$count) {
+        return $data->map(function ($item) use (&$count) {
             $item->count = $count++;
             $item->datereq = Date::parse($item->datereq)->toFormattedDateString();
             $item->daterel = Date::parse($item->daterel)->toFormattedDateString();
