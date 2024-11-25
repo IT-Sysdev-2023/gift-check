@@ -15,18 +15,21 @@ class allDuplicateExcel implements WithMultipleSheets
 
     public function sheets(): array
     {
+        // dd($this->allDuplicateData);
         $fileName = $this->allDuplicateData['data'];
+        // dd($fileName);
 
-        $filePath = "C:/Users/it personnel/Downloads/{$fileName}";
+        // $filePath = "C:/Users/it personnel/Downloads/{$fileName}";
 
-        if (!file_exists($filePath)) {
-            throw new \Exception("File not found: {$filePath}");
-        }
+        // if (!file_exists($filePath)) {
+        //     throw new \Exception("File not found: {$filePath}");
+        // }
 
-        $fileContents = file_get_contents($filePath);
+        // $fileContents = file_get_contents($fileName);
 
-        $processedData = explode(PHP_EOL, $fileContents);
+        $processedData = explode(PHP_EOL, $fileName);
         $processedData = array_map('str_getcsv', $processedData);
+        // dd($processedData);
         return [
             new tagbilaranExcel($processedData),
             new talibonExcel($processedData),

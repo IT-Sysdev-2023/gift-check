@@ -21,14 +21,8 @@
                             </span>
                         </template>
                         <a-card style="margin-top: 5px;">
-                            <span style="font-weight: bold; margin-left: 3%;">
-                                <a-button @click="generatePdf" style="background-color:#b22222; color:white ">
-                                    <FilePdfOutlined />
-                                    Generate PDF
-                                </a-button>
-                            </span>
 
-                            <span style="font-weight: bold; margin-left: 46.4%;">
+                            <span style="font-weight: bold; margin-left: 60%;">
                                 Search:
                                 <a-input allow-clear v-model:value="pdfPerCustomerSearch"
                                     placeholder="Input search here!"
@@ -58,6 +52,14 @@
                             </div>
                             <pagination :datarecords="records.pdfPerCustomer" class="mt-5" />
                         </a-card>
+                        <div style="margin-left: 80%;">
+                            <span style="font-weight: bold; margin-left: 3%;">
+                                <a-button @click="generatePdf" style="background-color:#b22222; color:white ">
+                                    <FilePdfOutlined />
+                                    Generate PDF
+                                </a-button>
+                            </span>
+                        </div>
                     </a-tab-pane>
                     <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
@@ -71,15 +73,7 @@
                             </span>
                         </template>
                         <a-card style="margin-top: 5px;">
-
-
-                            <span style="font-weight: bold; margin-left: 3%;">
-                                <a-button @click="generatePdf" style="background-color:#b22222; color:white ">
-                                    <FilePdfOutlined />
-                                    Generate PDF
-                                </a-button>
-                            </span>
-                            <span style="font-weight: bold; margin-left: 46.4%;">
+                            <span style="font-weight: bold; margin-left: 60%;">
                                 Search:
                                 <a-input allow-clear v-model:value="pdfPerBarcodeSearch"
                                     placeholder="Input search here!"
@@ -108,8 +102,15 @@
                                 </a-table>
                             </div>
                             <pagination :datarecords="records.pdfPerBarcode" class="mt-5" />
-
                         </a-card>
+                        <div style="margin-left: 80%;">
+                            <span style="font-weight: bold; margin-left: 3%;">
+                                <a-button @click="generatePdf" style="background-color:#b22222; color:white ">
+                                    <FilePdfOutlined />
+                                    Generate PDF
+                                </a-button>
+                            </span>
+                        </div>
                     </a-tab-pane>
                     <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
@@ -124,21 +125,7 @@
                         </template>
                         <a-card style="margin-top: 5px;">
 
-
-                            <!-- <span style="font-weight: bold;">
-                                <a-button @click="generatePdf" style="background-color:#b22222; color:white ">
-                                    <FilePdfOutlined />
-                                    Generate PDF
-                                </a-button>
-                            </span> -->
-
-                            <span style="font-weight: bold; margin-left: 3%;">
-                                <a-button @click="generateExcel" style="background-color:green; color:white ">
-                                    <FileExcelOutlined />
-                                    Generate EXCEL
-                                </a-button>
-                            </span>
-                            <span style="font-weight: bold; margin-left: 45%;">
+                            <span style="font-weight: bold; margin-left: 60%;">
                                 Search:
                                 <a-input allow-clear v-model:value="spgcApprovedSearchPerCustomer"
                                     placeholder="Input search here!"
@@ -170,6 +157,12 @@
                             <pagination :datarecords="records.dataCustomer" class="mt-5" />
 
                         </a-card>
+                        <span style="font-weight: bold; margin-left: 80%;">
+                            <a-button @click="generateExcel" style="background-color:green; color:white ">
+                                <FileExcelOutlined />
+                                Generate EXCEL
+                            </a-button>
+                        </span>
                     </a-tab-pane>
                     <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
@@ -183,19 +176,7 @@
                             </span>
                         </template>
                         <a-card style="margin-top: 5px;">
-                            <!-- <span style="font-weight: bold;">
-                                <a-button @click="generatePdf" style="background-color:#b22222; color:white ">
-                                    <FilePdfOutlined />
-                                    Generate PDF
-                                </a-button>
-                            </span> -->
-                            <span style="font-weight: bold; margin-left: 3%;">
-                                <a-button @click="generateExcel" style="background-color:green; color:white ">
-                                    <FileExcelOutlined />
-                                    Generate EXCEL
-                                </a-button>
-                            </span>
-                            <span style="font-weight: bold; margin-left: 45%;">
+                            <span style="font-weight: bold; margin-left: 60%;">
                                 Search:
                                 <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
                                     style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
@@ -224,9 +205,13 @@
                                 </a-table>
                             </div>
                             <pagination :datarecords="records.dataBarcode" class="mt-5" />
-
-
                         </a-card>
+                        <span style="font-weight: bold; margin-left: 80%;">
+                            <a-button @click="generateExcel" style="background-color:green; color:white ">
+                                <FileExcelOutlined />
+                                Generate EXCEL
+                            </a-button>
+                        </span>
                     </a-tab-pane>
                 </a-tabs>
             </a-card>

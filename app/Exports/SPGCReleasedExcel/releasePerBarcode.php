@@ -109,16 +109,17 @@ class releasePerBarcode implements FromCollection, ShouldAutoSize, WithHeadings,
             ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
             ->join('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
             ->where('approved_request.reqap_approvedtype', 'special external releasing')
-            ->whereBetween('approved_request.reqap_date', [$this->perBarcodeData['startDate'], $this->perBarcodeData['endDate']])
+            ->whereRaw("DATE_FORMAT(approved_request.reqap_date,'%Y-%m-%d') >= ?", [$this->perBarcodeData['startDate']])
+            ->whereRaw("DATE_FORMAT(approved_request.reqap_date,'%Y-%m-%d') <= ?", [$this->perBarcodeData['endDate']])
             ->select(
-                DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%M %d %Y') as dateRequest0"),
+                DB::raw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') as dateRequest0"),
                 'special_external_gcrequest_emp_assign.spexgcemp_barcode',
                 'special_external_gcrequest_emp_assign.spexgcemp_denom',
                 DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname,
                  ' ', special_external_gcrequest_emp_assign.spexgcemp_mname,
                  ' ', special_external_gcrequest_emp_assign.spexgcemp_lname ) as customer"),
                 'special_external_gcrequest.spexgc_num',
-                DB::raw("DATE_FORMAT(approved_request.reqap_date, '%M %d %Y') as dateRequest1")
+                DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') as dateRequest1")
             )
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode')
             ->get();

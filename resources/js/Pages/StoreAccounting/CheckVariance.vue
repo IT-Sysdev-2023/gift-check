@@ -11,12 +11,8 @@
                             Tagbilaran
                         </span>
                     </template>
-                    <a-button style="background-color: green; color:white; margin-top: 10px;"
-                        @click="SelectCustomerName">
-                        <FileExcelOutlined />
-                        Generate Excel
-                    </a-button>
-                    <span style="margin-left: 30%; font-weight: bold;">
+
+                    <span style="margin-left: 50%; font-weight: bold;">
                         Search:
                         <a-input allow-clear v-model:value="tagbilaranSearch" placeholder="Input search here!"
                             style="width: 40%; border: 1px solid #1e90ff;" />
@@ -39,12 +35,12 @@
                             Talibon
                         </span>
                     </template>
-                    <a-button style="background-color: green; color:white; margin-top: 10px;"
+                    <!-- <a-button style="background-color: green; color:white; margin-top: 10px;"
                         @click="SelectCustomerName">
                         <FileExcelOutlined />
                         Generate Excel
-                    </a-button>
-                    <span style="margin-left: 30%; font-weight: bold;">
+                    </a-button> -->
+                    <span style="margin-left: 50%; font-weight: bold;">
                         Search:
                         <a-input allow-clear v-model:value="talibonSearch" placeholder="Input search here!"
                             style="width: 40%; border: 1px solid #1e90ff;" />
@@ -60,6 +56,10 @@
                 </a-tab-pane>
             </a-tabs>
         </a-card>
+        <a-button style="background-color: green; color:white; margin-top: 10px; margin-left: 85%;" @click="SelectCustomerName">
+            <FileExcelOutlined />
+            Generate Excel
+        </a-button>
 
         <a-card style="width: 40%; position: absolute; top:25px;">
             <span style="margin-left: 35%; font-weight: bold;">

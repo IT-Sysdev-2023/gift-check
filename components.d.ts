@@ -185,16 +185,8 @@ declare module 'vue' {
     ColonadeMandaue: typeof import('./resources/js/Pages/StoreAccounting/ColonadeMandaue.vue')['default']
     ColonadeMandauePosTransaction: typeof import('./resources/js/Pages/StoreAccounting/ColonadeMandauePosTransaction.vue')['default']
     ConfirmPassword: typeof import('./resources/js/Pages/Auth/ConfirmPassword.vue')['default']
-<<<<<<< HEAD
-=======
     ContainerOutlined: typeof import('@ant-design/icons-vue')['ContainerOutlined']
     copy: typeof import('./resources/js/Pages/Treasury/Adjustment/BudgetAdjustment copy.vue')['default']
-<<<<<<< HEAD
-=======
-=======
->>>>>>> gamale
->>>>>>> 8407a9780994198b3f3f2e4a653167f1cdf8c7e6
->>>>>>> 04bfbcd2c003d6bcba9c5e158c8294ba59cdc886
     CopyOutlined: typeof import('@ant-design/icons-vue')['CopyOutlined']
     CouponTransaction: typeof import('./resources/js/Pages/Treasury/Coupon/CouponTransaction.vue')['default']
     CreateEntryGc: typeof import('./resources/js/Pages/Retail/Modals/CreateEntryGc.vue')['default']
@@ -290,15 +282,8 @@ declare module 'vue' {
     LineChartOutlined: typeof import('@ant-design/icons-vue')['LineChartOutlined']
     Link: typeof import('@inertiajs/vue3')['Link']
     ListOfEod: typeof import('./resources/js/Pages/Eod/ListOfEod.vue')['default']
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 04bfbcd2c003d6bcba9c5e158c8294ba59cdc886
     ListOfGeneratedReports: typeof import('./resources/js/Pages/Treasury/Reports/ListOfGeneratedReports.vue')['default']
     LoadingOutlined: typeof import('@ant-design/icons-vue')['LoadingOutlined']
->>>>>>> 8407a9780994198b3f3f2e4a653167f1cdf8c7e6
     LockOutlined: typeof import('@ant-design/icons-vue')['LockOutlined']
     Login: typeof import('./resources/js/Pages/Login.vue')['default']
     LoginX: typeof import('./resources/js/Pages/Auth/LoginX.vue')['default']
