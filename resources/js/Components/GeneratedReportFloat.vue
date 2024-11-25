@@ -14,7 +14,7 @@
         </template>
         <a-card class="card-admin-style" style="height: 250px">
             <template #title>
-                <span>Queue Reports{{ reportProgress }}</span>
+                <span>Queue Reports</span>
             </template>
             <div style="height: 200px; overflow-y: auto; padding-right: 8px">
                 <a-space
@@ -145,7 +145,6 @@ onBeforeUnmount(() => {
 });
 const fileLocation = () => {
     isProgressFinish();
-    // router.visit(route("treasury.reports.generatedReports"));
 };
 
 const isProgressFinish = () => {
