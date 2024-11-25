@@ -15,6 +15,7 @@ class ReportGenerator
     protected $progress;
     protected $reportId;
     protected $date;
+    protected $format;
     public function __construct()
     {
 
@@ -31,6 +32,11 @@ class ReportGenerator
     protected function setTransactionDate($date)
     {
         $this->date = $date;
+        return $this;
+    }
+
+    protected function setFormat(string $format){
+        $this->format = $format;
         return $this;
     }
     protected function setTotalRecord()

@@ -16,7 +16,8 @@ class SpgcApprovedMultiExport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            new SpgcApprovedExport($this->transactionDate),
+            new SpgcApprovedPerBarcode($this->transactionDate),
+            new SpgcApprovedPerCustomer($this->transactionDate),
         ];
     }
 }

@@ -53,6 +53,15 @@ class ExportHandler extends FileHandler
         return $this;
     }
 
+    public function exportDocument(string $format, $document)
+    {
+        if ($format === 'pdf') {
+            $this->exportToPdf($document);
+        } else { //excel
+            $this->exportToExcel($document);
+        }
+    }
+
     public function deleteFileIn($date)
     {
         DeleteFile::dispatch($this->fullPath)->delay($date);

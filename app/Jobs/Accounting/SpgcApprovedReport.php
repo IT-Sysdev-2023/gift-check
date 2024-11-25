@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Accounting;
 
+use App\Exports\Accounting\SpgcApprovedMultiExport;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\User;
 use App\Services\Accounting\Reports\ReportGenerator;
@@ -33,22 +34,28 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
      */
     public function handle(): void
     {
-        $pdf = Pdf::loadView('pdf.accountingSpgcApprovedReport', ['data' => $this->handleRecords($this->request['date'])]);
+        if ($this->request['format'] === 'pdf') {
+            $doc = Pdf::loadView('pdf.accountingSpgcApprovedReport', ['data' => $this->handleRecords($this->request['date'])])->output();
+        } else {
+            $doc = new SpgcApprovedMultiExport($this->request['date']);
+        }
 
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
             ->setFileName('SPGC Approved Report-' . $this->user->user_id, $this->request['date'][0] . 'To' . $this->request['date'][1])
-            // ->exportToExcel($this->dataForExcel($request->date));
-            ->exportToPdf($pdf->output());
-
+            ->exportDocument($this->request['format'], $doc);
     }
 
     private function handleRecords($date)
     {
         $record = collect();
 
-        $this->setTransactionDate($date)->setTotalRecord();
+        //initialize
+        $this->setTransactionDate($date)
+            ->setFormat($this->request['format'])
+            ->setTotalRecord();
+
         $record->put('perCustomer', $this->perCustomerRecord($this->user));
         $record->put('perBarcode', $this->perBarcode($this->user));
 
