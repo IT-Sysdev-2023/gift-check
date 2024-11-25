@@ -318,7 +318,7 @@ export default {
             },
             pdfPerCustomer: [
                 {
-                    title: 'Date Requestd',
+                    title: 'Date Requested',
                     dataIndex: 'datereq',
                 },
                 {
@@ -337,7 +337,7 @@ export default {
             ],
             pdfPerBarcode: [
                 {
-                    title: 'Date Request',
+                    title: 'Date Requested',
                     dataIndex: 'datereq'
                 },
                 {

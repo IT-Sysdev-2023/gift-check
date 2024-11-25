@@ -654,6 +654,7 @@ class StoreAccountingController extends Controller
                 ->first();
 
             if ($totals) {
+               
                 // dd($totals);
                 $newData->totalCount = $totals->totalCount ?? 0;
                 // dd($newData->totalCount = $totals->totalCount ?? 0);
