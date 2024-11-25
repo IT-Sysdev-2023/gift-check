@@ -62,20 +62,6 @@ Route::fallback(function () {
 Route::get('kanding', function () {
     return Storage::disk('fad')->files();
 });
-Route::get('kanding-hinuktan', function () {
-    $insti = InstitutPayment::select('insp_id')->where('institut_eodid', '0')->get();
-        if ($insti->isNotEmpty()) {
-            DB::transaction(function () {
-                $eod_num = InstitutEod::orderByDesc('ieod_id')->value('ieod_num');
-
-                $incre = $eod_num ? $eod_num + 1 : 1;
-                dd($incre);
-
-            });
-        }
-});
-
-
 
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::get('employee', [UserDetailsController::class, 'index']);
