@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useQueueState = defineStore("counter", () => {
+export const useQueueState = defineStore("useProgressStore", () => {
     const isGenerateVisible = ref(false);
     const isFloatButtonVisible = ref(false);
     const isFloatOpen = ref(false);
