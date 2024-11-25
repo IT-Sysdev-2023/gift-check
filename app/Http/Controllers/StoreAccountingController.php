@@ -2451,7 +2451,8 @@ class StoreAccountingController extends Controller
 
     public function duplicateExcel(Request $request)
     {
-        // dd($request->toArray());
+
+        // dd($request->all());
 
         return Excel::download(new allDuplicateExcel($request->toArray()), 'Duplicated Barcode Excel.xlsx');
     }

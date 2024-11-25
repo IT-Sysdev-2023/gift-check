@@ -36,7 +36,6 @@ class varianceTalibonExcel implements FromCollection, WithHeadings, WithTitle, S
         ];
 
         foreach ($talibonData as $row) {
-            // Set status based on vs_date and seodtt_transno
             if ($row->vs_date != null && $row->seodtt_transno != null) {
                 $status = "Verified and Use";
             } elseif ($row->vs_date != null) {
@@ -45,10 +44,8 @@ class varianceTalibonExcel implements FromCollection, WithHeadings, WithTitle, S
                 $status = "Not verified / not use";
             }
 
-            // Format date if it's not null
             $date = $row->vs_date ? Carbon::parse($row->vs_date)->format('Y-m-d') : 'N/A';
 
-            // Add data to the formatted array
             $variances2Formatted[] = [
                 'barcode' => $row->spexgcemp_barcode,
                 'denom' => number_format($row->spexgcemp_denom, 2),
@@ -65,7 +62,6 @@ class varianceTalibonExcel implements FromCollection, WithHeadings, WithTitle, S
 
     private function VarianceTalibonData($request)
     {
-        // Database query using the request data (assuming 'customerName' is passed in $request)
         return DB::table('special_external_gcrequest_emp_assign')
             ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
             ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
