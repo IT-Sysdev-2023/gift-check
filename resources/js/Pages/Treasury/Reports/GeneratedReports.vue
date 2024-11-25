@@ -3,7 +3,7 @@
         <Head title="List Of Generated Reports" />
         <a-breadcrumb>
             <a-breadcrumb-item>
-                <Link :href="route('treasury.dashboard')">Home</Link>
+                <Link>Home</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>Generated Reports</a-breadcrumb-item>
         </a-breadcrumb>

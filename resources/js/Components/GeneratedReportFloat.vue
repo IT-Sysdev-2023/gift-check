@@ -152,9 +152,8 @@ const isProgressFinish = () => {
         Object.values(reportProgress).every(
             (report) => report.percentage === 100
         )
-    ) {
+    )
         state.setFloatButton(false);
-    }
 };
 </script>
 

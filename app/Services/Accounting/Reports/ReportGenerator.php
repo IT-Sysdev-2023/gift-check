@@ -14,7 +14,6 @@ class ReportGenerator
 {
     protected $progress;
     protected $reportId;
-
     protected $date;
     public function __construct()
     {

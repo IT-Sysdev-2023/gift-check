@@ -23,4 +23,7 @@ class AccountingReportController extends Controller
     public function spgcReleasedReport(){
 
     }
+    public function generatedReports(Request $request){
+        return $this->reportService->listOfReports($request);
+    }
 }

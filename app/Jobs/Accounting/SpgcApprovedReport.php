@@ -38,7 +38,7 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
-            ->setFileName($this->user->user_id, 1)
+            ->setFileName('SPGC Approved Report-' . $this->user->user_id, $this->request['date'][0] . 'To' . $this->request['date'][1])
             // ->exportToExcel($this->dataForExcel($request->date));
             ->exportToPdf($pdf->output());
 
@@ -66,5 +66,5 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
         ];
     }
 
-    
+
 }
