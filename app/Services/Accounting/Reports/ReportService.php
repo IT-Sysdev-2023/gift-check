@@ -41,29 +41,9 @@ class ReportService
 
     public function listOfReports(Request $request)
     {
-        $getFiles = (new ImportHandler())
-            ->setFolder('Reports')
-            ->getFilesFromDirectory($this->roleDashboardRoutes[$request->user()->usertype]);
-
-
+        $getFiles = (new ImportHandler())->getFileReports($request->user()->usertype);
         return inertia('Treasury/Reports/GeneratedReports', [
-            'files' => collect($getFiles)->transform(function ($item) {
-                $fileInfo = pathinfo($item);
-                $extension = $fileInfo['extension'];
-
-                $timestamp = Str::match('/\d{4}-\d{2}-\d{2}-\d{6}/', $item);
-                $generatedAt = Date::createFromFormat('Y-m-d-His', $timestamp);
-
-                return [
-                    'file' => $item,
-                    'filename' => Str::of(basename($item))->basename('.' . $extension),
-                    'extension' => $extension,
-                    'date' => $generatedAt->toDayDateTimeString(), // for Sorting
-                    'icon' => $extension === 'pdf' ? 'pdf.png' : 'excel.png',
-                    'generatedAt' => $generatedAt->diffForHumans(),
-                    'expiration' => $generatedAt->addDays(2)->diffForHumans(),
-                ];
-            })->sortByDesc('date')->values()
+            'files' => $getFiles
         ]);
     }
 }

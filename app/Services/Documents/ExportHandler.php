@@ -26,7 +26,7 @@ class ExportHandler extends FileHandler
     }
     public function setFileName($id, $identifier)
     {
-        $date = now()->format('Y-m-d-His');
+        $date = now()->timestamp;
         $this->filename = "{$id}-{$identifier}-" . $date;
 
         return $this;

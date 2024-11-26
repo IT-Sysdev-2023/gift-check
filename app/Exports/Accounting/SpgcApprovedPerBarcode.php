@@ -6,8 +6,12 @@ use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SpgcApprovedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle
+class SpgcApprovedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles
 {
 
     public function __construct(protected array $transactionDate)
@@ -34,6 +38,18 @@ class SpgcApprovedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode');
 
     }
+    public function map($data): array
+    {
+        return [
+            (new \DateTime($data->datereq))->format('F j, Y'),
+            $data->spexgcemp_barcode,
+            $data->spexgcemp_denom,
+            $data->spexgcemp_lname . ', ' . $data->spexgcemp_fname,
+            $data->voucher,
+            $data->spexgc_num,
+            (new \DateTime($data->daterel))->format('F j, Y'),
+        ];
+    }
     public function title(): string
     {
         return 'Per Barcode';
@@ -42,13 +58,19 @@ class SpgcApprovedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle
     public function headings(): array
     {
         return [
-            'Transaction Date',
-            'Barcode',
-            'Denomination',
-            'Customer',
-            'Voucher',
-            'Approval #',
-            'Date Approved',
+            'TRANSACTION DATE',
+            'BARCODE',
+            'DENOMINATION',
+            'CUSTOMER',
+            'VOUCHER',
+            'APPROVAL #',
+            'DATE APPROVED',
+        ];
+    }
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            1 => ['font' => ['bold' => true]],
         ];
     }
 }

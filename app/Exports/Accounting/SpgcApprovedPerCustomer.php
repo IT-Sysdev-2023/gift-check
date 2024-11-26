@@ -2,17 +2,21 @@
 
 namespace App\Exports\Accounting;
 
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SpgcApprovedPerCustomer implements FromQuery, ShouldAutoSize, WithTitle
+class SpgcApprovedPerCustomer implements FromQuery, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles
 {
 
     public function __construct(protected array $transactionDate)
     {
-
     }
     public function query()
     {
@@ -35,6 +39,16 @@ class SpgcApprovedPerCustomer implements FromQuery, ShouldAutoSize, WithTitle
             ->orderBy('special_external_gcrequest.spexgc_datereq');
 
     }
+    public function map($data): array
+    {
+        return [
+            (new \DateTime($data->datereq))->format('F j, Y'),
+            $data->spcus_acctname,
+            $data->spexgc_num,
+            $data->totDenom,
+        ];
+    }
+    
     public function title(): string
     {
         return 'Per Customer';
@@ -43,10 +57,17 @@ class SpgcApprovedPerCustomer implements FromQuery, ShouldAutoSize, WithTitle
     public function headings(): array
     {
         return [
-            'Date Requested',
-            'Company',
-            'Approval #',
-            'Total Amount',
+            'DATE REQUESTED',
+            'COMPANY',
+            'APPROVAL #',
+            'TOTAL AMOUNT',
+        ];
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            1 => ['font' => ['bold' => true]],
         ];
     }
 }

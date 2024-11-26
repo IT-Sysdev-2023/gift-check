@@ -43,7 +43,7 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
-            ->setFileName('SPGC Approved Report-' . $this->user->user_id, $this->request['date'][0] . 'To' . $this->request['date'][1])
+            ->setFileName('SPGC Approved Report-' . $this->user->user_id, $this->request['date'][0] . ' to ' . $this->request['date'][1])
             ->exportDocument($this->request['format'], $doc);
     }
 
