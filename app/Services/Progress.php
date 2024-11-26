@@ -9,7 +9,8 @@ class Progress
 {
     protected $progress;
     protected $reportId;
-    public function __construct(){
+    public function __construct()
+    {
         $this->reportId = now()->toImmutable()->toISOString();
         $this->progress = [
             'name' => 'Accounting Report',
@@ -21,7 +22,7 @@ class Progress
         ];
     }
 
-    private function broadcastProgress(User $user, string $info)
+    protected function broadcastProgress(User $user, string $info)
     {
         $this->progress['info'] = $info;
         $this->progress['progress']['currentRow']++;

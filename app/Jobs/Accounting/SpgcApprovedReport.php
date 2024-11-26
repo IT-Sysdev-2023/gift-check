@@ -64,9 +64,8 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
             'reportCreated' => now()->toFormattedDateString(),
         ]);
 
-        $transDateHeader = ReportHelper::transactionDateLabel(true, $date);
-
-        $header->put('transactionDate', $transDateHeader);
+        $header->put('transactionDate', ReportHelper::transactionDateLabel(true, $date));
+        
         return [
             'header' => $header,
             'records' => $record,

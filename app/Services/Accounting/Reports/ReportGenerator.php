@@ -6,28 +6,19 @@ use App\Events\AccountingReportEvent;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 
 use App\Models\User;
+use App\Services\Progress;
 use Illuminate\Support\Facades\Date;
 use App\Helpers\NumberHelper;
 use Illuminate\Support\Facades\Log;
 
-class ReportGenerator
+class ReportGenerator extends Progress
 {
-    protected $progress;
-    protected $reportId;
     protected $date;
     protected $format;
     public function __construct()
     {
-
-        $this->reportId = now()->toImmutable()->toISOString();
-        $this->progress = [
-            'name' => 'Accounting Report',
-            'progress' => [
-                'currentRow' => 0,
-                'totalRow' => 0,
-            ],
-            'info' => ""
-        ];
+        parent::__construct();
+      
     }
     protected function setTransactionDate($date)
     {
@@ -77,13 +68,6 @@ class ReportGenerator
             $item->fullName = $item->spexgcemp_lname . ', ' . $item->spexgcemp_fname;
             return $item;
         });
-    }
-
-    private function broadcastProgress(User $user, string $info)
-    {
-        $this->progress['info'] = $info;
-        $this->progress['progress']['currentRow']++;
-        AccountingReportEvent::dispatch($user, $this->progress, $this->reportId);
     }
 
     private function getBarcodeQuery()
