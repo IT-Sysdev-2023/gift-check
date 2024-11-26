@@ -70,6 +70,12 @@ const page = usePage<PageWithSharedProps>().props;
                     <Link :href="route('iad.excel.purchased')">Store GC Purchased Reports</Link>
                 </span>
             </a-menu-item>
+            <a-menu-item key="iad-excel-special-gc-reviewed">
+                <OrderedListOutlined />
+                <span>
+                    <Link :href="route('iad.excel.special')">Special Gc Reviewed</Link>
+                </span>
+            </a-menu-item>
         </a-sub-menu>
     </div>
 </template>
