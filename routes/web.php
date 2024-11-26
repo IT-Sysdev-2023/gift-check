@@ -480,7 +480,7 @@ Route::prefix('accounting')->name('accounting.')->group(function () {
         Route::get('generate-spgc-report-approved', [AccountingReportController::class, 'generateApprovedReport'])->name('generate.special.gc.approved');
 
         Route::get('spgc-report-released', [AccountingReportController::class, 'spgcReleasedReport'])->name('special.gc.released');
-        Route::get('generated-reports', [AccountingReportController::class, 'generatedReports'])->name('special.gc.generatedReports');
+        Route::get('generated-reports', [AccountingReportController::class, 'generatedReports'])->name('generatedReports');
     });
 });
 

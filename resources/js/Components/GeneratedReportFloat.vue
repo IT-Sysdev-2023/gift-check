@@ -46,8 +46,8 @@
                             <a-button
                                 type="primary"
                                 size="small"
-                                @click="fileLocation"
-                                :disabled="progress.percentage !== 100"
+                                @click="routeToLocation"
+                                :disabled="progress.percentage < 100"
                             >
                                 <template #icon>
                                     <FolderOutlined />
@@ -127,11 +127,13 @@ const whichShouldListenTo = computed(() => {
         return {
             channel: "treasury-report.",
             listen: "TreasuryReportEvent",
+            route: "treasury.reports.generatedReports",
         };
     } else if (accounting.value) {
         return {
             channel: "accounting-report.",
             listen: "AccountingReportEvent",
+            route: "accounting.reports.generatedReports",
         };
     } else {
         return {
@@ -143,17 +145,20 @@ const whichShouldListenTo = computed(() => {
 onBeforeUnmount(() => {
     isProgressFinish();
 });
-const fileLocation = () => {
-    isProgressFinish();
-};
 
 const isProgressFinish = () => {
     if (
         Object.values(reportProgress).every(
             (report) => report.percentage === 100
         )
-    )
+    ) {
         state.setFloatButton(false);
+    }
+};
+
+const routeToLocation = () => {
+    isProgressFinish();
+    router.visit(route(whichShouldListenTo.value.route));
 };
 </script>
 

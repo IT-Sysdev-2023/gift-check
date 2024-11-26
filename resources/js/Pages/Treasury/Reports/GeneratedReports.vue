@@ -3,7 +3,7 @@
         <Head title="List Of Generated Reports" />
         <a-breadcrumb>
             <a-breadcrumb-item>
-                <Link>Home</Link>
+                <Link :href="dashboardRoute">Home</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>Generated Reports</a-breadcrumb-item>
         </a-breadcrumb>
@@ -16,7 +16,10 @@
             <template #renderItem="{ item }">
                 <a-list-item>
                     <template #actions>
-                        <a-button type="primary" @click="downloadFile(item.file)">
+                        <a-button
+                            type="primary"
+                            @click="downloadFile(item.file)"
+                        >
                             <template #icon>
                                 <DownloadOutlined />
                             </template>
@@ -52,7 +55,7 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import axios from "axios";
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, ref, computed } from "vue";
 
 const initLoading = ref(false);
 
@@ -64,13 +67,18 @@ defineProps<{
         expiration: string;
     }[];
 }>();
+const dashboardRoute = computed(() => {
+    const webRoute = route().current();
+    const res = webRoute?.split(".")[0];
+    return res + ".dashboard";
+});
 
 const downloadFile = (file) => {
     const url = route("treasury.reports.download.gc", {
         file: file,
     });
     location.href = url;
-}
+};
 </script>
 <style scoped>
 .demo-loadmore-list {
