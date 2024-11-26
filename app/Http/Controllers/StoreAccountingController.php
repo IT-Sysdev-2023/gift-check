@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Str;
 
 use App\Jobs\GenerateVarianceExcel;
+
 use Carbon\Carbon;
 use App\Models\User;
 use Inertia\Inertia;
@@ -2120,8 +2121,6 @@ class StoreAccountingController extends Controller
 
         return Excel::download(new allApprovedExcel($request->toArray()), 'Approved Per Customer Excel.xlsx');
     }
-
-
     public function pdfApproved(Request $request)
     {
         ini_set('memory_limit', '1024M');

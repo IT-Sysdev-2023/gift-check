@@ -428,13 +428,13 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::prefix('reports')->name('reports.')->group(function () {
-            Route::get('gc-report', [ReportsController::class,'gcReport'])->name('index');
-            Route::get('eod-report', [ReportsController::class,'eodReport'])->name('eod');
-            Route::get('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc');
-            Route::get('generate-eod-report', [ReportsController::class,'generateEodReports'])->name('generate.eod');
+            Route::get('gc-report', [ReportsController::class, 'gcReport'])->name('index');
+            Route::get('eod-report', [ReportsController::class, 'eodReport'])->name('eod');
+            Route::get('generate-gc-report', [ReportsController::class, 'generateGcReports'])->name('generate.gc');
+            Route::get('generate-eod-report', [ReportsController::class, 'generateEodReports'])->name('generate.eod');
 
-            Route::get('list-of-generated-reports', [ReportsController::class,'listOfGeneratedReports'])->name('generatedReports');
-            Route::get('download-generated-report', [ReportsController::class,'downloadGeneratedReport'])->name('download.gc');
+            Route::get('list-of-generated-reports', [ReportsController::class, 'listOfGeneratedReports'])->name('generatedReports');
+            Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('download.gc');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
@@ -475,7 +475,7 @@ Route::prefix('accounting')->name('accounting.')->group(function () {
         Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
     });
 
-    Route::prefix('reports')->name('reports.')->group(function() {
+    Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('spgc-report-approved', [AccountingReportController::class, 'spgcApprovedReport'])->name('special.gc.approved');
         Route::get('generate-spgc-report-approved', [AccountingReportController::class, 'generateApprovedReport'])->name('generate.special.gc.approved');
 
@@ -515,9 +515,9 @@ Route::prefix('finance')->group(function () {
             Route::get('reprint-{id}', [FinanceController::class, 'reprint'])->name('reprint');
         });
 
-        Route::name('cancelledSpecialExternalGC.')->group(function(){
-            Route::get('cancelled-especial-external-gc',[FinanceController::class, 'list'])->name('list');
-            Route::get('view-cancelled-especial-external-gc',[FinanceController::class, 'view'])->name('view');
+        Route::name('cancelledSpecialExternalGC.')->group(function () {
+            Route::get('cancelled-especial-external-gc', [FinanceController::class, 'list'])->name('list');
+            Route::get('view-cancelled-especial-external-gc', [FinanceController::class, 'view'])->name('view');
         });
     });
 
@@ -556,18 +556,17 @@ Route::prefix('retail')->group(function () {
         });
         Route::get('AvailableGc', [RetailController::class, 'availableGcList'])->name('availableGcList');
         Route::get('soldGc', [RetailController::class, 'soldGc'])->name('soldGc');
-    
+
 
         Route::get('lostGc', [RetailController::class, 'lostGC'])->name('lostGc');
-        Route::post('submit-lost-gc',[RetailController::class, 'submitLostGc'])->name('submit-lost-gc')->middleware([HandlePrecognitiveRequests::class]);
-   
+        Route::post('submit-lost-gc', [RetailController::class, 'submitLostGc'])->name('submit-lost-gc')->middleware([HandlePrecognitiveRequests::class]);
+
         Route::get('store-eod', [RetailController::class, 'storeEOD'])->name('storeEod');
-        
-        Route::name('verified-gc.')->group(function (){
+
+        Route::name('verified-gc.')->group(function () {
             Route::get('verified-gc-list', [RetailController::class, 'verifiedGc'])->name('list');
-            Route::get('gc-details',[RetailController::class, 'gcdetails'])->name('gcdetails');
+            Route::get('gc-details', [RetailController::class, 'gcdetails'])->name('gcdetails');
         });
-        
     });
 });
 Route::prefix('retailgroup')->name('retailgroup.')->group(function () {
@@ -782,6 +781,9 @@ Route::prefix('store-accounting')
                         Route::get('spgc-approved-submit', [StoreAccountingController::class, 'SPGCApprovedSubmit'])->name('SPGCApprovedSubmit');
                         Route::get('spgc-approved-pdf', [StoreAccountingController::class, 'pdfApproved'])->name('pdfApprovedSubmit');
                         Route::get('spgc-approved-excel-barcode', [StoreAccountingController::class, 'excelPerBarcode'])->name('excelPerBarcode');
+                       
+
+
 
 
 

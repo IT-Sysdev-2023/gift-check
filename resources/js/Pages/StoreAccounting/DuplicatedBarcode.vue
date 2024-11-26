@@ -191,7 +191,7 @@ export default {
                 const notificationWithIcon = (type) => {
                     notification[type]({
                         message: 'File Selection Required',
-                        description: 'Please choose file first or the Textfile you selected has no data found',
+                        description: 'Please choose file first or the selected Textfile has no data found',
                         placement: 'topRight'
                     });
                 };
@@ -266,7 +266,7 @@ export default {
             const notificationWithIcon = (type) => {
                 notification[type]({
                     message: 'File Selection Required',
-                    description: 'Please choose file first or the Textfile you selected has no data found',
+                    description: 'Please choose file first or the selected Textfile has no data found',
                     placement: 'topRight'
                 });
             };
