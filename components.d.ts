@@ -373,6 +373,7 @@ declare module 'vue' {
     RestTwoTone: typeof import('@ant-design/icons-vue')['RestTwoTone']
     RetailApprovedGcRequest: typeof import('./resources/js/Pages/Retail/RetailApprovedGcRequest.vue')['default']
     RetailDashboard: typeof import('./resources/js/Pages/Retail/RetailDashboard.vue')['default']
+    RetailEod: typeof import('./resources/js/Pages/Retail/RetailEod.vue')['default']
     RetailGcReleasing: typeof import('./resources/js/Pages/Treasury/Transactions/RetailGcReleasing.vue')['default']
     RetailGroupDashboard: typeof import('./resources/js/Pages/RetailGroup/RetailGroupDashboard.vue')['default']
     RetailGroupSidebar: typeof import('./resources/js/Components/RetailGroupSidebar.vue')['default']

@@ -38,7 +38,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item @click="() => $inertia.get(route('retailstore.retailstore.gc.request'))" key="GCRequest">GC Request</a-menu-item>
             <a-menu-item @click="() => $inertia.get(route('retial.'))" key="GCVerification">GC Verification</a-menu-item>
             <a-menu-item key="GCTransfer">GC Transfer</a-menu-item>
-            <a-menu-item key="StoreEOD">Store EOD</a-menu-item>
+            <a-menu-item key="StoreEOD" @click="()=>$inertia.get(route('retail.storeEod'))">Store EOD</a-menu-item>
             <a-menu-item key="LostGC" @click="()=> $inertia.get(route('retail.lostGc'))">Lost GC</a-menu-item>
             <a-menu-item key="SupplierGC">Supplier GC</a-menu-item>
         </a-sub-menu>
@@ -70,11 +70,11 @@ const page = usePage<PageWithSharedProps>().props;
             <BarcodeOutlined />
             <span>Store Ledger</span>
         </a-menu-item>
-        <a-menu-item key="verifiedGc">
+        <a-menu-item key="verifiedGc" @click="()=> $inertia.get(route('retail.verified-gc.list'))">
             <BarcodeOutlined />
             <span>Verified GC</span>
         </a-menu-item>
-        <a-menu-item key="soldgc">
+        <a-menu-item key="soldgc" @click="()=> $inertia.get(route('retail.soldGc'))">
             <BarcodeOutlined />
             <span>Sold GC</span>
         </a-menu-item>
@@ -108,7 +108,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item @click="() => $inertia.get(route('retail.gc.request'))" key="GCRequest">GC Request</a-menu-item>
             <a-menu-item @click="() => $inertia.get(route('retail.verification.index'))" key="GCVerification">GC Verification</a-menu-item>
             <a-menu-item key="GCTransfer">GC Transfer</a-menu-item>
-            <a-menu-item key="StoreEOD">Store EOD</a-menu-item>
+            <a-menu-item key="StoreEOD" @click="()=>$inertia.get(route('retail.storeEod'))">Store EOD</a-menu-item>
             <a-menu-item key="LostGC" @click="()=> $inertia.get(route('retail.lostGc'))">Lost GC</a-menu-item>
             <a-menu-item key="SupplierGC">Supplier GC</a-menu-item>
         </a-sub-menu>
@@ -140,11 +140,11 @@ const page = usePage<PageWithSharedProps>().props;
             <BarcodeOutlined />
             <span>Store Ledger</span>
         </a-menu-item>
-        <a-menu-item key="verifiedGc">
+        <a-menu-item key="verifiedGc" @click="()=> $inertia.get(route('retail.verified-gc.list'))">
             <BarcodeOutlined />
             <span>Verified GC</span>
         </a-menu-item>
-        <a-menu-item key="soldgc">
+        <a-menu-item key="soldgc"  @click="()=> $inertia.get(route('retail.soldGc'))">
             <BarcodeOutlined />
             <span>Sold GC</span>
         </a-menu-item>

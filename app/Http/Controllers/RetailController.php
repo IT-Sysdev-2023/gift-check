@@ -12,6 +12,8 @@ use App\Models\LostGcBarcode;
 use App\Models\LostGcDetail;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Store;
+use App\Models\StoreEodItem;
+use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreGcrequest;
 use App\Models\StoreReceivedGc;
 use App\Models\StoreRequestItem;
@@ -439,7 +441,7 @@ class RetailController extends Controller
             'remarks' => 'required',
             'lostbarcode' => 'required|numeric',
         ]);
-        
+
         $checkifexist = LostGcBarcode::where('lostgcb_barcode', $request['lostbarcode'])->exists();
         $reggc = Gc::where('barcode_no', $request['lostbarcode'])->exists();
         $spgc = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', $request['lostbarcode'])->exists();
@@ -502,6 +504,31 @@ class RetailController extends Controller
             'description' => "Barcode Added to Lost Barcode List",
             'type' => "success",
         ]);
+    }
+    public function storeEOD(Request $request)
+    {
+        return inertia('Retail/RetailEod', [
+            'data' => $this->retail->storeEOD($request)
+        ]);
+    }
+
+    public function verifiedGc(Request $request)
+    {
+        return inertia('Retail/VerifiedGc', [
+            'data' => $this->retail->verifiedGc($request)
+        ]);
+
+    }
+
+    public function gcdetails(Request $request)
+    {
+
+        $data = StoreEodTextfileTransaction::where('seodtt_barcode', $request->barcode)->get();
+        $data->transform(function ($item){
+            $item->time = Date::parse($item->seodtt_timetrnx)->format('H:i:s: A');
+            return $item;
+        });
+        return response()->json(['data' => $data]);
     }
 
 

@@ -560,6 +560,14 @@ Route::prefix('retail')->group(function () {
 
         Route::get('lostGc', [RetailController::class, 'lostGC'])->name('lostGc');
         Route::post('submit-lost-gc',[RetailController::class, 'submitLostGc'])->name('submit-lost-gc')->middleware([HandlePrecognitiveRequests::class]);
+   
+        Route::get('store-eod', [RetailController::class, 'storeEOD'])->name('storeEod');
+        
+        Route::name('verified-gc.')->group(function (){
+            Route::get('verified-gc-list', [RetailController::class, 'verifiedGc'])->name('list');
+            Route::get('gc-details',[RetailController::class, 'gcdetails'])->name('gcdetails');
+        });
+        
     });
 });
 Route::prefix('retailgroup')->name('retailgroup.')->group(function () {
