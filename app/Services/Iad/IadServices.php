@@ -29,15 +29,20 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Iad\AuditTraits;
+use App\Traits\OpenOfficeTraits\StorePurchasedTraits;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Ods;
 
 class IadServices extends FileHandler
 {
     use AuditTraits;
+    use StorePurchasedTraits;
 
     public function __construct(public IadDbServices $iadDbServices)
     {
+        $this->initializeSpreadsheet();
         parent::__construct();
     }
     public function gcReceivingIndex()
@@ -664,9 +669,17 @@ class IadServices extends FileHandler
         return Excel::download($rec, 'users.xlsx');
     }
 
-    public function generatePurchasedReportsExcel($request){
+    public function generatePurchasedReportsExcel($request)
+    {
         $rec = new PurchasedExports($request->all());
 
         return Excel::download($rec, 'users.xlsx');
+    }
+    public function generatePurchasedReportsOpenOffice($request)
+    {
+        return $this->record($request)
+            ->header()
+            ->data()
+            ->save();
     }
 }
