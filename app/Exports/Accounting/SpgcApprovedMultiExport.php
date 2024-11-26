@@ -16,8 +16,8 @@ class SpgcApprovedMultiExport extends Progress implements WithMultipleSheets
     public function __construct(protected array $transactionDate, protected User $user)
     {
         parent::__construct();
+        
         //BroadCasting
-        // Log::info($transactionDate);
         $this->progress['progress']['totalRow'] += (new SpgcApprovedPerBarcode($transactionDate, $this->progress, $this->reportId, $user))->query()->count();
         $this->progress['progress']['totalRow'] += (new SpgcApprovedPerCustomer($transactionDate, $this->progress, $this->reportId, $user))->query()->get()->count();
     }

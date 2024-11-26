@@ -92,10 +92,15 @@ class FileHandler
             return response()->json('File Not Found on the Server', 404);
         }
     }
-    public function getFilesFromDirectory(?string $subfolder = null)
+    public function getFilesFromDirectory(?string $subfolder = null, bool $includeSubdirectory = false)
     {
         $trim = Str::finish($this->folder() . $subfolder, '/');
         $path = $subfolder ? $trim : $this->folder();
+
+        if($includeSubdirectory){
+            return collect($this->disk->allFiles($path));
+        }
+        
         return collect($this->disk->files($path));
     }
     public function download(string $file, ?string $subfolder = null)

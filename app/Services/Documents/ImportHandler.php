@@ -41,7 +41,7 @@ class ImportHandler extends FileHandler
     {
         $getFiles = $this
             ->setFolder('Reports')
-            ->getFilesFromDirectory($this->roleDashboardRoutes[$userType]);
+            ->getFilesFromDirectory($this->roleDashboardRoutes[$userType], true);
 
         return $getFiles->transform(function ($item) {
             $fileInfo = pathinfo($item);
