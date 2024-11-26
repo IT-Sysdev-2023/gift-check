@@ -170,7 +170,7 @@ const detailcolumn = [
     },
     {
         title: "Ackslip #",
-        dataIndex: "ack",
+        dataIndex: "seodtt_ackslipno",
     },
 ];
 </script>
