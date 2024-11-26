@@ -26,41 +26,29 @@
                         <span :style="{ fontSize: iconSize + 'px' }">
                             <FileSearchOutlined />
                         </span>
-                        <input type="file" ref="fileInput" style="display: none;" @change="handleFileChange" />
 
-                        <a-button @click="ChooseFileCebu" style="background-color: #1e90ff; color: white;">
-                           <SearchOutlined />
-                            Choose File
+                        <a-input type="file" id="barcodeFile" @change="handleFileChange"
+                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" />
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span v-if="textfile" style="color:green; font-weight: bold;">Selected TextFile: </span>
+                        <span style="margin-left: 5px;">
+                            {{ this.textfile }}
+                        </span>
+                        <span v-if="!textfile" style="color:red">
+
+                            No selected Textfile
+                        </span>
+                    </div>
+                    <div>
+                        <a-button @click="cebuReportButton"
+                            style="background-color: #1e90ff; color: white; margin-top: 20px;">
+                            <FileExcelOutlined />
+                            Check Duplicates
                         </a-button>
-                        <div v-if="!cebuFileName && !message" style="color:red;">
-                            No file selected
-
-                        </div>
-                        <div v-if="!cebuFileName" style="color:red">
-                            {{ this.message }}
-                        </div>
-                        <div v-if="cebuFileName" style="width: 40%; max-width: 40%;">
-                            <span style="color:#1e90ff; font-weight: bold;">
-                                Selected File:
-                            </span>
-                            <div style="text-decoration: underline;">
-                                {{ cebuFileName }}
-                            </div>
-                        </div>
-                        <div style="margin-top: 20px;">
-                            <a-button @click="cebuReportButton" style="background-color: green; color: white">
-                                <CheckOutlined />
-                                Check Duplicates
-                            </a-button>
-                        </div>
-
-                        <div style="color:red; margin-top: 20px;">
-                            <WarningOutlined />
-                            Note: Upload Textfile Only.
-                        </div>
                     </div>
                 </a-card>
-
+                <!-- {{ this.message }} -->
             </a-tab-pane>
             <a-tab-pane key="2">
                 <template #tab>
@@ -68,10 +56,10 @@
                         <span style="color:green">
                             <TagsOutlined />
                         </span>
-                        Duplicated Report (ALTA CITTA)
+                        Duplicated Report (ALTTA CITTA)
                     </span>
                 </template>
-                <a-card style="width: 25%">
+                <a-card style="width: 25%;">
                     <div style="margin-left: 50px;">
                         <span style="color:green">
                             <TagsOutlined />
@@ -79,193 +67,215 @@
                         <span style="font-weight: bold;">
                             Duplicate Barcodes
                         </span>
-                        <div style="margin-left: 50px; color:#1e90ff; font-weight: bold;">
-                            Alta Citta
+                        <div style="margin-left: 45px; color:#1e90ff; font-weight: bold;">
+                            ALTTA CITTA
                         </div>
                     </div>
                     <div style="margin-top: 20px;">
                         <span :style="{ fontSize: iconSize + 'px' }">
                             <FileSearchOutlined />
                         </span>
-                        <input type="file" ref="fileInput" style="display: none;" @change="handleAltaCittaFileChange" />
 
-                        <a-button @click="chooseFileAltaCitta" style="background-color: #1e90ff; color: white;">
-                           <SearchOutlined />
-                            Choose File
+                        <a-input type="file" id="barcodeFile" @change="handleFileChangeAltta"
+                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" />
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span v-if="altaTextFile" style="color:green; font-weight: bold;">Selected TextFile: </span>
+                        <span style="margin-left: 5px;">
+                            {{ this.altaTextFile }}
+                        </span>
+                        <span v-if="!altaTextFile" style="color:red">
+
+                            No selected Textfile
+                        </span>
+                    </div>
+                    <div>
+                        <a-button @click="alttaReportButton"
+                            style="background-color: #1e90ff; color: white; margin-top: 20px;">
+                            <FileExcelOutlined />
+                            Check Duplicates
                         </a-button>
-                        <div v-if="!altaCittaFileName">
-                            <span style="color:red">
-                                No file selected
-                            </span>
-                        </div>
-                        <div v-if="altaCittaFileName" style=" width: 40%; max-width: 40%;">
-                            <span style="color:#1e90ff; font-weight: bold;">
-                                Selected file:
-                            </span>
-                            <div style="text-decoration: underline">
-                                {{ altaCittaFileName }}
-                            </div>
-                        </div>
-
-
-                        <div style="margin-top: 20px;">
-                            <a-button @click="altaCittaReportButton" style="background-color: green; color: white">
-                                <CheckOutlined />
-                                Check Duplicates
-                            </a-button>
-                        </div>
-
-                        <div style="color:red; margin-top: 20px;">
-                            <WarningOutlined />
-                            Note: Upload Textfile Only.
-                        </div>
                     </div>
                 </a-card>
-
+                {{ tagbilaran }}
             </a-tab-pane>
         </a-tabs>
     </a-card>
-
 </template>
+
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { ExclamationCircleOutlined, WindowsFilled } from '@ant-design/icons-vue';
-import { createVNode } from 'vue';
-import { message, Modal } from 'ant-design-vue';
+import { TagsOutlined, FileSearchOutlined, CheckOutlined, PlayCircleFilled } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue';
-import TextfileUploader from '../Custodian/TextfileUploader.vue';
+import Description from '../Treasury/Description.vue';
+import { placements } from 'ant-design-vue/es/vc-tour/placements';
+import { message, Modal } from 'ant-design-vue';
+import ColumnGroup from 'ant-design-vue/es/vc-table/sugar/ColumnGroup';
+
 
 export default {
     layout: AuthenticatedLayout,
+    props: {
+        tagbilaran: Object
+    },
     data() {
         return {
-            message: '',
             cebuFileName: '',
-            altaCittaFileName: '',
             iconSize: 80,
-        }
+            fileContent: '',
+            barcodes: [],
+            textfile: '',
+
+            altaTextFile: '',
+            altaContent: '',
+            altaBarcode: []
+        };
     },
     methods: {
-        ChooseFileCebu() {
-            this.$refs.fileInput.click();
-        },
-        handleFileChange(event) {
+        handleFileChangeAltta(event) {
             const file = event.target.files[0];
-            this.cebuFileName = file ? file.name : '';
+            this.altaTextFile = file.name
 
-        },
-        chooseFileAltaCitta() {
-            this.$refs.fileInput.click();
-        },
-        handleAltaCittaFileChange(event) {
-            const file = event.target.files[0];
-            this.altaCittaFileName = file ? file.name : '';
-        },
-        cebuReportButton() {
+            if (file) {
+                const reader = new FileReader();
 
-            if (!this.cebuFileName) {
+                reader.onload = (e) => {
+                    this.altaContent = e.target.result;
+                    console.log(this.altaContent);
+
+                    this.altaBarcode = this.extractBarcodesAltta(this.altaContent);
+                    console.log(this.altaBarcode);
+                };
+                reader.readAsText(file);
+            }
+        },
+        extractBarcodesAltta() {
+            const regex = /\b\d{1,20}\b/g;
+            const barcodes = content.match(regex);
+            return barcodes ? barcodes.map(barcode => barcode.trim().replace(/\t/g, '')) : [];
+        },
+        alttaReportButton() {
+            if (this.altaContent) {
+                const altaBarcodeString = this.altaContent
+
                 const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'File Selection Required',
-                        description: 'Please choose file first before checking duplicates!',
+                        message: 'Invalid File Selected',
+                        description: 'Please select Textfile only',
                         placement: 'topRight'
                     });
                 };
-                openNotificationWithIcon('warning');
-                return;
-            }
+                const validTextFileAltta = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
+                const fileExtention = this.altaTextFile.split('.').pop().toLowerCase();
 
-            const openNotificationWithIcon = (type) => {
-                notification[type]({
-                    message: 'Invalid file selected',
-                    description: 'Invalid file selected, please select a text file only!',
-                    placement: 'topRight'
+                if (!validTextFileAltta.includes(fileExtention)) {
+                    openNotificationWithIcon('warning');
+                    return;
+
+                }
+                Modal.confirm({
+                    title: 'Notification',
+                    content: 'Are you sure you want to check DUPLICATE BARCODES?',
+                    okText: 'Yes',
+                    cancelText: 'No',
+                    onOk: () => {
+                        window.location.href = route('storeaccounting.duplicateExcel', { barcodes: altaBarcodeString });
+                    },
+                    onCancel: () => {
+                        console.log('Cancel');
+                    }
                 });
-            };
 
-            const validTextFileExtensions = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
-
-            const fileExtension = this.cebuFileName.split('.').pop().toLowerCase();
-
-            if (!validTextFileExtensions.includes(fileExtension)) {
-                openNotificationWithIcon('warning');
-                return;
             }
-            const cebuData = {
-                data: this.cebuFileName
-            }
-
-            Modal.confirm({
-                title: 'Confirmation',
-                content: 'Are you sure you want to check DUPLICATE BARCODE?',
-                okText: 'Yes',
-                okType: 'danger',
-                cancelText: 'No',
-                onOk: () => {
-                    const hide = message.loading('Generating in progress..', 0)
-
-                    window.location.href = route('storeaccounting.duplicateExcel', cebuData);
-                    setTimeout(hide, 1500);
-                },
-                onCancel() {
-                    console.log('Cancel');
-                },
-            });
-        },
-
-        altaCittaReportButton() {
-
-            if (!this.altaCittaFileName) {
-                const openNotificationWithIcon = (type) => {
+            else {
+                const notificationWithIcon = (type) => {
                     notification[type]({
                         message: 'File Selection Required',
-                        description: 'Please choose file first before checking duplicates!',
+                        description: 'Please choose file first or the Textfile you selected has no data found',
                         placement: 'topRight'
                     });
                 };
-                openNotificationWithIcon('warning');
+                notificationWithIcon('warning');
                 return;
             }
-            const openNotificationWithIcon = (type) => {
-                notification[type]({
-                    message: 'Invalid file selected',
-                    description: 'Invalid file selected, please select a text file only!',
-                    placement: 'topRight'
-                });
+
+    },
+
+    handleFileChange(event) {
+        const file = event.target.files[0];
+        // console.log(file.name);
+        this.textfile = file.name
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                this.fileContent = e.target.result;
+                console.log(this.fileContent);
+
+
+                this.barcodes = this.extractBarcodes(this.fileContent);
+                console.log(this.barcodes);
             };
-            const validTextFileExtensions = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
 
-            const fileExtension = this.cebuFileName.split('.').pop().toLowerCase();
-
-            if (!validTextFileExtensions.includes(fileExtension)) {
-                openNotificationWithIcon('warning');
-                return;
-            }
-
-            const altaCittaData = {
-                data: this.altaCittaFileName
-            }
-
-            Modal.confirm({
-                title: 'Confirmation',
-                icon: createVNode(ExclamationCircleOutlined),
-                content: 'Are you sure you want to check DUPLICATE BARCODE?',
-                okText: 'Yes',
-                okType: 'danger',
-                cancelText: 'No',
-                onOk: () => {
-                    const hide = message.loading('Generating in progress..', 0)
-
-                    window.location.href = route('storeaccounting.duplicateExcel', altaCittaData)
-                    setTimeout(hide, 1500);
-                },
-                onCancel() {
-                    console.log('Cancel');
-                },
-            });
+            reader.readAsText(file);
         }
 
 
+    },
+
+    extractBarcodes(content) {
+        const regex = /\b\d{1,20}\b/g;
+        const barcodes = content.match(regex);
+        return barcodes ? barcodes.map(barcode => barcode.trim().replace(/\t/g, '')) : [];
+    },
+
+    cebuReportButton() {
+        if (this.fileContent) {
+            const barcodeString = this.fileContent
+
+            const openNotificationWithIcon = (type) => {
+                notification[type]({
+                    message: 'Invalid File Selected',
+                    description: 'Please select Textfile only',
+                    placement: 'topRight',
+                });
+            };
+            const validFileExtention = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
+            const fileExtention = this.textfile.split('.').pop().toLowerCase();
+
+            if (!validFileExtention.includes(fileExtention)) {
+                openNotificationWithIcon('warning');
+                return;
+            }
+
+            Modal.confirm({
+                title: 'Notification',
+                content: 'Are you sure you want to check DUPLICATE BARCODES?',
+                okText: 'Yes',
+                cancelText: 'No',
+                onOk: () => {
+                    window.location.href = route('storeaccounting.duplicateExcel', { barcodes: barcodeString });
+                },
+                onCancel: () => {
+                    console.log('Cancel');
+                }
+            });
+
+        }
+        else {
+            const notificationWithIcon = (type) => {
+                notification[type]({
+                    message: 'File Selection Required',
+                    description: 'Please choose file first or the Textfile you selected has no data found',
+                    placement: 'topRight'
+                });
+            };
+            notificationWithIcon('warning');
+            return;
+        }
     }
 }
+
+
+};
 </script>

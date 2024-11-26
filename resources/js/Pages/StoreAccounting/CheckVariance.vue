@@ -255,7 +255,6 @@ export default {
                 title: 'Confirmation',
                 content: 'Are you sure you want to generate EXCEL?',
                 okText: 'Yes',
-                okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
                     const hide = message.loading('Generating in progress..', 0)

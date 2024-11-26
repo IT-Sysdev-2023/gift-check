@@ -811,7 +811,6 @@ Route::prefix('store-accounting')
 
 
 
-
                         Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
                     }
                 );

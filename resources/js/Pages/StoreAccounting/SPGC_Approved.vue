@@ -505,7 +505,6 @@ export default {
                 title: 'Notification',
                 content: 'Are you sure you want to generate PDF!',
                 okText: 'Yes',
-                okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
                     const hide = message.loading('Generating in progress..', 0);
@@ -538,7 +537,6 @@ export default {
                 title: 'Confirmation',
                 content: 'Are you sure you want to generate EXCEL per CUSTOMER?',
                 okText: 'Yes',
-                okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
                     

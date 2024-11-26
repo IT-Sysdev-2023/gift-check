@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Illuminate\Support\Str;
+
 use App\Jobs\GenerateVarianceExcel;
 use Carbon\Carbon;
 use App\Models\User;
@@ -2446,20 +2448,19 @@ class StoreAccountingController extends Controller
 
     public function DuplicatedBarcodes(Request $request)
     {
+        // dd($request->barcodes);
         return Inertia::render('StoreAccounting/DuplicatedBarcode');
+
     }
 
     public function duplicateExcel(Request $request)
     {
-
-        // dd($request->all());
-
+        // dd($request->toArray());    
         return Excel::download(new allDuplicateExcel($request->toArray()), 'Duplicated Barcode Excel.xlsx');
     }
+
     public function CheckVariance(Request $request)
     {
-        // dd($this->CheckVarianceSubmit($request));
-
         $companyNameList = SpecialExternalCustomer::select(
             'spcus_id',
             'spcus_companyname',
@@ -2467,8 +2468,6 @@ class StoreAccountingController extends Controller
         )
             ->orderBy('spcus_companyname', 'ASC')
             ->get();
-        // dd($companyNameList);
-
         return Inertia::render('StoreAccounting/CheckVariance', [
             'variance' => $this->CheckVarianceSubmit ($request),
             'companyNameList' => $companyNameList
