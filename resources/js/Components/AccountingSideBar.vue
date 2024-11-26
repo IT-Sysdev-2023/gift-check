@@ -77,6 +77,9 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item key="spgcreleased">
                 <Link :href="route('accounting.reports.special.gc.released')"><DollarOutlined /> SPGC Released</Link>
             </a-menu-item>
+            <a-menu-item key="generatedReports">
+                <Link :href="route('accounting.reports.special.gc.generatedReports')"><DollarOutlined /> Generated Reports</Link>
+            </a-menu-item>
         </a-sub-menu>
     </div>
 

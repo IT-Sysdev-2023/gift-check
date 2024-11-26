@@ -76,7 +76,6 @@ class FileHandler
             }
         }
     }
-
     protected function savePdfFile(Request $request, string|int $identifier, $pdf, $date = null)
     {
         $date = $date ?: now()->format('Y-m-d-His');
@@ -109,6 +108,7 @@ class FileHandler
             return response()->json(['error' => 'File Not Found'], 404);
         }
     }
+
     public function getOriginalFileName(Request $request, $image)
     {
         $filename = $this->createFileName($request);

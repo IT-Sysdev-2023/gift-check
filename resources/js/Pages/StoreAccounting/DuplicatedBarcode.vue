@@ -29,7 +29,7 @@
                         <input type="file" ref="fileInput" style="display: none;" @change="handleFileChange" />
 
                         <a-button @click="ChooseFileCebu" style="background-color: #1e90ff; color: white;">
-                            <LoadingOutlined />
+                           <SearchOutlined />
                             Choose File
                         </a-button>
                         <div v-if="!cebuFileName && !message" style="color:red;">
@@ -90,7 +90,7 @@
                         <input type="file" ref="fileInput" style="display: none;" @change="handleAltaCittaFileChange" />
 
                         <a-button @click="chooseFileAltaCitta" style="background-color: #1e90ff; color: white;">
-                            <LoadingOutlined />
+                           <SearchOutlined />
                             Choose File
                         </a-button>
                         <div v-if="!altaCittaFileName">
@@ -212,7 +212,7 @@ export default {
                 },
             });
         },
-       
+
         altaCittaReportButton() {
 
             if (!this.altaCittaFileName) {

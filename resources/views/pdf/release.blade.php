@@ -19,6 +19,8 @@
         td {
             padding: 10px;
             text-align: left;
+            font-size: x-small;
+            font-weight: bold
         }
         .center-text {
             text-align: center; 
@@ -60,7 +62,7 @@
 
    <h1 class="center-text">ALTURAS GROUP OF COMPANIES</h1>
     <h1 class="center-text">HEAD OFFICE FINANCE DEPARTMENT</h1>
-    <h1 class="center-text">SPECIAL EXTERNAL GC REPORT- APPROVAL</h1>
+    <h1 class="center-text">SPECIAL EXTERNAL GC REPORT- RELEASE</h1>
     <h1 class="center-text">PER BARCODE</h1>
     
     <table>

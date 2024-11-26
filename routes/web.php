@@ -62,20 +62,6 @@ Route::fallback(function () {
 Route::get('kanding', function () {
     return Storage::disk('fad')->files();
 });
-Route::get('kanding-hinuktan', function () {
-    $insti = InstitutPayment::select('insp_id')->where('institut_eodid', '0')->get();
-        if ($insti->isNotEmpty()) {
-            DB::transaction(function () {
-                $eod_num = InstitutEod::orderByDesc('ieod_id')->value('ieod_num');
-
-                $incre = $eod_num ? $eod_num + 1 : 1;
-                dd($incre);
-
-            });
-        }
-});
-
-
 
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::get('employee', [UserDetailsController::class, 'index']);
@@ -492,7 +478,9 @@ Route::prefix('accounting')->name('accounting.')->group(function () {
     Route::prefix('reports')->name('reports.')->group(function() {
         Route::get('spgc-report-approved', [AccountingReportController::class, 'spgcApprovedReport'])->name('special.gc.approved');
         Route::get('generate-spgc-report-approved', [AccountingReportController::class, 'generateApprovedReport'])->name('generate.special.gc.approved');
+
         Route::get('spgc-report-released', [AccountingReportController::class, 'spgcReleasedReport'])->name('special.gc.released');
+        Route::get('generated-reports', [AccountingReportController::class, 'generatedReports'])->name('special.gc.generatedReports');
     });
 });
 

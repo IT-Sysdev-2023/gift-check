@@ -5,7 +5,7 @@
         :style="{ right: '24px' }"
         v-model:open="state.isFloatOpen"
     >
-        <!-- YOURE VISITING THIS PAGE.., THIS MEANS YOU HAVE REACH THE LEVEL OF A SENIOR PROGRAMMER -->
+        <!-- YOURE VISITING THIS PAGE.., THIS MEANS YOU HAVE REACH THE END OF PROGRAMMER -->
 
         <template #icon>
             <a-badge dot :offset="[0, -12]">
@@ -56,7 +56,7 @@
                             </a-button>
 
                             <span
-                                >{{ progress.data.store }} -
+                                >{{ progress.data?.store }} -
                                 {{ progress.data.info }}</span
                             >
                         </div>
@@ -68,10 +68,11 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, computed, watch, onBeforeUnmount } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { PageWithSharedProps } from "@/types/index";
 import { useQueueState } from "@/stores/queue-state";
+import { UserType } from "@/userType";
 
 const page = usePage<PageWithSharedProps>().props;
 
@@ -79,7 +80,7 @@ interface ProgressData {
     currentRow: number;
     name: string;
     totalRow: number;
-    store: string;
+    store?: string;
     info: string;
 }
 
@@ -89,12 +90,27 @@ interface ReportProgress {
     data: ProgressData;
 }
 
+const {
+    treasury,
+    retail,
+    admin,
+    finance,
+    accounting,
+    iad,
+    custodian,
+    marketing,
+    retailgroup,
+    eod,
+    storeaccounting,
+} = UserType();
+
 const reportProgress = reactive<Record<string, ReportProgress>>({});
 const state = useQueueState();
-
 onMounted(() => {
-    window.Echo.private(`treasury-report.${page.auth.user.user_id}`).listen(
-        "TreasuryReportEvent",
+    const listenTo = whichShouldListenTo.value;
+
+    window.Echo.private(`${listenTo.channel}${page.auth.user.user_id}`).listen(
+        listenTo.listen,
         (e) => {
             state.setGenerateButton(false);
             reportProgress[e.reportId] = {
@@ -105,15 +121,39 @@ onMounted(() => {
         }
     );
 });
+
+const whichShouldListenTo = computed(() => {
+    if (treasury.value) {
+        return {
+            channel: "treasury-report.",
+            listen: "TreasuryReportEvent",
+        };
+    } else if (accounting.value) {
+        return {
+            channel: "accounting-report.",
+            listen: "AccountingReportEvent",
+        };
+    } else {
+        return {
+            channel: "",
+            listen: "",
+        };
+    }
+});
+onBeforeUnmount(() => {
+    isProgressFinish();
+});
 const fileLocation = () => {
+    isProgressFinish();
+};
+
+const isProgressFinish = () => {
     if (
         Object.values(reportProgress).every(
             (report) => report.percentage === 100
         )
-    ) {
+    )
         state.setFloatButton(false);
-    }
-    router.visit(route("treasury.reports.generatedReports"));
 };
 </script>
 

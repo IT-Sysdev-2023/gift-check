@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 
 class SpecialExternalGcrequestEmpAssign extends Model
 {
@@ -102,6 +103,12 @@ class SpecialExternalGcrequestEmpAssign extends Model
             'address',
             'bunit',
         );
+    }
+
+    public function scopeSpecialApproved(Builder $query, array $date){
+        $query->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
+        ->whereNot('special_external_gcrequest_emp_assign.spexgc_status', 'inactive')
+        ->whereBetween('approved_request.reqap_date', [$date[0], $date[1]]);
     }
     public function reverified()
     {

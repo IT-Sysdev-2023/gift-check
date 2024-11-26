@@ -25,6 +25,7 @@ class tagbilaranExcel implements FromCollection, WithHeadings, WithTitle, Should
     public function __construct($barcode)
     {
         $this->barcode = $barcode;
+        // dd($this->barcode);
     }
 
     public function headings(): array

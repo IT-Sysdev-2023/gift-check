@@ -34,7 +34,11 @@
                     </a-radio-group>
                 </div>
                 <div>
-                    <a-button type="primary" @click="generate">
+                    <a-button
+                        type="primary"
+                        @click="generate"
+                        :loading="state.isGenerateVisible"
+                    >
                         Generate
                     </a-button>
                 </div>
@@ -49,36 +53,39 @@ import dayjs, { Dayjs } from "dayjs";
 import { ref } from "vue";
 import axios, { AxiosResponse } from "axios";
 import { notification } from "ant-design-vue";
+import { useQueueState } from "@/stores/queue-state";
 
 const form = ref<{ extension: string; dateRange: [Dayjs, Dayjs] }>({
     extension: "pdf",
     dateRange: [dayjs(), dayjs()],
 });
-const generate = () => {
-    axios
+const state = useQueueState();
+
+const generate = async () => {
+    state.setGenerateButton(true);
+    state.setFloatButton(true);
+
+    await axios
         .get(route("accounting.reports.generate.special.gc.approved"), {
-            params: { ...form.value },
-            responseType: 'blob'
-        })
-        .then(async (response: AxiosResponse) => {
-            // loadingProgress.value = true;
-
-            // await waitForEvent;
-
-            const file = new Blob([response.data], { type: "application/pdf" });
-            const fileURL = URL.createObjectURL(file);
-            window.open(fileURL, "_blank"); // Open the PDF in a new tab
+            params: {
+                format: form.value.extension,
+                date: [
+                    form.value.dateRange[0].format("YYYY-MM-DD"),
+                    form.value.dateRange[1].format("YYYY-MM-DD"),
+                ],
+            },
         })
         .catch((e) => {
-            let message = 'please check all the fields';
-            if(e.status === 404){
-                message = 'there was no transaction on this selected date!';
+            let message = "please check all the fields";
+            if (e.status === 404) {
+                message = "there was no transaction on this selected date!";
             }
             notification.error({
                 message: "Error",
-                description:
-                    `Something Went wrong,  ${message}`,
+                description: `Something Went wrong,  ${message}`,
             });
         });
+
+    state.setOpenFloat(true);
 };
 </script>
