@@ -485,24 +485,24 @@ export default {
             this.$inertia.get(route('storeaccounting.SPGCRelease', submitData));
         },
         perCustumerPdf() {
+            if (this.data.fromDate === null || this.data.endDate === null) {
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'File Selection Required',
+                        description: 'Please select start and end date first',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             Modal.confirm({
                 title: 'Confirmation',
                 content: 'Are you sure you want to generate PDF?',
                 okText: 'Yes',
-                okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    if (this.data.fromDate === null || this.data.endDate === null) {
-                        const openNotificationWithIcon = (type) => {
-                            notification[type]({
-                                message: 'File Selection Required',
-                                description: 'Please select start and end date first',
-                                placement: 'topRight'
-                            });
-                        };
-                        openNotificationWithIcon('warning');
-                        return;
-                    }
+                   
                     const hide = message.loading('Generating in progress..', 0)
 
                     window.location.href = route('storeaccounting.releasePdf', {
@@ -519,24 +519,24 @@ export default {
         },
 
         perCustomerExcel() {
+            if (this.data.fromDate === null || this.data.endDate === null) {
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'File Selection Required',
+                        description: 'Please select start and end date first',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             Modal.confirm({
                 title: 'Confirmation',
                 content: 'Are you sure you want to generate EXCEL?',
                 okText: 'Yes',
-                okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    if (this.data.fromDate === null || this.data.endDate === null) {
-                        const openNotificationWithIcon = (type) => {
-                            notification[type]({
-                                message: 'File Selection Required',
-                                description: 'Please select start and end date first',
-                                placement: 'topRight'
-                            });
-                        };
-                        openNotificationWithIcon('warning');
-                        return;
-                    }
+                    
                     const hide = message.loading('Generating in progress..', 0)
                     window.location.href = route('storeaccounting.releaseExcel', {
                         startDate: this.data.fromDate,

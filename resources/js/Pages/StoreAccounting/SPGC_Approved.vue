@@ -318,7 +318,7 @@ export default {
             },
             pdfPerCustomer: [
                 {
-                    title: 'Date Requestd',
+                    title: 'Date Requested',
                     dataIndex: 'datereq',
                 },
                 {
@@ -337,7 +337,7 @@ export default {
             ],
             pdfPerBarcode: [
                 {
-                    title: 'Date Request',
+                    title: 'Date Requested',
                     dataIndex: 'datereq'
                 },
                 {
@@ -490,24 +490,23 @@ export default {
         },
 
         generatePdf() {
+            if (this.records.fromDate === null || this.records.toDate === null) {
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'File Selection Required',
+                        description: 'Please select start and end date first',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             Modal.confirm({
                 title: 'Notification',
                 content: 'Are you sure you want to generate PDF!',
                 okText: 'Yes',
-                okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    if (this.records.fromDate === null || this.records.toDate === null) {
-                        const openNotificationWithIcon = (type) => {
-                            notification[type]({
-                                message: 'File Selection Required',
-                                description: 'Please select start and end date first',
-                                placement: 'topRight'
-                            });
-                        };
-                        openNotificationWithIcon('warning');
-                        return;
-                    }
                     const hide = message.loading('Generating in progress..', 0);
                     
                     window.location.href = route('storeaccounting.pdfApprovedSubmit', {
@@ -523,24 +522,24 @@ export default {
             });
         },
         generateExcel() {
+            if (this.records.fromDate === null || this.records.toDate === null) {
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'File Selection Required',
+                        description: 'Please select start and end date first',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             Modal.confirm({
                 title: 'Confirmation',
                 content: 'Are you sure you want to generate EXCEL per CUSTOMER?',
                 okText: 'Yes',
-                okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    if (this.records.fromDate === null || this.records.toDate === null) {
-                        const openNotificationWithIcon = (type) => {
-                            notification[type]({
-                                message: 'File Selection Required',
-                                description: 'Please select start and end date first',
-                                placement: 'topRight'
-                            });
-                        };
-                        openNotificationWithIcon('warning');
-                        return;
-                    }
+                    
                     const hide = message.loading('Generating in progress..', 0)
 
                     window.location.href = route('storeaccounting.SPGCApprovedExcel', {
