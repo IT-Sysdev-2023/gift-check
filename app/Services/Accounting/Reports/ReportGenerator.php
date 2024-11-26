@@ -53,6 +53,7 @@ class ReportGenerator
 
             $item->datereq = Date::parse($item->datereq)->toFormattedDateString();
             $item->daterel = Date::parse($item->daterel)->toFormattedDateString();
+            $item->totalDenomInt = $item->totDenom;
             $item->totDenom = NumberHelper::currency($item->totDenom);
             return $item;
         });

@@ -14,6 +14,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use App\Helpers\NumberHelper;
+use Illuminate\Support\Facades\Log;
 
 class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
 {
@@ -66,10 +67,13 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
         $transDateHeader = ReportHelper::transactionDateLabel(true, $date);
 
         $header->put('transactionDate', $transDateHeader);
-
         return [
             'header' => $header,
             'records' => $record,
+            'total' => [
+                'noOfGc' => NumberHelper::currency(collect($record['perCustomer'])->sum('totcnt')),
+                'gcAmount' => NumberHelper::currency(collect($record['perCustomer'])->sum('totalDenomInt'))
+            ]
         ];
     }
 
