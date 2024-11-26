@@ -2,6 +2,8 @@
 
 namespace App\Exports\Accounting;
 
+use App\Events\AccountingReportEvent;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -15,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class SpgcApprovedPerCustomer implements FromQuery, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles
 {
 
-    public function __construct(protected array $transactionDate)
+    public function __construct(protected array $transactionDate, protected &$progress, protected $reportId, protected $user)
     {
     }
     public function query()
@@ -41,12 +43,17 @@ class SpgcApprovedPerCustomer implements FromQuery, ShouldAutoSize, WithTitle, W
     }
     public function map($data): array
     {
+        $this->broadcastProgress("Generating Customer Records");
         return [
             (new \DateTime($data->datereq))->format('F j, Y'),
             $data->spcus_acctname,
             $data->spexgc_num,
             $data->totDenom,
         ];
+    }
+
+    public function countRecords(){
+        return $this->query()->count();
     }
     
     public function title(): string
@@ -69,5 +76,11 @@ class SpgcApprovedPerCustomer implements FromQuery, ShouldAutoSize, WithTitle, W
         return [
             1 => ['font' => ['bold' => true]],
         ];
+    }
+    private function broadcastProgress(string $info)
+    {
+        $this->progress['info'] = $info;
+        $this->progress['progress']['currentRow']++;
+        AccountingReportEvent::dispatch($this->user, $this->progress, $this->reportId);
     }
 }

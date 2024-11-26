@@ -37,7 +37,7 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
         if ($this->request['format'] === 'pdf') {
             $doc = Pdf::loadView('pdf.accountingSpgcApprovedReport', ['data' => $this->handleRecords($this->request['date'])])->output();
         } else {
-            $doc = new SpgcApprovedMultiExport($this->request['date']);
+            $doc = new SpgcApprovedMultiExport($this->request['date'], $this->user);
         }
 
         (new ExportHandler())
