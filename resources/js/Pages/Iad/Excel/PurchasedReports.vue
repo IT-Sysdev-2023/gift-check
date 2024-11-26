@@ -7,6 +7,7 @@
                 </a-select>
             </div>
             <a-row class="mt-5" :gutter="[16, 16]">
+
                 <a-col :span="12">
                     <a-card>
                         <a-row :gutter="[16, 16]">
@@ -50,6 +51,7 @@ import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import type { Dayjs } from 'dayjs';
 import type { SelectProps } from 'ant-design-vue';
+import { router } from '@inertiajs/core';
 
 
 const selected = ref<string>('0');
@@ -100,33 +102,42 @@ const datatype = ref<SelectProps['options']>([
     },
 ]);
 
+
+// const generate = async () => {
+//     try {
+//         const response = await axios.get(route('iad.excel.generate.purchased', {
+//             datatype: purchase.value,
+//             store: storeData.value,
+//             date: date.value,
+//         }), {
+
+//             responseType: 'blob', // Ensures the response is treated as a Blob
+//         });
+
+//         // Create a URL for the Blob and trigger a download
+//         const url = window.URL.createObjectURL(new Blob([response.data]));
+//         const link = document.createElement('a');
+//         link.href = url;
+
+//         // Optionally set a filename
+//         link.setAttribute('download', 'verified_report.xlsx');
+//         document.body.appendChild(link);
+//         link.click();
+
+//         // Clean up
+//         link.remove();
+//         window.URL.revokeObjectURL(url);
+//     } catch (error) {
+//         console.error('Error generating the file:', error);
+//     }
+// };
 const generate = async () => {
-    try {
-        const response = await axios.get(route('iad.excel.generate.purchased', {
-            datatype: purchase.value,
-            store: storeData.value,
-            date: date.value,
-        }), {
-            
-            responseType: 'blob', // Ensures the response is treated as a Blob
-        });
+    window.location.href = route('iad.openOffice.generate.purchased', {
+        datatype: purchase.value,
+        store: storeData.value,
+        date: date.value,
+    });
 
-        // Create a URL for the Blob and trigger a download
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-
-        // Optionally set a filename
-        link.setAttribute('download', 'verified_report.xlsx');
-        document.body.appendChild(link);
-        link.click();
-
-        // Clean up
-        link.remove();
-        window.URL.revokeObjectURL(url);
-    } catch (error) {
-        console.error('Error generating the file:', error);
-    }
 };
 
 

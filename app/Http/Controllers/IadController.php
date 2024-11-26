@@ -6,7 +6,9 @@ use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Models\TempValidation;
 use App\Services\Iad\IadServices;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class IadController extends Controller
 {
@@ -23,7 +25,8 @@ class IadController extends Controller
         ]);
     }
 
-    public function setLimitAndTime(){
+    public function setLimitAndTime()
+    {
         ini_set('memory_limit', '1024M');
         set_time_limit(300);
     }
@@ -126,55 +129,72 @@ class IadController extends Controller
     }
     public function approveBudget(Request $request, $id)
     {
-       return $this->iadServices->updateBudgetRequest($request, $id);
-
+        return $this->iadServices->updateBudgetRequest($request, $id);
     }
-    public function details($id){
+    public function details($id)
+    {
         return response()->json([
             'record' => $this->iadServices->getDetails($id),
         ]);
     }
 
-    public function auditStore(Request $request){
+    public function auditStore(Request $request)
+    {
         return inertia('Iad/AuditStore', [
             'record' => $this->iadServices->getAuditStore($request),
         ]);
     }
-    public function auditStoreGenerate(Request $request){
+    public function auditStoreGenerate(Request $request)
+    {
         return $this->iadServices->generateAudited($this->iadServices->getAuditStore($request));
     }
-    public function verifiedSoldUsed(){
+    public function verifiedSoldUsed()
+    {
         return inertia('Iad/VerifiedSoldUsedGc', [
             'record' => $this->iadServices->getVerifiedSoldUsedData(),
         ]);
     }
 
-    public function verifiedDetails($barcode){
+    public function verifiedDetails($barcode)
+    {
         return $this->iadServices->getVerifiedDetails($barcode);
     }
-    public function verifiedsDetails($barcode){
+    public function verifiedsDetails($barcode)
+    {
         return $this->iadServices->getVerifiedsDetails($barcode);
     }
-    public function transactionTxtDetails($barcode){
+    public function transactionTxtDetails($barcode)
+    {
         return $this->iadServices->getTransactionText($barcode);
     }
-    public function verifiedReports(){
+    public function verifiedReports()
+    {
         return inertia('Iad/Excel/VerifiedReports', [
             'stores' => $this->iadServices->getStores(),
         ]);
     }
-    public function generateVerifiedReports(Request $request){
+    public function generateVerifiedReports(Request $request)
+    {
         $this->setLimitAndTime();
         return $this->iadServices->generateVerifiedReportExcel($request);
     }
 
-    public function purchasedReports(){
+    public function purchasedReports()
+    {
         return inertia('Iad/Excel/PurchasedReports', [
             'stores' => $this->iadServices->getStores(),
         ]);
     }
-    public function generatePurchasedReports(Request $request){
+    public function generatePurchasedReportsExcel(Request $request)
+    {
         $this->setLimitAndTime();
         return $this->iadServices->generatePurchasedReportsExcel($request);
     }
+    public function generatePurchasedReports(Request $request)
+    {
+        // dd($request->all());
+        $this->setLimitAndTime();
+        return $this->iadServices->generatePurchasedReportsOpenOffice(collect($request));
+    }
+
 }
