@@ -3,6 +3,7 @@
 namespace App\Services\Iad;
 
 use App\Exports\IadPurchased\PurchasedExports;
+use App\Exports\IadSpecialReviewed\SpecialReviewedExports;
 use App\Exports\VerifiedGcMultipleSheetExport;
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
@@ -681,5 +682,8 @@ class IadServices extends FileHandler
             ->header()
             ->data()
             ->save();
+    }
+    public function generateSpecialReviewedReportsExcel(){
+        return Excel::download(new SpecialReviewedExports, 'special.xlsx');
     }
 }

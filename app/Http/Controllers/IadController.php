@@ -197,4 +197,12 @@ class IadController extends Controller
         return $this->iadServices->generatePurchasedReportsOpenOffice(collect($request));
     }
 
+    public function specialReviewedReports(){
+        return inertia('Iad/Excel/SpecialGcReviewedReports');
+    }
+
+    public function generateSpecialReports(){
+        return $this->iadServices->generateSpecialReviewedReportsExcel();
+    }
+
 }

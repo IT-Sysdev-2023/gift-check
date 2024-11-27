@@ -671,9 +671,11 @@ Route::middleware('auth')->group(function () {
         Route::name('excel.')->group(function () {
             Route::get('verified', [IadController::class, 'verifiedReports'])->name('verified');
             Route::get('purchased', [IadController::class, 'purchasedReports'])->name('purchased');
+            Route::get('special', [IadController::class, 'specialReviewedReports'])->name('special');
 
             Route::name('generate.')->group(function () {
                 Route::get('generate-verified', [IadController::class, 'generateVerifiedReports'])->name('verified');
+                Route::get('generate-special', [IadController::class, 'generateSpecialReports'])->name('special');
                 // Route::get('generate-purchased', [IadController::class, 'generatePurchasedReportsExcel'])->name('purchased');
             });
         });

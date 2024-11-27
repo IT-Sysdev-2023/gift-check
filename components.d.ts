@@ -431,6 +431,7 @@ declare module 'vue' {
     SpecialGcPending: typeof import('./resources/js/Pages/Finance/SpecialGcPending.vue')['default']
     SpecialGcRequestHolder: typeof import('./resources/js/Pages/Custodian/SpecialGcRequestHolder.vue')['default']
     SpecialGcRequestSetup: typeof import('./resources/js/Pages/Custodian/SpecialGcRequestSetup.vue')['default']
+    SpecialGcReviewedReports: typeof import('./resources/js/Pages/Iad/Excel/SpecialGcReviewedReports.vue')['default']
     SpecialGcSetupDetails: typeof import('./resources/js/Pages/Custodian/Cards/SpecialGcSetupDetails.vue')['default']
     SpecialGcTable: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGcTable.vue')['default']
     SpecialPendingRequestFinance: typeof import('./resources/js/Pages/Finance/Cards/SpecialPendingRequestFinance.vue')['default']
