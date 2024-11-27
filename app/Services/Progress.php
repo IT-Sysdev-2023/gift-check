@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Events\AccountingReportEvent;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 class Progress
 {
@@ -11,22 +12,24 @@ class Progress
     protected $reportId;
     public function __construct()
     {
-        $this->reportId = now()->toImmutable()->toISOString();
+        $this->reportId = (string) Str::uuid();
         $this->progress = [
             'name' => 'Accounting Report',
             'progress' => [
                 'currentRow' => 0,
                 'totalRow' => 0,
             ],
-            'info' => ""
+            'info' => "",
+            'isDone' => false
         ];
     }
 
-    protected function broadcastProgress(User $user, string $info)
+    protected function broadcastProgress(User $user, string $info, bool $isDone = false, $id = null)
     {
         $this->progress['info'] = $info;
         $this->progress['progress']['currentRow']++;
-        AccountingReportEvent::dispatch($user, $this->progress, $this->reportId);
+        $this->progress['isDone'] = $isDone;
+        AccountingReportEvent::dispatch($user, $this->progress, $id ?? $this->reportId);
     }
 
 }

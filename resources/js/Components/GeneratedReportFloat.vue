@@ -82,6 +82,7 @@ interface ProgressData {
     totalRow: number;
     store?: string;
     info: string;
+    isDone?: boolean
 }
 
 interface ReportProgress {

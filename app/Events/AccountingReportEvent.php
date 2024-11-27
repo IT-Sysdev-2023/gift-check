@@ -39,6 +39,10 @@ class AccountingReportEvent implements ShouldBroadcast
     }
     public function broadcastWith(): array
     {
+        if(($this->percentage > 99) && ($this->progress['isDone'] === false)){
+            $this->percentage = 99;
+            $this->progress['info'] = 'Saving Report Pls wait...';
+        }
         return [
             'id' => $this->user->user_id,
             'reportId' => $this->reportId,

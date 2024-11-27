@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Accounting;
 
+use App\Events\AccountingReportEvent;
 use App\Exports\Accounting\SpgcApprovedMultiExport;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\User;
@@ -27,6 +28,7 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
     public function __construct(protected array $request)
     {
         parent::__construct();
+        $this->progress['name'] = "Pdf SPGC Approved Report";
         $this->user = Auth::user();
     }
 
@@ -41,7 +43,15 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
             ->setFileName('SPGC Approved Report-' . $this->user->user_id, $this->request['date'][0] . ' to ' . $this->request['date'][1])
-            ->exportDocument($this->request['format'], $doc);
+            ->exportDocument($this->request['format'], $doc, function($docu, $document){
+                
+                if($docu === 'excel'){
+                    $document->progress['isDone'] = true;
+                    AccountingReportEvent::dispatch($this->user, $document->progress, $document->reportId);
+                }else{
+                    $this->broadcastProgress($this->user, "Done", true);
+                }
+            });
     }
 
     private function handleRecords($date)
@@ -52,6 +62,7 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
             ->setFormat($this->request['format'])
             ->setTotalRecord();
 
+        
         $record = collect();
         $record->put('perCustomer', $this->perCustomerRecord($this->user));
         $record->put('perBarcode', $this->perBarcode($this->user));
