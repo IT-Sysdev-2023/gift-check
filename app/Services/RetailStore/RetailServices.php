@@ -27,6 +27,7 @@ use App\Services\RetailStore\RetailDbServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RetailServices
 {
@@ -791,7 +792,7 @@ class RetailServices
 
     public function verifiedGc(Request $request)
     {
-        
+
 
         $data = StoreVerification::join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('gc_type', 'gc_type.gc_type_id', '=', 'store_verification.vs_gctype')
@@ -802,7 +803,7 @@ class RetailServices
             ->Join('institut_transactions', 'institut_transactions.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
             ->whereAny([
                 'vs_barcode'
-            ],'like', '%'.$request->barcode.'%')
+            ], 'like', '%' . $request->barcode . '%')
             ->where('store_verification.vs_store', $request->user()->store_assigned)
             ->orderByDesc('vs_barcode')
             ->paginate()
@@ -811,5 +812,18 @@ class RetailServices
 
         return $data;
 
+    }
+
+
+    public function generate_verified_gc_pdf($request,$data,$d1,$d2)
+    {
+        $pdf = Pdf::loadView('pdf/verifiedgcreport', [
+            'data' => $data,
+            'd1' => Date::parse($d1)->format('F d, Y'),
+            'd2' =>Date::parse($d2)->format('F d, Y'),
+            'generatedby' => $request->user()->fullname,
+            'dateGenerated' => now()->format('F d, Y')
+        ])->setPaper('letter');
+        return $pdf;
     }
 }

@@ -36,9 +36,9 @@ class varianceTalibonExcel implements FromCollection, WithHeadings, WithTitle, S
         ];
 
         foreach ($talibonData as $row) {
-            if ($row->vs_date != null && $row->seodtt_transno != null) {
+            if ($row->vs_date !== null && $row->seodtt_transno !== null) {
                 $status = "Verified and Use";
-            } elseif ($row->vs_date != null) {
+            } elseif ($row->vs_date !== null) {
                 $status = "Verified not used";
             } else {
                 $status = "Not verified / not use";

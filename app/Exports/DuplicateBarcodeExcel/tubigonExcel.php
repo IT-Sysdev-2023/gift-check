@@ -41,6 +41,10 @@ class tubigonExcel implements FromCollection, WithTitle, WithHeadings, WithStyle
             'Store',
         ];
     }
+
+    public function startRow(): int{
+        return 4;
+    }
     public function styles(Worksheet $sheet)
     {
 
@@ -74,9 +78,9 @@ class tubigonExcel implements FromCollection, WithTitle, WithHeadings, WithStyle
                 $headings = $this->headings();
                 $column = 'A';
                 foreach ($headings as $heading) {
-                    $sheet->setCellValue($column . '2', $heading);
-                    $sheet->getStyle($column . '2')->getAlignment()->setHorizontal('center');
-                    $sheet->getStyle($column . '2')->getFont()->setBold(true);
+                    $sheet->setCellValue($column . '3', $heading);
+                    $sheet->getStyle($column . '3')->getAlignment()->setHorizontal('center');
+                    $sheet->getStyle($column . '3')->getFont()->setBold(true);
                     $column++;
                 }
             },
@@ -90,8 +94,10 @@ class tubigonExcel implements FromCollection, WithTitle, WithHeadings, WithStyle
     public function collection()
     {
         $tubigonData = $this->tubigonDataExcel($this->tubigonData);
+        $padding = collect(array_fill(0, 2, ['', '', '', '']));
+        $dataPadding = $padding->concat(collect($tubigonData));
 
-        return collect($tubigonData);
+        return collect($dataPadding);
     }
 
     private function tubigonDataExcel($request)

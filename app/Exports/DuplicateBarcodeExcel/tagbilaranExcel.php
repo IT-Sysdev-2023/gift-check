@@ -12,7 +12,7 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithEvents;
-
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 
 class tagbilaranExcel implements FromCollection, WithHeadings, WithTitle, ShouldAutoSize, WithEvents, WithStyles
 {
@@ -43,15 +43,16 @@ class tagbilaranExcel implements FromCollection, WithHeadings, WithTitle, Should
         ];
     }
 
+    public function startRow(): int{
+        return 4;
+    }
+
     public function styles(Worksheet $sheet)
     {
-        $data = $this->collection();
-        $rowCount = count($data);
-        $range = 'A1:Z' . ($rowCount + 1);
-
+        // return [];
         return [
             1 => ['font' => ['bold' => true]],
-            $range => ['alignment' => ['horizontal' => 'left']],
+           'A1:Z1000' => ['alignment' => ['horizontal' => 'left']],
         ];
     }
 
@@ -75,9 +76,9 @@ class tagbilaranExcel implements FromCollection, WithHeadings, WithTitle, Should
                 $headings = $this->headings();
                 $column = 'A';
                 foreach ($headings as $heading) {
-                    $sheet->setCellValue($column . '2', $heading);
-                    $sheet->getStyle($column . '2')->getAlignment()->setHorizontal('center');
-                    $sheet->getStyle($column . '2')->getFont()->setBold(true);
+                    $sheet->setCellValue($column . '3', $heading);
+                    $sheet->getStyle($column . '3')->getAlignment()->setHorizontal('center');
+                    $sheet->getStyle($column . '3')->getFont()->setBold(true);
                     $column++;
                 }
             },
@@ -93,7 +94,10 @@ class tagbilaranExcel implements FromCollection, WithHeadings, WithTitle, Should
     public function collection()
     {
         $data = $this->tagbilaranDataExcel($this->barcode);
-        return collect($data);
+        // dd($data);
+        $paddingRows = collect(array_fill(0, 2, ['', '', '', '']));
+        $dataWithPadding = $paddingRows->concat(collect($data));
+        return collect($dataWithPadding);
     }
 
     private function tagbilaranDataExcel($barcode)
