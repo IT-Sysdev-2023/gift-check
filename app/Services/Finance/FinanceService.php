@@ -118,7 +118,7 @@ class FinanceService extends FileHandler
         DB::transaction(function () use ($request, $ledger) {
 
             $file = $this->createFileName($request);
-
+            // dd($request->all());
             LedgerBudget::create([
                 'bledger_no' => NumberHelper::leadingZero($ledger, "%013d"),
                 'bledger_trid' => $request->br_id,

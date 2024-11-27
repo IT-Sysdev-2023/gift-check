@@ -14,14 +14,14 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SpgcApprovedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles
+class SpgcReleasedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles
 {
 
     public function __construct(protected array $transactionDate, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
     {
 
     }
-    public function query()
+    public function query(): mixed
     {
         return SpecialExternalGcrequestEmpAssign::query()->select(
             'special_external_gcrequest_emp_assign.spexgcemp_denom',
@@ -37,7 +37,7 @@ class SpgcApprovedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle, Wi
             'approved_request.reqap_date as daterel'
         )
             ->joinDataBarTables()
-            ->specialApproved($this->transactionDate)
+            ->specialReleased($this->transactionDate)
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode');
     }
     public function map($data): array

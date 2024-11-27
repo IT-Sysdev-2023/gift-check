@@ -2,21 +2,22 @@
 
 namespace App\Jobs\Accounting;
 
+use App\Exports\Accounting\SpgcReleasedMultiExport;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use App\Exports\Accounting\SpgcApprovedMultiExport;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\User;
 use App\Services\Accounting\Reports\ReportGenerator;
 use App\Services\Documents\ExportHandler;
 use App\Services\Treasury\Reports\ReportHelper;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use App\Helpers\NumberHelper;
 use Illuminate\Support\Facades\Log;
 
-class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
+class SpgcReleasedReport extends ReportGenerator implements ShouldQueue
 {
     use Queueable;
 
@@ -40,7 +41,7 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
-            ->setFileName('SPGC Approved Report-' . $this->user->user_id, $this->request['date'][0] . ' to ' . $this->request['date'][1])
+            ->setFileName('SPGC Released Report-' . $this->user->user_id, $this->request['date'][0] . ' to ' . $this->request['date'][1])
             ->exportDocument($this->request['format'], $doc);
     }
 
@@ -48,17 +49,17 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
     {
         //initialize
         $this->setTransactionDate($date)
-            ->setTypeApproved(true)
+            ->setTypeApproved(false)
             ->setFormat($this->request['format'])
             ->setTotalRecord();
 
         $record = collect();
-        $record->put('perCustomer', $this->perCustomerRecord($this->user));
+        $record->put('perCustomer', value: $this->perCustomerRecord($this->user));
         $record->put('perBarcode', $this->perBarcode($this->user));
 
         $header = collect([
             'reportCreated' => now()->toFormattedDateString(),
-            'subtitle' => 'Special External GC Report-Approval'
+            'subtitle' => 'Special External GC Report'
         ]);
 
         $header->put('transactionDate', ReportHelper::transactionDateLabel(true, $date));
@@ -77,7 +78,6 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
     {
         return $format === 'pdf'
             ? Pdf::loadView('pdf.accountingSpgcApprovedReport', ['data' => $this->handleRecords($date)])->output()
-            : new SpgcApprovedMultiExport($date, $this->user);
+            : new SpgcReleasedMultiExport($date, $this->user);
     }
-
 }
