@@ -106,6 +106,7 @@ declare module 'vue' {
     AppstoreOutlined: typeof import('@ant-design/icons-vue')['AppstoreOutlined']
     AProgress: typeof import('ant-design-vue/es')['Progress']
     ARadio: typeof import('ant-design-vue/es')['Radio']
+    ARadioButton: typeof import('ant-design-vue/es')['RadioButton']
     ARadioGroup: typeof import('ant-design-vue/es')['RadioGroup']
     ARangePicker: typeof import('ant-design-vue/es')['RangePicker']
     AreaChartOutlined: typeof import('@ant-design/icons-vue')['AreaChartOutlined']
