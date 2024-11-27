@@ -24,6 +24,7 @@ class AdminServices
 {
 
     public function __construct(public DBTransaction $dBTransaction) {}
+
     public function purchaseOrderDetails()
     {
 
@@ -919,6 +920,8 @@ class AdminServices
             return $key !== "";
         });
 
+        // dd($denomfiltered);
+
 
         return (object) [
             'data' => $recordfiltered,
@@ -998,31 +1001,36 @@ class AdminServices
 
     public function submitOrderPurchase($request)
     {
-
         // dd($request->name);
+
         $request->validate([
-            // 'reqno' => 'required|numeric',
+
             'reqno' => 'required|numeric|unique:requisition_form,req_no',
         ]);
 
         $create = $this->dBTransaction->createPruchaseOrders($request);
 
-
         if ($create) {
+
+            // dd(Storage::disk('fad')->exists('New/' . $request->name));
             if (Storage::disk('fad')->exists('New/' . $request->name)) {
 
                 Storage::disk('fad')->move('New/' . $request->name, 'Used/' . $request->name);
+
                 return response()->json([
                     'title' => 'Success',
                     'msg' => 'Successfully Added Po Details',
                     'status' => 'success'
                 ]);
             }
+        } else {
+            return response()->json([
+                'title' => 'Error',
+                'msg' => 'Failed Added Po Details',
+                'status' => 'error'
+            ]);
         }
-        return response()->json([
-            'title' => 'Error',
-            'msg' => 'Failed Added Po Details',
-            'status' => 'error'
-        ]);
     }
+
+    public function setupPurchaseOrdersDetails() {}
 }
