@@ -43,6 +43,10 @@ class talibonExcel implements FromCollection, WithHeadings, WithStyles, WithTitl
         ];
     }
 
+    public function startRow():int{
+        return 4;
+    }
+
     public function styles(Worksheet $sheet)
     {
         $data = $this->collection();
@@ -74,9 +78,9 @@ class talibonExcel implements FromCollection, WithHeadings, WithStyles, WithTitl
                 $headings = $this->headings();
                 $column = 'A';
                 foreach ($headings as $heading) {
-                    $sheet->setCellValue($column . '2', $heading);
-                    $sheet->getStyle($column . '2')->getAlignment()->setHorizontal('center');
-                    $sheet->getStyle($column . '2')->getFont()->setBold(true);
+                    $sheet->setCellValue($column . '3', $heading);
+                    $sheet->getStyle($column . '3')->getAlignment()->setHorizontal('center');
+                    $sheet->getStyle($column . '3')->getFont()->setBold(true);
                     $column++;
                 }
             },
@@ -90,7 +94,10 @@ class talibonExcel implements FromCollection, WithHeadings, WithStyles, WithTitl
 
     public function collection()
     {
-        return collect($this->fetchTalibonData());
+        $data = $this->fetchTalibonData($this->barcodeData);
+        $padding = collect(array_fill(0, 2, ['','','','']));
+        $dataPadding = $padding->concat(collect($data));
+        return collect($dataPadding);
     }
 
     private function fetchTalibonData()

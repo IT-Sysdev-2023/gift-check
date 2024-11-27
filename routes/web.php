@@ -781,7 +781,7 @@ Route::prefix('store-accounting')
                         Route::get('spgc-approved-submit', [StoreAccountingController::class, 'SPGCApprovedSubmit'])->name('SPGCApprovedSubmit');
                         Route::get('spgc-approved-pdf', [StoreAccountingController::class, 'pdfApproved'])->name('pdfApprovedSubmit');
                         Route::get('spgc-approved-excel-barcode', [StoreAccountingController::class, 'excelPerBarcode'])->name('excelPerBarcode');
-                       
+
 
 
 
@@ -796,7 +796,11 @@ Route::prefix('store-accounting')
 
 
                         Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');
-                        Route::get('duplicate-barcode-excel', [StoreAccountingController::class, 'duplicateExcel'])->name('duplicateExcel');
+                        Route::get('duplicate-barcode-excel', [StoreAccountingController::class, 'duplicateExcel'])->name('barcodes');
+                        Route::get('duplicate-barcode-altta-table', [StoreAccountingController::class, 'alttaTable'])->name('alttaTable');
+                        Route::get('duplicate-barcode-cebu-table', [StoreAccountingController::class, 'cebuTable'])->name('cebuTable');
+
+
 
                         Route::get('check-variance', [StoreAccountingController::class, 'CheckVariance'])->name('CheckVariance');
                         Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
