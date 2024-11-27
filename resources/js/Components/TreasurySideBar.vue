@@ -13,6 +13,7 @@ const handleClick = (e: any) => {
 
 const setActiveTab = computed(() => {
     const currentR = highlightRoute.value[0].split(".");
+    
     const keys = [
         "masterfile",
         "transactions",
