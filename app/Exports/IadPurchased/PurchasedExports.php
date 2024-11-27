@@ -47,7 +47,6 @@ class PurchasedExports implements FromView, WithEvents
                         'size' => 10,
                     ],
                 ]);
-
             },
         ];
     }
@@ -123,50 +122,66 @@ class PurchasedExports implements FromView, WithEvents
             ->orderBy('trans_sid', 'ASC')
             ->get();
 
+            // dd($data);
+
 
         $data->transform(function ($row) use ($query) {
 
-            // dd($row->seodtt_bu);
-            $purchasecred = 0;
-            $balance = 0;
+            dd($query->where('seodtt_barcode', 1310000000770)->get());
+            $data = $query->select(
+                'seodtt_bu',
+                'seodtt_terminalno',
+                'seodtt_credpuramt',
+                'seodtt_barcode'
+            )->where('seodtt_barcode', $row->sales_barcode)->get();
 
-            if ($row->vs_reverifydate != '') {
-
-                $purchasecred = 0;
-                $balance = $row->vs_tf_denomination;
-            } else {
-
-                $bdata = $this->getGCTextfileTR($row->sales_barcode, $query);
-
-                $purchasecred = $row->vs_tf_purchasecredit;
-                $balance = $row->vs_tf_balance;
-                $vsdate = $row->vs_date;
-                $vstime = $row->vs_time;
-            }
-
-            return (object) [
-                'date'          =>  $row->vs_date,
-                'barcode'       =>  $row->sales_barcode,
-                'denomination'  =>  $row->vs_tf_denomination,
-                'purchasecred'  =>  $purchasecred,
-                'fullname'     =>  $row->cus_fname . ' ',$row->cus_lname . ' , ' . $row->cus_mname . ' ' .  $row->cus_namext,
-                'balance'       =>  $balance,
-                'valid_type'    =>  'VERIFIED',
-                'gc_type'       =>  self::gcTypeTransaction($row->vs_gctype),
-                'businessunit'  =>  $bdata->bus,
-                'terminalno'    =>  $bdata->tnum,
-                'vsdate'        =>  $vsdate,
-                'vstime'        =>  $vstime,
-                'seodtt_bu'     => $row->seodtt_bu,
-                'purchaseamt'   =>  $bdata->puramt ?? 0,
-                'trans_store'   =>  $row->trans_store,
-                'vs_store'      =>  $row->vs_store,
-                'trans_number'  =>  $row->seodtt_transno,
-                'trans_datetime' =>  $row->trans_datetime,
-                'storepurchased' => $this->storePurchasedSwitchCase($row->trans_store),
-                'busnessunited' => $this->businessUnitSwitchCase($row->seodtt_bu),
+            return [
+                'data' => $data,
+                'bar' => $row->sales_barcode,
             ];
+            // $purchasecred = 0;
+            // $balance = 0;
+
+            // if ($row->vs_reverifydate != '') {
+
+            //     $purchasecred = 0;
+            //     $balance = $row->vs_tf_denomination;
+            // } else {
+
+            //     $bdata = $this->getGCTextfileTR($row->sales_barcode, $query);
+
+            //     $purchasecred = $row->vs_tf_purchasecredit;
+
+            //     $balance = $row->vs_tf_balance;
+            //     $vsdate = $row->vs_date;
+            //     $vstime = $row->vs_time;
+            // }
+
+            // return (object) [
+            //     'data'          =>  $bdata,
+            //     'date'          =>  $row->vs_date,
+            //     'barcode'       =>  $row->sales_barcode,
+            //     'denomination'  =>  $row->vs_tf_denomination,
+            //     'purchasecred'  =>  $purchasecred,
+            //     'fullname'     =>  $row->cus_fname . ' ', $row->cus_lname . ' , ' . $row->cus_mname . ' ' .  $row->cus_namext,
+            //     'balance'       =>  $balance,
+            //     'valid_type'    =>  'VERIFIED',
+            //     'gc_type'       =>  self::gcTypeTransaction($row->vs_gctype),
+            //     // 'businessunit'  =>  $bdata->bus ?? '',
+            //     // 'terminalno'    =>  $bdata->tnum ?? '',
+            //     // 'vsdate'        =>  $vsdate ?? null,
+            //     // 'vstime'        =>  $vstime ?? null,
+            //     'seodtt_bu'     => $row->seodtt_bu,
+            //     // 'purchaseamt'   =>  $bdata->puramt ?? 0,
+            //     'trans_store'   =>  $row->trans_store,
+            //     'vs_store'      =>  $row->vs_store,
+            //     'trans_number'  =>  $row->seodtt_transno,
+            //     'trans_datetime' =>  $row->trans_datetime,
+            //     'storepurchased' => $this->storePurchasedSwitchCase($row->trans_store),
+            //     'busnessunited' => $this->businessUnitSwitchCase($row->seodtt_bu),
+            // ];
         });
+
         dd($data->toArray());
 
         return $data;
@@ -203,7 +218,7 @@ class PurchasedExports implements FromView, WithEvents
     }
     private static function gcTypeTransaction($type)
     {
-// ALA WABALO
+        // ALA WABALO
         $transaction = [
             '1' => 'REGULAR',
             '3' => 'SPECIAL EXTERNAL',
@@ -230,15 +245,16 @@ class PurchasedExports implements FromView, WithEvents
     public function getGCTextfileTR($barcode, $query)
     {
 
-        $data = $query->select(
+       return $query->select(
             'seodtt_bu',
             'seodtt_terminalno',
-            'seodtt_credpuramt'
+            'seodtt_credpuramt',
+            'seodtt_barcode'
         )->where('seodtt_barcode', $barcode)->get();
 
-        $puramnt = "";
-        $bus = "";
-        $tnum = "";
+        // $puramnt = "";
+        // $bus = "";
+        // $tnum = "";
 
         if ($data->count() > 0) {
             // dd();
@@ -249,7 +265,6 @@ class PurchasedExports implements FromView, WithEvents
                     $bus .= $item->seodtt_bu;
                     $tnum .= $item->seodtt_terminalno;
                 });
-
             } else {
                 $data->each(function ($item, $index) use ($data, &$puramt, &$bus, &$tnum) {
 
@@ -263,10 +278,10 @@ class PurchasedExports implements FromView, WithEvents
         }
 
 
-        return (object) [
-            'puramnt' => $puramnt,
-            'bus' => $bus,
-            'tnum' => $tnum,
-        ];
+        // return (object) [
+        //     'puramnt' => $puramnt,
+        //     'bus' => $bus,
+        //     'tnum' => $tnum,
+        // ];
     }
 }

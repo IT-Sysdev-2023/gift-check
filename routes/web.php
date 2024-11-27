@@ -45,6 +45,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
+
+
 Route::get('/', function () {
     return Inertia::render(
         'Login'
@@ -62,6 +64,19 @@ Route::fallback(function () {
 Route::get('kanding', function () {
     return Storage::disk('fad')->files();
 });
+Route::get('kanding-hinuktan', function () {
+    $insti = InstitutPayment::select('insp_id')->where('institut_eodid', '0')->get();
+    if ($insti->isNotEmpty()) {
+        DB::transaction(function () {
+            $eod_num = InstitutEod::orderByDesc('ieod_id')->value('ieod_num');
+
+            $incre = $eod_num ? $eod_num + 1 : 1;
+            dd($incre);
+        });
+    }
+});
+
+
 
 Route::get('admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::get('employee', [UserDetailsController::class, 'index']);
@@ -428,13 +443,13 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::prefix('reports')->name('reports.')->group(function () {
-            Route::get('gc-report', [ReportsController::class,'gcReport'])->name('index');
-            Route::get('eod-report', [ReportsController::class,'eodReport'])->name('eod');
-            Route::get('generate-gc-report', [ReportsController::class,'generateGcReports'])->name('generate.gc');
-            Route::get('generate-eod-report', [ReportsController::class,'generateEodReports'])->name('generate.eod');
+            Route::get('gc-report', [ReportsController::class, 'gcReport'])->name('index');
+            Route::get('eod-report', [ReportsController::class, 'eodReport'])->name('eod');
+            Route::get('generate-gc-report', [ReportsController::class, 'generateGcReports'])->name('generate.gc');
+            Route::get('generate-eod-report', [ReportsController::class, 'generateEodReports'])->name('generate.eod');
 
-            Route::get('list-of-generated-reports', [ReportsController::class,'listOfGeneratedReports'])->name('generatedReports');
-            Route::get('download-generated-report', [ReportsController::class,'downloadGeneratedReport'])->name('download.gc');
+            Route::get('list-of-generated-reports', [ReportsController::class, 'listOfGeneratedReports'])->name('generatedReports');
+            Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('download.gc');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
@@ -475,11 +490,12 @@ Route::prefix('accounting')->name('accounting.')->group(function () {
         Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
     });
 
-    Route::prefix('reports')->name('reports.')->group(function() {
+    Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('spgc-report-approved', [AccountingReportController::class, 'spgcApprovedReport'])->name('special.gc.approved');
-        Route::get('generate-spgc-report-approved', [AccountingReportController::class, 'generateApprovedReport'])->name('generate.special.gc.approved');
-
         Route::get('spgc-report-released', [AccountingReportController::class, 'spgcReleasedReport'])->name('special.gc.released');
+        Route::get('generate-spgc-report-approved', [AccountingReportController::class, 'generateApprovedReport'])->name('generate.special.gc.approved');
+        Route::get('generate-spgc-report-released', [AccountingReportController::class, 'generateReleasedReport'])->name('generate.special.gc.released');
+
         Route::get('generated-reports', [AccountingReportController::class, 'generatedReports'])->name('generatedReports');
     });
 });
@@ -515,9 +531,9 @@ Route::prefix('finance')->group(function () {
             Route::get('reprint-{id}', [FinanceController::class, 'reprint'])->name('reprint');
         });
 
-        Route::name('cancelledSpecialExternalGC.')->group(function(){
-            Route::get('cancelled-especial-external-gc',[FinanceController::class, 'list'])->name('list');
-            Route::get('view-cancelled-especial-external-gc',[FinanceController::class, 'view'])->name('view');
+        Route::name('cancelledSpecialExternalGC.')->group(function () {
+            Route::get('cancelled-especial-external-gc', [FinanceController::class, 'list'])->name('list');
+            Route::get('view-cancelled-especial-external-gc', [FinanceController::class, 'view'])->name('view');
         });
     });
 
@@ -556,18 +572,23 @@ Route::prefix('retail')->group(function () {
         });
         Route::get('AvailableGc', [RetailController::class, 'availableGcList'])->name('availableGcList');
         Route::get('soldGc', [RetailController::class, 'soldGc'])->name('soldGc');
-    
+
 
         Route::get('lostGc', [RetailController::class, 'lostGC'])->name('lostGc');
-        Route::post('submit-lost-gc',[RetailController::class, 'submitLostGc'])->name('submit-lost-gc')->middleware([HandlePrecognitiveRequests::class]);
-   
+        Route::post('submit-lost-gc', [RetailController::class, 'submitLostGc'])->name('submit-lost-gc')->middleware([HandlePrecognitiveRequests::class]);
+
         Route::get('store-eod', [RetailController::class, 'storeEOD'])->name('storeEod');
-        
-        Route::name('verified-gc.')->group(function (){
+
+        Route::name('verified-gc.')->group(function () {
             Route::get('verified-gc-list', [RetailController::class, 'verifiedGc'])->name('list');
-            Route::get('gc-details',[RetailController::class, 'gcdetails'])->name('gcdetails');
+            Route::get('gc-details', [RetailController::class, 'gcdetails'])->name('gcdetails');
         });
-        
+
+        Route::name('verified_gc_report.')->group(function () {
+            Route::get('verified_gc_report', [RetailController::class, 'verified_gc_report'])->name('verified_gc_report');
+            Route::get('generate-pdf', [RetailController::class, 'verified_gc_generate_pdf'])->name('generate_pdf');
+        });
+
     });
 });
 Route::prefix('retailgroup')->name('retailgroup.')->group(function () {
@@ -664,15 +685,23 @@ Route::middleware('auth')->group(function () {
         Route::name('excel.')->group(function () {
             Route::get('verified', [IadController::class, 'verifiedReports'])->name('verified');
             Route::get('purchased', [IadController::class, 'purchasedReports'])->name('purchased');
+            Route::get('special', [IadController::class, 'specialReviewedReports'])->name('special');
 
             Route::name('generate.')->group(function () {
                 Route::get('generate-verified', [IadController::class, 'generateVerifiedReports'])->name('verified');
+                Route::get('generate-special', [IadController::class, 'generateSpecialReports'])->name('special');
+                // Route::get('generate-purchased', [IadController::class, 'generatePurchasedReportsExcel'])->name('purchased');
+            });
+        });
+        Route::name('openOffice.')->group(function () {
+            Route::name('generate.')->group(function () {
                 Route::get('generate-purchased', [IadController::class, 'generatePurchasedReports'])->name('purchased');
             });
         });
     });
 });
-
+Route::post('upload', [IadController::class, 'upload'])->name('upload');
+Route::get('merge', [IadController::class, 'merge'])->name('merge');
 Route::prefix('search')->group(function () {
     Route::name('search.')->group(function () {
         Route::get('check-by', [QueryFilterController::class, 'getCheckBy'])->name('checkBy');
@@ -800,17 +829,24 @@ Route::prefix('store-accounting')
                         Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                         Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
 
-
-
-
-
-
-
-
                         Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
                     }
                 );
         }
     );
+
+// Route::get('openoffice', function () {
+
+// // dd();
+//     $spreadsheet = new Spreadsheet();
+//     $sheet = $spreadsheet->getActiveSheet();
+//     $sheet->setCellValue('A1', 'Hello OpenOffice!');
+
+//     $writer = new Ods($spreadsheet);
+//     $filePath = storage_path('hellos.ods');
+//     $writer->save($filePath);
+
+//     return response()->download($filePath)->deleteFileAfterSend();
+// })->name('openoffice');
 
 require __DIR__ . '/auth.php';

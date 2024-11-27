@@ -80,7 +80,7 @@
         <div class="header">
             <h1>ALTURAS GROUP OF COMPANIES</h1>
             <h3>Head Office - Finance Department</h3>
-            <h3>Special External GC Report-Approval</h3>
+            <h3>{{$data['header']['subtitle']}}</h3>
         </div>
 
         <div class="report-dates">

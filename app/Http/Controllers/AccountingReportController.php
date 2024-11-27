@@ -13,15 +13,21 @@ class AccountingReportController extends Controller
     }
     public function spgcApprovedReport(){
         return inertia('Accounting/Reports/SpecialGcApprovedReport', [
-            'title' => 'Special Gc Report'
+            'title' => 'Special Gc Approved Report'
         ]);
     }
 
     public function generateApprovedReport(Request $request){
         return $this->reportService->specialGcReport($request);
     }
-    public function spgcReleasedReport(){
 
+    public function generateReleasedReport(Request $request){
+        return $this->reportService->specialGcReleasedReport($request);
+    }
+    public function spgcReleasedReport(){
+        return inertia('Accounting/Reports/SpecialGcReleasedReport', [
+            'title' => 'Special Gc Released Report'
+        ]);
     }
     public function generatedReports(Request $request){
         return $this->reportService->listOfReports($request);

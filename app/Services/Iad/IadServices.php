@@ -3,6 +3,7 @@
 namespace App\Services\Iad;
 
 use App\Exports\IadPurchased\PurchasedExports;
+use App\Exports\IadSpecialReviewed\SpecialReviewedExports;
 use App\Exports\VerifiedGcMultipleSheetExport;
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
@@ -29,15 +30,20 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Iad\AuditTraits;
+use App\Traits\OpenOfficeTraits\StorePurchasedTraits;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Ods;
 
 class IadServices extends FileHandler
 {
     use AuditTraits;
+    use StorePurchasedTraits;
 
     public function __construct(public IadDbServices $iadDbServices)
     {
+        $this->initializeSpreadsheet();
         parent::__construct();
     }
     public function gcReceivingIndex()
@@ -78,13 +84,8 @@ class IadServices extends FileHandler
 
     public function getDenomination($denom, $request)
     {
-        // dd($denom);
-
 
         $requisProId = self::getRequistionNo($request->requisId) ?? null;
-
-        // dd(1);
-
 
         $data =  Denomination::select('denomination', 'denom_fad_item_number', 'denom_code', 'denom_id')
             ->where('denom_type', 'RSGC')
@@ -102,7 +103,6 @@ class IadServices extends FileHandler
 
             $prodRequest = ProductionRequestItem::where('pe_items_request_id', $requisProId)
                 ->where('pe_items_denomination', $item->denom_id)->first();
-            // dd($prodRequest->toArray());
 
             foreach ($denom as $key => $value) {
                 if ($item->denom_fad_item_number == $value->denom_no) {
@@ -125,8 +125,6 @@ class IadServices extends FileHandler
 
             return $item;
         });
-
-        // dd($data->toArray());
 
         return $data;
     }
@@ -664,9 +662,20 @@ class IadServices extends FileHandler
         return Excel::download($rec, 'users.xlsx');
     }
 
-    public function generatePurchasedReportsExcel($request){
+    public function generatePurchasedReportsExcel($request)
+    {
         $rec = new PurchasedExports($request->all());
 
         return Excel::download($rec, 'users.xlsx');
+    }
+    public function generatePurchasedReportsOpenOffice($request)
+    {
+        return $this->record($request)
+            ->header()
+            ->data()
+            ->save();
+    }
+    public function generateSpecialReviewedReportsExcel(){
+        return Excel::download(new SpecialReviewedExports, 'special.xlsx');
     }
 }

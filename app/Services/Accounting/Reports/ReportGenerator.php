@@ -15,10 +15,12 @@ class ReportGenerator extends Progress
 {
     protected $date;
     protected $format;
+    protected bool $type;
+
     public function __construct()
     {
         parent::__construct();
-      
+
     }
     protected function setTransactionDate($date)
     {
@@ -26,17 +28,27 @@ class ReportGenerator extends Progress
         return $this;
     }
 
-    protected function setFormat(string $format){
+    protected function setFormat(string $format)
+    {
         $this->format = $format;
+        return $this;
+    }
+    protected function setTypeApproved(bool $type)
+    {
+        $this->type = $type;
         return $this;
     }
     protected function setTotalRecord()
     {
-        $this->progress['progress']['totalRow'] = $this->getBarcodeQuery()->count() + $this->getPerCustomerQuery()->count();
+        $barcode = $this->type ? $this->getApprovedBarcodeQuery() : $this->getReleasedBarcodeQuery();
+        $released = $this->type ? $this->getApprovedPerCustomerQuery() : $this->getReleasedPerCustomerQuery();
+
+        $this->progress['progress']['totalRow'] = $barcode->count() + $released->count();
     }
     protected function perCustomerRecord(User $user)
     {
-        $data = $this->getPerCustomerQuery();
+        $data = $this->type ? $this->getApprovedPerCustomerQuery()
+            : $this->getReleasedPerCustomerQuery();
 
         return $data->map(function ($item) use ($user) {
             //Dispatch
@@ -53,7 +65,8 @@ class ReportGenerator extends Progress
 
     protected function perBarcode(User $user)
     {
-        $data = $this->getBarcodeQuery();
+        $data = $this->type ? $this->getApprovedBarcodeQuery()
+            : $this->getReleasedBarcodeQuery();
 
         $count = 1;
 
@@ -70,7 +83,48 @@ class ReportGenerator extends Progress
         });
     }
 
-    private function getBarcodeQuery()
+    private function getReleasedBarcodeQuery()
+    {
+        return SpecialExternalGcrequestEmpAssign::select(
+            'special_external_gcrequest_emp_assign.spexgcemp_denom',
+            'special_external_gcrequest_emp_assign.spexgcemp_fname',
+            'special_external_gcrequest_emp_assign.spexgcemp_lname',
+            'special_external_gcrequest_emp_assign.spexgcemp_mname',
+            'special_external_gcrequest_emp_assign.voucher',
+            'special_external_gcrequest_emp_assign.spexgcemp_extname',
+            'special_external_gcrequest_emp_assign.spexgcemp_barcode',
+
+            'special_external_gcrequest.spexgc_num',
+            'special_external_gcrequest.spexgc_datereq as datereq',
+            'approved_request.reqap_date as daterel'
+        )
+            ->joinDataBarTables()
+            ->specialReleased($this->date)
+            ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode')
+            ->cursor();
+    }
+    private function getReleasedPerCustomerQuery()
+    {
+        return SpecialExternalGcrequestEmpAssign::selectRaw("
+        COALESCE(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom), 0) AS totDenom,
+        COALESCE(COUNT(special_external_gcrequest_emp_assign.spexgcemp_barcode), 0) AS totcnt,
+        special_external_gcrequest.spexgc_num,
+        special_external_gcrequest.spexgc_datereq as datereq,
+        approved_request.reqap_date as daterel,
+        special_external_customer.spcus_acctname
+")
+            ->joinDataAndGetOnTables()
+            ->specialReleased($this->date)
+            ->groupBy(
+                'special_external_gcrequest.spexgc_datereq',
+                'special_external_gcrequest.spexgc_num',
+                'approved_request.reqap_date',
+                'special_external_customer.spcus_acctname',
+            )
+            ->orderBy('special_external_gcrequest.spexgc_datereq')
+            ->cursor();
+    }
+    private function getApprovedBarcodeQuery()
     {
         return SpecialExternalGcrequestEmpAssign::select(
             'special_external_gcrequest_emp_assign.spexgcemp_denom',
@@ -90,7 +144,7 @@ class ReportGenerator extends Progress
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode')
             ->cursor();
     }
-    private function getPerCustomerQuery()
+    private function getApprovedPerCustomerQuery()
     {
         return SpecialExternalGcrequestEmpAssign::selectRaw("
         COALESCE(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom), 0) AS totDenom,

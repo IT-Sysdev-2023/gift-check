@@ -33,7 +33,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 class AdminController extends Controller
 {
-    public function __construct(public AdminServices $adminservices) {}
+    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction) {}
 
     public function index()
     {
@@ -74,6 +74,7 @@ class AdminController extends Controller
             'podetails' => $this->adminservices->getpodetailsDatabase(),
         ]);
     }
+
     // public function submitPurchaseOrders(PurchaseOrderRequest $request)
     // {
     //     $denomination = collect($request->denom)->filter(function ($item) {
@@ -1163,5 +1164,15 @@ class AdminController extends Controller
     public function submitPurchaseOrdersToIad(Request $request)
     {
         return $this->adminservices->submitOrderPurchase($request);
+    }
+    public function setupPurchaseOrders($name){
+
+        $data = $this->adminservices->getPoDetailsTextfiles($name);
+
+        return inertia('Admin/SetupPurchaseOrders', [
+            'record' => $data,
+            'denom' => $this->adminservices->getDenomination($data->denom),
+            'title' => $name,
+        ]);
     }
 }

@@ -110,6 +110,10 @@ class SpecialExternalGcrequestEmpAssign extends Model
         ->whereNot('special_external_gcrequest_emp_assign.spexgc_status', 'inactive')
         ->whereBetween('approved_request.reqap_date', [$date[0], $date[1]]);
     }
+    public function scopeSpecialReleased(Builder $query, array $date){
+        $query->where('approved_request.reqap_approvedtype', 'special external releasing')
+        ->whereBetween('approved_request.reqap_date', [$date[0], $date[1]]);
+    }
     public function reverified()
     {
         return $this->belongsTo(StoreVerification::class, 'spexgcemp_barcode', 'vs_barcode');

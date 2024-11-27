@@ -85,8 +85,8 @@ const page = usePage<PageWithSharedProps>().props;
                     <span>Reports</span>
                 </span>
             </template>
-            <a-menu-item key="verifiedGCReports">Verified GC Reports</a-menu-item>
-            <a-menu-item key="beamAndGoGoReport">Beam and Go GC Report</a-menu-item>
+            <a-menu-item key="verifiedGCReports" @click="()=> $inertia.get(route('retail.verified_gc_report.verified_gc_report'))">Verified GC Reports</a-menu-item>
+            <!-- <a-menu-item key="beamAndGoGoReport">Beam and Go GC Report</a-menu-item> -->
         </a-sub-menu>
     </a-sub-menu>
     <div v-else>
@@ -155,8 +155,8 @@ const page = usePage<PageWithSharedProps>().props;
                     <span>Reports</span>
                 </span>
             </template>
-            <a-menu-item key="verifiedGCReports">Verified GC Reports</a-menu-item>
-            <a-menu-item key="beamAndGoGoReport">Beam and Go GC Report</a-menu-item>
+            <a-menu-item key="verifiedGCReports" @click="()=> $inertia.get(route('retail.verified_gc_report.verified_gc_report'))">Verified GC Reports</a-menu-item>
+            <!-- <a-menu-item key="beamAndGoGoReport">Beam and Go GC Report</a-menu-item> -->
         </a-sub-menu>
     </div>
 

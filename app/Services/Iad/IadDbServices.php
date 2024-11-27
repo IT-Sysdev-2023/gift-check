@@ -11,6 +11,7 @@ use App\Models\RequisitionEntry;
 use App\Models\RequisitionForm;
 use App\Models\RequisitionFormDenomination;
 use App\Models\TempValidation;
+use Illuminate\Support\Facades\Date;
 
 class IadDbServices
 {
@@ -32,10 +33,10 @@ class IadDbServices
         PurchaseOrderDetail::create([
             'purchorderdet_mnlno' => $request->data['req_no'],
             'purchorderdet_fadrecno' => $request->data['rec_no'],
-            'purchorderdet_trandate' => $request->data['trans_date'],
+            'purchorderdet_trandate' => Date::parse($request->data['trans_date'])->format('Y-m-d'),
             'purchorderdet_refno' => $request->data['ref_no'],
             'purchorderdet_purono' => $request->data['po_no'],
-            'purchorderdet_purdate' => $request->data['pur_date'],
+            'purchorderdet_purdate' => Date::parse($request->data['pur_date'])->format('Y-m-d'),
             'purchorderdet_payterms' => $request->data['pay_terms'],
             'purchorderdet_locode' => $request->data['loc_code'],
             'purchorderdet_deptcode' => $request->data['dep_code'],
@@ -83,8 +84,6 @@ class IadDbServices
 
 
         }
-
-        // dd($prodRequest);
 
         return $this;
     }

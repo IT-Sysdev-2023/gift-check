@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SpgcApprovedPerCustomer implements FromQuery, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles
+class SpgcReleasedPerCustomer implements FromQuery, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles
 {
 
     public function __construct(protected array $transactionDate, protected &$progress = null, protected $reportId = null, protected $user= null)
@@ -31,7 +31,7 @@ class SpgcApprovedPerCustomer implements FromQuery, ShouldAutoSize, WithTitle, W
         special_external_customer.spcus_acctname
 ")
             ->joinDataAndGetOnTables()
-            ->specialApproved($this->transactionDate)
+            ->specialReleased($this->transactionDate)
             ->groupBy(
                 'special_external_gcrequest.spexgc_datereq',
                 'special_external_gcrequest.spexgc_num',
