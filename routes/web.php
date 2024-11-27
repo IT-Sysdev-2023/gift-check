@@ -583,12 +583,6 @@ Route::prefix('retail')->group(function () {
             Route::get('verified-gc-list', [RetailController::class, 'verifiedGc'])->name('list');
             Route::get('gc-details', [RetailController::class, 'gcdetails'])->name('gcdetails');
         });
-
-        Route::name('verified_gc_report.')->group(function () {
-            Route::get('verified_gc_report', [RetailController::class, 'verified_gc_report'])->name('verified_gc_report');
-            Route::get('generate-pdf', [RetailController::class, 'verified_gc_generate_pdf'])->name('generate_pdf');
-        });
-
     });
 });
 Route::prefix('retailgroup')->name('retailgroup.')->group(function () {
@@ -815,6 +809,9 @@ Route::prefix('store-accounting')
 
 
 
+
+
+
                         Route::get('spgc-release', [StoreAccountingController::class, 'SPGCRelease'])->name('SPGCRelease');
                         Route::get('spgc-release-submit', [StoreAccountingController::class, 'SPGCReleasedSubmit'])->name('SPGCReleasedSubmit');
                         Route::get('spgc-release-excel', [StoreAccountingController::class, 'releaseExcel'])->name('releaseExcel');
@@ -823,7 +820,11 @@ Route::prefix('store-accounting')
 
 
                         Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');
-                        Route::get('duplicate-barcode-excel', [StoreAccountingController::class, 'duplicateExcel'])->name('duplicateExcel');
+                        Route::get('duplicate-barcode-excel', [StoreAccountingController::class, 'duplicateExcel'])->name('barcodes');
+                        Route::get('duplicate-barcode-altta-table', [StoreAccountingController::class, 'alttaTable'])->name('alttaTable');
+                        Route::get('duplicate-barcode-cebu-table', [StoreAccountingController::class, 'cebuTable'])->name('cebuTable');
+
+
 
                         Route::get('check-variance', [StoreAccountingController::class, 'CheckVariance'])->name('CheckVariance');
                         Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');

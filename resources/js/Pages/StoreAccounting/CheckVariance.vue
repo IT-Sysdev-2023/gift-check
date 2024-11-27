@@ -4,10 +4,10 @@
             <a-tabs>
                 <a-tab-pane key="1">
                     <template #tab>
-                        <span style="font-weight: bold;">
-                            <span style="color: green;">
+                        <span>
+                            <!-- <span style="color: green;">
                                 <DatabaseOutlined />
-                            </span>
+                            </span> -->
                             Tagbilaran
                         </span>
                     </template>
@@ -28,10 +28,10 @@
                 </a-tab-pane>
                 <a-tab-pane key="2">
                     <template #tab>
-                        <span style="font-weight: bold;">
-                            <span style="color: green;">
+                        <span>
+                            <!-- <span style="color: green;">
                                 <DatabaseOutlined />
-                            </span>
+                            </span> -->
                             Talibon
                         </span>
                     </template>
@@ -56,7 +56,8 @@
                 </a-tab-pane>
             </a-tabs>
         </a-card>
-        <a-button style="background-color: green; color:white; margin-top: 10px; margin-left: 85%;" @click="SelectCustomerName">
+        <a-button style="background-color: green; color:white; margin-top: 10px; margin-left: 85%;"
+            @click="SelectCustomerName">
             <FileExcelOutlined />
             Generate Excel
         </a-button>
@@ -82,11 +83,14 @@
                 </a-select>
             </a-form-item>
             <div style="margin-top: 20px;">
-                <span style="color:green; font-weight: bold;">
+                <span v-if="variance.formatCusName" style="color:green; font-weight: bold;">
                     Selected Customer Name:
                 </span>
                 <span style="color:red; margin-left: 5px; text-decoration: underline;">
                     {{ this.variance.formatCusName }}
+                </span>
+                <span v-if="!variance.formatCusName" style="color:red">
+                    No selected Customer Name
                 </span>
             </div>
             <a-button style="background-color:#1e90ff; color:white; margin-top: 10px;" @click="selectButton">
@@ -130,53 +134,53 @@ export default {
             varianceTable: [
                 {
                     title: 'Barcode',
-                    dataIndex: 'spexgcemp_barcode'
+                    dataIndex: 'barcode'
                 },
                 {
                     title: 'Denomination',
-                    dataIndex: 'spexgcemp_denom'
+                    dataIndex: 'denom'
                 },
                 {
                     title: 'Customer Name',
-                    dataIndex: 'customerName'
+                    dataIndex: 'cusname'
                 },
                 {
                     title: 'Verify Date',
-                    dataIndex: 'vs_date'
+                    dataIndex: 'verifydate'
                 },
                 {
                     title: 'Store',
-                    dataIndex: 'store_name'
+                    dataIndex: 'store'
                 },
                 {
                     title: 'Transaction No',
-                    dataIndex: 'seodtt_transno'
+                    dataIndex: 'transno'
                 },
             ],
             talibonData: [
                 {
                     title: 'Barcode',
-                    dataIndex: 'spexgcemp_barcode'
+                    dataIndex: 'barcode'
                 },
                 {
                     title: 'Denomination',
-                    dataIndex: 'spexgcemp_denom'
+                    dataIndex: 'denom'
                 },
                 {
                     title: 'Customer Name',
-                    dataIndex: 'customerName'
+                    dataIndex: 'cusname'
                 },
                 {
                     title: 'Verify Date',
-                    dataIndex: 'vs_date'
+                    dataIndex: 'verifydate'
                 },
                 {
                     title: 'Store',
-                    dataIndex: 'store_name'
+                    dataIndex: 'store'
                 },
                 {
                     title: 'Transaction No',
-                    dataIndex: 'seodtt_transno'
+                    dataIndex: 'transno'
                 },
             ],
         }
