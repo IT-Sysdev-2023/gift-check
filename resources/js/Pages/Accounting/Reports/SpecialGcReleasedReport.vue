@@ -77,7 +77,7 @@ const generate = async () => {
     state.setFloatButton(true);
 
     await axios
-        .get(route("accounting.reports.generate.special.gc.approved"), {
+        .get(route("accounting.reports.generate.special.gc.released"), {
             params: {
                 format: form.value.extension,
                 date: [

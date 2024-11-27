@@ -68,7 +68,7 @@ class SpgcReleasedReport extends ReportGenerator implements ShouldQueue
             'header' => $header,
             'records' => $record,
             'total' => [
-                'noOfGc' => NumberHelper::currency(collect($record['perCustomer'])->sum('totcnt')),
+                'noOfGc' => NumberHelper::toLocaleString(collect($record['perCustomer'])->sum('totcnt')) . ' pcs',
                 'gcAmount' => NumberHelper::currency(collect($record['perCustomer'])->sum('totalDenomInt'))
             ]
         ];

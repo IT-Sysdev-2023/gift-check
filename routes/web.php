@@ -492,9 +492,10 @@ Route::prefix('accounting')->name('accounting.')->group(function () {
 
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('spgc-report-approved', [AccountingReportController::class, 'spgcApprovedReport'])->name('special.gc.approved');
-        Route::get('generate-spgc-report-approved', [AccountingReportController::class, 'generateApprovedReport'])->name('generate.special.gc.approved');
-
         Route::get('spgc-report-released', [AccountingReportController::class, 'spgcReleasedReport'])->name('special.gc.released');
+        Route::get('generate-spgc-report-approved', [AccountingReportController::class, 'generateApprovedReport'])->name('generate.special.gc.approved');
+        Route::get('generate-spgc-report-released', [AccountingReportController::class, 'generateReleasedReport'])->name('generate.special.gc.released');
+
         Route::get('generated-reports', [AccountingReportController::class, 'generatedReports'])->name('generatedReports');
     });
 });
