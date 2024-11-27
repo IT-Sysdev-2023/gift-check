@@ -1004,7 +1004,6 @@ class AdminServices
         // dd($request->name);
 
         $request->validate([
-
             'reqno' => 'required|numeric|unique:requisition_form,req_no',
         ]);
 
