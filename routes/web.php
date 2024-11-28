@@ -586,6 +586,7 @@ Route::prefix('retail')->group(function () {
         Route::name('verified_gc_report.')->group(function () {
             Route::get('verified_gc_report', [RetailController::class, 'verified_gc_report'])->name('verified_gc_report');
             Route::get('generate-pdf', [RetailController::class, 'verified_gc_generate_pdf'])->name('generate_pdf');
+            Route::get('generate-excel', [RetailController::class, 'verified_gc_generate_excel'])->name('generate_excel');
         });
     });
 });
