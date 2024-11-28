@@ -13,6 +13,7 @@ use App\Http\Controllers\EodController;
 use App\Http\Controllers\FadController;
 use App\Http\Controllers\Iad\Dashboard\SpecialExternalGcRequestController;
 use App\Http\Controllers\MarketingController;
+use App\Http\Controllers\Treasury\PromoGcReleasedController;
 use App\Http\Controllers\Treasury\ReportsController;
 use \App\Http\Controllers\Treasury\MasterfileController;
 use App\Http\Controllers\ProfileController;
@@ -452,6 +453,10 @@ Route::middleware(['auth'])->group(function () {
             Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('download.gc');
         });
 
+        Route::prefix('promo-gc-released')->name('promo.gc.')->group(function () {
+            Route::get('released', [PromoGcReleasedController::class, 'released'])->name('released');
+        });
+
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
 
         Route::get('budget-ledger', [TreasuryController::class, 'budgetLedger'])->name('budget.ledger');
@@ -576,6 +581,18 @@ Route::prefix('retail')->group(function () {
 
         Route::get('lostGc', [RetailController::class, 'lostGC'])->name('lostGc');
         Route::post('submit-lost-gc', [RetailController::class, 'submitLostGc'])->name('submit-lost-gc')->middleware([HandlePrecognitiveRequests::class]);
+
+        Route::get('store-eod', [RetailController::class, 'storeEOD'])->name('storeEod');
+
+        Route::name('verified-gc.')->group(function () {
+            Route::get('verified-gc-list', [RetailController::class, 'verifiedGc'])->name('list');
+            Route::get('gc-details', [RetailController::class, 'gcdetails'])->name('gcdetails');
+        });
+        Route::name('verified_gc_report.')->group(function () {
+            Route::get('verified_gc_report', [RetailController::class, 'verified_gc_report'])->name('verified_gc_report');
+            Route::get('generate-pdf', [RetailController::class, 'verified_gc_generate_pdf'])->name('generate_pdf');
+            Route::get('generate-excel', [RetailController::class, 'verified_gc_generate_excel'])->name('generate_excel');
+        });
     });
 });
 Route::prefix('retailgroup')->name('retailgroup.')->group(function () {
@@ -802,6 +819,9 @@ Route::prefix('store-accounting')
 
 
 
+
+
+
                         Route::get('spgc-release', [StoreAccountingController::class, 'SPGCRelease'])->name('SPGCRelease');
                         Route::get('spgc-release-submit', [StoreAccountingController::class, 'SPGCReleasedSubmit'])->name('SPGCReleasedSubmit');
                         Route::get('spgc-release-excel', [StoreAccountingController::class, 'releaseExcel'])->name('releaseExcel');
@@ -810,7 +830,11 @@ Route::prefix('store-accounting')
 
 
                         Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');
-                        Route::get('duplicate-barcode-excel', [StoreAccountingController::class, 'duplicateExcel'])->name('duplicateExcel');
+                        Route::get('duplicate-barcode-excel', [StoreAccountingController::class, 'duplicateExcel'])->name('barcodes');
+                        Route::get('duplicate-barcode-altta-table', [StoreAccountingController::class, 'alttaTable'])->name('alttaTable');
+                        Route::get('duplicate-barcode-cebu-table', [StoreAccountingController::class, 'cebuTable'])->name('cebuTable');
+
+
 
                         Route::get('check-variance', [StoreAccountingController::class, 'CheckVariance'])->name('CheckVariance');
                         Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');

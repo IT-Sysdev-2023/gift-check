@@ -14,6 +14,7 @@ class SpgcReleasedMultiExport extends Progress implements WithMultipleSheets
     public function __construct(protected array $transactionDate, protected User $user)
     {
         parent::__construct();
+        $this->progress['name'] = "Excel SPGC Released Report";
 
         //Count Total Rows for Broadcasting
         $this->progress['progress']['totalRow'] += (new SpgcReleasedPerBarcode($transactionDate))->query()->count();

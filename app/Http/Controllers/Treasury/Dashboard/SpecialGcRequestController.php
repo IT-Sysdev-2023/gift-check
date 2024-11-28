@@ -107,11 +107,10 @@ class SpecialGcRequestController extends Controller
 
     public function releasingGc(Request $request)
     {
-        // dd(1);
         $promo = $request->has('promo') ? $request->promo : '*';
 
         $record = $this->specialGcPaymentService->releasingGc($promo);
-        // dd($record);
+
         return inertia('Treasury/Dashboard/SpecialGc/ReviewedReleasing', [
             'title' => 'Reviewed GC For Releasing',
             'records' => SpecialExternalGcRequestResource::collection($record),
@@ -240,8 +239,10 @@ class SpecialGcRequestController extends Controller
 
     public function releasedGc(Request $request)
     {
+        $promo = $request->has('promo') ? $request->promo : '*';
         $record = SpecialExternalGcrequest::
             select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed')
+            ->where('spexgc_promo', $promo)
             ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', )
             ->withWhereHas('approvedRequest', function ($q) {
                 $q->with('user:user_id,firstname,lastname')->select('reqap_preparedby', 'reqap_trid', 'reqap_date')->where('reqap_approvedtype', 'special external releasing');
@@ -250,10 +251,11 @@ class SpecialGcRequestController extends Controller
             ->paginate()->withQueryString();
 
         return inertia('Treasury/Dashboard/SpecialGc/SpecialReleasedGc', [
-            'title' => 'Released Special External Gc',
+            'title' => $promo == '0' ? 'Released Special External Gc' : 'Released Special Internal Gc',
             'filters' => $request->only(['date', 'search']),
             'data' => SpecialExternalGcRequestResource::collection($record),
-            'columns' => ColumnHelper::$specialReleasedGc
+            'columns' => ColumnHelper::$specialReleasedGc,
+            'tab' => $promo
         ]);
     }
 
@@ -343,8 +345,8 @@ class SpecialGcRequestController extends Controller
     public function cancelledRequest(Request $request)
     {
         $record = StoreGcrequest::joinCancelledGcStore()
-            ->select('sgc_id', 'sgc_num', 'sgc_date_request', 'sgc_store', 'sgc_requested_by')    
-        ->where([['sgc_status', 0], ['sgc_cancel', '*']])->paginate();
+            ->select('sgc_id', 'sgc_num', 'sgc_date_request', 'sgc_store', 'sgc_requested_by')
+            ->where([['sgc_status', 0], ['sgc_cancel', '*']])->paginate();
 
         return inertia('Treasury/Dashboard/SpecialGc/CancelledSpecialGcRequest', [
             'title' => 'Cancelled Special Gc Request',
@@ -358,10 +360,10 @@ class SpecialGcRequestController extends Controller
     {
         $cancelled = StoreGcrequest::joinCancelledGcStore()->where('store_gcrequest.sgc_id', $id)->first();
         $denomination = StoreRequestItem::join('denomination', 'denomination.denom_id', '=', 'store_request_items.sri_items_denomination')
-        ->select(DB::raw('store_request_items.sri_items_quantity * denomination.denomination as total'), 'store_request_items.sri_items_quantity', 'denomination.denomination')
-        ->where('store_request_items.sri_items_requestid', $id);
+            ->select(DB::raw('store_request_items.sri_items_quantity * denomination.denomination as total'), 'store_request_items.sri_items_quantity', 'denomination.denomination')
+            ->where('store_request_items.sri_items_requestid', $id);
 
-    $total = NumberHelper::currency($denomination->get()->sum( 'total'));
+        $total = NumberHelper::currency($denomination->get()->sum('total'));
 
         return response()->json([
             'info' => new StoreGcRequestResource($cancelled),

@@ -53,13 +53,16 @@ class ExportHandler extends FileHandler
         return $this;
     }
 
-    public function exportDocument(string $format, $document)
+    public function exportDocument(string $format, $document, ?callable $callback = null)
     {
         if ($format === 'pdf') {
             $this->exportToPdf($document);
+            $callback('pdf', $document);
         } else { //excel
             $this->exportToExcel($document);
+            $callback('excel', $document);
         }
+        
     }
 
     public function deleteFileIn($date)

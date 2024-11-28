@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Accounting;
 
+use App\Events\AccountingReportEvent;
 use App\Exports\Accounting\SpgcReleasedMultiExport;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -24,10 +25,14 @@ class SpgcReleasedReport extends ReportGenerator implements ShouldQueue
     /**
      * Create a new job instance.
      */
+
+
+    const RELEASED_TYPE = false;
     private User|null $user;
     public function __construct(protected array $request)
     {
         parent::__construct();
+        $this->progress['name'] = "Pdf SPGC Released Report";
         $this->user = Auth::user();
     }
 
@@ -42,14 +47,23 @@ class SpgcReleasedReport extends ReportGenerator implements ShouldQueue
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
             ->setFileName('SPGC Released Report-' . $this->user->user_id, $this->request['date'][0] . ' to ' . $this->request['date'][1])
-            ->exportDocument($this->request['format'], $doc);
+            ->exportDocument($this->request['format'], $doc, function ($docu, $document) {
+
+                //this is to broadcast the generation is about to finish
+                if ($docu === 'excel') {
+                    $document->progress['isDone'] = true;
+                    AccountingReportEvent::dispatch($this->user, $document->progress, $document->reportId);
+                } else {
+                    $this->broadcastProgress($this->user, "Done", true);
+                }
+            });
     }
 
     private function handleRecords($date)
     {
         //initialize
         $this->setTransactionDate($date)
-            ->setTypeApproved(false)
+            ->setType(self::RELEASED_TYPE)
             ->setFormat($this->request['format'])
             ->setTotalRecord();
 

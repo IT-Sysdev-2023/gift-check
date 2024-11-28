@@ -13,7 +13,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AccountingReportEvent implements ShouldBroadcast
+class verifiedgcreport implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -21,9 +21,12 @@ class AccountingReportEvent implements ShouldBroadcast
      * Create a new event instance.
      */
     protected $percentage;
-    public function __construct(public User $user, protected $progress, protected string $reportId)
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(protected string $message, protected int $currentRow, protected int $totalRows, protected User $user)
     {
-        $this->percentage = NumberHelper::percentage($progress['progress']['currentRow'], $progress['progress']['totalRow']);
+        $this->percentage = NumberHelper::percentage($currentRow, $totalRows);
     }
 
     /**
@@ -34,20 +37,23 @@ class AccountingReportEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('accounting-report.' . $this->user->user_id),
+            new PrivateChannel('verified-gc-report-pdf.' . $this->user->user_id),
         ];
     }
-    public function broadcastWith(): array
+
+    public function broadcastAs()
     {
-        if(($this->percentage > 99) && ($this->progress['isDone'] === false)){
-            $this->percentage = 99;
-            $this->progress['info'] = 'Saving Report Pls wait...';
-        }
+        return 'verified-report-pdf';
+    }
+
+
+    public function broadcastWith()
+    {
         return [
-            'id' => $this->user->user_id,
-            'reportId' => $this->reportId,
-            'data' => $this->progress,
+            'message' => $this->message,
             'percentage' => $this->percentage,
+            'currentRow' => $this->currentRow,
+            'totalRows' => $this->totalRows,
         ];
     }
 }

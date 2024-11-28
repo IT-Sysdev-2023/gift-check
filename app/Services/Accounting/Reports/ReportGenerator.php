@@ -20,6 +20,7 @@ class ReportGenerator extends Progress
     public function __construct()
     {
         parent::__construct();
+        $this->progress['name'] = "Pdf Accounting Report";
 
     }
     protected function setTransactionDate($date)
@@ -33,7 +34,7 @@ class ReportGenerator extends Progress
         $this->format = $format;
         return $this;
     }
-    protected function setTypeApproved(bool $type)
+    protected function setType(bool $type)
     {
         $this->type = $type;
         return $this;

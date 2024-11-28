@@ -1,10 +1,6 @@
 <template>
     <a-card>
         <span style="margin-left: 45%; font-weight: bold;">
-            <span style="color:green">
-                <LikeOutlined />
-
-            </span>
             APPROVED GC REPORTS
         </span>
         <div>
@@ -13,10 +9,7 @@
                 <a-tabs>
                     <a-tab-pane key="1">
                         <template #tab>
-                            <span style="font-weight: bold;">
-                                <span style="color:red">
-                                    <FilePdfOutlined />
-                                </span>
+                            <span>
                                 PDF Per Customer
                             </span>
                         </template>
@@ -38,9 +31,6 @@
                             </div>
                             <div style="padding: 10px; background-color: #b0c4de;">
                                 <span style="font-weight: bold; margin-left: 30%;">
-                                    <span style="color:red">
-                                        <FilePdfOutlined />
-                                    </span>
                                     Table showing PDF per customer
                                 </span>
                             </div>
@@ -65,10 +55,8 @@
 
                     <a-tab-pane key="2">
                         <template #tab>
-                            <span style="font-weight: bold;">
-                                <span style="color:red">
-                                    <FilePdfOutlined />
-                                </span>
+                            <span>
+                        
                                 PDF Per Barcode
                             </span>
                         </template>
@@ -89,9 +77,7 @@
                             </div>
                             <div style="padding: 10px; background-color: #b0c4de;">
                                 <span style="font-weight: bold; margin-left: 30%;">
-                                    <span style="color:red">
-                                        <FilePdfOutlined />
-                                    </span>
+                                    
                                     Table showing PDF per barcode
                                 </span>
                             </div>
@@ -116,10 +102,8 @@
 
                     <a-tab-pane key="3">
                         <template #tab>
-                            <span style="font-weight: bold;">
-                                <span style="color: #006400">
-                                    <FileExcelOutlined />
-                                </span>
+                            <span >
+                                
                                 EXCEL Per Customer
                             </span>
                         </template>
@@ -142,9 +126,7 @@
 
                             <div style="padding: 10px; background-color: #b0c4de;">
                                 <span style="font-weight: bold; margin-left: 30%;">
-                                    <span style="color:green">
-                                        <FileExcelOutlined />
-                                    </span>
+                                  
                                     Table showing EXCEL per customer
                                 </span>
                             </div>
@@ -168,10 +150,8 @@
 
                     <a-tab-pane key="4">
                         <template #tab>
-                            <span style="font-weight: bold;">
-                                <span style="color: #006400">
-                                    <FileExcelOutlined />
-                                </span>
+                            <span >
+                               
                                 EXCEL Per Barcode
                             </span>
                         </template>
@@ -193,9 +173,7 @@
 
                             <div style="padding: 10px; background-color: #b0c4de;">
                                 <span style="font-weight: bold; margin-left: 30%;">
-                                    <span style="color:green">
-                                        <FileExcelOutlined />
-                                    </span>
+                                  
                                     Table showing EXCEL per barcode
                                 </span>
                             </div>
@@ -503,7 +481,7 @@ export default {
             }
             Modal.confirm({
                 title: 'Notification',
-                content: 'Are you sure you want to generate PDF!',
+                content: 'Are you sure you want to generate PDF?',
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
