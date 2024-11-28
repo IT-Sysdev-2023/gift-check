@@ -61,10 +61,7 @@
             :footer="false"
             centered
         >
-            <a-card
-                :title="title + ' details'"
-                style="text-align: center"
-            >
+            <a-card :title="title + ' details'" style="text-align: center">
                 <a-form layout="horizontal" style="min-width: 600px">
                     <a-row :gutter="[16, 0]">
                         <a-col :span="12"
@@ -200,33 +197,21 @@ const formatDate = (date) => dayjs(date).format("MMM D, YYYY h:mm A");
 const openModal = ref<boolean>(false);
 const viewedData = ref(null);
 const denomination = ref(null);
+const totals = ref<number>(0);
 const form = {
     search: props.filters.search,
     date: props.filters.date
         ? [dayjs(props.filters.date[0]), dayjs(props.filters.date[1])]
         : [],
 };
-const totals = computed(() => {
-    let totalBorrow = 0;
-
-    denomination.value.data.forEach(({ denomination }) => {
-        const floatAmount = parseFloat(denomination.replace(/[₱,]/g, ""));
-        totalBorrow += floatAmount;
-    });
-    //format with sign
-    return new Intl.NumberFormat("en-PH", {
-        style: "currency",
-        currency: "PHP",
-    }).format(totalBorrow);
-});
 
 const viewRecord = async (id) => {
     const { data } = await axios.get(
         route("treasury.promo.gc.viewReleased", id)
     );
-    console.log(data.denomination);
     viewedData.value = data.data;
     denomination.value = data.denomination;
+    totals.value = data.total;
     openModal.value = true;
 };
 

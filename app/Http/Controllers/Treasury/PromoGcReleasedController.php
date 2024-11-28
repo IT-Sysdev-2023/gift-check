@@ -50,11 +50,20 @@ class PromoGcReleasedController extends Controller
             ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
             ->where('prreltoi_relid', $id->prrelto_id)->paginate(5);
 
+        $total = PromoGcReleaseToItem::
+            selectRaw(
+                'SUM(denomination.denomination) as sum'
+            )
+            ->join('gc', 'gc.barcode_no', '=', 'promo_gc_release_to_items.prreltoi_barcode')
+            ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+            ->where('prreltoi_relid', $id->prrelto_id)
+            ->value('sum');
+
         $denom->transform(function ($item) {
             $item->denomination = NumberHelper::currency($item->denomination);
             return $item;
         });
-        return response()->streamJson(['data' => $rec, 'denomination' => $denom]);
+        return response()->streamJson(['data' => $rec, 'denomination' => $denom, 'total' => NumberHelper::currency($total)]);
 
     }
 }
