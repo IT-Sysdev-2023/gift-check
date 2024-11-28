@@ -309,7 +309,7 @@ declare module 'vue' {
     ProgressHeader: typeof import('./resources/js/Components/Finance/ProgressHeader.vue')['default']
     PromoForApproval: typeof import('./resources/js/Pages/Finance/Cards/PromoForApproval.vue')['default']
     PromoGcReceived: typeof import('./resources/js/Pages/Marketing/Card/PromoGcReceived.vue')['default']
-    PromoGcReleasingIndex: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/PromoGcReleasingIndex.vue')['default']
+    PromoGcReleasingIndex: typeof import('./resources/js/Pages/Treasury/Dashboard/PromoGcReleasing/PromoGcReleasingIndex.vue')['default']
     PromoGcReleasingModal: typeof import('./resources/js/Pages/Treasury/Transactions/PromoGcReleasing/Components/PromoGcReleasingModal.vue')['default']
     PromoGcRequest: typeof import('./resources/js/Pages/Marketing/PromoGcRequest.vue')['default']
     PromoGcRequestCard: typeof import('./resources/js/Pages/RetailGroup/Cards/PromoGcRequestCard.vue')['default']
