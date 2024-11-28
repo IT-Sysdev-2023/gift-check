@@ -25,6 +25,9 @@ class SpgcReleasedReport extends ReportGenerator implements ShouldQueue
     /**
      * Create a new job instance.
      */
+
+
+    const RELEASED_TYPE = false;
     private User|null $user;
     public function __construct(protected array $request)
     {
@@ -44,12 +47,13 @@ class SpgcReleasedReport extends ReportGenerator implements ShouldQueue
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
             ->setFileName('SPGC Released Report-' . $this->user->user_id, $this->request['date'][0] . ' to ' . $this->request['date'][1])
-            ->exportDocument($this->request['format'], $doc, function($docu) use ($doc) {
+            ->exportDocument($this->request['format'], $doc, function ($docu, $document) {
 
-                if($docu === 'excel'){
-                    $doc->progress['isDone'] = true;
-                    AccountingReportEvent::dispatch($this->user, $doc->progress, $doc->reportId);
-                }else{
+                //this is to broadcast the generation is about to finish
+                if ($docu === 'excel') {
+                    $document->progress['isDone'] = true;
+                    AccountingReportEvent::dispatch($this->user, $document->progress, $document->reportId);
+                } else {
                     $this->broadcastProgress($this->user, "Done", true);
                 }
             });
@@ -59,14 +63,14 @@ class SpgcReleasedReport extends ReportGenerator implements ShouldQueue
     {
         //initialize
         $this->setTransactionDate($date)
-            ->setTypeApproved(false)
+            ->setType(self::RELEASED_TYPE)
             ->setFormat($this->request['format'])
             ->setTotalRecord();
 
         $record = collect();
         $record->put('perCustomer', value: $this->perCustomerRecord($this->user));
         $record->put('perBarcode', $this->perBarcode($this->user));
-        
+
         $header = collect([
             'reportCreated' => now()->toFormattedDateString(),
             'subtitle' => 'Special External GC Report'

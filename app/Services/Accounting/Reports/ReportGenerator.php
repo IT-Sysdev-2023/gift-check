@@ -34,7 +34,7 @@ class ReportGenerator extends Progress
         $this->format = $format;
         return $this;
     }
-    protected function setTypeApproved(bool $type)
+    protected function setType(bool $type)
     {
         $this->type = $type;
         return $this;

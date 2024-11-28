@@ -24,6 +24,9 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
     /**
      * Create a new job instance.
      */
+
+     const APPROVED_TYPE = true;
+
     private User|null $user;
     public function __construct(protected array $request)
     {
@@ -45,6 +48,7 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
             ->setFileName('SPGC Approved Report-' . $this->user->user_id, $this->request['date'][0] . ' to ' . $this->request['date'][1])
             ->exportDocument($this->request['format'], $doc, function($docu, $document){
                 
+                //Dont touch this you damn f*ck
                 if($docu === 'excel'){
                     $document->progress['isDone'] = true;
                     AccountingReportEvent::dispatch($this->user, $document->progress, $document->reportId);
@@ -58,7 +62,7 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
     {
         //initialize
         $this->setTransactionDate($date)
-            ->setTypeApproved(true)
+            ->setType(self::APPROVED_TYPE)
             ->setFormat($this->request['format'])
             ->setTotalRecord();
 
