@@ -14,6 +14,12 @@ class PromoGcReleaseToDetail extends Model
     protected $primaryKey = 'prrelto_id';
     protected $guarded = [];
     public $timestamps = false;
+    protected function casts(): array
+    {
+        return [
+            'prrelto_date' => 'datetime',
+        ];
+    }
 
     public static function getMax(){
         $max = self::max('prrelto_relnumber');
