@@ -15,11 +15,13 @@
         </a-select>
         entries
     </div>
-    <div style="background-color: #b0c4de; margin-top: 15px;">
-        <div style="font-weight: bold; font-size: large; padding: 20px;">
-            {{ storeName }} - Verified GC
+    <div style=" margin-top: 15px;">
+        <div style="font-weight: bold;  padding: 10px; background-color: #b0c4de;">
+            <span style="margin-left: 40%;">
+                {{ storeName }} - Verified GC
+            </span>
         </div>
-        <a-table :data-source="data.data" :columns="alturasMallColumns" :pagination="false">
+        <a-table :data-source="data.data" :columns="alturasMallColumns" :pagination="false" size="small" style="margin-top: 10px;">
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'view'">
                     <a-button @click="viewAlturasMall(record)" class="me-2 me-sm-5"

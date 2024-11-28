@@ -18,15 +18,16 @@
         </a-select>
         entries
     </span>
-    <div style="background-color: #b0c4de; margin-top: 15px; font-weight: bold; font-size: large; padding: 20px;">
-        EOD List
+    <div style="  background-color: #b0c4de; padding: 10px; margin-top: 10px">
+        <span style="font-weight: bold; margin-left: 45%; ">
+            EOD List
+        </span>
     </div>
-    <div style="background-color: #b0c4de ;">
-        <a-table :data-source="data.data" :columns="columns" :pagination="false">
+    <div style="margin-top: 10px;">
+        <a-table :data-source="data.data" :columns="columns" :pagination="false" size="small">
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'action'">
-                    <a-button title="view"  @click="viewEODList(record)"
-                        style="color:white; background-color: #1e90ff;">
+                    <a-button title="view" @click="viewEODList(record)" style="color:white; background-color: #1e90ff;">
                         <EyeOutlined />
                     </a-button>
                 </template>

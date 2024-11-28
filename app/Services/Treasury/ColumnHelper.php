@@ -881,4 +881,35 @@ class ColumnHelper
             'key' => 'action',
         ],
     ];
+
+    public static $promoGcReleased = [
+        [
+            'title' => 'Released #',
+            'dataIndex' => 'prrelto_relnumber',
+
+        ],
+        [
+            'title' => 'Promo Request #',
+            'key' => 'pgcreq_reqnum',
+
+        ],
+        [
+            'title' => 'Date Released',
+            'dataIndex' => 'date',
+
+        ],
+        [
+            'title' => 'Released By',
+            'key' => 'relby',
+        ],
+        [
+            'title' => 'Received By',
+            'dataIndex' => 'prrelto_recby',
+
+        ],
+        [
+            'title' => 'Reprint',
+            'key' => 'action',
+        ],
+    ];
 }

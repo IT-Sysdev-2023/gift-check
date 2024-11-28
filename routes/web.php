@@ -455,6 +455,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('promo-gc-released')->name('promo.gc.')->group(function () {
             Route::get('released', [PromoGcReleasedController::class, 'released'])->name('released');
+            Route::get('view-released-{id}', [PromoGcReleasedController::class, 'viewReleased'])->name('viewReleased');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');
