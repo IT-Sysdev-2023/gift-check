@@ -16,11 +16,13 @@
         entries
     </span>
 
-    <div style="font-weight: bold; background-color: #b0c4de; font-size: large; margin-top: 15px; padding: 20px;">
-        Store Sales
+    <div style="font-weight: bold; background-color: #b0c4de; margin-top: 10px; padding: 10px;">
+        <span style="margin-left: 45%;">
+            Store Sales
+        </span>
     </div>
-    <div style="background-color: #b0c4de;">
-        <a-table :data-source="data.data" :columns="storeColumns" :pagination="false">
+    <div style="margin-top: 10px;">
+        <a-table :data-source="data.data" :columns="storeColumns" :pagination="false" size="small">
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'view'">
                     <a-button @click="viewStore(record)" class="me-2 me-sm-5"
