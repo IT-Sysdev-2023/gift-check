@@ -576,6 +576,19 @@ Route::prefix('retail')->group(function () {
 
         Route::get('lostGc', [RetailController::class, 'lostGC'])->name('lostGc');
         Route::post('submit-lost-gc', [RetailController::class, 'submitLostGc'])->name('submit-lost-gc')->middleware([HandlePrecognitiveRequests::class]);
+
+        Route::get('store-eod', [RetailController::class, 'storeEOD'])->name('storeEod');
+
+        Route::name('verified-gc.')->group(function () {
+            Route::get('verified-gc-list', [RetailController::class, 'verifiedGc'])->name('list');
+            Route::get('gc-details', [RetailController::class, 'gcdetails'])->name('gcdetails');
+        });
+
+        Route::name('verified_gc_report.')->group(function () {
+            Route::get('verified_gc_report', [RetailController::class, 'verified_gc_report'])->name('verified_gc_report');
+            Route::get('generate-pdf', [RetailController::class, 'verified_gc_generate_pdf'])->name('generate_pdf');
+        });
+
     });
 });
 Route::prefix('retailgroup')->name('retailgroup.')->group(function () {

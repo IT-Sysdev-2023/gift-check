@@ -492,6 +492,7 @@ declare module 'vue' {
     VerifiedDetailsModal: typeof import('./resources/js/Pages/Iad/Modals/VerifiedDetailsModal.vue')['default']
     VerifiedGc: typeof import('./resources/js/Pages/Eod/VerifiedGc.vue')['default']
     VerifiedGCReport: typeof import('./resources/js/Pages/StoreAccounting/VerifiedGCReport.vue')['default']
+    VerifiedGcReports: typeof import('./resources/js/Pages/Retail/VerifiedGcReports.vue')['default']
     VerifiedOutlined: typeof import('@ant-design/icons-vue')['VerifiedOutlined']
     VerifiedReports: typeof import('./resources/js/Pages/Iad/Excel/VerifiedReports.vue')['default']
     VerifiedSoldUsedGc: typeof import('./resources/js/Pages/Iad/VerifiedSoldUsedGc.vue')['default']

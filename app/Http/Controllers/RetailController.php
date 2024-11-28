@@ -524,12 +524,51 @@ class RetailController extends Controller
     {
 
         $data = StoreEodTextfileTransaction::where('seodtt_barcode', $request->barcode)->get();
-        $data->transform(function ($item){
+        $data->transform(function ($item) {
             $item->time = Date::parse($item->seodtt_timetrnx)->format('H:i:s: A');
             return $item;
         });
         return response()->json(['data' => $data]);
     }
+    public function verified_gc_report()
+    {
+        return inertia('Retail/VerifiedGcReports');
+    }
+
+    public function verified_gc_generate_pdf(Request $request)
+    {
+
+        $d1 = $request['date'][0];
+        $d2 = $request['date'][1];
+
+
+        $data = StoreVerification::select([
+                'store_verification.vs_barcode',
+                DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_lname) as customer"),
+                DB::raw("CONCAT(users.firstname, ' ', users.lastname) as verby"),
+                'store_verification.vs_tf_denomination',
+                'store_verification.vs_tf_used',
+                'store_verification.vs_gctype',
+                'store_verification.vs_date',
+                'store_verification.vs_reverifydate',
+                'store_verification.vs_tf_balance',
+            ])
+            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->leftJoin('users', 'users.user_id', '=', 'store_verification.vs_by')
+            ->whereBetween(DB::raw("DATE_FORMAT(store_verification.vs_date, '%Y-%m-%d')"), [$d1, $d2])
+            ->where('store_verification.vs_store', $request->user()->store_assigned)
+            ->get();
+
+            $pdf = $this->retail->generate_verified_gc_pdf($request, $data,$d1,$d2);
+
+
+
+            return back()->with([
+                'stream' => base64_encode($pdf ->output())
+            ]);
+    }
+
+
 
 
 
