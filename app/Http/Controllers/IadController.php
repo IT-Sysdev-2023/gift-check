@@ -201,8 +201,8 @@ class IadController extends Controller
         return inertia('Iad/Excel/SpecialGcReviewedReports');
     }
 
-    public function generateSpecialReports(){
-        return $this->iadServices->generateSpecialReviewedReportsExcel();
+    public function generateSpecialReports(Request $request){
+        return $this->iadServices->generateSpecialReviewedReportsExcel($request);
     }
 
 }

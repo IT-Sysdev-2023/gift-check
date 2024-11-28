@@ -400,8 +400,6 @@ class RetailServices
             ]);
         }
 
-
-
         $data = [
             'tfilext' => $tfilext,
             'gctype' => $gctype,
@@ -531,14 +529,14 @@ class RetailServices
                         return back()->with([
                             'status' => 'success',
                             'msg' => 'Successfully reverfied!.',
-                            'title' => 'Success'
+                            'title' => 'Reverified'
                         ]);
                     } else {
 
                         return back()->with([
                             'status' => 'success',
                             'msg' => 'Successfully Verified!.',
-                            'title' => 'Success'
+                            'title' => 'Reverified'
                         ]);
                     }
                 }
@@ -583,13 +581,13 @@ class RetailServices
                         return back()->with([
                             'status' => 'success',
                             'msg' => 'Successfully reverfied!.',
-                            'title' => 'Expired'
+                            'title' => 'Verification'
                         ]);
                     } else {
                         return back()->with([
                             'status' => 'success',
                             'msg' => 'Successfully Verified!.',
-                            'title' => 'Expired'
+                            'title' => 'Verification'
                         ]);
                     }
                 }
