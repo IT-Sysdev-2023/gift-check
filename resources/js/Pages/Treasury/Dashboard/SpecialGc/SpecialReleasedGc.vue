@@ -3,10 +3,8 @@ import { highlighten } from "@/Mixin/UiUtilities";
 import { ref } from "vue";
 
 const { highlightText } = highlighten();
-
 </script>
 <template>
-
     <Head :title="title" />
     <a-breadcrumb style="margin: 15px 0">
         <a-breadcrumb-item>
@@ -14,40 +12,62 @@ const { highlightText } = highlighten();
         </a-breadcrumb-item>
         <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
     </a-breadcrumb>
+
     <a-card>
-
-        <ProgressBar :progressBar="progressBar" v-if="isGenerating"/>
-
         <div class="flex justify-between mb-5">
             <div>
                 <a-range-picker v-model:value="form.date" />
             </div>
             <div>
-                <a-input-search class="mr-1" v-model:value="form.search" placeholder="Search here..."
-                    style="width: 300px" />
-                
+                <a-input-search
+                    class="mr-1"
+                    v-model:value="form.search"
+                    placeholder="Search here..."
+                    style="width: 300px"
+                />
             </div>
         </div>
-        <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false">
+        <a-tabs
+            v-model:activeKey="activeKeyTab"
+            type="card"
+            @change="onTabChange"
+        >
+            <a-tab-pane key="0" tab="Released Special External GC Request">
+            </a-tab-pane>
+            <a-tab-pane key="*" tab="Released Special Internal GC Request">
+            </a-tab-pane>
+        </a-tabs>
+        <a-table
+            :data-source="data.data"
+            :columns="columns"
+            bordered
+            size="small"
+            :pagination="false"
+            :loading="onLoading"
+        >
             <template #title>
                 <a-typography-title :level="4">{{ title }}</a-typography-title>
             </template>
             <template #bodyCell="{ column, record }">
-                 <template v-if="column.key === 'requestedBy'">
-                    {{record.user}}
+                <template v-if="column.key === 'requestedBy'">
+                    {{ record.user }}
                 </template>
                 <template v-if="column.key === 'customer'">
-                    {{record.specialExternalCustomer?.spcus_acctname}}
+                    {{ record.specialExternalCustomer?.spcus_acctname }}
                 </template>
                 <template v-if="column.key === 'dateReleased'">
-                    {{record.approvedRequest?.reqap_date}}
+                    {{ record.approvedRequest?.reqap_date }}
                 </template>
                 <template v-if="column.key === 'releasedBy'">
-                    {{record.approvedRequest?.user.full_name}}
+                    {{ record.approvedRequest?.user.full_name }}
                 </template>
 
                 <template v-if="column.key === 'action'">
-                    <a-button type="primary" size="small" @click="viewRecord(record.spexgc_id)">
+                    <a-button
+                        type="primary"
+                        size="small"
+                        @click="viewRecord(record.spexgc_id)"
+                    >
                         <template #icon>
                             <FileSearchOutlined />
                         </template>
@@ -57,7 +77,6 @@ const { highlightText } = highlighten();
             </template>
         </a-table>
 
-        
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
 </template>
@@ -67,7 +86,6 @@ import dayjs from "dayjs";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
-import ProgressBar from "@/Components/Finance/ProgressBar.vue";
 import { router } from "@inertiajs/core";
 
 export default {
@@ -79,11 +97,14 @@ export default {
         columns: Array,
         remainingBudget: String,
         filters: Object,
+        tab: String,
     },
     data() {
         return {
             descriptionRecord: [],
+            activeKeyTab: this.tab,
             showModal: false,
+            onLoading: false,
             isGenerating: false,
             form: {
                 search: this.filters.search,
@@ -91,7 +112,6 @@ export default {
                     ? [dayjs(this.filters.date[0]), dayjs(this.filters.date[1])]
                     : [],
             },
-           
         };
     },
     computed: {
@@ -103,7 +123,25 @@ export default {
     },
     methods: {
         async viewRecord(id) {
-            router.get(route('treasury.special.gc.viewReleasedGc', id));
+            router.get(route("treasury.special.gc.viewReleasedGc", id));
+        },
+        dataFilter(data, type) {
+            return data.filter(function (promo) {
+                return promo.spexgc_promo === type;
+            });
+        },
+        onTabChange(val) {
+            router.visit(route(route().current()), {
+                data: { promo: val },
+                only: ["data", "tab", "title"],
+                preserveScroll: true,
+                onStart: () => {
+                    this.onLoading = true;
+                },
+                onSuccess: () => {
+                    this.onLoading = false;
+                },
+            });
         },
     },
 

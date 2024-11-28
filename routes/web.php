@@ -13,6 +13,7 @@ use App\Http\Controllers\EodController;
 use App\Http\Controllers\FadController;
 use App\Http\Controllers\Iad\Dashboard\SpecialExternalGcRequestController;
 use App\Http\Controllers\MarketingController;
+use App\Http\Controllers\Treasury\PromoGcReleasedController;
 use App\Http\Controllers\Treasury\ReportsController;
 use \App\Http\Controllers\Treasury\MasterfileController;
 use App\Http\Controllers\ProfileController;
@@ -450,6 +451,10 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('list-of-generated-reports', [ReportsController::class, 'listOfGeneratedReports'])->name('generatedReports');
             Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('download.gc');
+        });
+
+        Route::prefix('promo-gc-released')->name('promo.gc.')->group(function () {
+            Route::get('released', [PromoGcReleasedController::class, 'released'])->name('released');
         });
 
         Route::get('accept-production-request-{id}', [TreasuryController::class, 'acceptProductionRequest'])->name('acceptProdRequest');

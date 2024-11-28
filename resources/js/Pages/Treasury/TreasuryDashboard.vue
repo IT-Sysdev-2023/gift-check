@@ -121,8 +121,9 @@
                             <Card title="Promo GC Released">
                                 <template #badge>
                                     <CardBadge
-                                        :count="data?.adjustment?.budget"
+                                        :count="data?.promoGcReleased"
                                         title="Released Gc"
+                                        @event="promoGcReleased"
                                     />
                                 </template>
                             </Card>
@@ -183,6 +184,7 @@ defineProps<{
             budget: number;
             allocation: number;
         };
+        promoGcReleased:number,
         eod: number;
         budget: {
             totalBudget: number;
@@ -227,6 +229,9 @@ const budgetAdjustments = () =>
     routeTo("adjustment", "budgetAdjustmentsUpdate");
 const allocationAdjustment = () => routeTo("adjustment", "allocation");
 
+//Promo Gc Released
+const promoGcReleased = () => routeTo("promo.gc", "released");
+//Institution Gc Sales
 const institutionGc = () =>
     routeTo("transactions.institution.gc.sales", "transaction");
 const eodList = () => routeTo("transactions.eod", "eodList");
