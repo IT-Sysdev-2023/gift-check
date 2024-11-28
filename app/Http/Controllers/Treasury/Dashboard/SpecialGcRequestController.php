@@ -287,7 +287,7 @@ class SpecialGcRequestController extends Controller
 
     public function approvedRequest(Request $request)
     {
-
+        $promo = $request->has('promo') ? $request->promo : '*';
         $record = SpecialExternalGcrequest::with([
             'approvedRequest' => function ($q) {
                 $q->select('reqap_approvedby', 'reqap_trid', 'reqap_date')->where('reqap_approvedtype', 'Special External GC Approved');
@@ -295,15 +295,17 @@ class SpecialGcRequestController extends Controller
             'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname'
         ])
             ->select('spexgc_id', 'spexgc_company', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed')
+            ->where('spexgc_promo', $promo)
             ->where('spexgc_status', 'approved')
             ->orderByDesc('spexgc_id')
             ->paginate()->withQueryString();
 
         return inertia('Treasury/Dashboard/SpecialGc/ApprovedGc', [
             'filters' => $request->only(['date', 'search']),
-            'title' => 'Approved Special External Gc',
+            'title' => $promo == '0' ? 'Approved Special External Gc' : 'Approved Special Internal Gc',
             'data' => SpecialExternalGcRequestResource::collection($record),
             'columns' => ColumnHelper::$approvedRequest,
+            'tab' => $promo
         ]);
     }
 

@@ -133,7 +133,7 @@ export default {
         onTabChange(val) {
             router.visit(route(route().current()), {
                 data: { promo: val },
-                only: ["data", "tab"],
+                only: ["data", "tab", 'title'],
                 preserveScroll: true,
                 onStart: () => {
                     this.onLoading = true;
