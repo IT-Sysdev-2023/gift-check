@@ -18,7 +18,6 @@ class PromoGcReleasedController extends Controller
         $record = PromoGcReleaseToDetail::with('user:user_id,firstname,lastname', 'promoGcRequest:pgcreq_id,pgcreq_reqnum')
             ->select('prrelto_trid', 'prrelto_relby', 'prrelto_id', 'prrelto_relnumber', 'prrelto_docs', 'prrelto_checkedby', 'prrelto_approvedby', 'prrelto_date', 'prrelto_recby', 'prrelto_status')
             ->orderByDesc('prrelto_id')
-            // ->get();
             ->paginate()
             ->withQueryString();
 
@@ -27,9 +26,7 @@ class PromoGcReleasedController extends Controller
             $item->date = $item->prrelto_date->toFormattedDateString();
             return $item;
         });
-
-        // dd($record);
-        return inertia('Treasury/Dashboard/PromoGcReleasing/PromoGcReleasingIndex', [
+        return inertia('Treasury/Dashboard/PromoGcReleasing/PromoGcReleasing', [
             'title' => 'Promo Gc Released',
             'data' => $record,
             'columns' => ColumnHelper::$promoGcReleased,

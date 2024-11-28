@@ -44,11 +44,11 @@
                                 @click="viewRecord(record.prrelto_id)"
                                 >View</a-button
                             >
-                            <a-button
+                            <!-- <a-button
                                 type="primary"
                                 @click="viewRecord(record.prrelto_id)"
                                 >Reprint</a-button
-                            >
+                            > -->
                         </a-space>
                     </template>
                 </template>
