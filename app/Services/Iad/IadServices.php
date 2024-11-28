@@ -3,7 +3,7 @@
 namespace App\Services\Iad;
 
 use App\Exports\IadPurchased\PurchasedExports;
-use App\Exports\IadSpecialReviewed\SpecialReviewedExports;
+use App\Exports\SpecialReviewedGcMultipleExports;
 use App\Exports\VerifiedGcMultipleSheetExport;
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
@@ -33,8 +33,6 @@ use App\Traits\Iad\AuditTraits;
 use App\Traits\OpenOfficeTraits\StorePurchasedTraits;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Ods;
 
 class IadServices extends FileHandler
 {
@@ -267,7 +265,8 @@ class IadServices extends FileHandler
 
             $id = self::getRequistionNo($request->data['req_no']);
 
-            $this->iadDbServices->custodianPurchaseOrderDetails($request)
+            $this->iadDbServices->custodianSsrCreate($request)
+                ->custodianPurchaseOrderDetails($request)
                 ->custodianUsedAndValidated($id, $request->data['req_no'], $request->select)
                 ->custodianRequisitionUpdate($request)
                 ->custodianUpProdDetails($request)
@@ -392,7 +391,13 @@ class IadServices extends FileHandler
 
     public function getReceivedGc()
     {
-        $data = CustodianSrr::select('csrr_id', 'csrr_receivetype', 'csrr_datetime', 'csrr_prepared_by', 'csrr_requisition')
+        $data = CustodianSrr::select(
+            'csrr_id',
+            'csrr_receivetype',
+            'csrr_datetime',
+            'csrr_prepared_by',
+            'csrr_requisition'
+        )
             ->with(
                 'user:user_id,firstname,lastname',
                 'requisition:requis_id,requis_supplierid,requis_erno',
@@ -675,7 +680,8 @@ class IadServices extends FileHandler
             ->data()
             ->save();
     }
-    public function generateSpecialReviewedReportsExcel(){
-        return Excel::download(new SpecialReviewedExports, 'special.xlsx');
+    public function generateSpecialReviewedReportsExcel($request)
+    {
+        return Excel::download(new SpecialReviewedGcMultipleExports($request->all()), 'special.xlsx');
     }
 }
