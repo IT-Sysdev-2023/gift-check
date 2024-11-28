@@ -100,15 +100,16 @@ const formState = ref({
 const state = useQueueState();
 
 const onSubmit = async () => {
-    state.setGenerateButton(true);
-    state.setFloatButton(true);
-    state.setOpenFloat(true);
-
     await axios
         .get(route("treasury.reports.generate.gc"), {
             params: {
                 ...formState.value,
             },
+        })
+        .then((e) => {
+            state.setGenerateButton(true);
+            state.setFloatButton(true);
+            state.setOpenFloat(true);
         })
         .catch((e) => {
             let message = "please check all the fields";
