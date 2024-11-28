@@ -11,17 +11,24 @@
                     <a-row>
                         <a-col :span="12">
                             <div class="flex justify-center">
-                                <a-button class="mt-5 mx-2" @click="generatePdf"
-                                    ><FilePdfOutlined />Generate PDF</a-button
+                                <a-button
+                                    :disabled="daterange == null"
+                                    class="mt-5 mx-2"
+                                    @click="generatePdf"
                                 >
+                                    <FilePdfOutlined /> Generate PDF
+                                </a-button>
                             </div>
                         </a-col>
                         <a-col :span="12">
                             <div class="flex justify-center">
-                                <a-button class="mt-5 mx-3"
-                                    ><OrderedListOutlined />Generate
-                                    Excel</a-button
+                                <a-button
+                                    :disabled="daterange == null"
+                                    class="mt-5 mx-3"
+                                    @click="generateExcel"
                                 >
+                                    <OrderedListOutlined /> Generate Excel
+                                </a-button>
                             </div>
                         </a-col>
                     </a-row>
@@ -55,9 +62,11 @@
                         v-else-if="load.percentage == 100 && generated"
                         class="flex justify-center"
                     >
-                        <a-form-item label="Generated">
-                            <CheckOutlined />
-                        </a-form-item>
+                        <a-result
+                            status="success"
+                            title="Successfully Generated"
+                        >
+                        </a-result>
                     </div>
                 </a-col>
             </a-row>
@@ -99,6 +108,12 @@ const generatePdf = () => {
             preserveState: true,
         }
     );
+};
+
+const generateExcel = () => {
+    window.location.href = route("retail.verified_gc_report.generate_excel", {
+        date: daterange.value,
+    });
 };
 
 onMounted(() => {
