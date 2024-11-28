@@ -28,6 +28,7 @@ const { highlightText } = highlighten();
             </div>
         </div>
         <a-tabs
+        class="mt-5"
             v-model:activeKey="activeKeyTab"
             type="card"
             @change="onTabChange"
@@ -37,47 +38,46 @@ const { highlightText } = highlighten();
             <a-tab-pane key="*" tab="Released Special Internal GC Request">
             </a-tab-pane>
         </a-tabs>
-        <a-table
-            :data-source="data.data"
-            :columns="columns"
-            bordered
-            size="small"
-            :pagination="false"
-            :loading="onLoading"
-        >
-            <template #title>
-                <a-typography-title :level="4">{{ title }}</a-typography-title>
-            </template>
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.key === 'requestedBy'">
-                    {{ record.user }}
-                </template>
-                <template v-if="column.key === 'customer'">
-                    {{ record.specialExternalCustomer?.spcus_acctname }}
-                </template>
-                <template v-if="column.key === 'dateReleased'">
-                    {{ record.approvedRequest?.reqap_date }}
-                </template>
-                <template v-if="column.key === 'releasedBy'">
-                    {{ record.approvedRequest?.user.full_name }}
-                </template>
+        <a-card>
+            <a-table
+                :data-source="data.data"
+                :columns="columns"
+                bordered
+                size="small"
+                :pagination="false"
+                :loading="onLoading"
+            >
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.key === 'requestedBy'">
+                        {{ record.user }}
+                    </template>
+                    <template v-if="column.key === 'customer'">
+                        {{ record.specialExternalCustomer?.spcus_acctname }}
+                    </template>
+                    <template v-if="column.key === 'dateReleased'">
+                        {{ record.approvedRequest?.reqap_date }}
+                    </template>
+                    <template v-if="column.key === 'releasedBy'">
+                        {{ record.approvedRequest?.user.full_name }}
+                    </template>
 
-                <template v-if="column.key === 'action'">
-                    <a-button
-                        type="primary"
-                        size="small"
-                        @click="viewRecord(record.spexgc_id)"
-                    >
-                        <template #icon>
-                            <FileSearchOutlined />
-                        </template>
-                        View
-                    </a-button>
+                    <template v-if="column.key === 'action'">
+                        <a-button
+                            type="primary"
+                            size="small"
+                            @click="viewRecord(record.spexgc_id)"
+                        >
+                            <template #icon>
+                                <FileSearchOutlined />
+                            </template>
+                            View
+                        </a-button>
+                    </template>
                 </template>
-            </template>
-        </a-table>
+            </a-table>
 
-        <pagination-resource class="mt-5" :datarecords="data" />
+            <pagination-resource class="mt-5" :datarecords="data" />
+        </a-card>
     </a-card>
 </template>
 <script>
@@ -133,7 +133,7 @@ export default {
         onTabChange(val) {
             router.visit(route(route().current()), {
                 data: { promo: val },
-                only: ["data", "tab", "title"],
+                only: ["data", "tab"],
                 preserveScroll: true,
                 onStart: () => {
                     this.onLoading = true;
