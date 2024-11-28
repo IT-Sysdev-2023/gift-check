@@ -1,15 +1,15 @@
 <template>
     <div style="font-weight: bold; margin-left: 70%;">
         Search:
-        <a-input v-model:value="salesSearchBox" placeholder="Input search here!"
+        <a-input allow-clear v-model:value="salesSearchBox" placeholder="Input search here!"
             style="width:60%; border:1px solid #1e90ff" />
     </div>
     <a-tabs>
-        <a-tab-pane style="background-color: #b0c4de;">
-            <div style="padding: 20px; font-weight: bold;">
+        <a-tab-pane>
+            <div style="padding: 10px; font-weight: bold; background-color: #b0c4de;">
                 Customer: {{ salesCustomer }}
             </div>
-            <a-table :data-source="data" :columns="viewSalesColumns" :paginate="false">
+            <a-table :data-source="data" :columns="viewSalesColumns" :paginate="false" size="small">
                 <template #bodyCell="{column,record}">
                     <template v-if="column.dataIndex === 'viewSales'">
                         <a-button @click="viewTreasurySales(record)" class="me-2 me-sm-5"
@@ -26,13 +26,13 @@
     </a-tabs>
 
     <a-modal v-model:open="salesViewModal" @ok="handleSalesView" style="width: 100%;">
-        <div style="padding: 20px; font-weight: bold; background-color: #b0c4de; font-weight: bold; font-size: large;">
+        <div style="padding: 10px; font-weight: bold; background-color: #b0c4de; font-weight: bold; font-size: large;">
             Post Transaction: {{ selectedBarcode }}
         </div>
-        <a-table :data-source="POStransactionData" :columns="salesViewColumns" />
+        <a-table :data-source="POStransactionData" :columns="salesViewColumns" size="small" />
     </a-modal>
     <!-- {{ viewSalesData }} -->
-      <!-- {{ salesCustomerID }} -->
+    <!-- {{ salesCustomerID }} -->
 </template>
 
 <script>

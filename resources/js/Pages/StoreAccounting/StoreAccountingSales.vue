@@ -18,11 +18,13 @@
         entries
     </span>
 
-    <div style="padding: 20px; font-weight: bold; background-color: #b0c4de; margin-top: 15px; font-size: large;">
-        Treasury Sales
+    <div style="padding: 10px; font-weight: bold; background-color: #b0c4de; margin-top: 10px;">
+        <span style="margin-left: 45%;">
+            Treasury Sales
+        </span>
     </div>
-    <div style="background-color: #b0c4de;">
-        <a-table :data-source="data.data" :columns="columns" :pagination="false">
+    <div style="margin-top: 10px;">
+        <a-table :data-source="data.data" :columns="columns" :pagination="false" size="small">
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'view'">
                     <a-button title="view" @click="viewSales(record)" class="me-2 me-sm-5"

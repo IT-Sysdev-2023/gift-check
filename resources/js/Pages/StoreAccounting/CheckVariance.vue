@@ -82,7 +82,7 @@
                     </a-select-option>
                 </a-select>
             </a-form-item>
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 15px;">
                 <span v-if="variance.formatCusName" style="color:green; font-weight: bold;">
                     Selected Customer Name:
                 </span>
@@ -90,7 +90,7 @@
                     {{ this.variance.formatCusName }}
                 </span>
                 <span v-if="!variance.formatCusName" style="color:red">
-                    No selected Customer Name
+                    No Selected Customer Name !
                 </span>
             </div>
             <a-button style="background-color:#1e90ff; color:white; margin-top: 10px;" @click="selectButton">
