@@ -80,7 +80,7 @@
         <div class="header">
             <h1>ALTURAS GROUP OF COMPANIES</h1>
             <h3>Head Office - Finance Department</h3>
-            <h3>Special External GC Report-Approval</h3>
+            <h3>{{$data['header']['subtitle']}}</h3>
         </div>
 
         <div class="report-dates">
@@ -138,6 +138,8 @@
                 </tr>
             @endforeach
         </table>
+        <p>Total No. of Gc: {{$data['total']['noOfGc']}}</p>
+        <p>Total GC Amount: {{$data['total']['gcAmount']}}</p>
     </div>
 </body>
 

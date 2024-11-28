@@ -2,6 +2,9 @@
 
 namespace App\Exports\Accounting;
 
+use App\Events\AccountingReportEvent;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use App\Models\SpecialExternalGcrequestEmpAssign;
@@ -14,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class SpgcApprovedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles
 {
 
-    public function __construct(protected array $transactionDate)
+    public function __construct(protected array $transactionDate, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
     {
 
     }
@@ -36,10 +39,10 @@ class SpgcApprovedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle, Wi
             ->joinDataBarTables()
             ->specialApproved($this->transactionDate)
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode');
-
     }
     public function map($data): array
     {
+        $this->broadcastProgress("Generating Barcode Records");
         return [
             (new \DateTime($data->datereq))->format('F j, Y'),
             $data->spexgcemp_barcode,
@@ -49,6 +52,10 @@ class SpgcApprovedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle, Wi
             $data->spexgc_num,
             (new \DateTime($data->daterel))->format('F j, Y'),
         ];
+    }
+  
+    public function countRecords(){
+        return $this->query()->count();
     }
     public function title(): string
     {
@@ -72,5 +79,12 @@ class SpgcApprovedPerBarcode implements FromQuery, ShouldAutoSize, WithTitle, Wi
         return [
             1 => ['font' => ['bold' => true]],
         ];
+    }
+
+    private function broadcastProgress(string $info)
+    {
+        $this->progress['info'] = $info;
+        $this->progress['progress']['currentRow']++;
+        AccountingReportEvent::dispatch($this->user, $this->progress, $this->reportId);
     }
 }

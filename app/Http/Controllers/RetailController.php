@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DashboardClass;
+use App\Events\verifiedgcreport;
 use App\Helpers\ColumnHelper;
 use App\Models\Assignatory;
 use App\Models\Denomination;
@@ -24,6 +25,7 @@ use App\Services\Finance\FinanceService;
 use App\Services\RetailStore\RetailServices;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -558,6 +560,14 @@ class RetailController extends Controller
             ->whereBetween(DB::raw("DATE_FORMAT(store_verification.vs_date, '%Y-%m-%d')"), [$d1, $d2])
             ->where('store_verification.vs_store', $request->user()->store_assigned)
             ->get();
+
+            $count = $data->count();
+
+            $no = 1;
+            $data->transform(function ($item) use ($count, &$no) {
+                verifiedgcreport::dispatch("Generating Pdf in progress.. ", $no++, $count, Auth::user());
+                return $item;
+            });
 
             $pdf = $this->retail->generate_verified_gc_pdf($request, $data,$d1,$d2);
 

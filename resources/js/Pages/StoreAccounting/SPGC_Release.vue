@@ -1,19 +1,14 @@
 <template>
     <a-card>
         <span style="margin-left: 45%; font-weight: bold">
-            <span style="color:green">
-                <ExportOutlined />
-            </span>
             RELEASE GC REPORTS
         </span>
         <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc;">
             <a-tabs>
                 <a-tab-pane key="1">
                     <template #tab>
-                        <span style="font-weight: bold;">
-                            <span style="color:red">
-                                <FilePdfOutlined />
-                            </span>
+                        <span>
+                           
                             PDF Per Customer
                         </span>
                     </template>
@@ -35,9 +30,6 @@
                         </div>
                         <div style="padding: 10px; background-color: #b0c4de;">
                             <span style="font-weight: bold; margin-left: 30%;">
-                                <span style="color:red">
-                                    <FilePdfOutlined />
-                                </span>
                                 Table showing PDF per customer
                             </span>
                         </div>
@@ -59,10 +51,7 @@
                 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
                 <a-tab-pane key="2">
                     <template #tab>
-                        <span style="font-weight: bold;">
-                            <span style="color:red">
-                                <FilePdfOutlined />
-                            </span>
+                        <span>
                             PDF Per Barcode
                         </span>
                     </template>
@@ -84,9 +73,7 @@
                         </div>
                         <div style="padding: 10px; background-color: #b0c4de;">
                             <span style="font-weight: bold; margin-left: 30%;">
-                                <span style="color:red">
-                                    <FilePdfOutlined />
-                                </span>
+                               
                                 Table showing PDF per barcode
                             </span>
                         </div>
@@ -108,10 +95,8 @@
                 <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
                 <a-tab-pane key="3">
                     <template #tab>
-                        <span style="font-weight: bold;">
-                            <span style="color: #006400">
-                                <FileExcelOutlined />
-                            </span>
+                        <span >
+                            
                             EXCEL Per Customer
                         </span>
                     </template>
@@ -132,9 +117,7 @@
                         </div>
                         <div style="padding: 10px; background-color: #b0c4de;">
                             <span style="font-weight: bold; margin-left: 30%;">
-                                <span style="color:green">
-                                    <FileExcelOutlined />
-                                </span>
+                               
                                 Table showing EXCEL per customer
                             </span>
                         </div>
@@ -156,10 +139,8 @@
                 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
                 <a-tab-pane key="4">
                     <template #tab>
-                        <span style="font-weight: bold;">
-                            <span style="color: #006400">
-                                <FileExcelOutlined />
-                            </span>
+                        <span >
+                    
                             EXCEL Per Barcode
                         </span>
                     </template>
@@ -182,9 +163,7 @@
                         </div>
                         <div style="padding: 10px; background-color: #b0c4de;">
                             <span style="font-weight: bold; margin-left: 30%;">
-                                <span style="color:green">
-                                    <FileExcelOutlined />
-                                </span>
+                                
                                 Table showing EXCEL per barcode
                             </span>
                         </div>
@@ -485,24 +464,24 @@ export default {
             this.$inertia.get(route('storeaccounting.SPGCRelease', submitData));
         },
         perCustumerPdf() {
+            if (this.data.fromDate === null || this.data.endDate === null) {
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'File Selection Required',
+                        description: 'Please select start and end date first',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             Modal.confirm({
                 title: 'Confirmation',
                 content: 'Are you sure you want to generate PDF?',
                 okText: 'Yes',
-                okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    if (this.data.fromDate === null || this.data.endDate === null) {
-                        const openNotificationWithIcon = (type) => {
-                            notification[type]({
-                                message: 'File Selection Required',
-                                description: 'Please select start and end date first',
-                                placement: 'topRight'
-                            });
-                        };
-                        openNotificationWithIcon('warning');
-                        return;
-                    }
+                   
                     const hide = message.loading('Generating in progress..', 0)
 
                     window.location.href = route('storeaccounting.releasePdf', {
@@ -519,24 +498,24 @@ export default {
         },
 
         perCustomerExcel() {
+            if (this.data.fromDate === null || this.data.endDate === null) {
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'File Selection Required',
+                        description: 'Please select start and end date first',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             Modal.confirm({
                 title: 'Confirmation',
                 content: 'Are you sure you want to generate EXCEL?',
                 okText: 'Yes',
-                okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    if (this.data.fromDate === null || this.data.endDate === null) {
-                        const openNotificationWithIcon = (type) => {
-                            notification[type]({
-                                message: 'File Selection Required',
-                                description: 'Please select start and end date first',
-                                placement: 'topRight'
-                            });
-                        };
-                        openNotificationWithIcon('warning');
-                        return;
-                    }
+                    
                     const hide = message.loading('Generating in progress..', 0)
                     window.location.href = route('storeaccounting.releaseExcel', {
                         startDate: this.data.fromDate,

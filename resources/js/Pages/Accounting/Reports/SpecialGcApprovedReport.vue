@@ -1,5 +1,13 @@
 <template>
     <AuthenticatedLayout>
+        <Head :title="title" />
+    <a-breadcrumb>
+        <a-breadcrumb-item>
+            <Link :href="route('treasury.dashboard')">Home</Link>
+        </a-breadcrumb-item>
+        <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
+        <!-- hello -->
+    </a-breadcrumb>
         <div class="flex justify-between">
             <div>
                 <a-range-picker
@@ -55,6 +63,9 @@ import axios, { AxiosResponse } from "axios";
 import { notification } from "ant-design-vue";
 import { useQueueState } from "@/stores/queue-state";
 
+defineProps<{
+    title: string
+}>();
 const form = ref<{ extension: string; dateRange: [Dayjs, Dayjs] }>({
     extension: "pdf",
     dateRange: [dayjs(), dayjs()],

@@ -16,7 +16,6 @@
                             width: '50%'
                         }
                     ]">
-
                     </a-table>
                 </a-card>
                 <a-divider>

@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Accounting;
 
+use App\Events\AccountingReportEvent;
 use App\Exports\Accounting\SpgcApprovedMultiExport;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\User;
@@ -14,6 +15,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use App\Helpers\NumberHelper;
+use Illuminate\Support\Facades\Log;
 
 class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
 {
@@ -26,6 +28,7 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
     public function __construct(protected array $request)
     {
         parent::__construct();
+        $this->progress['name'] = "Pdf SPGC Approved Report";
         $this->user = Auth::user();
     }
 
@@ -34,44 +37,58 @@ class SpgcApprovedReport extends ReportGenerator implements ShouldQueue
      */
     public function handle(): void
     {
-        if ($this->request['format'] === 'pdf') {
-            $doc = Pdf::loadView('pdf.accountingSpgcApprovedReport', ['data' => $this->handleRecords($this->request['date'])])->output();
-        } else {
-            $doc = new SpgcApprovedMultiExport($this->request['date']);
-        }
+        $doc = $this->generateDocument($this->request['format'], $this->request['date']);
 
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
             ->setFileName('SPGC Approved Report-' . $this->user->user_id, $this->request['date'][0] . ' to ' . $this->request['date'][1])
-            ->exportDocument($this->request['format'], $doc);
+            ->exportDocument($this->request['format'], $doc, function($docu, $document){
+                
+                if($docu === 'excel'){
+                    $document->progress['isDone'] = true;
+                    AccountingReportEvent::dispatch($this->user, $document->progress, $document->reportId);
+                }else{
+                    $this->broadcastProgress($this->user, "Done", true);
+                }
+            });
     }
 
     private function handleRecords($date)
     {
-        $record = collect();
-
         //initialize
         $this->setTransactionDate($date)
+            ->setTypeApproved(true)
             ->setFormat($this->request['format'])
             ->setTotalRecord();
 
+        
+        $record = collect();
         $record->put('perCustomer', $this->perCustomerRecord($this->user));
         $record->put('perBarcode', $this->perBarcode($this->user));
 
         $header = collect([
             'reportCreated' => now()->toFormattedDateString(),
+            'subtitle' => 'Special External GC Report-Approval'
         ]);
 
-        $transDateHeader = ReportHelper::transactionDateLabel(true, $date);
-
-        $header->put('transactionDate', $transDateHeader);
+        $header->put('transactionDate', ReportHelper::transactionDateLabel(true, $date));
 
         return [
             'header' => $header,
             'records' => $record,
+            'total' => [
+                'noOfGc' => NumberHelper::toLocaleString(collect($record['perCustomer'])->sum('totcnt')) . ' pcs',
+                'gcAmount' => NumberHelper::currency(collect($record['perCustomer'])->sum('totalDenomInt'))
+            ]
         ];
     }
 
+    private function generateDocument(string $format, array $date)
+    {
+        return $format === 'pdf'
+            ? Pdf::loadView('pdf.accountingSpgcApprovedReport', ['data' => $this->handleRecords($date)])->output()
+            : new SpgcApprovedMultiExport($date, $this->user);
+    }
 
 }

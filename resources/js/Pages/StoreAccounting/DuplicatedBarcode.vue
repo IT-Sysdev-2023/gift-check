@@ -4,13 +4,92 @@
             <a-tab-pane key="1">
                 <template #tab>
                     <span style="font-weight: bold;">
-                        <span style="color:green">
-                            <TagsOutlined />
-                        </span>
                         Duplicated Report (CEBU)
                     </span>
                 </template>
-                <a-card style="width: 25%;">
+                <a-card style="width: 72%; margin-left: 28%;">
+                    <a-tabs>
+                        <a-tab-pane key="1">
+                            <template #tab>
+                                <span>
+                                    Tagbilaran
+                                </span>
+                            </template>
+                            <a-card>
+                                <div style="padding: 10px; background-color: #b0c4de;">
+                                    <span style="font-weight: bold; margin-left: 40%;">
+                                        Table Showing Tagbilaran
+                                    </span>
+                                </div>
+                                <a-table :columns="cebuTable" :data-source="cebu.tagbilaran.data" :pagination="false"
+                                    size="small" style="margin-top: 5px;">
+
+                                </a-table>
+                                <pagination :datarecords="cebu.tagbilaran" class="mt-5" />
+                            </a-card>
+                            <span>
+                                <a-button @click="cebuGenerateExcel"
+                                    style="margin-left: 77%; background-color: green; color:white;">
+                                    <FileExcelOutlined />
+                                    Generate Excel
+                                </a-button>
+                            </span>
+                        </a-tab-pane>
+                        <a-tab-pane key="2">
+                            <template #tab>
+                                <span>
+                                    Talibon
+                                </span>
+                            </template>
+                            <a-card>
+                                <div style="padding: 10px; background-color: #b0c4de;">
+                                    <span style="font-weight: bold; margin-left: 40%;">
+                                        Table Showing Talibon
+                                    </span>
+                                </div>
+                                <a-table :columns="cebuTable" :data-source="cebu.talibon.data" :pagination="false"
+                                    size="small" style="margin-top: 5px;">
+
+                                </a-table>
+                                <pagination :datarecords="cebu.talibon" class="mt-5" />
+                            </a-card>
+                            <span>
+                                <a-button @click="cebuGenerateExcel"
+                                    style="margin-left: 77%; background-color: green; color:white;">
+                                    <FileExcelOutlined />
+                                    Generate Excel
+                                </a-button>
+                            </span>
+                        </a-tab-pane>
+                        <a-tab-pane key="3">
+                            <template #tab>
+                                <span>
+                                    Tubigon
+                                </span>
+                            </template>
+                            <a-card>
+                                <div style="padding: 10px; background-color: #b0c4de;">
+                                    <span style="font-weight: bold; margin-left: 40%;">
+                                        Table Showing Tubigon
+                                    </span>
+                                </div>
+                                <a-table :columns="cebuTable" :data-source="cebu.tubigon.data" :pagination="false"
+                                    size="small" style="margin-top: 5px;">
+
+                                </a-table>
+                                <pagination :datarecords="cebu.tubigon" class="mt-5" />
+                            </a-card>
+                            <span>
+                                <a-button @click="cebuGenerateExcel"
+                                    style="margin-left: 77%; background-color: green; color:white;">
+                                    <FileExcelOutlined />
+                                    Generate Excel
+                                </a-button>
+                            </span>
+                        </a-tab-pane>
+                    </a-tabs>
+                </a-card>
+                <a-card style="width: 25%; position: absolute; top:0;">
                     <div style="margin-left: 50px;">
                         <span style="color:green">
                             <TagsOutlined />
@@ -19,59 +98,132 @@
                             Duplicate Barcodes
                         </span>
                         <div style="margin-left: 50px; color:#1e90ff; font-weight: bold;">
-                            Cebu
+                            CEBU
                         </div>
                     </div>
                     <div style="margin-top: 20px;">
                         <span :style="{ fontSize: iconSize + 'px' }">
                             <FileSearchOutlined />
                         </span>
-                        <input type="file" ref="fileInput" style="display: none;" @change="handleFileChange" />
 
-                        <a-button @click="ChooseFileCebu" style="background-color: #1e90ff; color: white;">
-                           <SearchOutlined />
-                            Choose File
+                        <a-input type="file" id="barcodeFile" @change="handleFileChange"
+                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" />
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span v-if="textfile" style="color:green; font-weight: bold;">Selected TextFile: </span>
+                        <span style="margin-left: 5px;">
+                            {{ this.textfile }}
+                        </span>
+                        <span v-if="!textfile" style="color:red">
+
+                            No selected Textfile
+                        </span>
+                    </div>
+                    <div>
+                        <a-button @click="cebuReportButton"
+                            style="background-color: #1e90ff; color: white; margin-top: 20px;">
+                            <FileExcelOutlined />
+                            Check Duplicates
                         </a-button>
-                        <div v-if="!cebuFileName && !message" style="color:red;">
-                            No file selected
-
-                        </div>
-                        <div v-if="!cebuFileName" style="color:red">
-                            {{ this.message }}
-                        </div>
-                        <div v-if="cebuFileName" style="width: 40%; max-width: 40%;">
-                            <span style="color:#1e90ff; font-weight: bold;">
-                                Selected File:
-                            </span>
-                            <div style="text-decoration: underline;">
-                                {{ cebuFileName }}
-                            </div>
-                        </div>
-                        <div style="margin-top: 20px;">
-                            <a-button @click="cebuReportButton" style="background-color: green; color: white">
-                                <CheckOutlined />
-                                Check Duplicates
-                            </a-button>
-                        </div>
-
-                        <div style="color:red; margin-top: 20px;">
-                            <WarningOutlined />
-                            Note: Upload Textfile Only.
-                        </div>
                     </div>
                 </a-card>
 
+                <!-- {{ barcodes}} -->
             </a-tab-pane>
             <a-tab-pane key="2">
                 <template #tab>
                     <span style="font-weight: bold;">
-                        <span style="color:green">
-                            <TagsOutlined />
-                        </span>
-                        Duplicated Report (ALTA CITTA)
+                        Duplicated Report (ALTTA CITTA)
                     </span>
                 </template>
-                <a-card style="width: 25%">
+
+                <a-card style="width: 72%; margin-left: 28%;">
+                    <a-tabs>
+                        <a-tab-pane key="1">
+                            <template #tab>
+                                <span>
+                                    Tagbilaran
+                                </span>
+                            </template>
+                            <a-card>
+                                <div style="padding: 10px; background-color: #b0c4de;">
+                                    <span style="font-weight: bold; margin-left: 40%;">
+                                        Table Showing Tagbilaran
+                                    </span>
+                                </div>
+                                <a-table :columns="cebuTable" :data-source="altta.tagbilaran.data" :pagination="false"
+                                    size="small" style="margin-top: 5px;">
+
+                                </a-table>
+                                <pagination :datarecords="altta.tagbilaran" class="mt-5" />
+                            </a-card>
+                            <span>
+                                <a-button @click="alttaGenerateExcel"
+                                    style="margin-left: 77%; background-color: green; color:white;">
+                                    <FileExcelOutlined />
+                                    Generate Excel
+                                </a-button>
+                            </span>
+
+                        </a-tab-pane>
+                        <a-tab-pane key="2">
+                            <template #tab>
+                                <span>
+                                    Talibon
+                                </span>
+                            </template>
+                            <a-card>
+                                <div style="padding: 10px; background-color: #b0c4de;">
+                                    <span style="font-weight: bold; margin-left: 40%;">
+                                        Table Showing Talibon
+                                    </span>
+                                </div>
+                                <a-table :columns="cebuTable" :data-source="altta.talibon.data" :pagination="false"
+                                    size="small" style="margin-top: 5px;">
+
+                                </a-table>
+                                <pagination :datarecords="altta.talibon" class="mt-5" />
+                            </a-card>
+                            <span>
+                                <a-button @click="alttaGenerateExcel"
+                                    style="margin-left: 77%; background-color: green; color:white;">
+                                    <FileExcelOutlined />
+                                    Generate Excel
+                                </a-button>
+                            </span>
+
+                        </a-tab-pane>
+                        <a-tab-pane key="3">
+                            <template #tab>
+                                <span>
+                                    Tubigon
+                                </span>
+                            </template>
+                            <a-card>
+                                <div style="padding: 10px; background-color: #b0c4de;">
+                                    <span style="font-weight: bold; margin-left: 40%;">
+                                        Table Showing Tubigon
+                                    </span>
+                                </div>
+                                <a-table :columns="cebuTable" :data-source="altta.tubigon.data" :pagination="false"
+                                    size="small" style="margin-top: 5px;">
+
+                                </a-table>
+                                <pagination :datarecords="altta.tubigon" class="mt-5" />
+                            </a-card>
+                            <span>
+                                <a-button @click="alttaGenerateExcel"
+                                    style="margin-left: 77%; background-color: green; color:white;">
+                                    <FileExcelOutlined />
+                                    Generate Excel
+                                </a-button>
+                            </span>
+
+                        </a-tab-pane>
+                    </a-tabs>
+                </a-card>
+
+                <a-card style="width:25%; position: absolute; top:0;">
                     <div style="margin-left: 50px;">
                         <span style="color:green">
                             <TagsOutlined />
@@ -79,193 +231,354 @@
                         <span style="font-weight: bold;">
                             Duplicate Barcodes
                         </span>
-                        <div style="margin-left: 50px; color:#1e90ff; font-weight: bold;">
-                            Alta Citta
+                        <div style="margin-left: 45px; color:#1e90ff; font-weight: bold;">
+                            ALTTA CITTA
                         </div>
                     </div>
                     <div style="margin-top: 20px;">
                         <span :style="{ fontSize: iconSize + 'px' }">
                             <FileSearchOutlined />
                         </span>
-                        <input type="file" ref="fileInput" style="display: none;" @change="handleAltaCittaFileChange" />
 
-                        <a-button @click="chooseFileAltaCitta" style="background-color: #1e90ff; color: white;">
-                           <SearchOutlined />
-                            Choose File
-                        </a-button>
-                        <div v-if="!altaCittaFileName">
-                            <span style="color:red">
-                                No file selected
-                            </span>
-                        </div>
-                        <div v-if="altaCittaFileName" style=" width: 40%; max-width: 40%;">
-                            <span style="color:#1e90ff; font-weight: bold;">
-                                Selected file:
-                            </span>
-                            <div style="text-decoration: underline">
-                                {{ altaCittaFileName }}
-                            </div>
-                        </div>
-
-
-                        <div style="margin-top: 20px;">
-                            <a-button @click="altaCittaReportButton" style="background-color: green; color: white">
-                                <CheckOutlined />
-                                Check Duplicates
-                            </a-button>
-                        </div>
-
-                        <div style="color:red; margin-top: 20px;">
-                            <WarningOutlined />
-                            Note: Upload Textfile Only.
-                        </div>
+                        <a-input type="file" id="barcodeFile" @change="handleFileChangeAltta"
+                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" />
                     </div>
+                    <div style="margin-top: 10px;">
+                        <span v-if="altaTextFile" style="color:green; font-weight: bold;">Selected TextFile: </span>
+                        <span style="margin-left: 5px;">
+                            {{ this.altaTextFile }}
+                        </span>
+                        <span v-if="!altaTextFile" style="color:red">
+
+                            No selected Textfile
+                        </span>
+                    </div>
+                    <div>
+                        <a-button @click="alttaReportButton"
+                            style="background-color: #1e90ff; color: white; margin-top: 20px;">
+                            <FileExcelOutlined />
+                            Check Duplicates
+                        </a-button>
+                    </div>
+                    <!-- {{ data }} -->
+
                 </a-card>
 
             </a-tab-pane>
         </a-tabs>
     </a-card>
-
 </template>
+
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { ExclamationCircleOutlined, WindowsFilled } from '@ant-design/icons-vue';
-import { createVNode } from 'vue';
-import { message, Modal } from 'ant-design-vue';
+import { TagsOutlined, FileSearchOutlined, CheckOutlined, PlayCircleFilled } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue';
-import TextfileUploader from '../Custodian/TextfileUploader.vue';
+import Description from '../Treasury/Description.vue';
+import { placements } from 'ant-design-vue/es/vc-tour/placements';
+import { message, Modal } from 'ant-design-vue';
+import ColumnGroup from 'ant-design-vue/es/vc-table/sugar/ColumnGroup';
+import Pagination from '@/Components/Pagination.vue';
+
 
 export default {
+  components: { Pagination },
     layout: AuthenticatedLayout,
+    props: {
+        altta: Object,
+        cebu: Object,
+    },
     data() {
         return {
-            message: '',
             cebuFileName: '',
-            altaCittaFileName: '',
             iconSize: 80,
-        }
+            fileContent: '',
+            barcodes: [],
+            textfile: '',
+
+            altaTextFile: '',
+            altaContent: '',
+            altaBarcode: [],
+            alttaTable: [
+                {
+                    title: 'Transno',
+                    dataIndex: 'transno'
+                },
+                {
+                    title: 'Name',
+                    dataIndex:'name'
+                },
+                {
+                    title: 'Barcode',
+                    dataIndex: 'barcode'
+                },
+                {
+                    title: 'Terminal',
+                    dataIndex: 'terminal'
+                },
+                {
+                    title: 'Business Unit',
+                    dataIndex: 'bu'
+                },
+                {
+                    title: 'Amount',
+                    dataIndex: 'amount'
+                },
+                {
+                    title: 'Verdate',
+                    dataIndex: 'verdate'
+                },
+                {
+                    title: 'Vertime',
+                    dataIndex: 'vertime'
+                },
+                {
+                    title: 'Store',
+                    dataIndex: 'store'
+                },
+                
+            ],
+            cebuTable: [
+                {
+                    title: 'Transno',
+                    dataIndex: 'transno'
+                },
+                {
+                    title: 'Name',
+                    dataIndex: 'name'
+                },
+                {
+                    title: 'Barcode',
+                    dataIndex: 'barcode'
+                },
+                {
+                    title: 'Terminal',
+                    dataIndex: 'terminal'
+                },
+                {
+                    title: 'Business Unit',
+                    dataIndex: 'bu'
+                },
+                {
+                    title: 'Amount',
+                    dataIndex: 'amount'
+                },
+                {
+                    title: 'Verdate',
+                    dataIndex: 'verdate'
+                },
+                {
+                    title: 'Vertime',
+                    dataIndex: 'vertime'
+                },
+                {
+                    title: 'Store',
+                    dataIndex: 'store'
+                },
+            ]
+        };
     },
     methods: {
-        ChooseFileCebu() {
-            this.$refs.fileInput.click();
-        },
-        handleFileChange(event) {
-            const file = event.target.files[0];
-            this.cebuFileName = file ? file.name : '';
-
-        },
-        chooseFileAltaCitta() {
-            this.$refs.fileInput.click();
-        },
-        handleAltaCittaFileChange(event) {
-            const file = event.target.files[0];
-            this.altaCittaFileName = file ? file.name : '';
-        },
-        cebuReportButton() {
-
-            if (!this.cebuFileName) {
-                const openNotificationWithIcon = (type) => {
+        alttaGenerateExcel() {
+            const data = this.altta.alttaTable
+            if (this.altta.alttaTable === null) {
+                const notificationWarning = (type) => {
                     notification[type]({
                         message: 'File Selection Required',
-                        description: 'Please choose file first before checking duplicates!',
+                        description: 'Please choose file first before generating EXCEL',
                         placement: 'topRight'
                     });
                 };
-                openNotificationWithIcon('warning');
+                notificationWarning('warning');
                 return;
             }
-
-            const openNotificationWithIcon = (type) => {
-                notification[type]({
-                    message: 'Invalid file selected',
-                    description: 'Invalid file selected, please select a text file only!',
-                    placement: 'topRight'
-                });
-            };
-
-            const validTextFileExtensions = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
-
-            const fileExtension = this.cebuFileName.split('.').pop().toLowerCase();
-
-            if (!validTextFileExtensions.includes(fileExtension)) {
-                openNotificationWithIcon('warning');
-                return;
-            }
-            const cebuData = {
-                data: this.cebuFileName
-            }
-
             Modal.confirm({
-                title: 'Confirmation',
-                content: 'Are you sure you want to check DUPLICATE BARCODE?',
+                title: 'Notification',
+                content: 'Are you sure you want generate EXCEL?',
                 okText: 'Yes',
-                okType: 'danger',
                 cancelText: 'No',
                 onOk: () => {
-                    const hide = message.loading('Generating in progress..', 0)
+                    window.location.href = route('storeaccounting.barcodes', { barcodes: data })
+                },
+                onCancel: () => {
+                    console.log('Cancel');
+                }
 
-                    window.location.href = route('storeaccounting.duplicateExcel', cebuData);
-                    setTimeout(hide, 1500);
+            });
+        },
+         
+        handleFileChangeAltta(event) {
+            const file = event.target.files[0];
+            this.altaTextFile = file.name
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    this.altaContent = e.target.result;
+                    console.log(this.altaContent);
+
+                    this.altaBarcode = this.extractBarcodesAltta(this.altaContent);
+                    console.log(this.altaBarcode);
+                };
+                reader.readAsText(file);
+            }
+        },
+        extractBarcodesAltta() {
+            const regex = /\b\d{1,20}\b/g;
+            const barcodes = content.match(regex);
+            return barcodes ? barcodes.map(barcode => barcode.trim().replace(/\t/g, '')) : [];
+        },
+        alttaReportButton() {
+            if (this.altaContent) {
+                const altaBarcodeString = this.altaContent
+
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'Invalid File Selected',
+                        description: 'Please select Textfile type only',
+                        placement: 'topRight'
+                    });
+                };
+                const validTextFileAltta = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
+                const fileExtention = this.altaTextFile.split('.').pop().toLowerCase();
+
+                if (!validTextFileAltta.includes(fileExtention)) {
+                    openNotificationWithIcon('warning');
+                    return;
+
+                }
+                Modal.confirm({
+                    title: 'Notification',
+                    content: 'Are you sure you want to check DUPLICATE BARCODES?',
+                    okText: 'Yes',
+                    cancelText: 'No',
+                    onOk: () => {
+                        window.location.href = route('storeaccounting.DuplicatedBarcodes', { AlttaData: altaBarcodeString });
+                    },
+                    onCancel: () => {
+                        console.log('Cancel');
+                    }
+                });
+
+            }
+            else {
+                const notificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'File Selection Required',
+                        description: 'Please choose file first or the selected Textfile has no data found',
+                        placement: 'topRight'
+                    });
+                };
+                notificationWithIcon('warning');
+                return;
+            }
+
+        },
+        cebuGenerateExcel() {
+            if (this.cebu.cebu === null) {
+                const notificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'File Selection Required',
+                        description: 'Please choose file first before generating EXCEL',
+                        placement: 'topRight'
+                    });
+
+                };
+                notificationWithIcon('warning');
+                return;
+            }
+            const data = this.cebu.cebu
+            Modal.confirm({
+                title: 'Notification',
+                content: 'Are you sure you want to generate Excel?',
+                okText: 'Yes',
+                cancelText: 'No',
+                onOk: () => {
+                    window.location.href = route('storeaccounting.barcodes', { barcodes: data });
                 },
                 onCancel() {
                     console.log('Cancel');
                 },
+
             });
+          
         },
 
-        altaCittaReportButton() {
+    handleFileChange(event) {
+        const file = event.target.files[0];
+        // console.log(file.name);
+        this.textfile = file.name
+        if (file) {
+            const reader = new FileReader();
 
-            if (!this.altaCittaFileName) {
-                const openNotificationWithIcon = (type) => {
-                    notification[type]({
-                        message: 'File Selection Required',
-                        description: 'Please choose file first before checking duplicates!',
-                        placement: 'topRight'
-                    });
-                };
-                openNotificationWithIcon('warning');
-                return;
-            }
-            const openNotificationWithIcon = (type) => {
-                notification[type]({
-                    message: 'Invalid file selected',
-                    description: 'Invalid file selected, please select a text file only!',
-                    placement: 'topRight'
-                });
+            reader.onload = (e) => {
+                this.fileContent = e.target.result;
+                console.log(this.fileContent);
+
+
+                this.barcodes = this.extractBarcodes(this.fileContent);
+                console.log(this.barcodes);
             };
-            const validTextFileExtensions = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
 
-            const fileExtension = this.cebuFileName.split('.').pop().toLowerCase();
-
-            if (!validTextFileExtensions.includes(fileExtension)) {
-                openNotificationWithIcon('warning');
-                return;
-            }
-
-            const altaCittaData = {
-                data: this.altaCittaFileName
-            }
-
-            Modal.confirm({
-                title: 'Confirmation',
-                icon: createVNode(ExclamationCircleOutlined),
-                content: 'Are you sure you want to check DUPLICATE BARCODE?',
-                okText: 'Yes',
-                okType: 'danger',
-                cancelText: 'No',
-                onOk: () => {
-                    const hide = message.loading('Generating in progress..', 0)
-
-                    window.location.href = route('storeaccounting.duplicateExcel', altaCittaData)
-                    setTimeout(hide, 1500);
-                },
-                onCancel() {
-                    console.log('Cancel');
-                },
-            });
+            reader.readAsText(file);
         }
 
 
+    },
+
+    extractBarcodes(content) {
+        const regex = /\b\d{1,20}\b/g;
+        const barcodes = content.match(regex);
+        return barcodes ? barcodes.map(barcode => barcode.trim().replace(/\t/g, '')) : [];
+    },
+
+    cebuReportButton() {
+        if (this.fileContent) {
+            const barcodeString = this.fileContent
+
+            const openNotificationWithIcon = (type) => {
+                notification[type]({
+                    message: 'Invalid File Selected',
+                    description: 'Please select Textfile type only',
+                    placement: 'topRight',
+                });
+            };
+            const validFileExtention = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
+            const fileExtention = this.textfile.split('.').pop().toLowerCase();
+
+            if (!validFileExtention.includes(fileExtention)) {
+                openNotificationWithIcon('warning');
+                return;
+            }
+
+            Modal.confirm({
+                title: 'Notification',
+                content: 'Are you sure you want to check DUPLICATE BARCODES?',
+                okText: 'Yes',
+                cancelText: 'No',
+                onOk: () => {
+                    window.location.href = route('storeaccounting.DuplicatedBarcodes', { barcodes: barcodeString });
+                },
+                onCancel: () => {
+                    console.log('Cancel');
+                }
+            });
+
+        }
+        else {
+            const notificationWithIcon = (type) => {
+                notification[type]({
+                    message: 'File Selection Required',
+                    description: 'Please choose file first or the selected Textfile has no data found',
+                    placement: 'topRight'
+                });
+            };
+            notificationWithIcon('warning');
+            return;
+        }
     }
 }
+
+
+};
 </script>

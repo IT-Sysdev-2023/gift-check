@@ -377,7 +377,7 @@ trait VerifiedTraits
                     'vsdate' => Date::parse($item->vs_date)->toFormattedDateString(),
                     'vstime' => $item->vs_time,
                     'purchaseamt' => $datatxtfile->puramnt,
-                ];
+                ]; 
 
 
                 VerifiedExcelReports::dispatch('Searching for reverified barcodes ' . $item->vs_barcode . ' ... ', $vsrevcount++, $vsrevdate->count(), Auth::user());

@@ -2,6 +2,7 @@
 
 namespace App\Exports\DuplicateBarcodeExcel;
 
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class allDuplicateExcel implements WithMultipleSheets
@@ -15,25 +16,21 @@ class allDuplicateExcel implements WithMultipleSheets
 
     public function sheets(): array
     {
-        // dd($this->allDuplicateData);
-        $fileName = $this->allDuplicateData['data'];
+        $fileName = $this->allDuplicateData['barcodes'];
         // dd($fileName);
+        $cleanedFileName = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $fileName); 
+        // $baseDirectory = ('c:/Users/it personnel/downloads/' . $fileName); 
 
-        // $filePath = "C:/Users/it personnel/Downloads/{$fileName}";
-
-        // if (!file_exists($filePath)) {
-        //     throw new \Exception("File not found: {$filePath}");
-        // }
-
-        // $fileContents = file_get_contents($fileName);
-
-        $processedData = explode(PHP_EOL, $fileName);
-        $processedData = array_map('str_getcsv', $processedData);
-        // dd($processedData);
+        $barcodes = array_filter(explode(',', $cleanedFileName));
+        // $fileContents = file_get_contents($baseDirectory);
+        // $processedData = explode(PHP_EOL, $fileContents);
+        // $processedData = array_map('str_getcsv', $processedData);
+        $barcodes = array_map('trim', $barcodes);
+        // dd($barcodes);
         return [
-            new tagbilaranExcel($processedData),
-            new talibonExcel($processedData),
-            new tubigonExcel($processedData),
+            new tagbilaranExcel($barcodes),
+            new talibonExcel($barcodes),
+            new tubigonExcel($barcodes),
         ];
     }
 }

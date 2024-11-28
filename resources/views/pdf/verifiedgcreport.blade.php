@@ -116,7 +116,7 @@
                         <td>{{$item['customer']}}</td>
                         <td>{{$item['vs_tf_used'] =='*' ? 'Used' : ''}}</td>
                         <td>{{$item['vs_tf_balance']}}</td>
-                        <td>{{$item['vs_date']}}</td>
+                        <td>{{ \Carbon\Carbon::parse($item['vs_date'])->toDateString() }}</td>
                     </tr>
                 @endforeach
 
