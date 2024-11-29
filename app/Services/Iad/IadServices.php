@@ -350,7 +350,7 @@ class IadServices extends FileHandler
             'specialExternalCustomer:spcus_id,spcus_companyname',
             'approvedRequest',
             'approvedRequest1.user:user_id,firstname,lastname'
-        )->leftJoin('special_external_bank_payment_info', 'spexgcbi_trid', '=', 'spexgc_id')
+        )->leftJoin('special_external_bank_payment_info', 'spexgcbi_id', '=', 'spexgc_id')
             ->whereHas('approvedRequest', fn($query) => $query->where('reqap_approvedtype', 'Special External GC Approved'))
             ->where('spexgc_status', 'approved')
             ->where('spexgc_id', $id)

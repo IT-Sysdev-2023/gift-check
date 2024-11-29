@@ -9,9 +9,7 @@
                     </a-button>
                 </a-col>
                 <a-col :span="14">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, distinctio dolorum ad veniam accusamus
-                    nulla laboriosam aliquid accusantium nisi? Quis, itaque! Vero voluptatum voluptatibus voluptatem
-                    provident voluptas praesentium necessitatibus distinctio.
+
                 </a-col>
             </a-row>
         </a-card>

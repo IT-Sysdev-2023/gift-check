@@ -25,8 +25,6 @@ class SpecialReviewedGcMultipleExports implements WithMultipleSheets
         return [
             new SpecialReviewedExportsPerBarcode($this->requestData),
             new SpecialReviewedExportsPerCustomer($this->requestData),
-            // new VerifiedSummaryExports($this->requestData),
-            // new PerGcTypeAndBuExports($this->requestData),
         ];
     }
 }
