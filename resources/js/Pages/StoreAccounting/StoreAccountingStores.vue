@@ -46,7 +46,7 @@ export default {
     props: {
         data: Object,
         search: String,
-        pagination: String
+        pagination: Number
     },
 
     data() {

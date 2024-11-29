@@ -746,6 +746,8 @@ Route::prefix('store-accounting')
 
                         Route::get('storeaccouting-sales', [StoreAccountingController::class, 'storeAccoutingSales'])->name('sales');
                         Route::get('store-accounting-view-sales-{id}', [StoreAccountingController::class, 'storeaccountingViewSales'])->name('storeAccountingViewSales');
+               
+
                         Route::get('view-sales-{barcode}', [StoreAccountingController::class, 'viewSalesPostTransaction'])->name('storeAccountingPOStransaction');
 
                         Route::get('storeaccounting-store', [StoreAccountingController::class, 'storeAccountingStore'])->name('store');
