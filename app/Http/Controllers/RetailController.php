@@ -6,10 +6,12 @@ use App\DashboardClass;
 use App\Events\verifiedgcreport;
 use App\Exports\RetailVerifiedGCReport;
 use App\Helpers\ColumnHelper;
+use App\Helpers\NumberHelper;
 use App\Models\Assignatory;
 use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\GcLocation;
+use App\Models\LedgerStore;
 use App\Models\LostGcBarcode;
 use App\Models\LostGcDetail;
 use App\Models\SpecialExternalGcrequestEmpAssign;
@@ -24,6 +26,7 @@ use App\Models\TempReceivestore;
 use App\Services\Admin\AdminServices;
 use App\Services\Finance\FinanceService;
 use App\Services\RetailStore\RetailServices;
+use Faker\Core\Number;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -583,9 +586,35 @@ class RetailController extends Controller
 
     public function verified_gc_generate_excel(Request $request)
     {
-        
-        return Excel::download(new RetailVerifiedGCReport($request->all()),'excel.xlsx');
-        
+
+        return Excel::download(new RetailVerifiedGCReport($request->all()), 'excel.xlsx');
+
+    }
+
+
+    public function storeLedger(Request $request)
+    {
+        $ledgerData = LedgerStore::where('sledger_store', $request->user()->store_assigned)
+            ->whereIn('sledger_trans', ['GCE', 'GCS', 'GCREF', 'GCTOUT'])
+            ->orderBy('sledger_id', 'asc')
+            ->get();
+        $ledgerData->transform(function ($item) {
+            $item->debit = NumberHelper::currency($item->sledger_debit);
+            return $item;
+        });
+
+
+        $revalData = LedgerStore::join('transaction_stores', 'transaction_stores.trans_sid', '=', 'ledger_store.sledger_ref')
+            ->join('store_staff', 'store_staff.ss_id', '=', 'transaction_stores.trans_cashier')
+            ->where('ledger_store.sledger_store', '=', $request->user()->store_assigned)
+            ->where('ledger_store.sledger_trans', '=', 'GCR')
+            ->get();
+        $revalData->transform(function ($item) {
+            $item->amount = NumberHelper::currency($item->sledger_credit);
+            return $item;
+        });
+
+
     }
 
 
