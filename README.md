@@ -49,9 +49,9 @@ without sail
 - sail artisan horizon/queue:listen
 - sail aritsan reverb:start
 
-## GC Sponsors
+## SPECIAL THANKS
 
-We would like to extend our thanks to the following sponsors for funding TAYLOR OTEN. If you are interested in becoming a sponsor, please visit the [GC Partners program](https://partners.laravel.com).
+We would like to extend our thanks to TAYLOR OTEN for making this project possible. Thank you for your hardwork
 
 ### Premium Partners
 
