@@ -11,7 +11,8 @@
 <p align="center">
 :heavy_exclamation_mark:message for a new appointed programmer of this project
 <p align="center">
-Gif Check is a web application with expressive, elegant syntax. Whoever is assigned to this project should maintain the cleanliness and professionalism of the code for future generations. Gift check was once a disorganized application, but not anymore b*tch. A new heroes have arrived. The old version of the GC system ignored the law of a good programmer, therefore we rebuilt it to benefit the company and serve as a resource for aspiring programmers.
+Gif Check is a web application with expressive, elegant syntax. Whoever is assigned to this project should maintain the cleanliness and professionalism of the code for future generations. Gift check was once a disorganized application, but not anymore b*tch. A new heroes have arrived. </p>
+    <p align="center">The old version of the GC system ignored the law of a good programmer, therefore we rebuilt it to benefit the company and serve as a resource for aspiring programmers.
 This project embodies many essential concepts you need to learn about Laravel. We have purposefully restructured it to enhance code readability, adhere to the SOLID principle, reduce redundancy and optimize both queries and securities. 
 While much of the project has been improved, there may still be areas that need refinement. If you encounter anything inconvenient or inefficient, feel free to revise it—just ensure that the overall functionality remains unaffected. Code must adapt to the technological environment; failure to do so will ensure uncertain consequences, you feel me :satisfied:
 </p>
