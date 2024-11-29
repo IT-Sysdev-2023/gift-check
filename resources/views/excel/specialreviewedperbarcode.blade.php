@@ -10,12 +10,12 @@
     <table>
         <thead>
             <tr>
-                <th style="border: 1px solid black;">TRANSACTION DATE</th>
-                <th style="border: 1px solid black;">BARCODE</th>
-                <th style="border: 1px solid black;">DENOMINATION</th>
-                <th style="border: 1px solid black;">CUSTOMER</th>
-                <th style="border: 1px solid black;">APPROVAL #</th>
-                <th style="border: 1px solid black;">DATE APPROVED</th>
+                <th style="border: 1px solid black; font-weight: bold">TRANSACTION DATE</th>
+                <th style="border: 1px solid black; font-weight: bold">BARCODE</th>
+                <th style="border: 1px solid black; font-weight: bold">DENOMINATION</th>
+                <th style="border: 1px solid black; font-weight: bold">CUSTOMER</th>
+                <th style="border: 1px solid black; font-weight: bold">APPROVAL #</th>
+                <th style="border: 1px solid black; font-weight: bold">DATE APPROVED</th>
             </tr>
         </thead>
         <tbody>
