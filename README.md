@@ -1,4 +1,4 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://i.giphy.com/J0IZzqRxvrcmdZ4LgD.webp" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
@@ -7,64 +7,69 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Gift Check
+## :white_check_mark:About Gift Check
+<p align="center">
+:heavy_exclamation_mark:message for a new appointed programmer of this project
+<p align="center">
+Gif Check is a web application with expressive, elegant syntax. Whoever is assigned to this project should maintain the cleanliness and professionalism of the code for future generations. Gift check was once a disorganized application, but not anymore b*tch. A new heroes have arrived. The old version of the GC system ignored the law of a good programmer, therefore we rebuilt it to benefit the company and serve as a resource for aspiring programmers.
+This project embodies many essential concepts you need to learn about Laravel. We have purposefully restructured it to enhance code readability, adhere to the SOLID principle, reduce redundancy and optimize both queries and securities. 
+While much of the project has been improved, there may still be areas that need refinement. If you encounter anything inconvenient or inefficient, feel free to revise it—just ensure that the overall functionality remains unaffected. Code must adapt to the technological environment; failure to do so will ensure uncertain consequences, you feel me :satisfied:
+</p>
+</p>
 
-Gif Check is a web application with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling.
+:construction_worker:Looking For Maintainers 
+- :computer:Batak mag code
+- :x:dili mugamit chatGpt
+  
+:newspaper:Requirements
+- Node js 18 and later (use LTS)
+- Php 8.2 and later
+- Mariadb
+- Redis
+- Lakas ng luob
 
-Looking For Maintainers 
-- Batak mag code
-- d mugamit og chatGpt
-
-Requirements
-- Node js 18
-- Php 8.2
-- Lakas ng luob mag code
-
-Setup
+:rocket:Setup
 - clone this repository
-- pnpm i/ npm i
+- pnpm i/ npm i / bun i
 - composer i
 - cp .env.example .env
 - php artisan key:generate
+- no need to run redis when using WSL (Sail) already included in docker.compose 
 
-for running in development
-in Sail/Docker:
+🏃for running in development
+without sail
+- php artisan serve
+- php artisan horizon/queue:listen
+- php artisan reverb:start
+- pnpm/bun/npm dev
+  
+⛵in Sail/Docker:
 - sail up
-- sail bun dev
-- sail artisan horizon/ queue:work
+- sail bun/pnpm/npm dev
+- sail artisan horizon/queue:listen
 - sail aritsan reverb:start
 
 ## GC Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+We would like to extend our thanks to the following sponsors for funding TAYLOR OTEN. If you are interested in becoming a sponsor, please visit the [GC Partners program](https://partners.laravel.com).
 
 ### Premium Partners
 
 - **[Vehikl](https://vehikl.com/)**
 - **[Tighten Co.](https://tighten.co)**
 - **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Thank you for considering contributing to the GC! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
 ## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+In order to ensure that the GC community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Swift via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
 ## License
 
