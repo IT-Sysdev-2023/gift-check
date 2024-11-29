@@ -80,7 +80,7 @@ import {
         </a-menu-item>
         <a-menu-item key="gcTracking">
             <RiseOutlined />
-            <span>GC Tracking</span>
+            <span><Link :href="route('custodian.tracking.gctracking')"></Link>GC Tracking</span>
         </a-menu-item>
     </div>
 

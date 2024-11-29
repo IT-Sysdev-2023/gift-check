@@ -66,7 +66,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item key="sgcCompanySetup">SGC Company Setup</a-menu-item>
             <a-menu-item key="sgcItemSetup">SGC Item Setup</a-menu-item>
         </a-sub-menu>
-        <a-menu-item key="storeLedger">
+        <a-menu-item key="storeLedger" @click="()=> $inertia.get(route('retail.store_ledger.storeledger'))">
             <BarcodeOutlined />
             <span>Store Ledger</span>
         </a-menu-item>
@@ -136,7 +136,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item key="sgcCompanySetup">SGC Company Setup</a-menu-item>
             <a-menu-item key="sgcItemSetup">SGC Item Setup</a-menu-item>
         </a-sub-menu>
-        <a-menu-item key="storeLedger">
+        <a-menu-item key="storeLedger" @click="()=> $inertia.get(route('retail.store_ledger.storeledger'))">
             <BarcodeOutlined />
             <span>Store Ledger</span>
         </a-menu-item>

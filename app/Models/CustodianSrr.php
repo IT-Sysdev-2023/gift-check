@@ -30,4 +30,7 @@ class CustodianSrr extends Model
     {
         return $this->belongsTo(RequisitionEntry::class, 'csrr_requisition', 'requis_id');
     }
+    public function purorderdetails(){
+        return $this->belongsTo(PurchaseOrderDetail::class, 'csrr_id', 'purchorderdet_ref');
+    }
 }
