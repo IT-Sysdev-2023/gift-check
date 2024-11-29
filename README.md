@@ -50,8 +50,8 @@ without sail
 - sail aritsan reverb:start
 
 ## SPECIAL THANKS
-
-We would like to extend our thanks to TAYLOR OTEN for making this project possible. Thank you for your hardwork
+:salut
+We would like to extend our thanks to TAYLOR OTEN for making this project possible. Thank you for your hardwork<a><img style="width:20px" src="https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/128px/1fae1.png" alt="Build Status"></a>
 
 ### Premium Partners
 
