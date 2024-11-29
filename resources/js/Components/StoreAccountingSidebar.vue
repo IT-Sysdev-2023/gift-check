@@ -13,11 +13,12 @@
                 <span>Sales</span>
             </span>
         </template>
-
+        
         <a-menu-item @click="() => $inertia.get(route('storeaccounting.sales'))" key="treasurySales" class="menu-item">
             <MoneyCollectOutlined />
             <span>Treasury Sales</span>
         </a-menu-item>
+
 
         <a-menu-item @click="() => $inertia.get(route('storeaccounting.store'))" key="storeSales" class="menu-item">
             <AppstoreAddOutlined />

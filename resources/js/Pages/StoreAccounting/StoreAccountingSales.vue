@@ -49,7 +49,7 @@ export default {
     layout: AuthenticatedLayout,
     props: {
         data: Object,
-        pagination: String,
+        pagination: Number,
         searchData: String
     },
     data() {

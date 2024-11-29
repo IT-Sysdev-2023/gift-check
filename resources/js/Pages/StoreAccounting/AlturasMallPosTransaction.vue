@@ -23,7 +23,7 @@ export default {
     components: { Pagination },
     layout: AuthenticatedLayout,
     props: {
-        barcodeNumber: Number,
+        barcodeNumber: String,
         data: Object
     },
     data() {
