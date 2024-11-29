@@ -96,10 +96,9 @@ Route::middleware('auth')->group(function () {
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing,admin');
 
     Route::get('storeaccounting-dashboard', [StoreAccountingController::class, 'storeAccountingDashboard'])->name('storeaccounting.dashboard');
-    
-    //? End of DASHBOARD
+});
 
-
+Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('view-barcode-status', [AdminController::class, 'index'])->name('view.barcode.status');
     });
@@ -619,22 +618,28 @@ Route::middleware('auth')->group(function () {
                 Route::get('reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request');
             });
 
-            Route::name('check.')->group(function () {
-                Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
-            });
-            Route::name('production.')->group(function () {
-                Route::get('production', [CustodianController::class, 'productionIndex'])->name('index');
-                Route::get('production-cancelled', [CustodianController::class, 'productionCancelled'])->name('pro.cancelled');
-                Route::get('production-cancelled-details-{id}', [CustodianController::class, 'productionCancelledDetails'])->name('cancelled.details');
-                Route::get('production-details-{id}', [CustodianController::class, 'productionApprovedDetails'])->name('details');
-                Route::get('barcode-details-{id}', [CustodianController::class, 'barcodeApprovedDetails'])->name('barcode.details');
-                Route::get('barcode-every-{id}', [CustodianController::class, 'getEveryBarcode'])->name('barcode.every');
-                Route::get('requisition-details-{id}', [CustodianController::class, 'getRequisitionDetails'])->name('requisition');
-            });
-            Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
-            Route::post('upload', [CustodianController::class, 'upload'])->name('upload');
+        Route::name('check.')->group(function () {
+            Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
         });
+        Route::name('production.')->group(function () {
+            Route::get('production', [CustodianController::class, 'productionIndex'])->name('index');
+            Route::get('production-cancelled', [CustodianController::class, 'productionCancelled'])->name('pro.cancelled');
+            Route::get('production-cancelled-details-{id}', [CustodianController::class, 'productionCancelledDetails'])->name('cancelled.details');
+            Route::get('production-details-{id}', [CustodianController::class, 'productionApprovedDetails'])->name('details');
+            Route::get('barcode-details-{id}', [CustodianController::class, 'barcodeApprovedDetails'])->name('barcode.details');
+            Route::get('barcode-every-{id}', [CustodianController::class, 'getEveryBarcode'])->name('barcode.every');
+            Route::get('requisition-details-{id}', [CustodianController::class, 'getRequisitionDetails'])->name('requisition');
+        });
+        Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
+        Route::post('upload', [CustodianController::class, 'upload'])->name('upload');
+
+        Route::name('tracking.')->group(function () {
+            Route::get('gc-tracking', [CustodianController::class, 'gcTracking'])->name('gctracking');
+            Route::get('gc-tracking-submit', [CustodianController::class, 'gcTrackingSubmition'])->name('submit');
+        });
+
     });
+});
 
 
 
