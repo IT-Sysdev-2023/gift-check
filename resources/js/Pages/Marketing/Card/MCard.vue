@@ -1,5 +1,5 @@
 <template>
-    <a-card :title="title">
+    <a-card :title="title" class="mb-5">
         <a-badge :count="pending" class="mb-2">
             <a-button
                 style="width: 340px"
@@ -9,7 +9,7 @@
                 @click="() => $inertia.get(route(pRoute))"
                 danger
             >
-                Pending {{ pextension ? `(${pextension})` : "" }}
+                {{pendingLabel ?? 'Pending'}} {{ pextension ? `(${pextension})` : "" }}
             </a-button>
         </a-badge>
 
@@ -25,9 +25,10 @@
                 type="primary"
                 @click="() => $inertia.get(route(aRoute))"
             >
-                Approved {{ aextension ? `(${aextension})` : "" }}
+                {{approvedLabel ?? 'Approved'}} {{ aextension ? `(${aextension})` : "" }}
             </a-button>
         </a-badge>
+        <slot />
         <div v-if="spexgcreleased === true">
             <a-badge
                 class="mb-2"
@@ -45,6 +46,7 @@
                 </a-button>
             </a-badge>
         </div>
+       
         <a-badge
             class="mb-2"
             :count="cancelled"
@@ -57,18 +59,25 @@
                 @click="() => $inertia.get(route(cRoute))"
                 class="bg-gray-900 text-white"
             >
-                Cancelled {{ cextension ? `(${cextension})` : "" }}
+                {{cancelledLabel ?? 'Cancelled'}} {{ cextension ? `(${cextension})` : "" }}
             </a-button>
         </a-badge>
     </a-card>
 </template>
 
 <script setup>
+import { stringType } from "ant-design-vue/es/_util/type";
 import axios from "axios";
 import { onMounted, ref } from "vue";
 
 defineProps({
     title: String,
+    
+    //label
+    pendingLabel: String,
+    approvedLabel: String,
+    cancelledLabel: String,
+
     pending: Number,
     approved: Number,
     cancelled: Number,
