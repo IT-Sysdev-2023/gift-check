@@ -645,6 +645,12 @@ Route::prefix('custodian')->group(function () {
         });
         Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
         Route::post('upload', [CustodianController::class, 'upload'])->name('upload');
+
+        Route::name('tracking.')->group(function () {
+            Route::get('gc-tracking', [CustodianController::class, 'gcTracking'])->name('gctracking');
+            Route::get('gc-tracking-submit', [CustodianController::class, 'gcTrackingSubmition'])->name('submit');
+        });
+
     });
 });
 
