@@ -17,6 +17,8 @@ declare module 'vue' {
     ACard: typeof import('ant-design-vue/es')['Card']
     AccountingDashboard: typeof import('./resources/js/Pages/Accounting/AccountingDashboard.vue')['default']
     AccountingSideBar: typeof import('./resources/js/Components/AccountingSideBar.vue')['default']
+    ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
+    ACheckboxGroup: typeof import('ant-design-vue/es')['CheckboxGroup']
     ACol: typeof import('ant-design-vue/es')['Col']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     ADatePicker: typeof import('ant-design-vue/es')['DatePicker']

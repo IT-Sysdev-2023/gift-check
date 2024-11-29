@@ -175,47 +175,10 @@
 </template>
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { router } from "@inertiajs/vue3";
+import { TreasuryDashboardTypes } from "@/types";
 import { computed } from "vue";
 
-defineProps<{
-    data?: {
-        budgetRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-        };
-        storeGcRequest: {
-            pending: number;
-            released: number;
-            cancelled: number;
-        };
-        gcProductionRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-        };
-        specialGcRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-            released: number;
-            internalReviewed: number;
-        };
-        adjustment: {
-            budget: number;
-            allocation: number;
-        };
-        promoGcReleased: number;
-        eod: number;
-        budget: {
-            totalBudget: number;
-            regularBudget: number;
-            specialBudget: number;
-        };
-        institutionGcSales: number;
-    };
-}>();
+defineProps<TreasuryDashboardTypes>();
 
 const routeTo = (type: string, status: string) => {
     return `treasury.${type}.${status}`;
