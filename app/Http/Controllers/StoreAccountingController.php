@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Support\Str;
 
 use App\Jobs\GenerateVarianceExcel;
-
+use Illuminate\Pagination\Paginator;
 use Carbon\Carbon;
 use App\Models\User;
 use Inertia\Inertia;
@@ -339,7 +339,7 @@ class StoreAccountingController extends Controller
             'searchData' => $request->search
         ]);
     }
-
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function storeaccountingViewSales(Request $request, $id)
     {
         // dd($id);
@@ -581,8 +581,16 @@ class StoreAccountingController extends Controller
                 }
             }
         }
+        elseif($payment->insp_paymentcustomer == 'promo'){
+            $arr_barcodesinfo = [
+                $data = "No data"
+            ];
+        }
         // dd($arr_barcodesinfo);
+        // dd($finalData);
 
+       
+        // dd($outputData);
 
         return Inertia::render('StoreAccounting/StoreAccountingViewSales', [
             'salesCustomer' => $salesCustomer,
@@ -2613,7 +2621,7 @@ class StoreAccountingController extends Controller
             'alttaTable' => $alttaTable,
             'talibon' => $talibon,
             'tubigon' => $tubigon,
-            'alttaTagbilaran'=> $alttaTagbilaranSearch,
+            'alttaTagbilaran' => $alttaTagbilaranSearch,
             'alttaBarcode' => $alttaBarcode
         ];
     }

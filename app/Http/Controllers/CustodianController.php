@@ -174,4 +174,10 @@ class CustodianController extends Controller
     public function getAvailableGc(){
         return $this->custodianservices->getAvailableGcRecords();
     }
+    public function gcTracking(){
+        return inertia('Custodian/GcTracking');
+    }
+    public function gcTrackingSubmition(Request $request){
+        return $this->custodianservices->gcTrackingSubmission($request);
+    }
 }

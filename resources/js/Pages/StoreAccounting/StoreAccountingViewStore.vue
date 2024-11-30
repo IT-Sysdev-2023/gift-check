@@ -38,11 +38,11 @@ export default {
   components: { Pagination },
     layout: AuthenticatedLayout,
     props: {
-        transnumber: Number,
+        transnumber: String,
         viewStoreData: Object,
         viewStoreSalesData: Object,
         modalBarcode: Number,
-        storeID: Number,
+        storeID: String,
         search: String
 
     },

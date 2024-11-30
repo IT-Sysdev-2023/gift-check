@@ -67,7 +67,7 @@ export default {
         pagination: String,
         search: String,
         eodDate: String,
-        ideod: Number
+        ideod: String
     },
     // components: {
     //     ErrorMessage,
