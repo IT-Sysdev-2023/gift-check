@@ -435,6 +435,7 @@ declare module 'vue' {
     StoreGCPurchased: typeof import('./resources/js/Pages/StoreAccounting/StoreGCPurchased.vue')['default']
     StoreGcRequestCard: typeof import('./resources/js/Pages/Retail/Cards/StoreGcRequestCard.vue')['default']
     StoreGcTable: typeof import('./resources/js/Pages/Treasury/Dashboard/StoreGc/StoreGcTable.vue')['default']
+    StoreLedger: typeof import('./resources/js/Pages/Retail/StoreLedger.vue')['default']
     StoreStaffSetup: typeof import('./resources/js/Pages/Admin/Masterfile/StoreStaffSetup.vue')['default']
     SwapOutlined: typeof import('@ant-design/icons-vue')['SwapOutlined']
     Table: typeof import('./resources/js/Pages/Treasury/Table.vue')['default']
