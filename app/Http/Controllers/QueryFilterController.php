@@ -18,7 +18,7 @@ class QueryFilterController extends Controller
     }
     public function customer(Request $request)
     {
-        $result = Customer::whereAny(['cus_fname', 'cus_lname'], 'LIKE', '%' . $request->search . '%')->limit(5)->get();
+        $result = Customer::whereAny(['cus_fname', 'cus_lname'], 'LIKE', '%' . $request->search . '%')->get();
 
         return response()->json($result);
     }
