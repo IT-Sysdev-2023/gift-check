@@ -7,7 +7,7 @@
                 <GcReceiving
                     :countPending="count.approvedgc"
                     :recrev="count.reviewedCount"
-                    title="Special External Gc Request"
+                    title="SPECIAL EXTERNAL GC REQUEST"
                     containerTitle1="Approved Gc"
                     containerTitle2="Reviewed GC"
                     containerDesc1="For receving gift cheque"
@@ -20,7 +20,7 @@
                 <GcReceiving
                     :countPending="count.countReceiving"
                     :recrev="count.receivedcount"
-                    title="Internal GC"
+                    title="INTERNAL GC"
                     containerTitle1="GC Receiving"
                     containerTitle2="GC Received"
                     containerDesc1="For receving gift cheque"

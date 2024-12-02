@@ -3,10 +3,8 @@ import { highlighten } from "@/Mixin/UiUtilities";
 import { ref } from "vue";
 
 const { highlightText } = highlighten();
-
 </script>
 <template>
-
     <Head :title="title" />
     <a-breadcrumb style="margin: 15px 0">
         <a-breadcrumb-item>
@@ -15,44 +13,68 @@ const { highlightText } = highlighten();
         <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
     </a-breadcrumb>
     <a-card>
-
-        <ProgressBar :progressBar="progressBar" v-if="isGenerating"/>
+        <ProgressBar :progressBar="progressBar" v-if="isGenerating" />
 
         <div class="flex justify-between mb-5">
             <div>
                 <a-range-picker v-model:value="form.date" />
             </div>
             <div>
-                <a-input-search class="mr-1" v-model:value="form.search" placeholder="Search here..."
-                    style="width: 300px" />
+                <a-input-search
+                    class="mr-1"
+                    v-model:value="form.search"
+                    placeholder="Search here..."
+                    style="width: 300px"
+                />
             </div>
         </div>
-        <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false">
-            <template #title>
-                <a-typography-title :level="4">{{ title }}</a-typography-title>
-            </template>
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.key === 'customer'">
-                    {{record.specialExternalCustomer?.spcus_acctname}}
-                </template>
-                <template v-if="column.key === 'dateApproved'">
-                    {{record.approvedRequest.reqap_date}}
-                </template>
-                <template v-if="column.key === 'approvedBy'">
-                    {{record.approvedRequest.reqap_approvedby}}
-                </template>
 
-                <template v-if="column.key === 'action'">
-                    <a-button type="primary" size="small" @click="viewRecord(record.spexgc_id)">
-                        <template #icon>
-                            <FileSearchOutlined />
-                        </template>
-                        View
-                    </a-button>
+        <a-tabs
+            class="mt-5"
+            v-model:activeKey="activeKeyTab"
+            type="card"
+            @change="onTabChange"
+        >
+            <a-tab-pane key="0" tab="Approved Special External GC Request">
+            </a-tab-pane>
+            <a-tab-pane key="*" tab="Approved Special Internal GC Request">
+            </a-tab-pane>
+        </a-tabs>
+        <a-card>
+            <a-table
+                :data-source="data.data"
+                :columns="columns"
+                bordered
+                size="small"
+                :pagination="false"
+            >
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.key === 'customer'">
+                        {{ record.specialExternalCustomer?.spcus_acctname }}
+                    </template>
+                    <template v-if="column.key === 'dateApproved'">
+                        {{ record.approvedRequest.reqap_date }}
+                    </template>
+                    <template v-if="column.key === 'approvedBy'">
+                        {{ record.approvedRequest.reqap_approvedby }}
+                    </template>
+
+                    <template v-if="column.key === 'action'">
+                        <a-button
+                            type="primary"
+                            size="small"
+                            @click="viewRecord(record.spexgc_id)"
+                        >
+                            <template #icon>
+                                <FileSearchOutlined />
+                            </template>
+                            View
+                        </a-button>
+                    </template>
                 </template>
-            </template>
-        </a-table>
-        <pagination-resource class="mt-5" :datarecords="data" />
+            </a-table>
+            <pagination-resource class="mt-5" :datarecords="data" />
+        </a-card>
     </a-card>
 </template>
 <script>
@@ -73,11 +95,13 @@ export default {
         columns: Array,
         remainingBudget: String,
         filters: Object,
+        tab: String,
     },
     data() {
         return {
             descriptionRecord: [],
             showModal: false,
+            activeKeyTab: this.tab,
             isGenerating: false,
             form: {
                 search: this.filters.search,
@@ -102,7 +126,20 @@ export default {
     },
     methods: {
         async viewRecord(id) {
-            router.get(route('treasury.special.gc.viewApprovedRequest', id));
+            router.get(route("treasury.special.gc.viewApprovedRequest", id));
+        },
+        onTabChange(val) {
+            router.visit(route(route().current()), {
+                data: { promo: val },
+                only: ["data", "tab", 'title'],
+                preserveScroll: true,
+                onStart: () => {
+                    this.onLoading = true;
+                },
+                onSuccess: () => {
+                    this.onLoading = false;
+                },
+            });
         },
     },
 

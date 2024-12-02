@@ -1,16 +1,16 @@
 <template>
     <div style="font-weight: bold; margin-left: 70%;">
         Search:
-        <a-input v-model:value="salesSearchBox" placeholder="Input search here!"
+        <a-input allow-clear v-model:value="salesSearchBox" placeholder="Input search here!"
             style="width:60%; border:1px solid #1e90ff" />
     </div>
     <a-tabs>
-        <a-tab-pane style="background-color: #b0c4de;">
-            <div style="padding: 20px; font-weight: bold;">
+        <a-tab-pane>
+            <div style="padding: 10px; font-weight: bold; background-color: #b0c4de;">
                 Customer: {{ salesCustomer }}
             </div>
-            <a-table :data-source="data" :columns="viewSalesColumns" :paginate="false">
-                <template #bodyCell="{column,record}">
+            <a-table :data-source="data" :columns="viewSalesColumns" :paginate="false" size="small">
+                <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'viewSales'">
                         <a-button @click="viewTreasurySales(record)" class="me-2 me-sm-5"
                             style="color:white; background-color: #1e90ff;">
@@ -21,18 +21,18 @@
 
 
             </a-table>
-            <pagination :datarecords="data.data" class="mt-5" />
+            <!-- <pagination :datarecords="data" class="mt-5" /> -->
         </a-tab-pane>
     </a-tabs>
 
     <a-modal v-model:open="salesViewModal" @ok="handleSalesView" style="width: 100%;">
-        <div style="padding: 20px; font-weight: bold; background-color: #b0c4de; font-weight: bold; font-size: large;">
+        <div style="padding: 10px; font-weight: bold; background-color: #b0c4de; font-weight: bold; font-size: large;">
             Post Transaction: {{ selectedBarcode }}
         </div>
-        <a-table :data-source="POStransactionData" :columns="salesViewColumns" />
+        <a-table :data-source="POStransactionData" :columns="salesViewColumns" size="small" />
     </a-modal>
     <!-- {{ viewSalesData }} -->
-      <!-- {{ salesCustomerID }} -->
+    <!-- {{ salesCustomerID }} -->
 </template>
 
 <script>
@@ -40,7 +40,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import axios from 'axios';
 export default {
-  components: { Pagination },
+    components: { Pagination },
 
     layout: AuthenticatedLayout,
     props: {
@@ -55,9 +55,9 @@ export default {
     data() {
         return {
             salesSearchBox: this.search,
-            
+
             selectedBarcode: {},
-            
+
             salesViewModal: false,
 
             POStransactionData: {},
@@ -65,7 +65,7 @@ export default {
             salesViewColumns: [
                 {
                     title: 'Textfile Line',
-                    dataIndex:'seodtt_line'
+                    dataIndex: 'seodtt_line'
                 },
                 {
                     title: 'Credit Limit',
@@ -93,7 +93,7 @@ export default {
                 },
                 {
                     title: 'Bus. Unit',
-                    dataIndex:'seodtt_bu'
+                    dataIndex: 'seodtt_bu'
                 },
                 {
                     title: 'Terminal #',
@@ -103,7 +103,7 @@ export default {
                     title: 'Ackslip #',
                     dataIndex: 'seodtt_ackslipno'
                 },
-                
+
             ],
             viewSalesColumns: [
                 {
@@ -145,7 +145,7 @@ export default {
             ]
         }
     },
-    watch:{
+    watch: {
         salesSearchBox(salesViewSearch) {
             // alert(1)  
             console.log(salesViewSearch);
@@ -168,8 +168,8 @@ export default {
                 console.error("Error fetching sales transaction data:", error);
                 this.errorMessage = "Failed to fetch sales transaction data.";
             }
-            
-            
+
+
         },
         handleSalesView() {
             this.salesViewModal = false

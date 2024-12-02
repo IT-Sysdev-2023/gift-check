@@ -220,7 +220,7 @@
                     <SendOutlined /> Submit
                 </a-button>
             </div>
-            <div style="margin-top: 15%;">
+            <div v-if="data.fromDate" style="margin-top: 15%;">
                 <div style=" font-weight: bold;">
                     Date Selected:
                 </div>
@@ -243,6 +243,11 @@
                     </span>
                 </div>
 
+            </div>
+            <div v-if="!data.fromDate" style="margin-top: 15%;">
+                <span style="color:red">
+                    No Date Selected !
+                </span>
             </div>
 
         </a-card>

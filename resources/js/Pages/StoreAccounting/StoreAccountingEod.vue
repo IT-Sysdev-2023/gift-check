@@ -22,11 +22,11 @@
 
 
     <a-tabs>
-        <a-tab-pane key="EOD View" style="background-color: #b0c4de;">
-            <div style="padding: 20px; font-weight: bold;">
+        <a-tab-pane key="EOD View">
+            <div style="padding: 10px; font-weight: bold; background-color: #b0c4de;">
                 EOD Date: {{ selectedEODDate }}
             </div>
-            <a-table :data-source="data.data" :columns="searchColumns" :pagination="false">
+            <a-table :data-source="data.data" :columns="searchColumns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'search'">
                         <a-button title="search" @click="searchEODView(record)"
@@ -41,7 +41,7 @@
     </a-tabs>
 
     <a-modal v-model:open="modalForGCNavisionPOSTransactions" style="width:100%;" @ok="modalBackButton">
-        <div style="font-weight: bold; font-size: large; background-color: #b0c4de; padding:20px;">
+        <div style="font-weight: bold; font-size: large; background-color: #b0c4de; padding:10px;">
             GC Navision POS Transactions - Barcode # {{ selectedBarcode }}
         </div>
         <a-table size="small" :data-source="modalData" :columns="GCNavisionPOSTransactions" />
@@ -67,7 +67,7 @@ export default {
         pagination: String,
         search: String,
         eodDate: String,
-        ideod: Number
+        ideod: String
     },
     // components: {
     //     ErrorMessage,

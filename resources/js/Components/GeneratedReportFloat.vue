@@ -82,6 +82,7 @@ interface ProgressData {
     totalRow: number;
     store?: string;
     info: string;
+    isDone?: boolean
 }
 
 interface ReportProgress {
@@ -149,7 +150,7 @@ onBeforeUnmount(() => {
 const isProgressFinish = () => {
     if (
         Object.values(reportProgress).every(
-            (report) => report.percentage > 100
+            (report) => report.percentage >= 100
         )
     ) {
         state.setFloatButton(false);

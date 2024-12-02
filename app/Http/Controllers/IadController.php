@@ -104,6 +104,7 @@ class IadController extends Controller
 
     public function reviewDetails($id)
     {
+        // dd();
         return inertia('Iad/ReviewDetails', [
             'record' => $this->iadServices->getReviewedDetails($id),
             'document' => $this->iadServices->getDocuments($id),
@@ -201,8 +202,8 @@ class IadController extends Controller
         return inertia('Iad/Excel/SpecialGcReviewedReports');
     }
 
-    public function generateSpecialReports(){
-        return $this->iadServices->generateSpecialReviewedReportsExcel();
+    public function generateSpecialReports(Request $request){
+        return $this->iadServices->generateSpecialReviewedReportsExcel($request);
     }
 
 }

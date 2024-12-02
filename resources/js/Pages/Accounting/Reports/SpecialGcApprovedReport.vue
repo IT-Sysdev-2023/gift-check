@@ -72,11 +72,9 @@ const form = ref<{ extension: string; dateRange: [Dayjs, Dayjs] }>({
 });
 const state = useQueueState();
 
-const generate = async () => {
-    state.setGenerateButton(true);
-    state.setFloatButton(true);
+const generate = () => {
 
-    await axios
+     axios
         .get(route("accounting.reports.generate.special.gc.approved"), {
             params: {
                 format: form.value.extension,
@@ -85,18 +83,23 @@ const generate = async () => {
                     form.value.dateRange[1].format("YYYY-MM-DD"),
                 ],
             },
+        }).then((e) => {
+            state.setGenerateButton(true);
+            state.setFloatButton(true);
+
+            state.setOpenFloat(true);
         })
         .catch((e) => {
+
             let message = "please check all the fields";
             if (e.status === 404) {
-                message = "there was no transaction on this selected date!";
+                message = e.response.data.error;
             }
             notification.error({
-                message: "Error",
-                description: `Something Went wrong,  ${message}`,
+                message: "Opps Something Went wrong",
+                description: `${message}`,
             });
         });
 
-    state.setOpenFloat(true);
 };
 </script>

@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Support\Str;
 
 use App\Jobs\GenerateVarianceExcel;
-
+use Illuminate\Pagination\Paginator;
 use Carbon\Carbon;
 use App\Models\User;
 use Inertia\Inertia;
@@ -339,7 +339,7 @@ class StoreAccountingController extends Controller
             'searchData' => $request->search
         ]);
     }
-
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function storeaccountingViewSales(Request $request, $id)
     {
         // dd($id);
@@ -581,8 +581,16 @@ class StoreAccountingController extends Controller
                 }
             }
         }
+        elseif($payment->insp_paymentcustomer == 'promo'){
+            $arr_barcodesinfo = [
+                $data = "No data"
+            ];
+        }
         // dd($arr_barcodesinfo);
+        // dd($finalData);
 
+       
+        // dd($outputData);
 
         return Inertia::render('StoreAccounting/StoreAccountingViewSales', [
             'salesCustomer' => $salesCustomer,
@@ -2448,7 +2456,7 @@ class StoreAccountingController extends Controller
     public function DuplicatedBarcodes(Request $request)
     {
         // dd($this->alttaTable($request));
-        return Inertia::render('StoreAccounting/DuplicatedBarcode',[
+        return Inertia::render('StoreAccounting/DuplicatedBarcode', [
             'cebu' => $this->cebuTable($request),
             'altta' => $this->alttaTable($request),
 
@@ -2460,14 +2468,18 @@ class StoreAccountingController extends Controller
 
     public function alttaTable(Request $request)
     {
+        // dd();
         // dd($request->toArray());
         $alttaTable = $request->AlttaData;
         // dd($alttaTable);
         $cleanedBarcodes = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $alttaTable);
         $barcodes = array_filter(explode(',', $cleanedBarcodes));
 
-        $barcode = array_map('trim', $barcodes);
+        $alttaBarcode = array_map('trim', $barcodes);
         //    dd($barcode);
+
+        $alttaTagbilaranSearch = $request->input('search');
+        // dd($alttaTagbilaranSearch);
 
         $tagbilaran = DB::table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
@@ -2489,58 +2501,118 @@ class StoreAccountingController extends Controller
                     ELSE 'PM' 
                 END) as store")
             )
-            ->whereIn('store_verification.vs_barcode', $barcode)
+            ->when($alttaTagbilaranSearch, function ($query) use ($alttaTagbilaranSearch) {
+                $query->where(function ($query) use ($alttaTagbilaranSearch) {
+                    $query->where('store_eod_textfile_transactions.seodtt_transno', 'like', '%' . $alttaTagbilaranSearch . '%')
+                        ->orWhereRaw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) LIKE ?", ["%$alttaTagbilaranSearch%"])
+                        ->orWhere('store_verification.vs_barcode', 'like', '%' . $alttaTagbilaranSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_terminalno', 'like', '%' . $alttaTagbilaranSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_bu', 'like', '%' . $alttaTagbilaranSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_crditpurchaseamt', 'like', '%' . $alttaTagbilaranSearch . '%')
+                        ->orWhere('store_verification.vs_date', 'like', '%' . $alttaTagbilaranSearch . '%')
+                        ->orWhere('store_verification.vs_time', 'like', '%' . $alttaTagbilaranSearch . '%')
+                        ->orWhereRaw("(CASE
+                             WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
+                    ELSE 'PM' 
+                END)LIKE ?", ["%$alttaTagbilaranSearch%"]);
+                });
+            })
+            ->whereIn('store_verification.vs_barcode', $alttaBarcode)
             ->paginate(10)
             ->withQueryString();
 
+        $talibonSearch = $request->input('search5', '');
+
         $talibon = DB::table('store_verification')
-        ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-        ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
-        ->select(
-            'store_eod_textfile_transactions.seodtt_transno as transno',
-            DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) as name"),
-            'store_verification.vs_barcode as barcode',
-            'store_eod_textfile_transactions.seodtt_terminalno as terminal',
-            'store_eod_textfile_transactions.seodtt_bu as bu',
-            'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
-            'store_verification.vs_date as verdate',
-            'store_verification.vs_time as vertime',
-            DB::raw("(CASE 
+            ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+            ->select(
+                'store_eod_textfile_transactions.seodtt_transno as transno',
+                DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) as name"),
+                'store_verification.vs_barcode as barcode',
+                'store_eod_textfile_transactions.seodtt_terminalno as terminal',
+                'store_eod_textfile_transactions.seodtt_bu as bu',
+                'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
+                'store_verification.vs_date as verdate',
+                'store_verification.vs_time as vertime',
+                DB::raw("(CASE 
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
                     ELSE 'PM' 
                 END) as store")
-        )
-        ->whereIn('store_verification.vs_barcode', $barcode)
-        ->paginate(10)
-        ->withQueryString();
+            )
+            ->when($talibonSearch, function ($query) use ($talibonSearch) {
+                $query->where(function ($query) use ($talibonSearch) {
+                    $query->where('store_eod_textfile_transactions.seodtt_transno', 'like', '%' . $talibonSearch . '%')
+                        ->orWhereRaw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) LIKE ?", ["%$talibonSearch%"])
+                        ->orWhere('store_verification.vs_barcode', 'like', '%' . $talibonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_terminalno', 'like', '%' . $talibonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_bu', 'like', '%' . $talibonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_crditpurchaseamt', 'like', '%' . $talibonSearch . '%')
+                        ->orWhere('store_verification.vs_date', 'like', '%' . $talibonSearch . '%')
+                        ->orWhere('store_verification.vs_time', 'like', '%' . $talibonSearch . '%')
+                        ->orWhereRaw("(CASE
+                             WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
+                    ELSE 'PM' 
+                END)LIKE ?", ["%$talibonSearch%"]);
+                });
+            })
+            ->whereIn('store_verification.vs_barcode', $alttaBarcode)
+            ->paginate(10)
+            ->withQueryString();
 
+        $tubigonSearch = $request->input('search6', '');
 
         $tubigon = DB::table('store_verification')
-        ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-        ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
-        ->select(
-            'store_eod_textfile_transactions.seodtt_transno as transno',
-            DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) as name"),
-            'store_verification.vs_barcode as barcode',
-            'store_eod_textfile_transactions.seodtt_terminalno as terminal',
-            'store_eod_textfile_transactions.seodtt_bu as bu',
-            'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
-            'store_verification.vs_date as verdate',
-            'store_verification.vs_time as vertime',
-            DB::raw("(CASE 
+            ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+            ->select(
+                'store_eod_textfile_transactions.seodtt_transno as transno',
+                DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) as name"),
+                'store_verification.vs_barcode as barcode',
+                'store_eod_textfile_transactions.seodtt_terminalno as terminal',
+                'store_eod_textfile_transactions.seodtt_bu as bu',
+                'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
+                'store_verification.vs_date as verdate',
+                'store_verification.vs_time as vertime',
+                DB::raw("(CASE 
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
                     ELSE 'PM' 
                 END) as store")
-        )
-        ->whereIn('store_verification.vs_barcode', $barcode)
-        ->paginate(10)
-        ->withQueryString();
+            )
+            ->when($tubigonSearch, function ($query) use ($tubigonSearch) {
+                $query->where(function ($query) use ($tubigonSearch) {
+                    $query->where('store_eod_textfile_transactions.seodtt_transno', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhereRaw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) LIKE ?", ["%$tubigonSearch%"])
+                        ->orWhere('store_verification.vs_barcode', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_terminalno', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_bu', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_crditpurchaseamt', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhere('store_verification.vs_date', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhere('store_verification.vs_time', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhereRaw("(CASE
+                             WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
+                    ELSE 'PM' 
+                END)LIKE ?", ["%$tubigonSearch%"]);
+                });
+            })
+            ->whereIn('store_verification.vs_barcode', $alttaBarcode)
+            ->paginate(10)
+            ->withQueryString();
         // dd($tagbilaran->toArray());
 
 
@@ -2548,7 +2620,9 @@ class StoreAccountingController extends Controller
             'tagbilaran' => $tagbilaran,
             'alttaTable' => $alttaTable,
             'talibon' => $talibon,
-            'tubigon' => $tubigon
+            'tubigon' => $tubigon,
+            'alttaTagbilaran' => $alttaTagbilaranSearch,
+            'alttaBarcode' => $alttaBarcode
         ];
     }
 
@@ -2557,9 +2631,13 @@ class StoreAccountingController extends Controller
         // dd($request->toArray());
         $cebu = $request->barcodes;
 
+        // dd();
         $cleanedBarcodes = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $cebu);
         $barcodes = array_filter(explode(',', $cleanedBarcodes));
-        $barcode = array_map('trim', $barcodes);
+        $cebuBarcode = array_map('trim', $barcodes);
+
+        $tagbilaranSearch = $request->input('search1', '');
+        // dd($tagbilaranSearch);
 
         $tagbilaran = DB::table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
@@ -2581,36 +2659,74 @@ class StoreAccountingController extends Controller
                     ELSE 'PM' 
                 END) as store")
             )
-            ->whereIn('store_verification.vs_barcode', $barcode)
+            ->when($tagbilaranSearch, function ($query) use ($tagbilaranSearch) {
+                $query->where(function ($query) use ($tagbilaranSearch) {
+                    $query->where('store_eod_textfile_transactions.seodtt_transno', 'like', '%' . $tagbilaranSearch . '%')
+                        ->orWhereRaw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) LIKE ?", ["%$tagbilaranSearch%"])
+                        ->orWhere('store_verification.vs_barcode', 'like', '%' . $tagbilaranSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_terminalno', 'like', '%' . $tagbilaranSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_bu', 'like', '%' . $tagbilaranSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_crditpurchaseamt', 'like', '%' . $tagbilaranSearch . '%')
+                        ->orWhere('store_verification.vs_date', 'like', '%' . $tagbilaranSearch . '%')
+                        ->orWhere('store_verification.vs_time', 'like', '%' . $tagbilaranSearch . '%')
+                        ->orWhereRaw("(CASE
+                             WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
+                    ELSE 'PM' 
+                END)LIKE ?", ["%$tagbilaranSearch%"]);
+                });
+            })
+            ->whereIn('store_verification.vs_barcode', $cebuBarcode)
             ->paginate(10)
             ->withQueryString();
 
-
+        $talibonSearch = $request->input('search2', '');
         $talibon = DB::table('store_verification')
-        ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-        ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
-        ->select(
-            'store_eod_textfile_transactions.seodtt_transno as transno',
-            DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) as name"),
-            'store_verification.vs_barcode as barcode',
-            'store_eod_textfile_transactions.seodtt_terminalno as terminal',
-            'store_eod_textfile_transactions.seodtt_bu as bu',
-            'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
-            'store_verification.vs_date as verdate',
-            'store_verification.vs_time as vertime',
-            DB::raw("(CASE 
+            ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+            ->select(
+                'store_eod_textfile_transactions.seodtt_transno as transno',
+                DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) as name"),
+                'store_verification.vs_barcode as barcode',
+                'store_eod_textfile_transactions.seodtt_terminalno as terminal',
+                'store_eod_textfile_transactions.seodtt_bu as bu',
+                'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
+                'store_verification.vs_date as verdate',
+                'store_verification.vs_time as vertime',
+                DB::raw("(CASE 
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
                     ELSE 'PM' 
                 END) as store")
-        )
-        ->whereIn('store_verification.vs_barcode', $barcode)
-        ->paginate(10)
-        ->withQueryString();
+            )
+            ->when($talibonSearch, function ($query) use ($talibonSearch) {
+                $query->where(function ($query) use ($talibonSearch) {
+                    $query->where('store_eod_textfile_transactions.seodtt_transno', 'like', '%' . $talibonSearch . '%')
+                        ->orWhereRaw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) LIKE ?", ["%$talibonSearch%"])
+                        ->orWhere('store_verification.vs_barcode', 'like', '%' . $talibonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_terminalno', 'like', '%' . $talibonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_bu', 'like', '%' . $talibonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_crditpurchaseamt', 'like', '%' . $talibonSearch . '%')
+                        ->orWhere('store_verification.vs_date', 'like', '%' . $talibonSearch . '%')
+                        ->orWhere('store_verification.vs_time', 'like', '%' . $talibonSearch . '%')
+                        ->orWhereRaw("(CASE
+                             WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
+                    ELSE 'PM' 
+                END)LIKE ?", ["%$talibonSearch%"]);
+                });
+            })
+            ->whereIn('store_verification.vs_barcode', $cebuBarcode)
+            ->paginate(10)
+            ->withQueryString();
 
-
+        $tubigonSearch = $request->input('search3', '');
         $tubigon = DB::table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
@@ -2631,7 +2747,26 @@ class StoreAccountingController extends Controller
                     ELSE 'PM' 
                 END) as store")
             )
-            ->whereIn('store_verification.vs_barcode', $barcode)
+            ->when($tubigonSearch, function ($query) use ($tubigonSearch) {
+                $query->where(function ($query) use ($tubigonSearch) {
+                    $query->where('store_eod_textfile_transactions.seodtt_transno', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhereRaw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) LIKE ?", ["%$tubigonSearch%"])
+                        ->orWhere('store_verification.vs_barcode', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_terminalno', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_bu', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_crditpurchaseamt', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhere('store_verification.vs_date', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhere('store_verification.vs_time', 'like', '%' . $tubigonSearch . '%')
+                        ->orWhereRaw("(CASE
+                             WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
+                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
+                    ELSE 'PM' 
+                END)LIKE ?", ["%$tubigonSearch%"]);
+                });
+            })
+            ->whereIn('store_verification.vs_barcode', $cebuBarcode)
             ->paginate(10)
             ->withQueryString();
 
@@ -2639,7 +2774,10 @@ class StoreAccountingController extends Controller
             'tagbilaran' => $tagbilaran,
             'cebu' => $cebu,
             'talibon' => $talibon,
-            'tubigon' => $tubigon
+            'tubigon' => $tubigon,
+            'tagbilaranSearch' => $tagbilaranSearch,
+            'talibonSearch' => $talibonSearch,
+            'tubigonSearch' => $tubigonSearch
         ];
     }
 
@@ -2681,64 +2819,64 @@ class StoreAccountingController extends Controller
         $formatCusName = $request->formatCusName;
 
 
-$tagbSearch = $request->tagbSearch;
+        $tagbSearch = $request->tagbSearch;
 
-$tagbilaranQuery = DB::table('special_external_gcrequest_emp_assign')
-    ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-    ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
-    ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
-    ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
-    ->where('special_external_gcrequest.spexgc_company', $customerName)
-    ->select(
-        'special_external_gcrequest_emp_assign.spexgcemp_barcode',
-        'special_external_gcrequest_emp_assign.spexgcemp_denom',
-        DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) AS cusname"),
-        'store_verification.vs_date',
-        'stores.store_name',
-        'store_eod_textfile_transactions.seodtt_transno'
-    )
-    ->when($tagbSearch, function ($query) use ($tagbSearch) {
-        $query->where(function ($query) use ($tagbSearch) {
-            $query->where('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'like', '%' . $tagbSearch . '%')
-                ->orWhere('special_external_gcrequest_emp_assign.spexgcemp_denom', 'like', '%' . $tagbSearch . '%')
-                ->orWhereRaw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) like ?", ["%$tagbSearch%"])
-                ->orWhere('store_verification.vs_date', 'like', '%' . $tagbSearch . '%')
-                ->orWhere('stores.store_name', 'like', '%' . $tagbSearch . '%')
-                ->orWhere('store_eod_textfile_transactions.seodtt_transno', 'like', '%' . $tagbSearch . '%');
+        $tagbilaranQuery = DB::table('special_external_gcrequest_emp_assign')
+            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
+            ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
+            ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->where('special_external_gcrequest.spexgc_company', $customerName)
+            ->select(
+                'special_external_gcrequest_emp_assign.spexgcemp_barcode',
+                'special_external_gcrequest_emp_assign.spexgcemp_denom',
+                DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) AS cusname"),
+                'store_verification.vs_date',
+                'stores.store_name',
+                'store_eod_textfile_transactions.seodtt_transno'
+            )
+            ->when($tagbSearch, function ($query) use ($tagbSearch) {
+                $query->where(function ($query) use ($tagbSearch) {
+                    $query->where('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'like', '%' . $tagbSearch . '%')
+                        ->orWhere('special_external_gcrequest_emp_assign.spexgcemp_denom', 'like', '%' . $tagbSearch . '%')
+                        ->orWhereRaw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) like ?", ["%$tagbSearch%"])
+                        ->orWhere('store_verification.vs_date', 'like', '%' . $tagbSearch . '%')
+                        ->orWhere('stores.store_name', 'like', '%' . $tagbSearch . '%')
+                        ->orWhere('store_eod_textfile_transactions.seodtt_transno', 'like', '%' . $tagbSearch . '%');
+                });
+            })
+            ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc');
+
+        // Paginate the results
+        $tagbilaran = $tagbilaranQuery->paginate(10)->withQueryString();
+
+        $tagbilaran->getCollection()->transform(function ($row) {
+            if (is_null($row->vs_date) && is_null($row->seodtt_transno)) {
+                $status = 'Not verified / not use';
+            } elseif (!is_null($row->vs_date) && is_null($row->seodtt_transno)) {
+                $status = 'Verified not used';
+            } else {
+                $status = 'Verified and used';
+            }
+
+            $date = $row->vs_date ? Carbon::parse($row->vs_date)->format('Y-m-d') : 'N/A';
+
+            $store = $row->store_name ?? 'N/A';
+            $transno = $row->seodtt_transno ?? 'N/A';
+
+            return [
+                'barcode'    => $row->spexgcemp_barcode,
+                'denom'      => number_format($row->spexgcemp_denom, 2),
+                'cusname'    => $row->cusname,
+                'verifydate' => $date,
+                'store'      => $store,
+                'transno'    => $transno,
+                'status'     => $status,
+            ];
         });
-    })
-    ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc');
 
-// Paginate the results
-$tagbilaran = $tagbilaranQuery->paginate(10)->withQueryString();
-
-$tagbilaran->getCollection()->transform(function ($row) {
-    if (is_null($row->vs_date) && is_null($row->seodtt_transno)) {
-        $status = 'Not verified / not use';
-    } elseif (!is_null($row->vs_date) && is_null($row->seodtt_transno)) {
-        $status = 'Verified not used';
-    } else {
-        $status = 'Verified and used';
-    }
-
-    $date = $row->vs_date ? Carbon::parse($row->vs_date)->format('Y-m-d') : 'N/A';
-
-    $store = $row->store_name ?? 'N/A';
-    $transno = $row->seodtt_transno ?? 'N/A';
-
-    return [
-        'barcode'    => $row->spexgcemp_barcode,
-        'denom'      => number_format($row->spexgcemp_denom, 2),
-        'cusname'    => $row->cusname,
-        'verifydate' => $date,
-        'store'      => $store,
-        'transno'    => $transno,
-        'status'     => $status,
-    ];
-});
-
-// Debugging
-// dd($tagbilaran->toArray());
+        // Debugging
+        // dd($tagbilaran->toArray());
 
         // dd($tagbilaran->toArray());
 
@@ -2771,7 +2909,7 @@ $tagbilaran->getCollection()->transform(function ($row) {
                 });
             })
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc');
-          $talibon = $talibon->paginate(10)->withQueryString();
+        $talibon = $talibon->paginate(10)->withQueryString();
 
         $talibon->getCollection()->transform(function ($row2) {
             $date = $row2->vs_date ? Carbon::parse($row2->vs_date)->format('Y-m-d') : 'N/A';
@@ -2788,7 +2926,7 @@ $tagbilaran->getCollection()->transform(function ($row) {
                 'transno' => $transno,
                 'status' => $status,
             ];
-            });
+        });
         // dd($talibon->toArray());
 
         // dd($talibon);

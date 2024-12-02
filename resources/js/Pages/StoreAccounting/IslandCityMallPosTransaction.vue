@@ -1,13 +1,13 @@
 <template>
     <div style="font-weight: bold; margin-left: 70%;">
         Search:
-        <a-input allow-clear v-model:value="alturasSearch" style="border: 1px solid #1e90ff; width: 60%;" />
+        <a-input allow-clear v-model:value="alturasSearch" style="border: 1px solid #1e90ff; width: 60%;" placeholder="Input search here!" />
     </div>
-    <div style="background-color: #b0c4de; padding: 20px; font-weight: bold; margin-top: 15px;">
+    <div style="background-color: #b0c4de; padding: 10px; font-weight: bold; margin-top: 15px;">
         GC Barcode #{{ barcodeNumber }} POS Transaction
     </div>
-    <div style="background-color: #b0c4de;">
-        <a-table :data-source="data.data" :columns="alturasPosTransaction" :pagination="false">
+    <div>
+        <a-table :data-source="data.data" :columns="alturasPosTransaction" :pagination="false" size="small" style="margin-top: 10px;">
 
         </a-table>
 

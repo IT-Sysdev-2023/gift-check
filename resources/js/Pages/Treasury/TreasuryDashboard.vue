@@ -48,102 +48,124 @@
                             </a-col>
                         </a-row>
                         <a-row :gutter="16">
-                            <Card
-                                use-default
-                                title="Budget Request"
-                                :pending="data?.budgetRequest?.pending"
-                                :approved="data?.budgetRequest?.approved"
-                                :cancelled="data?.budgetRequest?.cancelled"
-                                @pending-event="budgetRequestPending"
-                                @approved-event="budgetRequestApproved"
-                                @cancelled-event="budgetRequestCancelled"
-                            />
-                            <Card
-                                use-default
-                                title="Store Gc Request"
-                                card2="Released Gc"
-                                :pending="data?.storeGcRequest?.pending"
-                                :approved="data?.storeGcRequest?.released"
-                                :cancelled="data?.storeGcRequest?.cancelled"
-                                @pending-event="storeGcPending"
-                                @approved-event="storeGcReleased"
-                                @cancelled-event="storeGcCancelled"
-                            />
-                            <Card
-                                use-default
-                                title="Gc Production Request"
-                                :pending="data?.gcProductionRequest?.pending"
-                                :approved="data?.gcProductionRequest?.approved"
-                                :cancelled="
-                                    data?.gcProductionRequest?.cancelled
-                                "
-                                @pending-event="pendingProductionRequest"
-                                @approved-event="approvedProductionRequest"
-                                @cancelled-event="cancelledProductionRequest"
-                            />
-                            <Card
-                                use-default
-                                title="Special GC Requests"
-                                :pending="data?.specialGcRequest?.pending"
-                                :approved="data?.specialGcRequest?.approved"
-                                :cancelled="data?.specialGcRequest?.cancelled"
-                                @pending-event="specialGcPending"
-                                @approved-event="approvedRequest"
-                                @cancelled-event="cancelledSpecialRequest"
-                            >
-                                <CardBadge
-                                    :count="data?.specialGcRequest?.released"
-                                    title="Released GC"
-                                    @event="specialReleasedGc"
+                            <a-col :span="8">
+                                <m-card
+                                    class="uppercase"
+                                    title="Budget Request"
+                                    :pending="data?.budgetRequest?.pending"
+                                    :approved="data?.budgetRequest?.approved"
+                                    :cancelled="data?.budgetRequest?.cancelled"
+                                    :pRoute="budgetRequestPending"
+                                    :aRoute="budgetRequestApproved"
+                                    :cRoute="budgetRequestCancelled"
                                 />
-                                <CardBadge
-                                    :count="
-                                        data?.specialGcRequest?.internalReviewed
+                                
+                                <m-card
+                                    class="uppercase"
+                                    title="Special GC Requests"
+                                    :pending="data?.specialGcRequest?.pending"
+                                    :approved="data?.specialGcRequest?.approved"
+                                    :cancelled="
+                                        data?.specialGcRequest?.cancelled
                                     "
-                                    title="Reviewed GC For Releasing(Internal/ External)"
-                                    @event="gcReleasing"
+                                    :pRoute="specialGcPending"
+                                    :aRoute="approvedRequest"
+                                    :cRoute="cancelledSpecialRequest"
+                                >
+                                    <inner-m-card
+                                        label="Released Gc"
+                                        :routeTo="specialReleasedGc"
+                                        :count="
+                                            data?.specialGcRequest?.released
+                                        "
+                                    />
+                                    <inner-m-card
+                                        label=" Reviewed GC For Releasing(Internal/External)"
+                                        :routeTo="gcReleasing"
+                                        :count="
+                                            data?.specialGcRequest
+                                                ?.internalReviewed
+                                        "
+                                    />
+                                </m-card>
+                               
+                                
+                            </a-col>
+                            <a-col :span="8">
+                                <m-card
+                                    class="uppercase"
+                                    title="Store Gc Request"
+                                    approvedLabel="Released Gc"
+                                    :pending="data?.storeGcRequest?.pending"
+                                    :approved="data?.storeGcRequest?.released"
+                                    :cancelled="data?.storeGcRequest?.cancelled"
+                                    :pRoute="storeGcPending"
+                                    :aRoute="storeGcReleased"
+                                    :cRoute="storeGcCancelled"
                                 />
-                            </Card>
-                            <Card title="Adjustment">
-                                <template #badge>
-                                    <CardBadge
+                                
+                                <a-card
+                                    title="Adjustment"
+                                    class="mb-5 uppercase"
+                                >
+                                    <inner-m-card
+                                        label="Budget Adjustment"
+                                        :routeTo="budgetAdjustments"
                                         :count="data?.adjustment?.budget"
-                                        title="Budget Adjustment"
-                                        @event="budgetAdjustments"
                                     />
-                                    <CardBadge
+                                    <inner-m-card
+                                        label="Allocation Adjustment"
+                                        :routeTo="allocationAdjustment"
                                         :count="data?.adjustment?.allocation"
-                                        title="Allocation Adjustment"
-                                        @event="allocationAdjustment"
                                     />
-                                </template>
-                            </Card>
-                            <Card title="Promo GC Released">
-                                <template #badge>
-                                    <CardBadge
-                                        :count="data?.adjustment?.budget"
-                                        title="Released Gc"
+                                </a-card>
+                            </a-col>
+                            <a-col :span="8">
+                                <m-card
+                                    class="uppercase"
+                                    title="Gc Production Request"
+                                    :pending="
+                                        data?.gcProductionRequest?.pending
+                                    "
+                                    :approved="
+                                        data?.gcProductionRequest?.approved
+                                    "
+                                    :cancelled="
+                                        data?.gcProductionRequest?.cancelled
+                                    "
+                                    :pRoute="pendingProductionRequest"
+                                    :aRoute="approvedProductionRequest"
+                                    :cRoute="cancelledProductionRequest"
+                                />
+                                <a-card
+                                    title="Promo GC Released"
+                                    class="mb-5 uppercase"
+                                >
+                                    <inner-m-card
+                                        label="Released GC"
+                                        :routeTo="promoGcReleased"
+                                        :count="data?.promoGcReleased"
                                     />
-                                </template>
-                            </Card>
-                            <Card title="Institution GC Sales">
-                                <template #badge>
-                                    <CardBadge
+                                </a-card>
+
+                                <a-card
+                                    title="Institution GC Released"
+                                    class="mb-5 uppercase"
+                                >
+                                    <inner-m-card
+                                        label="Transactions"
+                                        :routeTo="institutionGc"
                                         :count="data?.institutionGcSales"
-                                        title="Transactions"
-                                        @event="institutionGc"
                                     />
-                                </template>
-                            </Card>
-                            <Card title="EOD List">
-                                <template #badge>
-                                    <CardBadge
+                                </a-card>
+                                <a-card title="EOD List" class="mb-5 uppercase">
+                                    <inner-m-card
+                                        label="EOD List"
+                                        :routeTo="eodList"
                                         :count="data?.eod"
-                                        title="Eod List"
-                                        @event="eodList"
                                     />
-                                </template>
-                            </Card>
+                                </a-card>
+                            </a-col>
                         </a-row>
                     </div>
                 </div>
@@ -153,81 +175,71 @@
 </template>
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { router } from "@inertiajs/vue3";
+import { TreasuryDashboardTypes } from "@/types";
+import { computed } from "vue";
 
-defineProps<{
-    data?: {
-        budgetRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-        };
-        storeGcRequest: {
-            pending: number;
-            released: number;
-            cancelled: number;
-        };
-        gcProductionRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-        };
-        specialGcRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-            released: number;
-            internalReviewed: number;
-        };
-        adjustment: {
-            budget: number;
-            allocation: number;
-        };
-        eod: number;
-        budget: {
-            totalBudget: number;
-            regularBudget: number;
-            specialBudget: number;
-        };
-        institutionGcSales: number;
-    };
-}>();
+defineProps<TreasuryDashboardTypes>();
 
 const routeTo = (type: string, status: string) => {
-    router.get(route(`treasury.${type}.${status}`));
+    return `treasury.${type}.${status}`;
 };
 
 // Budget request handlers
-const budgetRequestPending = () => routeTo("budget.request", "pending");
-const budgetRequestApproved = () => routeTo("budget.request", "approved");
-const budgetRequestCancelled = () => routeTo("budget.request", "cancelled");
+const budgetRequestPending = computed(() =>
+    routeTo("budget.request", "pending")
+);
+const budgetRequestApproved = computed(() =>
+    routeTo("budget.request", "approved")
+);
+const budgetRequestCancelled = computed(() =>
+    routeTo("budget.request", "cancelled")
+);
 
 // Store GC request handlers
-const storeGcPending = () => routeTo("store.gc", "pending");
-const storeGcReleased = () => routeTo("store.gc", "released");
-const storeGcCancelled = () => routeTo("store.gc", "cancelled");
+const storeGcPending = computed(() => routeTo("store.gc", "pending"));
+const storeGcReleased = computed(() => routeTo("store.gc", "released"));
+const storeGcCancelled = computed(() => routeTo("store.gc", "cancelled"));
 
 // GC Production request handlers
-const pendingProductionRequest = () => routeTo("production.request", "pending");
-const approvedProductionRequest = () =>
-    routeTo("production.request", "approved");
-const cancelledProductionRequest = () =>
-    routeTo("production.request", "cancelled");
+const pendingProductionRequest = computed(() =>
+    routeTo("production.request", "pending")
+);
+const approvedProductionRequest = computed(() =>
+    routeTo("production.request", "approved")
+);
+const cancelledProductionRequest = computed(() =>
+    routeTo("production.request", "cancelled")
+);
 
 //Special GC Request
-const specialGcPending = () => routeTo("special.gc", "pending");
-const gcReleasing = () => routeTo("special.gc", "gcReleasing");
-const specialReleasedGc = () => routeTo("special.gc", "specialReleasedGc");
-const reviewedGcReleasing = () => routeTo("special.gc", "reviewedGcReleasing");
-const approvedRequest = () => routeTo("special.gc", "approvedRequest");
-const cancelledSpecialRequest = () => routeTo("special.gc", "cancelledRequest");
+const specialGcPending = computed(() => routeTo("special.gc", "pending"));
+const gcReleasing = computed(() => routeTo("special.gc", "gcReleasing"));
+const specialReleasedGc = computed(() =>
+    routeTo("special.gc", "specialReleasedGc")
+);
+const reviewedGcReleasing = computed(() =>
+    routeTo("special.gc", "reviewedGcReleasing")
+);
+const approvedRequest = computed(() =>
+    routeTo("special.gc", "approvedRequest")
+);
+const cancelledSpecialRequest = computed(() =>
+    routeTo("special.gc", "cancelledRequest")
+);
 
 //Adjustment
-const budgetAdjustments = () =>
-    routeTo("adjustment", "budgetAdjustmentsUpdate");
-const allocationAdjustment = () => routeTo("adjustment", "allocation");
+const budgetAdjustments = computed(() =>
+    routeTo("adjustment", "budgetAdjustmentsUpdate")
+);
+const allocationAdjustment = computed(() =>
+    routeTo("adjustment", "allocation")
+);
 
-const institutionGc = () =>
-    routeTo("transactions.institution.gc.sales", "transaction");
-const eodList = () => routeTo("transactions.eod", "eodList");
+//Promo Gc Released
+const promoGcReleased = computed(() => routeTo("promo.gc", "released"));
+//Institution Gc Sales
+const institutionGc = computed(() =>
+    routeTo("transactions.institution.gc.sales", "transaction")
+);
+const eodList = computed(() => routeTo("transactions.eod", "eodList"));
 </script>

@@ -10,6 +10,7 @@ use App\Http\Resources\SpecialGcRequestResource;
 use App\Models\BarcodeChecker;
 use App\Models\CancelledProductionRequest;
 use App\Models\CustodianSrr;
+use App\Models\CustodianSrrItem;
 use App\Models\Denomination;
 use App\Models\Document;
 use App\Models\Gc;
@@ -637,7 +638,44 @@ class CustodianServices
         });
 
         return $data;
+    }
 
+    public function gcTrackingSubmission($request)
+    {
+        $request->validate([
+            'barcode' => 'required',
+        ]);
 
+        $datagc = Gc::select('denom_id', 'pe_entry_gc')
+            ->with('denomination:denom_id,denomination', 'gcbarcodegenerate:gbcg_pro_id,gbcg_at')
+            ->where('barcode_no', $request->barcode)
+            ->first();
+
+        if ($datagc) {
+            $datagc->barcode = $request->barcode;
+            $datagc->dateGen = $datagc->gcbarcodegenerate->gbcg_at;
+            $datagc->denom = $datagc->denomination->denomination_format;
+            $datagc->entry = NumberHelper::leadingZero($datagc->pe_entry_gc);
+        }
+        $datasrr = CustodianSrrItem::with(
+            'custodiaSsr',
+            'custodiaSsr.purorderdetails:purchorderdet_ref,purchorderdet_purono',
+            'custodiaSsr.user:user_id,firstname,lastname'
+        )
+            ->where('cssitem_barcode', $request->barcode)
+            ->first();
+
+        if ($datasrr) {
+            $datasrr->datetime = Date::parse($datasrr->custodiaSsr->csrr_datetime)->toFormattedDateString() ?? null;
+            $datasrr->num = $datasrr->cssitem_recnum ?? null;
+            $datasrr->purono = $datasrr->custodiaSsr->purorderdetails->purchorderdet_purono ?? null;
+            $datasrr->name = $datasrr->custodiaSsr->user->full_name ?? null;
+            $datasrr->type = $datasrr->custodiaSsr->csrr_receivetype ?? null;
+        }
+
+        return (object) [
+            'datagc' => $datagc,
+            'datasrr' => $datasrr
+        ];
     }
 }

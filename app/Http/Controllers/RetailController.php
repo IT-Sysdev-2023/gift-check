@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\DashboardClass;
+use App\Events\verifiedgcreport;
+use App\Exports\RetailVerifiedGCReport;
 use App\Helpers\ColumnHelper;
+use App\Helpers\NumberHelper;
 use App\Models\Assignatory;
 use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\GcLocation;
+use App\Models\LedgerStore;
 use App\Models\LostGcBarcode;
 use App\Models\LostGcDetail;
 use App\Models\SpecialExternalGcrequestEmpAssign;
@@ -19,14 +23,18 @@ use App\Models\StoreReceivedGc;
 use App\Models\StoreRequestItem;
 use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
+use App\Models\TransactionRevalidation;
 use App\Services\Admin\AdminServices;
 use App\Services\Finance\FinanceService;
 use App\Services\RetailStore\RetailServices;
+use Faker\Core\Number;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RetailController extends Controller
 {
@@ -543,29 +551,98 @@ class RetailController extends Controller
 
 
         $data = StoreVerification::select([
-                'store_verification.vs_barcode',
-                DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_lname) as customer"),
-                DB::raw("CONCAT(users.firstname, ' ', users.lastname) as verby"),
-                'store_verification.vs_tf_denomination',
-                'store_verification.vs_tf_used',
-                'store_verification.vs_gctype',
-                'store_verification.vs_date',
-                'store_verification.vs_reverifydate',
-                'store_verification.vs_tf_balance',
-            ])
+            'store_verification.vs_barcode',
+            DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_lname) as customer"),
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) as verby"),
+            'store_verification.vs_tf_denomination',
+            'store_verification.vs_tf_used',
+            'store_verification.vs_gctype',
+            'store_verification.vs_date',
+            'store_verification.vs_reverifydate',
+            'store_verification.vs_tf_balance',
+        ])
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->leftJoin('users', 'users.user_id', '=', 'store_verification.vs_by')
             ->whereBetween(DB::raw("DATE_FORMAT(store_verification.vs_date, '%Y-%m-%d')"), [$d1, $d2])
             ->where('store_verification.vs_store', $request->user()->store_assigned)
             ->get();
 
-            $pdf = $this->retail->generate_verified_gc_pdf($request, $data,$d1,$d2);
+        $count = $data->count();
+
+        $no = 1;
+        $data->transform(function ($item) use ($count, &$no) {
+            verifiedgcreport::dispatch("Generating Pdf in progress.. ", $no++, $count, Auth::user());
+            return $item;
+        });
+
+        $pdf = $this->retail->generate_verified_gc_pdf($request, $data, $d1, $d2);
 
 
 
-            return back()->with([
-                'stream' => base64_encode($pdf ->output())
-            ]);
+        return back()->with([
+            'stream' => base64_encode($pdf->output())
+        ]);
+    }
+
+
+    public function verified_gc_generate_excel(Request $request)
+    {
+
+        return Excel::download(new RetailVerifiedGCReport($request->all()), 'excel.xlsx');
+
+    }
+
+
+    public function storeLedger(Request $request)
+    {
+        $bal = 0;
+
+        $ledgerData = LedgerStore::where('sledger_store', $request->user()->store_assigned)
+            ->whereIn('sledger_trans', ['GCE', 'GCS', 'GCREF', 'GCTOUT'])
+            ->orderBy('sledger_id', 'asc')
+            ->paginate(10)
+            ->withQueryString();
+
+        $ledgerData->transform(function ($item) use (&$bal) { 
+            $item->debit = NumberHelper::currency($item->sledger_debit);
+            $item->date = Date::parse($item->sledger_date)->format('F d, Y');
+            $item->time = Date::parse($item->sledger_date)->format('H:i:s A');
+            $item->credit = NumberHelper::currency($item->sledger_credit);
+
+            if (in_array($item->sledger_trans, ['GCE', 'GCREF'])) {
+                $bal += $item->sledger_debit;
+            } elseif (in_array($item->sledger_trans, ['GCS', 'GCTOUT'])) {
+                $totpay = $item->sledger_credit + $item->sledger_trans_disc;
+                $bal -= $totpay;
+            }
+
+            $item->balance = NumberHelper::currency($bal);
+            return $item;
+        });
+
+
+
+
+        $revalData = LedgerStore::join('transaction_stores', 'transaction_stores.trans_sid', '=', 'ledger_store.sledger_ref')
+            ->join('store_staff', 'store_staff.ss_id', '=', 'transaction_stores.trans_cashier')
+            ->where('ledger_store.sledger_store', '=', $request->user()->store_assigned)
+            ->where('ledger_store.sledger_trans', '=', 'GCR')
+            ->paginate(10)
+            ->withQueryString();
+        $revalData->transform(function ($item) {
+            $item->totalGc = TransactionRevalidation::where('reval_trans_id', $item->sledger_ref)->count();
+            $item->amount = NumberHelper::currency($item->sledger_credit);
+            $item->date = Date::parse($item->trans_datetime)->format('F d, Y');
+            $item->time = Date::parse($item->trans_datetime)->format('H:i:s A');
+            $item->cashier = ucwords($item->ss_firstname.' '.$item->ss_lastname);
+
+            return $item;
+        });
+
+        return inertia('Retail/StoreLedger', [
+            'ledger_data' => $ledgerData,
+            'reval_data' => $revalData
+        ]);
     }
 
 

@@ -83,6 +83,45 @@ export interface PaginationTypes {
     };
 }
 
+export interface TreasuryDashboardTypes{
+    data?: {
+        budgetRequest: {
+            pending: number;
+            approved: number;
+            cancelled: number;
+        };
+        storeGcRequest: {
+            pending: number;
+            released: number;
+            cancelled: number;
+        };
+        gcProductionRequest: {
+            pending: number;
+            approved: number;
+            cancelled: number;
+        };
+        specialGcRequest: {
+            pending: number;
+            approved: number;
+            cancelled: number;
+            released: number;
+            internalReviewed: number;
+        };
+        adjustment: {
+            budget: number;
+            allocation: number;
+        };
+        promoGcReleased: number;
+        eod: number;
+        budget: {
+            totalBudget: number;
+            regularBudget: number;
+            specialBudget: number;
+        };
+        institutionGcSales: number;
+    };
+}
+
 export interface FlashProps {
     flash?: { success: string; error: string };
     [key: string]: unknown;

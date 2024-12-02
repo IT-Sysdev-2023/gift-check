@@ -23,4 +23,7 @@ class PromoGcReleaseToItem extends Model
     public function reverified(){
         return $this->belongsTo(StoreVerification::class, 'prreltoi_barcode', 'vs_barcode');
     }
+    public function gc(){
+        return $this->belongsTo(Gc::class, 'prreltoi_barcode', 'barcode_no');
+    }
 }

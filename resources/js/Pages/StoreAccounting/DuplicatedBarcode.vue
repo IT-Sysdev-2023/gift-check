@@ -16,7 +16,15 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="padding: 10px; background-color: #b0c4de;">
+                                <div style="margin-left: 55%;">
+                                    <span style="font-weight: bold;">
+                                        Search:
+                                    </span>
+                                    <a-input allow-clear v-model:value="cebuTagbilaranSearch"
+                                        placeholder="Input search here! "
+                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                </div>
+                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tagbilaran
                                     </span>
@@ -42,7 +50,15 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="padding: 10px; background-color: #b0c4de;">
+                                <div style="margin-left: 55%;">
+                                    <span style="font-weight: bold;">
+                                        Search:
+                                    </span>
+                                    <a-input allow-clear v-model:value="cebuTalibonSearch"
+                                        placeholder="Input search here! "
+                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                </div>
+                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Talibon
                                     </span>
@@ -68,7 +84,15 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="padding: 10px; background-color: #b0c4de;">
+                                <div style="margin-left: 55%;">
+                                    <span style="font-weight: bold;">
+                                        Search:
+                                    </span>
+                                    <a-input allow-clear v-model:value="cebuTubigonSearch"
+                                        placeholder="Input search here! "
+                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                </div>
+                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tubigon
                                     </span>
@@ -111,12 +135,15 @@
                     </div>
                     <div style="margin-top: 10px;">
                         <span v-if="textfile" style="color:green; font-weight: bold;">Selected TextFile: </span>
-                        <span style="margin-left: 5px;">
+                        <span style="margin-left: 5px; color:red">
                             {{ this.textfile }}
                         </span>
-                        <span v-if="!textfile" style="color:red">
+                        <span v-if="!textfile" style="font-weight: bold;">
+                            Note:
+                        </span>
+                        <span v-if="!textfile" style="margin-left: 5px;" class="wave-animation">
 
-                            No selected Textfile
+                            Choose TEXTFILE type only !
                         </span>
                     </div>
                     <div>
@@ -126,8 +153,9 @@
                             Check Duplicates
                         </a-button>
                     </div>
+                    <!-- {{ this.cebu.cebu }} -->
                 </a-card>
-
+                <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
                 <!-- {{ barcodes}} -->
             </a-tab-pane>
             <a-tab-pane key="2">
@@ -146,7 +174,15 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="padding: 10px; background-color: #b0c4de;">
+                                <div style="margin-left: 55%;">
+                                    <span style="font-weight: bold;">
+                                        Search:
+                                    </span>
+                                    <a-input allow-clear v-model:value="alttaTagbilaranSearch"
+                                        placeholder="Input search here! "
+                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                </div>
+                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tagbilaran
                                     </span>
@@ -173,7 +209,15 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="padding: 10px; background-color: #b0c4de;">
+                                <div style="margin-left: 55%;">
+                                    <span style="font-weight: bold;">
+                                        Search:
+                                    </span>
+                                    <a-input allow-clear v-model:value="alttaTalibonSearch"
+                                        placeholder="Input search here! "
+                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                </div>
+                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Talibon
                                     </span>
@@ -200,7 +244,15 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="padding: 10px; background-color: #b0c4de;">
+                                <div style="margin-left: 55%;">
+                                    <span style="font-weight: bold;">
+                                        Search:
+                                    </span>
+                                    <a-input allow-clear v-model:value="alttaTubigonSearch"
+                                        placeholder="Input search here! "
+                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                </div>
+                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tubigon
                                     </span>
@@ -248,9 +300,11 @@
                         <span style="margin-left: 5px;">
                             {{ this.altaTextFile }}
                         </span>
-                        <span v-if="!altaTextFile" style="color:red">
-
-                            No selected Textfile
+                        <span v-if="!altaTextFile" style="font-weight: bold;">
+                            Note:
+                        </span>
+                        <span v-if="!altaTextFile" style="margin-left: 5px;" class="wave-animation">
+                            Choose CSV type only !
                         </span>
                     </div>
                     <div>
@@ -260,7 +314,7 @@
                             Check Duplicates
                         </a-button>
                     </div>
-                    <!-- {{ data }} -->
+                    <!-- {{ this.altta.alttaTable }} -->
 
                 </a-card>
 
@@ -281,7 +335,7 @@ import Pagination from '@/Components/Pagination.vue';
 
 
 export default {
-  components: { Pagination },
+    components: { Pagination },
     layout: AuthenticatedLayout,
     props: {
         altta: Object,
@@ -289,6 +343,14 @@ export default {
     },
     data() {
         return {
+            cebuTagbilaranSearch: this.cebu.tagbilaranSearch,
+            cebuTalibonSearch: this.cebu.talibonSearch,
+            cebuTubigonSearch: this.cebu.tubigonSearch,
+
+            alttaTagbilaranSearch: this.altta.alttaTagbilaran,
+            alttaTalibonSearch: this.altta.talibonSearch,
+            alttaTubigonSearch: this.altta.tubigonSearch,
+
             cebuFileName: '',
             iconSize: 80,
             fileContent: '',
@@ -305,7 +367,7 @@ export default {
                 },
                 {
                     title: 'Name',
-                    dataIndex:'name'
+                    dataIndex: 'name'
                 },
                 {
                     title: 'Barcode',
@@ -335,7 +397,7 @@ export default {
                     title: 'Store',
                     dataIndex: 'store'
                 },
-                
+
             ],
             cebuTable: [
                 {
@@ -377,6 +439,78 @@ export default {
             ]
         };
     },
+    watch: {
+        cebuTagbilaranSearch(search) {
+            console.log(search);
+            const data = {
+                search1: search,
+                barcodes: this.cebu.cebu
+
+            }
+            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes', data), {
+
+            }, {
+                preserveState: true
+            })
+        },
+        cebuTalibonSearch(search) {
+            console.log(search);
+            const data1 = {
+                search2: search,
+                barcodes: this.cebu.cebu
+            }
+            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes', data1), {
+
+            }, {
+                preserveState: true
+            })
+        },
+        cebuTubigonSearch(search) {
+            console.log(search);
+            const data2 = {
+                search3: search,
+                barcodes: this.cebu.cebu
+            }
+            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes', data2), {
+
+            }, {
+                preserveState: true
+            })
+        },
+        alttaTagbilaranSearch(search) {
+            console.log(search);
+            // const data4 = {
+            //     search4: search,
+            //     // alttaBarcodeSearch: this.altta.alttaTable,
+            //     // alttaBarcode: this.altta.alttaBarcode
+            // }
+            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes'), {
+                search: search,
+                AlttaData: this.altta.alttaTable
+
+            }, {
+                preserveState: true
+            })
+        },
+        alttaTalibonSearch(search) {
+            console.log(search);
+            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes'), {
+                search5: search,
+                AlttaData: this.altta.alttaTable
+            }, {
+                preserveState: true
+            })
+        },
+        alttaTubigonSearch(search) {
+            console.log(search);
+            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes'), {
+                search6: search,
+                AlttaData: this.altta.alttaTable
+            }, {
+                preserveState: true
+            })
+        }
+    },
     methods: {
         alttaGenerateExcel() {
             const data = this.altta.alttaTable
@@ -392,7 +526,7 @@ export default {
                 return;
             }
             Modal.confirm({
-                title: 'Notification',
+                title: 'Confirmation',
                 content: 'Are you sure you want generate EXCEL?',
                 okText: 'Yes',
                 cancelText: 'No',
@@ -405,7 +539,7 @@ export default {
 
             });
         },
-         
+
         handleFileChangeAltta(event) {
             const file = event.target.files[0];
             this.altaTextFile = file.name
@@ -439,7 +573,7 @@ export default {
                         placement: 'topRight'
                     });
                 };
-                const validTextFileAltta = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
+                const validTextFileAltta = ['csv'];
                 const fileExtention = this.altaTextFile.split('.').pop().toLowerCase();
 
                 if (!validTextFileAltta.includes(fileExtention)) {
@@ -448,7 +582,7 @@ export default {
 
                 }
                 Modal.confirm({
-                    title: 'Notification',
+                    title: 'Confirmation',
                     content: 'Are you sure you want to check DUPLICATE BARCODES?',
                     okText: 'Yes',
                     cancelText: 'No',
@@ -474,6 +608,9 @@ export default {
             }
 
         },
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         cebuGenerateExcel() {
             if (this.cebu.cebu === null) {
                 const notificationWithIcon = (type) => {
@@ -489,7 +626,7 @@ export default {
             }
             const data = this.cebu.cebu
             Modal.confirm({
-                title: 'Notification',
+                title: 'Confirmation',
                 content: 'Are you sure you want to generate Excel?',
                 okText: 'Yes',
                 cancelText: 'No',
@@ -501,84 +638,103 @@ export default {
                 },
 
             });
-          
+
         },
 
-    handleFileChange(event) {
-        const file = event.target.files[0];
-        // console.log(file.name);
-        this.textfile = file.name
-        if (file) {
-            const reader = new FileReader();
+        handleFileChange(event) {
+            const file = event.target.files[0];
+            // console.log(file.name);
+            this.textfile = file.name
+            if (file) {
+                const reader = new FileReader();
 
-            reader.onload = (e) => {
-                this.fileContent = e.target.result;
-                console.log(this.fileContent);
-
-
-                this.barcodes = this.extractBarcodes(this.fileContent);
-                console.log(this.barcodes);
-            };
-
-            reader.readAsText(file);
-        }
+                reader.onload = (e) => {
+                    this.fileContent = e.target.result;
+                    console.log(this.fileContent);
 
 
-    },
+                    this.barcodes = this.extractBarcodes(this.fileContent);
+                    console.log(this.barcodes);
+                };
 
-    extractBarcodes(content) {
-        const regex = /\b\d{1,20}\b/g;
-        const barcodes = content.match(regex);
-        return barcodes ? barcodes.map(barcode => barcode.trim().replace(/\t/g, '')) : [];
-    },
-
-    cebuReportButton() {
-        if (this.fileContent) {
-            const barcodeString = this.fileContent
-
-            const openNotificationWithIcon = (type) => {
-                notification[type]({
-                    message: 'Invalid File Selected',
-                    description: 'Please select Textfile type only',
-                    placement: 'topRight',
-                });
-            };
-            const validFileExtention = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
-            const fileExtention = this.textfile.split('.').pop().toLowerCase();
-
-            if (!validFileExtention.includes(fileExtention)) {
-                openNotificationWithIcon('warning');
-                return;
+                reader.readAsText(file);
             }
 
-            Modal.confirm({
-                title: 'Notification',
-                content: 'Are you sure you want to check DUPLICATE BARCODES?',
-                okText: 'Yes',
-                cancelText: 'No',
-                onOk: () => {
-                    window.location.href = route('storeaccounting.DuplicatedBarcodes', { barcodes: barcodeString });
-                },
-                onCancel: () => {
-                    console.log('Cancel');
-                }
-            });
 
-        }
-        else {
-            const notificationWithIcon = (type) => {
-                notification[type]({
-                    message: 'File Selection Required',
-                    description: 'Please choose file first or the selected Textfile has no data found',
-                    placement: 'topRight'
+        },
+
+        extractBarcodes(content) {
+            const regex = /\b\d{1,20}\b/g;
+            const barcodes = content.match(regex);
+            return barcodes ? barcodes.map(barcode => barcode.trim().replace(/\t/g, '')) : [];
+        },
+
+        cebuReportButton() {
+            if (this.fileContent) {
+                const barcodeString = this.fileContent
+
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'Invalid File Selected',
+                        description: 'Please select Textfile type only',
+                        placement: 'topRight',
+                    });
+                };
+                const validFileExtention = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
+                const fileExtention = this.textfile.split('.').pop().toLowerCase();
+
+                if (!validFileExtention.includes(fileExtention)) {
+                    openNotificationWithIcon('warning');
+                    return;
+                }
+
+                Modal.confirm({
+                    title: 'Confirmation',
+                    content: 'Are you sure you want to check DUPLICATE BARCODES?',
+                    okText: 'Yes',
+                    cancelText: 'No',
+                    onOk: () => {
+                        window.location.href = route('storeaccounting.DuplicatedBarcodes', { barcodes: barcodeString });
+                    },
+                    onCancel: () => {
+                        console.log('Cancel');
+                    }
                 });
-            };
-            notificationWithIcon('warning');
-            return;
+
+            }
+            else {
+                const notificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'File Selection Required',
+                        description: 'Please choose file first or the selected Textfile has no data found',
+                        placement: 'topRight'
+                    });
+                };
+                notificationWithIcon('warning');
+                return;
+            }
         }
     }
-}
 
 
 };
 </script>
+<style scoped>
+@keyframes wave {
+
+    0%,
+    100% {
+        color: black;
+        font-weight: normal;
+    }
+
+    50% {
+        color: red;
+        font-weight: bold;
+    }
+}
+
+.wave-animation {
+    animation: wave 1s infinite;
+}
+</style>

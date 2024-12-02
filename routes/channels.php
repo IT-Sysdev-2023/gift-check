@@ -12,3 +12,4 @@ Broadcast::channel('spgc-ledger-excel.{id}', fn(User $user, $id) => (int) $user-
 Broadcast::channel('treasury-report.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
 Broadcast::channel('accounting-report.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
 Broadcast::channel('generate-verified-excel.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
+Broadcast::channel('verified-gc-report-pdf.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
