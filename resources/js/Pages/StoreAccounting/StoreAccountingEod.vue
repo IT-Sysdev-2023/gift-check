@@ -44,12 +44,13 @@
         <div style="font-weight: bold; font-size: large; background-color: #b0c4de; padding:10px;">
             GC Navision POS Transactions - Barcode # {{ selectedBarcode }}
         </div>
-        <a-table size="small" :data-source="modalData" :columns="GCNavisionPOSTransactions" />
+        <a-table size="small" :data-source="modalData.data" :columns="GCNavisionPOSTransactions" :pagination="false" />
+        <pagination :datarecords="modalData" class="mt-5" />
     </a-modal>
-    <a-modal v-model:open="errorModal"
+    <!-- <a-modal v-model:open="errorModal"
         style=" width:50%; align-items: center; font-weight: bold; text-align: center; font-size: 50px;">
         {{ errorMessage }}
-    </a-modal>
+    </a-modal> -->
     <!-- {{ errorMessage }} -->
     <!-- {{ data }} -->
 </template>

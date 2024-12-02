@@ -9,7 +9,7 @@
             <div style="padding: 10px; font-weight: bold; background-color: #b0c4de;">
                 Customer: {{ salesCustomer }}
             </div>
-            <a-table :data-source="data" :columns="viewSalesColumns" :paginate="false" size="small">
+            <a-table :data-source="data.data" :columns="viewSalesColumns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'viewSales'">
                         <a-button @click="viewTreasurySales(record)" class="me-2 me-sm-5"
@@ -21,7 +21,7 @@
 
 
             </a-table>
-            <!-- <pagination :datarecords="data" class="mt-5" /> -->
+            <pagination :datarecords="data" class="mt-5" />
         </a-tab-pane>
     </a-tabs>
 
@@ -29,9 +29,12 @@
         <div style="padding: 10px; font-weight: bold; background-color: #b0c4de; font-weight: bold; font-size: large;">
             Post Transaction: {{ selectedBarcode }}
         </div>
-        <a-table :data-source="POStransactionData" :columns="salesViewColumns" size="small" />
+        <a-table :data-source="POStransactionData.data" :columns="salesViewColumns" size="small" :pagination="false" />
+        <div style="margin-top: 20px;">
+            <pagination :datarecords="POStransactionData" class="mt-5" />
+        </div>
     </a-modal>
-    <!-- {{ viewSalesData }} -->
+    <!-- {{ data }} -->
     <!-- {{ salesCustomerID }} -->
 </template>
 

@@ -152,10 +152,11 @@ class StoreAccountingController extends Controller
     }
 
 
-    public function GCNavisionPOSTtransactions($barcode)
+    public function GCNavisionPOSTtransactions(Request $request, $barcode)
     {
         // dd($barcode);
-
+        $perPage = $request->input('per_page', 10);
+        $currentPage = $request->input('page', 1);
         $data = StoreEodTextfileTransaction::select(
             'seodtt_line',
             'seodtt_creditlimit',
@@ -173,7 +174,20 @@ class StoreAccountingController extends Controller
             ->orderBy('seodtt_id', 'ASC')
             ->get();
 
-        return response()->json($data);
+            $dataCollection = collect($data);
+        $currentPageItems = $dataCollection->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        $paginatedData = new LengthAwarePaginator(
+            $currentPageItems,
+            $dataCollection->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
+        return response()->json($paginatedData);
     }
     public function storeAccoutingSales(Request $request)
     {
@@ -582,19 +596,28 @@ class StoreAccountingController extends Controller
             }
         }
         elseif($payment->insp_paymentcustomer == 'promo'){
-            $arr_barcodesinfo = [
-                $data = "No data"
-            ];
+            $data = "No data found";
         }
-        // dd($arr_barcodesinfo);
-        // dd($finalData);
+
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = $request->input('perPage', 10); 
+       
+        $currentPageItems = array_slice($arr_barcodesinfo, ($currentPage - 1) * $perPage, $perPage);
+        $paginatedData = new LengthAwarePaginator(
+            $currentPageItems,
+            count($arr_barcodesinfo), 
+            $perPage,
+            $currentPage, 
+            [
+                'path' => $request->url(), 
+                'query' => $request->query(), 
+            ]
+        );
 
        
-        // dd($outputData);
-
         return Inertia::render('StoreAccounting/StoreAccountingViewSales', [
             'salesCustomer' => $salesCustomer,
-            'data' => $arr_barcodesinfo,
+            'data' => $paginatedData,
             'viewSalesData' => $data,
             'search' => $searchTerm,
             'salesCustomerID' => $id
@@ -602,9 +625,11 @@ class StoreAccountingController extends Controller
         ]);
     }
 
-
-    public function viewSalesPostTransaction($barcode)
+    public function viewSalesPostTransaction($barcode, Request $request)
     {
+        $perPage = $request->input('per_page', 10); 
+        $currentPage = $request->input('page', 1); 
+
         $data = StoreEodTextfileTransaction::select(
             'seodtt_line',
             'seodtt_creditlimit',
@@ -622,9 +647,24 @@ class StoreAccountingController extends Controller
             ->orderBy('seodtt_id', 'ASC')
             ->get();
 
+       
+        $dataCollection = collect($data);
+        $currentPageItems = $dataCollection->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
-        return response()->json($data);
+        $paginatedData = new LengthAwarePaginator(
+            $currentPageItems, 
+            $dataCollection->count(), 
+            $perPage,
+            $currentPage, 
+            [
+                'path' => $request->url(), 
+                'query' => $request->query(), 
+            ]
+        );
+
+        return response()->json($paginatedData);
     }
+
     public function storeAccountingStore(Request $request)
     {
         $searchTerm = $request->input('search', '');
@@ -738,7 +778,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('vs_tf_balance', 'like', '%' . $searchTerm . '%');
             });
         }
-        $viewStoreSalesData = $viewStoreSalesData->get();
+        $viewStoreSalesData = $viewStoreSalesData->paginate(10)->withQueryString();
         // ->orderByDesc('sales_id')->paginate(10)->withQueryString();	
 
 
@@ -751,9 +791,12 @@ class StoreAccountingController extends Controller
 
         ]);
     }
-    public function storeAccountingViewModalStore($barcode)
+    public function storeAccountingViewModalStore(Request $request, $barcode)
     {
         // dd($barcode);
+        $perPage = $request->input('per_page', 10);
+        $currentPage = $request->input('page', 1);
+
         $storeModalData = StoreEodTextfileTransaction::select(
             'seodtt_barcode',
             'seodtt_line',
@@ -772,7 +815,21 @@ class StoreAccountingController extends Controller
             ->orderBy('seodtt_id', 'ASC')
             ->get();
 
-        return response()->json($storeModalData);
+            $dataCollection = collect($storeModalData);
+        $currentPageItems = $dataCollection->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $paginatedData = new LengthAwarePaginator(
+            $currentPageItems,
+            $dataCollection->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
+        return response()->json($paginatedData);
     }
 
     public function storeVerifiedAlturasMall(Request $request, $id)

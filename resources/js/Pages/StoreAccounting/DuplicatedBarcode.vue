@@ -293,6 +293,7 @@
                         </span>
 
                         <a-input type="file" id="barcodeFile" @change="handleFileChangeAltta"
+                            enctype="multipart/form-data"
                             style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" />
                     </div>
                     <div style="margin-top: 10px;">
@@ -332,6 +333,7 @@ import { placements } from 'ant-design-vue/es/vc-tour/placements';
 import { message, Modal } from 'ant-design-vue';
 import ColumnGroup from 'ant-design-vue/es/vc-table/sugar/ColumnGroup';
 import Pagination from '@/Components/Pagination.vue';
+import { mapState } from 'pinia';
 
 
 export default {
