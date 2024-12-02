@@ -19,10 +19,13 @@ use App\Models\Store;
 use App\Models\StoreEodItem;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreGcrequest;
+use App\Models\StoreReceived;
 use App\Models\StoreReceivedGc;
 use App\Models\StoreRequestItem;
 use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
+use App\Models\TransactionRevalidation;
+use App\Models\TransactionStore;
 use App\Services\Admin\AdminServices;
 use App\Services\Finance\FinanceService;
 use App\Services\RetailStore\RetailServices;
@@ -594,25 +597,92 @@ class RetailController extends Controller
 
     public function storeLedger(Request $request)
     {
+        $bal = 0;
+
         $ledgerData = LedgerStore::where('sledger_store', $request->user()->store_assigned)
             ->whereIn('sledger_trans', ['GCE', 'GCS', 'GCREF', 'GCTOUT'])
             ->orderBy('sledger_id', 'asc')
-            ->get();
-        $ledgerData->transform(function ($item) {
+            ->paginate(10)
+            ->withQueryString();
+
+        $ledgerData->transform(function ($item) use (&$bal) {
             $item->debit = NumberHelper::currency($item->sledger_debit);
+            $item->date = Date::parse($item->sledger_date)->format('F d, Y');
+            $item->time = Date::parse($item->sledger_date)->format('H:i:s A');
+            $item->credit = NumberHelper::currency($item->sledger_credit);
+
+            if (in_array($item->sledger_trans, ['GCE', 'GCREF'])) {
+                $bal += $item->sledger_debit;
+            } elseif (in_array($item->sledger_trans, ['GCS', 'GCTOUT'])) {
+                $totpay = $item->sledger_credit + $item->sledger_trans_disc;
+                $bal -= $totpay;
+            }
+
+            $item->balance = NumberHelper::currency($bal);
             return $item;
         });
+
+
 
 
         $revalData = LedgerStore::join('transaction_stores', 'transaction_stores.trans_sid', '=', 'ledger_store.sledger_ref')
             ->join('store_staff', 'store_staff.ss_id', '=', 'transaction_stores.trans_cashier')
             ->where('ledger_store.sledger_store', '=', $request->user()->store_assigned)
             ->where('ledger_store.sledger_trans', '=', 'GCR')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
         $revalData->transform(function ($item) {
+            $item->totalGc = TransactionRevalidation::where('reval_trans_id', $item->sledger_ref)->count();
             $item->amount = NumberHelper::currency($item->sledger_credit);
+            $item->date = Date::parse($item->trans_datetime)->format('F d, Y');
+            $item->time = Date::parse($item->trans_datetime)->format('H:i:s A');
+            $item->cashier = ucwords($item->ss_firstname . ' ' . $item->ss_lastname);
+
             return $item;
         });
+
+        return inertia('Retail/StoreLedger', [
+            'ledger_data' => $ledgerData,
+            'reval_data' => $revalData
+        ]);
+    }
+
+    public function storeLedgerdetails(Request $request)
+    {
+        // $data = StoreReceived::select([
+        //     'store_received.srec_recid',
+        //     'store_received.srec_at',
+        //     'store_received.srec_checkedby',
+        //     'store_received.srec_rel_id',
+        //     'users.firstname',
+        //     'users.lastname'
+        // ])
+        // ->join('users', 'users.user_id', '=', 'store_received.srec_by')
+        // ->where('store_received.srec_id', $request->id)
+        // ->where('store_received.srec_store_id', $request->user()->store_assigned)
+        // ->get();
+
+        $data  = TransactionStore::select(
+            'transaction_stores.trans_type',
+            'transaction_stores.trans_number',
+            'transaction_stores.trans_datetime',
+            'transaction_stores.trans_type',
+            'stores.store_name',
+            'store_staff.ss_firstname',
+            'store_staff.ss_lastname',
+            DB::raw('IFNULL(transaction_docdiscount.trdocdisc_amnt, 0.00) as docdisc')
+        )
+        ->join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
+        ->join('store_staff', 'store_staff.ss_id', '=', 'transaction_stores.trans_cashier')
+        ->leftJoin('transaction_docdiscount', 'transaction_docdiscount.trdocdisc_trid', '=', 'transaction_stores.trans_sid')
+        ->where('transaction_stores.trans_sid', $request->id)
+        ->where('transaction_stores.trans_store', $request->user()->store_assigned)
+        ->get();
+
+        dd($data->toArray());
+
+      
+
 
 
     }
