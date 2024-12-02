@@ -639,6 +639,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('gc-tracking-submit', [CustodianController::class, 'gcTrackingSubmition'])->name('submit');
         });
 
+        Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
+        Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
+
     });
 });
 

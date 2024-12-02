@@ -180,4 +180,15 @@ class CustodianController extends Controller
     public function gcTrackingSubmition(Request $request){
         return $this->custodianservices->gcTrackingSubmission($request);
     }
+
+    public function releasedIndex(){
+        return inertia('Custodian/Released', [
+            'records' => $this->custodianservices->fetchReleased()
+        ]);
+    }
+    public function releasedDetails($id){
+        return inertia('Custodian/ReleasedDetailComponent', [
+            'records' => $this->custodianservices->fetchReleasedDetails($id)
+        ]);
+    }
 }
