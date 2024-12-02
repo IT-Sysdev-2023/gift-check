@@ -46,11 +46,9 @@ class verifiedReportMonthly implements FromCollection, WithTitle, WithHeadings, 
     }
     public function collection()
     {
-        // dd($this->verifiedMonthly);
-        $verifiedMonthlydata = $this->perDay($this->verifiedMonthly);
-        // dd($verifiedMonthlydata);
-
-        return collect($verifiedMonthlydata);
+        $verifiedData = $this->perDay($this->verifiedMonthly);
+        dd($verifiedData);
+        return collect($verifiedData);
     }
 
     private function perDay($request)
@@ -59,67 +57,61 @@ class verifiedReportMonthly implements FromCollection, WithTitle, WithHeadings, 
         $storeId = $request['selectedStoreMonthly'];
         $month = $request['month'];
         $year = $request['yearMonthly'];
-        
         $data = [];
 
         if ($dataType === 'verifiedGC') {
-            
+            $connection = $this->getConnection($storeId);
 
-            $hasLocal = DB::table('stores')
-                ->where('store_id', $storeId)
-                ->where('has_local', 1)
-                ->exists();
-
-            if ($hasLocal) {
-                $localServer = DB::table('store_local_server')
-                    ->where('stlocser_storeid', $storeId)
-                    ->first();
-
-                if ($localServer) {
-                    $localConnection = $this->connectToLocalServer($localServer);
-
-                    if ($localConnection) {
-                        $data = $this->getVerifiedDataByMonthAndYear($localConnection, $month, $year, $storeId);
-
-
-                    }
-                }
+            if ($connection) {
+                $data = $this->getVerifiedDateByMonthAndYear($connection, $month, $year, $storeId);
             } else {
-                $data = $this->getVerifiedDataByMonthAndYear(DB::connection(), $month, $year, $storeId);
+                $data = $this->getVerifiedDateByMonthAndYear(DB::connection(), $month, $year, $storeId);
             }
         }
 
         return $data;
     }
 
+    private function getConnection($storeId)
+    {
+        // Check if the store has a local server connection and return the connection
+        $store = DB::table('stores')->where('store_id', $storeId)->first();
+
+        if ($store && $store->has_local) {
+            // Assume the local server connection details are stored in the 'store_local_server' table
+            $localServer = DB::table('store_local_server')->where('stlocser_storeid', $storeId)->first();
+
+            if ($localServer) {
+                return $this->connectToLocalServer($localServer);
+            }
+        }
+
+        return null; // Return null if no local server connection is found
+    }
+
     private function connectToLocalServer($localServer)
     {
-        try {
-            return DB::connection([
-                'driver' => 'mysql',
-                'host' => $localServer->stlocser_ip,
-                'username' => $localServer->stlocser_username,
-                'password' => $localServer->stlocser_password,
-                'database' => $localServer->stlocser_db,
-            ]);
-        } catch (\Exception $e) {
-            return null;
-        }
+        // Attempt to connect to the local server
+        return @localserver_connect(
+            $localServer->stlocser_ip,
+            $localServer->stlocser_username,
+            $localServer->stlocser_password,
+            $localServer->stlocser_db
+        );
     }
 
-    private function getVerifiedDataByMonthAndYear($connection, $month, $year, $storeId)
+    private function getVerifiedDateByMonthAndYear($connection, $month, $year, $storeId)
     {
-
-        return $connection->table('store_verification')
-        ->where(function ($query) use ($year, $month) {
+        $query = $connection->table('store_verification')
+        ->where(function ($query) use ($month, $year) {
             $query->whereYear('vs_date', $year)
-            ->whereMonth('vs_date', $month)
-                ->orWhere(function ($subQuery) use ($year, $month) {
-                    $subQuery->whereYear('vs_reverifydate', $year)
-                    ->whereMonth('vs_reverifydate', $month);
-                });
+                ->whereMonth('vs_date', $month)
+                ->orWhereYear('vs_reverifydate', $year)
+                ->whereMonth('vs_reverifydate', $month);
         })
-        ->where('vs_store', $storeId)
-        ->get();
+            ->where('vs_store', $storeId);
+
+        return $query->get();
     }
+    
 }

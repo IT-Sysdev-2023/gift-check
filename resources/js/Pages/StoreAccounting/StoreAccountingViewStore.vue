@@ -9,7 +9,8 @@
             <div style="font-weight: bold; padding:10px; background-color: #b0c4de;">
                 Barcode # {{ selectecTransNumber }}
             </div>
-            <a-table :data-source="viewStoreSalesData" :columns="viewStoreColumns" size="small">
+            <a-table :data-source="viewStoreSalesData.data" :columns="viewStoreColumns" size="small"
+                :pagination="false">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'view'">
                         <a-button @click="storeModalButton(record)" style="background-color: #1e90ff; color: white;"
@@ -19,15 +20,19 @@
                     </template>
                 </template>
             </a-table>
-            <!-- <pagination :datarecords="viewStoreSalesData.search" class="mt-5"/> -->
+            <pagination :datarecords="viewStoreSalesData" class="mt-5" />
         </a-tab-pane>
     </a-tabs>
     <a-modal v-model:open="storeModal" style="width: 100%;" @ok="storeOkButton">
         <div style="background-color: #b0c4de; padding: 10px; font-weight: bold;">
             GC Barcode # {{ salesBarcode }}
         </div>
-        <a-table :data-source="storeModalData" :columns="storeModalColumns" size="small">
+        <a-table :data-source="storeModalData.data" :columns="storeModalColumns" size="small" :pagination="false">
         </a-table>
+        <div style="margin-top: 20px;"> 
+            <pagination :datarecords="storeModalData" class="mt-t" />
+
+        </div>
     </a-modal>
     <!-- {{ viewStoreSalesData }} -->
 </template>
@@ -38,11 +43,11 @@ export default {
   components: { Pagination },
     layout: AuthenticatedLayout,
     props: {
-        transnumber: Number,
+        transnumber: String,
         viewStoreData: Object,
         viewStoreSalesData: Object,
         modalBarcode: Number,
-        storeID: Number,
+        storeID: String,
         search: String
 
     },
