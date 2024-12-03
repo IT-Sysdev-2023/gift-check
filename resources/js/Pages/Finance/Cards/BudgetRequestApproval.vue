@@ -1,6 +1,6 @@
 <template>
     <a-card class="bg-card">
-        <a-alert message="Budget Gc Request" show-icon />
+        <a-alert message="BUDGET REQUEST" show-icon />
         <div class="card" style="background-color: #EE4E4E">
             <svg class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
                 <path
