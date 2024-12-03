@@ -467,7 +467,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('index');
             });
             Route::name('approved.')->group(function () {
-                Route::get('approved-gc-request', [CustodianController::class, 'approvedGcRequest'])->name('request');
+                Route::get('approved-gc-request', [AccountingController::class, 'approvedGcRequest'])->name('request');
             });
             Route::name('payment.')->group(function () {
                 Route::get('payment-gc', [AccountingController::class, 'paymantGc'])->name('payment.gc');
