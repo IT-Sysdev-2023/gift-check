@@ -1,22 +1,21 @@
 <template>
     <a-card>
-        <a-card title="USERS SETUP"> 
+        <a-card title="USERS SETUP">
         </a-card>
 
-        <div class="user-button">
-            <a-button class="add-user-button" @click="() => open = true">
+        <div style="margin-left: 82.5%;">
+            <a-button style="background-color: #1e90ff; color:white" @click="() => open = true">
                 <PlusOutlined />Add New User
             </a-button>
         </div>
-        
+
         <div style="margin-top: 10px; margin-left: 70%;">
             <a-input-search allow-clear v-model:value="searchTerm" size="medium" placeholder="Input search here!"
                 style="width: 80%;" />
         </div>
 
         <div style="margin-top: 10px;">
-            <a-table :dataSource="users.data" :columns="columns" :pagination="false"
-                size="small">
+            <a-table :dataSource="users.data" :columns="columns" :pagination="false" size="small">
                 <template v-slot:bodyCell="{ column, record }">
 
                     <template v-if="column.dataIndex === 'action'">

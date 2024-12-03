@@ -4,7 +4,7 @@
             <a-tab-pane key="1">
                 <template #tab>
                     <span style="font-weight: bold;">
-                       DUPLICATED REPORT (CEBU)
+                       Duplicated Report (CEBU)
                     </span>
                 </template>
                 <a-card style="width: 72%; margin-left: 28%;">
@@ -12,7 +12,7 @@
                         <a-tab-pane key="1">
                             <template #tab>
                                 <span style="font-weight: bold;">
-                                    TAGBILARAN
+                                    Tagbilaran
                                 </span>
                             </template>
                             <a-card>
@@ -44,7 +44,7 @@
                         <a-tab-pane key="2">
                             <template #tab>
                                 <span style="font-weight: bold">
-                                    TALIBON
+                                    Talibon
                                 </span>
                             </template>
                             <a-card>
@@ -76,7 +76,7 @@
                         <a-tab-pane key="3">
                             <template #tab>
                                 <span style="font-weight: bold;">
-                                   TUBIGON
+                                   Tubigon
                                 </span>
                             </template>
                             <a-card>
@@ -155,7 +155,7 @@
             <a-tab-pane key="2">
                 <template #tab>
                     <span style="font-weight: bold;">
-                        DUPLICATED REPORT (ALTTA CITTA)
+                        Duplicated Report (ALTTA CITTA)
                     </span>
                 </template>
 
@@ -164,7 +164,7 @@
                         <a-tab-pane key="1">
                             <template #tab>
                                 <span style="font-weight: bold;">
-                                    TAGBILARAN
+                                    Tagbilaran
                                 </span>
                             </template>
                             <a-card>
@@ -197,7 +197,7 @@
                         <a-tab-pane key="2">
                             <template #tab>
                                 <span style="font-weight: bold;">
-                                   TALIBON
+                                   Talibon
                                 </span>
                             </template>
                             <a-card>
@@ -230,7 +230,7 @@
                         <a-tab-pane key="3">
                             <template #tab>
                                 <span style="font-weight: bold;">
-                                    TUBIGON
+                                    Tubigon
                                 </span>
                             </template>
                             <a-card>
