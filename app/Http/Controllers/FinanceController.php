@@ -593,4 +593,10 @@ class FinanceController extends Controller
 
         return response()->json($data);
     }
+
+    public function budgetAdjustmentsPending(){
+        return inertia('Finance/BudgetAdjustmentsPendingComponent', [
+            'records' => $this->financeService->getBudgetAdjustmentsData(),
+        ]);
+    }
 }

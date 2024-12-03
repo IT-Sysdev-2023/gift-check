@@ -1,15 +1,17 @@
 <template>
-    <div style="font-weight: bold; margin-left: 70%;">
-        Search:
-        <a-input allow-clear v-model:value="storeSearchBox" placeholder="Input search here!"
-            style="border:1px solid #1e90ff; width: 60%;" />
-    </div>
-    <a-tabs>
-        <a-tab-pane key="StoreView">
-            <div style="font-weight: bold; padding:10px; background-color: #b0c4de;">
+    <a-card>
+        <a-card>
+            <div style="font-weight: bold;">
                 Barcode # {{ selectecTransNumber }}
             </div>
-            <a-table :data-source="viewStoreSalesData" :columns="viewStoreColumns" size="small">
+        </a-card>
+        <div style="margin-top: 10px; margin-left: 70%; font-weight: bold;">
+            <a-input-search allow-clear v-model:value="storeSearchBox" placeholder="Input search here!"
+                style="width: 90%;" />
+        </div>
+        <div style="margin-top: 10px;">
+            <a-table :data-source="viewStoreSalesData.data" :columns="viewStoreColumns" size="small"
+                :pagination="false">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'view'">
                         <a-button @click="storeModalButton(record)" style="background-color: #1e90ff; color: white;"
@@ -19,15 +21,25 @@
                     </template>
                 </template>
             </a-table>
-            <!-- <pagination :datarecords="viewStoreSalesData.search" class="mt-5"/> -->
-        </a-tab-pane>
-    </a-tabs>
-    <a-modal v-model:open="storeModal" style="width: 100%;" @ok="storeOkButton">
-        <div style="background-color: #b0c4de; padding: 10px; font-weight: bold;">
-            GC Barcode # {{ salesBarcode }}
+            <pagination :datarecords="viewStoreSalesData" class="mt-5" />
         </div>
-        <a-table :data-source="storeModalData" :columns="storeModalColumns" size="small">
-        </a-table>
+
+    </a-card>
+
+    <a-modal v-model:open="storeModal" style="width: 100%;" @ok="storeOkButton">
+        <a-card>
+            <a-card>
+                <div style="font-weight: bold;">
+                    GC Barcode # {{ salesBarcode }}
+                </div>
+            </a-card>
+            <div style="margin-top: 10px;">
+                <a-table :data-source="storeModalData.data" :columns="storeModalColumns" size="small"
+                    :pagination="false">
+                </a-table>
+                <pagination :datarecords="storeModalData" class="mt-5" />
+            </div>
+        </a-card>
     </a-modal>
     <!-- {{ viewStoreSalesData }} -->
 </template>

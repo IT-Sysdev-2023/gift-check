@@ -1,18 +1,19 @@
 <template>
-    <div style="font-weight: bold; margin-left: 70%;">
-        Search:
-        <a-input allow-clear v-model:value="salesSearchBox" placeholder="Input search here!"
-            style="width:60%; border:1px solid #1e90ff" />
-    </div>
-    <a-tabs>
-        <a-tab-pane>
-            <div style="padding: 10px; font-weight: bold; background-color: #b0c4de;">
+    <a-card>
+        <a-card>
+            <div style="font-weight: bold;">
                 Customer: {{ salesCustomer }}
             </div>
-            <a-table :data-source="data" :columns="viewSalesColumns" :paginate="false" size="small">
+        </a-card>
+        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
+            <a-input-search allow-clear v-model:value="salesSearchBox" placeholder="Input search here!"
+                style="width:90%;" />
+        </div>
+        <div style="margin-top: 10px;">
+            <a-table :data-source="data.data" :columns="viewSalesColumns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'viewSales'">
-                        <a-button @click="viewTreasurySales(record)" class="me-2 me-sm-5"
+                        <a-button title="search" @click="viewTreasurySales(record)" class="me-2 me-sm-5"
                             style="color:white; background-color: #1e90ff;">
                             <SearchOutlined />
                         </a-button>
@@ -21,17 +22,26 @@
 
 
             </a-table>
-            <!-- <pagination :datarecords="data" class="mt-5" /> -->
-        </a-tab-pane>
-    </a-tabs>
+            <pagination :datarecords="data" class="mt-5" />
+        </div>
+    </a-card>
 
     <a-modal v-model:open="salesViewModal" @ok="handleSalesView" style="width: 100%;">
-        <div style="padding: 10px; font-weight: bold; background-color: #b0c4de; font-weight: bold; font-size: large;">
-            Post Transaction: {{ selectedBarcode }}
-        </div>
-        <a-table :data-source="POStransactionData" :columns="salesViewColumns" size="small" />
+        <a-card>
+            <a-card>
+                <div style="font-weight: bold;">
+                    Post Transaction: {{ selectedBarcode }}
+                </div>
+            </a-card>
+            <div style="margin-top: 10px;">
+                <a-table :data-source="POStransactionData.data" :columns="salesViewColumns" size="small"
+                    :pagination="false" />
+                <pagination :datarecords="POStransactionData" class="mt-5" />
+            </div>
+
+        </a-card>
     </a-modal>
-    <!-- {{ viewSalesData }} -->
+    <!-- {{ data }} -->
     <!-- {{ salesCustomerID }} -->
 </template>
 

@@ -4,35 +4,36 @@
             <a-tabs>
                 <a-tab-pane key="1">
                     <template #tab>
-                        <span>
+                        <span style="font-weight: bold;">
                             <!-- <span style="color: green;">
                                 <DatabaseOutlined />
                             </span> -->
-                            Tagbilaran
+                           TAGBILARAN
                         </span>
                     </template>
 
-                    <span style="margin-left: 50%; font-weight: bold;">
-                        Search:
-                        <a-input allow-clear v-model:value="tagbilaranSearch" placeholder="Input search here!"
-                            style="width: 40%; border: 1px solid #1e90ff;" />
+                    <span style="margin-left: 60%; font-weight: bold;">
+                        <a-input-search allow-clear v-model:value="tagbilaranSearch" placeholder="Input search here!"
+                            style="width: 40%;" />
                     </span>
-                    <div style="padding:10px; background-color: #b0c4de; font-weight: bold; margin-top: 10px;">
+                    <div style="font-weight: bold; margin-top: 10px;">
                         <span style="margin-left: 40%;">Table Showing Tagbilaran</span>
                     </div>
+                    <div style="margin-top: 10px;">
+                        <a-table :columns="varianceTable" :data-source="variance.tagbilaranData.data"
+                            :pagination="false" size="small">
+                        </a-table>
+                        <pagination :datarecords="variance.tagbilaranData" class="mt-5" size="small" />
+                    </div>
 
-                    <a-table :columns="varianceTable" :data-source="variance.tagbilaranData.data" :pagination="false"
-                        size="small">
-                    </a-table>
-                    <pagination :datarecords="variance.tagbilaranData" class="mt-5" size="small" />
                 </a-tab-pane>
                 <a-tab-pane key="2">
                     <template #tab>
-                        <span>
+                        <span style="font-weight: bold;">
                             <!-- <span style="color: green;">
                                 <DatabaseOutlined />
                             </span> -->
-                            Talibon
+                            TALIBON
                         </span>
                     </template>
                     <!-- <a-button style="background-color: green; color:white; margin-top: 10px;"
@@ -40,12 +41,11 @@
                         <FileExcelOutlined />
                         Generate Excel
                     </a-button> -->
-                    <span style="margin-left: 50%; font-weight: bold;">
-                        Search:
-                        <a-input allow-clear v-model:value="talibonSearch" placeholder="Input search here!"
-                            style="width: 40%; border: 1px solid #1e90ff;" />
+                    <span style="margin-left: 60%; font-weight: bold;">
+                        <a-input-search allow-clear v-model:value="talibonSearch" placeholder="Input search here!"
+                            style="width: 40%;"/>
                     </span>
-                    <div style="padding:10px; background-color: #b0c4de; font-weight: bold; margin-top: 10px;">
+                    <div style="font-weight: bold; margin-top: 10px;">
                         <span style="margin-left: 40%;">Table Showing Tubigon</span>
                     </div>
                     <a-table :columns="talibonData" :data-source="variance.talibonData.data" :pagination="false"
@@ -63,8 +63,8 @@
         </a-button>
 
         <a-card style="width: 40%; position: absolute; top:25px;">
-            <span style="margin-left: 35%; font-weight: bold;">
-                <span style="color: green;">
+            <span style="margin-left: 35%; font-weight: bold; font-size: 15px;">
+                <span>
                     <DatabaseOutlined />
                 </span>
                 CHECK VARIANCE

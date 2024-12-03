@@ -153,6 +153,8 @@ declare module 'vue' {
     BarcodeForm: typeof import('./resources/js/Pages/Custodian/Partials/BarcodeForm.vue')['default']
     BarcodeOutlined: typeof import('@ant-design/icons-vue')['BarcodeOutlined']
     BudgetAdjustment: typeof import('./resources/js/Pages/Treasury/Adjustment/BudgetAdjustment.vue')['default']
+    BudgetAdjustments: typeof import('./resources/js/Pages/Finance/Cards/BudgetAdjustments.vue')['default']
+    BudgetAdjustmentsPendingComponent: typeof import('./resources/js/Pages/Finance/BudgetAdjustmentsPendingComponent.vue')['default']
     BudgetAdjustmentUpdate: typeof import('./resources/js/Pages/Treasury/Adjustment/BudgetAdjustmentUpdate.vue')['default']
     BudgetLedger: typeof import('./resources/js/Pages/Finance/BudgetLedger.vue')['default']
     BudgetLedgerResult: typeof import('./resources/js/Pages/Documents/BudgetLedgerResult.vue')['default']
@@ -199,6 +201,7 @@ declare module 'vue' {
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     Dashboard: typeof import('./resources/js/Pages/Dashboard.vue')['default']
     DashboardOutlined: typeof import('@ant-design/icons-vue')['DashboardOutlined']
+    DashOutlined: typeof import('@ant-design/icons-vue')['DashOutlined']
     DatabaseOutlined: typeof import('@ant-design/icons-vue')['DatabaseOutlined']
     DeleteUserForm: typeof import('./resources/js/Pages/Profile/Partials/DeleteUserForm.vue')['default']
     DenominationSetup: typeof import('./resources/js/Pages/Admin/Masterfile/DenominationSetup.vue')['default']
@@ -237,6 +240,7 @@ declare module 'vue' {
     FinanceSideBar: typeof import('./resources/js/Components/FinanceSideBar.vue')['default']
     FireOutlined: typeof import('@ant-design/icons-vue')['FireOutlined']
     FolderFilled: typeof import('@ant-design/icons-vue')['FolderFilled']
+    FolderOpenOutlined: typeof import('@ant-design/icons-vue')['FolderOpenOutlined']
     FolderOutlined: typeof import('@ant-design/icons-vue')['FolderOutlined']
     ForApprovalPending: typeof import('./resources/js/Pages/Iad/Cards/ForApprovalPending.vue')['default']
     ForgotPassword: typeof import('./resources/js/Pages/Auth/ForgotPassword.vue')['default']
@@ -291,6 +295,10 @@ declare module 'vue' {
     MarketingDashboard: typeof import('./resources/js/Pages/Marketing/MarketingDashboard.vue')['default']
     MarketingSideBar: typeof import('./resources/js/Components/MarketingSideBar.vue')['default']
     MCard: typeof import('./resources/js/Pages/Marketing/Card/MCard.vue')['default']
+<<<<<<< HEAD
+=======
+    MenuFoldOutlined: typeof import('@ant-design/icons-vue')['MenuFoldOutlined']
+>>>>>>> be493bee1304ea23decdb23190f3bdad1e1aa42d
     MenuUnfoldOutlined: typeof import('@ant-design/icons-vue')['MenuUnfoldOutlined']
     MinusCircleOutlined: typeof import('@ant-design/icons-vue')['MinusCircleOutlined']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
@@ -365,6 +373,8 @@ declare module 'vue' {
     ReceivedGcIndex: typeof import('./resources/js/Pages/Iad/ReceivedGcIndex.vue')['default']
     ReconciliationOutlined: typeof import('@ant-design/icons-vue')['ReconciliationOutlined']
     Register: typeof import('./resources/js/Pages/Auth/Register.vue')['default']
+    Released: typeof import('./resources/js/Pages/Custodian/Released.vue')['default']
+    ReleasedDetailComponent: typeof import('./resources/js/Pages/Custodian/ReleasedDetailComponent.vue')['default']
     ReleasedPromoGc: typeof import('./resources/js/Pages/Marketing/ReleasedPromoGc.vue')['default']
     ReleasedSpexGc: typeof import('./resources/js/Pages/Marketing/specialgc/ReleasedSpexGc.vue')['default']
     ReleasedTab: typeof import('./resources/js/Pages/Finance/Reports/ReleasedTab.vue')['default']
@@ -420,8 +430,13 @@ declare module 'vue' {
     SetupRecommendation: typeof import('./resources/js/Pages/RetailGroup/SetupRecommendation.vue')['default']
     SetupStore: typeof import('./resources/js/Pages/Admin/Masterfile/SetupStore.vue')['default']
     ShoppingOutlined: typeof import('@ant-design/icons-vue')['ShoppingOutlined']
+<<<<<<< HEAD
     ShrinkOutlined: typeof import('@ant-design/icons-vue')['ShrinkOutlined']
+=======
+    SmallDashOutlined: typeof import('@ant-design/icons-vue')['SmallDashOutlined']
+>>>>>>> be493bee1304ea23decdb23190f3bdad1e1aa42d
     SmileTwoTone: typeof import('@ant-design/icons-vue')['SmileTwoTone']
+    SnippetsOutlined: typeof import('@ant-design/icons-vue')['SnippetsOutlined']
     SoldGc: typeof import('./resources/js/Pages/Retail/Cards/SoldGc.vue')['default']
     SoldGcList: typeof import('./resources/js/Pages/Retail/SoldGcList.vue')['default']
     SpecialExGcRequest: typeof import('./resources/js/Pages/Iad/Cards/SpecialExGcRequest.vue')['default']
@@ -477,6 +492,7 @@ declare module 'vue' {
     TransactionTxtModal: typeof import('./resources/js/Pages/Iad/Cards/TransactionTxtModal.vue')['default']
     TreasuryDashboard: typeof import('./resources/js/Pages/Treasury/TreasuryDashboard.vue')['default']
     TreasurySideBar: typeof import('./resources/js/Components/TreasurySideBar.vue')['default']
+    TwitterOutlined: typeof import('@ant-design/icons-vue')['TwitterOutlined']
     UbayDistribution: typeof import('./resources/js/Pages/StoreAccounting/UbayDistribution.vue')['default']
     UbayDistributionCenter: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/UbayDistributionCenter.vue')['default']
     UbayDistributionPosTransaction: typeof import('./resources/js/Pages/StoreAccounting/UbayDistributionPosTransaction.vue')['default']

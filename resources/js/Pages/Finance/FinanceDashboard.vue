@@ -23,6 +23,10 @@
             <!-- <PromoGCCard/> -->
             <budget-request-approval :count="count" />
         </a-col>
+        <a-col :span="8">
+            <!-- <PromoGCCard/> -->
+            <budget-adjustments :count="count" />
+        </a-col>
     </a-row>
 </template>
 <script>

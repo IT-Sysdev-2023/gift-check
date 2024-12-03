@@ -1,6 +1,6 @@
 <template>
     <a-card class="bg-card">
-        <a-alert message="PROMO GC REQUEST" show-icon />
+        <a-alert message="BUDGET ADJUSTMENTS" show-icon />
         <div class="card" style="background-color: #EE4E4E">
             <svg class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -12,19 +12,19 @@
                 <ExclamationCircleFilled />
             </div>
 
+
             <div class="message-text-container">
                 <p class="message-text text-white">Pendings</p>
                 <p class="sub-text text-white">All Pending Request</p>
             </div>
-            <a-badge :count="count?.penPomoCount" @click="() => $inertia.get(route('finance.pen.promo.request'))">
-                <a-button :disabled="count.penPomoCount <= 0">
+            <a-badge >
+                <a-button @click="pending">
                     <template #icon>
                         <FolderFilled />
                     </template>
                     View
                 </a-button>
             </a-badge>
-
         </div>
 
         <div class="card" style="background-color: #34B3F1">
@@ -39,10 +39,10 @@
             </div>
             <div class="message-text-container">
                 <p class="message-text text-white">Approved</p>
-                <p class="sub-text text-white">All Approved Request</p>
+                <p class="sub-text text-white">Approved Gc Request</p>
             </div>
-            <a-badge :count="count?.appPromoCount" :number-style="{ backgroundColor: '#52c41a' }">
-                <a-button @click="() => $inertia.get(route('finance.app.promo.request'))">
+            <a-badge  :number-style="{ backgroundColor: '#52c41a' }">
+                <a-button >
                     <template #icon>
                         <FolderFilled />
                     </template>
@@ -75,12 +75,14 @@
         </div>
     </a-card>
 </template>
-<script>
-export default {
-    props: {
-        count: Array,
-    }
+<script setup lang="ts">
+import { router } from '@inertiajs/core';
+
+
+const pending = () => {
+    router.get(route('finance.budgetad.pending'))
 }
+
 </script>
 <style scoped>
 .bg-card {
@@ -94,7 +96,6 @@ export default {
     margin-top: 7px;
     box-sizing: border-box;
     padding: 10px 15px;
-    /* background-color: #ffffff; */
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     position: relative;
     overflow: hidden;

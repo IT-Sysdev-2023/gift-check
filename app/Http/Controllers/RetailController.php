@@ -8,6 +8,8 @@ use App\Exports\RetailVerifiedGCReport;
 use App\Helpers\ColumnHelper;
 use App\Helpers\NumberHelper;
 use App\Models\Assignatory;
+use App\Models\CreditcardPayment;
+use App\Models\CustomerInternalAr;
 use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\GcLocation;
@@ -19,11 +21,17 @@ use App\Models\Store;
 use App\Models\StoreEodItem;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreGcrequest;
+use App\Models\StoreReceived;
 use App\Models\StoreReceivedGc;
 use App\Models\StoreRequestItem;
 use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
+use App\Models\TransactionLinediscount;
+use App\Models\TransactionPayment;
+use App\Models\TransactionRefund;
 use App\Models\TransactionRevalidation;
+use App\Models\TransactionSale;
+use App\Models\TransactionStore;
 use App\Services\Admin\AdminServices;
 use App\Services\Finance\FinanceService;
 use App\Services\RetailStore\RetailServices;
@@ -603,22 +611,27 @@ class RetailController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $ledgerData->transform(function ($item) use (&$bal) { 
+        $ledgerData->transform(function ($item) use (&$bal) {
             $item->debit = NumberHelper::currency($item->sledger_debit);
-            $item->date = Date::parse($item->sledger_date)->format('F d, Y');
-            $item->time = Date::parse($item->sledger_date)->format('H:i:s A');
             $item->credit = NumberHelper::currency($item->sledger_credit);
+            $item->date = Date::parse($item->sledger_date)->format('F d, Y');
+            $item->time = Date::parse($item->sledger_date)->format('h:i:s A');
 
-            if (in_array($item->sledger_trans, ['GCE', 'GCREF'])) {
-                $bal += $item->sledger_debit;
-            } elseif (in_array($item->sledger_trans, ['GCS', 'GCTOUT'])) {
-                $totpay = $item->sledger_credit + $item->sledger_trans_disc;
-                $bal -= $totpay;
-            }
-
+            $bal += in_array($item->sledger_trans, ['GCE', 'GCREF']) ? $item->sledger_debit : 0;
+            $bal -= in_array($item->sledger_trans, ['GCS', 'GCTOUT']) ? ($item->sledger_credit + $item->sledger_trans_disc) : 0;
             $item->balance = NumberHelper::currency($bal);
+
+            $item->entry = match ($item->sledger_trans) {
+                'GCE' => 1,
+                'GCS' => 2,
+                'GCREF' => 3,
+                'GCTOUT' => 4,
+                default => null
+            };
+
             return $item;
         });
+
 
 
 
@@ -634,7 +647,7 @@ class RetailController extends Controller
             $item->amount = NumberHelper::currency($item->sledger_credit);
             $item->date = Date::parse($item->trans_datetime)->format('F d, Y');
             $item->time = Date::parse($item->trans_datetime)->format('H:i:s A');
-            $item->cashier = ucwords($item->ss_firstname.' '.$item->ss_lastname);
+            $item->cashier = ucwords($item->ss_firstname . ' ' . $item->ss_lastname);
 
             return $item;
         });
@@ -645,8 +658,87 @@ class RetailController extends Controller
         ]);
     }
 
+    public function storeLedgerdetails(Request $request)
+    {
+        if ($request->entry == '1') {
+            $data = StoreReceived::join('users', 'users.user_id', '=', 'store_received.srec_by')
+                ->where('store_received.srec_id', $request->id)
+                ->where('store_received.srec_store_id', $request->user()->store_assigned)
+                ->first();
+            $data['recBy'] = ucwords($data->firstname . ' ' . $data->lastname);
+            $data['checkby'] = ucwords($data->srec_checkedby);
+            $data['dateReceived'] = Date::parse($data->srec_at)->format('F d, Y');
+
+            $table = StoreReceivedGc::selectRaw('COUNT(store_received_gc.strec_barcode) as cnt, denomination.denomination, store_received_gc.strec_denom')
+                ->join('denomination', 'denomination.denom_id', '=', 'store_received_gc.strec_denom')
+                ->where('store_received_gc.strec_recnum', $data->srec_recid)
+                ->where('store_received_gc.strec_storeid', $request->user()->store_assigned)
+                ->groupBy('store_received_gc.strec_denom', 'denomination.denomination')
+                ->get();
+            $table->transform(function ($item) {
+                $item->total = $item->cnt * $item->denomination;
+                return $item;
+            });
+
+            return response()->json([
+                'data' => $data,
+                'table' => $table,
+                'type' => '1'
+            ]);
+        } elseif ($request->entry == '2') {
+            $data = TransactionStore::select(
+                'transaction_stores.trans_type',
+                'transaction_stores.trans_number',
+                'transaction_stores.trans_datetime',
+                'stores.store_name',
+                'store_staff.ss_firstname',
+                'store_staff.ss_lastname',
+                DB::raw('IFNULL(transaction_docdiscount.trdocdisc_amnt, 0.00) as docdisc')
+            )
+                ->join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
+                ->join('store_staff', 'store_staff.ss_id', '=', 'transaction_stores.trans_cashier')
+                ->leftJoin('transaction_docdiscount', 'transaction_docdiscount.trdocdisc_trid', '=', 'transaction_stores.trans_sid')
+                ->where('transaction_stores.trans_sid', $request->id)
+                ->where('transaction_stores.trans_store', $request->user()->store_assigned)
+                ->first();
+            $data['cashier'] = ucwords($data->ss_firstname.' '.$data->ss_lastname);
+
+
+            $totlinedisc = TransactionLinediscount::where('trlinedis_sid', $request->id)
+                ->selectRaw('IFNULL(SUM(trlinedis_discamt), 0) as totline')
+                ->value('totline'); 
+
+            $tpayment = TransactionSale::join('denomination', 'denomination.denom_id', '=', 'transaction_sales.sales_denomination')
+                ->selectRaw('IFNULL(SUM(denomination.denomination), 0.00) as payment')
+                ->where('transaction_sales.sales_transaction_id', $request->id)
+                ->value('payment'); 
+
+            $docdisc = $data->docdisc ?? 0; 
+
+            $amtdue = (float) $tpayment - ((float) $totlinedisc + (float) $docdisc); 
+
+            
 
 
 
 
+            $datatable = TransactionSale::where('sales_transaction_id', $request->id)
+                ->join('denomination', 'denomination.denom_id', '=', 'transaction_sales.sales_denomination')
+                ->get();
+            
+            $details = [
+                'data' =>$data,
+                'totlinedisc' =>$totlinedisc,
+                'tpayment' =>$tpayment,
+                'amtdue' =>$amtdue
+            ];
+
+            return response()->json([
+                'data' =>  $details,
+                'table' => $datatable,
+                'type' => '2'
+            ]);
+        }
+
+    }
 }

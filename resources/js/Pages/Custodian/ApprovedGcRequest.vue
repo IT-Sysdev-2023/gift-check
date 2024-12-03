@@ -76,7 +76,7 @@ export default {
                 promo = '*';
 
             }
-            this.$inertia.get(route('custodian.approved.request'), { promo: promo }, { preserveState: true });
+            this.$inertia.get(route('accounting.approved.request'), { promo: promo }, { preserveState: true });
         }
     }
 }
