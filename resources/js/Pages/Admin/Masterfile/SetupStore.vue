@@ -1,17 +1,35 @@
 <template>
-    <div class="store-button">
-        <a-button class="store-input" @click="() => addStore = true">
-            <PlusOutlined /> Add New Store
-        </a-button>
-    </div>
+    <a-card>
+        <a-card title="STORE SETUP"> </a-card>
+        <div class="store-button">
+            <a-button class="store-input" @click="() => addStore = true">
+                <PlusOutlined /> Add New Store
+            </a-button>
+        </div>
 
-    <div class="store-search-button">
-        Search:
-        <a-input class="store-search-input" allow-clear v-model:value="searchTerm" placeholder="Input search here!"
-            enter-button="Search" size="medium" />
-    </div>
+        <div style="margin-left: 70%; margin-top: 10px;">
+            <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here!" size="medium"
+                style="width: 80%;" />
+        </div>
+        <div style="margin-top: 10px;">
+            <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'action'">
 
+                        <a-switch title="Issue Receipt" v-model:checked="record.status" @change="issueReceipt(record)"
+                            checked-children="YES" un-checked-children="NO"
+                            :style="{ backgroundColor: record.status ? '#0286df' : 'darkgray' }" />
 
+                    </template>
+                </template>
+
+            </a-table>
+            <pagination :datarecords="data" class="mt-5" />
+        </div>
+
+    </a-card>
+
+    <!-- 
     <a-title style="font-size: 20px; display: flex; align-items: center; color:#0286df;">
         <AppstoreFilled style="margin-right: 8px; color:#0286df;" />
         Store Setup
@@ -27,22 +45,8 @@
             <a-select-option value="100">100</a-select-option>
         </a-select>
         entries
-    </span>
-    <div style="background-color: #dcdcdc;">
-        <a-table :columns="columns" :data-source="data.data" :pagination="false" style="margin-top: 10px;">
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex === 'action'">
+    </span> -->
 
-                    <a-switch title="Issue Receipt" v-model:checked="record.status" @change="issueReceipt(record)"
-                        checked-children="YES" un-checked-children="NO"
-                        :style="{ backgroundColor: record.status ? '#0286df' : 'darkgray' }" />
-
-                </template>
-            </template>
-
-        </a-table>
-        <pagination :datarecords="data" class="mt-5" />
-    </div>
 
     <a-modal v-model:open="addStore" @ok="handleOk">
         <span style="color: #0286df; font-size: 17px; ">
@@ -211,7 +215,7 @@ export default {
 .store-input {
     background-color: #0286df;
     color: white;
-    margin-right: 17%;
+    margin-right: 6%;
 }
 
 .store-search-button {
