@@ -185,6 +185,10 @@ class DashboardClass extends DashboardService
                 ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
                 ->where('spexgc_status', 'approved')
                 ->where('reqap_approvedtype', 'Special External GC Approved')->count(),
+            'countReleased' => SpecialExternalGcrequest::join('approved_request', 'reqap_trid', 'spexgc_id')
+                ->where('spexgc_released', 'released')
+                ->where('reqap_approvedtype', 'special external releasing')
+                ->count(),
 
         ];
     }

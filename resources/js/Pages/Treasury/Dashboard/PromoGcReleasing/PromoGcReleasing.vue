@@ -92,7 +92,7 @@
                             />
                         </a-col>
                         <a-col :span="12">
-                            <a-form-item
+                            <!-- <a-form-item
                                 label="Document Uploaded:"
                                 v-if="viewedData.prrelto_docs"
                             >
@@ -102,6 +102,18 @@
                                     </template>
                                     {{ viewedData.prrelto_docs }}</a-button
                                 >
+                            </a-form-item> -->
+                            <a-form-item label="Document Uploaded.:">
+                                <ant-image-preview
+                                    :images="[
+                                        {
+                                            name: viewedData.prrelto_docs,
+                                            url:
+                                                '/storage/' +
+                                                viewedData.prrelto_docs,
+                                        },
+                                    ]"
+                                />
                             </a-form-item>
                             <FormItem
                                 label="Released Type:"

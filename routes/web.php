@@ -65,7 +65,7 @@ Route::get('kanding', function () {
 });
 
 
-//* Please install "Better Comments" to see comments clearly
+//* Please install "Better Comments extension" to see comments clearly
 //! AUTHENTICATION SECTION
 Route::middleware('auth')->group(function () {
 
@@ -108,8 +108,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-
-    Route::prefix('admin')->group(function () {
+    //? Admin
+    Route::middleware('userType:admin')->prefix('admin')->group(function () {
         Route::name('admin.')->group(function () {
             Route::get('add-new-fund', [AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
             Route::get('users_add_user', [AdminController::class, 'users_save_user'])->name('masterfile.user.saveUser');
@@ -157,7 +157,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     //? Marketing
-    Route::prefix('marketing')->group(function () {
+    Route::middleware('userType:marketing,admin')->prefix('marketing')->group(function () {
         Route::name('marketing.')->group(function () {
             Route::name('promo.gc.')->group(function () {
                 Route::get('promo-gc-request', [MarketingController::class, 'promogcrequest'])->name('request');
@@ -467,7 +467,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('index');
             });
             Route::name('approved.')->group(function () {
-                Route::get('approved-gc-request', [CustodianController::class, 'approvedGcRequest'])->name('request');
+                Route::get('approved-gc-request', [AccountingController::class, 'approvedGcRequest'])->name('request');
             });
             Route::name('payment.')->group(function () {
                 Route::get('payment-gc', [AccountingController::class, 'paymantGc'])->name('payment.gc');
@@ -490,7 +490,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     //? Finance
-    Route::prefix('finance')->group(function () {
+    Route::middleware('userType:finance,admin')->prefix('finance')->group(function () {
         Route::name('finance.')->group(function () {
             Route::get('budget-ledger', [FinanceController::class, 'budgetLedger'])->name('budget.ledger');
             Route::get('spgc-ledger', [FinanceController::class, 'spgcLedger'])->name('spgc.ledger');
@@ -524,6 +524,12 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('cancelled-especial-external-gc', [FinanceController::class, 'list'])->name('list');
                 Route::get('view-cancelled-especial-external-gc', [FinanceController::class, 'view'])->name('view');
             });
+
+            Route::name('budgetad.')->group(function () {
+                Route::get('budget-adjustments-pending', [FinanceController::class, 'budgetAdjustmentsPending'])->name('pending');
+            });
+
+
         });
 
         Route::get('/download/{filename}', function ($filename) {
@@ -532,8 +538,8 @@ Route::middleware(['auth'])->group(function () {
         })->name('download');
     })->middleware('userType:finance');
 
-    //? Retailstore
-    Route::prefix('retail')->group(function () {
+    //? Retail
+    Route::middleware('userType:retail,admin')->prefix('retail')->group(function () {
         Route::name('retail.')->group(function () {
             Route::get('retailstore-gc-request', [RetailController::class, 'gcRequest'])->name('gc.request');
             Route::post('retailstore-gc-request-submit', [RetailController::class, 'gcRequestsubmit'])->name('gc.request.submit');
@@ -584,7 +590,9 @@ Route::middleware(['auth'])->group(function () {
             });
         });
     });
-    Route::prefix('retailgroup')->name('retailgroup.')->group(function () {
+
+    //? Retail Group
+    Route::middleware('userType:retailgroup,admin')->prefix('retailgroup')->name('retailgroup.')->group(function () {
         Route::get('pending-gc-request', [RetailGroupController::class, 'pendingGcRequest'])->name('pending');
 
         Route::name('recommendation.')->group(function () {
@@ -598,7 +606,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('legder', [RetailGroupController::class, 'ledger'])->name('ledger');
     });
 
-    Route::prefix('custodian')->group(function () {
+    //? Custodian
+    Route::middleware('userType:custodian,admin')->prefix('custodian')->group(function () {
 
         Route::name('custodian.')->group(function () {
 
@@ -619,32 +628,34 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request');
             });
 
-        Route::name('check.')->group(function () {
-            Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
-        });
-        Route::name('production.')->group(function () {
-            Route::get('production', [CustodianController::class, 'productionIndex'])->name('index');
-            Route::get('production-cancelled', [CustodianController::class, 'productionCancelled'])->name('pro.cancelled');
-            Route::get('production-cancelled-details-{id}', [CustodianController::class, 'productionCancelledDetails'])->name('cancelled.details');
-            Route::get('production-details-{id}', [CustodianController::class, 'productionApprovedDetails'])->name('details');
-            Route::get('barcode-details-{id}', [CustodianController::class, 'barcodeApprovedDetails'])->name('barcode.details');
-            Route::get('barcode-every-{id}', [CustodianController::class, 'getEveryBarcode'])->name('barcode.every');
-            Route::get('requisition-details-{id}', [CustodianController::class, 'getRequisitionDetails'])->name('requisition');
-        });
-        Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
-        Route::post('upload', [CustodianController::class, 'upload'])->name('upload');
+            Route::name('check.')->group(function () {
+                Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
+            });
+            Route::name('production.')->group(function () {
+                Route::get('production', [CustodianController::class, 'productionIndex'])->name('index');
+                Route::get('production-cancelled', [CustodianController::class, 'productionCancelled'])->name('pro.cancelled');
+                Route::get('production-cancelled-details-{id}', [CustodianController::class, 'productionCancelledDetails'])->name('cancelled.details');
+                Route::get('production-details-{id}', [CustodianController::class, 'productionApprovedDetails'])->name('details');
+                Route::get('barcode-details-{id}', [CustodianController::class, 'barcodeApprovedDetails'])->name('barcode.details');
+                Route::get('barcode-every-{id}', [CustodianController::class, 'getEveryBarcode'])->name('barcode.every');
+                Route::get('requisition-details-{id}', [CustodianController::class, 'getRequisitionDetails'])->name('requisition');
+            });
+            Route::get('text-fileuploader', [CustodianController::class, 'textFileUploader'])->name('textfile.uploader');
+            Route::post('upload', [CustodianController::class, 'upload'])->name('upload');
 
-        Route::name('tracking.')->group(function () {
-            Route::get('gc-tracking', [CustodianController::class, 'gcTracking'])->name('gctracking');
-            Route::get('gc-tracking-submit', [CustodianController::class, 'gcTrackingSubmition'])->name('submit');
-        });
+            Route::name('tracking.')->group(function () {
+                Route::get('gc-tracking', [CustodianController::class, 'gcTracking'])->name('gctracking');
+                Route::get('gc-tracking-submit', [CustodianController::class, 'gcTrackingSubmition'])->name('submit');
+            });
+
+        Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
+        Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
 
     });
 });
 
-
-
-    Route::prefix('iad')->name('iad.')->group(function () {
+    //? Iad
+    Route::middleware('userType:iad,admin')->prefix('iad')->name('iad.')->group(function () {
         Route::get('receiving-index', [IadController::class, 'receivingIndex'])->name('receiving');
         Route::get('receiving-setup', [IadController::class, 'setupReceiving'])->name('setup.receiving');
         Route::post('validate-with-range', [IadController::class, 'validateByRange'])->name('validate.range');
@@ -728,7 +739,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('generate-barcode', [CustodianController::class, 'generateBarcode'])->name('generaate');
 
     //? Store Accounting
-    Route::prefix('store-accounting')
+    Route::middleware('userType:storeaccounting,admin')->prefix('store-accounting')
         ->group(
             function () {
                 Route::name('storeaccounting.')
@@ -846,8 +857,8 @@ Route::get('file-search', [ProcessFiles::class, 'barcodeSearch']);
 
 Route::get('generate-barcode', [CustodianController::class, 'generateBarcode'])->name('generaate');
 
-//Store Accounting
-Route::prefix('store-accounting')
+//? Store Accounting
+Route::middleware('userType:storeaccounting,admin')->prefix('store-accounting')
     ->group(
         function () {
             Route::name('storeaccounting.')
@@ -859,7 +870,7 @@ Route::prefix('store-accounting')
 
                         Route::get('storeaccouting-sales', [StoreAccountingController::class, 'storeAccoutingSales'])->name('sales');
                         Route::get('store-accounting-view-sales-{id}', [StoreAccountingController::class, 'storeaccountingViewSales'])->name('storeAccountingViewSales');
-               
+
 
                         Route::get('view-sales-{barcode}', [StoreAccountingController::class, 'viewSalesPostTransaction'])->name('storeAccountingPOStransaction');
 

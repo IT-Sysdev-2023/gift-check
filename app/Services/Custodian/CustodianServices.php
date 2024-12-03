@@ -678,4 +678,68 @@ class CustodianServices
             'datasrr' => $datasrr
         ];
     }
+
+    public function fetchReleased()
+    {
+        $data = SpecialExternalGcrequest::select(
+            'spexgc_reqby',
+            'spexgc_company',
+            'spexgc_id',
+            'spexgc_num',
+            'spexgc_datereq',
+            'spexgc_dateneed',
+            'spexgc_id',
+            'firstname',
+            'lastname',
+            'reqap_date'
+        )
+            ->join('approved_request', 'reqap_trid', 'spexgc_id')
+            ->join('users', 'user_id', 'reqap_preparedby')
+            ->with(
+                'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
+                'user:user_id,firstname,lastname'
+            )
+            ->where('spexgc_released', 'released')
+            ->where('reqap_approvedtype', 'special external releasing')
+            ->orderByDesc('spexgc_num')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+
+            return (object) [
+                'id' => $item->spexgc_id,
+                'num' => $item->spexgc_num,
+                'datereq' => Date::parse($item->spexgc_datereq)->toFormattedDateString(),
+                'dateneed' => Date::parse($item->spexgc_dateneed)->toFormattedDateString(),
+                'reqby' => $item->user->full_name,
+                'revby' => Str::ucfirst($item->firstname)  . ' ' . Str::ucfirst($item->lastname),
+                'acctname' => $item->specialExternalCustomer->spcus_acctname,
+                'reqappdate' => Date::parse($item->reqap_date)->toFormattedDateString(),
+            ];
+        });
+
+        return $data;
+    }
+
+    public function fetchReleasedDetails($id)
+    {
+        $spgc = $this->custodianDbServices->getSpecialExternalGcRequest($id);
+
+        $docs = $this->custodianDbServices->getDocs($id);
+
+        $barcodes = $this->custodianDbServices->getGcSpecialBarcodes($id);
+
+        $approvedReq = $this->custodianDbServices->getApprovedRequest($id);
+
+        $releasedReq = $this->custodianDbServices->getReleasedRequest($id);
+
+        return (object) [
+            'spgc' => $spgc,
+            'docs' => $docs,
+            'approved' => $approvedReq,
+            'released' => $releasedReq,
+            'barcodes' => $barcodes,
+        ];
+    }
 }

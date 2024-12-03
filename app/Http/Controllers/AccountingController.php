@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Accounting\AccountingServices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 
 class AccountingController extends Controller
 {
-    public function __construct(public AccountingServices $accountingservices, public DashboardClass $dashboard) {}
+    public function __construct(public AccountingServices $accountingservices, public DashboardClass $dashboard)
+    {
+    }
     public function index()
     {
         return inertia('Accounting/AccountingDashboard', [
@@ -60,11 +64,40 @@ class AccountingController extends Controller
             ->get();
 
         $data->transform(function ($item) {
-            $item->name = $item->spexgcemp_fname . ' ' . $item->spexgcemp_mname  . ' , ' . $item->spexgcemp_lname;
+            $item->name = $item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' , ' . $item->spexgcemp_lname;
             return $item;
         });
 
         return $data;
 
+    }
+
+    public function approvedGcRequest(Request $request)
+    {
+        $data = SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
+            ->selectFilterApproved()
+            ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
+            ->where('spexgc_promo', $request->promo ?? '0')
+            ->where('spexgc_status', 'approved')
+            ->where('reqap_approvedtype', 'Special External GC Approved')
+            ->orderByDesc('spexgc_num')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+
+            $item->company = $item->specialExternalCustomer->spcus_companyname;
+
+            $item->datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();
+            $item->dateneeded = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
+            $item->reqap_date = Date::parse($item->reqap_date)->toFormattedDateString();
+
+            return $item;
+        });
+        
+        return inertia('Custodian/ApprovedGcRequest', [
+            'columns' => ColumnHelper::$approved_gc_column,
+            'record' => $data
+        ]);
     }
 }
