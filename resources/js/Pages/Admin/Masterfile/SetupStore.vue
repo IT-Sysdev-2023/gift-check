@@ -1,8 +1,8 @@
 <template>
     <a-card>
         <a-card title="STORE SETUP"> </a-card>
-        <div class="store-button">
-            <a-button class="store-input" @click="() => addStore = true">
+        <div style="margin-left: 82%;">
+            <a-button style="background-color: #1e90ff; color:white" @click="() => addStore = true">
                 <PlusOutlined /> Add New Store
             </a-button>
         </div>

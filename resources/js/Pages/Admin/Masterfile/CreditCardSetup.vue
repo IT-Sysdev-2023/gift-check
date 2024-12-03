@@ -2,8 +2,8 @@
     <a-card>
         <a-card title="CREDIT CARD SETUP">
         </a-card>
-        <div class="creditcard-button">
-            <a-button class="creditcard-input" @click="() => addCreditCard = true">
+        <div style="margin-left: 79%;">
+            <a-button style="background-color: #1e90ff; color:white" @click="() => addCreditCard = true">
                 <PlusOutlined /> Add New Credit Card
             </a-button>
         </div>
@@ -155,7 +155,7 @@ export default {
 }
 
 .creditcard-input {
-    background-color: #0286df;
+    background-color: #1e90ff;
     color: white;
     margin-right: 6%;
 }
@@ -166,7 +166,7 @@ export default {
 }
 
 .creditcard-search-input {
-    border: 1px solid #0286df;
+    border: 1px solid #1e90ff;
     width: 20%;
     margin-right: 10%;
     min-width: 110px;

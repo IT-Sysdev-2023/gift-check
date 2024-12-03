@@ -1,8 +1,8 @@
 <template>
     <a-card>
         <a-card title="DENOMINATION SETUP"> </a-card>
-        <div class="denomination-button">
-            <a-button class="denomination-input" @click="() => addDenomination = true">
+        <div style="margin-left: 77.5%;">
+            <a-button style="background-color: #1e90ff; color: white" @click="() => addDenomination = true">
                 <PlusOutlined /> Add New Denomination
             </a-button>
 

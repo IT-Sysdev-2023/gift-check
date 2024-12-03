@@ -1,15 +1,15 @@
 <template>
     <a-card>
         <a-card title="STORE STAFF SETUP"> </a-card>
-        <div class="storeStaff-button">
-            <a-button class="storeStaff-input" @click="() => open = true">
+        <div style="margin-left: 82.5%;">
+            <a-button style="background-color: #1e90ff; color:white" @click="() => open = true">
                 <PlusOutlined /> Add New User
             </a-button>
         </div>
 
         <div style="margin-left: 70%; margin-top: 10px;">
-            <a-input-search allow-clear placeholder="Input search here!"
-                v-model:value="searchTerm" size="medium" style="width: 80%;" />
+            <a-input-search allow-clear placeholder="Input search here!" v-model:value="searchTerm" size="medium"
+                style="width: 80%;" />
         </div>
         <div style="margin-top: 10px;">
             <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
