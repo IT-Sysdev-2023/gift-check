@@ -106,10 +106,7 @@ declare module 'vue' {
     AResult: typeof import('ant-design-vue/es')['Result']
     ARow: typeof import('ant-design-vue/es')['Row']
     ArrowDownOutlined: typeof import('@ant-design/icons-vue')['ArrowDownOutlined']
-<<<<<<< HEAD
     ArrowLeftOutlined: typeof import('@ant-design/icons-vue')['ArrowLeftOutlined']
-=======
->>>>>>> 260dd2a50fadc5ed4bb9063b33a62de6bb2420ff
     ArrowsAltOutlined: typeof import('@ant-design/icons-vue')['ArrowsAltOutlined']
     ArrowUpOutlined: typeof import('@ant-design/icons-vue')['ArrowUpOutlined']
     AscTech: typeof import('./resources/js/Pages/StoreAccounting/AscTech.vue')['default']
@@ -169,12 +166,9 @@ declare module 'vue' {
     CheckOutlined: typeof import('@ant-design/icons-vue')['CheckOutlined']
     CheckVariance: typeof import('./resources/js/Pages/StoreAccounting/CheckVariance.vue')['default']
     CloseCircleFilled: typeof import('@ant-design/icons-vue')['CloseCircleFilled']
-<<<<<<< HEAD
     CloseCircleOutlined: typeof import('@ant-design/icons-vue')['CloseCircleOutlined']
     CloseOutlined: typeof import('@ant-design/icons-vue')['CloseOutlined']
     CloudDownloadOutlined: typeof import('@ant-design/icons-vue')['CloudDownloadOutlined']
-=======
->>>>>>> 260dd2a50fadc5ed4bb9063b33a62de6bb2420ff
     CloudUploadOutlined: typeof import('@ant-design/icons-vue')['CloudUploadOutlined']
     Colonade_colon: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/Colonade_colon.vue')['default']
     ColonadeColon: typeof import('./resources/js/Pages/StoreAccounting/ColonadeColon.vue')['default']
@@ -235,6 +229,7 @@ declare module 'vue' {
     ForApprovalPending: typeof import('./resources/js/Pages/Iad/Cards/ForApprovalPending.vue')['default']
     ForgotPassword: typeof import('./resources/js/Pages/Auth/ForgotPassword.vue')['default']
     FormItem: typeof import('./resources/js/Components/FormItem.vue')['default']
+    FormOutlined: typeof import('@ant-design/icons-vue')['FormOutlined']
     FundFilled: typeof import('@ant-design/icons-vue')['FundFilled']
     FundProjectionScreenOutlined: typeof import('@ant-design/icons-vue')['FundProjectionScreenOutlined']
     GcAllocation: typeof import('./resources/js/Pages/Treasury/Transactions/GcAllocation.vue')['default']
@@ -273,10 +268,7 @@ declare module 'vue' {
     LineChartOutlined: typeof import('@ant-design/icons-vue')['LineChartOutlined']
     Link: typeof import('@inertiajs/vue3')['Link']
     ListOfEod: typeof import('./resources/js/Pages/Eod/ListOfEod.vue')['default']
-<<<<<<< HEAD
     LockOutlined: typeof import('@ant-design/icons-vue')['LockOutlined']
-=======
->>>>>>> 260dd2a50fadc5ed4bb9063b33a62de6bb2420ff
     Login: typeof import('./resources/js/Pages/Login.vue')['default']
     LoginX: typeof import('./resources/js/Pages/Auth/LoginX.vue')['default']
     LogoutOutlined: typeof import('@ant-design/icons-vue')['LogoutOutlined']
@@ -465,6 +457,7 @@ declare module 'vue' {
     UbayDistribution: typeof import('./resources/js/Pages/StoreAccounting/UbayDistribution.vue')['default']
     UbayDistributionCenter: typeof import('./resources/js/Pages/Marketing/VerifiedGCperStore/UbayDistributionCenter.vue')['default']
     UbayDistributionPosTransaction: typeof import('./resources/js/Pages/StoreAccounting/UbayDistributionPosTransaction.vue')['default']
+    UndoOutlined: typeof import('@ant-design/icons-vue')['UndoOutlined']
     UnorderedListOutlined: typeof import('@ant-design/icons-vue')['UnorderedListOutlined']
     UpdatePasswordForm: typeof import('./resources/js/Pages/Profile/Partials/UpdatePasswordForm.vue')['default']
     UpdateProfileInformationForm: typeof import('./resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue')['default']
