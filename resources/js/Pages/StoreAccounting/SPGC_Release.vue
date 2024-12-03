@@ -1,6 +1,6 @@
 <template>
     <a-card>
-        <span style="margin-left: 45%; font-weight: bold">
+        <span style="margin-left: 45%; font-weight: bold; font-size: 15px;">
             RELEASE GC REPORTS
         </span>
         <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc;">
@@ -189,7 +189,7 @@
 
         <a-card style="width: 15%; position: absolute; top: 45px; border: 1px solid #dcdcdc;">
             <div style="font-weight: bold; font-size: small;">
-                <span style="color:green">
+                <span >
                     <ExportOutlined />
                 </span>
                 Release GC Reports

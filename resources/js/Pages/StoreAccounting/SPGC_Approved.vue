@@ -1,6 +1,6 @@
 <template>
     <a-card>
-        <span style="margin-left: 45%; font-weight: bold;">
+        <span style="margin-left: 45%; font-weight: bold; font-size: 15px;">
             APPROVED GC REPORTS
         </span>
         <div>
@@ -199,7 +199,7 @@
         <a-card style="width:15%; border: 1px solid #dcdcdc; position: absolute; top: 45px;">
 
             <div style="font-weight: bold; font-size: small;">
-                <span style="color:green">
+                <span>
                     <LikeOutlined />
 
                 </span>

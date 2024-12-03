@@ -63,8 +63,8 @@
         </a-button>
 
         <a-card style="width: 40%; position: absolute; top:25px;">
-            <span style="margin-left: 35%; font-weight: bold;">
-                <span style="color: green;">
+            <span style="margin-left: 35%; font-weight: bold; font-size: 15px;">
+                <span>
                     <DatabaseOutlined />
                 </span>
                 CHECK VARIANCE

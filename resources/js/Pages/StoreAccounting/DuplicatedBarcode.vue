@@ -115,10 +115,10 @@
                 </a-card>
                 <a-card style="width: 25%; position: absolute; top:0;">
                     <div style="margin-left: 50px;">
-                        <span style="color:green">
+                        <span>
                             <TagsOutlined />
                         </span>
-                        <span style="font-weight: bold;">
+                        <span style="font-weight: bold; font-size: 15px;">
                             Duplicate Barcodes
                         </span>
                         <div style="margin-left: 50px; color:#1e90ff; font-weight: bold;">
@@ -141,7 +141,7 @@
                         <span v-if="!textfile" style="font-weight: bold;">
                             Note:
                         </span>
-                        <span v-if="!textfile" style="margin-left: 5px;" class="wave-animation">
+                        <span v-if="!textfile" style="margin-left: 5px; color:red; font-weight: bold;">
 
                             Choose TEXTFILE type only !
                         </span>
@@ -277,10 +277,10 @@
 
                 <a-card style="width:25%; position: absolute; top:0;">
                     <div style="margin-left: 50px;">
-                        <span style="color:green">
+                        <span>
                             <TagsOutlined />
                         </span>
-                        <span style="font-weight: bold;">
+                        <span style="font-weight: bold; font-size: 15px;">
                             Duplicate Barcodes
                         </span>
                         <div style="margin-left: 45px; color:#1e90ff; font-weight: bold;">
@@ -304,7 +304,7 @@
                         <span v-if="!altaTextFile" style="font-weight: bold;">
                             Note:
                         </span>
-                        <span v-if="!altaTextFile" style="margin-left: 5px;" class="wave-animation">
+                        <span v-if="!altaTextFile" style="margin-left: 5px; color:red; font-weight: bold" >
                             Choose CSV type only !
                         </span>
                     </div>
