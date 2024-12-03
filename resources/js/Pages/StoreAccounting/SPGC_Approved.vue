@@ -1,6 +1,6 @@
 <template>
     <a-card>
-        <span style="margin-left: 45%; font-weight: bold;">
+        <span style="margin-left: 45%; font-weight: bold; font-size: 15px;">
             APPROVED GC REPORTS
         </span>
         <div>
@@ -9,17 +9,16 @@
                 <a-tabs>
                     <a-tab-pane key="1">
                         <template #tab>
-                            <span>
-                                PDF Per Customer
+                            <span style="font-weight: bold;">
+                                <FilePdfOutlined />
+                                PDF PER CUSTOMER
                             </span>
                         </template>
                         <a-card style="margin-top: 5px;">
 
                             <span style="font-weight: bold; margin-left: 60%;">
-                                Search:
-                                <a-input allow-clear v-model:value="pdfPerCustomerSearch"
-                                    placeholder="Input search here!"
-                                    style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
+                                <a-input-search allow-clear v-model:value="pdfPerCustomerSearch"
+                                    placeholder="Input search here!" style="width: 35%;" />
                             </span>
                             <div style="margin-top: 10px;margin-left: 30px;">
                                 <span style="color:red; font-style: oblique;">
@@ -29,7 +28,7 @@
                                     {{ this.message }}
                                 </span>
                             </div>
-                            <div style="padding: 10px; background-color: #b0c4de;">
+                            <div>
                                 <span style="font-weight: bold; margin-left: 30%;">
                                     Table showing PDF per customer
                                 </span>
@@ -55,17 +54,15 @@
 
                     <a-tab-pane key="2">
                         <template #tab>
-                            <span>
-                        
-                                PDF Per Barcode
+                            <span style="font-weight: bold;">
+                                <FilePdfOutlined />
+                                PDF PER BARCODE
                             </span>
                         </template>
                         <a-card style="margin-top: 5px;">
                             <span style="font-weight: bold; margin-left: 60%;">
-                                Search:
-                                <a-input allow-clear v-model:value="pdfPerBarcodeSearch"
-                                    placeholder="Input search here!"
-                                    style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
+                                <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch"
+                                    placeholder="Input search here!" style="width: 35%;" />
                             </span>
                             <div style="margin-top: 10px;margin-left: 30px;">
                                 <span style="color:red; font-style: oblique;">
@@ -75,9 +72,9 @@
                                     {{ this.message }}
                                 </span>
                             </div>
-                            <div style="padding: 10px; background-color: #b0c4de;">
+                            <div>
                                 <span style="font-weight: bold; margin-left: 30%;">
-                                    
+
                                     Table showing PDF per barcode
                                 </span>
                             </div>
@@ -102,18 +99,16 @@
 
                     <a-tab-pane key="3">
                         <template #tab>
-                            <span >
-                                
+                            <span style="font-weight: bold;">
+                                <FileExcelOutlined />
                                 EXCEL Per Customer
                             </span>
                         </template>
                         <a-card style="margin-top: 5px;">
 
                             <span style="font-weight: bold; margin-left: 60%;">
-                                Search:
-                                <a-input allow-clear v-model:value="spgcApprovedSearchPerCustomer"
-                                    placeholder="Input search here!"
-                                    style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
+                                <a-input-search allow-clear v-model:value="spgcApprovedSearchPerCustomer"
+                                    placeholder="Input search here!" style="width: 35%;" />
                             </span>
                             <div style="margin-top: 10px;margin-left: 30px;">
                                 <span style="color:red; font-style: oblique;">
@@ -124,9 +119,9 @@
                                 </span>
                             </div>
 
-                            <div style="padding: 10px; background-color: #b0c4de;">
+                            <div>
                                 <span style="font-weight: bold; margin-left: 30%;">
-                                  
+
                                     Table showing EXCEL per customer
                                 </span>
                             </div>
@@ -150,16 +145,15 @@
 
                     <a-tab-pane key="4">
                         <template #tab>
-                            <span >
-                               
+                            <span style="font-weight: bold">
+                                <FileExcelOutlined />
                                 EXCEL Per Barcode
                             </span>
                         </template>
                         <a-card style="margin-top: 5px;">
                             <span style="font-weight: bold; margin-left: 60%;">
-                                Search:
-                                <a-input allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
-                                    style="width: 20%; max-width: 30%; min-width: 30%; border: 1px solid #1e90ff" />
+                                <a-input-search allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
+                                    style="width: 35%;" />
                             </span>
                             <div style="margin-top: 10px;margin-left: 30px;">
                                 <span style="color:red; font-style: oblique;">
@@ -171,9 +165,9 @@
                             </div>
 
 
-                            <div style="padding: 10px; background-color: #b0c4de;">
+                            <div>
                                 <span style="font-weight: bold; margin-left: 30%;">
-                                  
+
                                     Table showing EXCEL per barcode
                                 </span>
                             </div>
@@ -199,7 +193,7 @@
         <a-card style="width:15%; border: 1px solid #dcdcdc; position: absolute; top: 45px;">
 
             <div style="font-weight: bold; font-size: small;">
-                <span style="color:green">
+                <span>
                     <LikeOutlined />
 
                 </span>

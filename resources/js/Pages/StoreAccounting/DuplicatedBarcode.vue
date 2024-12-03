@@ -4,27 +4,25 @@
             <a-tab-pane key="1">
                 <template #tab>
                     <span style="font-weight: bold;">
-                        Duplicated Report (CEBU)
+                       DUPLICATED REPORT (CEBU)
                     </span>
                 </template>
                 <a-card style="width: 72%; margin-left: 28%;">
                     <a-tabs>
                         <a-tab-pane key="1">
                             <template #tab>
-                                <span>
-                                    Tagbilaran
+                                <span style="font-weight: bold;">
+                                    TAGBILARAN
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 55%;">
-                                    <span style="font-weight: bold;">
-                                        Search:
-                                    </span>
-                                    <a-input allow-clear v-model:value="cebuTagbilaranSearch"
+                                <div style="margin-left: 60%;">
+                                    
+                                    <a-input-search allow-clear v-model:value="cebuTagbilaranSearch"
                                         placeholder="Input search here! "
-                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                        style="width: 100%;  " />
                                 </div>
-                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px;">
+                                <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tagbilaran
                                     </span>
@@ -45,20 +43,18 @@
                         </a-tab-pane>
                         <a-tab-pane key="2">
                             <template #tab>
-                                <span>
-                                    Talibon
+                                <span style="font-weight: bold">
+                                    TALIBON
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 55%;">
-                                    <span style="font-weight: bold;">
-                                        Search:
-                                    </span>
-                                    <a-input allow-clear v-model:value="cebuTalibonSearch"
+                                <div style="margin-left: 60%;">
+                                    
+                                    <a-input-search allow-clear v-model:value="cebuTalibonSearch"
                                         placeholder="Input search here! "
-                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                        style="width: 100%;  " />
                                 </div>
-                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px;">
+                                <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Talibon
                                     </span>
@@ -79,20 +75,18 @@
                         </a-tab-pane>
                         <a-tab-pane key="3">
                             <template #tab>
-                                <span>
-                                    Tubigon
+                                <span style="font-weight: bold;">
+                                   TUBIGON
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 55%;">
-                                    <span style="font-weight: bold;">
-                                        Search:
-                                    </span>
-                                    <a-input allow-clear v-model:value="cebuTubigonSearch"
+                                <div style="margin-left: 60%;">
+                                    
+                                    <a-input-search allow-clear v-model:value="cebuTubigonSearch"
                                         placeholder="Input search here! "
-                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                        style="width: 100%;  " />
                                 </div>
-                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px;">
+                                <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tubigon
                                     </span>
@@ -115,10 +109,10 @@
                 </a-card>
                 <a-card style="width: 25%; position: absolute; top:0;">
                     <div style="margin-left: 50px;">
-                        <span style="color:green">
+                        <span>
                             <TagsOutlined />
                         </span>
-                        <span style="font-weight: bold;">
+                        <span style="font-weight: bold; font-size: 15px;">
                             Duplicate Barcodes
                         </span>
                         <div style="margin-left: 50px; color:#1e90ff; font-weight: bold;">
@@ -141,7 +135,7 @@
                         <span v-if="!textfile" style="font-weight: bold;">
                             Note:
                         </span>
-                        <span v-if="!textfile" style="margin-left: 5px;" class="wave-animation">
+                        <span v-if="!textfile" style="margin-left: 5px; color:red; font-weight: bold;">
 
                             Choose TEXTFILE type only !
                         </span>
@@ -161,7 +155,7 @@
             <a-tab-pane key="2">
                 <template #tab>
                     <span style="font-weight: bold;">
-                        Duplicated Report (ALTTA CITTA)
+                        DUPLICATED REPORT (ALTTA CITTA)
                     </span>
                 </template>
 
@@ -169,20 +163,18 @@
                     <a-tabs>
                         <a-tab-pane key="1">
                             <template #tab>
-                                <span>
-                                    Tagbilaran
+                                <span style="font-weight: bold;">
+                                    TAGBILARAN
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 55%;">
-                                    <span style="font-weight: bold;">
-                                        Search:
-                                    </span>
-                                    <a-input allow-clear v-model:value="alttaTagbilaranSearch"
+                                <div style="margin-left: 60%;">
+                                    
+                                    <a-input-search allow-clear v-model:value="alttaTagbilaranSearch"
                                         placeholder="Input search here! "
-                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                        style="width: 100%;  " />
                                 </div>
-                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px">
+                                <div style=" margin-top: 10px">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tagbilaran
                                     </span>
@@ -204,20 +196,18 @@
                         </a-tab-pane>
                         <a-tab-pane key="2">
                             <template #tab>
-                                <span>
-                                    Talibon
+                                <span style="font-weight: bold;">
+                                   TALIBON
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 55%;">
-                                    <span style="font-weight: bold;">
-                                        Search:
-                                    </span>
-                                    <a-input allow-clear v-model:value="alttaTalibonSearch"
+                                <div style="margin-left: 60%;">
+                                    
+                                    <a-input-search allow-clear v-model:value="alttaTalibonSearch"
                                         placeholder="Input search here! "
-                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                        style="width: 100%;  " />
                                 </div>
-                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px;">
+                                <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Talibon
                                     </span>
@@ -239,20 +229,18 @@
                         </a-tab-pane>
                         <a-tab-pane key="3">
                             <template #tab>
-                                <span>
-                                    Tubigon
+                                <span style="font-weight: bold;">
+                                    TUBIGON
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 55%;">
-                                    <span style="font-weight: bold;">
-                                        Search:
-                                    </span>
-                                    <a-input allow-clear v-model:value="alttaTubigonSearch"
+                                <div style="margin-left: 60%;">
+                                    
+                                    <a-input-search allow-clear v-model:value="alttaTubigonSearch"
                                         placeholder="Input search here! "
-                                        style="width: 80%; border: 1px solid #1e90ff " />
+                                        style="width: 100%;  " />
                                 </div>
-                                <div style="padding: 10px; background-color: #b0c4de; margin-top: 10px">
+                                <div style=" margin-top: 10px">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tubigon
                                     </span>
@@ -277,10 +265,10 @@
 
                 <a-card style="width:25%; position: absolute; top:0;">
                     <div style="margin-left: 50px;">
-                        <span style="color:green">
+                        <span>
                             <TagsOutlined />
                         </span>
-                        <span style="font-weight: bold;">
+                        <span style="font-weight: bold; font-size: 15px;">
                             Duplicate Barcodes
                         </span>
                         <div style="margin-left: 45px; color:#1e90ff; font-weight: bold;">
@@ -304,7 +292,7 @@
                         <span v-if="!altaTextFile" style="font-weight: bold;">
                             Note:
                         </span>
-                        <span v-if="!altaTextFile" style="margin-left: 5px;" class="wave-animation">
+                        <span v-if="!altaTextFile" style="margin-left: 5px; color:red; font-weight: bold" >
                             Choose CSV type only !
                         </span>
                     </div>

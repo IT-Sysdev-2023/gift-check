@@ -1,10 +1,27 @@
 <template>
-    <div style="margin-left: 70%; font-weight: bold;">
-        Search:
-        <a-input allow-clear style="border: 1px solid #1e90ff; width: 60%;" v-model:value="storeSearchBox"
-            placeholder="Input search here!" />
-    </div>
-    <span style="font-weight: bold;">
+    <a-card>
+        <a-card title="STORE SALES">
+        </a-card>
+        <div style="margin-left: 70%; font-weight: bold; margin-top: 10px;">
+            <a-input-search allow-clear style=" width: 90%;" v-model:value="storeSearchBox"
+                placeholder="Input search here!" />
+        </div>
+        <div style="margin-top: 10px;">
+            <a-table :data-source="data.data" :columns="storeColumns" :pagination="false" size="small">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'view'">
+                        <a-button @click="viewStore(record)" class="me-2 me-sm-5"
+                            style="color:white; background-color: #1e90ff;">
+                            <EyeOutlined />
+                        </a-button>
+                    </template>
+                </template>
+            </a-table>
+            <pagination :datarecords="data" class="mt-5" />
+        </div>
+    </a-card>
+
+    <!-- <span style="font-weight: bold;">
         Select
         <a-select id="select_entries" style="background-color: #1e90ff; border: 1px solid #1e90ff"
             @change="storeSelectEntries" v-model:value="storeDataForSelectEntries.select_entries">
@@ -14,26 +31,7 @@
             <a-select-option value="100">100</a-select-option>
         </a-select>
         entries
-    </span>
-
-    <div style="font-weight: bold; background-color: #b0c4de; margin-top: 10px; padding: 10px;">
-        <span style="margin-left: 45%;">
-            Store Sales
-        </span>
-    </div>
-    <div style="margin-top: 10px;">
-        <a-table :data-source="data.data" :columns="storeColumns" :pagination="false" size="small">
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex === 'view'">
-                    <a-button @click="viewStore(record)" class="me-2 me-sm-5"
-                        style="color:white; background-color: #1e90ff;">
-                        <EyeOutlined />
-                    </a-button>
-                </template>
-            </template>
-        </a-table>
-        <pagination :datarecords="data" class="mt-5" />
-    </div>
+    </span> -->
 
     <!-- {{ data }} -->
 </template>
