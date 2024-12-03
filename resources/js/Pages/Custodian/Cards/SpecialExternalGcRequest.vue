@@ -65,7 +65,7 @@
                 <p class="message-text text-white">Released</p>
                 <p class="sub-text text-white">Released Gc Infos</p>
             </div>
-            <a-badge :overflow-count="999" :number-style="{ backgroundColor: '#52c41a' }"  @click="() => $inertia.get(route('custodian.released'))">
+            <a-badge :overflow-count="999" :count="count.countReleased" :number-style="{ backgroundColor: '#52c41a' }"  @click="() => $inertia.get(route('custodian.released'))">
                 <a-button >
                     <template #icon>
                         <FolderFilled />

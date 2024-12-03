@@ -725,10 +725,11 @@ class CustodianServices
     public function fetchReleasedDetails($id)
     {
         $spgc = $this->custodianDbServices->getSpecialExternalGcRequest($id);
-        dd($spgc->toArray());
+
         $docs = $this->custodianDbServices->getDocs($id);
 
         $approvedReq = $this->custodianDbServices->getApprovedRequest($id);
+
         $releasedReq = $this->custodianDbServices->getReleasedRequest($id);
 
         return (object) [

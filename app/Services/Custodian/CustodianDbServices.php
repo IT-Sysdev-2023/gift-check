@@ -86,21 +86,21 @@ class CustodianDbServices
 
     public function getDocs($id)
     {
-        return Document::where('doc_trid', $id)
-            ->where('doc_type', 'Special External GC Request')
-            ->value('doc_fullpath');
+        return Document::select('doc_fullpath')->where('doc_trid', $id)
+            ->where('doc_type', 'Special External GC Request')->get();
     }
 
     public function getApprovedRequest($id)
     {
-        return ApprovedRequest::select('reqap_remarks', 'reqap_date')
-            ->with('user:user_id,firstname,lastname')->where('reqap_trid', $id)
+        return ApprovedRequest::select('reqap_remarks', 'reqap_date', 'reqap_preparedby')
+            ->with('user:user_id,firstname,lastname')
+            ->where('reqap_trid', $id)
             ->where('reqap_approvedtype', 'special external gc review')
             ->first();
     }
     public function getReleasedRequest($id)
     {
-        return ApprovedRequest::select('reqap_remarks', 'reqap_date')
+        return ApprovedRequest::select('reqap_remarks', 'reqap_date', 'reqap_preparedby')
             ->with('user:user_id,firstname,lastname')->where('reqap_trid', $id)
             ->where('reqap_approvedtype', 'special external releasing')
             ->first();
