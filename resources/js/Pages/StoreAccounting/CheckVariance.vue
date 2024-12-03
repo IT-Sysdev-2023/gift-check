@@ -23,7 +23,7 @@
                         <a-table :columns="varianceTable" :data-source="variance.tagbilaranData.data"
                             :pagination="false" size="small">
                         </a-table>
-                        <pagination :datarecords="variance.tagbilaranData" class="mt-5" size="small" />
+                        <pagination :datarecords="variance.tagbilaranData" class="mt-5" />
                     </div>
 
                 </a-tab-pane>
