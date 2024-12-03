@@ -5,6 +5,7 @@ namespace App\Services\Finance;
 use App\Helpers\NumberHelper;
 use App\Models\ApprovedBudgetRequest;
 use App\Models\Assignatory;
+use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
 use App\Models\CancelledBudgetRequest;
 use App\Models\LedgerBudget;
@@ -300,6 +301,32 @@ class FinanceService extends FileHandler
             $data->checkedby =  User::select('firstname', 'lastname')->where('user_id', $data->abr_approved_by)->value('full_name');
             $data->appby =  User::select('firstname', 'lastname')->where('user_id', $data->abr_checked_by)->value('full_name');
         }
+        return $data;
+    }
+
+    public function getBudgetAdjustmentsData()
+    {
+        $data = BudgetAdjustment::select(
+            'adj_request',
+            'adj_requested_at',
+            'adj_no',
+            'adjust_type',
+            'adj_requested_by'
+        )
+            ->with('user:user_id,firstname,lastname')
+            ->where('adj_request_status', '0')
+            ->get();
+
+        $data->transform(function ($item) {
+            return (object) [
+                'request' => $item->adj_request,
+                'requestAt' => $item->adj_requested_at,
+                'reqno' => $item->adj_no,
+                'type' => $item->adjust_type,
+                'reqby' => $item->user->full_name,
+            ];
+        });
+
         return $data;
     }
 }

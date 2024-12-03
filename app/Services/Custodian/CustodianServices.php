@@ -728,6 +728,8 @@ class CustodianServices
 
         $docs = $this->custodianDbServices->getDocs($id);
 
+        $barcodes = $this->custodianDbServices->getGcSpecialBarcodes($id);
+
         $approvedReq = $this->custodianDbServices->getApprovedRequest($id);
 
         $releasedReq = $this->custodianDbServices->getReleasedRequest($id);
@@ -737,6 +739,7 @@ class CustodianServices
             'docs' => $docs,
             'approved' => $approvedReq,
             'released' => $releasedReq,
+            'barcodes' => $barcodes,
         ];
     }
 }
