@@ -19,11 +19,13 @@ use App\Models\Store;
 use App\Models\StoreEodItem;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreGcrequest;
+use App\Models\StoreReceived;
 use App\Models\StoreReceivedGc;
 use App\Models\StoreRequestItem;
 use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
 use App\Models\TransactionRevalidation;
+use App\Models\TransactionStore;
 use App\Services\Admin\AdminServices;
 use App\Services\Finance\FinanceService;
 use App\Services\RetailStore\RetailServices;
@@ -603,7 +605,7 @@ class RetailController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $ledgerData->transform(function ($item) use (&$bal) { 
+        $ledgerData->transform(function ($item) use (&$bal) {
             $item->debit = NumberHelper::currency($item->sledger_debit);
             $item->date = Date::parse($item->sledger_date)->format('F d, Y');
             $item->time = Date::parse($item->sledger_date)->format('H:i:s A');
@@ -634,7 +636,7 @@ class RetailController extends Controller
             $item->amount = NumberHelper::currency($item->sledger_credit);
             $item->date = Date::parse($item->trans_datetime)->format('F d, Y');
             $item->time = Date::parse($item->trans_datetime)->format('H:i:s A');
-            $item->cashier = ucwords($item->ss_firstname.' '.$item->ss_lastname);
+            $item->cashier = ucwords($item->ss_firstname . ' ' . $item->ss_lastname);
 
             return $item;
         });
@@ -643,6 +645,46 @@ class RetailController extends Controller
             'ledger_data' => $ledgerData,
             'reval_data' => $revalData
         ]);
+    }
+
+    public function storeLedgerdetails(Request $request)
+    {
+        // $data = StoreReceived::select([
+        //     'store_received.srec_recid',
+        //     'store_received.srec_at',
+        //     'store_received.srec_checkedby',
+        //     'store_received.srec_rel_id',
+        //     'users.firstname',
+        //     'users.lastname'
+        // ])
+        // ->join('users', 'users.user_id', '=', 'store_received.srec_by')
+        // ->where('store_received.srec_id', $request->id)
+        // ->where('store_received.srec_store_id', $request->user()->store_assigned)
+        // ->get();
+
+        $data  = TransactionStore::select(
+            'transaction_stores.trans_type',
+            'transaction_stores.trans_number',
+            'transaction_stores.trans_datetime',
+            'transaction_stores.trans_type',
+            'stores.store_name',
+            'store_staff.ss_firstname',
+            'store_staff.ss_lastname',
+            DB::raw('IFNULL(transaction_docdiscount.trdocdisc_amnt, 0.00) as docdisc')
+        )
+        ->join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
+        ->join('store_staff', 'store_staff.ss_id', '=', 'transaction_stores.trans_cashier')
+        ->leftJoin('transaction_docdiscount', 'transaction_docdiscount.trdocdisc_trid', '=', 'transaction_stores.trans_sid')
+        ->where('transaction_stores.trans_sid', $request->id)
+        ->where('transaction_stores.trans_store', $request->user()->store_assigned)
+        ->get();
+
+        dd($data->toArray());
+
+      
+
+
+
     }
 
 
