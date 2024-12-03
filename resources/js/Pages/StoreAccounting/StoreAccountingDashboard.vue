@@ -52,6 +52,8 @@ export default {
 
     data() {
         return {
+            open: false,
+            message: '',
             dataForSelectEntries: {
                 select_entries: this.pagination
             },
@@ -120,6 +122,7 @@ export default {
             })
 
         },
+      
         // moveButton() {
          
         //     const newTop = Math.floor(Math.random() * 200 - 100); 

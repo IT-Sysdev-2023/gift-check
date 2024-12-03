@@ -6,7 +6,15 @@
                     :pagination="false"
                     :dataSource="ledger_data.data"
                     :columns="ledgercolumns"
-                />
+                >
+                    <template v-slot:bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'view'">
+                            <a-button type="primary" @click="gcsalesdetails(record.sledger_ref)">
+                                <FolderFilled />
+                            </a-button>
+                        </template>
+                    </template>
+                </a-table>
                 <Pagination :datarecords="ledger_data" class="mt-2" />
             </a-tab-pane>
             <a-tab-pane key="2" tab="Store Revalidation" force-render>
@@ -14,8 +22,16 @@
                     :pagination="false"
                     :dataSource="reval_data.data"
                     :columns="revalidatecolumns"
-                />
-                <Pagination :datarecords="reval_data" class="mt-2"/>
+                >
+                    <template v-slot:bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'view'">
+                            <a-button type="primary">
+                                <FolderFilled />
+                            </a-button>
+                        </template>
+                    </template>
+                </a-table>
+                <Pagination :datarecords="reval_data" class="mt-2" />
             </a-tab-pane>
         </a-tabs>
     </AuthenticatedLayout>
@@ -24,6 +40,7 @@
 <script setup>
 import Pagination from "@/Components/Pagination.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import axios from "axios";
 import { ref } from "vue";
 
 defineProps({
@@ -31,6 +48,15 @@ defineProps({
     reval_data: Object,
 });
 const activeKey = ref("1");
+
+const gcsalesdetails = (id) =>{
+    axios.get(route('retail.store_ledger.storeledgerdetails'),{
+        params:{
+            id: id
+        }
+    })
+}
+
 
 const ledgercolumns = [
     {

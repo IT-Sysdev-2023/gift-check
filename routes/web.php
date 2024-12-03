@@ -580,6 +580,7 @@ Route::middleware(['auth'])->group(function () {
 
             Route::name('store_ledger.')->group(function () {
                 Route::get('store-ledger', [RetailController::class, 'storeLedger'])->name('storeledger');
+                Route::get('store-ledger-details', [RetailController::class, 'storeLedgerdetails'])->name('storeledgerdetails');
             });
         });
     });
@@ -641,8 +642,11 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('gc-tracking-submit', [CustodianController::class, 'gcTrackingSubmition'])->name('submit');
             });
 
-        });
+        Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
+        Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
+
     });
+});
 
     //? Iad
     Route::middleware('userType:iad,admin')->prefix('iad')->name('iad.')->group(function () {
