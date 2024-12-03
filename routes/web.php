@@ -580,6 +580,7 @@ Route::middleware(['auth'])->group(function () {
 
             Route::name('store_ledger.')->group(function () {
                 Route::get('store-ledger', [RetailController::class, 'storeLedger'])->name('storeledger');
+                Route::get('store-ledger-details', [RetailController::class, 'storeLedgerdetails'])->name('storeledgerdetails');
             });
         });
     });
