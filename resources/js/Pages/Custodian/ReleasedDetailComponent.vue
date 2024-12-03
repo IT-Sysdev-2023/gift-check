@@ -1,6 +1,5 @@
 <template>
     <AuthenticatedLayout>
-        <!-- {{ records.spgc.user.full_name }} -->
         <a-card>
             <a-row :gutter="[16, 16]">
                 <a-col :span="12">
