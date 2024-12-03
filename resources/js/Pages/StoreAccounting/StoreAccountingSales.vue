@@ -1,7 +1,7 @@
 <template>
 
     <a-card>
-        <a-card title=" Treasury Sales"></a-card>
+        <a-card title=" TREASURY SALES"></a-card>
         <div style="margin-top: 10px; margin-left: 70%;">
             <a-input-search allow-clear v-model:value="salesSearchBox" placeholder="Input search here!"
                 style="width: 90%;" />
