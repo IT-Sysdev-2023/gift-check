@@ -5,7 +5,7 @@
             <a-table size="small" bordered :dataSource="availableGc" :columns="columns" :pagination="false">
                 <template v-slot:bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'denomination'">
-                        <a-tag color="#87d068">{{ record.denomination }}</a-tag>
+                        <a-tag color="#108ee9">{{ record.denomination }}</a-tag>
                     </template>
                     <template v-if="column.dataIndex === 'count'">
                         <a-tag color="#108ee9">{{ record.count }}</a-tag>
