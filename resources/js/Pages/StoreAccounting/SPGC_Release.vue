@@ -9,7 +9,7 @@
                     <template #tab>
                         <span style="font-weight: bold">
                             <FilePdfOutlined />
-                           PDF PER CUSTOMER
+                           Pdf per Customer
                         </span>
                     </template>
 
@@ -52,7 +52,7 @@
                     <template #tab>
                         <span style="font-weight: bold;">
                             <FilePdfOutlined />
-                           PDF PER BARCODE
+                           Pdf per Barcode
                         </span>
                     </template>
 
@@ -96,7 +96,7 @@
                     <template #tab>
                         <span style="font-weight: bold;">
                             <FileExcelOutlined />
-                          EXCEL PER CUSTOMER
+                          Excel per Customer
                         </span>
                     </template>
                     <a-card style="margin-top: 5px;">
@@ -139,7 +139,7 @@
                     <template #tab>
                         <span style="font-weight: bold;">
                             <FileExcelOutlined />
-                          EXCEL PER BARCODE
+                          Excel per Barcode
                         </span>
                     </template>
 

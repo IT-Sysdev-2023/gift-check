@@ -18,9 +18,7 @@
                                     )
                                 "
                             >
-                                <FolderFilled />{{ record.sledger_ref }},{{
-                                    record.entry
-                                }}
+                                <FolderFilled />
                             </a-button>
                         </template>
                     </template>
@@ -74,37 +72,76 @@
                 </a-row>
             </a-card>
         </a-modal>
-        <a-modal v-model:open="type2" width="900px">
-            {{ type2data }}
-            <a-card>
-                <a-row :gutter="[16,16]">
+        <a-modal v-model:open="type2" width="900px" :footer="false">
+            <a-card title="GC Sales Details">
+                <a-row :gutter="[16, 16]">
                     <a-col :span="12">
                         <a-form-item label="Transaction #">
-                            <a-input :value="type2data.data.data.trans_number" readonly/>
+                            <a-input
+                                :value="type2data.data.data.trans_number"
+                                readonly
+                            />
                         </a-form-item>
                         <a-form-item label="Subtotal">
-                            <a-input :value="type2data.data.tpayment" readonly/>
+                            <a-input
+                                :value="type2data.data.tpayment"
+                                readonly
+                            />
                         </a-form-item>
                         <a-form-item label="Total Line Disc">
-                            <a-input :value="type2data.data.totlinedisc" readonly/>
+                            <a-input
+                                :value="type2data.data.totlinedisc"
+                                readonly
+                            />
                         </a-form-item>
                         <a-form-item label="Subtotal Disc">
-                            <a-input :value="type2data.data.data.docdisc" readonly/>
+                            <a-input
+                                :value="type2data.data.data.docdisc"
+                                readonly
+                            />
                         </a-form-item>
                         <a-form-item label="Total Payment">
-                            <a-input :value="type2data.data.tpayment" readonly/>
+                            <a-input
+                                :value="type2data.data.tpayment"
+                                readonly
+                            />
                         </a-form-item>
                         <a-form-item label="Cashier">
-                            <a-input :value="type2data.data.data.cashier" readonly/>
+                            <a-input
+                                :value="type2data.data.data.cashier"
+                                readonly
+                            />
                         </a-form-item>
-                        <a-form-item label="Amount Tender">
-                            <a-input readonly/>
+                        <a-form-item :label="type2data.data.typelabel">
+                            <a-input
+                                :value="type2data.data.type.payment_cash"
+                                readonly
+                            />
                         </a-form-item>
                         <a-form-item label="Change">
-                            <a-input readonly/>
+                            <a-input
+                                :value="type2data.data.type.payment_change"
+                                readonly
+                            />
                         </a-form-item>
                     </a-col>
-                    <a-col :span="12"></a-col>
+                    <a-col :span="12">
+                        <a-card>
+                            <a-table
+                                size="small"
+                                :dataSource="type2data.table"
+                                :columns="type2columns"
+                            >
+                                <template v-slot:bodyCell="{ column, record }">
+                                    <template
+                                        v-if="column.dataIndex === 'dis'"
+                                    >
+                                        {{ record.discount ? record.discount : 0.00 }}
+                                    </template>
+                                </template>
+                            </a-table>
+                        </a-card>
+                    </a-col>
                 </a-row>
             </a-card>
         </a-modal>
@@ -145,7 +182,7 @@ const gcsalesdetails = async (id, entry) => {
                 type1table.value = r.data.table;
                 type1.value = true;
             } else if (r.data.type == "2") {
-                type2data.value = r.data
+                type2data.value = r.data;
                 type2.value = true;
             }
         });
@@ -163,6 +200,20 @@ const type1columns = [
     {
         title: "Total",
         dataIndex: "total",
+    },
+];
+const type2columns = [
+    {
+        title: "Barcode",
+        dataIndex: "sales_barcode",
+    },
+    {
+        title: "Denomination",
+        dataIndex: "denomination",
+    },
+    {
+        title: "Discount",
+        dataIndex: "dis",
     },
 ];
 

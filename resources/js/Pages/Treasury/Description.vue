@@ -13,7 +13,7 @@
         <a-descriptions-item label="Budget Requested" :span="2">{{
             data.br_request
         }}</a-descriptions-item>
-        <a-descriptions-item label="Request Document">
+        <a-descriptions-item label="Request Document" v-if="data.br_file_docno">
             <a-image
                 style="height: 100px"
                 :src="data.br_file_docno"
@@ -29,29 +29,29 @@
     </a-descriptions>
     <a-descriptions bordered style="margin-top: 20px">
         <a-descriptions-item label="Date Approved">{{
-            data.abr.approved_at
+            data.abr?.approved_at
         }}</a-descriptions-item>
 
-        <a-descriptions-item label="Approved Document">
+        <a-descriptions-item label="Approved Document" v-if="data.abr?.file_doc_no">
             <a-image
                 style="height: 100px"
-                :src="data.abr.file_doc_no"
+                :src="data.abr?.file_doc_no"
                 :fallback="imageUrl"
             />
         </a-descriptions-item>
         <a-descriptions-item label="Approved Remarks"
             ><a-tag color="cyan">{{
-                data.abr.budget_remark
+                data.abr?.budget_remark
             }}</a-tag></a-descriptions-item
         >
         <a-descriptions-item label="Approved By" :span="2">{{
-            data.abr.approved_by
+            data.abr?.approved_by
         }}</a-descriptions-item>
         <a-descriptions-item label="Checked By">{{
-            data.abr.checked_by
+            data.abr?.checked_by
         }}</a-descriptions-item>
         <a-descriptions-item label="Prepared By">{{
-            data.abr.user_prepared_by.full_name
+            data.abr?.user_prepared_by.full_name
         }}</a-descriptions-item>
     </a-descriptions>
 </template>

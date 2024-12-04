@@ -38,6 +38,7 @@ use App\Http\Controllers\Treasury\Transactions\RetailGcReleasingController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\TreasuryController;
 use App\Http\Controllers\UserDetailsController;
+use App\Models\Assignatory;
 use App\Models\InstitutEod;
 use App\Models\InstitutPayment;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -60,8 +61,10 @@ Route::get('/not-found', function () {
 Route::fallback(function () {
     return view('notFound');
 });
-Route::get('kanding', function () {
-    return Storage::disk('fad')->files();
+Route::get('kanding', function (Request $request) {
+    // return Storage::disk('fad')->files();
+    $checkBy = Assignatory::select('assig_position', 'assig_name as label', 'assig_id as value')->where('assig_id', 10)->get();
+    dd($checkBy);
 });
 
 
@@ -623,6 +626,7 @@ Route::middleware(['auth'])->group(function () {
             });
 
             Route::name('approved.')->group(function () {
+                // Route::get('approved-gc-request', [AccountingController::class, 'approvedGcRequest'])->name('request');
                 Route::get('approved-gc-request', [CustodianController::class, 'approvedGcRequest'])->name('request');
                 Route::get('approve-request-special', [CustodianController::class, 'setupApproval'])->name('setup');
                 Route::get('reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request');
