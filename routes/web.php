@@ -527,6 +527,8 @@ Route::middleware(['auth'])->group(function () {
 
             Route::name('budgetad.')->group(function () {
                 Route::get('budget-adjustments-pending', [FinanceController::class, 'budgetAdjustmentsPending'])->name('pending');
+                Route::get('budget-adjustments-approval-{id}', [FinanceController::class, 'budgetAdjustmentsApproval'])->name('approval');
+                Route::post('budget-adjustments-submit', [FinanceController::class, 'budgetAdjustmentSubmission'])->name('submit');
             });
 
 

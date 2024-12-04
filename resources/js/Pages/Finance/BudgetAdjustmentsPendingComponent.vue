@@ -4,7 +4,7 @@
             <a-table bordered size="small" :data-source="records" :columns="columns">
                 <template #bodyCell="{column, record}">
                     <template v-if="column.key === 'details'">
-                        <a-button >
+                        <a-button @click="pending(record.id)">
                             <AreaChartOutlined />
                         </a-button>
                     </template>
@@ -14,6 +14,7 @@
     </AuthenticatedLayout>
 </template>
 <script setup lang="ts">
+import { router } from '@inertiajs/core';
 import { ref } from 'vue';
 
 defineProps < {
@@ -21,6 +22,7 @@ defineProps < {
 } >();
 
 interface Record {
+    id: number,
     request: string,
     requestAt: string,
     reqno: number,
@@ -55,5 +57,9 @@ const columns = ref([
     },
 ]);
 
+
+const pending = (id: number) => {
+    router.get(route('finance.budgetad.approval', id))
+}
 
 </script>
