@@ -21,6 +21,9 @@
                     <span class="agcSpan">
                        ALTURAS GROUP OF COMPANIES
                     </span>
+                    <span class="agcSpanHolder">
+                        {{ item.holder }}
+                    </span>
                     <span class="denomSpan">
                         {{ item.spexgcemp_denom }}
                     </span>
@@ -105,6 +108,16 @@ export default {
     font-weight: bold;
     top: 22.8%;
     right: 43.6%;
+    position: absolute;
+}
+.agcSpanHolder{
+    text-align: center;
+    width:390px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    font-weight: bold;
+    top: 30.8%;
+    right: 33.6%;
     position: absolute;
 }
 .denomSpan{
