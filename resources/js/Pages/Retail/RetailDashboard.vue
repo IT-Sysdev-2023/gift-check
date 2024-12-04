@@ -16,13 +16,19 @@
 
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
-                <store-gc-request-card :counts="countGcRequest" />
+                <m-card
+                title="Store Gc Request"
+                :pending="countGcRequest.PendingGcRequest"
+                :approved="countGcRequest.approved"
+                :cancelled="0"
+                pRoute="retail.gcrequest.pending.list"
+                aRoute="retail.approved.request"
+                />
             </a-col>
             <a-col :span="8">
                 <available-gc :availableGc :total />
             </a-col>
             <a-col :span="8">
-
                 <sold-gc :soldGc />
             </a-col>
         </a-row>

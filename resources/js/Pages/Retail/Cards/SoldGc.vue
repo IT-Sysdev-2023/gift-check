@@ -6,7 +6,7 @@
                     <a-tag color="#2db7f5">{{ record.denomination }}</a-tag>
                 </template>
                 <template v-if="column.dataIndex === 'total'">
-                    <a-tag color="#00e1ff">{{ record.total }}</a-tag>
+                    <a-tag color="#2db7f5">{{ record.total }}</a-tag>
                 </template>
             </template>
         </a-table>
