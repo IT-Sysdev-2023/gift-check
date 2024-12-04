@@ -3,10 +3,10 @@
         <a-table size="small" :pagination="false" bordered :dataSource="soldGc" :columns="columns">
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'denomination'">
-                    <a-tag color="#2db7f5">{{ record.denomination }}</a-tag>
+                    <a-tag color="#108ee9">{{ record.denomination }}</a-tag>
                 </template>
                 <template v-if="column.dataIndex === 'total'">
-                    <a-tag color="#2db7f5">{{ record.total }}</a-tag>
+                    <a-tag color="#108ee9">{{ record.total }}</a-tag>
                 </template>
             </template>
         </a-table>
