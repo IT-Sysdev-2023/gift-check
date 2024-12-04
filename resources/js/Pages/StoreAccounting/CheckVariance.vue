@@ -8,6 +8,7 @@
                             <!-- <span style="color: green;">
                                 <DatabaseOutlined />
                             </span> -->
+                            <DashOutlined />
                             Tagbilaran
                         </span>
                     </template>
@@ -33,6 +34,7 @@
                             <!-- <span style="color: green;">
                                 <DatabaseOutlined />
                             </span> -->
+                            <DashOutlined />
                             Talibon
                         </span>
                     </template>
