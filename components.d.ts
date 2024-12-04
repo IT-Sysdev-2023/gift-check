@@ -201,6 +201,7 @@ declare module 'vue' {
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     Dashboard: typeof import('./resources/js/Pages/Dashboard.vue')['default']
     DashboardOutlined: typeof import('@ant-design/icons-vue')['DashboardOutlined']
+    DashOutlined: typeof import('@ant-design/icons-vue')['DashOutlined']
     DatabaseOutlined: typeof import('@ant-design/icons-vue')['DatabaseOutlined']
     DeleteUserForm: typeof import('./resources/js/Pages/Profile/Partials/DeleteUserForm.vue')['default']
     DenominationSetup: typeof import('./resources/js/Pages/Admin/Masterfile/DenominationSetup.vue')['default']
@@ -293,10 +294,7 @@ declare module 'vue' {
     MarketingDashboard: typeof import('./resources/js/Pages/Marketing/MarketingDashboard.vue')['default']
     MarketingSideBar: typeof import('./resources/js/Components/MarketingSideBar.vue')['default']
     MCard: typeof import('./resources/js/Pages/Marketing/Card/MCard.vue')['default']
-<<<<<<< HEAD
-=======
     MenuFoldOutlined: typeof import('@ant-design/icons-vue')['MenuFoldOutlined']
->>>>>>> 3255189ccd4926b63a4d0f4c2890a871909e0eca
     MenuUnfoldOutlined: typeof import('@ant-design/icons-vue')['MenuUnfoldOutlined']
     MinusCircleOutlined: typeof import('@ant-design/icons-vue')['MinusCircleOutlined']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
@@ -429,10 +427,7 @@ declare module 'vue' {
     SetupStore: typeof import('./resources/js/Pages/Admin/Masterfile/SetupStore.vue')['default']
     ShoppingOutlined: typeof import('@ant-design/icons-vue')['ShoppingOutlined']
     ShrinkOutlined: typeof import('@ant-design/icons-vue')['ShrinkOutlined']
-<<<<<<< HEAD
-=======
     SmallDashOutlined: typeof import('@ant-design/icons-vue')['SmallDashOutlined']
->>>>>>> 3255189ccd4926b63a4d0f4c2890a871909e0eca
     SmileTwoTone: typeof import('@ant-design/icons-vue')['SmileTwoTone']
     SnippetsOutlined: typeof import('@ant-design/icons-vue')['SnippetsOutlined']
     SoldGc: typeof import('./resources/js/Pages/Retail/Cards/SoldGc.vue')['default']
