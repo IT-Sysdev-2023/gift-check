@@ -8,7 +8,7 @@
                             <!-- <span style="color: green;">
                                 <DatabaseOutlined />
                             </span> -->
-                           TAGBILARAN
+                            Tagbilaran
                         </span>
                     </template>
 
@@ -33,7 +33,7 @@
                             <!-- <span style="color: green;">
                                 <DatabaseOutlined />
                             </span> -->
-                            TALIBON
+                            Talibon
                         </span>
                     </template>
                     <!-- <a-button style="background-color: green; color:white; margin-top: 10px;"
@@ -43,16 +43,19 @@
                     </a-button> -->
                     <span style="margin-left: 60%; font-weight: bold;">
                         <a-input-search allow-clear v-model:value="talibonSearch" placeholder="Input search here!"
-                            style="width: 40%;"/>
+                            style="width: 40%;" />
                     </span>
                     <div style="font-weight: bold; margin-top: 10px;">
                         <span style="margin-left: 40%;">Table Showing Tubigon</span>
                     </div>
-                    <a-table :columns="talibonData" :data-source="variance.talibonData.data" :pagination="false"
-                        size="small">
+                    <div style="margin-top: 10px;">
+                        <a-table :columns="talibonData" :data-source="variance.talibonData.data" :pagination="false"
+                            size="small">
 
-                    </a-table>
-                    <pagination :datarecords="variance.talibonData" class="mt-5" />
+                        </a-table>
+                        <pagination :datarecords="variance.talibonData" class="mt-5" />
+                    </div>
+
                 </a-tab-pane>
             </a-tabs>
         </a-card>

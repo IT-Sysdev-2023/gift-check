@@ -11,7 +11,7 @@
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
                         <a-button title="Update User" @click="updateFund(record)" class="me-2 me-sm-5"
-                            style="color:white; background-color: #4CAF50;">
+                            style="color:white; background-color: green;">
                             <FormOutlined />
                         </a-button>
                     </template>

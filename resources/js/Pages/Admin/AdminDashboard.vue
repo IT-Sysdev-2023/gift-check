@@ -1,53 +1,49 @@
 <template>
+    <div>
+        <a-card title="MASTERFILE"></a-card>
+    </div>
+        <a-form-item style="margin-top: 20px;">
+            <a-card @click="() => $inertia.get(route('admin.masterfile.users'))" class="card-hover"
+                style=" background-color: #1e90ff ; color: white; width: 12%; height: auto; position: absolute; top:10px;">
+                <UserOutlined /> Setup Users
+            </a-card>
 
-    <a-card title="MASTERFILE">
-        <a-form-item>
-            <div>
-                <a-card @click="() => $inertia.get(route('admin.masterfile.users'))" class="card-hover"
-                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto;">
-                    <UserOutlined /> SETUP USERS
-                </a-card>
+            <a-card @click="() => $inertia.get(route('admin.masterfile.store.staff'))" class="card-hover"
+                style=" background-color: #1e90ff ; color: white; width: 15%; height: auto;  position: absolute; top:10px; margin-left: 12%;">
+                <AppstoreAddOutlined /> Setup Store Staff
+            </a-card>
 
-                <a-card @click="() => $inertia.get(route('admin.masterfile.store.staff'))" class="card-hover"
-                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
-                    <AppstoreAddOutlined /> SETUP STORE STAFF
-                </a-card>
-
-                <a-card @click="() => $inertia.get(route('admin.masterfile.customer.setup'))" class="card-hover"
-                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
-                    <CustomerServiceOutlined /> SETUP CUSTOMER
-                </a-card>
-
-
-                <a-card @click="() => $inertia.get(route('admin.masterfile.setupStore'))" class="card-hover"
-                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
-                    <AppstoreFilled /> SETUP STORE
-                </a-card>
+            <a-card @click="() => $inertia.get(route('admin.masterfile.customer.setup'))" class="card-hover"
+                style=" background-color: #1e90ff ; color: white; width: 15%; height: auto; position: absolute; top:10px; margin-left: 27%;  ">
+                <CustomerServiceOutlined /> Setup Customer
+            </a-card>
 
 
-                <a-card @click="() => $inertia.get(route('admin.masterfile.creditCardSetup'))" class="card-hover"
-                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
-                    <CreditCardFilled /> SETUP CREDIT CARD
-                </a-card>
+            <a-card @click="() => $inertia.get(route('admin.masterfile.setupStore'))" class="card-hover"
+                style=" background-color: #1e90ff ; color: white; width: 12%; height: auto; position: absolute; top:10px; margin-left: 42%; ">
+                <AppstoreFilled /> Setup Store
+            </a-card>
 
 
-
-                <a-card @click="() => $inertia.get(route('admin.masterfile.denominationSetup'))" class="card-hover"
-                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
-                    <BarcodeOutlined /> SETUP DENOMINATION
-                </a-card>
+            <a-card @click="() => $inertia.get(route('admin.masterfile.creditCardSetup'))" class="card-hover"
+                style=" background-color: #1e90ff ; color: white; width: 15%; height: auto; position: absolute; top:10px; margin-left: 54%; ">
+                <CreditCardFilled /> Setup Credit Card
+            </a-card>
 
 
 
-                <a-card @click="() => $inertia.get(route('admin.masterfile.revolvingFund'))" class="card-hover"
-                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
-                    <FundFilled /> REVOLVING FUND
-                </a-card>
+            <a-card @click="() => $inertia.get(route('admin.masterfile.denominationSetup'))" class="card-hover"
+                style=" background-color: #1e90ff ; color: white; width: 17%; height: auto; position: absolute; top:10px; margin-left: 69%; ">
+                <BarcodeOutlined /> Setup Denomination
+            </a-card>
 
-            </div>
+
+
+            <a-card @click="() => $inertia.get(route('admin.masterfile.revolvingFund'))" class="card-hover"
+                style=" background-color: #1e90ff ; color: white; width: 15%; height: auto; position: absolute; top:10px; margin-left: 86%; ">
+                <FundFilled /> Revolving Fund
+            </a-card>
         </a-form-item>
-    </a-card>
-
 
     <!-- {{ users }} -->
 </template>

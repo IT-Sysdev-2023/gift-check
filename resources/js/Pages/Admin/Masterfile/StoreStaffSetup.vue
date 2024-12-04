@@ -16,11 +16,11 @@
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
                         <a-button @click="updateStoreStaffSetup(record)" title="Update" class="me-2 me-sm-5"
-                            style="color: white; background-color: #4CAF50;">
+                            style="color: white; background-color: green;" >
                             <FormOutlined />
                         </a-button>
                         <a-button @click="changePassword(record)" title="Change Password"
-                            style="color: white; background-color: #0286df;">
+                            style="color: white; background-color: #1e90ff;" >
                             <UndoOutlined />
                         </a-button>
                     </template>

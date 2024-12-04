@@ -204,7 +204,7 @@ class AdminController extends Controller
                     $is_in_non_required = in_array($usertype, $non_required_usertypes);
 
                     $is_required = in_array($usertype, ['7', 'retailstore', 'store_accounting', '14']) ||
-                    in_array($it_type, ['2', 'store_it',]);
+                        in_array($it_type, ['2', 'store_it',]);
 
                     return !$is_in_non_required && $is_required;
                 })
@@ -361,7 +361,7 @@ class AdminController extends Controller
             $usertype = $accessPage->access_no;
         }
         $newUser = User::where('username', $request->username)->first();
-        if($newUser){
+        if ($newUser) {
             return back()->with(
                 'error',
                 'OPPS'
@@ -553,7 +553,7 @@ class AdminController extends Controller
         ]);
 
         $storeStaff = StoreStaff::where('ss_username', $request->username)->first();
-        if($storeStaff){
+        if ($storeStaff) {
             return back()->with(
                 'error',
                 'OPPS'
@@ -596,9 +596,11 @@ class AdminController extends Controller
         $store = Store::get();
         $data = Customer::get();
 
-        $selectEntries = $request->input('value', 10);
+        // $selectEntries = $request->input('value', 10);
         $searchTerm = $request->input('data', '');
+
         $activeTab = $request->input('tabs', 'store_customer');
+        // dd($activeTab);
 
         $data = Customer::select(
             'cus_id',
@@ -630,54 +632,46 @@ class AdminController extends Controller
             'users.lastname as lastname',
             User::raw("CONCAT(users.firstname, ' ', users.lastname) as fullname")
 
-
-
         )
+            ->when($searchTerm, function ($query) use ($searchTerm) {
+                $query->where(function ($query) use ($searchTerm) {
+                    $query->where('cus_fname', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('cus_lname', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('cus_mname', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('cus_namext', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('ins_name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('ins_status', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('ins_custype', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('ins_gctype', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('spcus_companyname', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('spcus_acctname', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('spcus_address', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('spcus_cperson', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('spcus_cnumber', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('firstname', 'like', '%' . $searchTerm . '%');
+                });
+            })
             ->leftJoin('users', 'cus_register_by', '=', 'users.user_id')
             ->leftJoin('institut_customer', 'cus_id', '=', 'institut_customer.ins_id')
             ->leftJoin('special_external_customer', 'cus_id', '=', 'special_external_customer.spcus_id')
             ->leftJoin('stores', 'cus_store_register', '=', 'stores.store_id');
 
-
-
-        if ($searchTerm) {
-            $data = $data->where(function ($query) use ($searchTerm) {
-                $query->where('cus_fname', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('cus_lname', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('cus_mname', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('cus_namext', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('ins_name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('ins_status', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('ins_custype', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('ins_gctype', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('spcus_companyname', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('spcus_acctname', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('spcus_address', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('spcus_cperson', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('spcus_cnumber', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('firstname', 'like', '%' . $searchTerm . '%');
-
-            });
-        }
         if ($activeTab === 'store_customer') {
             $data = $data->whereNotNull('cus_id')
-                ->orderBy('cus_id', 'ASC')
-                ->paginate($selectEntries)
+                ->orderBy('cus_id', 'asc')
+                ->paginate(10, '')
                 ->withQueryString();
         } elseif ($activeTab === 'institutional_customer') {
             $data = $data->whereNotNull('institut_customer.ins_id')
                 ->orderBy('institut_customer.ins_id', 'ASC')
-                ->paginate($selectEntries)
+                ->paginate(10, '')
                 ->withQueryString();
         } elseif ($activeTab === 'special_customer') {
             $data = $data->whereNotNull('special_external_customer.spcus_id')
                 ->orderBy('special_external_customer.spcus_id', 'ASC')
-                ->paginate($selectEntries)
+                ->paginate(10, '')
                 ->withQueryString();
         }
-
-
-        // $data = $data->paginate($selectEntries)->withQueryString();
 
         return inertia('Admin/Masterfile/CustomerSetup', [
             'data' => $data,
@@ -890,7 +884,7 @@ class AdminController extends Controller
         $denom_fad_item_number = Denomination::max('denom_fad_item_number');
         $newDenomFadItemNumber = $denom_fad_item_number ? $denom_fad_item_number + 1 : 1;
 
-        $newDenom = Denomination::where( 'denomination', $request->denomination)->first();
+        $newDenom = Denomination::where('denomination', $request->denomination)->first();
         if ($newDenom) {
             return back()->with('error', 'OPPS');
         }
@@ -1165,7 +1159,8 @@ class AdminController extends Controller
     {
         return $this->adminservices->submitOrderPurchase($request);
     }
-    public function setupPurchaseOrders($name){
+    public function setupPurchaseOrders($name)
+    {
 
         $data = $this->adminservices->getPoDetailsTextfiles($name);
 
