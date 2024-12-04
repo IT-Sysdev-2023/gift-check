@@ -295,10 +295,7 @@ declare module 'vue' {
     MarketingDashboard: typeof import('./resources/js/Pages/Marketing/MarketingDashboard.vue')['default']
     MarketingSideBar: typeof import('./resources/js/Components/MarketingSideBar.vue')['default']
     MCard: typeof import('./resources/js/Pages/Marketing/Card/MCard.vue')['default']
-<<<<<<< HEAD
-=======
     MenuFoldOutlined: typeof import('@ant-design/icons-vue')['MenuFoldOutlined']
->>>>>>> be493bee1304ea23decdb23190f3bdad1e1aa42d
     MenuUnfoldOutlined: typeof import('@ant-design/icons-vue')['MenuUnfoldOutlined']
     MinusCircleOutlined: typeof import('@ant-design/icons-vue')['MinusCircleOutlined']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
@@ -430,11 +427,8 @@ declare module 'vue' {
     SetupRecommendation: typeof import('./resources/js/Pages/RetailGroup/SetupRecommendation.vue')['default']
     SetupStore: typeof import('./resources/js/Pages/Admin/Masterfile/SetupStore.vue')['default']
     ShoppingOutlined: typeof import('@ant-design/icons-vue')['ShoppingOutlined']
-<<<<<<< HEAD
     ShrinkOutlined: typeof import('@ant-design/icons-vue')['ShrinkOutlined']
-=======
     SmallDashOutlined: typeof import('@ant-design/icons-vue')['SmallDashOutlined']
->>>>>>> be493bee1304ea23decdb23190f3bdad1e1aa42d
     SmileTwoTone: typeof import('@ant-design/icons-vue')['SmileTwoTone']
     SnippetsOutlined: typeof import('@ant-design/icons-vue')['SnippetsOutlined']
     SoldGc: typeof import('./resources/js/Pages/Retail/Cards/SoldGc.vue')['default']
