@@ -336,6 +336,11 @@ class CustodianServices
 
 
         $data->transform(function ($item) {
+            // dd($item->specialExternalGcRequest->specialExternalCustomer->spcus_acctname);
+            $holdername = Str::ucfirst($item->spexgcemp_fname) . ', ' .
+                Str::ucfirst($item->spexgcemp_lname) . ' ' .
+                Str::ucfirst($item->spexgcemp_mname) . '' .
+                Str::ucfirst($item->spexgcemp_extname);
 
             $barcode = new DNS1D();
 
@@ -343,7 +348,8 @@ class CustodianServices
 
             $item->barcode = $html;
             $item->numWords = Number::spell($item->spexgcemp_denom) . ' pesos only';
-
+            $item->holder = $holdername;
+            $item->custname = $item->specialExternalGcRequest->specialExternalCustomer->spcus_acctname;
             return $item;
         });
 

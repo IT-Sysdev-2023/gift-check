@@ -19,7 +19,10 @@
             <div v-for="item in record">
                 <div class="gift-check">
                     <span class="agcSpan">
-                       ALTURAS GROUP OF COMPANIES
+                       {{ item.custname }}
+                    </span>
+                    <span class="agcSpanHolder">
+                        {{ item.holder }}
                     </span>
                     <span class="denomSpan">
                         {{ item.spexgcemp_denom }}
@@ -100,11 +103,23 @@ export default {
     position: absolute;
 }
 .agcSpan{
+    text-align: center;
+    width:360px;
     font-size: 12px;
     letter-spacing: 0.5px;
     font-weight: bold;
     top: 22.8%;
-    right: 43.6%;
+    right: 27.6%;
+    position: absolute;
+}
+.agcSpanHolder{
+    text-align: center;
+    width:390px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    font-weight: bold;
+    top: 30.8%;
+    right: 33.6%;
     position: absolute;
 }
 .denomSpan{

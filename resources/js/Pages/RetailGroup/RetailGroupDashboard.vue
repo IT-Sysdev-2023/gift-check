@@ -2,11 +2,20 @@
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
-                <promo-gc-request-card :counts="count"/>
+                <promo-gc-request-card :counts="count" />
             </a-col>
             <a-col :span="8">
-              
-
+                <a-card>
+                    <a-statistic  :value="count.promo" :precision="2"
+                        :value-style="{ color: '#3f8600' }" style="margin-right: 50px">
+                        <template #title>
+                            <p class="font-bold text-lg">Promo GC Approved (Total Amount)</p>
+                        </template>
+                        <template #prefix>
+                            ₱
+                        </template>
+                    </a-statistic>
+                </a-card>
             </a-col>
             <a-col :span="8">
 

@@ -72,6 +72,7 @@ class CustodianController extends Controller
     }
     public function approvedGcRequest(Request $request)
     {
+        // dd($request->all());
         return inertia('Custodian/ApprovedGcRequest', [
             'columns' => ColumnHelper::$approved_gc_column,
             'record' => $this->custodianservices->approvedGcList($request)
@@ -87,6 +88,7 @@ class CustodianController extends Controller
 
     public function barcodeOrRange(Request $request)
     {
+        // dd($request->all());
         if ($request->status == '1') {
             $request->validate(rules: [
                 'barcode' => 'required',
