@@ -281,15 +281,18 @@ export default {
         record: Object,
         barcodes: Object,
         docs: Object,
+        custname: String,
     },
     data() {
         return {
             formByRange: {
                 barcodeEnd: null,
                 barcodeStart: null,
+                custname: this.custname
             },
             formBarcode: {
                 barcode: null,
+                custname: this.custname
             },
 
             form: useForm({

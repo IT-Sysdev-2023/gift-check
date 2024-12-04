@@ -34,6 +34,7 @@
                 </template>
                 <a-table size="small" :data-source="record.data" :columns="columns" :pagination="false" bordered>
                     <template #bodyCell="{ column, record }">
+                        <!-- {{record.company}} -->
                         <template v-if="column.key == 'setup'">
                             <a-button
                                 @click="() => $inertia.get(route('custodian.approved.setup'), { id: record.spexgc_id })">
