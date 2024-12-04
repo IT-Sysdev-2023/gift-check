@@ -1,50 +1,47 @@
 <template>
 
-
-    <a-card title="Masterfile">
+    <a-card title="MASTERFILE">
         <a-form-item>
-            <div class=" button-container">
+            <div>
+                <a-card @click="() => $inertia.get(route('admin.masterfile.users'))" class="card-hover"
+                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto;">
+                    <UserOutlined /> SETUP USERS
+                </a-card>
 
-                <a-card @click="() => $inertia.get(route('admin.masterfile.users'))" class="mb-5 card-hover"
-                    style=" background-color: #0286df; color: white; ">
-                    <UserOutlined />  Setup Users
+                <a-card @click="() => $inertia.get(route('admin.masterfile.store.staff'))" class="card-hover"
+                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
+                    <AppstoreAddOutlined /> SETUP STORE STAFF
+                </a-card>
+
+                <a-card @click="() => $inertia.get(route('admin.masterfile.customer.setup'))" class="card-hover"
+                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
+                    <CustomerServiceOutlined /> SETUP CUSTOMER
                 </a-card>
 
 
-                <a-card @click="() => $inertia.get(route('admin.masterfile.store.staff'))" class="mb-5 card-hover"
-                    style="background-color: #0286df; color: white; margin-left: 5px;">
-                    <AppstoreAddOutlined />  Setup Store Staff
-                </a-card>
-
-                <a-card @click="() => $inertia.get(route('admin.masterfile.customer.setup'))" class="mb-5 card-hover"
-                    style="  background-color: #0286df; color: white; margin-left: 5px;">
-                    <CustomerServiceOutlined />  Setup Customers
+                <a-card @click="() => $inertia.get(route('admin.masterfile.setupStore'))" class="card-hover"
+                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
+                    <AppstoreFilled /> SETUP STORE
                 </a-card>
 
 
-                <a-card @click="() => $inertia.get(route('admin.masterfile.setupStore'))" class="mb-5 card-hover"
-                    style=" background-color: #0286df; color: white; margin-left: 5px;">
-                    <AppstoreFilled />  Setup Store
-                </a-card>
-
-
-                <a-card @click="() => $inertia.get(route('admin.masterfile.creditCardSetup'))" class="mb-5 card-hover"
-                    style="  background-color: #0286df; color: white; margin-left: 5px;">
-                    <CreditCardFilled />  Setup Credit Card
-                </a-card>
-
-
-
-                <a-card @click="() => $inertia.get(route('admin.masterfile.denominationSetup'))" class="mb-5 card-hover"
-                    style="background-color: #0286df; color: white; margin-left: 5px;">
-                    <BarcodeOutlined />  Setup Denomination
+                <a-card @click="() => $inertia.get(route('admin.masterfile.creditCardSetup'))" class="card-hover"
+                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
+                    <CreditCardFilled /> SETUP CREDIT CARD
                 </a-card>
 
 
 
-                <a-card @click="() => $inertia.get(route('admin.masterfile.revolvingFund'))" class="mb-5 card-hover"
-                    style=" background-color: #0286df; color: white; margin-left: 5px;">
-                    <FundFilled />  Revolving Fund
+                <a-card @click="() => $inertia.get(route('admin.masterfile.denominationSetup'))" class="card-hover"
+                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
+                    <BarcodeOutlined /> SETUP DENOMINATION
+                </a-card>
+
+
+
+                <a-card @click="() => $inertia.get(route('admin.masterfile.revolvingFund'))" class="card-hover"
+                    style=" background-color: #1e90ff ; color: white; width: 18%; height: auto; margin-top: 10px;">
+                    <FundFilled /> REVOLVING FUND
                 </a-card>
 
             </div>
@@ -77,6 +74,7 @@ export default {
 .button-container .ant-btn {
     margin: 5px;
 }
+
 .card-hover {
     transition: transform 0.2s ease;
     cursor: pointer;

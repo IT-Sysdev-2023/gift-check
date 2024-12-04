@@ -1,11 +1,28 @@
 <template>
-    <div class="revolvingfund-search-button">
-        Search:
-        <a-input class="revolvingfund-search-input" enter-button size="medium" placeholder=" Search User"
-            v-model:value="searchTerm" />
-    </div>
 
-    <a-title style="font-size: 20px; display: flex; align-items: center; color: #0286df">
+    <a-card>
+        <a-card title="SETUP STORE REVOLVING FUND"></a-card>
+
+        <div style="margin-left: 70%; margin-top: 10px;">
+            <a-input-search size="medium" placeholder=" Search User" v-model:value="searchTerm" style="width: 80%;" />
+        </div>
+        <div style="margin-top: 10px;">
+            <a-table :dataSource="data.data" :columns="columns" :pagination="false" size="small">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'action'">
+                        <a-button title="Update User" @click="updateFund(record)" class="me-2 me-sm-5"
+                            style="color:white; background-color: #4CAF50;">
+                            <FormOutlined />
+                        </a-button>
+                    </template>
+                </template>
+
+            </a-table>
+            <pagination :datarecords="data" class="mt-5" />
+        </div>
+
+    </a-card>
+    <!-- <a-title style="font-size: 20px; display: flex; align-items: center; color: #0286df">
         <FundFilled style="margin-right: 8px; color:#0286df" />
         Setup Store Revolving Fund
     </a-title>
@@ -20,21 +37,8 @@
             <a-select-option value="100">100</a-select-option>
         </a-select>
         entries
-    </span>
-    <div style="background-color: #dcdcdc;">
-        <a-table :dataSource="data.data" :columns="columns" :pagination="false" style="margin-top: 10px;">
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex === 'action'">
-                    <a-button title="Update User" @click="updateFund(record)" class="me-2 me-sm-5"
-                        style="color:white; background-color: #4CAF50;">
-                        <FormOutlined />
-                    </a-button>
-                </template>
-            </template>
+    </span> -->
 
-        </a-table>
-        <pagination :datarecords="data" class="mt-5" />
-    </div>
     <a-modal v-model:open="modalForUpdateFund" @ok="updatupdateRevolvingFundeFund">
         <span style="color:#0286df; font-size: 17px; ">
             <BarChartOutlined style="margin-right: 8px; color:#0286df" />

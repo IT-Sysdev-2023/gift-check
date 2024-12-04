@@ -524,6 +524,12 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('cancelled-especial-external-gc', [FinanceController::class, 'list'])->name('list');
                 Route::get('view-cancelled-especial-external-gc', [FinanceController::class, 'view'])->name('view');
             });
+
+            Route::name('budgetad.')->group(function () {
+                Route::get('budget-adjustments-pending', [FinanceController::class, 'budgetAdjustmentsPending'])->name('pending');
+            });
+
+
         });
 
         Route::get('/download/{filename}', function ($filename) {

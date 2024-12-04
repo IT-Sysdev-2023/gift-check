@@ -90,6 +90,19 @@ class CustodianDbServices
             ->where('doc_type', 'Special External GC Request')->get();
     }
 
+    public function getGcSpecialBarcodes($id)
+    {
+        return SpecialExternalGcrequestEmpAssign::select(
+            'spexgcemp_trid',
+            'spexgcemp_denom',
+            'spexgcemp_fname',
+            'spexgcemp_lname',
+            'spexgcemp_mname',
+            'spexgcemp_extname',
+            'spexgcemp_barcode',
+        )->where('spexgcemp_trid', $id)->get();
+    }
+
     public function getApprovedRequest($id)
     {
         return ApprovedRequest::select('reqap_remarks', 'reqap_date', 'reqap_preparedby')
@@ -105,5 +118,4 @@ class CustodianDbServices
             ->where('reqap_approvedtype', 'special external releasing')
             ->first();
     }
-
 }

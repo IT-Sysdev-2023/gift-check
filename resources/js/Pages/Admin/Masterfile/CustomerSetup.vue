@@ -1,17 +1,73 @@
 <template>
-    <div class="customer-search-button">
-        Search:
-        <a-input class="customer-search-input" allow-clear placeholder="input search text" v-model:value="searchTerm"
-            enter-button size="medium" />
-    </div>
 
-    <a-title style="font-size: 20px; display: flex; align-items: center; color:#0286df;">
-        <CustomerServiceOutlined style=" margin-right: 8px; color:#0286df" />
-        Customer Setup
-    </a-title>
+    <a-card>
+        <a-card title="CUSTOMER SETUP"></a-card>
+        <div style="margin-left: 70%; margin-top: 10px;">
+            <a-input-search allow-clear placeholder="input search text" v-model:value="searchTerm" size="medium"
+                style="width: 80%;" />
+        </div>
+        <a-tabs id="tabs" v-model:value="dataFortabs.tabs" @change="tabIndentifier" style="margin-top: 10px;">
+            <!-- -------------------------------------------------------------------store customer---------------------------------------------------------------- -->
+            <a-tab-pane key="store_customer">
+                <template #tab>
+                    <span style="font-weight: bold;">
+                       REGULAR CUSTOMER
+                    </span>
+                </template>
+                <a-table :columns="columns" bordered :data-source="data.data" :pagination="false" size="small">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'action'">
+                            <a-button @click="updateStoreCustomer(record)" title="Update" class="me-2 me-sm-5"
+                                style="color: white; background-color: #4CAF50;">
+                                <FormOutlined />
+                            </a-button>
+                        </template>
+                    </template>
+                </a-table>
+                <pagination :datarecords="data" class="mt-5" />
+            </a-tab-pane>
+            <!-- ------------------------------------------------------------------institutional customer------------------------------------------------->
+            <a-tab-pane key="institutional_customer">
+                <template #tab>
+                    <span style="font-weight: bold;">
+                      INSTITUTIONAL CUSTOMER
+                    </span>
+                </template>
+                <a-table :columns="institutionalColumns" bordered :data-source="data.data" :pagination="false" size="small">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'action'">
+                            <a-button @click="updateInstitutional(record)" title="Update" class="me-2 me-sm-5"
+                                style="color: white; background-color: #4CAF50;">
+                                <FormOutlined />
+                            </a-button>
+                        </template>
+                    </template>
+                </a-table>
+                <pagination :datarecords="data" class="mt-5" />
+            </a-tab-pane>
+            <!-- --------------------------------------------------------------------special customer---------------------------------------------------->
+            <a-tab-pane key="special_customer">
+                <template #tab>
+                    <span style="font-weight: bold;">
+                        SPECIAL CUSTOMER
+                    </span>
+                </template>
+                <a-table :columns="specialColumns" bordered :data-source="data.data" :pagination="false" size="small">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'action'">
+                            <a-button @click="updateSpecialCustomer(record)" title="Update" class="me-2 me-sm-5"
+                                style="color: white; background-color: #4CAF50;">
+                                <FormOutlined />
+                            </a-button>
+                        </template>
+                    </template>
+                </a-table>
+                <pagination :datarecords="data" class="mt-5" />
+            </a-tab-pane>
+        </a-tabs>
+    </a-card>
 
-
-    <span style="font-weight: bold;">
+    <!-- <span style="font-weight: bold;">
         Show
         <a-select id="select_entries" v-model:value="dataForSelectEntries.select_entries" @change="changeSelectEntries"
             style="background-color: #0286df; border: 1px solid #0286df; margin-top: 10px;" placeholder="10">
@@ -21,72 +77,9 @@
             <a-select-option value="100">100</a-select-option>
         </a-select>
         entries
-    </span>
+    </span> -->
 
-    <a-tabs id="tabs" v-model:value="dataFortabs.tabs" @change="tabIndentifier" style="margin-top: 10px;">
-        <!-- -------------------------------------------------------------------store customer---------------------------------------------------------------- -->
-        <a-tab-pane key="store_customer" style="background-color:#dcdcdc;">
-            <template #tab>
-                <span style="font-weight: bold;">
-                    <AppstoreOutlined />
-                    Regular Customer
-                </span>
-            </template>
-            <a-table :columns="columns" bordered :data-source="data.data" :pagination="false" style="margin-top: 10px;">
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'action'">
-                        <a-button @click="updateStoreCustomer(record)" title="Update" class="me-2 me-sm-5"
-                            style="color: white; background-color: #4CAF50;">
-                            <FormOutlined />
-                        </a-button>
-                    </template>
-                </template>
-            </a-table>
-            <pagination :datarecords="data" class="mt-5" />
-        </a-tab-pane>
-        <!-- ------------------------------------------------------------------institutional customer------------------------------------------------->
-        <a-tab-pane key="institutional_customer" style="background-color:#dcdcdc;">
-            <template #tab>
-                <span style="font-weight: bold;">
-                    <UngroupOutlined />
-                    Instutitional Customer
-                </span>
-            </template>
-            <a-table :columns="institutionalColumns" bordered :data-source="data.data" :pagination="false"
-                style="margin-top: 10px;">
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'action'">
-                        <a-button @click="updateInstitutional(record)" title="Update" class="me-2 me-sm-5"
-                            style="color: white; background-color: #4CAF50;">
-                            <FormOutlined />
-                        </a-button>
-                    </template>
-                </template>
-            </a-table>
-            <pagination :datarecords="data" class="mt-5" />
-        </a-tab-pane>
-        <!-- --------------------------------------------------------------------special customer---------------------------------------------------->
-        <a-tab-pane key="special_customer" style="background-color:#dcdcdc;">
-            <template #tab>
-                <span style="font-weight: bold;">
-                    <CustomerServiceOutlined />
-                    Special Customer
-                </span>
-            </template>
-            <a-table :columns="specialColumns" bordered :data-source="data.data" :pagination="false"
-                style="margin-top: 10px;">
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'action'">
-                        <a-button @click="updateSpecialCustomer(record)" title="Update" class="me-2 me-sm-5"
-                            style="color: white; background-color: #4CAF50;">
-                            <FormOutlined />
-                        </a-button>
-                    </template>
-                </template>
-            </a-table>
-            <pagination :datarecords="data" class="mt-5" />
-        </a-tab-pane>
-    </a-tabs>
+
 
     <a-modal v-model:open="modalForStoreCustomer" @ok="storeCustomerUpdate">
         <span style="color: #0286df; font-size: 17px;">

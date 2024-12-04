@@ -1,31 +1,15 @@
 <template>
-
-    <div style="font-weight: bold; margin-left: 70%;">
-        Search:
-        <a-input allow-clear v-model:value="searchTerm" placeholder="Input search here!"
-            style="width:60%; border: 1px solid #1e90ff;" />
-    </div>
-
-    <span style="font-weight: bold;">
-        Select
-        <a-select id="select_entries" v-model:value="dataForSelectEntries.select_entries" placeholder="10"
-            @change="dashboardViewSelectEntries" style="background-color: #1e90ff; border: 1px solid #1e90ff">
-            <a-select-option value="10">10</a-select-option>
-            <a-select-option value="20">20</a-select-option>
-            <a-select-option value="50">50</a-select-option>
-            <a-select-option value="100">100</a-select-option>
-
-        </a-select>
-        entries
-    </span>
-
-
-
-    <a-tabs>
-        <a-tab-pane key="EOD View">
-            <div style="padding: 10px; font-weight: bold; background-color: #b0c4de;">
+    <a-card>
+        <a-card>
+            <div style="font-weight: bold;">
                 EOD Date: {{ selectedEODDate }}
             </div>
+        </a-card>
+        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
+            <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here!"
+                style="width:90%;" />
+        </div>
+        <div style="margin-top: 10px;">
             <a-table :data-source="data.data" :columns="searchColumns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'search'">
@@ -37,22 +21,42 @@
                 </template>
             </a-table>
             <pagination :datarecords="data" :id="selectedEODDate" class="mt-5" />
-        </a-tab-pane>
-    </a-tabs>
+        </div>
+    </a-card>
+
+
+
+    <!-- <span style="font-weight: bold;">
+        Select
+        <a-select id="select_entries" v-model:value="dataForSelectEntries.select_entries" placeholder="10"
+            @change="dashboardViewSelectEntries" style="background-color: #1e90ff; border: 1px solid #1e90ff">
+            <a-select-option value="10">10</a-select-option>
+            <a-select-option value="20">20</a-select-option>
+            <a-select-option value="50">50</a-select-option>
+            <a-select-option value="100">100</a-select-option>
+
+        </a-select>
+        entries
+    </span> -->
+
+
+
+
 
     <a-modal v-model:open="modalForGCNavisionPOSTransactions" style="width:100%;" @ok="modalBackButton">
-        <div style="font-weight: bold; font-size: large; background-color: #b0c4de; padding:10px;">
-            GC Navision POS Transactions - Barcode # {{ selectedBarcode }}
-        </div>
-        <a-table size="small" :data-source="modalData.data" :columns="GCNavisionPOSTransactions" :pagination="false" />
-        <pagination :datarecords="modalData" class="mt-5" />
+        <a-card>
+            <a-card>
+                <div style="font-weight: bold;">
+                    GC Navision POS Transactions - Barcode # {{ selectedBarcode }}
+                </div>
+            </a-card>
+            <div style="margin-top: 10px;">
+                <a-table size="small" :data-source="modalData.data" :columns="GCNavisionPOSTransactions"
+                    :pagination="false" />
+                <pagination :datarecords="modalData" class="mt-5" />
+            </div>
+        </a-card>
     </a-modal>
-    <!-- <a-modal v-model:open="errorModal"
-        style=" width:50%; align-items: center; font-weight: bold; text-align: center; font-size: 50px;">
-        {{ errorMessage }}
-    </a-modal> -->
-    <!-- {{ errorMessage }} -->
-    <!-- {{ data }} -->
 </template>
 
 <script>
@@ -60,7 +64,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Modal } from 'ant-design-vue';
 import { DatabaseOutlined } from '@ant-design/icons-vue';
 import Pagination from '@/Components/Pagination.vue';
-// import ErrorMessage from '@/Pages/StoreAccounting/ErrorMessage.vue';
 export default {
     layout: AuthenticatedLayout,
     props: {
@@ -214,13 +217,13 @@ export default {
                 this.errorMessage = error.response?.data?.message || 'KUPAL KABA?';
                 this.errorModal = true;
             }
-            
+
         },
 
         modalBackButton() {
             this.modalForGCNavisionPOSTransactions = false
         },
-        
+
     }
 
 }

@@ -10,11 +10,11 @@ class BudgetAdjustment extends Model
 {
     use HasFactory;
 
-    protected $table = 'budget_adjustment';
+    protected $table = 'budgetadjustment';
     protected $primaryKey = 'bud_id';
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'bud_by', 'user_id');
+        return $this->belongsTo(User::class, 'adj_requested_by', 'user_id');
     }
 }
