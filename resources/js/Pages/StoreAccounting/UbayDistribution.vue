@@ -1,10 +1,32 @@
 <template>
-    <div style="font-weight: bold; margin-left: 70%;">
-        Search:
-        <a-input allow-clear v-model:value="alturasSearchBox" style="border: 1px solid #1e90ff; width:60%"
-            placeholder="Input search here!" />
-    </div>
-    <div style="font-weight: bold;">
+    <a-card>
+        <a-card>
+            <div style="font-weight: bold; ">
+                <span>
+                    {{ storeName }} - Verified GC
+                </span>
+            </div>
+        </a-card>
+        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
+            <a-input-search allow-clear v-model:value="alturasSearchBox" style=" width:90%"
+                placeholder="Input search here!" />
+        </div>
+        <div style=" margin-top: 10px;">
+            <a-table :data-source="data.data" :columns="alturasMallColumns" :pagination="false" size="small">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'view'">
+                        <a-button @click="viewAlturasMall(record)" class="me-2 me-sm-5"
+                            style="color:white; background-color: #1e90ff;">
+                            <EyeOutlined />
+                        </a-button>
+                    </template>
+                </template>
+            </a-table>
+            <pagination :datarecords="data" class="mt-5" />
+        </div>
+    </a-card>
+
+    <!-- <div style="font-weight: bold;">
         Select
         <a-select id="select_entries" style="border:1px solid #1e90ff; background-color: #1e90ff;"
             v-model:value="alturasPagination.select_entries" @change="PaginationEntries">
@@ -14,26 +36,8 @@
             <a-select-option value="100">100</a-select-option>
         </a-select>
         entries
-    </div>
-    <div style=" margin-top: 15px;">
-        <div style="font-weight: bold; padding: 10px; background-color: #b0c4de;">
-            <span style="margin-left: 40%">
-                {{ storeName }} - Verified GC
-            </span>
-        </div>
-        <a-table :data-source="data.data" :columns="alturasMallColumns" :pagination="false" size="small"
-            style="margin-top: 10px;">
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex === 'view'">
-                    <a-button @click="viewAlturasMall(record)" class="me-2 me-sm-5"
-                        style="color:white; background-color: #1e90ff;">
-                        <EyeOutlined />
-                    </a-button>
-                </template>
-            </template>
-        </a-table>
-        <pagination :datarecords="data" class="mt-5" />
-    </div>
+    </div> -->
+
 
     <!-- {{ storeName }} -->
 </template>

@@ -1,60 +1,39 @@
 <template>
-    <div class="user-button">
-        <a-button class="add-user-button" @click="() => open = true">
-            <PlusOutlined />Add New User
-        </a-button>
-    </div>
+    <a-card>
+        <a-card title="USERS SETUP">
+        </a-card>
 
-    <div class="search-button">
-        Search:
-        <a-input class="search-input" allow-clear v-model:value="searchTerm" enter-button size="medium"
-            placeholder="Input search here!" />
-    </div>
+        <div style="margin-left: 82.5%;">
+            <a-button style="background-color: #1e90ff; color:white" @click="() => open = true">
+                <PlusOutlined />Add New User
+            </a-button>
+        </div>
 
-    <a-title style=" font-size: 20px; display: flex; align-items: center; color:#0286df">
-        <UserOutlined style=" margin-right: 8px; color:#0286df" />
-        Users Setup
-    </a-title>
-    <span style="font-weight: bold;">
-        Show
-        <a-select id="show_entries" v-model:value="dataForSelectEntries.show_entries" @change="changeShowEntries"
-            style="margin-top: 10px; background-color: #0286df; border: 1px solid #0286df" placeholder="10">
-            <a-select-option value="10">10</a-select-option>
-            <a-select-option value="25">25</a-select-option>
-            <a-select-option value="50">50</a-select-option>
-            <a-select-option value="100">100</a-select-option>
+        <div style="margin-top: 10px; margin-left: 70%;">
+            <a-input-search allow-clear v-model:value="searchTerm" size="medium" placeholder="Input search here!"
+                style="width: 80%;" />
+        </div>
 
-        </a-select>
-        entries
-    </span>
-    <!-- <span style="margin-left: 15px; font-weight: bold;">
-        Filter by Stores:
-        <a-select id="filter_store" v-model:value="dataForFilterStore.filter_store" @change="FilterStore"
-            style="background-color: #0286df; border: 1px solid #0286df;" placeholder="Select Store">
-            <a-select-option v-for="item in store" :key="item.store_name" :value="item.store_name">
-                {{ item.store_name }}
-            </a-select-option>
-        </a-select>
-    </span> -->
-    <div style="background-color: #dcdcdc;">
-        <a-table :dataSource="users.data" :columns="columns" :pagination="false" style="margin-top: 8px;">
-            <template v-slot:bodyCell="{ column, record }">
+        <div style="margin-top: 10px;">
+            <a-table :dataSource="users.data" :columns="columns" :pagination="false" size="small">
+                <template v-slot:bodyCell="{ column, record }">
 
-                <template v-if="column.dataIndex === 'action'">
-                    <a-button title="Update User" @click="updateUser(record)" class="me-2 me-sm-5"
-                        style="color:white; background-color: #4CAF50;">
-                        <FormOutlined />
-                    </a-button>
+                    <template v-if="column.dataIndex === 'action'">
+                        <a-button title="Update User" @click="updateUser(record)" class="me-2 me-sm-5"
+                            style="color:white; background-color: #4CAF50;">
+                            <FormOutlined />
+                        </a-button>
 
-                    <a-button @click="resetPassword(record)" title="Reset Password"
-                        style="color: white; background-color: #0286df;">
-                        <UndoOutlined />
-                    </a-button>
+                        <a-button @click="resetPassword(record)" title="Reset Password"
+                            style="color: white; background-color: #0286df;">
+                            <UndoOutlined />
+                        </a-button>
+                    </template>
                 </template>
-            </template>
-        </a-table>
-        <pagination v-model:value="pagination" :datarecords="users" class="mt-5" />
-    </div>
+            </a-table>
+            <pagination v-model:value="pagination" :datarecords="users" class="mt-5" />
+        </div>
+    </a-card>
 
     <!-- this is for updating user -->
     <a-modal v-model:open="modalforUpdateUser" @ok="updateStoreStaff">
@@ -759,7 +738,7 @@ export default {
 .add-user-button {
     background-color: #0286df;
     color: white;
-    margin-right: 17%;
+    margin-right: 6%;
 }
 
 .search-button {

@@ -99,7 +99,6 @@ class StoreAccountingController extends Controller
         $searchTerm = $request->input('search', '');
         $selectEntries = $request->input('value', 10);
         $eodDate = $request->input('eodDate', '');
-
         $searchQuery = StoreEodItem::select(
             'st_eod_id',
             'store_verification.vs_barcode as vs_barcode',
@@ -174,7 +173,7 @@ class StoreAccountingController extends Controller
             ->orderBy('seodtt_id', 'ASC')
             ->get();
 
-            $dataCollection = collect($data);
+        $dataCollection = collect($data);
         $currentPageItems = $dataCollection->slice(($currentPage - 1) * $perPage, $perPage)->values();
         $paginatedData = new LengthAwarePaginator(
             $currentPageItems,
@@ -594,27 +593,26 @@ class StoreAccountingController extends Controller
                     ];
                 }
             }
-        }
-        elseif($payment->insp_paymentcustomer == 'promo'){
+        } elseif ($payment->insp_paymentcustomer == 'promo') {
             $data = "No data found";
         }
 
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = $request->input('perPage', 10); 
-       
+        $perPage = $request->input('perPage', 10);
+
         $currentPageItems = array_slice($arr_barcodesinfo, ($currentPage - 1) * $perPage, $perPage);
         $paginatedData = new LengthAwarePaginator(
             $currentPageItems,
-            count($arr_barcodesinfo), 
+            count($arr_barcodesinfo),
             $perPage,
-            $currentPage, 
+            $currentPage,
             [
-                'path' => $request->url(), 
-                'query' => $request->query(), 
+                'path' => $request->url(),
+                'query' => $request->query(),
             ]
         );
 
-       
+
         return Inertia::render('StoreAccounting/StoreAccountingViewSales', [
             'salesCustomer' => $salesCustomer,
             'data' => $paginatedData,
@@ -627,8 +625,8 @@ class StoreAccountingController extends Controller
 
     public function viewSalesPostTransaction($barcode, Request $request)
     {
-        $perPage = $request->input('per_page', 10); 
-        $currentPage = $request->input('page', 1); 
+        $perPage = $request->input('per_page', 10);
+        $currentPage = $request->input('page', 1);
 
         $data = StoreEodTextfileTransaction::select(
             'seodtt_line',
@@ -647,18 +645,18 @@ class StoreAccountingController extends Controller
             ->orderBy('seodtt_id', 'ASC')
             ->get();
 
-       
+
         $dataCollection = collect($data);
         $currentPageItems = $dataCollection->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
         $paginatedData = new LengthAwarePaginator(
-            $currentPageItems, 
-            $dataCollection->count(), 
+            $currentPageItems,
+            $dataCollection->count(),
             $perPage,
-            $currentPage, 
+            $currentPage,
             [
-                'path' => $request->url(), 
-                'query' => $request->query(), 
+                'path' => $request->url(),
+                'query' => $request->query(),
             ]
         );
 
@@ -815,7 +813,7 @@ class StoreAccountingController extends Controller
             ->orderBy('seodtt_id', 'ASC')
             ->get();
 
-            $dataCollection = collect($storeModalData);
+        $dataCollection = collect($storeModalData);
         $currentPageItems = $dataCollection->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
         $paginatedData = new LengthAwarePaginator(
@@ -2054,7 +2052,7 @@ class StoreAccountingController extends Controller
                 'special_external_customer.spcus_companyname'
             )
 
-            ->orderByDesc('special_external_gcrequest.spexgc_datereq', 'ASC')
+            ->orderBy('special_external_gcrequest.spexgc_datereq', 'asc')
             ->paginate(10)
             ->withQueryString();
 

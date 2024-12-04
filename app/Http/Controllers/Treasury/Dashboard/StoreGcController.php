@@ -123,10 +123,11 @@ class StoreGcController extends Controller
             ->whereNot('store_request_items.sri_items_remain', 0)
             ->paginate(3)->withQueryString();
 
-        $checkBy = Assignatory::select('assig_position', 'assig_name as label', 'assig_id as value')->where(function ($q) use ($request) {
-            $q->where('assig_dept', $request->user()->usertype)
-                ->orWhere('assig_dept','1');
-        })->get();
+        // $checkBy = Assignatory::select('assig_position', 'assig_name as label', 'assig_id as value')->where(function ($q) use ($request) {
+        //     $q->where('assig_dept', $request->user()->usertype)
+        //         ->orWhere('assig_dept','1');
+        // })->get();
+        $checkBy = Assignatory::select('assig_position', 'assig_name as label', 'assig_id as value')->where('assig_id', 10)->get(); //Melisa Miculob only
 
         $rgc->transform(function ($item) {
             $item->denomination = NumberHelper::currency($item->denomination);
