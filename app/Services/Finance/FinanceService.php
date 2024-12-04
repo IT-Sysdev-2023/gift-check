@@ -307,6 +307,7 @@ class FinanceService extends FileHandler
     public function getBudgetAdjustmentsData()
     {
         $data = BudgetAdjustment::select(
+            'adj_id',
             'adj_request',
             'adj_requested_at',
             'adj_no',
@@ -319,6 +320,7 @@ class FinanceService extends FileHandler
 
         $data->transform(function ($item) {
             return (object) [
+                'id' => $item->adj_id,
                 'request' => $item->adj_request,
                 'requestAt' => $item->adj_requested_at,
                 'reqno' => $item->adj_no,
@@ -326,7 +328,40 @@ class FinanceService extends FileHandler
                 'reqby' => $item->user->full_name,
             ];
         });
+        // dd()
 
         return $data;
+    }
+
+    public function getBudgetApprovalData($id)
+    {
+        return BudgetAdjustment::select(
+            'adj_request',
+            'adj_no',
+            'adj_requested_by',
+            'adj_remarks',
+            'adj_file_docno',
+            'adj_id',
+            'adj_requested_at',
+            'adjust_type',
+            'adj_type',
+            'adj_group',
+            'adj_preapprovedby',
+        )->with('user:user_id,firstname,lastname,usertype', 'user.accessPage:access_no,title')
+            ->where('adj_request_status', '0')
+            ->where('adj_id', $id)
+            ->first();
+    }
+
+    public function getPromoApprovedData($id)
+    {
+        return PromogcPreapproved::select('prapp_by', 'prapp_doc', 'prapp_remarks', 'prapp_at')
+            ->with('user:user_id,firstname,lastname')
+            ->where('prapp_reqid', $id)
+            ->first();
+    }
+
+    public function bugdetAdSubmission($request) {
+        dd($request->all());
     }
 }

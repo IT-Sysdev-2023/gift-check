@@ -16,6 +16,7 @@ use App\Models\LedgerSpgc;
 use App\Models\ProductionRequest;
 use App\Models\PromoGcReleaseToDetail;
 use App\Models\PromoGcRequest;
+use App\Models\PromoLedger;
 use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequest;
 use App\Services\Treasury\Dashboard\DashboardService;
@@ -29,9 +30,7 @@ class DashboardClass extends DashboardService
      * Create a new class instance.
      */
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
     public function treasuryDashboard(Request $request)
     {
         return [
@@ -78,6 +77,12 @@ class DashboardClass extends DashboardService
                 ->withWhereHas('approvedReq', function ($q) {
                     $q->where('reqap_approvedtype', 'promo gc preapproved');
                 })->count(),
+            'promo' => PromoLedger::selectRaw(
+                'IFNULL(SUM(promo_ledger.promled_debit - promo_ledger.promled_credit), 0.00) as sum'
+            )
+                ->join('promo_gc_request', 'promo_gc_request.pgcreq_id', '=', 'promo_ledger.promled_trid')
+                ->where('promo_gc_request.pgcreq_group', request()->user()->usergroup)
+                ->value('sum'),
         ];
     }
     public function financeDashboard()

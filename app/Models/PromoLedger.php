@@ -16,4 +16,9 @@ class PromoLedger extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+
+    public function promogcreq(){
+       return $this->belongsTo(PromoGcRequest::class, 'promled_trid', 'pgcreq_id');
+    }
 }

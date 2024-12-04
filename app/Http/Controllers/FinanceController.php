@@ -9,6 +9,7 @@ use App\Http\Resources\BudgetLedgerResource;
 use App\Http\Resources\SpgcLedgerResource;
 use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
+use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
 use App\Models\LedgerBudget;
 use App\Models\LedgerSpgc;
@@ -39,8 +40,7 @@ class FinanceController extends Controller
         public ApprovedReleasedPdfExcelService $appRelPdfExcelService,
         public DashboardClass $dashboardClass,
         public FinanceService $financeService
-    ) {
-    }
+    ) {}
 
     public function index()
     {
@@ -576,7 +576,6 @@ class FinanceController extends Controller
                 ->paginate()
                 ->withQueryString()
         ]);
-
     }
 
     public function view(Request $request)
@@ -594,9 +593,23 @@ class FinanceController extends Controller
         return response()->json($data);
     }
 
-    public function budgetAdjustmentsPending(){
+    public function budgetAdjustmentsPending()
+    {
         return inertia('Finance/BudgetAdjustmentsPendingComponent', [
             'records' => $this->financeService->getBudgetAdjustmentsData(),
         ]);
+    }
+
+    public function budgetAdjustmentsApproval($id)
+    {
+        return inertia('Finance/BudgetAdjustmentApproval', [
+            'request' => $this->financeService->getBudgetApprovalData($id),
+            'promo' => $this->financeService->getPromoApprovedData($id),
+            'id' => $id,
+        ]);
+    }
+
+    public function budgetAdjustmentSubmission(Request $request){
+        return $this->financeService->bugdetAdSubmission($request);
     }
 }
