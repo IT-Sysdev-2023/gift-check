@@ -1,18 +1,24 @@
 <template>
-    <div class="creditcard-button">
-        <a-button class="creditcard-input"
-            @click="() => addCreditCard = true">
-            <PlusOutlined /> Add New Credit Card
-        </a-button>
-    </div>
+    <a-card>
+        <a-card title="CREDIT CARD SETUP">
+        </a-card>
+        <div style="margin-left: 79%;">
+            <a-button style="background-color: #1e90ff; color:white" @click="() => addCreditCard = true">
+                <PlusOutlined /> Add New Credit Card
+            </a-button>
+        </div>
 
-    <div class="creditcard-search-button">
-        Search:
-        <a-input class="creditcard-search-input" allow-clear v-model:value="searchTerm" placeholder="Input search here!" enter-button="Search"
-            size="medium" />
-    </div>
-
-    <a-title style="font-size: 20px; display: flex; align-items: center; color:#0286df;">
+        <div style="margin-left: 70%; margin-top: 10px;">
+            <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here!" size="medium"
+                style="width: 80%;" />
+        </div>
+        <div style="margin-top: 10px;">
+            <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
+            </a-table>
+            <pagination :datarecords="data" class="mt-5" />
+        </div>
+    </a-card>
+    <!-- <a-title style="font-size: 20px; display: flex; align-items: center; color:#0286df;">
         <CreditCardFilled style="margin-right: 8px; color:#0286df;" />
         Credit Card Setup
     </a-title>
@@ -28,12 +34,8 @@
             <a-select-option value="100">all</a-select-option>
         </a-select>
         entries
-    </span>
-    <div style="background-color: #dcdcdc;">
-        <a-table :columns="columns" :data-source="data.data" :pagination="false" style="margin-top: 10px">
-        </a-table>
-        <pagination :datarecords="data" class="mt-5" />
-    </div>
+    </span> -->
+
     <a-modal v-model:open="addCreditCard" @ok="handleOk">
         <span style="color: #0286df; font-size: 17px;">
             <CreditCardOutlined style="margin-right: 8px; " />
@@ -47,7 +49,7 @@
             <a-input allow-clear v-model:value="form.ccard_name" placeholder="Credit Card Name" />
         </a-form-item>
     </a-modal>
-<!-- {{ data }} -->
+    <!-- {{ data }} -->
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -153,9 +155,9 @@ export default {
 }
 
 .creditcard-input {
-    background-color: #0286df;
+    background-color: #1e90ff;
     color: white;
-    margin-right: 16%;
+    margin-right: 6%;
 }
 
 .creditcard-search-button {
@@ -164,7 +166,7 @@ export default {
 }
 
 .creditcard-search-input {
-    border: 1px solid #0286df;
+    border: 1px solid #1e90ff;
     width: 20%;
     margin-right: 10%;
     min-width: 110px;

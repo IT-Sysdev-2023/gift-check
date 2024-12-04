@@ -85,7 +85,6 @@ class AccountingController extends Controller
             ->withQueryString();
 
         $data->transform(function ($item) {
-
             $item->company = $item->specialExternalCustomer->spcus_companyname;
 
             $item->datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();

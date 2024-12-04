@@ -1,49 +1,36 @@
 <template>
-    <div class="storeStaff-button">
-        <a-button class="storeStaff-input" @click="() => open = true">
-            <PlusOutlined /> Add New User
-        </a-button>
-    </div>
+    <a-card>
+        <a-card title="STORE STAFF SETUP"> </a-card>
+        <div style="margin-left: 82.5%;">
+            <a-button style="background-color: #1e90ff; color:white" @click="() => open = true">
+                <PlusOutlined /> Add New User
+            </a-button>
+        </div>
 
-    <div class="storeStaff-search-button">
-        Search:
-        <a-input class="storeStaff-search-input" allow-clear placeholder="Input search here!" v-model:value="searchTerm"
-            enter-button size="medium" />
-    </div>
-
-
-    <a-title style="font-size: 20px; display: flex; align-items: center; color:#0286df">
-        <AppstoreFilled style=" margin-right: 8px; color:#0286df;" />
-        Store Staff Setup
-    </a-title>
-    <span style="font-weight: bold;">
-        Show
-        <a-select id="select_entries" v-model:value="dataForSelectEntries.select_entries" @change="changeSelectEntries"
-            style=" background-color: #0286df; border: 1px solid #0286df; margin-top: 10px;" placeholder="10">
-            <a-select-option value="10">10 </a-select-option>
-            <a-select-option value="25">25 </a-select-option>
-            <a-select-option value="50">50 </a-select-option>
-            <a-select-option value="100">100 </a-select-option>
-        </a-select>
-        entries
-    </span>
-    <div style="background-color: #dcdcdc;">
-        <a-table :columns="columns" :data-source="data.data" :pagination="false" style="margin-top: 10px;">
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex === 'action'">
-                    <a-button @click="updateStoreStaffSetup(record)" title="Update" class="me-2 me-sm-5"
-                        style="color: white; background-color: #4CAF50;">
-                        <FormOutlined />
-                    </a-button>
-                    <a-button @click="changePassword(record)" title="Change Password"
-                        style="color: white; background-color: #0286df;">
-                        <UndoOutlined />
-                    </a-button>
+        <div style="margin-left: 70%; margin-top: 10px;">
+            <a-input-search allow-clear placeholder="Input search here!" v-model:value="searchTerm" size="medium"
+                style="width: 80%;" />
+        </div>
+        <div style="margin-top: 10px;">
+            <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'action'">
+                        <a-button @click="updateStoreStaffSetup(record)" title="Update" class="me-2 me-sm-5"
+                            style="color: white; background-color: #4CAF50;">
+                            <FormOutlined />
+                        </a-button>
+                        <a-button @click="changePassword(record)" title="Change Password"
+                            style="color: white; background-color: #0286df;">
+                            <UndoOutlined />
+                        </a-button>
+                    </template>
                 </template>
-            </template>
-        </a-table>
-        <pagination :datarecords="data" class="mt-5" />
-    </div>
+            </a-table>
+            <pagination :datarecords="data" class="mt-5" />
+        </div>
+    </a-card>
+
+
     <!-- this is for update password part -->
 
     <a-modal v-model:open="modalforchangePassword" @ok="updatePassword">
@@ -483,7 +470,7 @@ export default {
 .storeStaff-input {
     background-color: #0286df;
     color: white;
-    margin-right: 17%;
+    margin-right: 6%;
 }
 
 .storeStaff-search-button {

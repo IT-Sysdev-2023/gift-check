@@ -1,18 +1,34 @@
 <template>
-    <div class="denomination-button">
-        <a-button class="denomination-input" @click="() => addDenomination = true">
-            <PlusOutlined /> Add New Denomination
-        </a-button>
+    <a-card>
+        <a-card title="DENOMINATION SETUP"> </a-card>
+        <div style="margin-left: 77.5%;">
+            <a-button style="background-color: #1e90ff; color: white" @click="() => addDenomination = true">
+                <PlusOutlined /> Add New Denomination
+            </a-button>
 
-    </div>
+        </div>
 
-    <div class="denomination-search-button">
-        Search:
-        <a-input class="denomination-search-input" allow-clear v-model:value="searchTerm" placeholder="Input search here"
-            enter-button="Search" size="medium" />
-    </div>
+        <div style="margin-left: 70%; margin-top: 10px;">
+            <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here" size="medium"
+                style="width: 80%;" />
+        </div>
+        <div style="margin-top: 10px;">
+            <a-table :columns="columns" :dataSource="data.data" :pagination="false" size="small">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'action'">
+                        <a-button @click="updateDenominationData(record)" title="Update" class="me-2 me-sm-5"
+                            style="color:white; background-color: #4CAF50;">
+                            <FormOutlined />
+                        </a-button>
+                    </template>
+                </template>
+            </a-table>
+            <pagination :datarecords="data" class="mt-5" />
+        </div>
+    </a-card>
 
-    <a-title style="font-size: 20px; display: flex; align-items: center; color:#0286df">
+
+    <!-- <a-title style="font-size: 20px; display: flex; align-items: center; color:#0286df">
         <BarcodeOutlined style=" margin-right: 8px; color:#0286df" />
         Denomination Setup
     </a-title>
@@ -27,20 +43,8 @@
             <a-select-option value="100">100</a-select-option>
         </a-select>
         entries
-    </span>
-    <div style="background-color: #dcdcdc;">
-        <a-table :columns="columns" :dataSource="data.data" :pagination="false" style="margin-top: 10px;">
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex === 'action'">
-                    <a-button @click="updateDenominationData(record)" title="Update" class="me-2 me-sm-5"
-                        style="color:white; background-color: #4CAF50;">
-                        <FormOutlined />
-                    </a-button>
-                </template>
-            </template>
-        </a-table>
-        <pagination :datarecords="data" class="mt-5" />
-    </div>
+    </span> -->
+
     <a-modal v-model:open="addDenomination" @ok="handleOk">
         <span style="color: #0286df; font-size: 17px; ">
             <BarcodeOutlined style="margin-right: 8px;" />
@@ -238,7 +242,7 @@ export default {
 .denomination-input {
     background-color: #0286df;
     color: white;
-    margin-right: 14.5%;
+    margin-right: 6%;
 }
 
 .denomination-search-button {
