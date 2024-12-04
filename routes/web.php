@@ -623,6 +623,7 @@ Route::middleware(['auth'])->group(function () {
             });
 
             Route::name('approved.')->group(function () {
+                // Route::get('approved-gc-request', [AccountingController::class, 'approvedGcRequest'])->name('request');
                 Route::get('approved-gc-request', [CustodianController::class, 'approvedGcRequest'])->name('request');
                 Route::get('approve-request-special', [CustodianController::class, 'setupApproval'])->name('setup');
                 Route::get('reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request');
