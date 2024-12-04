@@ -11,14 +11,15 @@
             <a-tab-pane key="store_customer">
                 <template #tab>
                     <span style="font-weight: bold;">
-                       REGULAR CUSTOMER
+                        <DashOutlined />
+                        Regular Customer
                     </span>
                 </template>
                 <a-table :columns="columns" bordered :data-source="data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">
                             <a-button @click="updateStoreCustomer(record)" title="Update" class="me-2 me-sm-5"
-                                style="color: white; background-color: #4CAF50;">
+                                style="color: white; background-color: green;">
                                 <FormOutlined />
                             </a-button>
                         </template>
@@ -30,14 +31,16 @@
             <a-tab-pane key="institutional_customer">
                 <template #tab>
                     <span style="font-weight: bold;">
-                      INSTITUTIONAL CUSTOMER
+                        <DashOutlined />
+                        Institutional Customer
                     </span>
                 </template>
-                <a-table :columns="institutionalColumns" bordered :data-source="data.data" :pagination="false" size="small">
+                <a-table :columns="institutionalColumns" bordered :data-source="data.data" :pagination="false"
+                    size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">
                             <a-button @click="updateInstitutional(record)" title="Update" class="me-2 me-sm-5"
-                                style="color: white; background-color: #4CAF50;">
+                                style="color: white; background-color: green;">
                                 <FormOutlined />
                             </a-button>
                         </template>
@@ -49,14 +52,15 @@
             <a-tab-pane key="special_customer">
                 <template #tab>
                     <span style="font-weight: bold;">
-                        SPECIAL CUSTOMER
+                        <DashOutlined />
+                        Special Customer
                     </span>
                 </template>
                 <a-table :columns="specialColumns" bordered :data-source="data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">
                             <a-button @click="updateSpecialCustomer(record)" title="Update" class="me-2 me-sm-5"
-                                style="color: white; background-color: #4CAF50;">
+                                style="color: white; background-color: green;">
                                 <FormOutlined />
                             </a-button>
                         </template>
@@ -224,6 +228,8 @@ export default {
         institutional: Object,
         special: Object,
         store: Object,
+        // institutionalCustomer: Object,
+        // specialCustomer: Object
 
     },
     data() {
