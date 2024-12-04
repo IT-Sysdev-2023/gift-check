@@ -701,40 +701,58 @@ class RetailController extends Controller
                 ->where('transaction_stores.trans_sid', $request->id)
                 ->where('transaction_stores.trans_store', $request->user()->store_assigned)
                 ->first();
-            $data['cashier'] = ucwords($data->ss_firstname.' '.$data->ss_lastname);
+            $data['cashier'] = ucwords($data->ss_firstname . ' ' . $data->ss_lastname);
+
 
 
             $totlinedisc = TransactionLinediscount::where('trlinedis_sid', $request->id)
                 ->selectRaw('IFNULL(SUM(trlinedis_discamt), 0) as totline')
-                ->value('totline'); 
+                ->value('totline');
 
             $tpayment = TransactionSale::join('denomination', 'denomination.denom_id', '=', 'transaction_sales.sales_denomination')
                 ->selectRaw('IFNULL(SUM(denomination.denomination), 0.00) as payment')
                 ->where('transaction_sales.sales_transaction_id', $request->id)
-                ->value('payment'); 
+                ->value('payment');
 
-            $docdisc = $data->docdisc ?? 0; 
-
-            $amtdue = (float) $tpayment - ((float) $totlinedisc + (float) $docdisc); 
-
-            
+            $docdisc = (float) $data['docdisc'] ?? 0;
 
 
 
+            $amtdue = (float) $tpayment - ((float) $totlinedisc + (float) $docdisc);
+
+
+
+            $typelabel = null;
+            $type = null;
+
+            if ($data['trans_type'] == '1') {
+                $typelabel = 'Amount Tender:';
+                $cash = TransactionPayment::where('payment_trans_num', $request->id)
+                    ->select('payment_cash', 'payment_change')->first();
+                $type = $cash;
+
+            }
 
             $datatable = TransactionSale::where('sales_transaction_id', $request->id)
                 ->join('denomination', 'denomination.denom_id', '=', 'transaction_sales.sales_denomination')
                 ->get();
-            
+
+            $datatable->transform(function($item){
+                $item->discount= TransactionLinediscount::where('trlinedis_barcode',$item->sales_barcode)->first();
+                return $item;
+            });
+
             $details = [
-                'data' =>$data,
-                'totlinedisc' =>$totlinedisc,
-                'tpayment' =>$tpayment,
-                'amtdue' =>$amtdue
+                'data' => $data,
+                'totlinedisc' => $totlinedisc,
+                'tpayment' => $tpayment,
+                'amtdue' => $amtdue,
+                'typelabel' => $typelabel,
+                'type' => $type
             ];
 
             return response()->json([
-                'data' =>  $details,
+                'data' => $details,
                 'table' => $datatable,
                 'type' => '2'
             ]);
