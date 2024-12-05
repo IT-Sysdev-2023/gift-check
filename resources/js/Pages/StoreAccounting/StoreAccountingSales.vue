@@ -3,7 +3,7 @@
     <a-card>
         <a-card title=" TREASURY SALES"></a-card>
         <div style="margin-top: 10px; margin-left: 70%;">
-            <a-input-search allow-clear v-model:value="salesSearchBox" placeholder="Input search here!"
+            <a-input-search allow-clear v-model:value="salesSearchBox" placeholder="Input search here!" enter-button
                 style="width: 90%;" />
         </div>
         <div style="margin-top: 10px;">

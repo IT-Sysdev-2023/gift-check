@@ -6,7 +6,7 @@
             </div>
         </a-card>
         <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
-            <a-input-search allow-clear v-model:value="alturasSearch" style="width: 90%;"
+            <a-input-search allow-clear v-model:value="alturasSearch" style="width: 90%;" enter-button
                 placeholder="Input search here!" />
         </div>
         <div style="margin-top: 10px;">

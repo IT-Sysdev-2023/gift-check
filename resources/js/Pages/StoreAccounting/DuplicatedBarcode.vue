@@ -19,7 +19,7 @@
                             <a-card>
                                 <div style="margin-left: 60%;">
 
-                                    <a-input-search allow-clear v-model:value="cebuTagbilaranSearch"
+                                    <a-input-search allow-clear v-model:value="cebuTagbilaranSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px;">
@@ -52,7 +52,7 @@
                             <a-card>
                                 <div style="margin-left: 60%;">
 
-                                    <a-input-search allow-clear v-model:value="cebuTalibonSearch"
+                                    <a-input-search allow-clear v-model:value="cebuTalibonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px;">
@@ -84,7 +84,7 @@
                             <a-card>
                                 <div style="margin-left: 60%;">
 
-                                    <a-input-search allow-clear v-model:value="cebuTubigonSearch"
+                                    <a-input-search allow-clear v-model:value="cebuTubigonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px;">
@@ -179,7 +179,7 @@
                             <a-card>
                                 <div style="margin-left: 60%;">
 
-                                    <a-input-search allow-clear v-model:value="alttaTagbilaranSearch"
+                                    <a-input-search allow-clear v-model:value="alttaTagbilaranSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px">
@@ -212,7 +212,7 @@
                             <a-card>
                                 <div style="margin-left: 60%;">
 
-                                    <a-input-search allow-clear v-model:value="alttaTalibonSearch"
+                                    <a-input-search allow-clear v-model:value="alttaTalibonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px;">
@@ -245,7 +245,7 @@
                             <a-card>
                                 <div style="margin-left: 60%;">
 
-                                    <a-input-search allow-clear v-model:value="alttaTubigonSearch"
+                                    <a-input-search allow-clear v-model:value="alttaTubigonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px">

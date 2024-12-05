@@ -14,7 +14,7 @@
                     </template>
 
                     <span style="margin-left: 60%; font-weight: bold;">
-                        <a-input-search allow-clear v-model:value="tagbilaranSearch" placeholder="Input search here!"
+                        <a-input-search allow-clear v-model:value="tagbilaranSearch" placeholder="Input search here!" enter-button
                             style="width: 40%;" />
                     </span>
                     <div style="font-weight: bold; margin-top: 10px;">
@@ -44,7 +44,7 @@
                         Generate Excel
                     </a-button> -->
                     <span style="margin-left: 60%; font-weight: bold;">
-                        <a-input-search allow-clear v-model:value="talibonSearch" placeholder="Input search here!"
+                        <a-input-search allow-clear v-model:value="talibonSearch" placeholder="Input search here!" enter-button
                             style="width: 40%;" />
                     </span>
                     <div style="font-weight: bold; margin-top: 10px;">

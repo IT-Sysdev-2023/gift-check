@@ -8,7 +8,7 @@
             </div>
         </a-card>
         <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
-            <a-input-search allow-clear v-model:value="alturasSearchBox" style=" width:90%" placeholder="Input search here!" />
+            <a-input-search allow-clear v-model:value="alturasSearchBox" style=" width:90%" placeholder="Input search here!" enter-button />
         </div>
         <div style=" margin-top: 10px;">
             <a-table :data-source="data.data" :columns="alturasMallColumns" :pagination="false" size="small">
