@@ -47,13 +47,7 @@
                         >
                             <a-input-number
                                 style="width: 100%"
-                                :formatter="
-                                    (value) =>
-                                        `₱ ${value}`.replace(
-                                            /\B(?=(\d{3})+(?!\d))/g,
-                                            ','
-                                        )
-                                "
+                                :formatter="currencyFormatter"
                                 v-model:value="formState.budget"
                                 :min="0"
                                 @change="clearError('budget')"
@@ -97,7 +91,7 @@
                         </a-form-item>
                         <div>
                             <div class="flex justify-end mx-9">
-                                <a-form-item class="text-end ">
+                                <a-form-item class="text-end">
                                     <a-button type="primary" html-type="submit"
                                         >Submit</a-button
                                     >
@@ -148,58 +142,36 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import type { UploadChangeParam } from "ant-design-vue";
 import { ref } from "vue";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
-import type { UploadFile } from "ant-design-vue";
-import { PageWithSharedProps } from "@/types/index";
+import { currencyFormatter, getError } from "@/Mixin/UiUtilities";
+import { FlashProps, PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
-interface FormStateGc {
-    file: UploadFile | null;
-    br: string;
-    budget: number;
-    remarks: string;
-    dateNeeded: null;
-    category: string;
-}
+import { BudgetRequestForm, BudgetRequestProps } from "@/types/treasury";
 
-const props = defineProps<{
-    title?: string;
-    remainingBudget: string;
-    regularBudget: string;
-    specialBudget: string;
-    br: string;
-}>();
+const props = defineProps<BudgetRequestProps>();
 
 const page = usePage<PageWithSharedProps>().props;
 const currentDate = dayjs().format("MMM DD, YYYY");
-const disabledDate = (current: Dayjs) => {
-    // Can not select days before today and today
-    return current && current < dayjs().startOf("day");
-};
-const formState = useForm<FormStateGc>({
+const stream = ref<string>("");
+const openIframe = ref<boolean>(false);
+const { openLeftNotification } = onProgress();
+
+const formState = useForm<BudgetRequestForm>({
     br: props.br,
     dateNeeded: null,
     budget: 0,
     file: null,
     remarks: "",
-    category: null,
+    category: "",
 });
-
-const stream = ref(null);
-const openIframe = ref(false);
-const { openLeftNotification } = onProgress();
-const handleChange = (file: UploadChangeParam) => {
-    formState.file = file.file;
-};
 
 const onSubmit = () => {
     formState.post(route("treasury.transactions.budgetRequestSubmission"), {
-        onSuccess: ({ props }) => {
+        onSuccess: ({ props }: { props: FlashProps }) => {
             openLeftNotification(props.flash);
-            if (props.flash.success) {
+            if (props.flash?.success) {
                 stream.value = `data:application/pdf;base64,${props.flash.stream}`;
                 openIframe.value = true;
             }
@@ -213,13 +185,14 @@ const categoryHandler = (cat: string) => {
 const closeIframe = () => {
     router.visit(route("treasury.dashboard"));
 };
-const getErrorStatus = (field: string) => {
-    return formState.errors[field] ? "error" : "";
-};
-const getErrorMessage = (field: string) => {
-    return formState.errors[field];
-};
-const clearError = (field: string) => {
-    formState.errors[field] = null;
-};
+
+const { getErrorMessage, getErrorStatus, clearError } =
+    getError<BudgetRequestForm>(formState);
+
+// const handleChange = (file: UploadChangeParam) => {
+//     formState.file = file.file;
+// };
+// const disabledDate = (current: Dayjs) => {
+//     return current && current < dayjs().startOf("day");
+// };
 </script>

@@ -7,21 +7,21 @@ export interface User {
 }
 
 export type PageProps<
-    T extends Record<string, unknown> = Record<string, unknown>
+    T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
     auth: {
         user: User;
     };
     barcodeReviewScan: {
         allocation: any[];
-        scannedRelease:  {
+        scannedRelease: {
             data: {
                 success?: string;
                 error?: string;
                 status: number;
             }[];
         };
-        scannedBarcodeResponse: any[]
+        scannedBarcodeResponse: any[];
     };
     flash?: {
         success: string;
@@ -83,7 +83,7 @@ export interface PaginationTypes {
     };
 }
 
-export interface TreasuryDashboardTypes{
+export interface TreasuryDashboardTypes {
     data?: {
         budgetRequest: {
             pending: number;
@@ -123,7 +123,7 @@ export interface TreasuryDashboardTypes{
 }
 
 export interface FlashProps {
-    flash?: { success: string; error: string };
+    flash?: { success: string; error: string; stream?: string };
     [key: string]: unknown;
 }
 

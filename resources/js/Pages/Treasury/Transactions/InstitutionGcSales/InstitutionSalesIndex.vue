@@ -102,7 +102,10 @@
                                         getErrorStatus(formState, 'paymentFund')
                                     "
                                     :help="
-                                        getErrorMessage(formState, 'paymentFund')
+                                        getErrorMessage(
+                                            formState,
+                                            'paymentFund',
+                                        )
                                     "
                                 >
                                     <ant-select
@@ -117,7 +120,9 @@
                                     @handPaymentType="handlePaymentType"
                                 />
                                 <a-form-item label="Upload Document:" name="up">
-                                    <ant-upload-multi-image @handle-change="handleDocumentChange"/>
+                                    <ant-upload-multi-image
+                                        @handle-change="handleDocumentChange"
+                                    />
                                 </a-form-item>
                             </a-col>
                             <a-col :span="14">
@@ -135,7 +140,7 @@
                                         <a-input
                                             :value="
                                                 currency(
-                                                    totalScannedDenomination
+                                                    totalScannedDenomination,
                                                 )
                                             "
                                             readonly
@@ -162,7 +167,7 @@
                                                 "
                                                 @click="
                                                     removeBarcode(
-                                                        record.barcode
+                                                        record.barcode,
                                                     )
                                                 "
                                             >
@@ -192,13 +197,18 @@
 
         <scan-modal-institution v-model:open="openScanModal" />
         <a-modal
-        v-model:open="openIframe"
-        style="width: 70%; top: 50px"
-        :footer="null"
-        :afterClose="() => router.get(route('treasury.dashboard'))"
-    >
-        <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
-    </a-modal>
+            v-model:open="openIframe"
+            style="width: 70%; top: 50px"
+            :footer="null"
+            :afterClose="() => router.get(route('treasury.dashboard'))"
+        >
+            <iframe
+                class="mt-7"
+                :src="stream"
+                width="100%"
+                height="600px"
+            ></iframe>
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 
@@ -272,8 +282,8 @@ const onSubmit = () => {
         }))
         .post(route("treasury.transactions.institution.gc.sales.submission"), {
             onSuccess: ({ props }) => {
-                openLeftNotification(props.flash, 'Institution Gc Sales');
-                if(props.flash.success){
+                openLeftNotification(props.flash, "Institution Gc Sales");
+                if (props.flash.success) {
                     stream.value = `data:application/pdf;base64,${props.flash.stream}`;
                     openIframe.value = true;
                 }
@@ -297,7 +307,7 @@ const removeBarcode = (bc) => {
                     [bc]: false,
                 };
             },
-        }
+        },
     );
 };
 const scanBarcode = () => {
@@ -306,7 +316,7 @@ const scanBarcode = () => {
 
 const handlePaymentType = (value) => {
     formState.paymentType.type = value;
-    formState.errors['paymentType.type'] = null;
+    formState.errors["paymentType.type"] = null;
 };
 
 const onPaginate = async (link) => {
@@ -327,15 +337,15 @@ const handleDocumentChange = (file) => {
 
 const handleCustomer = (value) => {
     formState.customer = value;
-    formState.clearErrors('customer');
+    formState.clearErrors("customer");
 };
 const handleCheckedBy = (value) => {
     formState.checkedBy = value;
-    formState.clearErrors('checkedBy');
+    formState.clearErrors("checkedBy");
 };
 const handlePaymentFund = (value) => {
     formState.paymentFund = value;
-    formState.clearErrors('paymentFund');
+    formState.clearErrors("paymentFund");
 };
-const { getErrorMessage, getErrorStatus, clearError } = getError();
+const { getErrorMessage, getErrorStatus } = getError();
 </script>
