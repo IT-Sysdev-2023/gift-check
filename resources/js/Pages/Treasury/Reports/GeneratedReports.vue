@@ -53,11 +53,9 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import axios from "axios";
-import { onMounted, ref, computed } from "vue";
+import { ref, computed } from "vue";
 
-const initLoading = ref(false);
+const initLoading = ref<boolean>(false);
 
 defineProps<{
     files: {

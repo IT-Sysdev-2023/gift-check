@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { UserType } from "@/userType";
 
 defineProps<{
     data?: {
