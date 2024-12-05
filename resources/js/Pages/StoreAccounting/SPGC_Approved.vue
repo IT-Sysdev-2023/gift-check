@@ -17,7 +17,7 @@
                         <a-card style="margin-top: 5px;">
 
                             <span style="font-weight: bold; margin-left: 60%;">
-                                <a-input-search allow-clear v-model:value="pdfPerCustomerSearch"
+                                <a-input-search allow-clear v-model:value="pdfPerCustomerSearch" enter-button
                                     placeholder="Input search here!" style="width: 35%;" />
                             </span>
                             <div style="margin-top: 10px;margin-left: 30px;">
@@ -61,7 +61,7 @@
                         </template>
                         <a-card style="margin-top: 5px;">
                             <span style="font-weight: bold; margin-left: 60%;">
-                                <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch"
+                                <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch" enter-button
                                     placeholder="Input search here!" style="width: 35%;" />
                             </span>
                             <div style="margin-top: 10px;margin-left: 30px;">
@@ -107,7 +107,7 @@
                         <a-card style="margin-top: 5px;">
 
                             <span style="font-weight: bold; margin-left: 60%;">
-                                <a-input-search allow-clear v-model:value="spgcApprovedSearchPerCustomer"
+                                <a-input-search allow-clear v-model:value="spgcApprovedSearchPerCustomer" enter-button
                                     placeholder="Input search here!" style="width: 35%;" />
                             </span>
                             <div style="margin-top: 10px;margin-left: 30px;">
@@ -152,8 +152,8 @@
                         </template>
                         <a-card style="margin-top: 5px;">
                             <span style="font-weight: bold; margin-left: 60%;">
-                                <a-input-search allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
-                                    style="width: 35%;" />
+                                <a-input-search allow-clear v-model:value="spgcApprovedSearch" enter-button
+                                    placeholder="Input search here!" style="width: 35%;" />
                             </span>
                             <div style="margin-top: 10px;margin-left: 30px;">
                                 <span style="color:red; font-style: oblique;">
@@ -432,7 +432,7 @@ export default {
                 spgcEndDate: this.records.toDate
             };
             this.$inertia.get(route('storeaccounting.SPGCApproved', pdfPerBarcode), {
-                
+
             }, {
                 preserveState: true
             })
@@ -484,17 +484,12 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                    const hide = message.loading('Generating in progress..', 0);
-                    
                     window.location.href = route('storeaccounting.pdfApprovedSubmit', {
                         startDate: this.records.fromDate,
                         endDate: this.records.toDate
                     },);
-                    setTimeout(hide, 16000);
-
                 },
                 onCancel() {
-                    console.log('Cancel');
                 },
             });
         },
@@ -516,15 +511,12 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                    
-                    const hide = message.loading('Generating in progress..', 0)
 
                     window.location.href = route('storeaccounting.SPGCApprovedExcel', {
                         startDate: this.records.fromDate,
                         endDate: this.records.toDate
                     });
-                    setTimeout(hide, 2500);
-
+                   
                 },
                 onCancel() {
                     console.log('Cancel');

@@ -1999,7 +1999,7 @@ class StoreAccountingController extends Controller
 
     public function SPGCApproved(Request $request)
     {
-
+        // dd($request->all());
         return Inertia::render('StoreAccounting/SPGC_Approved', [
             'records' => $this->SPGCApprovedSubmit($request)
         ]);
@@ -2688,7 +2688,7 @@ class StoreAccountingController extends Controller
     {
         // dd($request->toArray());
         $cebu = $request->barcodes;
-        
+
         $selectedCebuFile = $request->selectedCebuFile;
         // dd($selectedCebuFile);
         $cleanedBarcodes = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $cebu);

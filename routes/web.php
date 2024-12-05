@@ -61,7 +61,7 @@ Route::get('/not-found', function () {
 Route::fallback(function () {
     return view('notFound');
 });
-Route::get('kanding', function (Request $request) {
+Route::get('kanding', function () {
     // return Storage::disk('fad')->files();
     $checkBy = Assignatory::select('assig_position', 'assig_name as label', 'assig_id as value')->where('assig_id', 10)->get();
     dd($checkBy);
@@ -751,107 +751,90 @@ Route::middleware(['auth'])->group(function () {
                 Route::name('storeaccounting.')
                     ->group(
                         function () {
-
+                            //dashboard
                             Route::get('storeaccouting-storeeod-{id}', [StoreAccountingController::class, 'storeeod'])->name('storeeod');
                             Route::get('store-accounting.GCNavisionPOSTransactions-{barcode}', [StoreAccountingController::class, 'GCNavisionPOSTtransactions'])->name('GCNavisionPOSTransactions');
-
+                            //treasury sales
                             Route::get('storeaccouting-sales', [StoreAccountingController::class, 'storeAccoutingSales'])->name('sales');
                             Route::get('store-accounting-view-sales-{id}', [StoreAccountingController::class, 'storeaccountingViewSales'])->name('storeAccountingViewSales');
                             Route::get('view-sales-{barcode}', [StoreAccountingController::class, 'viewSalesPostTransaction'])->name('storeAccountingPOStransaction');
-
+                            //store sales
                             Route::get('storeaccounting-store', [StoreAccountingController::class, 'storeAccountingStore'])->name('store');
                             Route::get('store-accounting-view-store-{id}', [StoreAccountingController::class, 'storeAccountingViewStore'])->name('storeAccountingViewStore');
                             Route::get('view-modal-{barcode}', [StoreAccountingController::class, 'storeAccountingViewModalStore'])->name('storeAccountingViewModal');
-
+                            //alturas store
                             Route::get('store-verified-alturasMall-{id}', [StoreAccountingController::class, 'storeVerifiedAlturasMall'])->name('alturasMall');
                             Route::get('alturas-pos-transaction-{barcode}', [StoreAccountingController::class, 'alturasMallPosTransaction'])->name('alturasMallPosTransaction');
-
+                            //talibon
                             Route::get('store-verified-alturasTalibon-{id}', [StoreAccountingController::class, 'storeVerifiedAlturasTalibon'])->name('alturasTalibon');
                             Route::get('talibon-pos-transaction-{barcode}', [StoreAccountingController::class, 'talibonPosTransaction'])->name('talibonPosTransaction');
-
+                            //island city mall
                             Route::get('store-verified-islandCityMall-{id}', [StoreAccountingController::class, 'storeVerifiedIslandCityMall'])->name('islandCityMall');
                             Route::get('island-pos-transaction-{barcode}', [StoreAccountingController::class, 'islandCityMallPosTransaction'])->name('islandCityMallPosTransaction');
-
+                            //plaza marcela
                             Route::get('store-verified-plazaMarcela-{id}', [StoreAccountingController::class, 'storeVerifiedPlazaMarcela'])->name('plazaMarcela');
                             Route::get('plaza-transaction-plazaMarcela-{barcode}', [StoreAccountingController::class, 'plazaPostTransaction'])->name('plazaMarcelaPosTransaction');
-
+                            //alturas tubigon
                             Route::get('store-verified-alturasTubigon-{id}', [StoreAccountingController::class, 'storeVerifiedAlturasTubigon'])->name('alturasTubigon');
                             Route::get('tubigon-transaction-alturasTubigon-{barcode}', [StoreAccountingController::class, 'tubigonTransanction'])->name('TubigonPosTransaction');
-
+                            //colonade colon
                             Route::get('store-verified-colonadeColon-{id}', [StoreAccountingController::class, 'storeVerifiedColonadeColon'])->name('colonadeColon');
                             Route::get('pos-transaction-colonadeColon-{barcode}', [StoreAccountingController::class, 'transactionColonadeColon'])->name('colonadeColonPosTransaction');
-
+                            //colonade mandaue
                             Route::get('store-verified-colonadeMandaue-{id}', [StoreAccountingController::class, 'storeVerifiedColonadeMandaue'])->name('colonadeMandaue');
                             Route::get('pos-transaction-colonadeMandaue-{barcode}', [StoreAccountingController::class, 'transactionColonadeMandaue'])->name('colonadeMandauePosTransaction');
-
+                            //altacitta
                             Route::get('store-verified-altaCitta-{id}', [StoreAccountingController::class, 'storeVerifiedAltaCitta'])->name('altaCitta');
                             Route::get('pos-transaction-altaCitta-{barcode}', [StoreAccountingController::class, 'transactionAltaCitta'])->name('altaCittaPosTransaction');
-
+                            //farmersmarket
                             Route::get('store-verified-farmersMarket-{id}', [StoreAccountingController::class, 'storeVerifiedFarmersMarket'])->name('farmersMarket');
                             Route::get('pos-transaction-farmersMarket-{barcode}', [StoreAccountingController::class, 'transactionFarmersMarket'])->name('farmersMarketPosTransaction');
-
+                            //ubay distribution
                             Route::get('store-verified-ubayDistribution-{id}', [StoreAccountingController::class, 'storeVerifiedUbayDistribution'])->name('ubayDistribution');
                             Route::get('pos-transaction-ubayDistribution-{barcode}', [StoreAccountingController::class, 'transactionUbayDistribution'])->name('ubayDistributionPosTransaction');
-
+                            //screen ville
                             Route::get('store-verified-screenville-{id}', [StoreAccountingController::class, 'storeVerifiedScreenville'])->name('screenville');
                             Route::get('pos-transaction-screenville-{barcode}', [StoreAccountingController::class, 'transactionScreenville'])->name('screenvillePosTransaction');
-
+                            //asc tech
                             Route::get('store-verified-ascTech-{id}', [StoreAccountingController::class, 'storeVerifiedAscTech'])->name('ascTech');
                             Route::get('pos-transaction-ascTech-{barcode}', [StoreAccountingController::class, 'transactionAscTech'])->name('ascTechPosTransaction');
-
+                            //verified gc report
                             Route::get('verified-gc-report', [StoreAccountingController::class, 'verifiedGCReport'])->name('verifiedGCReport');
                             Route::get('verified-gc-submit', [StoreAccountingController::class, 'verifiedGcSubmit'])->name('verifiedGcSubmit');
                             Route::get('verified-yearly-submit', [StoreAccountingController::class, 'verifiedGcYearlySubmit'])->name('verifiedGcYearlySubmit');
-
+                            //store gc purchased
                             Route::get('store-gc-purchased', [StoreAccountingController::class, 'storeGCPurchasedReport'])->name('storeGCPurchasedReport');
                             Route::get('store-monthly-submit', [StoreAccountingController::class, 'billingMonthlySubmit'])->name('billingMonthlySubmit');
                             Route::get('store-yearly-submit', [StoreAccountingController::class, 'billingYearlySubmit'])->name('billingYearlySubmit');
-
-
-
+                            // redeem report
                             Route::get('redeem-report-purchased', [StoreAccountingController::class, 'redeemReport'])->name('redeemReport');
                             Route::get('redeem-monthly-submit', [StoreAccountingController::class, 'monthlyRedeemSubmit'])->name('monthlyRedeemSubmit');
                             Route::get('redeem-yearly-submit', [StoreAccountingController::class, 'yearlyRedeemSubmit'])->name('yearlyRedeemSubmit');
-
-
-
-
+                            // verified store
                             Route::get('verified-store-purchased', [StoreAccountingController::class, 'verifiedStore'])->name('verifiedStore');
                             Route::get('monthly-submit', [StoreAccountingController::class, 'puchasedMonthlySubmit'])->name('puchasedMonthlySubmit');
                             Route::get('yearly-submit', [StoreAccountingController::class, 'purchasedYearlySubmit'])->name('purchasedYearlySubmit');
-
-
-
+                            // spgc approved
                             Route::get('spgc-approved', [StoreAccountingController::class, 'SPGCApproved'])->name('SPGCApproved');
                             Route::get('generate-excel-perCustomer', [StoreAccountingController::class, 'SPGCExcel'])->name('SPGCApprovedExcel');
                             Route::get('spgc-approved-submit', [StoreAccountingController::class, 'SPGCApprovedSubmit'])->name('SPGCApprovedSubmit');
                             Route::get('spgc-approved-pdf', [StoreAccountingController::class, 'pdfApproved'])->name('pdfApprovedSubmit');
                             Route::get('spgc-approved-excel-barcode', [StoreAccountingController::class, 'excelPerBarcode'])->name('excelPerBarcode');
-
-
-
-
-
-
-
+                            // spgc release
                             Route::get('spgc-release', [StoreAccountingController::class, 'SPGCRelease'])->name('SPGCRelease');
                             Route::get('spgc-release-submit', [StoreAccountingController::class, 'SPGCReleasedSubmit'])->name('SPGCReleasedSubmit');
                             Route::get('spgc-release-excel', [StoreAccountingController::class, 'releaseExcel'])->name('releaseExcel');
                             Route::get('spgc-release-pdf', [StoreAccountingController::class, 'releasePdf'])->name('releasePdf');
-
-
-
+                            // duplicate barcodes 
                             Route::get('duplicated-barcode', [StoreAccountingController::class, 'DuplicatedBarcodes'])->name('DuplicatedBarcodes');
                             Route::get('duplicate-barcode-excel', [StoreAccountingController::class, 'duplicateExcel'])->name('barcodes');
                             Route::get('duplicate-barcode-altta-table', [StoreAccountingController::class, 'alttaTable'])->name('alttaTable');
                             Route::get('duplicate-barcode-cebu-table', [StoreAccountingController::class, 'cebuTable'])->name('cebuTable');
-
-
-
+                            // check variances
                             Route::get('check-variance', [StoreAccountingController::class, 'CheckVariance'])->name('CheckVariance');
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
-
+                            // about us
                             Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
                         }
                     );
