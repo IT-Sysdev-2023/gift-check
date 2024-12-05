@@ -16,7 +16,7 @@
                     <a-card style="margin-top: 5px;">
 
                         <span style="font-weight: bold; margin-left: 60%;">
-                            <a-input-search allow-clear v-model:value="pdfPerCustomerSearch"
+                            <a-input-search allow-clear v-model:value="pdfPerCustomerSearch" enter-button
                                 placeholder="Input search here!" style="width: 35%;" />
                         </span>
                         <div style="margin-top: 10px;margin-left: 30px;">
@@ -59,7 +59,7 @@
                     <a-card style="margin-top: 5px;">
 
                         <span style="font-weight: bold; margin-left: 60%;">
-                            <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch"
+                            <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch" enter-button
                                 placeholder="Input search here!" style="width: 35%;" />
                         </span>
                         <div style="margin-top: 10px;margin-left: 30px;">
@@ -102,7 +102,7 @@
                     <a-card style="margin-top: 5px;">
 
                         <span style="font-weight: bold; margin-left: 60%;">
-                            <a-input-search allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!"
+                            <a-input-search allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!" enter-button
                                 style="width: 35%;" />
                         </span>
                         <div style="margin-top: 10px;margin-left: 30px;">
@@ -146,7 +146,7 @@
                     <a-card style="margin-top: 5px; ">
 
                         <span style="font-weight: bold; margin-left: 60%;">
-                            <a-input-search allow-clear v-model:value="spgcApprovedSearchPerBarcode"
+                            <a-input-search allow-clear v-model:value="spgcApprovedSearchPerBarcode" enter-button
                                 placeholder="Input search here!"
                                 style="width: 35%;" />
                         </span>
@@ -484,13 +484,13 @@ export default {
                 cancelText: 'No',
                 onOk: () => {
                    
-                    const hide = message.loading('Generating in progress..', 0)
+                   
 
                     window.location.href = route('storeaccounting.releasePdf', {
                         startDate: this.data.fromDate,
                         endDate: this.data.endDate
                     });
-                    setTimeout(hide, 16000);
+                   
 
                 },
                 onCancel() {
@@ -518,12 +518,10 @@ export default {
                 cancelText: 'No',
                 onOk: () => {
                     
-                    const hide = message.loading('Generating in progress..', 0)
                     window.location.href = route('storeaccounting.releaseExcel', {
                         startDate: this.data.fromDate,
                         endDate: this.data.endDate
                     });
-                    setTimeout(hide, 2500);
 
                 },
                 onCancel() {

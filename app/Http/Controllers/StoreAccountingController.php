@@ -1999,7 +1999,7 @@ class StoreAccountingController extends Controller
 
     public function SPGCApproved(Request $request)
     {
-
+        // dd($request->all());
         return Inertia::render('StoreAccounting/SPGC_Approved', [
             'records' => $this->SPGCApprovedSubmit($request)
         ]);
@@ -2526,6 +2526,8 @@ class StoreAccountingController extends Controller
         // dd();
         // dd($request->toArray());
         $alttaTable = $request->AlttaData;
+        $selectedFile = $request->selectedFile;
+        // dd($selectedFile);
         // dd($alttaTable);
         $cleanedBarcodes = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $alttaTable);
         $barcodes = array_filter(explode(',', $cleanedBarcodes));
@@ -2672,6 +2674,7 @@ class StoreAccountingController extends Controller
 
 
         return (object) [
+            'selectedFile' => $selectedFile,
             'tagbilaran' => $tagbilaran,
             'alttaTable' => $alttaTable,
             'talibon' => $talibon,
@@ -2686,7 +2689,8 @@ class StoreAccountingController extends Controller
         // dd($request->toArray());
         $cebu = $request->barcodes;
 
-        // dd();
+        $selectedCebuFile = $request->selectedCebuFile;
+        // dd($selectedCebuFile);
         $cleanedBarcodes = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $cebu);
         $barcodes = array_filter(explode(',', $cleanedBarcodes));
         $cebuBarcode = array_map('trim', $barcodes);
@@ -2826,6 +2830,7 @@ class StoreAccountingController extends Controller
             ->withQueryString();
 
         return (object) [
+            'selectedCebuFile' => $selectedCebuFile,
             'tagbilaran' => $tagbilaran,
             'cebu' => $cebu,
             'talibon' => $talibon,

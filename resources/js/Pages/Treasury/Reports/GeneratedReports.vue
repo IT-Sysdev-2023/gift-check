@@ -53,27 +53,20 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import axios from "axios";
-import { onMounted, ref, computed } from "vue";
+import { ReportsGeneratedTypes } from "@/types/treasury";
+import { ref, computed } from "vue";
 
-const initLoading = ref(false);
+defineProps<ReportsGeneratedTypes>();
+const initLoading = ref<boolean>(false);
 
-defineProps<{
-    files: {
-        file: string;
-        filename: string;
-        extension: string;
-        expiration: string;
-    }[];
-}>();
 const dashboardRoute = computed(() => {
     const webRoute = route().current();
     const res = webRoute?.split(".")[0];
     return res + ".dashboard";
 });
 
-const downloadFile = (file) => {
+const downloadFile = (file: string) => {
+    console.log(file);
     const url = route("treasury.reports.download.gc", {
         file: file,
     });

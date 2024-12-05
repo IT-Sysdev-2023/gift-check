@@ -13,6 +13,7 @@ import RetailGroupSidebar from "@/Components/RetailGroupSidebar.vue";
 import TreasurySideBar from "@/Components/TreasurySideBar.vue";
 import RetailSidebar from "@/Components/RetailSidebar.vue";
 import { computed } from "vue";
+import { MenuProps } from "ant-design-vue";
 
 const page = usePage<PageWithSharedProps>().props;
 const {
@@ -43,7 +44,7 @@ onMounted(() => {
     curr.value = dashboardRoute.value;
 });
 
-const selectedPage = (obj) => {
+const selectedPage: MenuProps["onClick"] = (obj) => {
     curr.value = obj.key;
     router.visit(route(obj.key + ".dashboard"));
 };
@@ -268,8 +269,8 @@ const selectedPage = (obj) => {
                 </a-layout>
             </a-layout>
             <ant-float v-if="treasury && page.pendingPrRequest.length" />
-            
-            <generated-report-float/>
+
+            <generated-report-float />
         </a-layout>
     </div>
 </template>

@@ -20,14 +20,19 @@
 
                     <template v-if="column.dataIndex === 'action'">
                         <a-button title="Update User" @click="updateUser(record)" class="me-2 me-sm-5"
-                            style="color:white; background-color: #4CAF50;">
+                            style="color:white; background-color: green;">
                             <FormOutlined />
                         </a-button>
 
                         <a-button @click="resetPassword(record)" title="Reset Password"
-                            style="color: white; background-color: #0286df;">
+                            style="color: white; background-color: #1e90ff;">
                             <UndoOutlined />
                         </a-button>
+
+                        <!-- <a-button @click="DangerButton(record)" style="color:white; background-color: #C7253E;" title="danger" size="small">
+                            <WarningOutlined />
+                        </a-button> -->
+
                     </template>
                 </template>
             </a-table>
@@ -319,6 +324,9 @@
             </a-select>
         </a-form-item>
     </a-modal>
+    <!-- <a-modal v-model:open="danger">
+        <span>KUPAL KA TALAGA</span>
+    </a-modal> -->
 
     <!-- {{ users }} -->
 
@@ -327,10 +335,10 @@
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { UserAddOutlined } from '@ant-design/icons-vue';
-// import { Modal } from 'ant-design-vue';
+import { Modal } from 'ant-design-vue';
 // import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 // import { createVNode } from 'vue';
-import { legacyLogicalPropertiesTransformer, notification } from 'ant-design-vue';
+import { legacyLogicalPropertiesTransformer, message, notification } from 'ant-design-vue';
 export default {
     layout: AuthenticatedLayout,
     components: { UserAddOutlined },
@@ -345,6 +353,8 @@ export default {
     },
     data() {
         return {
+            // danger: false,
+
             dataForFilterStore: {
                 filter_store: this.filterstore
             },
@@ -708,6 +718,32 @@ export default {
                 preserveScroll: true
             })
         },
+        // DangerButton() {
+        //     Modal.confirm({
+        //         title: 'Are you sure?',
+        //         content: 'Really ?',
+        //         okText: 'Yes',
+        //         cancelText: 'No',
+        //         onOk: () => {
+        //             Modal.confirm({
+        //                 title: 'Are you sure? like 100% ?',
+        //                 content: 'Really , Really?',
+        //                 okText: 'Yes',
+        //                 cancelText: 'No',
+        //                 onOk: () => {
+        //                     this.danger = true;
+        //                 }
+        //             })
+        //         },
+        //         onCancel: () => {
+        //             Modal.confirm({
+        //                 title: 'Why?',
+        //                 content: 'Are you afraid?'
+        //             })
+        //         }
+
+        //     })
+        // }
         // showDeleteConfirm(rec) { 
         //     Modal.confirm({
         //         title: 'Are you sure update this task?',

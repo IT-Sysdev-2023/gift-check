@@ -3,7 +3,7 @@
         <a-card style="font-weight: bold;" title="EOD LIST"></a-card>
         <div style=" margin-left: 70%; margin-top: 10px;">
             <span>
-                <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here!"
+                <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here!" enter-button
                     style="width:90%;" />
             </span>
         </div>

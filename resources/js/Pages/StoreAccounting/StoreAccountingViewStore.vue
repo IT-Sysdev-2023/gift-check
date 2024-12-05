@@ -6,7 +6,7 @@
             </div>
         </a-card>
         <div style="margin-top: 10px; margin-left: 70%; font-weight: bold;">
-            <a-input-search allow-clear v-model:value="storeSearchBox" placeholder="Input search here!"
+            <a-input-search allow-clear v-model:value="storeSearchBox" placeholder="Input search here!" enter-button
                 style="width: 90%;" />
         </div>
         <div style="margin-top: 10px;">

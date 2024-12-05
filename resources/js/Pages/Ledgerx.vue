@@ -67,7 +67,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
-import _ from "lodash";
 import { highlighten } from "@/Mixin/UiUtilities";
 
 export default {
@@ -107,7 +106,7 @@ export default {
                     { ...pickBy(this.form), date: formattedDate },
                     {
                         preserveState: true,
-                    }
+                    },
                 );
             }, 150),
         },

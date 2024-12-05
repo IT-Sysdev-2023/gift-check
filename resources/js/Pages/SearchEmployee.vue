@@ -67,13 +67,12 @@
 import { reactive, watch, ref } from "vue";
 import debounce from "lodash/debounce";
 import { router } from "@inertiajs/vue3";
-import { useForm } from 'laravel-precognition-vue';
 import { notification } from "ant-design-vue";
 import axios from "axios";
 
 let lastFetchId = 0;
 
-const props = defineProps({
+defineProps({
     users: [],
 });
 const value2 = ref(undefined);
@@ -92,12 +91,11 @@ const filterOption2 = (input, option) => {
 const fetchUser = debounce(async (value) => {
     // console.log('fetching user', value);
     lastFetchId += 1;
-    const fetchId = lastFetchId;
     state.data = [];
     state.fetching = true;
 
     // console.log(value);
-    
+
     const { data } = await axios.get(route("get.employee"), {
         params: { q: value },
     });
@@ -111,7 +109,7 @@ const fetchUser = debounce(async (value) => {
     state.fetching = false;
 }, 300);
 const handleChange = (value, obj) => {
-    console.log(obj)
+    console.log(obj);
     state.dataFetched = obj.details;
 };
 const handleChangeOld = (value, obj) => {
@@ -134,7 +132,7 @@ const onSave = () => {
                     description: "Fill the Api user!",
                 });
             },
-        }
+        },
     );
     // console.log(state.oldData.user_id);
 };

@@ -59,7 +59,6 @@
                                     :aRoute="budgetRequestApproved"
                                     :cRoute="budgetRequestCancelled"
                                 />
-                                
                                 <m-card
                                     class="uppercase"
                                     title="Special GC Requests"

@@ -4,7 +4,7 @@
             <a-tab-pane key="1">
                 <template #tab>
                     <span style="font-weight: bold;">
-                       Duplicated Report (CEBU)
+                        Duplicated Report (CEBU)
                     </span>
                 </template>
                 <a-card style="width: 72%; margin-left: 28%;">
@@ -12,15 +12,15 @@
                         <a-tab-pane key="1">
                             <template #tab>
                                 <span style="font-weight: bold;">
+                                    <DashOutlined />
                                     Tagbilaran
                                 </span>
                             </template>
                             <a-card>
                                 <div style="margin-left: 60%;">
-                                    
-                                    <a-input-search allow-clear v-model:value="cebuTagbilaranSearch"
-                                        placeholder="Input search here! "
-                                        style="width: 100%;  " />
+
+                                    <a-input-search allow-clear v-model:value="cebuTagbilaranSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
@@ -37,6 +37,7 @@
                                 <a-button @click="cebuGenerateExcel"
                                     style="margin-left: 77%; background-color: green; color:white;">
                                     <FileExcelOutlined />
+
                                     Generate Excel
                                 </a-button>
                             </span>
@@ -44,15 +45,15 @@
                         <a-tab-pane key="2">
                             <template #tab>
                                 <span style="font-weight: bold">
+                                    <DashOutlined />
                                     Talibon
                                 </span>
                             </template>
                             <a-card>
                                 <div style="margin-left: 60%;">
-                                    
-                                    <a-input-search allow-clear v-model:value="cebuTalibonSearch"
-                                        placeholder="Input search here! "
-                                        style="width: 100%;  " />
+
+                                    <a-input-search allow-clear v-model:value="cebuTalibonSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
@@ -76,15 +77,15 @@
                         <a-tab-pane key="3">
                             <template #tab>
                                 <span style="font-weight: bold;">
-                                   Tubigon
+                                    <DashOutlined />
+                                    Tubigon
                                 </span>
                             </template>
                             <a-card>
                                 <div style="margin-left: 60%;">
-                                    
-                                    <a-input-search allow-clear v-model:value="cebuTubigonSearch"
-                                        placeholder="Input search here! "
-                                        style="width: 100%;  " />
+
+                                    <a-input-search allow-clear v-model:value="cebuTubigonSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
@@ -128,14 +129,21 @@
                             style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" />
                     </div>
                     <div style="margin-top: 10px;">
-                        <span v-if="textfile" style="color:green; font-weight: bold;">Selected TextFile: </span>
-                        <span style="margin-left: 5px; color:red">
+                        <span v-if="textfile && !cebu.selectedCebuFile" style="color:green; font-weight: bold;">Selected
+                            TextFile: </span>
+                        <span style="margin-left: 5px; text-decoration: underline;">
                             {{ this.textfile }}
                         </span>
-                        <span v-if="!textfile" style="font-weight: bold;">
+                        <span v-if="cebu.selectedCebuFile" style="font-weight: bold; color:green">Selected
+                            TextFile:</span>
+                        <span style="margin-left: 5px; text-decoration: underline;">
+                            {{ this.cebu.selectedCebuFile }}
+                        </span>
+                        <span v-if="!textfile && !cebu.selectedCebuFile" style="font-weight: bold;">
                             Note:
                         </span>
-                        <span v-if="!textfile" style="margin-left: 5px; color:red; font-weight: bold;">
+                        <span v-if="!textfile && !cebu.selectedCebuFile"
+                            style="margin-left: 5px; color:red; font-weight: bold;">
 
                             Choose TEXTFILE type only !
                         </span>
@@ -164,15 +172,15 @@
                         <a-tab-pane key="1">
                             <template #tab>
                                 <span style="font-weight: bold;">
+                                    <DashOutlined />
                                     Tagbilaran
                                 </span>
                             </template>
                             <a-card>
                                 <div style="margin-left: 60%;">
-                                    
-                                    <a-input-search allow-clear v-model:value="alttaTagbilaranSearch"
-                                        placeholder="Input search here! "
-                                        style="width: 100%;  " />
+
+                                    <a-input-search allow-clear v-model:value="alttaTagbilaranSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px">
                                     <span style="font-weight: bold; margin-left: 40%;">
@@ -197,15 +205,15 @@
                         <a-tab-pane key="2">
                             <template #tab>
                                 <span style="font-weight: bold;">
-                                   Talibon
+                                    <DashOutlined />
+                                    Talibon
                                 </span>
                             </template>
                             <a-card>
                                 <div style="margin-left: 60%;">
-                                    
-                                    <a-input-search allow-clear v-model:value="alttaTalibonSearch"
-                                        placeholder="Input search here! "
-                                        style="width: 100%;  " />
+
+                                    <a-input-search allow-clear v-model:value="alttaTalibonSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
@@ -230,15 +238,15 @@
                         <a-tab-pane key="3">
                             <template #tab>
                                 <span style="font-weight: bold;">
+                                    <DashOutlined />
                                     Tubigon
                                 </span>
                             </template>
                             <a-card>
                                 <div style="margin-left: 60%;">
-                                    
-                                    <a-input-search allow-clear v-model:value="alttaTubigonSearch"
-                                        placeholder="Input search here! "
-                                        style="width: 100%;  " />
+
+                                    <a-input-search allow-clear v-model:value="alttaTubigonSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div>
                                 <div style=" margin-top: 10px">
                                     <span style="font-weight: bold; margin-left: 40%;">
@@ -286,13 +294,21 @@
                     </div>
                     <div style="margin-top: 10px;">
                         <span v-if="altaTextFile" style="color:green; font-weight: bold;">Selected TextFile: </span>
-                        <span style="margin-left: 5px;">
+                        <span style="margin-left: 5px; text-decoration: underline;">
                             {{ this.altaTextFile }}
                         </span>
-                        <span v-if="!altaTextFile" style="font-weight: bold;">
+
+                        <span v-if="altta.selectedFile" style="color:green; font-weight: bold;">Selected
+                            TextFile:</span>
+                        <span style="margin-left: 5px; text-decoration: underline;">
+                            {{ this.altta.selectedFile }}
+                        </span>
+
+                        <span v-if="!altaTextFile && !altta.selectedFile" style="font-weight: bold;">
                             Note:
                         </span>
-                        <span v-if="!altaTextFile" style="margin-left: 5px; color:red; font-weight: bold" >
+                        <span v-if="!altaTextFile && !altta.selectedFile"
+                            style="margin-left: 5px; color:red; font-weight: bold">
                             Choose CSV type only !
                         </span>
                     </div>
@@ -555,11 +571,12 @@ export default {
         alttaReportButton() {
             if (this.altaContent) {
                 const altaBarcodeString = this.altaContent
+                const selectedFile = this.altaTextFile
 
                 const openNotificationWithIcon = (type) => {
                     notification[type]({
                         message: 'Invalid File Selected',
-                        description: 'Please select Textfile type only',
+                        description: 'Please select CSV type only',
                         placement: 'topRight'
                     });
                 };
@@ -577,7 +594,7 @@ export default {
                     okText: 'Yes',
                     cancelText: 'No',
                     onOk: () => {
-                        window.location.href = route('storeaccounting.DuplicatedBarcodes', { AlttaData: altaBarcodeString });
+                        window.location.href = route('storeaccounting.DuplicatedBarcodes', { AlttaData: altaBarcodeString, selectedFile });
                     },
                     onCancel: () => {
                         console.log('Cancel');
@@ -662,6 +679,7 @@ export default {
         cebuReportButton() {
             if (this.fileContent) {
                 const barcodeString = this.fileContent
+                const selectedCebuFile = this.textfile
 
                 const openNotificationWithIcon = (type) => {
                     notification[type]({
@@ -684,7 +702,7 @@ export default {
                     okText: 'Yes',
                     cancelText: 'No',
                     onOk: () => {
-                        window.location.href = route('storeaccounting.DuplicatedBarcodes', { barcodes: barcodeString });
+                        window.location.href = route('storeaccounting.DuplicatedBarcodes', { barcodes: barcodeString, selectedCebuFile });
                     },
                     onCancel: () => {
                         console.log('Cancel');

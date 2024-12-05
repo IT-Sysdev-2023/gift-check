@@ -4,7 +4,7 @@
         "module": "ESNext",
         "moduleResolution": "bundler",
         "jsx": "preserve",
-        "strict": false, // set this true later
+        "strict": true, // set this true later
         "isolatedModules": true,
         "target": "ESNext",
         "esModuleInterop": true,

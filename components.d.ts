@@ -202,6 +202,7 @@ declare module 'vue' {
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     Dashboard: typeof import('./resources/js/Pages/Dashboard.vue')['default']
     DashboardOutlined: typeof import('@ant-design/icons-vue')['DashboardOutlined']
+    DashOutlined: typeof import('@ant-design/icons-vue')['DashOutlined']
     DatabaseOutlined: typeof import('@ant-design/icons-vue')['DatabaseOutlined']
     DeleteUserForm: typeof import('./resources/js/Pages/Profile/Partials/DeleteUserForm.vue')['default']
     DenominationSetup: typeof import('./resources/js/Pages/Admin/Masterfile/DenominationSetup.vue')['default']
