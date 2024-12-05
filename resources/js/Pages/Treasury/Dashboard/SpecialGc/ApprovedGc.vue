@@ -53,10 +53,10 @@ const { highlightText } = highlighten();
                         {{ record.specialExternalCustomer?.spcus_acctname }}
                     </template>
                     <template v-if="column.key === 'dateApproved'">
-                        {{ record.approvedRequest.reqap_date }}
+                        {{ record.approvedRequest?.reqap_date }}
                     </template>
                     <template v-if="column.key === 'approvedBy'">
-                        {{ record.approvedRequest.reqap_approvedby }}
+                        {{ record.approvedRequest?.reqap_approvedby }}
                     </template>
 
                     <template v-if="column.key === 'action'">

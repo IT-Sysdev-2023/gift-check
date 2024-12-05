@@ -5,7 +5,7 @@
                 style="width: 340px"
                 :overflow-count="Infinity"
                 type="primary"
-                :disabled="pending === 0"
+                :disabled="pending == 0"
                 @click="() => $inertia.get(route(pRoute))"
                 danger
             >
