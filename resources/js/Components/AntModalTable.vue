@@ -13,9 +13,7 @@
                 v-for="denom of denoms"
                 :key="denom.denomination"
                 :tab="denom.denomination_format"
-                ></a-tab-pane
-            >
-            
+            ></a-tab-pane>
         </a-tabs>
         <a-table
             bordered
@@ -47,13 +45,13 @@
 </template>
 
 <script lang="ts" setup>
-import axios from "axios";
+import { StoreDenomination } from "@/types/treasury";
 import { ref } from "vue";
 
 const activeKey = ref("all");
-const props = defineProps<{
+defineProps<{
     title: string;
-    denoms: any;
+    denoms: StoreDenomination | null;
     open: boolean;
     data: {
         data: any[];
@@ -63,6 +61,7 @@ const props = defineProps<{
         dataIndex: string;
     }[];
 }>();
+
 const emit = defineEmits<{
     (e: "update:open", value: boolean): void;
     (e: "handlePagination", link): void;
@@ -72,9 +71,9 @@ const emit = defineEmits<{
 const handleClose = () => {
     emit("update:open", false);
 };
-const handleTab = (val) =>{
+const handleTab = (val) => {
     emit("handleTabChange", val);
-}
+};
 const getValue = (record, index) => {
     return index.reduce((acc, index) => acc[index], record);
 };

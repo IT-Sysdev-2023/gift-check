@@ -25,3 +25,42 @@ export interface BudgetRequestProps {
     specialBudget: string;
     br: string;
 }
+
+export interface GcAllocationForm {
+    store: number;
+    gcType: number;
+    denomination: {
+        denominationFormat: string;
+        denomination: number;
+        qty: number | null;
+    }[];
+}
+
+export interface HandleSelectTypes {
+    value: number;
+    label: string;
+}
+
+export interface StoreDenomination {
+    count: number;
+    denom_id: number;
+    denomination: number;
+    denomination_format: string;
+}
+//Models
+
+export interface denomination {
+    denom_id: number;
+    denom_code: number;
+    denomination: number;
+    denom_fad_item_number: string;
+    denom_barcode_start: number;
+    denom_type: string;
+    denom_status: string;
+    denom_createdby: number;
+    denom_datecreated: string;
+    denom_updatedby: null | string;
+    denom_dateupdated: null | string;
+    cnt?: number;
+    denomination_format: string;
+}

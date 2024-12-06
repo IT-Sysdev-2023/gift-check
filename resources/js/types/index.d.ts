@@ -1,3 +1,4 @@
+import type { InertiaPage } from "@inertiajs/core";
 export interface User {
     user_id: number;
     name: string;
@@ -81,6 +82,12 @@ export interface PaginationTypes {
         to: number;
         total: number;
     };
+}
+
+export interface AxiosPaginationTypes {
+    active: boolean;
+    label: string;
+    url: string;
 }
 
 export interface TreasuryDashboardTypes {

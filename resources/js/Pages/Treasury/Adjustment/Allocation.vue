@@ -24,10 +24,8 @@
                         <a-form-item
                             label="Store:"
                             name="store"
-                            :validate-status="
-                                getErrorStatus(formState, 'store')
-                            "
-                            :help="getErrorMessage(formState, 'store')"
+                            :validate-status="getErrorStatus('store')"
+                            :help="getErrorMessage('store')"
                         >
                             <ant-select
                                 :options="stores"
@@ -37,10 +35,8 @@
                         <a-form-item
                             label="GC Type:"
                             name="gctype"
-                            :validate-status="
-                                getErrorStatus(formState, 'gcType')
-                            "
-                            :help="getErrorMessage(formState, 'gcType')"
+                            :validate-status="getErrorStatus('gcType')"
+                            :help="getErrorMessage('gcType')"
                         >
                             <ant-select
                                 :value="1"
@@ -51,10 +47,8 @@
                         <a-form-item
                             label="Adj Type:"
                             name="gctype"
-                            :validate-status="
-                                getErrorStatus(formState, 'adjType')
-                            "
-                            :help="getErrorMessage(formState, 'adjType')"
+                            :validate-status="getErrorStatus('adjType')"
+                            :help="getErrorMessage('adjType')"
                         >
                             <ant-select
                                 :options="[
@@ -68,14 +62,12 @@
                             label="Remarks"
                             name="name"
                             has-feedback
-                            :validate-status="
-                                getErrorStatus(formState, 'remarks')
-                            "
-                            :help="getErrorMessage(formState, 'remarks')"
+                            :validate-status="getErrorStatus('remarks')"
+                            :help="getErrorMessage('remarks')"
                         >
                             <a-textarea
                                 v-model:value="formState.remarks"
-                                @input="clearError(formState, 'remarks')"
+                                @input="clearError('remarks')"
                             />
                         </a-form-item>
                         <a-card>
@@ -348,7 +340,7 @@ const handleAdjTypeChange = (val) => {
 };
 const viewGcAllocation = async () => {
     const { data } = await axios.get(
-        route("treasury.transactions.gcallocation.forallocation")
+        route("treasury.transactions.gcallocation.forallocation"),
     );
     forAllocationData.value = data;
     gcAllocationModal.value = true;
@@ -356,15 +348,15 @@ const viewGcAllocation = async () => {
 
 const handleStoreChange = async (
     value: number,
-    obj: { value: number; label: string }
+    obj: { value: number; label: string },
 ) => {
-    clearError(formState, "store");
+    clearError("store");
     allocatedGc.value = obj.label;
     formState.store = obj.value;
 
     const { data } = await axios.get(
         route("treasury.transactions.gcallocation.storeAllocation"),
-        { params: { store: formState.store, type: formState.gcType } }
+        { params: { store: formState.store, type: formState.gcType } },
     );
     allDenoms.value = data;
 };
@@ -377,12 +369,12 @@ const forAllocationPagination = async (link) => {
 };
 
 const handleGcTypeChange = async (value: number) => {
-    clearError(formState, "gcType");
+    clearError("gcType");
     formState.gcType = value;
 
     const { data } = await axios.get(
         route("treasury.transactions.gcallocation.storeAllocation"),
-        { params: { store: formState.store, type: formState.gcType } }
+        { params: { store: formState.store, type: formState.gcType } },
     );
     allDenoms.value = data;
 };
@@ -396,14 +388,14 @@ const onSubmit = () => {
                 (item) =>
                     item.denomination !== 0 &&
                     item.qty !== 0 &&
-                    item.qty !== null
+                    item.qty !== null,
             ),
         }))
         .post(route("treasury.adjustment.allocation.setupSubmission"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
-                if(props.flash.success){
-                    router.get(route("treasury.dashboard"))   ;
+                if (props.flash.success) {
+                    router.get(route("treasury.dashboard"));
                 }
             },
         });
@@ -417,7 +409,7 @@ const viewAllocatedGc = async () => {
                 store: formState.store,
                 type: formState.gcType,
             },
-        }
+        },
     );
     allocatedData.value = data;
     openModal.value = true;
@@ -432,7 +424,7 @@ const handleTabChange = async (value) => {
                 type: formState.gcType,
                 search: text,
             },
-        }
+        },
     );
     allocatedData.value = data;
 };
@@ -444,7 +436,7 @@ const viewGcAllocationTab = async (value) => {
             params: {
                 search: text,
             },
-        }
+        },
     );
     forAllocationData.value = data;
 };
@@ -454,5 +446,5 @@ const onChangePagination = async (link) => {
         allocatedData.value = data;
     }
 };
-const { getErrorMessage, getErrorStatus, clearError } = getError();
+const { getErrorMessage, getErrorStatus, clearError } = getError(formState);
 </script>

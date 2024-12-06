@@ -9,7 +9,8 @@
                 @click="() => $inertia.get(route(pRoute))"
                 danger
             >
-                {{pendingLabel ?? 'Pending'}} {{ pextension ? `(${pextension})` : "" }}
+                {{ pendingLabel ?? "Pending" }}
+                {{ pextension ? `(${pextension})` : "" }}
             </a-button>
         </a-badge>
 
@@ -25,7 +26,8 @@
                 type="primary"
                 @click="() => $inertia.get(route(aRoute))"
             >
-                {{approvedLabel ?? 'Approved'}} {{ aextension ? `(${aextension})` : "" }}
+                {{ approvedLabel ?? "Approved" }}
+                {{ aextension ? `(${aextension})` : "" }}
             </a-button>
         </a-badge>
         <slot />
@@ -40,13 +42,20 @@
                     :disabled="approved === 0"
                     style="width: 340px"
                     type="primary"
-                    @click="() => $inertia.get(route('marketing.releasedspexgc.releasedspexgc'))"
+                    @click="
+                        () =>
+                            $inertia.get(
+                                route(
+                                    'marketing.releasedspexgc.releasedspexgc',
+                                ),
+                            )
+                    "
                 >
                     Released GC {{ aextension ? `(${aextension})` : "" }}
                 </a-button>
             </a-badge>
         </div>
-       
+
         <a-badge
             class="mb-2"
             :count="cancelled"
@@ -59,7 +68,8 @@
                 @click="() => $inertia.get(route(cRoute))"
                 class="bg-gray-900 text-white"
             >
-                {{cancelledLabel ?? 'Cancelled'}} {{ cextension ? `(${cextension})` : "" }}
+                {{ cancelledLabel ?? "Cancelled" }}
+                {{ cextension ? `(${cextension})` : "" }}
             </a-button>
         </a-badge>
     </a-card>
@@ -68,11 +78,12 @@
 <script setup>
 import { stringType } from "ant-design-vue/es/_util/type";
 import axios from "axios";
+import { usePage } from "@inertiajs/vue3";
 import { onMounted, ref } from "vue";
 
 defineProps({
     title: String,
-    
+
     //label
     pendingLabel: String,
     approvedLabel: String,
@@ -90,10 +101,16 @@ defineProps({
     spexgcreleased: Boolean,
 });
 
+const page = usePage().props;
+
 const countspexgc = ref("");
 
 onMounted(async () => {
-    const response = await axios.get(route("marketing.releasedspexgc.count"));
-    countspexgc.value = response.data.count;
+    if (page.auth.user.user_id == "6") {
+        const response = await axios.get(
+            route("marketing.releasedspexgc.count"),
+        );
+        countspexgc.value = response.data.count;
+    }
 });
 </script>
