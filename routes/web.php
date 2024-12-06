@@ -583,6 +583,9 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('generate-pdf', [RetailController::class, 'verified_gc_generate_pdf'])->name('generate_pdf');
                 Route::get('generate-excel', [RetailController::class, 'verified_gc_generate_excel'])->name('generate_excel');
             });
+            Route::name('masterfile.')->group(function(){
+                Route::get('customer_setup',[RetailController::class, 'customer_setup'])->name('customer_setup');
+            });
 
             Route::name('store_ledger.')->group(function () {
                 Route::get('store-ledger', [RetailController::class, 'storeLedger'])->name('storeledger');
