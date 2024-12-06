@@ -45,16 +45,16 @@
 </template>
 
 <script lang="ts" setup>
-import { StoreDenomination } from "@/types/treasury";
+import { AllocatedGcTypes, StoreDenomination } from "@/types/treasury";
 import { ref } from "vue";
 
 const activeKey = ref("all");
 defineProps<{
     title: string;
-    denoms: StoreDenomination | null;
+    denoms: StoreDenomination[] | null;
     open: boolean;
     data: {
-        data: any[];
+        data: AllocatedGcTypes[];
     };
     columns: {
         title: string;

@@ -47,8 +47,35 @@ export interface StoreDenomination {
     denomination: number;
     denomination_format: string;
 }
+export interface AllocatedGcTypes {
+    user: User;
+    gc_type: GcTypes;
+    gc: Gc;
+}
+
 //Models
 
+export interface User {
+    firstname: string;
+    lastname: string;
+    full_name: string;
+}
+export interface GcTypes {
+    gc_type_id: number;
+    gctype: string;
+}
+export interface Gc {
+    gc_id: number;
+    denom_id: number;
+    pe_entry_gc: number;
+    barcode_no: number;
+    denomination: denomination;
+    production_request: ProductionRequest;
+}
+export interface ProductionRequest {
+    pe_id: number;
+    pe_num: string;
+}
 export interface denomination {
     denom_id: number;
     denom_code: number;
