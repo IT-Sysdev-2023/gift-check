@@ -759,4 +759,9 @@ class RetailController extends Controller
         }
 
     }
+
+
+    public function customer_setup(){
+        return inertia('Retail/masterfile/CustomerSetup');
+    }
 }
