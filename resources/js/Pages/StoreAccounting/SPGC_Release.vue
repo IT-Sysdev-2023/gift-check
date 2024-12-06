@@ -123,7 +123,7 @@
                             <a-table :columns=" perCustomerReleaseTable" :data-source="data.dataCustomer.data"
                                 :pagination="false" size="small">
 
-                            </a-table>
+</a-table>
                             <pagination :datarecords="data.dataCustomer" class="mt-5" />
                         </div>
                     </a-card>
