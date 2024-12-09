@@ -18,4 +18,15 @@ export default [
         languageOptions: { parserOptions: { parser: tseslint.parser } },
     },
     eslintConfigPrettier,
+
+    //Ignore MultiWord Component
+    {
+        files: [
+            "resources/js/Pages/Treasury/Adjustment/Allocation.vue",
+            "resources/js/Pages/Treasury/Table.vue",
+        ], // Target the specific file
+        rules: {
+            "vue/multi-word-component-names": "off", // Disable the rule for this file
+        },
+    },
 ];

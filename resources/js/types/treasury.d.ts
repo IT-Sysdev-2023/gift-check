@@ -53,12 +53,38 @@ export interface AllocatedGcTypes {
     gc: Gc;
 }
 
+export interface AdjustmentAllocation {
+    barcode_no: number;
+    cutodianSrrItems: CustodianSrrItems;
+    denom_id: number;
+    denomination: {
+        denomination: number;
+        denomination_format: string;
+        id: number;
+    };
+}
 //Models
+export interface CustodianSrrItems {
+    cssitem_barcode: number;
+    cssitem_recnum: number;
+    custodiaSsr?: CustodianSsr;
+}
 
+export interface CustodianSsr {
+    date_rec: string;
+    e_reqno: null | string | number;
+    rec_no: string;
+    recby: string;
+    rectype: null | string | number;
+    supname: null | string | number;
+    user?: User;
+}
 export interface User {
+    user_id?: number;
     firstname: string;
     lastname: string;
     full_name: string;
+    format_firstname?: string;
 }
 export interface GcTypes {
     gc_type_id: number;
@@ -69,14 +95,14 @@ export interface Gc {
     denom_id: number;
     pe_entry_gc: number;
     barcode_no: number;
-    denomination: denomination;
+    denomination: Denomination;
     production_request: ProductionRequest;
 }
 export interface ProductionRequest {
     pe_id: number;
     pe_num: string;
 }
-export interface denomination {
+export interface Denomination {
     denom_id: number;
     denom_code: number;
     denomination: number;

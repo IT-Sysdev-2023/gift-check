@@ -257,7 +257,7 @@ import dayjs from "dayjs";
 import axios from "axios";
 import { getError, onProgress } from "@/Mixin/UiUtilities";
 import {
-    denomination,
+    Denomination,
     GcAllocationForm,
     HandleSelectTypes,
     StoreDenomination,
@@ -266,9 +266,9 @@ import { AxiosOnPaginationTypes, ForAllocationTypes } from "@/types";
 
 const props = defineProps<{
     title: string;
-    stores: { value: number; label: string }[];
-    gcTypes: { value: number; label: string }[];
-    denoms: denomination[];
+    stores: HandleSelectTypes[];
+    gcTypes: HandleSelectTypes[];
+    denoms: Denomination[];
 }>();
 
 const activeScannedKey = ref("all");

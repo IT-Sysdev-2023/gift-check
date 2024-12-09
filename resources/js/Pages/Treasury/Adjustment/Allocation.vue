@@ -3,7 +3,7 @@
         <Head :title="title" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
-                <Link :href="route('iad.dashboard')">Home</Link>
+                <Link :href="route('treasury.dashboard')">Home</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
@@ -165,6 +165,7 @@
                                     </a-button>
                                 </a-card>
                             </a-col>
+
                             <a-col :span="12">
                                 <a-card
                                     :title="allocatedGc + ' (Allocated GC)'"
@@ -248,7 +249,7 @@
                         key: 'validate',
                     },
                 ]"
-                :data-source="forAllocationData.data"
+                :data-source="forAllocationData?.data"
             >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key == 'denom'">
@@ -274,33 +275,39 @@
 </template>
 
 <script setup lang="ts">
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import { getError, onProgress } from "@/Mixin/UiUtilities";
+import {
+    Denomination,
+    AdjustmentAllocation,
+    StoreDenomination,
+    HandleSelectTypes,
+} from "@/types/treasury";
+import { AxiosOnPaginationTypes, AxiosPagination } from "@/types";
 
 const props = defineProps<{
     title: string;
-    stores: { value: number; label: string }[];
-    gcTypes: { value: number; label: string }[];
-    denoms: any[];
+    stores: HandleSelectTypes[];
+    gcTypes: HandleSelectTypes[];
+    denoms: Denomination[];
 }>();
 
 const activeScannedKey = ref("all");
 const allocatedData = ref([]);
-const allocatedGc = ref(null);
-const allDenoms = ref(null);
+const allocatedGc = ref("");
+const allDenoms = ref<StoreDenomination[]>();
 const currentDate = dayjs().format("MMM DD, YYYY");
 const openModal = ref(false);
-
-const forAllocationData = ref<any>([]);
+const forAllocationData = ref<AxiosPagination<AdjustmentAllocation>>();
 const gcAllocationModal = ref<boolean>(false);
+
 const formState = useForm({
     store: 0,
     gcType: 1,
-    adjType: null,
+    adjType: "",
     remarks: "",
     denomination: props.denoms.map((item) => ({
         denominationFormat: item.denomination_format,
@@ -309,35 +316,11 @@ const formState = useForm({
         denom_id: item.denom_id,
     })),
 });
-const columns = [
-    {
-        title: "GC Barcode No",
-        dataIndex: "loc_barcode_no",
-    },
-    {
-        title: "Date Allocated",
-        dataIndex: "loc_date",
-    },
-    {
-        title: "Allocated By",
-        key: "fullname",
-    },
-    {
-        title: "GC Type",
-        key: "gctype",
-    },
-    {
-        title: "Production #",
-        key: "productionrequest",
-    },
-    {
-        title: "Denom",
-        key: "denom",
-    },
-];
-const handleAdjTypeChange = (val) => {
+
+const handleAdjTypeChange = (val: string) => {
     formState.adjType = val;
 };
+
 const viewGcAllocation = async () => {
     const { data } = await axios.get(
         route("treasury.transactions.gcallocation.forallocation"),
@@ -346,10 +329,7 @@ const viewGcAllocation = async () => {
     gcAllocationModal.value = true;
 };
 
-const handleStoreChange = async (
-    value: number,
-    obj: { value: number; label: string },
-) => {
+const handleStoreChange = async (_: number, obj: HandleSelectTypes) => {
     clearError("store");
     allocatedGc.value = obj.label;
     formState.store = obj.value;
@@ -361,7 +341,7 @@ const handleStoreChange = async (
     allDenoms.value = data;
 };
 
-const forAllocationPagination = async (link) => {
+const forAllocationPagination = async (link: AxiosOnPaginationTypes) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
         forAllocationData.value = data;
@@ -394,7 +374,7 @@ const onSubmit = () => {
         .post(route("treasury.adjustment.allocation.setupSubmission"), {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
-                if (props.flash.success) {
+                if (props.flash?.success) {
                     router.get(route("treasury.dashboard"));
                 }
             },
@@ -414,7 +394,7 @@ const viewAllocatedGc = async () => {
     allocatedData.value = data;
     openModal.value = true;
 };
-const handleTabChange = async (value) => {
+const handleTabChange = async (value: string) => {
     const text = value == "all" ? "" : value;
     const { data } = await axios.get(
         route("treasury.transactions.gcallocation.viewAllocatedGc"),
@@ -428,7 +408,7 @@ const handleTabChange = async (value) => {
     );
     allocatedData.value = data;
 };
-const viewGcAllocationTab = async (value) => {
+const viewGcAllocationTab = async (value: string) => {
     const text = value == "all" ? "" : value;
     const { data } = await axios.get(
         route("treasury.transactions.gcallocation.forallocation"),
@@ -440,11 +420,38 @@ const viewGcAllocationTab = async (value) => {
     );
     forAllocationData.value = data;
 };
-const onChangePagination = async (link) => {
+const onChangePagination = async (link: AxiosOnPaginationTypes) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
         allocatedData.value = data;
     }
 };
 const { getErrorMessage, getErrorStatus, clearError } = getError(formState);
+
+const columns = [
+    {
+        title: "GC Barcode No",
+        dataIndex: "loc_barcode_no",
+    },
+    {
+        title: "Date Allocated",
+        dataIndex: "loc_date",
+    },
+    {
+        title: "Allocated By",
+        key: "fullname",
+    },
+    {
+        title: "GC Type",
+        key: "gctype",
+    },
+    {
+        title: "Production #",
+        key: "productionrequest",
+    },
+    {
+        title: "Denom",
+        key: "denom",
+    },
+];
 </script>

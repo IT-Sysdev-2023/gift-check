@@ -93,6 +93,13 @@ export interface AxiosOnPaginationTypes {
     label: string;
     url: string;
 }
+export interface AxiosPagination<T = unknown> {
+    links: AxiosOnPaginationTypes[];
+    data: T[];
+    from: number;
+    to: number;
+    total: number;
+}
 
 export interface TreasuryDashboardTypes {
     data?: {
