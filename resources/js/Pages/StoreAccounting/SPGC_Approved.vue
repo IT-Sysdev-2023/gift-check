@@ -14,12 +14,17 @@
                                 Pdf per Customer
                             </span>
                         </template>
-                        <a-card style="margin-top: 5px;">
+                        <a-card>
+                            <div class="input-wrapper">
+                                <input type="search" placeholder="Input search here..." name="text" class="input"
+                                    v-model="pdfPerCustomerSearch" />
+                            </div>
 
-                            <span style="font-weight: bold; margin-left: 60%;">
+
+                            <!-- <span style="font-weight: bold; margin-left: 60%;">
                                 <a-input-search allow-clear v-model:value="pdfPerCustomerSearch" enter-button
                                     placeholder="Input search here!" style="width: 35%;" />
-                            </span>
+                            </span> -->
                             <div style="margin-top: 10px;margin-left: 30px;">
                                 <span style="color:red; font-style: oblique;">
                                     <span v-if="message">
@@ -59,11 +64,16 @@
                                 Pdf per Barcode
                             </span>
                         </template>
-                        <a-card style="margin-top: 5px;">
-                            <span style="font-weight: bold; margin-left: 60%;">
+                        <a-card>
+
+                            <div class="input-wrapper">
+                                <input type="search" placeholder="Input search here..." name="text" class="input"
+                                    v-model="pdfPerBarcodeSearch" />
+                            </div>
+                            <!-- <span style="font-weight: bold; margin-left: 60%;">
                                 <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch" enter-button
                                     placeholder="Input search here!" style="width: 35%;" />
-                            </span>
+                            </span> -->
                             <div style="margin-top: 10px;margin-left: 30px;">
                                 <span style="color:red; font-style: oblique;">
                                     <span v-if="message">
@@ -104,12 +114,17 @@
                                 Excel per Customer
                             </span>
                         </template>
-                        <a-card style="margin-top: 5px;">
+                        <a-card>
 
-                            <span style="font-weight: bold; margin-left: 60%;">
+                            <div class="input-wrapper">
+                                <input type="search" placeholder="Input search here..." name="text" class="input"
+                                    v-model="spgcApprovedSearchPerCustomer" />
+                            </div>
+
+                            <!-- <span style="font-weight: bold; margin-left: 60%;">
                                 <a-input-search allow-clear v-model:value="spgcApprovedSearchPerCustomer" enter-button
                                     placeholder="Input search here!" style="width: 35%;" />
-                            </span>
+                            </span> -->
                             <div style="margin-top: 10px;margin-left: 30px;">
                                 <span style="color:red; font-style: oblique;">
                                     <span v-if="message">
@@ -150,11 +165,16 @@
                                 Excel per Barcode
                             </span>
                         </template>
-                        <a-card style="margin-top: 5px;">
-                            <span style="font-weight: bold; margin-left: 60%;">
+                        <a-card>
+
+                            <div class="input-wrapper">
+                                <input type="search" placeholder="Input search here..." name="text" class="input"
+                                    v-model="spgcApprovedSearch" />
+                            </div>
+                            <!-- <span style="font-weight: bold; margin-left: 60%;">
                                 <a-input-search allow-clear v-model:value="spgcApprovedSearch" enter-button
                                     placeholder="Input search here!" style="width: 35%;" />
-                            </span>
+                            </span> -->
                             <div style="margin-top: 10px;margin-left: 30px;">
                                 <span style="color:red; font-style: oblique;">
                                     <span v-if="message">
@@ -205,14 +225,16 @@
             <div>
                 <a-form-item for="spgcStartDate" :validate-status="spgcform.errors.spgcStartDate ? 'error' : ''"
                     :help="spgcform.errors.spgcStartDate">
-                    <a-date-picker allow-clear v-model:value="spgcform.spgcStartDate" style=" width:100%;" />
+                    <a-date-picker allow-clear v-model:value="spgcform.spgcStartDate"
+                        style=" width:100%;" />
                 </a-form-item>
             </div>
             <div style="font-weight: bold;">End Date:</div>
             <div>
                 <a-form-item for="spgcEndDate" :validate-status="spgcform.errors.spgcEndDate ? 'error' : ''"
                     :help="spgcform.errors.spgcEndDate">
-                    <a-date-picker allow-clear v-model:value="spgcform.spgcEndDate" style=" width: 100%;" />
+                    <a-date-picker allow-clear v-model:value="spgcform.spgcEndDate"
+                        style=" width: 100%;" />
                 </a-form-item>
             </div>
 
@@ -222,6 +244,7 @@
                     <SendOutlined /> Submit
                 </a-button>
             </div>
+
             <div v-if="records.fromDate" style="margin-top: 15%;">
                 <div style="font-weight: bold;">
                     Date Selected:
@@ -516,7 +539,7 @@ export default {
                         startDate: this.records.fromDate,
                         endDate: this.records.toDate
                     });
-                   
+
                 },
                 onCancel() {
                     console.log('Cancel');
@@ -526,3 +549,23 @@ export default {
     }
 }
 </script>
+<style scope>
+.input-wrapper input {
+    background-color: whitesmoke;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 16em;
+    border-radius: 2rem;
+    color: black;
+    box-shadow: 0 0.4rem #1e90ff;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 70%;
+}
+
+.input-wrapper input:focus {
+    outline-color: whitesmoke;
+}
+
+</style>
