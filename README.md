@@ -58,8 +58,8 @@ We would like to extend our thanks to TAYLOR OTEN for making this project possib
 
 - **[Harvey](https://github.com/hartzy0204)**
 - **[Kent](https://github.com/WebmasterSensei)**
-- **[Teo](https://github.com/San103)**
-- **[San](https://github.com/kupalkaba1)**
+- **[Teo](https://github.com/kupalkaba1)**
+- **[San](https://github.com/San103)**
 
 ## Contributing
 
