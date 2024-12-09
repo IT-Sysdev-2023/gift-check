@@ -13,7 +13,7 @@
                         </span>
                     </template>
 
-                    <a-card style="margin-top: 5px;">
+                    <a-card>
 
                         <div class="input-wrapper">
                             <input type="search" placeholder="Input search here..." name="text" class="input"

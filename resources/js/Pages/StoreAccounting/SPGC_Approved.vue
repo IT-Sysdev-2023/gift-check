@@ -225,14 +225,16 @@
             <div>
                 <a-form-item for="spgcStartDate" :validate-status="spgcform.errors.spgcStartDate ? 'error' : ''"
                     :help="spgcform.errors.spgcStartDate">
-                    <a-date-picker allow-clear v-model:value="spgcform.spgcStartDate" style=" width:100%;" />
+                    <a-date-picker allow-clear v-model:value="spgcform.spgcStartDate"
+                        style=" width:100%;" />
                 </a-form-item>
             </div>
             <div style="font-weight: bold;">End Date:</div>
             <div>
                 <a-form-item for="spgcEndDate" :validate-status="spgcform.errors.spgcEndDate ? 'error' : ''"
                     :help="spgcform.errors.spgcEndDate">
-                    <a-date-picker allow-clear v-model:value="spgcform.spgcEndDate" style=" width: 100%;" />
+                    <a-date-picker allow-clear v-model:value="spgcform.spgcEndDate"
+                        style=" width: 100%;" />
                 </a-form-item>
             </div>
 
