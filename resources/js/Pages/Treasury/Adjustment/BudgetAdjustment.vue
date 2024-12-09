@@ -34,8 +34,14 @@
                         >
                             <ant-select
                                 :options="[
-                                    { label: 'Negative Entry', value: 'negative' },
-                                    { label: 'Positive Entry', value: 'positive' },
+                                    {
+                                        label: 'Negative Entry',
+                                        value: 'negative',
+                                    },
+                                    {
+                                        label: 'Positive Entry',
+                                        value: 'positive',
+                                    },
                                 ]"
                                 @handle-change="categoryHandler"
                                 :value="'negative'"
@@ -53,7 +59,7 @@
                                     (value) =>
                                         `₱ ${value}`.replace(
                                             /\B(?=(\d{3})+(?!\d))/g,
-                                            ','
+                                            ',',
                                         )
                                 "
                                 v-model:value="formState.budget"
@@ -61,8 +67,12 @@
                                 @change="clearError('budget')"
                             />
                         </a-form-item>
-                          <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
-                        :help="getErrorMessage('file')">
+                        <a-form-item
+                            label="Upload Scan Copy.:"
+                            name="name"
+                            :validate-status="getErrorStatus('file')"
+                            :help="getErrorMessage('file')"
+                        >
                             <ant-upload-image @handle-change="handleChange" />
                         </a-form-item>
                         <a-form-item
@@ -85,7 +95,7 @@
                         </a-form-item>
                         <div>
                             <div class="flex justify-end mx-9">
-                                <a-form-item class="text-end ">
+                                <a-form-item class="text-end">
                                     <a-button type="primary" html-type="submit"
                                         >Submit</a-button
                                     >
@@ -136,20 +146,19 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import type { UploadChangeParam } from "ant-design-vue";
-import { ref } from "vue";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import type { UploadFile } from "ant-design-vue";
 import { PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
+
 interface FormStateGc {
-    adjustmentNo: string | null
+    adjustmentNo: string | null;
     file: UploadFile;
     budget: number;
     remarks: string;
-    adjustmentType: string | null
+    adjustmentType: string | null;
 }
 
 const props = defineProps<{
@@ -168,7 +177,7 @@ const formState = useForm<FormStateGc>({
     budget: 0,
     file: null,
     remarks: "",
-    adjustmentType: 'negative',
+    adjustmentType: "negative",
 });
 
 const { openLeftNotification } = onProgress();

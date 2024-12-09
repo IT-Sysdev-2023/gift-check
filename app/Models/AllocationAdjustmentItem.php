@@ -11,6 +11,9 @@ class AllocationAdjustmentItem extends Model
     use HasFactory;
     protected $primaryKey = 'addji_id';
 
+    protected $guarded = [];
+    public $timestamps = false;
+
     public function scopeFilterDenomination(Builder $builder, $filter)
     {
         return $builder->when($filter['search'] ?? null, function ($query, $search) {
