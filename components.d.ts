@@ -333,6 +333,7 @@ declare module 'vue' {
     PlazaMarcela: typeof import('./resources/js/Pages/StoreAccounting/PlazaMarcela.vue')['default']
     PlazaMarcelaPosTransaction: typeof import('./resources/js/Pages/StoreAccounting/PlazaMarcelaPosTransaction.vue')['default']
     PlusOutlined: typeof import('@ant-design/icons-vue')['PlusOutlined']
+    PlusSquareOutlined: typeof import('@ant-design/icons-vue')['PlusSquareOutlined']
     PoweroffOutlined: typeof import('@ant-design/icons-vue')['PoweroffOutlined']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
     PrinterFilled: typeof import('@ant-design/icons-vue')['PrinterFilled']

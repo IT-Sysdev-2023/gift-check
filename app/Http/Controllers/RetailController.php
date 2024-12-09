@@ -9,6 +9,7 @@ use App\Helpers\ColumnHelper;
 use App\Helpers\NumberHelper;
 use App\Models\Assignatory;
 use App\Models\CreditcardPayment;
+use App\Models\Customer;
 use App\Models\CustomerInternalAr;
 use App\Models\Denomination;
 use App\Models\Gc;
@@ -737,8 +738,8 @@ class RetailController extends Controller
                 ->join('denomination', 'denomination.denom_id', '=', 'transaction_sales.sales_denomination')
                 ->get();
 
-            $datatable->transform(function($item){
-                $item->discount= TransactionLinediscount::where('trlinedis_barcode',$item->sales_barcode)->first();
+            $datatable->transform(function ($item) {
+                $item->discount = TransactionLinediscount::where('trlinedis_barcode', $item->sales_barcode)->first();
                 return $item;
             });
 
@@ -761,7 +762,70 @@ class RetailController extends Controller
     }
 
 
-    public function customer_setup(){
-        return inertia('Retail/masterfile/CustomerSetup');
+    public function customer_setup(Request $request)
+    {
+        return inertia('Retail/masterfile/CustomerSetup', [
+            'data' =>
+                Customer::orderByDesc('cus_id')
+                    ->whereAny([
+                        'cus_fname',
+                        'cus_lname',
+                        'cus_idnumber',
+                        'cus_address',
+                        'cus_mobile'
+                    ],'like','%'.$request->search.'%')
+                    ->paginate(10)
+                    ->withQueryString()
+        ]);
+    }
+
+    public function add_customer(Request $request)
+    {
+        $request->validate([
+            'cusfname' => 'required',
+            'cuslname' => 'required',
+            'cstatus' => 'required',
+            'bday' => 'required',
+            'address' => 'required',
+        ], [
+            'cusfname.required' => 'Firstname is required.',
+            'cuslname.required' => 'Lastname is required.',
+            'bday.required' => 'Date of Birth is required.',
+        ]);
+
+        $exist = Customer::whereLike('cus_fname', $request['cusfname'])
+            ->orWhereLike('cus_lname', $request['cuslname'])->exists();
+        if ($exist) {
+            return back()->with([
+                'type' => 'warning',
+                'msg' => 'Warning',
+                'description' => 'Customer Already Exists',
+            ]);
+        }
+
+        $inserted = Customer::create([
+            'cus_fname' => $request['cusfname'],
+            'cus_lname' => $request['cuslname'],
+            'cus_mname' => $request['cusmname'],
+            'cus_namext' => $request['extname'],
+            'cus_dob' => $request['bday'],
+            'cus_idnumber' => $request['validId'],
+            'cus_sex' => $request['sex'],
+            'cus_cstatus' => $request['cstatus'],
+            'cus_address' => $request['address'],
+            'cus_mobile' => $request['mnumber'],
+            'cus_register_at' => now(),
+            'cus_register_by' => $request->user()->user_id,
+            'cus_store_register' => $request->user()->store_assigned
+        ]);
+
+        if ($inserted) {
+            return back()->with([
+                'type' => 'success',
+                'msg' => 'success',
+                'description' => 'Customer added successfully',
+            ]);
+        }
+
     }
 }
