@@ -65,26 +65,30 @@ export interface FormStateGc {
     dateNeeded: null;
 }
 
-export interface PaginationTypes {
-    data: any[];
+export interface PaginationMeta {
+    current_page: number;
+    from: number;
+    last_page: number;
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+}
+export interface PaginationTypes<T = unknown> {
+    data: T[];
     links: {
         first: string;
         last: string;
         prev: null;
         next: null;
     };
-    meta: {
-        current_page: number;
-        from: number;
-        last_page: number;
-        path: string;
-        per_page: number;
-        to: number;
-        total: number;
-    };
+    meta: PaginationMeta;
 }
 
-export interface AxiosPaginationTypes {
+export interface ForAllocationTypes {
+    data: PaginationMeta;
+}
+export interface AxiosOnPaginationTypes {
     active: boolean;
     label: string;
     url: string;

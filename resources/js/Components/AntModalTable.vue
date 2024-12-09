@@ -45,6 +45,7 @@
 </template>
 
 <script lang="ts" setup>
+import { AxiosOnPaginationTypes } from "@/types";
 import { AllocatedGcTypes, StoreDenomination } from "@/types/treasury";
 import { ref } from "vue";
 
@@ -64,20 +65,17 @@ defineProps<{
 
 const emit = defineEmits<{
     (e: "update:open", value: boolean): void;
-    (e: "handlePagination", link): void;
-    (e: "handleTabChange", value): void;
+    (e: "handlePagination", link: AxiosOnPaginationTypes): void;
+    (e: "handleTabChange", value: string): void;
 }>();
 
 const handleClose = () => {
     emit("update:open", false);
 };
-const handleTab = (val) => {
+const handleTab = (val: string) => {
     emit("handleTabChange", val);
 };
-const getValue = (record, index) => {
-    return index.reduce((acc, index) => acc[index], record);
-};
-const onChangePagination = async (link) => {
+const onChangePagination = async (link: AxiosOnPaginationTypes) => {
     emit("handlePagination", link);
 };
 </script>

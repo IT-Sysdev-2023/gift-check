@@ -225,7 +225,7 @@
                         key: 'validate',
                     },
                 ]"
-                :data-source="forAllocationData.data"
+                :data-source="forAllocationData?.data"
             >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key == 'denom'">
@@ -251,7 +251,6 @@
 </template>
 
 <script setup lang="ts">
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 import dayjs from "dayjs";
@@ -263,7 +262,7 @@ import {
     HandleSelectTypes,
     StoreDenomination,
 } from "@/types/treasury";
-import { AxiosPaginationTypes } from "@/types";
+import { AxiosOnPaginationTypes, ForAllocationTypes } from "@/types";
 
 const props = defineProps<{
     title: string;
@@ -275,11 +274,12 @@ const props = defineProps<{
 const activeScannedKey = ref("all");
 const allocatedData = ref([]);
 const allocatedGc = ref<string | null>(null);
-const allDenoms = ref<StoreDenomination | null>(null);
+const allDenoms = ref<StoreDenomination[] | null>(null);
 const currentDate = dayjs().format("MMM DD, YYYY");
 const openModal = ref(false);
-const forAllocationData = ref([]);
+const forAllocationData = ref<ForAllocationTypes | null>(null);
 const gcAllocationModal = ref<boolean>(false);
+const { openLeftNotification } = onProgress();
 
 const formState = useForm<GcAllocationForm>({
     store: 0,
@@ -338,8 +338,7 @@ const handleStoreChange = async (_: number, obj: HandleSelectTypes) => {
     allDenoms.value = data;
 };
 
-const forAllocationPagination = async (link: AxiosPaginationTypes) => {
-    console.log(link);
+const forAllocationPagination = async (link: AxiosOnPaginationTypes) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
         forAllocationData.value = data;
@@ -357,7 +356,6 @@ const forAllocationPagination = async (link: AxiosPaginationTypes) => {
 //     allDenoms.value = data;
 // };
 
-const { openLeftNotification } = onProgress();
 const onSubmit = () => {
     formState
         .transform((data) => ({
@@ -390,7 +388,8 @@ const viewAllocatedGc = async () => {
     allocatedData.value = data;
     openModal.value = true;
 };
-const handleTabChange = async (value) => {
+
+const handleTabChange = async (value: string) => {
     const text = value == "all" ? "" : value;
     const { data } = await axios.get(
         route("treasury.transactions.gcallocation.viewAllocatedGc"),
@@ -404,7 +403,7 @@ const handleTabChange = async (value) => {
     );
     allocatedData.value = data;
 };
-const viewGcAllocationTab = async (value) => {
+const viewGcAllocationTab = async (value: string) => {
     const text = value == "all" ? "" : value;
     const { data } = await axios.get(
         route("treasury.transactions.gcallocation.forallocation"),
@@ -416,7 +415,7 @@ const viewGcAllocationTab = async (value) => {
     );
     forAllocationData.value = data;
 };
-const onChangePagination = async (link) => {
+const onChangePagination = async (link: AxiosOnPaginationTypes) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
         allocatedData.value = data;

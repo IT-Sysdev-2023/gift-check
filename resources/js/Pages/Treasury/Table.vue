@@ -12,7 +12,6 @@ const { highlightText } = highlighten();
 // };
 </script>
 <template>
-
     <Head :title="title" />
     <a-breadcrumb style="margin: 15px 0">
         <a-breadcrumb-item>
@@ -21,37 +20,57 @@ const { highlightText } = highlighten();
         <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
     </a-breadcrumb>
     <a-card>
-
-        <ProgressBar :progressBar="progressBar" v-if="isGenerating"/>
+        <ProgressBar :progressBar="progressBar" v-if="isGenerating" />
 
         <div class="flex justify-between mb-5">
             <div>
                 <a-range-picker v-model:value="form.date" />
             </div>
             <div>
-                <a-input-search class="mr-1" v-model:value="form.search" placeholder="Search here..."
-                    style="width: 300px" />
+                <a-input-search
+                    class="mr-1"
+                    v-model:value="form.search"
+                    placeholder="Search here..."
+                    style="width: 300px"
+                />
                 <a-button type="primary" @click="start" :loading="isGenerating">
                     <template #icon>
                         <FileExcelOutlined />
                     </template>
-                    {{ isGenerating ? 'Generating Excel on Progress...' :' GC Budget Ledger Report' }}
+                    {{
+                        isGenerating
+                            ? "Generating Excel on Progress..."
+                            : " GC Budget Ledger Report"
+                    }}
                 </a-button>
             </div>
         </div>
-        <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false">
+        <a-table
+            :data-source="data.data"
+            :columns="columns"
+            bordered
+            size="small"
+            :pagination="false"
+        >
             <template #title>
                 <a-typography-title :level="4">{{ title }}</a-typography-title>
             </template>
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex">
-                    <span v-html="highlightText(record[column.dataIndex], form.search)
-                        ">
+                    <span
+                        v-html="
+                            highlightText(record[column.dataIndex], form.search)
+                        "
+                    >
                     </span>
                 </template>
 
                 <template v-if="column.dataIndex === 'action'">
-                    <a-button type="primary" size="small" @click="viewRecord(record.id)">
+                    <a-button
+                        type="primary"
+                        size="small"
+                        @click="viewRecord(record.id)"
+                    >
                         <template #icon>
                             <FileSearchOutlined />
                         </template>
@@ -67,10 +86,14 @@ const { highlightText } = highlighten();
         </a-modal>
 
         <div class="flex justify-end p-2 mt-2" v-if="remainingBudget">
-            <p >Remaining Budget:</p>
+            <p>Remaining Budget:</p>
             &nbsp;
             <span>
-                <a-typography-text keyboard  style="font-size: 13px; letter-spacing: 1px; color: blue;">{{ remainingBudget }}</a-typography-text>
+                <a-typography-text
+                    keyboard
+                    style="font-size: 13px; letter-spacing: 1px; color: blue"
+                    >{{ remainingBudget }}</a-typography-text
+                >
                 <!-- <a-tag color="blue" style="font-size: 13px; letter-spacing: 1px">{{ remainingBudget }}</a-tag> -->
             </span>
         </div>
@@ -82,7 +105,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
-import _ from "lodash";
+import axios from "axios";
 import ProgressBar from "@/Components/Finance/ProgressBar.vue";
 
 export default {
@@ -125,7 +148,7 @@ export default {
         async viewRecord($id) {
             try {
                 const { data } = await axios.get(
-                    route("treasury.view.approved.budget.ledger", $id)
+                    route("treasury.view.approved.budget.ledger", $id),
                 );
                 this.descriptionRecord = data;
             } finally {
@@ -134,11 +157,15 @@ export default {
         },
 
         start() {
-            this.$inertia.get(route('start.budget.ledger'), {
-                date: this.filters.date ? [dayjs(this.filters.date[0]).format('YYYY-MM-DD'), dayjs(this.filters.date[1]).format('YYYY-MM-DD')]
-                    : []
+            this.$inertia.get(route("start.budget.ledger"), {
+                date: this.filters.date
+                    ? [
+                          dayjs(this.filters.date[0]).format("YYYY-MM-DD"),
+                          dayjs(this.filters.date[1]).format("YYYY-MM-DD"),
+                      ]
+                    : [],
             });
-        }
+        },
     },
 
     watch: {
@@ -154,18 +181,21 @@ export default {
                     { ...pickBy(this.form), date: formattedDate },
                     {
                         preserveState: true,
-                    }
+                    },
                 );
             }, 150),
         },
     },
     mounted() {
-        this.$ws.private(`generating-excel-events.${this.$page.props.auth.user.user_id}`)
+        this.$ws
+            .private(
+                `generating-excel-events.${this.$page.props.auth.user.user_id}`,
+            )
             .listen(".generate-excel-ledger", (e) => {
                 this.progressBar = e;
                 this.isGenerating = true;
-                console.log('hello');
+                console.log("hello");
             });
-    }
+    },
 };
 </script>
