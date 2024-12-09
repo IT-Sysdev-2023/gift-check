@@ -18,14 +18,6 @@ export interface BudgetRequestForm {
     category: string;
 }
 
-export interface BudgetRequestProps {
-    title?: string;
-    remainingBudget: string;
-    regularBudget: string;
-    specialBudget: string;
-    br: string;
-}
-
 export interface GcAllocationForm {
     store: number;
     gcType: number;
@@ -63,6 +55,15 @@ export interface AdjustmentAllocation {
         id: number;
     };
 }
+
+export interface BudgetAdjustmentForm<T> {
+    adjustmentNo: string | null;
+    file: T | null;
+    budget: number;
+    remarks: string;
+    adjustmentType: string | null;
+}
+
 //Models
 export interface CustodianSrrItems {
     cssitem_barcode: number;
@@ -116,4 +117,20 @@ export interface Denomination {
     denom_dateupdated: null | string;
     cnt?: number;
     denomination_format: string;
+}
+
+export interface ProductionRequest {
+    pe_date_needed: null | string;
+    pe_date_request: string;
+    pe_date_request_time: string;
+    pe_file_docno: string;
+    pe_generate_code: null | number | string;
+    pe_group: number;
+    pe_id: number;
+    pe_num: string;
+    pe_remarks: string;
+    pe_requested_by: number;
+    pe_requisition: null | string;
+    pe_type: null | string;
+    user?: User;
 }

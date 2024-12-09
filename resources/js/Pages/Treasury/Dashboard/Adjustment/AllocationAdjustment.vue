@@ -1,8 +1,3 @@
-<script setup>
-import { highlighten } from "@/Mixin/UiUtilities";
-
-const { highlightText } = highlighten();
-</script>
 <template>
     <Head :title="title" />
     <a-breadcrumb style="margin: 15px 0">
@@ -103,7 +98,6 @@ const { highlightText } = highlighten();
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { onLoading } from "@/Mixin/UiUtilities";
 import axios from "axios";
 
 export default {
@@ -118,7 +112,7 @@ export default {
             activeScannedKey: "all",
             recordDetails: {},
             open: false,
-            id: '',
+            id: "",
         };
     },
     computed: {
@@ -145,7 +139,7 @@ export default {
         async viewDetails(id) {
             this.id = id;
             const { data } = await axios.get(
-                route("treasury.adjustment.viewAllocation", id)
+                route("treasury.adjustment.viewAllocation", id),
             );
             // console.log(data);
             this.recordDetails = data;
@@ -159,7 +153,7 @@ export default {
                     params: {
                         search: text,
                     },
-                }
+                },
             );
             this.recordDetails.record = data.record;
         },

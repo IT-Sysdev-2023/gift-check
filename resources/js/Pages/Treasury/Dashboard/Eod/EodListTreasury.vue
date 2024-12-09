@@ -47,7 +47,7 @@ const { highlightText } = highlighten();
                 <template v-if="column.key === 'ieod_date'">
                     {{
                         dayjs(record.ieod_date).format(
-                            "MMM DD, YYYY -  hh:mm a"
+                            "MMM DD, YYYY -  hh:mm a",
                         )
                     }}
                 </template>
@@ -92,7 +92,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
-import _ from "lodash";
+import axios from "axios";
 
 export default {
     layout: AuthenticatedLayout,
@@ -158,7 +158,7 @@ export default {
                     { ...pickBy(this.form), date: formattedDate },
                     {
                         preserveState: true,
-                    }
+                    },
                 );
             }, 600),
         },

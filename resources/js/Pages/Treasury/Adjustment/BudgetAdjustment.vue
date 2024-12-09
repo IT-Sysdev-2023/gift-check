@@ -55,13 +55,7 @@
                         >
                             <a-input-number
                                 style="width: 100%"
-                                :formatter="
-                                    (value) =>
-                                        `₱ ${value}`.replace(
-                                            /\B(?=(\d{3})+(?!\d))/g,
-                                            ',',
-                                        )
-                                "
+                                :formatter="currencyFormatter"
                                 v-model:value="formState.budget"
                                 :min="0"
                                 @change="clearError('budget')"
@@ -130,36 +124,17 @@
                 </a-row>
             </a-form>
         </a-card>
-        <!-- <a-modal
-            v-model:open="openIframe"
-            style="width: 70%; top: 50px"
-            :footer="null"
-            :afterClose="closeIframe"
-        >
-            <iframe
-                class="mt-7"
-                :src="stream"
-                width="100%"
-                height="600px"
-            ></iframe>
-        </a-modal> -->
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
 import type { UploadChangeParam } from "ant-design-vue";
+import { currencyFormatter, getError } from "@/Mixin/UiUtilities";
 import dayjs from "dayjs";
-import { router, useForm, usePage } from "@inertiajs/vue3";
+import { useForm, usePage } from "@inertiajs/vue3";
 import type { UploadFile } from "ant-design-vue";
 import { PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
-
-interface FormStateGc {
-    adjustmentNo: string | null;
-    file: UploadFile;
-    budget: number;
-    remarks: string;
-    adjustmentType: string | null;
-}
+import { BudgetAdjustmentForm } from "@/types/treasury";
 
 const props = defineProps<{
     title?: string;
@@ -172,7 +147,7 @@ const props = defineProps<{
 const page = usePage<PageWithSharedProps>().props;
 const currentDate = dayjs().format("MMM DD, YYYY");
 
-const formState = useForm<FormStateGc>({
+const formState = useForm<BudgetAdjustmentForm<UploadFile>>({
     adjustmentNo: props.adjustmentNo,
     budget: 0,
     file: null,
@@ -189,11 +164,9 @@ const onSubmit = () => {
     formState.post(route("treasury.adjustment.budgetAdjustmentSubmission"), {
         onSuccess: ({ props }) => {
             openLeftNotification(props.flash);
-            if (props.flash.success) {
+            if (props.flash?.success) {
                 formState.reset();
                 window.location.reload();
-                // stream.value = `data:application/pdf;base64,${props.flash.stream}`;
-                // openIframe.value = true;
             }
         },
     });
@@ -202,16 +175,5 @@ const onSubmit = () => {
 const categoryHandler = (cat: string) => {
     formState.adjustmentType = cat;
 };
-const closeIframe = () => {
-    router.visit(route("treasury.dashboard"));
-};
-const getErrorStatus = (field: string) => {
-    return formState.errors[field] ? "error" : "";
-};
-const getErrorMessage = (field: string) => {
-    return formState.errors[field];
-};
-const clearError = (field: string) => {
-    formState.errors[field] = null;
-};
+const { getErrorMessage, getErrorStatus, clearError } = getError(formState);
 </script>

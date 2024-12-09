@@ -1,8 +1,3 @@
-<script setup>
-import { highlighten } from "@/Mixin/UiUtilities";
-
-const { highlightText } = highlighten();
-</script>
 <template>
     <Head :title="title" />
     <a-breadcrumb style="margin: 15px 0">
@@ -85,7 +80,7 @@ const { highlightText } = highlighten();
                 :span="2"
                 >{{
                     dayjs(viewCancelled.pe_date_request).format(
-                        "MMM DD, YYYY HH:mm:ss"
+                        "MMM DD, YYYY HH:mm:ss",
                     )
                 }}</a-descriptions-item
             >
@@ -123,7 +118,7 @@ const { highlightText } = highlighten();
             >
                 {{
                     dayjs(
-                        viewCancelled.cancelled_production_request.cpr_at
+                        viewCancelled.cancelled_production_request.cpr_at,
                     ).format("MMM DD, YYYY HH:mm:ss")
                 }}
             </a-descriptions-item>
@@ -190,7 +185,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
-import _ from "lodash";
 import axios from "axios";
 
 export default {
@@ -228,7 +222,7 @@ export default {
                     const floatAmount =
                         denomination.denomination * pe_items_quantity;
                     totalBorrow += floatAmount;
-                }
+                },
             );
 
             //format with sign
@@ -241,7 +235,7 @@ export default {
     methods: {
         async viewHandler(id) {
             const { data } = await axios.get(
-                route("treasury.production.request.viewCancelled", id)
+                route("treasury.production.request.viewCancelled", id),
             );
             this.viewCancelled = data.productionRequest;
             this.barcodes = data.barcodes;
@@ -262,7 +256,7 @@ export default {
                     { ...pickBy(this.form), date: formattedDate },
                     {
                         preserveState: true,
-                    }
+                    },
                 );
             }, 600),
         },

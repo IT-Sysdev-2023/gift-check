@@ -148,9 +148,15 @@ import { router, useForm, usePage } from "@inertiajs/vue3";
 import { currencyFormatter, getError } from "@/Mixin/UiUtilities";
 import { FlashProps, PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
-import { BudgetRequestForm, BudgetRequestProps } from "@/types/treasury";
+import { BudgetRequestForm } from "@/types/treasury";
 
-const props = defineProps<BudgetRequestProps>();
+const props = defineProps<{
+    title?: string;
+    remainingBudget: string;
+    regularBudget: string;
+    specialBudget: string;
+    br: string;
+}>();
 
 const page = usePage<PageWithSharedProps>().props;
 const currentDate = dayjs().format("MMM DD, YYYY");
