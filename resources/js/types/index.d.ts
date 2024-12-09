@@ -101,27 +101,18 @@ export interface AxiosPagination<T = unknown> {
     total: number;
 }
 
+type DashboardStatus = Record<"pending" | "approved" | "cancelled", number>;
+
 export interface TreasuryDashboardTypes {
     data?: {
-        budgetRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-        };
+        budgetRequest: DashboardStatus;
         storeGcRequest: {
             pending: number;
             released: number;
             cancelled: number;
         };
-        gcProductionRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-        };
-        specialGcRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
+        gcProductionRequest: DashboardStatus;
+        specialGcRequest: DashboardStatus & {
             released: number;
             internalReviewed: number;
         };

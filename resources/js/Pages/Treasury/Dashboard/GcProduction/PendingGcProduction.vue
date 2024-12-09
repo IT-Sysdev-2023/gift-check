@@ -159,7 +159,6 @@ const props = defineProps<{
     };
     remainingBudget: string;
 }>();
-console.log(props.record.data);
 const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
 

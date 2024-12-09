@@ -76,7 +76,6 @@
 </template>
 
 <script setup>
-import { stringType } from "ant-design-vue/es/_util/type";
 import axios from "axios";
 import { usePage } from "@inertiajs/vue3";
 import { onMounted, ref } from "vue";
@@ -89,9 +88,9 @@ defineProps({
     approvedLabel: String,
     cancelledLabel: String,
 
-    pending: Number,
-    approved: Number,
-    cancelled: Number,
+    pending: [Number, String],
+    approved: [Number, String],
+    cancelled: [Number, String],
     pRoute: String,
     aRoute: String,
     cRoute: String,
