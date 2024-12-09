@@ -1,15 +1,8 @@
 <script setup>
 import { highlighten } from "@/Mixin/UiUtilities";
 import Description from "./Description.vue";
-import { ref } from "vue";
 
 const { highlightText } = highlighten();
-
-// const currentTab = ref("Description");
-
-// const tabs = {
-//     Description,
-// };
 </script>
 <template>
     <Head :title="title" />
