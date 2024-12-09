@@ -17,11 +17,15 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="cebuTagbilaranSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="cebuTagbilaranSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tagbilaran
@@ -50,11 +54,15 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="cebuTalibonSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="cebuTalibonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Talibon
@@ -82,11 +90,16 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="cebuTubigonSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="cebuTubigonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tubigon
@@ -121,22 +134,35 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px;">
-                        <span :style="{ fontSize: iconSize + 'px' }">
+                        <!-- <span :style="{ fontSize: iconSize + 'px' }">
                             <FileSearchOutlined />
-                        </span>
+                        </span> -->
 
-                        <a-input type="file" id="barcodeFile" @change="handleFileChange"
-                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" />
+                        <div class="container">
+                            <div class="folder">
+                                <div class="front-side">
+                                    <div class="tip"></div>
+                                    <div class="cover"></div>
+                                </div>
+                                <div class="back-side cover"></div>
+                            </div>
+                            <label class="custom-file-upload">
+                                <input class="title" type="file" @change="handleFileChange" />
+                                Choose a file
+                            </label>
+                        </div>
+
+                        <!-- <a-input type="file" id="barcodeFile" @change="handleFileChange"
+                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" /> -->
                     </div>
-                    <div style="margin-top: 10px;">
-                        <span v-if="textfile && !cebu.selectedCebuFile" style="color:green; font-weight: bold;">Selected
-                            TextFile: </span>
-                        <span style="margin-left: 5px; text-decoration: underline;">
+                    <div style="margin-top: 20px;">
+                        <span v-if="textfile" style="color:green; font-weight: bold;">Select: </span>
+                        <span style="margin-left: 10x;">
                             {{ this.textfile }}
                         </span>
-                        <span v-if="cebu.selectedCebuFile" style="font-weight: bold; color:green">Selected
+                        <span v-if="cebu.selectedCebuFile && !textfile" style="font-weight: bold; color:green">Selected
                             TextFile:</span>
-                        <span style="margin-left: 5px; text-decoration: underline;">
+                        <span style="margin-left: 5px;">
                             {{ this.cebu.selectedCebuFile }}
                         </span>
                         <span v-if="!textfile && !cebu.selectedCebuFile" style="font-weight: bold;">
@@ -177,11 +203,15 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="alttaTagbilaranSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="alttaTagbilaranSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tagbilaran
@@ -210,11 +240,16 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="alttaTalibonSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="alttaTalibonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Talibon
@@ -243,11 +278,16 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="alttaTubigonSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="alttaTubigonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tubigon
@@ -284,23 +324,38 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px;">
-                        <span :style="{ fontSize: iconSize + 'px' }">
+                        <!-- <span :style="{ fontSize: iconSize + 'px' }">
                             <FileSearchOutlined />
-                        </span>
+                        </span> -->
 
-                        <a-input type="file" id="barcodeFile" @change="handleFileChangeAltta"
+                        <div class="container">
+                            <div class="folder">
+                                <div class="front-side">
+                                    <div class="tip"></div>
+                                    <div class="cover"></div>
+                                </div>
+                                <div class="back-side cover"></div>
+                            </div>
+                            <label class="custom-file-upload">
+                                <input class="title" type="file" @change="handleFileChangeAltta" />
+                                Choose a file
+                            </label>
+                        </div>
+
+                        <!-- <a-input type="file" id="barcodeFile" @change="handleFileChangeAltta"
                             enctype="multipart/form-data"
-                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" />
+                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" /> -->
                     </div>
-                    <div style="margin-top: 10px;">
-                        <span v-if="altaTextFile" style="color:green; font-weight: bold;">Selected TextFile: </span>
-                        <span style="margin-left: 5px; text-decoration: underline;">
+                    <div style="margin-top: 20px;">
+                        <span v-if="altaTextFile" style="color:green; font-weight: bold;">Select: </span>
+                        <span style="margin-left: 5px;">
                             {{ this.altaTextFile }}
                         </span>
 
-                        <span v-if="altta.selectedFile" style="color:green; font-weight: bold;">Selected
+                        <span v-if="altta.selectedFile && !altaTextFile"
+                            style="color:green; font-weight: bold;">Selected
                             TextFile:</span>
-                        <span style="margin-left: 5px; text-decoration: underline;">
+                        <span style="margin-left: 5px;">
                             {{ this.altta.selectedFile }}
                         </span>
 
@@ -727,7 +782,7 @@ export default {
 
 };
 </script>
-<style scoped>
+<!-- <style scoped>
 @keyframes wave {
 
     0%,
@@ -744,5 +799,148 @@ export default {
 
 .wave-animation {
     animation: wave 1s infinite;
+}
+</style> -->
+<style scope>
+.input-wrapper input {
+    background-color: whitesmoke;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 16em;
+    border-radius: 2rem;
+    color: black;
+    box-shadow: 0 0.4rem #1e90ff;
+    cursor: pointer;
+    margin-left: 70%;
+}
+
+.input-wrapper input:focus {
+    outline-color: whitesmoke;
+}
+/*select folder css*/
+.container {
+    --transition: 350ms;
+    --folder-W: 80px;
+    --folder-H: 60px;
+    margin-top:80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px;
+    background: linear-gradient(135deg, #6dd5ed, #2193b0);
+    border-radius: 15px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    height: calc(var(--folder-H) * 1.7);
+    position: relative;
+}
+
+.folder {
+    position: absolute;
+    top: -20px;
+    left: calc(50% - 60px);
+    animation: float 2.5s infinite ease-in-out;
+    transition: transform var(--transition) ease;
+}
+
+.folder:hover {
+    transform: scale(1.05);
+}
+
+.folder .front-side,
+.folder .back-side {
+    position: absolute;
+    transition: transform var(--transition);
+    transform-origin: bottom center;
+}
+
+.folder .back-side::before,
+.folder .back-side::after {
+    content: "";
+    display: block;
+    background-color: white;
+    opacity: 0.5;
+    z-index: 0;
+    width: var(--folder-W);
+    height: var(--folder-H);
+    position: absolute;
+    transform-origin: bottom center;
+    border-radius: 15px;
+    transition: transform 350ms;
+    z-index: 0;
+}
+
+.container:hover .back-side::before {
+    transform: rotateX(-5deg) skewX(5deg);
+}
+
+.container:hover .back-side::after {
+    transform: rotateX(-15deg) skewX(12deg);
+}
+
+.folder .front-side {
+    z-index: 1;
+}
+
+.container:hover .front-side {
+    transform: rotateX(-40deg) skewX(15deg);
+}
+
+.folder .tip {
+    background: linear-gradient(135deg, #ff9a56, #ff6f56);
+    width: 80px;
+    height: 20px;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: -10px;
+    z-index: 2;
+}
+
+.folder .cover {
+    background: linear-gradient(135deg, #ffe563, #ffc663);
+    width: var(--folder-W);
+    height: var(--folder-H);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.custom-file-upload {
+    font-size: 1.1em;
+    color: #ffffff;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background var(--transition) ease;
+    display: inline-block;
+    width: 100%;
+    padding: 10px 35px;
+    position: relative;
+}
+
+.custom-file-upload:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.custom-file-upload input[type="file"] {
+    display: none;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
 }
 </style>
