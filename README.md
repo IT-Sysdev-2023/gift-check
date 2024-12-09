@@ -51,14 +51,15 @@ without sail
 - sail aritsan reverb:start
 
 ## SPECIAL THANKS
-:salut
+
 We would like to extend our thanks to TAYLOR OTEN for making this project possible. Thank you for your hardwork<a><img style="width:20px" src="https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/128px/1fae1.png" alt="Build Status"></a>
 
-### Premium Partners
+### Premium Developers
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
+- **[Harvey](https://github.com/hartzy0204)**
+- **[Kent](https://github.com/WebmasterSensei)**
+- **[Teo](https://github.com/kupalkaba1)**
+- **[San](https://github.com/San103)**
 
 ## Contributing
 
