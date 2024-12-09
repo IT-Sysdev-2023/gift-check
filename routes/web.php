@@ -590,6 +590,7 @@ Route::middleware(['auth'])->group(function () {
             });
             Route::name('masterfile.')->group(function(){
                 Route::get('customer_setup',[RetailController::class, 'customer_setup'])->name('customer_setup');
+                Route::post('add_customer',[RetailController::class, 'add_customer'])->name('add_customer');
             });
 
             Route::name('store_ledger.')->group(function () {
@@ -819,7 +820,7 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('yearly-submit', [StoreAccountingController::class, 'purchasedYearlySubmit'])->name('purchasedYearlySubmit');
                             // spgc approved
                             Route::get('spgc-approved', [StoreAccountingController::class, 'SPGCApproved'])->name('SPGCApproved');
-                            Route::get('generate-excel-perCustomer', [StoreAccountingController::class, 'SPGCExcel'])->name('SPGCApprovedExcel');
+                            Route::get('generate-excel-perCustomer', [StoreAccountingController::class, 'SPGCExcel'])->name('SPGCApprovedExcel'); 
                             Route::get('spgc-approved-submit', [StoreAccountingController::class, 'SPGCApprovedSubmit'])->name('SPGCApprovedSubmit');
                             Route::get('spgc-approved-pdf', [StoreAccountingController::class, 'pdfApproved'])->name('pdfApprovedSubmit');
                             Route::get('spgc-approved-excel-barcode', [StoreAccountingController::class, 'excelPerBarcode'])->name('excelPerBarcode');

@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class Customer extends Model
 {
     use HasFactory;
-    const CREATED_AT = 'cus_created_at';
+    const CREATED_AT = 'cus_register_at';
     const UPDATED_AT = 'cus_updated_at';
     protected $guarded = [];
 

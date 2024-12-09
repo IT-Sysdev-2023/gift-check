@@ -9,16 +9,20 @@
                     <template #tab>
                         <span style="font-weight: bold">
                             <FilePdfOutlined />
-                           Pdf per Customer
+                            Pdf per Customer
                         </span>
                     </template>
 
-                    <a-card style="margin-top: 5px;">
+                    <a-card>
 
-                        <span style="font-weight: bold; margin-left: 60%;">
+                        <div class="input-wrapper">
+                            <input type="search" placeholder="Input search here..." name="text" class="input"
+                                v-model="pdfPerCustomerSearch" />
+                        </div>
+                        <!-- <span style="font-weight: bold; margin-left: 60%;">
                             <a-input-search allow-clear v-model:value="pdfPerCustomerSearch" enter-button
                                 placeholder="Input search here!" style="width: 35%;" />
-                        </span>
+                        </span> -->
                         <div style="margin-top: 10px;margin-left: 30px;">
                             <span style="color:red; font-style: oblique;">
                                 <span v-if="message">
@@ -52,16 +56,20 @@
                     <template #tab>
                         <span style="font-weight: bold;">
                             <FilePdfOutlined />
-                           Pdf per Barcode
+                            Pdf per Barcode
                         </span>
                     </template>
 
                     <a-card style="margin-top: 5px;">
 
-                        <span style="font-weight: bold; margin-left: 60%;">
+                        <div class="input-wrapper">
+                            <input type="search" placeholder="Input search here..." name="text" class="input"
+                                v-model="pdfPerBarcodeSearch" />
+                        </div>
+                        <!-- <span style="font-weight: bold; margin-left: 60%;">
                             <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch" enter-button
                                 placeholder="Input search here!" style="width: 35%;" />
-                        </span>
+                        </span> -->
                         <div style="margin-top: 10px;margin-left: 30px;">
                             <span style="color:red; font-style: oblique;">
                                 <span v-if="message">
@@ -96,15 +104,19 @@
                     <template #tab>
                         <span style="font-weight: bold;">
                             <FileExcelOutlined />
-                          Excel per Customer
+                            Excel per Customer
                         </span>
                     </template>
                     <a-card style="margin-top: 5px;">
 
-                        <span style="font-weight: bold; margin-left: 60%;">
-                            <a-input-search allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!" enter-button
-                                style="width: 35%;" />
-                        </span>
+                        <div class="input-wrapper">
+                            <input type="search" placeholder="Input search here..." name="text" class="input"
+                                v-model="spgcApprovedSearch" />
+                        </div>
+                        <!-- <span style="font-weight: bold; margin-left: 60%;">
+                            <a-input-search allow-clear v-model:value="spgcApprovedSearch"
+                                placeholder="Input search here!" enter-button style="width: 35%;" />
+                        </span> -->
                         <div style="margin-top: 10px;margin-left: 30px;">
                             <span style="color:red; font-style: oblique;">
                                 <span v-if="message">
@@ -139,17 +151,21 @@
                     <template #tab>
                         <span style="font-weight: bold;">
                             <FileExcelOutlined />
-                          Excel per Barcode
+                            Excel per Barcode
                         </span>
                     </template>
 
                     <a-card style="margin-top: 5px; ">
 
-                        <span style="font-weight: bold; margin-left: 60%;">
+                        <div class="input-wrapper">
+                            <input type="search" placeholder="Input search here..." name="text" class="input"
+                                v-model="spgcApprovedSearchPerBarcode" />
+                        </div>
+
+                        <!-- <span style="font-weight: bold; margin-left: 60%;">
                             <a-input-search allow-clear v-model:value="spgcApprovedSearchPerBarcode" enter-button
-                                placeholder="Input search here!"
-                                style="width: 35%;" />
-                        </span>
+                                placeholder="Input search here!" style="width: 35%;" />
+                        </span> -->
                         <div style="margin-top: 10px;margin-left: 30px;">
                             <span style="color:red; font-style: oblique;">
                                 <span v-if="message">
@@ -533,3 +549,22 @@ export default {
 
 }
 </script>
+<style scope>
+.input-wrapper input {
+    background-color: whitesmoke;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 16em;
+    border-radius: 2rem;
+    color: black;
+    box-shadow: 0 0.4rem #1e90ff;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 70%;
+}
+
+.input-wrapper input:focus {
+    outline-color: whitesmoke;
+}
+</style>

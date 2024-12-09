@@ -5,10 +5,16 @@
                 Barcode # {{ selectecTransNumber }}
             </div>
         </a-card>
-        <div style="margin-top: 10px; margin-left: 70%; font-weight: bold;">
+
+        <div class="input-wrapper">
+            <input type="search" placeholder="Input search here..." name="text" class="input"
+                v-model="storeSearchBox" />
+        </div>
+        <!-- <div style="margin-top: 10px; margin-left: 70%; font-weight: bold;">
             <a-input-search allow-clear v-model:value="storeSearchBox" placeholder="Input search here!" enter-button
                 style="width: 90%;" />
-        </div>
+        </div> -->
+
         <div style="margin-top: 10px;">
             <a-table :data-source="viewStoreSalesData.data" :columns="viewStoreColumns" size="small"
                 :pagination="false">
@@ -187,3 +193,23 @@ export default {
 
 }
 </script>
+<style scoped>
+/* From Uiverse.io by adamgiebl */
+.input-wrapper input {
+    background-color: whitesmoke;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 16em;
+    border-radius: 2rem;
+    color: black;
+    box-shadow: 0 0.4rem #1e90ff;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 70%;
+}
+
+.input-wrapper input:focus {
+    outline-color: whitesmoke;
+}
+</style>

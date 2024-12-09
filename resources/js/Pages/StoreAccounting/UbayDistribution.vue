@@ -7,10 +7,16 @@
                 </span>
             </div>
         </a-card>
-        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
+
+        <div class="input-wrapper">
+            <input type="search" placeholder="Input search here..." name="text" class="input" v-model="alturasSearchBox"/>
+        </div>
+
+        <!-- <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
             <a-input-search allow-clear v-model:value="alturasSearchBox" style=" width:90%" enter-button
                 placeholder="Input search here!" />
-        </div>
+        </div> -->
+
         <div style=" margin-top: 10px;">
             <a-table :data-source="data.data" :columns="alturasMallColumns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
@@ -133,3 +139,22 @@ export default {
 
 }
 </script>
+<style scope>
+.input-wrapper input {
+    background-color: whitesmoke;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 16em;
+    border-radius: 2rem;
+    color: black;
+    box-shadow: 0 0.4rem #1e90ff;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 70%;
+}
+
+.input-wrapper input:focus {
+    outline-color: whitesmoke;
+}
+</style>
