@@ -590,6 +590,7 @@ Route::middleware(['auth'])->group(function () {
             });
             Route::name('masterfile.')->group(function(){
                 Route::get('customer_setup',[RetailController::class, 'customer_setup'])->name('customer_setup');
+                Route::post('add_customer',[RetailController::class, 'add_customer'])->name('add_customer');
             });
 
             Route::name('store_ledger.')->group(function () {
