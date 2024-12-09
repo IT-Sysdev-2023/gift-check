@@ -605,11 +605,12 @@ class FinanceController extends Controller
         return inertia('Finance/BudgetAdjustmentApproval', [
             'request' => $this->financeService->getBudgetApprovalData($id),
             'promo' => $this->financeService->getPromoApprovedData($id),
+            'assigned' => $this->financeService->getAssigners(),
             'id' => $id,
         ]);
     }
 
     public function budgetAdjustmentSubmission(Request $request){
-        return $this->financeService->bugdetAdSubmission($request);
+        return $this->financeService->bugdetAdSubmission(collect($request));
     }
 }

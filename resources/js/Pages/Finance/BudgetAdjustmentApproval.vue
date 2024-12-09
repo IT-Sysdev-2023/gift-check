@@ -10,23 +10,28 @@
                         <p class="font-bold mt-4 ml-2">{{ form.status === '1' ? 'Date Approved' : form.status === '2' ?
                             'Date Cancelled' : 'Select Date Approved/Cancel' }}</p>
                         <a-input readonly :value="dayjs().format('MMMM, DD YYYY')"></a-input>
+                        <div v-if="form.status === '1'">
+                            <p class="font-bold ml-2 mt-4">Checked By</p>
+                            <a-select placeholder="Assign Check By" v-model:value="form.checkby" style="width: 100%"
+                                :options="optionAssign"></a-select>
+                            <p class="font-bold ml-2 mt-4">Approved By</p>
+                            <a-select placeholder="Assign Approved" v-model:value="form.appby" style="width: 100%"
+                                :options="optionAssign"></a-select>
+                            <p class="mt-5 font-bold text-center">
+                                Upload
+                            </p>
+                            <div class="mt-3 flex justify-center">
+                                <ant-upload-image @handleChange="handleImage"></ant-upload-image>
+                            </div>
+                            <p class="mt-5 ml-2 font-bold">
+                                Remarks
+                            </p>
+                            <a-textarea v-model:value="form.remarks" :rows="4" val placeholder="Remarks..." />
 
-                        <p class="font-bold ml-2 mt-4">Checked By</p>
-                        <a-select placeholder="Select Status" v-model:value="form.status" style="width: 100%"
-                            :options="statusOption"></a-select>
-                        <p class="font-bold ml-2 mt-4">Approved By</p>
-                        <a-select placeholder="Select Status" v-model:value="form.status" style="width: 100%"
-                            :options="statusOption"></a-select>
-                        <p class="mt-4 font-bold ml-2">Prepared By</p>
-                        <a-input :value="page.auth.user.full_name"></a-input>
-
-                        <p class="mt-5 font-bold text-center">
-                            Upload
-                        </p>
-                        <div class="mt-3 flex justify-center">
-                            <ant-upload-image @handleChange="handleImage"></ant-upload-image>
                         </div>
-
+                        <p class="mt-4 font-bold ml-2">{{ form.status === '1' ? 'Prepared By' : form.status === '2' ?
+                            'Cancelled By' : 'Approved Or Cancelled By' }}</p>
+                        <a-input :value="page.auth.user.full_name"></a-input>
                     </a-card>
                 </a-col>
                 <a-col :span="14">
@@ -41,11 +46,11 @@
                                 Group {{ request.adj_group }}
                             </a-descriptions-item>
                             <a-descriptions-item style="width: 50%;" label="Date Requested" :span="3">{{
-                                request.adj_requested_at}}</a-descriptions-item>
-                            <a-descriptions-item style="width: 50%;" label="Time Requested"
-                                :span="3">{{ dayjs(request.adj_requested_at).format('h:mm A') }}</a-descriptions-item>
+                                request.adj_requested_at }}</a-descriptions-item>
+                            <a-descriptions-item style="width: 50%;" label="Time Requested" :span="3">{{
+                                dayjs(request.adj_requested_at).format('h:mm A') }}</a-descriptions-item>
                             <a-descriptions-item style="width: 50%;" label="Adjustment Type" :span="3">{{
-                                request.adj_type }}</a-descriptions-item>
+                                request.adjust_type }}</a-descriptions-item>
                             <a-descriptions-item style="width: 50%;" label="Adjustment Requested" :span="3">{{
                                 request.adj_request }}</a-descriptions-item>
                             <a-descriptions-item style="width: 50%;" label="Request Document"
@@ -56,7 +61,8 @@
                                 }}</a-descriptions-item>
                         </a-descriptions>
                     </a-card>
-                    <a-button class="mt-5" size="large" block ype="primary" :disabled="form.status === null" @click="submit">
+                    <a-button class="mt-5" size="large" block type="primary" :danger="form.status === '2'" :disabled="form.status === null"
+                        @click="submit" >
                         <template #icon>
                             <FastForwardOutlined />
                         </template>
@@ -94,9 +100,14 @@ interface Request {
         }
     }
 }
+interface Assignatories {
+    label: number,
+    value: string,
+}
 
 const props = defineProps<{
     request: Request,
+    assigned: Assignatories[]
     id: number
 }>();
 
@@ -104,6 +115,16 @@ const props = defineProps<{
 const form = useForm('post', route('finance.budgetad.submit'), {
     status: null,
     file: null,
+    checkby: null,
+    appby: null,
+    remarks: null,
+    atype: props.request.adjust_type,
+    adjrequest: props.request.adj_request,
+    bgroup: props.request.adj_group,
+    recapp: props.request.adj_preapprovedby,
+    id: props.id,
+    btype: props.request.adj_type,
+
 });
 
 const submit = () => form.submit();
@@ -118,6 +139,7 @@ const statusOption = ref<SelectProps['options']>([
         label: 'Cancel',
     },
 ]);
+const optionAssign = ref<SelectProps['options']>(props.assigned);
 
 const handleImage = (file: any) => {
     form.file = file;
