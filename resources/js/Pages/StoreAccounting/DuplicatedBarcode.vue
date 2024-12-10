@@ -382,7 +382,6 @@
         </a-tabs>
     </a-card>
 </template>
-
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { TagsOutlined, FileSearchOutlined, CheckOutlined, PlayCircleFilled } from '@ant-design/icons-vue';

@@ -1,7 +1,8 @@
 <template>
     <AuthenticatedLayout>
         <a-card>
-            <a-table :data-source="record.data" :columns="columns" size="small" bordered :pagination="false">
+            <a-input-search allow-clear enter-button v-model:value="iadVerifiedSearch" placeholder="Input search here..." style="width: 25%; margin-left: 75%"/>
+            <a-table :data-source="record.data" :columns="columns" size="small" bordered :pagination="false" style="margin-top: 10px;">
                 <template #bodyCell="{ column, record }">
 
                     <template v-if="column.key === 'details'">
@@ -35,7 +36,7 @@
 
 <script setup>
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
     record: Object,
@@ -79,11 +80,13 @@ const columns = ref([
     },
 ]);
 
+
 const verdata = ref({});
 const transdata = ref({});
 
 const verifiedopen = ref(false);
 const transtxtopen = ref(false);
+const iadVerifiedSearch = ref('');
 
 const verified = async (barcode) => {
     try {
@@ -113,5 +116,18 @@ const transactiontxt = async (barcode) => {
         alert('naay error ayaw sig galaw gaw diha');
     }
 }
+
+watch(iadVerifiedSearch, async (search) => {
+    try {
+        console log()
+        const {search} = await axios.get(route('iad.versoldused.index'));
+        iadVerifiedSearch = search
+    
+
+    } catch (error) {
+        alert('There was an error processing your search input.');
+        console.error('Error fetching data:', error);
+    }
+});
 
 </script>
