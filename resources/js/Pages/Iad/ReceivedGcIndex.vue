@@ -1,7 +1,8 @@
 <template>
     <AuthenticatedLayout>
         <a-card>
-            <a-table :data-source="record.data" :columns="columns" :pagination="false" size="small" bordered>
+            <a-input-search allow-clear enter-button placeholder="Input search here..." v-model:value="gcReceivedSearch" style="width:25%; margin-left: 75%;"/>
+            <a-table :data-source="record.data" :columns="columns" :pagination="false" size="small" bordered style="margin-top: 10px;">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
                         <a-button class="mr-1" @click="retreivedData(record.csrr_id)">
@@ -18,9 +19,9 @@
                 </template>
             </a-table>
             <pagination :datarecords="record" class="mt-6" />
-            <a-button @click="retreivedData">
+            <!-- <a-button @click="retreivedData">
 
-            </a-button>
+            </a-button> -->
             <received-gc-details-drawer v-model:open="openDrawer" :data="data"/>
         </a-card>
     </AuthenticatedLayout>
@@ -28,7 +29,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { debounce } from 'lodash';
+import { router } from '@inertiajs/core';
 
 defineProps({
     record: Object,
@@ -37,6 +40,7 @@ defineProps({
 
 const data = ref({});
 const openDrawer = ref(false);
+const gcReceivedSearch = ref('');
 
 const retreivedData = async (id) => {
     await axios.get(route('iad.details.view', id)).then((res) => {
@@ -44,5 +48,12 @@ const retreivedData = async (id) => {
         openDrawer.value = true;
     })
 }
+watch(gcReceivedSearch, debounce(async (search) => {
+    router.get(route('iad.view.received'), {
+            search: search
+    }, {
+            preserveState: true
+        })
+}, 300) )
 
 </script>

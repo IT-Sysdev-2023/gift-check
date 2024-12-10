@@ -25,7 +25,8 @@ class SpecialExternalGcService extends FileHandler
     }
     public function approvedGc(Request $request)
     {
-
+        // dd();
+        $search = $request->search;
         return SpecialExternalGcrequest::with(
             'user:user_id,firstname,lastname',
             'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
@@ -39,6 +40,16 @@ class SpecialExternalGcService extends FileHandler
                 'spexgc_id',
                 'spexgc_datereq',
             )
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('spexgc_company', 'like', '%' . $search . '%')
+                        ->orWhere('spexgc_reqby', 'like', '%' . $search . '%')
+                        ->orWhere('spexgc_num', 'like', '%' . $search . '%')
+                        ->orWhere('spexgc_dateneed', 'like', '%' . $search . '%')
+                        ->orWhere('spexgc_id', 'like', '%' . $search . '%')
+                        ->orWhere('spexgc_datereq', 'like', '%' . $search . '%');
+                });
+            })
             ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])
             ->orderByDesc('spexgc_id')
             ->paginate(10)
@@ -47,7 +58,7 @@ class SpecialExternalGcService extends FileHandler
     public function viewApprovedGcRecord(Request $request, SpecialExternalGcrequest $id)
     {
         $retrievedSession = collect($request->session()->get('scanReviewGC', []))->filter(fn($item) => $item['trid'] == $id->spexgc_id);
-        
+
         session(['countSession' => $retrievedSession->count()]);
         session(['denominationSession' => $retrievedSession->sum('denom')]);
         session(['scanGc' => $retrievedSession]);
@@ -163,7 +174,7 @@ class SpecialExternalGcService extends FileHandler
                     return redirect()->back()->with('error', 'Request already reviewed');
                 }
             });
-        }else{            
+        }else{
             return redirect()->back()->with('error', 'Please scan the Gc first!');
         }
 

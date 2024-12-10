@@ -32,11 +32,15 @@
             <transaction-txt-modal v-model:open="transtxtopen" :record="transdata"/>
         </a-card>
     </AuthenticatedLayout>
+    <!-- {{ record }} -->
+
 </template>
 
 <script setup>
 import axios from 'axios';
 import { ref, watch } from 'vue';
+import { debounce } from 'lodash';
+import { router } from '@inertiajs/core';
 
 const props = defineProps({
     record: Object,
@@ -86,7 +90,9 @@ const transdata = ref({});
 
 const verifiedopen = ref(false);
 const transtxtopen = ref(false);
-const iadVerifiedSearch = ref('');
+const iadVerifiedSearch = ref ('');
+
+
 
 const verified = async (barcode) => {
     try {
@@ -117,17 +123,12 @@ const transactiontxt = async (barcode) => {
     }
 }
 
-watch(iadVerifiedSearch, async (search) => {
-    try {
-        console log()
-        const {search} = await axios.get(route('iad.versoldused.index'));
-        iadVerifiedSearch = search
-    
-
-    } catch (error) {
-        alert('There was an error processing your search input.');
-        console.error('Error fetching data:', error);
-    }
-});
+watch(iadVerifiedSearch, debounce (async (search) => {
+    router.get(route('iad.versoldused.index'),{
+        search: search
+    },{
+        preserveState: true
+    });
+}, 300));
 
 </script>

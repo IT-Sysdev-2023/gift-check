@@ -10,7 +10,7 @@
                     <a-button @click="setup(record)">
                         <template #icon>
                             <FastForwardOutlined />
-                        </template>
+                       </template>
                         Setup Requsition
                     </a-button>
                 </template>

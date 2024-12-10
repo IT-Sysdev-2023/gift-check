@@ -20,7 +20,8 @@ const { highlightText } = highlighten();
             </div>
 
         </div>
-        <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false">
+        <a-input-search enter-button allow-clear placeholder="Input search here..." v-model:value="approvedGcSearch" style="width:25%; margin-left:75%;"/>
+        <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false" style="margin-top:10px">
             <template #title>
                 <a-typography-title :level="4">{{ title }}</a-typography-title>
             </template>
@@ -68,6 +69,7 @@ export default {
     },
     data() {
         return {
+            approvedGcSearch: '',
             form: {
                 search: this.filters.search,
                 date: this.filters.date
@@ -112,6 +114,14 @@ export default {
                 );
             }, 150),
         },
+        approvedGcSearch(search){
+            console.log(search);
+            this.$inertia.get(route('iad.special.external.approvedGc'),{
+                search:search
+            },{
+                preserveState: true
+            })
+        }
     },
 
 };
