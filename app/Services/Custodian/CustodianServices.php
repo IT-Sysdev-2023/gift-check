@@ -150,13 +150,26 @@ class CustodianServices
         }
     }
 
-    public function receivedgcIndex()
+    public function receivedgcIndex($request)
     {
-
+        $search = $request->search;
         $collection = CustodianSrr::with('user:user_id,firstname,lastname')
             ->select('csrr_id', 'csrr_datetime', 'requis_erno', 'gcs_companyname', 'csrr_receivetype', 'csrr_prepared_by')
             ->join('requisition_entry', 'requis_id', '=', 'csrr_requisition')
             ->join('supplier', 'gcs_id', '=', 'requis_supplierid')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('csrr_id', 'like', '%' . $search . '%')
+                        ->orWhere('requis_erno', 'like', '%' . $search . '%')
+                        ->orWhere('gcs_companyname', 'like', '%' . $search . '%')
+                        ->orWhere('csrr_datetime', 'like', '%' . $search . '%')
+                        ->orWhere('csrr_receivetype', 'like', '%' . $search . '%')
+                        ->orWhere('csrr_prepared_by', 'like', '%' . $search . '%')
+                        ->orWhereHas('user', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ['%' . $search . '%']);
+                        });
+                });
+            })
             ->orderByDesc('csrr_id')
             ->paginate(10)
             ->withQueryString();
@@ -230,12 +243,38 @@ class CustodianServices
 
     public function approvedGcList($request)
     {
+        $search = $request->search;
+        $internalSearch1 = $request->internalSearch1;
         $data = SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
             ->selectFilterApproved()
             ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
             ->where('spexgc_promo', $request->promo ?? '0')
             ->where('spexgc_status', 'approved')
             ->where('reqap_approvedtype', 'Special External GC Approved')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('spexgc_num', 'like', '%' . $search . '%')
+                        ->orWhere('reqap_approvedby', 'like', '%' . $search . '%')
+                        ->orWhereHas('specialExternalCustomer', function ($query) use ($search) {
+                            $query->where('spcus_companyname', 'like', '%' . $search . '%')
+                                ->orWhere('spcus_acctname', 'like', '%' . $search . '%');
+                        })
+                        ->orWhere('spexgc_datereq', 'like', '%' . $search . '%')
+                        ->orWhere('spexgc_dateneed', 'like', '%' . $search . '%');
+                });
+            })
+            ->when($internalSearch1, function ($query) use ($internalSearch1) {
+                $query->where(function ($query) use ($internalSearch1) {
+                    $query->where('spexgc_num', 'like', '%' . $internalSearch1 . '%')
+                        ->orWhere('reqap_approvedby', 'like', '%' . $internalSearch1 . '%')
+                        ->orWhereHas('specialExternalCustomer', function ($query) use ($internalSearch1) {
+                            $query->where('spcus_companyname', 'like', '%' . $internalSearch1 . '%')
+                                ->orWhere('spcus_acctname', 'like', '%' . $internalSearch1 . '%');
+                        })
+                        ->orWhere('spexgc_datereq', 'like', '%' . $internalSearch1 . '%')
+                        ->orWhere('spexgc_dateneed', 'like', '%' . $internalSearch1 . '%');
+                });
+            })
             ->orderByDesc('spexgc_num')
             ->paginate(10)
             ->withQueryString();
@@ -251,7 +290,11 @@ class CustodianServices
             return $item;
         });
 
-        return $data;
+        return [
+            'data' => $data,
+            'search' => $search,
+            'internalSearch' => $internalSearch1
+        ];
     }
 
     public function setupApprovalSelected($request)
@@ -412,8 +455,9 @@ class CustodianServices
         return $parsedData;
     }
 
-    public function getProductionApproved()
+    public function getProductionApproved($request)
     {
+        $search = $request->search;
         $data = ProductionRequest::select(
             'pe_id',
             'pe_num',
@@ -423,11 +467,22 @@ class CustodianServices
             'firstname',
             'ape_approved_by',
             'lastname',
-        )->join('approved_production_request', 'ape_pro_request_id', '=', 'pe_id')
+        )->when($search, function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('pe_num', 'like', '%' . $search . '%')
+                    ->orWhere('pe_date_request', 'like', '%' . $search . '%')
+                    ->orWhere('ape_approved_at', 'like', '%' . $search . '%')
+                    ->orWhere('pe_date_needed', 'like', '%' . $search . '%')
+                    ->orWhere('ape_approved_by', 'like', '%' . $search . '%')
+                    ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ['%' . $search . '%']);
+            });
+        })
+            ->join('approved_production_request', 'ape_pro_request_id', '=', 'pe_id')
             ->join('users', 'user_id', 'pe_requested_by')
             ->where('pe_status', '1')
             ->orderByDesc('pe_id')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         $data->transform(function ($item) {
             $item->pe_date_request_tran = Date::parse($item->pe_date_request)->toFormattedDateString();
@@ -540,9 +595,9 @@ class CustodianServices
             ->first();
     }
 
-    public function getCancelledViewing()
+    public function getCancelledViewing($request)
     {
-
+        $search = $request->search;
         $data = CancelledProductionRequest::select(
             'pe_id',
             'pe_num',
@@ -552,12 +607,21 @@ class CustodianServices
             'req.lastname as rlname',
             'can.firstname as cfname',
             'can.lastname as clname',
-        )
+        )->when($search, function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('pe_num', 'like', '%' . $search . '%')
+                    ->orWhere('pe_date_request', 'like', '%' . $search . '%')
+                    ->orWhere('cpr_at', 'like', '%' . $search . '%')
+                    ->orWhereRaw("CONCAT(req.firstname, ' ',req.lastname ) like ? ", ['%' . $search . '%'])
+                    ->orWhereRaw("CONCAT(can.firstname, ' ', can.lastname) LIKE ?", ['%' . $search . '%']);
+            });
+        })
             ->join('production_request', 'pe_id', '=', 'cpr_pro_id')
             ->join('users as req', 'req.user_id', '=', 'pe_requested_by')
             ->join('users as can', 'can.user_id', '=', 'cpr_by')
             ->orderByDesc('cpr_id')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         $data->transform(function ($item) {
 
@@ -685,8 +749,10 @@ class CustodianServices
         ];
     }
 
-    public function fetchReleased()
+    public function fetchReleased($request)
     {
+        $search = $request->search;
+        // dd($search);
         $data = SpecialExternalGcrequest::select(
             'spexgc_reqby',
             'spexgc_company',
@@ -699,6 +765,22 @@ class CustodianServices
             'lastname',
             'reqap_date'
         )
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('spexgc_num', 'like', '%' . $search . '%')
+                        ->orWhere('spexgc_datereq', 'like', '%' . $search . '%')
+                        ->orWhere('firstname', 'like', '%' . $search . '%')
+                        ->orWhere('lastname', 'like', '%' . $search . '%')
+                        ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ? ", ['%' . $search . '%'])
+                        ->orWhereHas('user', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT(firstname, ' ', lastname) LIKE ? ", ['%' . $search . '%']);
+                        })
+                        ->orWhereHas('specialExternalCustomer', function ($query) use ($search) {
+                            $query->where('spcus_acctname', 'like', '%' . $search . '%')
+                                ->orWhere('spcus_companyname', 'like', '%' . $search . '%');
+                        });
+                });
+            })
             ->join('approved_request', 'reqap_trid', 'spexgc_id')
             ->join('users', 'user_id', 'reqap_preparedby')
             ->with(

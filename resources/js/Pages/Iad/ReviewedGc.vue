@@ -15,6 +15,12 @@
             </a-table>
             <pagination :datarecords="record" class="mt-6"/>
         </a-card>
+        <a-modal v-model:open="open" @ok="okay">
+            <span style="color:red;">
+            {{ searchMessage }}
+
+            </span>
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 <script setup>
@@ -29,8 +35,20 @@ defineProps({
     columns: Array,
 })
 const reviewGcSearch = ref ('');
+const searchMessage = ref ('');
+const open = ref (false);
+
+const okay = () =>{
+    open.value = false;
+}
 
 watch(reviewGcSearch, debounce (async(search) => {
+    const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u20B1\$]/u.test(search);
+    if (searchValidation){
+        searchMessage.value = "Search contains invalid symbols or emojis";
+        open.value = true;
+        return;
+    }
     router.get(route('iad.reviewed.gc.special.review'),{
     search: search
 

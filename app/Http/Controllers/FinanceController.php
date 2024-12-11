@@ -427,13 +427,25 @@ class FinanceController extends Controller
 
     public function approvedGc(Request $request)
     {
-
+        $search = $request->search;
         $data = SpecialExternalGcrequest::where('special_external_gcrequest.spexgc_status', 'approved')
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
             ->leftJoin('approved_request', 'approved_request.reqap_trid', 'special_external_gcrequest.spexgc_id')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('spexgc_num', 'like', '%' . $search . '%')
+                        ->orWhere('spexgc_dateneed', 'like', '%' . $search . '%')
+                        ->orWhere('reqap_date', 'like', '%' . $search . '%')
+                        ->orWhere('reqap_approvedby', 'like', '%' . $search . '%')
+                        ->orWhere('special_external_customer.spcus_acctname', 'like', "%{$search}%")
+                        ->orWhere('special_external_gcrequest.spexgc_datereq', 'like', "%{$search}%");
+                });
+            })
             ->orderByDesc('spexgc_id')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
+
         $data->transform(function ($item) {
             $item->dateValid = Date::parse($item->spexgc_dateneed)->format('F d Y');
             $item->dateReq = Date::parse($item->spexgc_datereq)->format('F d Y');
@@ -479,10 +491,10 @@ class FinanceController extends Controller
         return $this->financeService->submitBudget($request);
     }
 
-    public function approvedBudget()
+    public function approvedBudget(Request $request)
     {
         return inertia('Finance/ApprovedBudget', [
-            'record' => $this->financeService->getApprovedBudget(),
+            'record' => $this->financeService->getApprovedBudget($request),
             'columns' => ColumnHelper::$approved_budget_request,
         ]);
     }
@@ -609,7 +621,8 @@ class FinanceController extends Controller
         ]);
     }
 
-    public function budgetAdjustmentSubmission(Request $request){
+    public function budgetAdjustmentSubmission(Request $request)
+    {
         return $this->financeService->bugdetAdSubmission($request);
     }
 }

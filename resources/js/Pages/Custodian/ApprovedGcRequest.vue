@@ -8,8 +8,9 @@
                         Approved Request External
                     </span>
                 </template>
+                <a-input-search allow-clear enter-button v-model:value="externalSearch" placeholder="Input search here..." style="width:25%; margin-left:75%"/>
 
-                <a-table size="small" :data-source="record.data" :columns="columns" :pagination="false" bordered>
+                <a-table size="small" :data-source="record.data.data" :columns="columns" :pagination="false" bordered style="margin-top:10px">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.key == 'setup'">
                             <a-button
@@ -22,7 +23,7 @@
                         </template>
                     </template>
                 </a-table>
-                <pagination :datarecords="record" class="mt-5" />
+                <pagination :datarecords="record.data" class="mt-5" />
 
             </a-tab-pane>
             <a-tab-pane key="2">
@@ -32,7 +33,9 @@
                         Approved Request Internal
                     </span>
                 </template>
-                <a-table size="small" :data-source="record.data" :columns="columns" :pagination="false" bordered>
+                <a-input-search allow-clear enter-button v-model:value="internalSearch" placeholder="Input search here..." style="width:25%; margin-left:75%"/>
+
+                <a-table size="small" :data-source="record.data.data" :columns="columns" :pagination="false" bordered style="margin-top:10px">
                     <template #bodyCell="{ column, record }">
                         <!-- {{record.company}} -->
                         <template v-if="column.key == 'setup'">
@@ -46,11 +49,12 @@
                         </template>
                     </template>
                 </a-table>
-                <pagination :datarecords="record" class="mt-5" />
+                <pagination :datarecords="record.data" class="mt-5" />
             </a-tab-pane>
         </a-tabs>
 
     </a-card>
+    <!-- {{ record }} -->
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -63,22 +67,42 @@ export default {
     },
     data() {
         return {
+            externalSearch: this.record.search,
+            internalSearch: this.record.internalSearch1,
             activeKey: '1',
+            promo: ''
         }
     },
-    methods: {
-        table(key) {
-
-            let promo = '';
-
-            if (key === '1') {
-                promo = '0';
-            } else {
-                promo = '*';
-
+    watch: {
+        externalSearch(search){
+            console.log(search)
+            this.$inertia.get(route('custodian.approved.request'),{
+                search:search
+            },{
+                preserveState: true
+            });
+        },
+        internalSearch(search){
+            console.log(search)
+            const tab = {
+               promo: this.promo,
+               internalSearch1:search
             }
-            this.$inertia.get(route('custodian.approved.request'), { promo: promo }, { preserveState: true });
+            this.$inertia.get(route('custodian.approved.request', tab),{
+
+            },{
+                preserveState: true
+            });
         }
+    },
+   methods: {
+    table(key) {
+        this.activeKey = key;
+        this.promo = key === '1' ? '0' : '*';
+
+        this.$inertia.get(route('custodian.approved.request'), { promo: this.promo }, { preserveState: true });
     }
+}
+
 }
 </script>

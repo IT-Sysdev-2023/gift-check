@@ -47,7 +47,18 @@ class SpecialExternalGcService extends FileHandler
                         ->orWhere('spexgc_num', 'like', '%' . $search . '%')
                         ->orWhere('spexgc_dateneed', 'like', '%' . $search . '%')
                         ->orWhere('spexgc_id', 'like', '%' . $search . '%')
-                        ->orWhere('spexgc_datereq', 'like', '%' . $search . '%');
+                        ->orWhere('spexgc_datereq', 'like', '%' . $search . '%')
+                        ->orWhereHas('user', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT(firstname, ' ', lastname) like ?", ['%' . $search . '%']);
+                        })
+                        ->orWhereHas('specialExternalCustomer', function ($query) use ($search) {
+                            $query->where('spcus_companyname', 'like', '%' . $search . '%')
+                                ->orWhere('spcus_acctname', 'like', '%' . $search . '%');
+                        })
+                        ->orWhereHas('specialExternalGcrequestItems', function ($query) use ($search) {
+                            $query->where('specit_denoms', 'like', '%' . $search . '%')
+                                ->orWhere('specit_qty', 'like', '%' . $search . '%');
+                        });
                 });
             })
             ->where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])

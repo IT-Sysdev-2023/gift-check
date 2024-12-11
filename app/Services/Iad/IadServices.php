@@ -45,12 +45,23 @@ class IadServices extends FileHandler
         $this->initializeSpreadsheet();
         parent::__construct();
     }
-    public function gcReceivingIndex()
+    public function gcReceivingIndex($request)
     {
         // dd();
+        $search = $request->search;
         return RequisitionForm::where('used', null)
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('rec_no', 'like', '%' . $search . '%')
+                        ->orWhere('req_no', 'like', '%' . $search . '%')
+                        ->orWhere('trans_date', 'like', '%' . $search . '%')
+                        ->orWhere('sup_name', 'like', '%' . $search . '%')
+                        ->orWhere('po_no', 'like', '%' . $search . '%');
+                });
+            })
             ->orderByDesc('id')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
     }
 
 
@@ -423,7 +434,8 @@ class IadServices extends FileHandler
                             $query->where('gcs_companyname', 'like', '%' . $searchTerm . '%');
                         })
                         ->orWhereHas('requisition', function ($query) use ($searchTerm) {
-                            $query->where('requis_erno', 'like', '%' . $searchTerm . '%');
+                            $query->where('requis_erno', 'like', '%' . $searchTerm . '%')
+                                ->orWhere('requis_supplierid', 'like', '%' . $searchTerm . '%');
                         })
                         ->orWhereHas('user', function ($query) use ($searchTerm) {
                             $query->whereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ['%' . $searchTerm . '%']);
@@ -632,7 +644,13 @@ class IadServices extends FileHandler
                         ->orWhere('gc_treasury_release', 'like', '%' . $search . '%')
                         ->orWhere('transaction_stores.trans_datetime', 'like', '%' . $search . '%')
                         ->orWhereHas('customer', function ($query) use ($search) {
-                            $query->whereRaw("CONCAT (cus_fname, ' ', cus_lname) LIKE ?", ['%' . $search . '%']);
+                            $query->whereRaw("CONCAT (cus_fname, ' ', cus_lname ) LIKE ?", ['%' . $search . '%']);
+                        })
+                        ->orWhereHas('store', function ($query) use ($search) {
+                            $query->where('store_name', 'like', '%' . $search . '%');
+                        })
+                        ->orWhereHas('type', function ($query) use ($search) {
+                            $query->where('gctype', 'like', '%' . $search . '%');
                         });
                 });
             })

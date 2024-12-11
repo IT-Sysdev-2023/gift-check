@@ -31,11 +31,11 @@ class IadController extends Controller
         set_time_limit(300);
     }
 
-    public function receivingIndex()
+    public function receivingIndex(Request $request)
     {
         return inertia('Iad/GcReceivingIndex', [
             'columns' => ColumnHelper::$receiving_columns,
-            'record' =>  $this->iadServices->gcReceivingIndex(),
+            'record' =>  $this->iadServices->gcReceivingIndex($request),
 
         ]);
     }
