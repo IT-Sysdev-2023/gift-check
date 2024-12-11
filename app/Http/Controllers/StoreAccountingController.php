@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StoreAccounting\VerifiedGcReportMultiExport;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
+use App\Services\Documents\ExportHandler;
 use Exception;
 use Illuminate\Support\Str;
 
@@ -1964,25 +1966,45 @@ class StoreAccountingController extends Controller
 
     public function verifiedGcYearlySubmit(Request $request)
     {
-        // dd($request->all());
-        $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
+        // $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
 
-        if ($isExists) {
-            $lserver = StoreLocalServer::where('stlocser_storeid', $request->selectedStore)
-                ->value('stlocser_ip');
+        // if ($isExists) {
+        //     $lserver = StoreLocalServer::where('stlocser_storeid', $request->selectedStore)
+        //         ->value('stlocser_ip');
 
-            $parts = collect(explode('.', $lserver));
-            $result = $parts->slice(2)->implode('.');
+        //     $parts = collect(explode('.', $lserver));
+        //     $result = $parts->slice(2)->implode('.');
 
-            $server = DB::connection('mariadb-' . $result)->table('store_verification');
-            $data = self::getStoreVerification($server, $request);
-        } else {
-            $data = self::getStoreVerification(new StoreVerification, $request);
-        }
+        //     $server = DB::connection('mariadb-' . $result)->table('store_verification');
+        //     $data = self::getStoreVerification($server, $request);
+        // } else {
+        //     $data = self::getStoreVerification(new StoreVerification, $request);
+        // }
+        $doc= new VerifiedGcReportMultiExport($request->all(), $request->user());
+        (new ExportHandler())
+        ->setFolder('Reports')
+        ->setSubfolderAsUsertype($request->user()->usertype)
+        ->setFileName('SPGC Approved Report-' . $request->user()->user_id, $request->year)
+        ->exportDocument('excel', $doc, function($docu, $document){
+            
+            // if($docu === 'excel'){
+            //     $document->progress['isDone'] = true;
+            //     AccountingReportEvent::dispatch($this->user, $document->progress, $document->reportId);
+            // }else{
+            //     $this->broadcastProgress($this->user, "Done", true);
+            // }
+        });
 
-        dd($data);
-        dd($isExists);
+        dd(1);
     }
+    private static function getTextfile($server, $barcode)
+    {
+        return $server->table('store_eod_textfile_transactions')
+            ->select('seodtt_bu', 'seodtt_terminalno', 'seodtt_credpuramt')
+            ->where('seodtt_barcode', $barcode)->get();
+    }
+
+   
     private static function getStoreVerification($model, Request $request)
     {
         return $model->where(fn($q) =>

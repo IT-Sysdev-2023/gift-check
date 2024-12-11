@@ -32,6 +32,11 @@ class ExportHandler extends FileHandler
         return $this;
     }
 
+    /**
+     * Create a subfolder as the userstype position.
+     *
+     * @param string $userType Usertype should be the usertype of the $this-folderName eg. $request->user()->usertype.
+     */
     public function setSubfolderAsUsertype(int $userType)
     {
         $this->folderName = Str::finish($this->folderName . $this->roleDashboardRoutes[$userType], '/');
@@ -52,7 +57,13 @@ class ExportHandler extends FileHandler
         $this->fullPath = $filename;
         return $this;
     }
-
+    /**
+     * Export the given document in the specified format.
+     *
+     * @param string $format The format in which the document should be exported (e.g., 'pdf', 'xlsx').
+     * @param mixed $document The document data or object to be exported (e.g., a return from a generated excel).
+     * @param callable|null $callback An optional callback to modify the document after exporting .
+     */
     public function exportDocument(string $format, $document, ?callable $callback = null)
     {
         if ($format === 'pdf') {
@@ -62,7 +73,7 @@ class ExportHandler extends FileHandler
             $this->exportToExcel($document);
             $callback('excel', $document);
         }
-        
+
     }
 
     public function deleteFileIn($date)
