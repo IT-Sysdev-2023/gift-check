@@ -589,9 +589,14 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('generate-pdf', [RetailController::class, 'verified_gc_generate_pdf'])->name('generate_pdf');
                 Route::get('generate-excel', [RetailController::class, 'verified_gc_generate_excel'])->name('generate_excel');
             });
-            Route::name('masterfile.')->group(function(){
-                Route::get('customer_setup',[RetailController::class, 'customer_setup'])->name('customer_setup');
-                Route::post('add_customer',[RetailController::class, 'add_customer'])->name('add_customer');
+            Route::name('masterfile.')->group(function () {
+                Route::get('customer_setup', [RetailController::class, 'customer_setup'])->name('customer_setup');
+                Route::post('add_customer', [RetailController::class, 'add_customer'])->name('add_customer');
+            });
+
+            Route::name('sgc_company_setup.')->group(function () {
+                Route::get('sgcsetup', [RetailController::class, 'sgcsetup'])->name('sgcsetup');
+                Route::post('add_company', [RetailController::class, 'add_company'])->name('add_company');
             });
 
             Route::name('store_ledger.')->group(function () {
@@ -659,11 +664,11 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('gc-tracking-submit', [CustodianController::class, 'gcTrackingSubmition'])->name('submit');
             });
 
-        Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
-        Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
+            Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
+            Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
 
+        });
     });
-});
 
     //? Iad
     Route::middleware('userType:iad,admin')->prefix('iad')->name('iad.')->group(function () {

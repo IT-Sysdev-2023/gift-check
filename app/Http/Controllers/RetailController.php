@@ -26,6 +26,8 @@ use App\Models\StoreReceived;
 use App\Models\StoreReceivedGc;
 use App\Models\StoreRequestItem;
 use App\Models\StoreVerification;
+use App\Models\Supplier;
+use App\Models\Suppliergc;
 use App\Models\TempReceivestore;
 use App\Models\TransactionLinediscount;
 use App\Models\TransactionPayment;
@@ -773,7 +775,7 @@ class RetailController extends Controller
                         'cus_idnumber',
                         'cus_address',
                         'cus_mobile'
-                    ],'like','%'.$request->search.'%')
+                    ], 'like', '%' . $request->search . '%')
                     ->paginate(10)
                     ->withQueryString()
         ]);
@@ -827,5 +829,35 @@ class RetailController extends Controller
             ]);
         }
 
+    }
+
+    public function sgcsetup()
+    {
+        return inertia('Retail/sgccompanysetup/Index', [
+            'data' => Suppliergc::join('users', 'users.user_id', '=', 'suppliergc.suppgc_createdby')
+                ->paginate(10)
+                ->withQueryString()
+        ]);
+    }
+
+    public function add_company(Request $request)
+    {
+        $request->validate([
+            'companyname' => 'required'
+        ]);
+
+        $inserted = Suppliergc::create([
+            'suppgc_compname' => $request->companyname,
+            'suppgc_datecreated' => now(),
+            'suppgc_createdby' => $request->user()->user_id,
+        ]);
+
+        if ($inserted) {
+            return back()->with([
+                'type' => 'success',
+                'msg' => 'Success',
+                'description' => 'Successfully added',
+            ]);
+        }
     }
 }
