@@ -379,8 +379,6 @@ class FinanceService extends FileHandler
             ->where('prapp_reqid', $id)
             ->first();
     }
-
-<<<<<<< HEAD
     public function getAssigners()
     {
 
@@ -521,10 +519,9 @@ class FinanceService extends FileHandler
     private function getAdjustmentBudget($id)
     {
         return BudgetAdjustment::where('adj_id', $id)->value('adj_request_status');
-=======
-    public function bugdetAdSubmission($request)
-    {
-        dd($request->all());
->>>>>>> gamale
     }
+    // public function bugdetAdSubmission($request)
+    // {
+    //     dd($request->all());
+    // }
 }

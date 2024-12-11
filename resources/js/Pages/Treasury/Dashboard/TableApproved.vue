@@ -19,7 +19,7 @@ const { highlightText } = highlighten();
                 <a-range-picker v-model:value="form.date" />
             </div>
             <div>
-                <a-input-search
+                <a-input-search allow-clear
                     class="mr-1"
                     v-model:value="form.search"
                     placeholder="Search here..."
