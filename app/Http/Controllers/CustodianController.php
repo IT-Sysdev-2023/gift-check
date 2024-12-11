@@ -43,10 +43,10 @@ class CustodianController extends Controller
         return $this->custodianservices->scannedBarcodeFn($request);
     }
 
-    public function receivedGcIndex()
+    public function receivedGcIndex(Request $request)
     {
         return inertia('Custodian/ReceivedGc', [
-            'record' => $this->custodianservices->receivedgcIndex(),
+            'record' => $this->custodianservices->receivedgcIndex($request),
             'columns' => ColumnHelper::$received_gc_columns
         ]);
     }
@@ -139,10 +139,10 @@ class CustodianController extends Controller
 
         return $this->custodianservices->upload($request);
     }
-    public function productionIndex()
+    public function productionIndex(Request $request)
     {
         return inertia('Custodian/ProductionIndex', [
-            'record' => $this->custodianservices->getProductionApproved(),
+            'record' => $this->custodianservices->getProductionApproved($request),
             'column' => ColumnHelper::$production_approved_column
         ]);
     }
@@ -161,9 +161,9 @@ class CustodianController extends Controller
         return $this->custodianservices->getRequisitionDetailsData($id);
     }
 
-    public function productionCancelled(){
+    public function productionCancelled(Request $request){
         return  inertia('Custodian/Cancelled/ProductionCancelled', [
-            'records' =>  $this->custodianservices->getCancelledViewing(),
+            'records' =>  $this->custodianservices->getCancelledViewing($request),
             'columns' => ColumnHelper::$cancelled_production_columns
         ]);
     }
@@ -183,9 +183,9 @@ class CustodianController extends Controller
         return $this->custodianservices->gcTrackingSubmission($request);
     }
 
-    public function releasedIndex(){
+    public function releasedIndex(Request $request){
         return inertia('Custodian/Released', [
-            'records' => $this->custodianservices->fetchReleased()
+            'records' => $this->custodianservices->fetchReleased($request)
         ]);
     }
     public function releasedDetails($id){

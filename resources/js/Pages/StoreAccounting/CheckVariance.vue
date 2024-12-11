@@ -105,7 +105,7 @@
                 <span v-if="variance.formatCusName && !formatted" style="color:green; font-weight: bold;">
                     Selected Customer Name:
                 </span>
-                <span v-if="variance.formatCusName && !formatted" style="margin-left: 10px;">
+               <span v-if="variance.formatCusName && !formatted" style="margin-left: 10px;">
                     {{ this.variance.formatCusName }}
                 </span>
                 <span v-if="!variance.formatCusName && !formatted" style="color:red">

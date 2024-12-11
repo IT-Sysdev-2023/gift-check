@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Iad\AuditTraits;
 use App\Traits\OpenOfficeTraits\StorePurchasedTraits;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -44,11 +45,23 @@ class IadServices extends FileHandler
         $this->initializeSpreadsheet();
         parent::__construct();
     }
-    public function gcReceivingIndex()
+    public function gcReceivingIndex($request)
     {
+        // dd();
+        $search = $request->search;
         return RequisitionForm::where('used', null)
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('rec_no', 'like', '%' . $search . '%')
+                        ->orWhere('req_no', 'like', '%' . $search . '%')
+                        ->orWhere('trans_date', 'like', '%' . $search . '%')
+                        ->orWhere('sup_name', 'like', '%' . $search . '%')
+                        ->orWhere('po_no', 'like', '%' . $search . '%');
+                });
+            })
             ->orderByDesc('id')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
     }
 
 
@@ -292,8 +305,9 @@ class IadServices extends FileHandler
             ]);
         }
     }
-    public function getReviewedGc()
+    public function getReviewedGc($request)
     {
+        $search = $request->search;
         $data = SpecialExternalGcrequest::select(
             'spexgc_id',
             'spexgc_num',
@@ -303,7 +317,19 @@ class IadServices extends FileHandler
             'spcus_acctname',
             'spcus_companyname',
             'reqap_trid',
-        )->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+        )->when($search, function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('spexgc_id', 'like', '%' . $search . '%')
+                    ->orWhere('spexgc_num', 'like', '%' . $search . '%')
+                    ->orWhere('spexgc_datereq', 'like', '%' . $search . '%')
+                    ->orWhere('reqap_approvedby', 'like', '%' . $search . '%')
+                    ->orWhere('reqap_date', 'like', '%' . $search . '%')
+                    ->orWhere('spcus_acctname', 'like', '%' . $search . '%')
+                    ->orWhere('spcus_companyname', 'like', '%' . $search . '%')
+                    ->orWhere('reqap_trid', 'like', '%' . $search . '%');
+            });
+        })
+            ->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
             ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
             ->where('spexgc_reviewed', 'reviewed')
             ->where('reqap_approvedtype', 'Special External GC Approved')
@@ -389,8 +415,9 @@ class IadServices extends FileHandler
             ->first();
     }
 
-    public function getReceivedGc()
+    public function getReceivedGc($request)
     {
+        $searchTerm = $request->search;
         $data = CustodianSrr::select(
             'csrr_id',
             'csrr_receivetype',
@@ -398,6 +425,23 @@ class IadServices extends FileHandler
             'csrr_prepared_by',
             'csrr_requisition'
         )
+            ->when($searchTerm, function ($query) use ($searchTerm) {
+                $query->where(function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('csrr_id', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('csrr_receivetype', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('csrr_datetime', 'like', '%' . $searchTerm . '%')
+                        ->orWhereHas('requisition.supplier', function ($query) use ($searchTerm) {
+                            $query->where('gcs_companyname', 'like', '%' . $searchTerm . '%');
+                        })
+                        ->orWhereHas('requisition', function ($query) use ($searchTerm) {
+                            $query->where('requis_erno', 'like', '%' . $searchTerm . '%')
+                                ->orWhere('requis_supplierid', 'like', '%' . $searchTerm . '%');
+                        })
+                        ->orWhereHas('user', function ($query) use ($searchTerm) {
+                            $query->whereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ['%' . $searchTerm . '%']);
+                        });
+                });
+            })
             ->with(
                 'user:user_id,firstname,lastname',
                 'requisition:requis_id,requis_supplierid,requis_erno',
@@ -566,12 +610,14 @@ class IadServices extends FileHandler
         $pdf = Pdf::loadView('pdf.auditstore', ['data' => $data]);
 
         return response()->json([
-            'stream' => base64_encode($pdf->output())
+            'stream' => base64_encode(string: $pdf->output())
         ]);
     }
-    public function getVerifiedSoldUsedData()
+    public function getVerifiedSoldUsedData($request)
     {
-        $storeVerification  = StoreVerification::select(
+        $search = $request->search;
+
+        $storeVerification = StoreVerification::select(
             'vs_barcode',
             'reval_trans_id',
             'reval_barcode',
@@ -583,11 +629,36 @@ class IadServices extends FileHandler
             'vs_reverifydate',
             'gc_treasury_release',
             'transaction_stores.trans_datetime',
-        )->with(
-            'customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext',
-            'store:store_id,store_name',
-            'type:gc_type_id,gctype',
-        )->leftJoin('gc', 'barcode_no', '=', 'vs_barcode')
+        )
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('vs_barcode', 'like', '%' . $search . '%')
+                        ->orWhere('reval_trans_id', 'like', '%' . $search . '%')
+                        ->orWhere('reval_barcode', 'like', '%' . $search . '%')
+                        ->orWhere('vs_tf_used', 'like', '%' . $search . '%')
+                        ->orWhere('vs_tf_denomination', 'like', '%' . $search . '%')
+                        ->orWhere('vs_cn', 'like', '%' . $search . '%')
+                        ->orWhere('vs_gctype', 'like', '%' . $search . '%')
+                        ->orWhere('vs_store', 'like', '%' . $search . '%')
+                        ->orWhere('vs_reverifydate', 'like', '%' . $search . '%')
+                        ->orWhere('gc_treasury_release', 'like', '%' . $search . '%')
+                        ->orWhere('transaction_stores.trans_datetime', 'like', '%' . $search . '%')
+                        ->orWhereHas('customer', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT (cus_fname, ' ', cus_lname ) LIKE ?", ['%' . $search . '%']);
+                        })
+                        ->orWhereHas('store', function ($query) use ($search) {
+                            $query->where('store_name', 'like', '%' . $search . '%');
+                        })
+                        ->orWhereHas('type', function ($query) use ($search) {
+                            $query->where('gctype', 'like', '%' . $search . '%');
+                        });
+                });
+            })
+            ->with(
+                'customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext',
+                'store:store_id,store_name',
+                'type:gc_type_id,gctype',
+            )->leftJoin('gc', 'barcode_no', '=', 'vs_barcode')
             ->leftJoin('transaction_revalidation', 'reval_barcode', '=', 'vs_barcode')
             ->leftJoin('transaction_stores', 'trans_sid', '=', 'reval_trans_id')
             ->whereRaw('1=1')
@@ -612,7 +683,6 @@ class IadServices extends FileHandler
             }
             return $item;
         });
-
         return  $storeVerification;
     }
 
