@@ -68,7 +68,7 @@
                 </a-col>
             </a-row>
             <template #footer>
-                <a-button key="back" @click="handleCancel">Return</a-button>
+                <a-button key="back"  @click="() => createmodal = false">Return</a-button>
                 <a-button key="submit" type="primary" :loading="loading" @click="handleOk">Submit</a-button>
             </template>
         </a-modal>
@@ -131,9 +131,6 @@ const handleOk = () => {
     })
 }
 
-const handleCancel = () => {
-    createmodal.value = false
-}
 
 const columns = [
     {

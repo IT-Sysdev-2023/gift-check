@@ -63,7 +63,7 @@ const page = usePage<PageWithSharedProps>().props;
                 </span>
             </template>
             <a-menu-item key="customerSetuo" @click="()=> $inertia.get(route('retail.masterfile.customer_setup'))">Customer Setup</a-menu-item>
-            <a-menu-item key="sgcCompanySetup">SGC Company Setup</a-menu-item>
+            <a-menu-item key="sgcCompanySetup" @click="()=> $inertia.get(route('retail.sgc_company_setup.sgcsetup'))">SGC Company Setup</a-menu-item>
             <a-menu-item key="sgcItemSetup">SGC Item Setup</a-menu-item>
         </a-sub-menu>
         <a-menu-item key="storeLedger" @click="()=> $inertia.get(route('retail.store_ledger.storeledger'))">
@@ -133,7 +133,7 @@ const page = usePage<PageWithSharedProps>().props;
                 </span>
             </template>
             <a-menu-item key="customerSetuo" @click="()=> $inertia.get(route('retail.masterfile.customer_setup'))" >Customer Setup</a-menu-item>
-            <a-menu-item key="sgcCompanySetup">SGC Company Setup</a-menu-item>
+            <a-menu-item key="sgcCompanySetup"  @click="()=> $inertia.get(route('retail.sgc_company_setup.sgcsetup'))">SGC Company Setup</a-menu-item>
             <a-menu-item key="sgcItemSetup">SGC Item Setup</a-menu-item>
         </a-sub-menu>
         <a-menu-item key="storeLedger" @click="()=> $inertia.get(route('retail.store_ledger.storeledger'))">
