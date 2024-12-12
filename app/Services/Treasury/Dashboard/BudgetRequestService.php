@@ -49,7 +49,7 @@ class BudgetRequestService extends FileHandler
 			->filter($request->only('search', 'date'))
 			->where('br_request_status', '1')
 			->orderByDesc('br_requested_at')
-			->paginate()
+			->paginate(10)
 			->withQueryString();
 	}
 	public function viewApprovedRequest(BudgetRequest $id)

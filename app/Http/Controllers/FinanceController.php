@@ -40,7 +40,8 @@ class FinanceController extends Controller
         public ApprovedReleasedPdfExcelService $appRelPdfExcelService,
         public DashboardClass $dashboardClass,
         public FinanceService $financeService
-    ) {}
+    ) {
+    }
 
     public function index()
     {
@@ -622,13 +623,9 @@ class FinanceController extends Controller
         ]);
     }
 
-<<<<<<< HEAD
-    public function budgetAdjustmentSubmission(Request $request){
-        return $this->financeService->bugdetAdSubmission(collect($request));
-=======
+
     public function budgetAdjustmentSubmission(Request $request)
     {
-        return $this->financeService->bugdetAdSubmission($request);
->>>>>>> gamale
+        return $this->financeService->bugdetAdSubmission(collect($request));
     }
 }
