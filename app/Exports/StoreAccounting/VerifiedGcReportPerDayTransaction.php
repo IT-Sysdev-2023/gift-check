@@ -39,16 +39,9 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
         // $this->broadcastProgress("Generating Barcode Records");
         return [
             (new \DateTime($data['date']))->format('F j, Y'),
-            $data['barcode'],
-            $data['denomination'],
-            $data['purchasecred'],
-            Str::headline($data['cus_fname'] . '_' . $data['cus_lname'],),
+            $data['totverifiedgc'],
+            $data['redeem'],
             $data['balance'],
-            $data['businessunit'],
-            $data['terminalno'],
-            $data['valid_type'],
-            $data['gc_type'],
-            $data['vsdate'] . ', ' . $data['vstime'],
         ];
     }
 
@@ -62,171 +55,60 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
     private function getVerifiedData($db, $requirements)
     {
 
-        $data = $db->table('store_verification')->selectRaw("
-        DATE(store_verification.vs_date) as datever,
-        DATE(store_verification.vs_reverifydate) as daterev,
-        store_verification.vs_barcode,
-        store_verification.vs_tf_denomination,
-        store_verification.vs_tf_purchasecredit,
-        customers.cus_fname,
-        customers.cus_lname,
-        customers.cus_mname,
-        customers.cus_namext,
-        store_verification.vs_tf_balance,
-        store_verification.vs_gctype,
-        store_verification.vs_date,
-        store_verification.vs_time")
+        $query1 = $db->table('store_verification')->selectRaw("
+            DATE(store_verification.vs_date) as datever,
+            IFNULL(SUM(store_verification.vs_tf_denomination),00.0) as totverifiedgc,
+            IFNULL(SUM(store_verification.vs_tf_balance),00.0) as balance,
+            IFNULL(SUM(store_verification.vs_tf_purchasecredit),00.0) as redeem
+        ")
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-            ->whereYear('vs_date', $requirements['year'])
+            ->where(
+                fn($q) =>
+                $q->whereYear('vs_date', $requirements['year'])
+                    ->orWhereYear('vs_reverifydate', $requirements['year'])
+            )
             ->where('vs_store', $requirements['selectedStore'])
+            ->groupBy('vs_date')
             ->cursor();
 
         $transformedData = collect();
 
-        $data->each(function ($q) use ($db, &$transformedData) {
-
-            $balance = 0;
-            $purchasecred = 0;
-            $vsdate = '';
-            $vstime = '';
-            $bus = "";
-            $tnum = "";
-            $puramt = "";
-
-            $gctype = match ($q->vs_gctype) {
-                1 => 'REGULAR',
-                3 => 'SPECIAL EXTERNAL',
-                6 => 'BEAM AND GO',
-                4 => 'PROMO',
-            };
-
-            if ($q->daterev != '') {
-                $balance = $q->vs_tf_denomination;
-            } else {
-
-                $bdata = self::getTextfile($db, $q->vs_barcode);
-
-                if ($bdata->isNotEmpty()) {
-                    if ($bdata->count() == 1) {
-                        $puramt = $bdata->pluck('seodtt_credpuramt')->implode('');
-                        $bus = $bdata->pluck('seodtt_bu')->implode('');
-                        $tnum = $bdata->pluck('seodtt_terminalno')->implode('');
-                    } else {
-                        $puramt = $bdata->pluck('seodtt_credpuramt')->implode(', ');
-                        $bus = $bdata->pluck('seodtt_bu')->implode(', ');
-                        $tnum = $bdata->pluck('seodtt_terminalno')->implode(', ');
-                    }
-                }
-                $purchasecred = $q->vs_tf_purchasecredit;
-                $balance = $q->vs_tf_balance;
-                $vsdate = $q->vs_date;
-                $vstime = $q->vs_time;
-
-            }
-
+        $query1->each(function ($q) use (&$transformedData) {
             $transformedData->push([
                 'date' => $q->datever,
-                'barcode' => $q->vs_barcode,
-                'denomination' => $q->vs_tf_denomination,
-                'purchasecred' => $purchasecred,
-                'cus_fname' => $q->cus_fname,
-                'cus_lname' => $q->cus_lname,
-                'cus_mname' => $q->cus_mname,
-                'cus_namext' => $q->cus_namext,
-                'balance' => $balance,
-                'valid_type' => 'VERIFIED',
-                'gc_type' => $gctype,
-                'businessunit' => $bus,
-                'terminalno' => $tnum,
-                'vsdate' => $vsdate,
-                'vstime' => $vstime,
-                'purchaseamt' => $puramt
+                'totverifiedgc' => $q->totverifiedgc,
+                'balance' => $q->balance,
+                'redeem' => $q->redeem
             ]);
         });
 
-        return $transformedData;
-    }
-
-    private function getReverifiedData($server, $requirements)
-    {
-        $data = $server->table('store_verification')->selectRaw("
-        DATE(store_verification.vs_reverifydate) as datever,
-        store_verification.vs_barcode,
-        store_verification.vs_tf_denomination,
-        store_verification.vs_tf_purchasecredit,
-        customers.cus_fname,
-        customers.cus_lname,
-        customers.cus_mname,
-        customers.cus_namext,
-        store_verification.vs_tf_balance,
-        store_verification.vs_gctype,
-        store_verification.vs_date,
-        store_verification.vs_time")
+        $query2 = $db->table('store_verification')->selectRaw("
+                    DATE(store_verification.vs_reverifydate) as datever,
+                    IFNULL(SUM(store_verification.vs_tf_denomination),00.0) as sumver,
+                    IFNULL(SUM(store_verification.vs_tf_balance),00.0) as balance,
+                    IFNULL(SUM(store_verification.vs_tf_purchasecredit),00.0) as redeem
+            ")
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->whereYear('vs_reverifydate', $requirements['year'])
             ->where('vs_store', $requirements['selectedStore'])
-            ->orderBy('vs_id')
-            ->limit(10)
-            ->get();
-        $transformedData = collect();
+            ->groupBy('vs_date','vs_reverifydate')
+            ->cursor();
 
-        $data->each(function ($q) use ($server, &$transformedData) {
-            $balance = 0;
-            $purchasecred = 0;
+        $query2->each(function ($q) use (&$transformedData) {
 
-            $gctype = match ($q->vs_gctype) {
-                1 => 'REGULAR',
-                3 => 'SPECIAL EXTERNAL',
-                6 => 'BEAM AND GO'
-            };
-
-
-
-            $bus = "";
-            $tnum = "";
-            $puramt = "";
-
-            $bdata = self::getTextfile($server, $q->vs_barcode);
-
-            if ($bdata->isNotEmpty()) {
-                if ($bdata->count() == 1) {
-                    $puramt = $bdata->pluck('seodtt_credpuramt')->implode('');
-                    $bus = $bdata->pluck('seodtt_bu')->implode('');
-                    $tnum = $bdata->pluck('seodtt_terminalno')->implode('');
-                } else {
-                    $puramt = $bdata->pluck('seodtt_credpuramt')->implode(', ');
-                    $bus = $bdata->pluck('seodtt_bu')->implode(', ');
-                    $tnum = $bdata->pluck('seodtt_terminalno')->implode(', ');
+            $transformedData->map(function ($value) use ($q, &$transformedData) {
+                if ($q->datever == $value['date']) {
+                    $value['totverifiedgc'] = (float) $q->sumver + (float) $value['totverifiedgc'];
+                    $value['balance'] = (float) $q->balance + (float) $value['balance'];
+                    $value['redeem'] = (float) $q->redeem + (float) $value['redeem'];
                 }
-            }
-
-            $purchasecred = $q->vs_tf_purchasecredit;
-            $balance = $q->vs_tf_balance;
-            $vsdate = $q->vs_date;
-            $vstime = $q->vs_time;
-
-            $transformedData->push([
-                'date' => $q->datever,
-                'barcode' => $q->vs_barcode,
-                'denomination' => $q->vs_tf_denomination,
-                'purchasecred' => $purchasecred,
-                'cus_fname' => $q->cus_fname,
-                'cus_lname' => $q->cus_lname,
-                'cus_mname' => $q->cus_mname,
-                'cus_namext' => $q->cus_namext,
-                'balance' => $balance,
-                'valid_type' => 'REVERIFIED',
-                'gc_type' => $gctype,
-                'businessunit' => $bus,
-                'terminalno' => $tnum,
-                'vsdate' => $vsdate,
-                'vstime' => $vstime,
-                'purchaseamt' => $puramt
-            ]);
+                return $value;
+            });
         });
 
         return $transformedData;
     }
+
     private static function getServerDatabase($store)
     {
         $lserver = StoreLocalServer::where('stlocser_storeid', $store)
@@ -237,10 +119,10 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
 
         return DB::connection('mariadb-' . $result);
     }
-    
+
     public function registerEvents(): array
     {
-        
+
         return [
             BeforeSheet::class => function (BeforeSheet $event) {
                 $sheet = $event->sheet;
@@ -263,23 +145,19 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
     // }
     public function title(): string
     {
-        return 'Per Day';
+        return 'By Month Summary Per Day';
     }
 
     public function headings(): array
     {
         return [
             'DATE',
-            'BARCODE',
-            'DENOMINATION',
-            'AMOUNT REDEEM',
-            'CUSTOMER NAME',
-            'BALANCE',
-            'BUSINESS UNIT',
-            'TERMINAL #',
-            'VALIDATION',
-            'GC TYPE',
-            'DATE GENERATED',
+            'TOTAL GC VERIFIED',
+            'TOTAL GC AMOUNT REDEEM',
+            'BALANCES',
+            // 'TOTAL GC PURCHASE BASED ON POS',
+            // 'VARIANCE',
+            // 'REMARKS'
         ];
     }
     public function styles(Worksheet $sheet)
