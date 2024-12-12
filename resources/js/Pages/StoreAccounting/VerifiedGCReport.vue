@@ -368,7 +368,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { ref } from "vue";
 import { Modal } from "ant-design-vue";
 import { router } from "@inertiajs/core";
-import { HandleSelectTypes } from "@/types/treasury";
 
 defineProps(["stores"]);
 const GCDataTypeMonthly = ref({
