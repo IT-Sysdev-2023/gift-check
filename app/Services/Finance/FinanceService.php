@@ -254,8 +254,9 @@ class FinanceService extends FileHandler
         });
     }
 
-    public function getApprovedBudget()
+    public function getApprovedBudget($request)
     {
+        $search = $request->search;
         $data = BudgetRequest::select(
             'br_id',
             'br_request',
@@ -266,6 +267,21 @@ class FinanceService extends FileHandler
             'br_requested_by',
             'br_request_status',
         )
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('br_id', 'like', '%' . $search . '%')
+                        ->orWhere('br_request', 'like', '%' . $search . '%')
+                        ->orWhere('br_requested_at', 'like', '%' . $search . '%')
+                        ->orWhere('br_no', 'like', '%' . $search . '%')
+                        ->orWhere('abr_approved_by', 'like', '%' . $search . '%')
+                        ->orWhere('abr_approved_at', 'like', '%' . $search . '%')
+                        ->orWhere('br_requested_by', 'like', '%' . $search . '%')
+                        ->orWhere('br_request_status', 'like', '%' . $search . '%')
+                        ->orWhereHas('user', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ['%' . $search . '%']);
+                        });
+                });
+            })
             ->with('user:user_id,firstname,lastname')
             ->leftJoin('approved_budget_request', 'abr_budget_request_id', '=', 'br_id')
             ->where('br_request_status', '1')
@@ -363,7 +379,6 @@ class FinanceService extends FileHandler
             ->where('prapp_reqid', $id)
             ->first();
     }
-
     public function getAssigners()
     {
 
@@ -505,4 +520,8 @@ class FinanceService extends FileHandler
     {
         return BudgetAdjustment::where('adj_id', $id)->value('adj_request_status');
     }
+    // public function bugdetAdSubmission($request)
+    // {
+    //     dd($request->all());
+    // }
 }

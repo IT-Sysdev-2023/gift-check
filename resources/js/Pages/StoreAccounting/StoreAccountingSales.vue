@@ -2,7 +2,7 @@
 
     <a-card>
         <a-card title=" TREASURY SALES"></a-card>
-        
+
         <div class="input-wrapper">
             <input type="search" placeholder="Input search here..." name="text" class="input" v-model="salesSearchBox" />
         </div>
@@ -49,6 +49,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import { setInputSelection } from 'ant-design-vue/es/vc-mentions/src/util';
+import { notification } from 'ant-design-vue'
 export default {
 
     layout: AuthenticatedLayout,
@@ -144,6 +145,18 @@ export default {
     },
     watch: {
         salesSearchBox(search) {
+            const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)){
+                const openNotificationWithIcon = (type)=>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contain invalid symbols or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             console.log(search);
             this.$inertia.get(route('storeaccounting.sales'), {
                 search: search

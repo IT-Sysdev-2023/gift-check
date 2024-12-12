@@ -77,7 +77,7 @@ class ApprovedPendingPromoGCRequestService extends FileHandler
                     ->whereFilterForApproved()
                     ->orderByDesc('pgcreq_id')
                     ->searchFilter($request)
-                    ->paginate()
+                    ->paginate(10)
                     ->withQueryString()
             ),
             'columns' => ColumnHelper::app_pend_request_columns(false),

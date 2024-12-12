@@ -17,16 +17,16 @@
                 <p class="sub-text text-white">All Pending Request</p>
             </div>
             <a-badge :count="count.internal + count.external">
-                <a-popover v-model:open="open" trigger="click">
+                <a-popover v-model:open="open" trigger="click" :disabled="count.internal <= 0 || count.external <= 0">
                     <template #content>
                         <a-badge class="m-2" :count="count.internal">
-                            <a-button @click="pendingListLink('internal')" type="primary">Internal</a-button>
+                            <a-button :disabled="count.internal <= 0 " @click="pendingListLink('internal')" type="primary">Internal</a-button>
                         </a-badge>
                         <a-badge class="m-2" :count="count.external">
-                            <a-button @click="pendingListLink('external')" type="primary">External</a-button>
+                            <a-button :disabled="count.external <= 0" @click="pendingListLink('external')" type="primary">External</a-button>
                         </a-badge>
                     </template>
-                    <a-button  :disabled="count.internal <= 0 || count.external <= 0">
+                    <a-button  >
                         <template #icon>
                             <FolderFilled />
                         </template>

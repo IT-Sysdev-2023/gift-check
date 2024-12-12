@@ -395,7 +395,7 @@ export default {
                     title: 'Date Approved',
                     dataIndex: 'daterel'
                 },
-                
+
             ],
 
 
@@ -404,7 +404,18 @@ export default {
     watch: {
         spgcApprovedSearch(search) {
             // alert(1)
-            console.log(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const searchData = {
                 perCustomer: search,
                 startDate: this.data.fromDate,
@@ -417,7 +428,18 @@ export default {
             });
         },
         spgcApprovedSearchPerBarcode(search) {
-            console.log(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const searchData = {
                 perBarcode: search,
                 startDate: this.data.fromDate,
@@ -430,7 +452,18 @@ export default {
             })
         },
         pdfPerCustomerSearch(search) {
-            console.log(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const pdfPerCustomerData = {
                 pdfPerCustomer: search,
                 startDate: this.data.fromDate,
@@ -443,14 +476,25 @@ export default {
             })
         },
         pdfPerBarcodeSearch(search) {
-            console.log(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const perBarcodeData = {
                 pdfPerBarcode: search,
                 startDate: this.data.fromDate,
                 endDate: this.data.endDate
             }
             this.$inertia.get(route('storeaccounting.SPGCRelease', perBarcodeData), {
-                
+
             }, {
                 preserveState: true
             })
@@ -499,14 +543,14 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                   
-                   
+
+
 
                     window.location.href = route('storeaccounting.releasePdf', {
                         startDate: this.data.fromDate,
                         endDate: this.data.endDate
                     });
-                   
+
 
                 },
                 onCancel() {
@@ -533,7 +577,7 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                    
+
                     window.location.href = route('storeaccounting.releaseExcel', {
                         startDate: this.data.fromDate,
                         endDate: this.data.endDate

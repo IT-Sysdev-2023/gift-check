@@ -51,6 +51,7 @@
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import {notification} from 'ant-design-vue';
 export default {
     layout: AuthenticatedLayout,
     props: {
@@ -73,8 +74,8 @@ export default {
                     title: 'Barcode #',
                     dataIndex: 'vs_barcode',
                     sorter: (a, b) => String(a.vs_barcode || '').localeCompare(String(b.vs_barcode || ''), undefined, { sensitivity: 'base' }),
-                        
-                    
+
+
                 },
                 {
                     title: 'Denomination',
@@ -115,8 +116,18 @@ export default {
     },
     watch: {
         alturasSearchBox(search) {
-            // alert
-            console.log(search);
+            const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             this.$inertia.get(route('storeaccounting.alturasMall', this.id), {
                 search: search
             }, {

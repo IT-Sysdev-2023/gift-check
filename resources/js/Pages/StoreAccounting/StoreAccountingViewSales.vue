@@ -55,6 +55,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import axios from 'axios';
+import {notification} from 'ant-design-vue';
 export default {
     components: { Pagination },
 
@@ -163,8 +164,20 @@ export default {
     },
     watch: {
         salesSearchBox(salesViewSearch) {
-            // alert(1)  
-            console.log(salesViewSearch);
+            const searchValidation =/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(salesViewSearch))
+            {
+                const openNotificationWithIcon = (type) =>{
+                notification[type]({
+                    message: 'Invalid input',
+                    description: 'Search contains invalid symbols or emojis',
+                    placement: 'topRight'
+                });
+            };
+            openNotificationWithIcon('warning');
+            return;
+            }
+
             this.$inertia.get(route('storeaccounting.storeAccountingViewSales', this.salesCustomerID), {
                 search: salesViewSearch
             }, {

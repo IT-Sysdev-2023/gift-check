@@ -1,6 +1,6 @@
 <template>
     <a-card>
-        
+
         <a-card style="font-weight: bold;" title="EOD LIST"></a-card>
 
         <div class="input-wrapper">
@@ -30,25 +30,6 @@
         </div>
     </a-card>
 
-
-
-    <!-- <div>
-        <span style="font-weight: bold;">
-            Select
-            <a-select id="select_entries" v-model:value="dataForSelectEntries.select_entries" placeholder="10"
-                @change="dashboardSelectEntries" style="background-color: #1e90ff; border: 1px solid #1e90ff">
-                <a-select-option value="10">10</a-select-option>
-                <a-select-option value="20">20</a-select-option>
-                <a-select-option value="50">50</a-select-option>
-                <a-select-option value="100">100</a-select-option>
-
-            </a-select>
-            entries
-        </span>
-    </div> -->
-
-
-
     <!-- {{ data }} -->
 </template>
 
@@ -56,6 +37,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { DatabaseOutlined } from '@ant-design/icons-vue';
 import Pagination from '@/Components/Pagination.vue';
+import { notification } from 'ant-design-vue';
+
 export default {
     layout: AuthenticatedLayout,
     props: {
@@ -107,6 +90,18 @@ export default {
     watch: {
         searchTerm(search) {
             console.log(search);
+            const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type)=>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbols or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                 openNotificationWithIcon('warning');
+                    return;
+            }
             this.$inertia.get(route('storeaccounting.dashboard'), {
                 data: search
             }, {
@@ -137,15 +132,6 @@ export default {
 
         },
 
-        // moveButton() {
-
-        //     const newTop = Math.floor(Math.random() * 200 - 100); 
-        //     const newLeft = Math.floor(Math.random() * 200 - 100); 
-        //     this.buttonPosition = {
-        //         top: this.buttonPosition.top + newTop,
-        //         left: this.buttonPosition.left + newLeft
-        //     };
-        // }
     }
 
 }

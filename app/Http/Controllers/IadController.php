@@ -31,11 +31,12 @@ class IadController extends Controller
         set_time_limit(300);
     }
 
-    public function receivingIndex()
+    public function receivingIndex(Request $request)
     {
         return inertia('Iad/GcReceivingIndex', [
             'columns' => ColumnHelper::$receiving_columns,
-            'record' =>  $this->iadServices->gcReceivingIndex(),
+            'record' =>  $this->iadServices->gcReceivingIndex($request),
+
         ]);
     }
 
@@ -94,10 +95,10 @@ class IadController extends Controller
         return $this->iadServices->submitSetupFunction($request);
     }
 
-    public function reviewedGcIndex()
+    public function reviewedGcIndex(Request $request)
     {
         return inertia('Iad/ReviewedGc', [
-            'record' => $this->iadServices->getReviewedGc(),
+            'record' => $this->iadServices->getReviewedGc($request),
             'columns' => ColumnHelper::$review_gc_columns,
         ]);
     }
@@ -113,11 +114,11 @@ class IadController extends Controller
         ]);
     }
 
-    public  function receivedGc()
+    public  function receivedGc(Request $request)
     {
         // dd(1);
         return inertia('Iad/ReceivedGcIndex', [
-            'record' => $this->iadServices->getReceivedGc(),
+            'record' => $this->iadServices->getReceivedGc($request),
             'columns' => ColumnHelper::$received_gc_index_columns,
         ]);
     }
@@ -149,10 +150,11 @@ class IadController extends Controller
     {
         return $this->iadServices->generateAudited($this->iadServices->getAuditStore($request));
     }
-    public function verifiedSoldUsed()
+    public function verifiedSoldUsed(Request $request)
     {
+        // dd($request->all());
         return inertia('Iad/VerifiedSoldUsedGc', [
-            'record' => $this->iadServices->getVerifiedSoldUsedData(),
+            'record' => $this->iadServices->getVerifiedSoldUsedData($request)
         ]);
     }
 
