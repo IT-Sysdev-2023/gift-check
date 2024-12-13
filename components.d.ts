@@ -427,7 +427,6 @@ declare module 'vue' {
     SetupReceiving: typeof import('./resources/js/Pages/Iad/SetupReceiving.vue')['default']
     SetupRecommendation: typeof import('./resources/js/Pages/RetailGroup/SetupRecommendation.vue')['default']
     SetupStore: typeof import('./resources/js/Pages/Admin/Masterfile/SetupStore.vue')['default']
-    Sgccompanysetup: typeof import('./resources/js/Pages/Retail/sgccompanysetup/index.vue')['default']
     ShoppingOutlined: typeof import('@ant-design/icons-vue')['ShoppingOutlined']
     ShrinkOutlined: typeof import('@ant-design/icons-vue')['ShrinkOutlined']
     SmileTwoTone: typeof import('@ant-design/icons-vue')['SmileTwoTone']
