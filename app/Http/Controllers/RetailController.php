@@ -860,4 +860,13 @@ class RetailController extends Controller
             ]);
         }
     }
+
+    public function sgc_item_setup()
+    {
+        return Inertia::render('Retail/SGC_item_setup');
+    }
+
+
+
+
 }
