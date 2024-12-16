@@ -6,6 +6,8 @@ use App\Models\Assignatory;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class QueryFilterController extends Controller
 {
@@ -18,9 +20,46 @@ class QueryFilterController extends Controller
     }
     public function customer(Request $request)
     {
-        $result = Customer::whereAny(['cus_fname', 'cus_lname'], 'LIKE', '%' . $request->search . '%')->get();
+        $result = Customer::whereAny(['cus_fname', 'cus_lname', 'cus_mname', 'cus_namext'], 'LIKE', '%' . $request->search . '%')->get();
 
         return response()->json($result);
+    }
+
+    public function addCustomer(Request $request){
+        $request->validate([
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'middlename' => 'required',
+        ]);
+        try {
+            $addCustomer = Customer::create([
+                'cus_fname' => $request->firstname,
+                'cus_lname' => $request->lastname,
+                'cus_mname' => $request->middlename,
+                'cus_namext' => $request->extention,
+                'cus_store_register' => '1',
+                'cus_register_by' => $request->user()->user_id,
+
+
+
+            ]);
+            return response()->json([
+                'status' => 'Success',
+                'message' => 'Customer added successfully',
+                'data' => [
+                    'cus_id' => $addCustomer->cus_id
+                ]
+
+            ]);
+        }
+        catch(\Exception $e){
+            Log::error('Error adding customer:' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'Error',
+                'message' => 'Failed to add customer',
+            ], 500);
+        }
     }
 
     // $query =  $link->query("SELECT
