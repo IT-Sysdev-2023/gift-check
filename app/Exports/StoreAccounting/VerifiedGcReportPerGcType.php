@@ -33,39 +33,165 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
     public function collection()
     {
         $transformData = collect();
+        $arr_perdate = [];
+        $amounts = [
+            'SM' => 0,
+            'HF' => 0,
+            'MP' => 0,
+            'FR' => 0,
+            'SOD' => 0,
+            'WHOLESALE' => 0,
+        ];
 
-        $amountSM = 0;
-        $amountHF = 0;
-        $amountMP = 0;
-        $amountFR = 0;
-        $amountSod = 0;
-        $amountWholeSale = 0;
-        $this->data->each(function ($item) {
+        $purchased = [
+            'special' => 0,
+            'regular' => 0,
+            'bng' => 0,
+            'promo' => 0
+        ];
+
+        $special = [
+            'SM' => 0,
+            'HF' => 0,
+            'MP' => 0,
+            'FR' => 0,
+            'SOD' => 0,
+            'WHOLESALE' => 0
+        ];
+        $regular = [
+            'SM' => 0,
+            'HF' => 0,
+            'MP' => 0,
+            'FR' => 0,
+            'SOD' => 0,
+            'WHOLESALE' => 0
+        ];
+        $bng = [
+            'SM' => 0,
+            'HF' => 0,
+            'MP' => 0,
+            'FR' => 0,
+            'SOD' => 0,
+            'WHOLESALE' => 0
+        ];
+        $promo = [
+            'SM' => 0,
+            'HF' => 0,
+            'MP' => 0,
+            'FR' => 0,
+            'SOD' => 0,
+            'WHOLESALE' => 0
+        ];
+        $cntr = 0;
+        $datedisplay = '';
+
+        $this->data->each(function ($item) use (&$amounts, &$special, &$bng, &$promo, &$regular, &$cntr, &$purchased, &$arr_perdate, $datedisplay) {
+
             if ((float) $item['purchasecred'] > 0) {
 
                 $terminal = explode(",", $item['terminalno']);
                 $purchase = explode(",", $item['purchaseamt']);
 
-                collect($terminal)->each(function ($item, $key) use ($purchase) {
-                    $explodeTerminal = explode('-', $item);
+                collect($terminal)->each(function ($item, $key) use ($purchase, &$amounts) {
+                    $explodeTerminal = explode('-', $item)[0] ?? null;
 
-                     match($explodeTerminal[0]){
-                        'SM' => $amountSM = $purchase[$key],
-                        'HF' => $amountHF =$purchase[$key],
-                        'MP' => $amountMP = $purchase[$key],
-                        'FR' => $amountFr = $purchase[$key],
-                        'SOD' => $amountSOD = $purchase[$key],
-                        'WHOLESALE' => $amountWholeSale = $purchase[$key],
-                    };
-
-
-                    dd($explodeTerminal, $this->data);
+                    if ($amounts[$explodeTerminal]) {
+                        $amounts[$explodeTerminal] += (float) $purchase[$key];
+                    }
                 });
+            }
+            if ($item['date'] != $datedisplay) {
+
+                if ($cntr === 1) {
+
+                    $datedisplay = $item['date'];
+
+                    $gcTypeMapping = [
+                        'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
+                        'REGULAR' => ['target' => 'regular', 'array' => &$regular],
+                        'BEAM AND GO' => ['target' => 'bng', 'array' => &$bng],
+                        'PROMOTIONAL GC' => ['target' => 'promo', 'array' => &$promo],
+                    ];
+
+                    $mapping = $gcTypeMapping[$item['gc_type']];
+
+                    foreach ($amounts as $key => $value) {
+                        $mapping['array'][$key] += $value; // Update corresponding array
+                    }
+
+                    $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
+                } else {
+
+                    $arr_perdate[] = array(
+                        'arr_perdate' => $datedisplay,
+                        'regular' => $purchased['regular'],
+                        'special' => $purchased['special'],
+                        'bng' => $purchased['bng'],
+                        'promo' => $purchased['promo'],
+                        'terminalreg' => $regular,
+                        'terminalspec' => $special,
+                        'terminalbng' => $bng,
+                        'terminalpromo' => $promo
+                    );
+
+                    $regular = collect($regular)->map(fn($val, $key) => 0)->toArray();
+                    $special = collect($special)->map(fn($val, $key) => 0)->toArray();
+                    $bng = collect($bng)->map(fn($val, $key) => 0)->toArray();
+                    $promo = collect($promo)->map(fn($val, $key) => 0)->toArray();
+
+                    $purchased = collect($purchased)->map(fn($val, $key) => 0)->toArray();
+
+                    $datedisplay = $item['date'];
+
+                    $gcTypeMapping = [
+                        'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
+                        'REGULAR' => ['target' => 'regular', 'array' => &$regular],
+                    ];
+
+                    $mapping = $gcTypeMapping[$item['gc_type']];
+
+                    foreach ($amounts as $key => $value) {
+                        $mapping['array'][$key] += $value; // Update corresponding array
+                    }
+
+                    $purchased[$mapping['target']] += $item['purchasecred'];
+                }
+            } else {
+                $gcTypeMapping = [
+                    'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
+                    'REGULAR' => ['target' => 'regular', 'array' => &$regular],
+                    'BEAM AND GO' => ['target' => 'bng', 'array' => &$bng],
+                    'PROMOTIONAL GC' => ['target' => 'promo', 'array' => &$promo],
+                ];
+
+                $mapping = $gcTypeMapping[$item['gc_type']];
+
+                foreach ($amounts as $key => $value) {
+                    $mapping['array'][$key] += $value; // Update corresponding array
+                }
+
+                $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
+            }
+
+            $amounts = collect($amounts)->map(fn($val, $key) => 0)->toArray();
+            $cntr++;
+
+            if($this->data->count() === $cntr){
+                $arr_perdate[] =  [
+                    'arr_perdate'   =>  $datedisplay,
+                    'regular'       =>  $purchased['regular'],
+                    'special'       =>  $purchased['special'],
+                    'bng'           =>  $purchased['bng'],
+                    'promo'         =>  $purchased['promo'],
+                    'terminalreg'   =>  $regular,
+                    'terminalspec'  =>  $special,
+                    'terminalbng'   =>  $bng,
+                    'terminalpromo' =>  $promo
+                ]; 
             }
         });
 
-
-
+        dd($arr_perdate);
         return;
     }
     public function map($data): array
