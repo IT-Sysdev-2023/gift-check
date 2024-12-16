@@ -6,6 +6,7 @@ use App\Events\AccountingReportEvent;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -21,17 +22,14 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class VerifiedGcReportPerDay implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles
 {
 
-    public function __construct(protected array $requirements, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
+    public function __construct(protected Collection $data, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
     {
 
     }
     public function collection()
     {
-        $db = self::getServerDatabase($this->requirements['selectedStore']);
-
-        $storeName = Store::where('store_id', $this->requirements['selectedStore'])->value('store_name');
-
-        return $this->getVerifiedData($db, $this->requirements);
+    
+        return $this->data;
     }
     public function map($data): array
     {
@@ -49,101 +47,6 @@ class VerifiedGcReportPerDay implements FromCollection, ShouldAutoSize, WithTitl
             $data['gc_type'],
             $data['vsdate'] . ', ' . $data['vstime'],
         ];
-    }
-
-    private static function getTextfile($db, $barcode)
-    {
-        return $db->table('store_eod_textfile_transactions')
-            ->select('seodtt_bu', 'seodtt_terminalno', 'seodtt_credpuramt')
-            ->where('seodtt_barcode', $barcode)->get();
-    }
-
-    private function getVerifiedData($db, $requirements)
-    {
-
-        $data = $db->table('store_verification')->selectRaw("
-        DATE(store_verification.vs_date) as datever,
-        DATE(store_verification.vs_reverifydate) as daterev,
-        store_verification.vs_barcode,
-        store_verification.vs_tf_denomination,
-        store_verification.vs_tf_purchasecredit,
-        customers.cus_fname,
-        customers.cus_lname,
-        customers.cus_mname,
-        customers.cus_namext,
-        store_verification.vs_tf_balance,
-        store_verification.vs_gctype,
-        store_verification.vs_date,
-        store_verification.vs_time")
-            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-            ->whereYear('vs_date', $requirements['year'])
-            ->where('vs_store', $requirements['selectedStore'])
-            ->cursor();
-
-        $transformedData = collect();
-
-        $data->each(function ($q) use ($db, &$transformedData) {
-
-            $balance = 0;
-            $purchasecred = 0;
-            $vsdate = '';
-            $vstime = '';
-            $bus = "";
-            $tnum = "";
-            $puramt = "";
-
-            $gctype = match ($q->vs_gctype) {
-                1 => 'REGULAR',
-                3 => 'SPECIAL EXTERNAL',
-                6 => 'BEAM AND GO',
-                4 => 'PROMO',
-            };
-
-            if ($q->daterev != '') {
-                $balance = $q->vs_tf_denomination;
-            } else {
-
-                $bdata = self::getTextfile($db, $q->vs_barcode);
-
-                if ($bdata->isNotEmpty()) {
-                    if ($bdata->count() == 1) {
-                        $puramt = $bdata->pluck('seodtt_credpuramt')->implode('');
-                        $bus = $bdata->pluck('seodtt_bu')->implode('');
-                        $tnum = $bdata->pluck('seodtt_terminalno')->implode('');
-                    } else {
-                        $puramt = $bdata->pluck('seodtt_credpuramt')->implode(', ');
-                        $bus = $bdata->pluck('seodtt_bu')->implode(', ');
-                        $tnum = $bdata->pluck('seodtt_terminalno')->implode(', ');
-                    }
-                }
-                $purchasecred = $q->vs_tf_purchasecredit;
-                $balance = $q->vs_tf_balance;
-                $vsdate = $q->vs_date;
-                $vstime = $q->vs_time;
-
-            }
-
-            $transformedData->push([
-                'date' => $q->datever,
-                'barcode' => $q->vs_barcode,
-                'denomination' => $q->vs_tf_denomination,
-                'purchasecred' => $purchasecred,
-                'cus_fname' => $q->cus_fname,
-                'cus_lname' => $q->cus_lname,
-                'cus_mname' => $q->cus_mname,
-                'cus_namext' => $q->cus_namext,
-                'balance' => $balance,
-                'valid_type' => 'VERIFIED',
-                'gc_type' => $gctype,
-                'businessunit' => $bus,
-                'terminalno' => $tnum,
-                'vsdate' => $vsdate,
-                'vstime' => $vstime,
-                'purchaseamt' => $puramt
-            ]);
-        });
-
-        return $transformedData;
     }
 
     private function getReverifiedData($server, $requirements)

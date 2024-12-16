@@ -603,6 +603,10 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('store-ledger', [RetailController::class, 'storeLedger'])->name('storeledger');
                 Route::get('store-ledger-details', [RetailController::class, 'storeLedgerdetails'])->name('storeledgerdetails');
             });
+
+            Route::name('sgc_item_setup')->group(function(){
+                Route::get('sgc_item_setup',[RetailController::class, 'sgc_item_setup'])->name('sgc_item_setup');
+            });
         });
     });
 
