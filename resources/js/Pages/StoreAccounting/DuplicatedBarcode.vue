@@ -17,6 +17,19 @@
                                 </span>
                             </template>
                             <a-card>
+                                <div v-if="isloading">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
                                 <div class="input-wrapper">
                                     <input type="search" placeholder="Input search here..." name="text" class="input"
                                         v-model="cebuTagbilaranSearch" />
@@ -54,6 +67,19 @@
                                 </span>
                             </template>
                             <a-card>
+                             <div v-if="isloading">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
                                 <div class="input-wrapper">
                                     <input type="search" placeholder="Input search here..." name="text" class="input"
                                         v-model="cebuTalibonSearch" />
@@ -83,6 +109,19 @@
                             </span>
                         </a-tab-pane>
                         <a-tab-pane key="3">
+                         <div v-if="isloading">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
                             <template #tab>
                                 <span style="font-weight: bold;">
                                     <DashOutlined />
@@ -203,6 +242,19 @@
                                 </span>
                             </template>
                             <a-card>
+                             <div v-if="isloadingAltta">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
                                 <div class="input-wrapper">
                                     <input type="search" placeholder="Input search here..." name="text" class="input"
                                         v-model="alttaTagbilaranSearch" />
@@ -240,6 +292,19 @@
                                 </span>
                             </template>
                             <a-card>
+                                <div v-if="isloadingAltta">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
 
                                 <div class="input-wrapper">
                                     <input type="search" placeholder="Input search here..." name="text" class="input"
@@ -278,6 +343,19 @@
                                 </span>
                             </template>
                             <a-card>
+                                <div v-if="isloadingAltta">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
 
                                 <div class="input-wrapper">
                                     <input type="search" placeholder="Input search here..." name="text" class="input"
@@ -392,6 +470,7 @@ import { message, Modal } from 'ant-design-vue';
 import ColumnGroup from 'ant-design-vue/es/vc-table/sugar/ColumnGroup';
 import Pagination from '@/Components/Pagination.vue';
 import { mapState } from 'pinia';
+import axios from 'axios';
 
 
 export default {
@@ -403,6 +482,10 @@ export default {
     },
     data() {
         return {
+            isloading: false,
+            isloadingAltta: false,
+
+
             cebuTagbilaranSearch: this.cebu.tagbilaranSearch,
             cebuTalibonSearch: this.cebu.talibonSearch,
             cebuTubigonSearch: this.cebu.tubigonSearch,
@@ -657,7 +740,38 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                    window.location.href = route('storeaccounting.barcodes', { barcodes: data })
+                    this.isloadingAltta = true;
+                    axios({
+                        method: 'get',
+                        url: route('storeaccounting.barcodes'),
+                        responseType: 'blob',
+                        params: {
+                            barcodes: data
+                        }
+                    })
+                        .then((response) => {
+                            const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                            const fileLink = document.createElement('a');
+                            fileLink.href = fileURL;
+                            fileLink.setAttribute('download', 'Altta Release-file Excel.xlsx');
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                            document.body.removeChild(fileLink);
+
+                            // hideLoading();
+                            this.isloadingAltta = false;
+                            message.success('EXCEL generated successfully!', 5);
+                        })
+                        .catch((error) => {
+                            console.error('Error generating EXCEL:', error);
+                            hideLoading();
+                            notification.error({
+                                message: 'Error',
+                                description: 'Failed to generate EXCEL. Please try again later.',
+                                placement: 'topRight',
+                            });
+                        });
+                    // window.location.href = route('storeaccounting.barcodes', { barcodes: data })
                 },
                 onCancel: () => {
                     console.log('Cancel');
@@ -758,7 +872,38 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                    window.location.href = route('storeaccounting.barcodes', { barcodes: data });
+                    this.isloading = true;
+                    axios({
+                        method: 'get',
+                        url: route('storeaccounting.barcodes'),
+                        responseType: 'blob',
+                        params: {
+                            barcodes: data
+                        }
+                    })
+                    .then((response) => {
+                            const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                            const fileLink = document.createElement('a');
+                            fileLink.href = fileURL;
+                            fileLink.setAttribute('download', 'Duplicate Barcode-file Excel.xlsx');
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                            document.body.removeChild(fileLink);
+
+                            // hideLoading();
+                            this.isloading = false;
+                            message.success('EXCEL generated successfully!', 5);
+                        })
+                        .catch((error) => {
+                         console.error('Error generating EXCEL:', error);
+                            hideLoading();
+                            notification.error({
+                                message: 'Error',
+                                description: 'Failed to generate EXCEL. Please try again later.',
+                                placement: 'topRight',
+                            });
+                        });
+                    // window.location.href = route('storeaccounting.barcodes', { barcodes: data });
                 },
                 onCancel() {
                     console.log('Cancel');
@@ -1007,5 +1152,90 @@ export default {
     100% {
         transform: translateY(0px);
     }
+}
+/* From Uiverse.io by Vazafirst */
+#page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+#h3 {
+  color: rgb(82, 79, 79);
+}
+
+#ring {
+  width: 190px;
+  height: 190px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  position: absolute;
+}
+
+#ring:nth-child(1) {
+  border-bottom: 8px solid rgb(240, 42, 230);
+  animation: rotate1 2s linear infinite;
+}
+
+@keyframes rotate1 {
+  from {
+    transform: rotateX(50deg) rotateZ(110deg);
+  }
+
+  to {
+    transform: rotateX(50deg) rotateZ(470deg);
+  }
+}
+
+#ring:nth-child(2) {
+  border-bottom: 8px solid rgb(240, 19, 67);
+  animation: rotate2 2s linear infinite;
+}
+
+@keyframes rotate2 {
+  from {
+    transform: rotateX(20deg) rotateY(50deg) rotateZ(20deg);
+  }
+
+  to {
+    transform: rotateX(20deg) rotateY(50deg) rotateZ(380deg);
+  }
+}
+
+#ring:nth-child(3) {
+  border-bottom: 8px solid rgb(3, 170, 170);
+  animation: rotate3 2s linear infinite;
+}
+
+@keyframes rotate3 {
+  from {
+    transform: rotateX(40deg) rotateY(130deg) rotateZ(450deg);
+  }
+
+  to {
+    transform: rotateX(40deg) rotateY(130deg) rotateZ(90deg);
+  }
+}
+
+#ring:nth-child(4) {
+  border-bottom: 8px solid rgb(207, 135, 1);
+  animation: rotate4 2s linear infinite;
+}
+
+@keyframes rotate4 {
+  from {
+    transform: rotateX(70deg) rotateZ(270deg);
+  }
+
+  to {
+    transform: rotateX(70deg) rotateZ(630deg);
+  }
 }
 </style>

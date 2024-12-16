@@ -12,6 +12,19 @@
                             Tagbilaran
                         </span>
                     </template>
+                       <div v-if="isloading">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
 
                     <div class="input-wrapper">
                         <input type="search" placeholder="Input search here..." name="text" class="input"
@@ -42,6 +55,20 @@
                             Talibon
                         </span>
                     </template>
+                                           <div v-if="isloading">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
+
                     <!-- <a-button style="background-color: green; color:white; margin-top: 10px;"
                         @click="SelectCustomerName">
                         <FileExcelOutlined />
@@ -188,6 +215,8 @@ import { createVNode } from 'vue';
 import { Modal, message } from 'ant-design-vue';
 import Pagination from '@/Components/Pagination.vue';
 import { notification } from 'ant-design-vue';
+import { tuple } from 'ant-design-vue/es/_util/type';
+import axios from 'axios';
 
 export default {
     components: { Pagination },
@@ -202,6 +231,7 @@ export default {
     },
     data() {
         return {
+            isloading: false,
 
             talibonSearch: this.variance.talibonSearch,
             tagbilaranSearch: this.variance.tagbSearch,
@@ -351,10 +381,10 @@ export default {
                 });
                 return;
             }
-            const varianceData = {
-                customerName: this.variance.selectedCustomer,
-                formatCusName: this.variance.formatCusName,
-            };
+            // const varianceData = {
+            //     customerName: this.variance.selectedCustomer,
+            //     formatCusName: this.variance.formatCusName,
+            // };
 
             Modal.confirm({
                 title: 'Confirmation',
@@ -362,11 +392,44 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                    const hide = message.loading('Generating in progress..', 0)
+                    this.isloading = true;
+                    // const hideLoading = message.loading('Generating EXCEL please wait...', 0);
 
-                    window.location.href = route('storeaccounting.varianceExcelExport', varianceData);
 
-                    setTimeout(hide, 1500);
+                    axios({
+                        method: 'get',
+                        url: route('storeaccounting.varianceExcelExport'),
+                        responseType: 'blob',
+                        params: {
+                            customerName: this.variance.selectedCustomer,
+                            formatCusName: this.variance.formatCusName
+                        },
+                    })
+                        .then((response) => {
+                         const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                            const fileLink = document.createElement('a');
+                            fileLink.href = fileURL;
+                            fileLink.setAttribute('download', 'CheckVariance-file Excel.xlsx');
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                            document.body.removeChild(fileLink);
+
+                            // hideLoading();
+                            this.isloading = false;
+                            message.success('EXCEL generated successfully!', 5);
+
+                        })
+                        .catch((error) => {
+                         console.error('Error generating EXCEL:', error);
+                            hideLoading();
+                            notification.error({
+                                message: 'Error',
+                                description: 'Failed to generate EXCEL. Please try again later.',
+                                placement: 'topRight',
+                            });
+                        });
+                    // window.location.href = route('storeaccounting.varianceExcelExport', varianceData);
+                    // setTimeout(hide, 1500);
                 },
                 onCancel() {
                     console.log('Cancel');

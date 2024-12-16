@@ -51,11 +51,11 @@ const { highlightText } = highlighten();
 
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
-    <a-modal v-model:open="messageModal" @ok="okay">
+    <!-- <a-modal v-model:open="messageModal" @ok="okay">
         <span style="color:red;">
         {{ this.searchMessage }}
         </span>
-    </a-modal>
+    </a-modal> -->
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
@@ -63,6 +63,8 @@ import dayjs from "dayjs";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
 import _ from "lodash";
+import { notification } from 'ant-design-vue';
+
 
 export default {
     layout: AuthenticatedLayout,
@@ -74,8 +76,8 @@ export default {
     },
     data() {
         return {
-            messageModal: false,
-            searchMessage: '',
+            // messageModal: false,
+            // searchMessage: '',
             approvedGcSearch: '',
             form: {
                 search: this.filters.search,
@@ -125,14 +127,19 @@ export default {
             }, 150),
         },
         approvedGcSearch(search){
-             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u20B1\$]/u.test(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
 
-            if (searchValidation){
-                this.searchMessage = "Search contains invalid symbols or emojis";
-                this.messageModal = true;
-            return;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
             }
-
             console.log(search);
             this.$inertia.get(route('iad.special.external.approvedGc'),{
                 search:search

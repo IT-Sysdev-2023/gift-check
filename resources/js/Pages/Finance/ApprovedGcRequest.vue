@@ -95,6 +95,8 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import axios from "axios";
 import Pagination from '@/Components/Pagination.vue';
+import {notification} from 'ant-design-vue';
+
 
 export default {
   components: { Pagination },
@@ -139,18 +141,24 @@ export default {
     },
     watch: {
         approvedGcRequestSearch(search){
-            console.log(search)
-            const searchValidate = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u20B1\$]/u.test(search);
-            if (searchValidate){
-                this.searchMessage = "Search contains invalid symbols and emojis";
-                this.openModal = true;
+           const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
                 return;
-            }
+                }
             this.$inertia.get(route('finance.approvedGc.approved'),{
                 search: search
             },{
                 preserveState: true
             });
+
         }
     },
     methods: {
@@ -183,5 +191,5 @@ export default {
         }
 
     },
-};
+}
 </script>
