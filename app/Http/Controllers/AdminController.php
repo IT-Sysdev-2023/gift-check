@@ -29,6 +29,7 @@ use App\Models\SpecialExternalCustomer;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\PurchaseOrderRequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use Illuminate\Support\Facades\DB;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class AdminController extends Controller
@@ -771,8 +772,6 @@ class AdminController extends Controller
             'has_local' => '1',
             'store_textfile_ip' => '172.16.161.205\CFS_Txt\GiftCheck',
             'store_initial' => '',
-            'updated_at' => now(),
-            'created_at' => now(),
 
         ]);
 
@@ -847,19 +846,30 @@ class AdminController extends Controller
 
 
         $data = Denomination::get();
-        // dd($data = Denomination::all());
-        $entriesPerPage = $request->input('value', '');
-        $searchTerm = $request->input('data', 10);
-        $data = Denomination::query();
-        // dd($data = Denomination::get());
-        if ($searchTerm) {
-            $data = $data->where(function ($query) use ($searchTerm) {
-                $query->where('denomination', 'like', '%' . $searchTerm . '%')
-                    ->orwhere('denom_barcode_start', 'like', '%' . $searchTerm . '%');
-            });
-        }
-        $data = $data->orderByDesc('denom_id')
-            ->paginate($entriesPerPage)
+        $searchTerm = $request->input('data', '');
+        $data = DB::table('denomination')
+            ->select(
+                'denom_id',
+                'denom_code',
+                'denomination',
+                'denom_fad_item_number',
+                'denom_barcode_start',
+                'denom_type',
+                'denom_status',
+                'denom_createdby',
+            )
+            ->whereAny([
+                'denom_id',
+                'denom_code',
+                'denomination',
+                'denom_fad_item_number',
+                'denom_barcode_start',
+                'denom_type',
+                'denom_status',
+                'denom_createdby'
+            ], 'like', '%' . $searchTerm . '%')
+            ->orderBy('denom_id', 'ASC')
+            ->paginate(10)
             ->withQueryString();
 
         return inertia('Admin/Masterfile/DenominationSetup', [

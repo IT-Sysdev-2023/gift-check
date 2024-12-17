@@ -189,15 +189,15 @@ export default {
                 usertype: ''
             }),
 
-            form: this.$inertia.form({
-                username: '',
-                firstname: '',
-                lastname: '',
-                employee_id: '',
-                password: '',
-                store_id: '',
-                usertype: ''
-            }),
+            // form: this.$inertia.form({
+            //     username: '',
+            //     firstname: '',
+            //     lastname: '',
+            //     employee_id: '',
+            //     password: '',
+            //     store_id: '',
+            //     usertype: ''
+            // }),
 
             dataForUpdate: this.$inertia.form({
                 ss_username: '',
@@ -352,11 +352,19 @@ export default {
                             description: 'Successfully adding new user!',
                         });
                         this.open = false;
+                        this.form.username = '',
+                        this.form.firstname = '',
+                        this.form.lastname = '',
+                        this.form.employee_id = '',
+                        this.form.password = '',
+                        this.form.store_id = '',
+                        this.form.usertype =''
+
                         this.$inertia.get(route('Admin/Masterfile/StoreStaffSetup'));
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: 'This username already exist, please try again!',
+                            description: 'This username already exist',
                         });
 
                     }
@@ -411,7 +419,7 @@ export default {
                         } else if (props.flash.error) {
                             notification.warning({
                                 message: props.flash.error,
-                                description: `${this.dataForUpdate.ss_username} data has no changes happen, update first before submitting`
+                                description: `${this.dataForUpdate.ss_username}'s data has no changes happen, update first before submitting`
                             });
                         }
                     },

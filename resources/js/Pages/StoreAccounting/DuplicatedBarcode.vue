@@ -3,56 +3,85 @@
         <a-tabs>
             <a-tab-pane key="1">
                 <template #tab>
-                    <span style="font-weight: bold;">
+                    <span style="font-weight: bold">
                         Duplicated Report (CEBU)
                     </span>
                 </template>
-                <a-card style="width: 72%; margin-left: 28%;">
+                <a-card style="width: 72%; margin-left: 28%">
                     <a-tabs>
                         <a-tab-pane key="1">
                             <template #tab>
-                                <span style="font-weight: bold;">
+                                <span style="font-weight: bold">
                                     <DashOutlined />
                                     Tagbilaran
                                 </span>
                             </template>
                             <a-card>
                                 <div v-if="isloading">
-                            <div>
-<div id="page">
-        <div id="container">
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
-        </div>
-</div>
-                            </div>
-                    	</div>
+                                    <div>
+                                        <div id="page">
+                                            <div id="container">
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div
+                                                    style="font-weight: bold"
+                                                    id="h3"
+                                                >
+                                                    Generating EXCEL please
+                                                    wait...
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="input-wrapper">
-                                    <input type="search" placeholder="Input search here..." name="text" class="input"
-                                        v-model="cebuTagbilaranSearch" />
+                                    <input
+                                        type="search"
+                                        placeholder="Input search here..."
+                                        name="text"
+                                        class="input"
+                                        v-model="cebuTagbilaranSearch"
+                                    />
                                 </div>
                                 <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="cebuTagbilaranSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
-                                <div style=" margin-top: 10px;">
-                                    <span style="font-weight: bold; margin-left: 40%;">
+                                <div style="margin-top: 10px">
+                                    <span
+                                        style="
+                                            font-weight: bold;
+                                            margin-left: 40%;
+                                        "
+                                    >
                                         Table Showing Tagbilaran
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="cebu.tagbilaran.data" :pagination="false"
-                                    size="small" style="margin-top: 5px;">
-
+                                <a-table
+                                    :columns="cebuTable"
+                                    :data-source="cebu.tagbilaran.data"
+                                    :pagination="false"
+                                    size="small"
+                                    style="margin-top: 5px"
+                                >
                                 </a-table>
-                                <pagination :datarecords="cebu.tagbilaran" class="mt-5" />
+                                <pagination
+                                    :datarecords="cebu.tagbilaran"
+                                    class="mt-5"
+                                />
                             </a-card>
                             <span>
-                                <a-button @click="cebuGenerateExcel"
-                                    style="margin-left: 77%; background-color: green; color:white;">
+                                <a-button
+                                    @click="cebuGenerateExcel"
+                                    style="
+                                        margin-left: 77%;
+                                        background-color: green;
+                                        color: white;
+                                    "
+                                >
                                     <FileExcelOutlined />
 
                                     Generate Excel
@@ -67,92 +96,148 @@
                                 </span>
                             </template>
                             <a-card>
-                             <div v-if="isloading">
-                            <div>
-<div id="page">
-        <div id="container">
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
-        </div>
-</div>
-                            </div>
-                    	</div>
+                                <div v-if="isloading">
+                                    <div>
+                                        <div id="page">
+                                            <div id="container">
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div
+                                                    style="font-weight: bold"
+                                                    id="h3"
+                                                >
+                                                    Generating EXCEL please
+                                                    wait...
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="input-wrapper">
-                                    <input type="search" placeholder="Input search here..." name="text" class="input"
-                                        v-model="cebuTalibonSearch" />
+                                    <input
+                                        type="search"
+                                        placeholder="Input search here..."
+                                        name="text"
+                                        class="input"
+                                        v-model="cebuTalibonSearch"
+                                    />
                                 </div>
                                 <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="cebuTalibonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
-                                <div style=" margin-top: 10px;">
-                                    <span style="font-weight: bold; margin-left: 40%;">
+                                <div style="margin-top: 10px">
+                                    <span
+                                        style="
+                                            font-weight: bold;
+                                            margin-left: 40%;
+                                        "
+                                    >
                                         Table Showing Talibon
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="cebu.talibon.data" :pagination="false"
-                                    size="small" style="margin-top: 5px;">
-
+                                <a-table
+                                    :columns="cebuTable"
+                                    :data-source="cebu.talibon.data"
+                                    :pagination="false"
+                                    size="small"
+                                    style="margin-top: 5px"
+                                >
                                 </a-table>
-                                <pagination :datarecords="cebu.talibon" class="mt-5" />
+                                <pagination
+                                    :datarecords="cebu.talibon"
+                                    class="mt-5"
+                                />
                             </a-card>
                             <span>
-                                <a-button @click="cebuGenerateExcel"
-                                    style="margin-left: 77%; background-color: green; color:white;">
+                                <a-button
+                                    @click="cebuGenerateExcel"
+                                    style="
+                                        margin-left: 77%;
+                                        background-color: green;
+                                        color: white;
+                                    "
+                                >
                                     <FileExcelOutlined />
                                     Generate Excel
                                 </a-button>
                             </span>
                         </a-tab-pane>
                         <a-tab-pane key="3">
-                         <div v-if="isloading">
-                            <div>
-<div id="page">
-        <div id="container">
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
-        </div>
-</div>
+                            <div v-if="isloading">
+                                <div>
+                                    <div id="page">
+                                        <div id="container">
+                                            <div id="ring"></div>
+                                            <div id="ring"></div>
+                                            <div id="ring"></div>
+                                            <div id="ring"></div>
+                                            <div
+                                                style="font-weight: bold"
+                                                id="h3"
+                                            >
+                                                Generating EXCEL please wait...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                    	</div>
                             <template #tab>
-                                <span style="font-weight: bold;">
+                                <span style="font-weight: bold">
                                     <DashOutlined />
                                     Tubigon
                                 </span>
                             </template>
                             <a-card>
-
                                 <div class="input-wrapper">
-                                    <input type="search" placeholder="Input search here..." name="text" class="input"
-                                        v-model="cebuTubigonSearch" />
+                                    <input
+                                        type="search"
+                                        placeholder="Input search here..."
+                                        name="text"
+                                        class="input"
+                                        v-model="cebuTubigonSearch"
+                                    />
                                 </div>
                                 <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="cebuTubigonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
-                                <div style=" margin-top: 10px;">
-                                    <span style="font-weight: bold; margin-left: 40%;">
+                                <div style="margin-top: 10px">
+                                    <span
+                                        style="
+                                            font-weight: bold;
+                                            margin-left: 40%;
+                                        "
+                                    >
                                         Table Showing Tubigon
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="cebu.tubigon.data" :pagination="false"
-                                    size="small" style="margin-top: 5px;">
-
+                                <a-table
+                                    :columns="cebuTable"
+                                    :data-source="cebu.tubigon.data"
+                                    :pagination="false"
+                                    size="small"
+                                    style="margin-top: 5px"
+                                >
                                 </a-table>
-                                <pagination :datarecords="cebu.tubigon" class="mt-5" />
+                                <pagination
+                                    :datarecords="cebu.tubigon"
+                                    class="mt-5"
+                                />
                             </a-card>
                             <span>
-                                <a-button @click="cebuGenerateExcel"
-                                    style="margin-left: 77%; background-color: green; color:white;">
+                                <a-button
+                                    @click="cebuGenerateExcel"
+                                    style="
+                                        margin-left: 77%;
+                                        background-color: green;
+                                        color: white;
+                                    "
+                                >
                                     <FileExcelOutlined />
                                     Generate Excel
                                 </a-button>
@@ -160,19 +245,25 @@
                         </a-tab-pane>
                     </a-tabs>
                 </a-card>
-                <a-card style="width: 25%; position: absolute; top:0;">
-                    <div style="margin-left: 50px;">
+                <a-card style="width: 25%; position: absolute; top: 0">
+                    <div style="margin-left: 50px">
                         <span>
                             <TagsOutlined />
                         </span>
-                        <span style="font-weight: bold; font-size: 15px;">
+                        <span style="font-weight: bold; font-size: 15px">
                             Duplicate Barcodes
                         </span>
-                        <div style="margin-left: 50px; color:#1e90ff; font-weight: bold;">
+                        <div
+                            style="
+                                margin-left: 50px;
+                                color: #1e90ff;
+                                font-weight: bold;
+                            "
+                        >
                             CEBU
                         </div>
                     </div>
-                    <div style="margin-top: 20px;">
+                    <div style="margin-top: 20px">
                         <!-- <span :style="{ fontSize: iconSize + 'px' }">
                             <FileSearchOutlined />
                         </span> -->
@@ -186,7 +277,11 @@
                                 <div class="back-side cover"></div>
                             </div>
                             <label class="custom-file-upload">
-                                <input class="title" type="file" @change="handleFileChange" />
+                                <input
+                                    class="title"
+                                    type="file"
+                                    @change="handleFileChange"
+                                />
                                 Choose a file
                             </label>
                         </div>
@@ -194,28 +289,49 @@
                         <!-- <a-input type="file" id="barcodeFile" @change="handleFileChange"
                             style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" /> -->
                     </div>
-                    <div style="margin-top: 20px;">
-                        <span v-if="textfile" style="color:green; font-weight: bold;">Select: </span>
-                        <span style="margin-left: 10x;">
+                    <div style="margin-top: 20px">
+                        <span
+                            v-if="textfile"
+                            style="color: green; font-weight: bold"
+                            >Select:
+                        </span>
+                        <span style="margin-left: 10x">
                             {{ this.textfile }}
                         </span>
-                        <span v-if="cebu.selectedCebuFile && !textfile" style="font-weight: bold; color:green">Selected
-                            TextFile:</span>
-                        <span style="margin-left: 5px;">
+                        <span
+                            v-if="cebu.selectedCebuFile && !textfile"
+                            style="font-weight: bold; color: green"
+                            >Selected TextFile:</span
+                        >
+                        <span style="margin-left: 5px">
                             {{ this.cebu.selectedCebuFile }}
                         </span>
-                        <span v-if="!textfile && !cebu.selectedCebuFile" style="font-weight: bold;">
+                        <span
+                            v-if="!textfile && !cebu.selectedCebuFile"
+                            style="font-weight: bold"
+                        >
                             Note:
                         </span>
-                        <span v-if="!textfile && !cebu.selectedCebuFile"
-                            style="margin-left: 5px; color:red; font-weight: bold;">
-
+                        <span
+                            v-if="!textfile && !cebu.selectedCebuFile"
+                            style="
+                                margin-left: 5px;
+                                color: red;
+                                font-weight: bold;
+                            "
+                        >
                             Choose TEXTFILE type only !
                         </span>
                     </div>
                     <div>
-                        <a-button @click="cebuReportButton"
-                            style="background-color: #1e90ff; color: white; margin-top: 20px;">
+                        <a-button
+                            @click="cebuReportButton"
+                            style="
+                                background-color: #1e90ff;
+                                color: white;
+                                margin-top: 20px;
+                            "
+                        >
                             <FileExcelOutlined />
                             Check Duplicates
                         </a-button>
@@ -227,181 +343,271 @@
             </a-tab-pane>
             <a-tab-pane key="2">
                 <template #tab>
-                    <span style="font-weight: bold;">
+                    <span style="font-weight: bold">
                         Duplicated Report (ALTTA CITTA)
                     </span>
                 </template>
 
-                <a-card style="width: 72%; margin-left: 28%;">
+                <a-card style="width: 72%; margin-left: 28%">
                     <a-tabs>
                         <a-tab-pane key="1">
                             <template #tab>
-                                <span style="font-weight: bold;">
+                                <span style="font-weight: bold">
                                     <DashOutlined />
                                     Tagbilaran
                                 </span>
                             </template>
                             <a-card>
-                             <div v-if="isloadingAltta">
-                            <div>
-<div id="page">
-        <div id="container">
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
-        </div>
-</div>
-                            </div>
-                    	</div>
+                                <div v-if="isloadingAltta">
+                                    <div>
+                                        <div id="page">
+                                            <div id="container">
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div
+                                                    style="font-weight: bold"
+                                                    id="h3"
+                                                >
+                                                    Generating EXCEL please
+                                                    wait...
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="input-wrapper">
-                                    <input type="search" placeholder="Input search here..." name="text" class="input"
-                                        v-model="alttaTagbilaranSearch" />
+                                    <input
+                                        type="search"
+                                        placeholder="Input search here..."
+                                        name="text"
+                                        class="input"
+                                        v-model="alttaTagbilaranSearch"
+                                    />
                                 </div>
                                 <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="alttaTagbilaranSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
-                                <div style=" margin-top: 10px">
-                                    <span style="font-weight: bold; margin-left: 40%;">
+                                <div style="margin-top: 10px">
+                                    <span
+                                        style="
+                                            font-weight: bold;
+                                            margin-left: 40%;
+                                        "
+                                    >
                                         Table Showing Tagbilaran
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="altta.tagbilaran.data" :pagination="false"
-                                    size="small" style="margin-top: 5px;">
-
+                                <a-table
+                                    :columns="cebuTable"
+                                    :data-source="altta.tagbilaran.data"
+                                    :pagination="false"
+                                    size="small"
+                                    style="margin-top: 5px"
+                                >
                                 </a-table>
-                                <pagination :datarecords="altta.tagbilaran" class="mt-5" />
+                                <pagination
+                                    :datarecords="altta.tagbilaran"
+                                    class="mt-5"
+                                />
                             </a-card>
                             <span>
-                                <a-button @click="alttaGenerateExcel"
-                                    style="margin-left: 77%; background-color: green; color:white;">
+                                <a-button
+                                    @click="alttaGenerateExcel"
+                                    style="
+                                        margin-left: 77%;
+                                        background-color: green;
+                                        color: white;
+                                    "
+                                >
                                     <FileExcelOutlined />
                                     Generate Excel
                                 </a-button>
                             </span>
-
                         </a-tab-pane>
                         <a-tab-pane key="2">
                             <template #tab>
-                                <span style="font-weight: bold;">
+                                <span style="font-weight: bold">
                                     <DashOutlined />
                                     Talibon
                                 </span>
                             </template>
                             <a-card>
                                 <div v-if="isloadingAltta">
-                            <div>
-<div id="page">
-        <div id="container">
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
-        </div>
-</div>
-                            </div>
-                    	</div>
+                                    <div>
+                                        <div id="page">
+                                            <div id="container">
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div
+                                                    style="font-weight: bold"
+                                                    id="h3"
+                                                >
+                                                    Generating EXCEL please
+                                                    wait...
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="input-wrapper">
-                                    <input type="search" placeholder="Input search here..." name="text" class="input"
-                                        v-model="alttaTalibonSearch" />
+                                    <input
+                                        type="search"
+                                        placeholder="Input search here..."
+                                        name="text"
+                                        class="input"
+                                        v-model="alttaTalibonSearch"
+                                    />
                                 </div>
                                 <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="alttaTalibonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
-                                <div style=" margin-top: 10px;">
-                                    <span style="font-weight: bold; margin-left: 40%;">
+                                <div style="margin-top: 10px">
+                                    <span
+                                        style="
+                                            font-weight: bold;
+                                            margin-left: 40%;
+                                        "
+                                    >
                                         Table Showing Talibon
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="altta.talibon.data" :pagination="false"
-                                    size="small" style="margin-top: 5px;">
-
+                                <a-table
+                                    :columns="cebuTable"
+                                    :data-source="altta.talibon.data"
+                                    :pagination="false"
+                                    size="small"
+                                    style="margin-top: 5px"
+                                >
                                 </a-table>
-                                <pagination :datarecords="altta.talibon" class="mt-5" />
+                                <pagination
+                                    :datarecords="altta.talibon"
+                                    class="mt-5"
+                                />
                             </a-card>
                             <span>
-                                <a-button @click="alttaGenerateExcel"
-                                    style="margin-left: 77%; background-color: green; color:white;">
+                                <a-button
+                                    @click="alttaGenerateExcel"
+                                    style="
+                                        margin-left: 77%;
+                                        background-color: green;
+                                        color: white;
+                                    "
+                                >
                                     <FileExcelOutlined />
                                     Generate Excel
                                 </a-button>
                             </span>
-
                         </a-tab-pane>
                         <a-tab-pane key="3">
                             <template #tab>
-                                <span style="font-weight: bold;">
+                                <span style="font-weight: bold">
                                     <DashOutlined />
                                     Tubigon
                                 </span>
                             </template>
                             <a-card>
                                 <div v-if="isloadingAltta">
-                            <div>
-<div id="page">
-        <div id="container">
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
-        </div>
-</div>
-                            </div>
-                    	</div>
+                                    <div>
+                                        <div id="page">
+                                            <div id="container">
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div id="ring"></div>
+                                                <div
+                                                    style="font-weight: bold"
+                                                    id="h3"
+                                                >
+                                                    Generating EXCEL please
+                                                    wait...
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="input-wrapper">
-                                    <input type="search" placeholder="Input search here..." name="text" class="input"
-                                        v-model="alttaTubigonSearch" />
+                                    <input
+                                        type="search"
+                                        placeholder="Input search here..."
+                                        name="text"
+                                        class="input"
+                                        v-model="alttaTubigonSearch"
+                                    />
                                 </div>
                                 <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="alttaTubigonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
-                                <div style=" margin-top: 10px">
-                                    <span style="font-weight: bold; margin-left: 40%;">
+                                <div style="margin-top: 10px">
+                                    <span
+                                        style="
+                                            font-weight: bold;
+                                            margin-left: 40%;
+                                        "
+                                    >
                                         Table Showing Tubigon
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="altta.tubigon.data" :pagination="false"
-                                    size="small" style="margin-top: 5px;">
-
+                                <a-table
+                                    :columns="cebuTable"
+                                    :data-source="altta.tubigon.data"
+                                    :pagination="false"
+                                    size="small"
+                                    style="margin-top: 5px"
+                                >
                                 </a-table>
-                                <pagination :datarecords="altta.tubigon" class="mt-5" />
+                                <pagination
+                                    :datarecords="altta.tubigon"
+                                    class="mt-5"
+                                />
                             </a-card>
                             <span>
-                                <a-button @click="alttaGenerateExcel"
-                                    style="margin-left: 77%; background-color: green; color:white;">
+                                <a-button
+                                    @click="alttaGenerateExcel"
+                                    style="
+                                        margin-left: 77%;
+                                        background-color: green;
+                                        color: white;
+                                    "
+                                >
                                     <FileExcelOutlined />
                                     Generate Excel
                                 </a-button>
                             </span>
-
                         </a-tab-pane>
                     </a-tabs>
                 </a-card>
 
-                <a-card style="width:25%; position: absolute; top:0;">
-                    <div style="margin-left: 50px;">
+                <a-card style="width: 25%; position: absolute; top: 0">
+                    <div style="margin-left: 50px">
                         <span>
                             <TagsOutlined />
                         </span>
-                        <span style="font-weight: bold; font-size: 15px;">
+                        <span style="font-weight: bold; font-size: 15px">
                             Duplicate Barcodes
                         </span>
-                        <div style="margin-left: 45px; color:#1e90ff; font-weight: bold;">
+                        <div
+                            style="
+                                margin-left: 45px;
+                                color: #1e90ff;
+                                font-weight: bold;
+                            "
+                        >
                             ALTTA CITTA
                         </div>
                     </div>
-                    <div style="margin-top: 20px;">
+                    <div style="margin-top: 20px">
                         <!-- <span :style="{ fontSize: iconSize + 'px' }">
                             <FileSearchOutlined />
                         </span> -->
@@ -415,7 +621,11 @@
                                 <div class="back-side cover"></div>
                             </div>
                             <label class="custom-file-upload">
-                                <input class="title" type="file" @change="handleFileChangeAltta" />
+                                <input
+                                    class="title"
+                                    type="file"
+                                    @change="handleFileChangeAltta"
+                                />
                                 Choose a file
                             </label>
                         </div>
@@ -424,54 +634,77 @@
                             enctype="multipart/form-data"
                             style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" /> -->
                     </div>
-                    <div style="margin-top: 20px;">
-                        <span v-if="altaTextFile" style="color:green; font-weight: bold;">Select: </span>
-                        <span style="margin-left: 5px;">
+                    <div style="margin-top: 20px">
+                        <span
+                            v-if="altaTextFile"
+                            style="color: green; font-weight: bold"
+                            >Select:
+                        </span>
+                        <span style="margin-left: 5px">
                             {{ this.altaTextFile }}
                         </span>
 
-                        <span v-if="altta.selectedFile && !altaTextFile"
-                            style="color:green; font-weight: bold;">Selected
-                            TextFile:</span>
-                        <span style="margin-left: 5px;">
+                        <span
+                            v-if="altta.selectedFile && !altaTextFile"
+                            style="color: green; font-weight: bold"
+                            >Selected TextFile:</span
+                        >
+                        <span style="margin-left: 5px">
                             {{ this.altta.selectedFile }}
                         </span>
 
-                        <span v-if="!altaTextFile && !altta.selectedFile" style="font-weight: bold;">
+                        <span
+                            v-if="!altaTextFile && !altta.selectedFile"
+                            style="font-weight: bold"
+                        >
                             Note:
                         </span>
-                        <span v-if="!altaTextFile && !altta.selectedFile"
-                            style="margin-left: 5px; color:red; font-weight: bold">
+                        <span
+                            v-if="!altaTextFile && !altta.selectedFile"
+                            style="
+                                margin-left: 5px;
+                                color: red;
+                                font-weight: bold;
+                            "
+                        >
                             Choose CSV type only !
                         </span>
                     </div>
                     <div>
-                        <a-button @click="alttaReportButton"
-                            style="background-color: #1e90ff; color: white; margin-top: 20px;">
+                        <a-button
+                            @click="alttaReportButton"
+                            style="
+                                background-color: #1e90ff;
+                                color: white;
+                                margin-top: 20px;
+                            "
+                        >
                             <FileExcelOutlined />
                             Check Duplicates
                         </a-button>
                     </div>
                     <!-- {{ this.altta.alttaTable }} -->
-
                 </a-card>
-
             </a-tab-pane>
         </a-tabs>
     </a-card>
 </template>
 <script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { TagsOutlined, FileSearchOutlined, CheckOutlined, PlayCircleFilled } from '@ant-design/icons-vue';
-import { notification } from 'ant-design-vue';
-import Description from '../Treasury/Description.vue';
-import { placements } from 'ant-design-vue/es/vc-tour/placements';
-import { message, Modal } from 'ant-design-vue';
-import ColumnGroup from 'ant-design-vue/es/vc-table/sugar/ColumnGroup';
-import Pagination from '@/Components/Pagination.vue';
-import { mapState } from 'pinia';
-import axios from 'axios';
-
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import {
+    TagsOutlined,
+    FileSearchOutlined,
+    CheckOutlined,
+    PlayCircleFilled,
+} from "@ant-design/icons-vue";
+import { notification } from "ant-design-vue";
+import Description from "../Treasury/Description.vue";
+import { placements } from "ant-design-vue/es/vc-tour/placements";
+import { message, Modal } from "ant-design-vue";
+import ColumnGroup from "ant-design-vue/es/vc-table/sugar/ColumnGroup";
+import Pagination from "@/Components/Pagination.vue";
+import { mapState } from "pinia";
+import axios from "axios";
 
 export default {
     components: { Pagination },
@@ -485,7 +718,6 @@ export default {
             isloading: false,
             isloadingAltta: false,
 
-
             cebuTagbilaranSearch: this.cebu.tagbilaranSearch,
             cebuTalibonSearch: this.cebu.talibonSearch,
             cebuTubigonSearch: this.cebu.tubigonSearch,
@@ -494,176 +726,184 @@ export default {
             alttaTalibonSearch: this.altta.talibonSearch,
             alttaTubigonSearch: this.altta.tubigonSearch,
 
-            cebuFileName: '',
+            cebuFileName: "",
             iconSize: 80,
-            fileContent: '',
+            fileContent: "",
             barcodes: [],
-            textfile: '',
+            textfile: "",
 
-            altaTextFile: '',
-            altaContent: '',
+            altaTextFile: "",
+            altaContent: "",
             altaBarcode: [],
             alttaTable: [
                 {
-                    title: 'Transno',
-                    dataIndex: 'transno'
+                    title: "Transno",
+                    dataIndex: "transno",
                 },
                 {
-                    title: 'Name',
-                    dataIndex: 'name'
+                    title: "Name",
+                    dataIndex: "name",
                 },
                 {
-                    title: 'Barcode',
-                    dataIndex: 'barcode'
+                    title: "Barcode",
+                    dataIndex: "barcode",
                 },
                 {
-                    title: 'Terminal',
-                    dataIndex: 'terminal'
+                    title: "Terminal",
+                    dataIndex: "terminal",
                 },
                 {
-                    title: 'Business Unit',
-                    dataIndex: 'bu'
+                    title: "Business Unit",
+                    dataIndex: "bu",
                 },
                 {
-                    title: 'Amount',
-                    dataIndex: 'amount'
+                    title: "Amount",
+                    dataIndex: "amount",
                 },
                 {
-                    title: 'Verdate',
-                    dataIndex: 'verdate'
+                    title: "Verdate",
+                    dataIndex: "verdate",
                 },
                 {
-                    title: 'Vertime',
-                    dataIndex: 'vertime'
+                    title: "Vertime",
+                    dataIndex: "vertime",
                 },
                 {
-                    title: 'Store',
-                    dataIndex: 'store'
+                    title: "Store",
+                    dataIndex: "store",
                 },
-
             ],
             cebuTable: [
                 {
-                    title: 'Transno',
-                    dataIndex: 'transno'
+                    title: "Transno",
+                    dataIndex: "transno",
                 },
                 {
-                    title: 'Name',
-                    dataIndex: 'name'
+                    title: "Name",
+                    dataIndex: "name",
                 },
                 {
-                    title: 'Barcode',
-                    dataIndex: 'barcode'
+                    title: "Barcode",
+                    dataIndex: "barcode",
                 },
                 {
-                    title: 'Terminal',
-                    dataIndex: 'terminal'
+                    title: "Terminal",
+                    dataIndex: "terminal",
                 },
                 {
-                    title: 'Business Unit',
-                    dataIndex: 'bu'
+                    title: "Business Unit",
+                    dataIndex: "bu",
                 },
                 {
-                    title: 'Amount',
-                    dataIndex: 'amount'
+                    title: "Amount",
+                    dataIndex: "amount",
                 },
                 {
-                    title: 'Verdate',
-                    dataIndex: 'verdate'
+                    title: "Verdate",
+                    dataIndex: "verdate",
                 },
                 {
-                    title: 'Vertime',
-                    dataIndex: 'vertime'
+                    title: "Vertime",
+                    dataIndex: "vertime",
                 },
                 {
-                    title: 'Store',
-                    dataIndex: 'store'
+                    title: "Store",
+                    dataIndex: "store",
                 },
-            ]
+            ],
         };
     },
     watch: {
         cebuTagbilaranSearch(search) {
-             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
-            if(searchValidation.test(search)){
-                const openNotificationWithIcon = (type) =>{
+            const searchValidation =
+                /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid input',
-                        description: 'Search contains invalid symbol or emojis',
-                        placement: 'topRight'
+                        message: "Invalid input",
+                        description: "Search contains invalid symbol or emojis",
+                        placement: "topRight",
                     });
                 };
-                openNotificationWithIcon('warning');
+                openNotificationWithIcon("warning");
                 return;
             }
             const data = {
                 search1: search,
-                barcodes: this.cebu.cebu
-
-            }
-            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes', data), {
-
-            }, {
-                preserveState: true
-            })
+                barcodes: this.cebu.cebu,
+            };
+            this.$inertia.get(
+                route("storeaccounting.DuplicatedBarcodes", data),
+                {},
+                {
+                    preserveState: true,
+                },
+            );
         },
         cebuTalibonSearch(search) {
-             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
-            if(searchValidation.test(search)){
-                const openNotificationWithIcon = (type) =>{
+            const searchValidation =
+                /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid input',
-                        description: 'Search contains invalid symbol or emojis',
-                        placement: 'topRight'
+                        message: "Invalid input",
+                        description: "Search contains invalid symbol or emojis",
+                        placement: "topRight",
                     });
                 };
-                openNotificationWithIcon('warning');
+                openNotificationWithIcon("warning");
                 return;
             }
             const data1 = {
                 search2: search,
-                barcodes: this.cebu.cebu
-            }
-            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes', data1), {
-
-            }, {
-                preserveState: true
-            })
+                barcodes: this.cebu.cebu,
+            };
+            this.$inertia.get(
+                route("storeaccounting.DuplicatedBarcodes", data1),
+                {},
+                {
+                    preserveState: true,
+                },
+            );
         },
         cebuTubigonSearch(search) {
-             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
-            if(searchValidation.test(search)){
-                const openNotificationWithIcon = (type) =>{
+            const searchValidation =
+                /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid input',
-                        description: 'Search contains invalid symbol or emojis',
-                        placement: 'topRight'
+                        message: "Invalid input",
+                        description: "Search contains invalid symbol or emojis",
+                        placement: "topRight",
                     });
                 };
-                openNotificationWithIcon('warning');
+                openNotificationWithIcon("warning");
                 return;
             }
             const data2 = {
                 search3: search,
-                barcodes: this.cebu.cebu
-            }
-            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes', data2), {
-
-            }, {
-                preserveState: true
-            })
+                barcodes: this.cebu.cebu,
+            };
+            this.$inertia.get(
+                route("storeaccounting.DuplicatedBarcodes", data2),
+                {},
+                {
+                    preserveState: true,
+                },
+            );
         },
         alttaTagbilaranSearch(search) {
-             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
-            if(searchValidation.test(search)){
-                const openNotificationWithIcon = (type) =>{
+            const searchValidation =
+                /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid input',
-                        description: 'Search contains invalid symbol or emojis',
-                        placement: 'topRight'
+                        message: "Invalid input",
+                        description: "Search contains invalid symbol or emojis",
+                        placement: "topRight",
                     });
                 };
-                openNotificationWithIcon('warning');
+                openNotificationWithIcon("warning");
                 return;
             }
             // const data4 = {
@@ -671,118 +911,137 @@ export default {
             //     // alttaBarcodeSearch: this.altta.alttaTable,
             //     // alttaBarcode: this.altta.alttaBarcode
             // }
-            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes'), {
-                search: search,
-                AlttaData: this.altta.alttaTable
-
-            }, {
-                preserveState: true
-            })
+            this.$inertia.get(
+                route("storeaccounting.DuplicatedBarcodes"),
+                {
+                    search: search,
+                    AlttaData: this.altta.alttaTable,
+                },
+                {
+                    preserveState: true,
+                },
+            );
         },
         alttaTalibonSearch(search) {
-             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
-            if(searchValidation.test(search)){
-                const openNotificationWithIcon = (type) =>{
+            const searchValidation =
+                /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid input',
-                        description: 'Search contains invalid symbol or emojis',
-                        placement: 'topRight'
+                        message: "Invalid input",
+                        description: "Search contains invalid symbol or emojis",
+                        placement: "topRight",
                     });
                 };
-                openNotificationWithIcon('warning');
+                openNotificationWithIcon("warning");
                 return;
             }
-            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes'), {
-                search5: search,
-                AlttaData: this.altta.alttaTable
-            }, {
-                preserveState: true
-            })
+            this.$inertia.get(
+                route("storeaccounting.DuplicatedBarcodes"),
+                {
+                    search5: search,
+                    AlttaData: this.altta.alttaTable,
+                },
+                {
+                    preserveState: true,
+                },
+            );
         },
         alttaTubigonSearch(search) {
-             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
-            if(searchValidation.test(search)){
-                const openNotificationWithIcon = (type) =>{
+            const searchValidation =
+                /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid input',
-                        description: 'Search contains invalid symbol or emojis',
-                        placement: 'topRight'
+                        message: "Invalid input",
+                        description: "Search contains invalid symbol or emojis",
+                        placement: "topRight",
                     });
                 };
-                openNotificationWithIcon('warning');
+                openNotificationWithIcon("warning");
                 return;
             }
-            this.$inertia.get(route('storeaccounting.DuplicatedBarcodes'), {
-                search6: search,
-                AlttaData: this.altta.alttaTable
-            }, {
-                preserveState: true
-            })
-        }
+            this.$inertia.get(
+                route("storeaccounting.DuplicatedBarcodes"),
+                {
+                    search6: search,
+                    AlttaData: this.altta.alttaTable,
+                },
+                {
+                    preserveState: true,
+                },
+            );
+        },
     },
     methods: {
         alttaGenerateExcel() {
-            const data = this.altta.alttaTable
+            const data = this.altta.alttaTable;
             if (this.altta.alttaTable === null) {
                 const notificationWarning = (type) => {
                     notification[type]({
-                        message: 'File Selection Required',
-                        description: 'Please choose file first before generating EXCEL',
-                        placement: 'topRight'
+                        message: "File Selection Required",
+                        description:
+                            "Please choose file first before generating EXCEL",
+                        placement: "topRight",
                     });
                 };
-                notificationWarning('warning');
+                notificationWarning("warning");
                 return;
             }
             Modal.confirm({
-                title: 'Confirmation',
-                content: 'Are you sure you want generate EXCEL?',
-                okText: 'Yes',
-                cancelText: 'No',
+                title: "Confirmation",
+                content: "Are you sure you want generate EXCEL?",
+                okText: "Yes",
+                cancelText: "No",
                 onOk: () => {
                     this.isloadingAltta = true;
                     axios({
-                        method: 'get',
-                        url: route('storeaccounting.barcodes'),
-                        responseType: 'blob',
+                        method: "get",
+                        url: route("storeaccounting.barcodes"),
+                        responseType: "blob",
                         params: {
-                            barcodes: data
-                        }
+                            barcodes: data,
+                        },
                     })
                         .then((response) => {
-                            const fileURL = window.URL.createObjectURL(new Blob([response.data]));
-                            const fileLink = document.createElement('a');
+                            const fileURL = window.URL.createObjectURL(
+                                new Blob([response.data]),
+                            );
+                            const fileLink = document.createElement("a");
                             fileLink.href = fileURL;
-                            fileLink.setAttribute('download', 'Altta Release-file Excel.xlsx');
+                            fileLink.setAttribute(
+                                "download",
+                                "Altta Release-file Excel.xlsx",
+                            );
                             document.body.appendChild(fileLink);
                             fileLink.click();
                             document.body.removeChild(fileLink);
 
                             // hideLoading();
                             this.isloadingAltta = false;
-                            message.success('EXCEL generated successfully!', 5);
+                            message.success("EXCEL generated successfully!", 5);
                         })
                         .catch((error) => {
-                            console.error('Error generating EXCEL:', error);
+                            console.error("Error generating EXCEL:", error);
                             hideLoading();
                             notification.error({
-                                message: 'Error',
-                                description: 'Failed to generate EXCEL. Please try again later.',
-                                placement: 'topRight',
+                                message: "Error",
+                                description:
+                                    "Failed to generate EXCEL. Please try again later.",
+                                placement: "topRight",
                             });
                         });
                     // window.location.href = route('storeaccounting.barcodes', { barcodes: data })
                 },
                 onCancel: () => {
-                    console.log('Cancel');
-                }
-
+                    console.log("Cancel");
+                },
             });
         },
 
         handleFileChangeAltta(event) {
             const file = event.target.files[0];
-            this.altaTextFile = file.name
+            this.altaTextFile = file.name;
 
             if (file) {
                 const reader = new FileReader();
@@ -791,7 +1050,9 @@ export default {
                     this.altaContent = e.target.result;
                     console.log(this.altaContent);
 
-                    this.altaBarcode = this.extractBarcodesAltta(this.altaContent);
+                    this.altaBarcode = this.extractBarcodesAltta(
+                        this.altaContent,
+                    );
                     console.log(this.altaBarcode);
                 };
                 reader.readAsText(file);
@@ -800,54 +1061,60 @@ export default {
         extractBarcodesAltta() {
             const regex = /\b\d{1,20}\b/g;
             const barcodes = content.match(regex);
-            return barcodes ? barcodes.map(barcode => barcode.trim().replace(/\t/g, '')) : [];
+            return barcodes
+                ? barcodes.map((barcode) => barcode.trim().replace(/\t/g, ""))
+                : [];
         },
         alttaReportButton() {
             if (this.altaContent) {
-                const altaBarcodeString = this.altaContent
-                const selectedFile = this.altaTextFile
+                const altaBarcodeString = this.altaContent;
+                const selectedFile = this.altaTextFile;
 
                 const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid File Selected',
-                        description: 'Please select CSV type only',
-                        placement: 'topRight'
+                        message: "Invalid File Selected",
+                        description: "Please select CSV type only",
+                        placement: "topRight",
                     });
                 };
-                const validTextFileAltta = ['csv'];
-                const fileExtention = this.altaTextFile.split('.').pop().toLowerCase();
+                const validTextFileAltta = ["csv"];
+                const fileExtention = this.altaTextFile
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
 
                 if (!validTextFileAltta.includes(fileExtention)) {
-                    openNotificationWithIcon('warning');
+                    openNotificationWithIcon("warning");
                     return;
-
                 }
                 Modal.confirm({
-                    title: 'Confirmation',
-                    content: 'Are you sure you want to check DUPLICATE BARCODES?',
-                    okText: 'Yes',
-                    cancelText: 'No',
+                    title: "Confirmation",
+                    content:
+                        "Are you sure you want to check DUPLICATE BARCODES?",
+                    okText: "Yes",
+                    cancelText: "No",
                     onOk: () => {
-                        window.location.href = route('storeaccounting.DuplicatedBarcodes', { AlttaData: altaBarcodeString, selectedFile });
+                        window.location.href = route(
+                            "storeaccounting.DuplicatedBarcodes",
+                            { AlttaData: altaBarcodeString, selectedFile },
+                        );
                     },
                     onCancel: () => {
-                        console.log('Cancel');
-                    }
+                        console.log("Cancel");
+                    },
                 });
-
-            }
-            else {
+            } else {
                 const notificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'File Selection Required',
-                        description: 'Please choose file first or the selected Textfile has no data found',
-                        placement: 'topRight'
+                        message: "File Selection Required",
+                        description:
+                            "Please choose file first or the selected Textfile has no data found",
+                        placement: "topRight",
                     });
                 };
-                notificationWithIcon('warning');
+                notificationWithIcon("warning");
                 return;
             }
-
         },
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -856,67 +1123,71 @@ export default {
             if (this.cebu.cebu === null) {
                 const notificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'File Selection Required',
-                        description: 'Please choose file first before generating EXCEL',
-                        placement: 'topRight'
+                        message: "File Selection Required",
+                        description:
+                            "Please choose file first before generating EXCEL",
+                        placement: "topRight",
                     });
-
                 };
-                notificationWithIcon('warning');
+                notificationWithIcon("warning");
                 return;
             }
-            const data = this.cebu.cebu
+            const data = this.cebu.cebu;
             Modal.confirm({
-                title: 'Confirmation',
-                content: 'Are you sure you want to generate Excel?',
-                okText: 'Yes',
-                cancelText: 'No',
+                title: "Confirmation",
+                content: "Are you sure you want to generate Excel?",
+                okText: "Yes",
+                cancelText: "No",
                 onOk: () => {
                     this.isloading = true;
                     axios({
-                        method: 'get',
-                        url: route('storeaccounting.barcodes'),
-                        responseType: 'blob',
+                        method: "get",
+                        url: route("storeaccounting.barcodes"),
+                        responseType: "blob",
                         params: {
-                            barcodes: data
-                        }
+                            barcodes: data,
+                        },
                     })
-                    .then((response) => {
-                            const fileURL = window.URL.createObjectURL(new Blob([response.data]));
-                            const fileLink = document.createElement('a');
+                        .then((response) => {
+                            const fileURL = window.URL.createObjectURL(
+                                new Blob([response.data]),
+                            );
+                            const fileLink = document.createElement("a");
                             fileLink.href = fileURL;
-                            fileLink.setAttribute('download', 'Duplicate Barcode-file Excel.xlsx');
+                            fileLink.setAttribute(
+                                "download",
+                                "Duplicate Barcode-file Excel.xlsx",
+                            );
                             document.body.appendChild(fileLink);
                             fileLink.click();
                             document.body.removeChild(fileLink);
 
                             // hideLoading();
                             this.isloading = false;
-                            message.success('EXCEL generated successfully!', 5);
+                            message.success("EXCEL generated successfully!", 5);
                         })
                         .catch((error) => {
-                         console.error('Error generating EXCEL:', error);
+                            console.error("Error generating EXCEL:", error);
                             hideLoading();
                             notification.error({
-                                message: 'Error',
-                                description: 'Failed to generate EXCEL. Please try again later.',
-                                placement: 'topRight',
+                                message: "Error",
+                                description:
+                                    "Failed to generate EXCEL. Please try again later.",
+                                placement: "topRight",
                             });
                         });
                     // window.location.href = route('storeaccounting.barcodes', { barcodes: data });
                 },
                 onCancel() {
-                    console.log('Cancel');
+                    console.log("Cancel");
                 },
-
             });
-
         },
 
         handleFileChange(event) {
             const file = event.target.files[0];
             // console.log(file.name);
-            this.textfile = file.name
+            this.textfile = file.name;
             if (file) {
                 const reader = new FileReader();
 
@@ -924,72 +1195,85 @@ export default {
                     this.fileContent = e.target.result;
                     console.log(this.fileContent);
 
-
                     this.barcodes = this.extractBarcodes(this.fileContent);
                     console.log(this.barcodes);
                 };
 
                 reader.readAsText(file);
             }
-
-
         },
 
         extractBarcodes(content) {
             const regex = /\b\d{1,20}\b/g;
             const barcodes = content.match(regex);
-            return barcodes ? barcodes.map(barcode => barcode.trim().replace(/\t/g, '')) : [];
+            return barcodes
+                ? barcodes.map((barcode) => barcode.trim().replace(/\t/g, ""))
+                : [];
         },
 
         cebuReportButton() {
             if (this.fileContent) {
-                const barcodeString = this.fileContent
-                const selectedCebuFile = this.textfile
+                const barcodeString = this.fileContent;
+                const selectedCebuFile = this.textfile;
 
                 const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid File Selected',
-                        description: 'Please select Textfile type only',
-                        placement: 'topRight',
+                        message: "Invalid File Selected",
+                        description: "Please select Textfile type only",
+                        placement: "topRight",
                     });
                 };
-                const validFileExtention = ['txt', 'csv', 'tsv', 'log', 'json', 'xml', 'html', 'markdown', 'rtf'];
-                const fileExtention = this.textfile.split('.').pop().toLowerCase();
+                const validFileExtention = [
+                    "txt",
+                    "csv",
+                    "tsv",
+                    "log",
+                    "json",
+                    "xml",
+                    "html",
+                    "markdown",
+                    "rtf",
+                ];
+                const fileExtention = this.textfile
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
 
                 if (!validFileExtention.includes(fileExtention)) {
-                    openNotificationWithIcon('warning');
+                    openNotificationWithIcon("warning");
                     return;
                 }
 
                 Modal.confirm({
-                    title: 'Confirmation',
-                    content: 'Are you sure you want to check DUPLICATE BARCODES?',
-                    okText: 'Yes',
-                    cancelText: 'No',
+                    title: "Confirmation",
+                    content:
+                        "Are you sure you want to check DUPLICATE BARCODES?",
+                    okText: "Yes",
+                    cancelText: "No",
                     onOk: () => {
-                        window.location.href = route('storeaccounting.DuplicatedBarcodes', { barcodes: barcodeString, selectedCebuFile });
+                        window.location.href = route(
+                            "storeaccounting.DuplicatedBarcodes",
+                            { barcodes: barcodeString, selectedCebuFile },
+                        );
                     },
                     onCancel: () => {
-                        console.log('Cancel');
-                    }
+                        console.log("Cancel");
+                    },
                 });
-
-            }
-            else {
+            } else {
                 const notificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'File Selection Required',
-                        description: 'Please choose file first or the selected Textfile has no data found',
-                        placement: 'topRight'
+                        message: "File Selection Required",
+                        description:
+                            "Please choose file first or the selected Textfile has no data found",
+                        placement: "topRight",
                     });
                 };
-                notificationWithIcon('warning');
+                notificationWithIcon("warning");
                 return;
             }
-        }
-    }
-
-
+        },
+    },
 };
 </script>
 <!-- <style scoped>
@@ -1033,7 +1317,7 @@ export default {
     --transition: 350ms;
     --folder-W: 80px;
     --folder-H: 60px;
-    margin-top:80px;
+    margin-top: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1155,87 +1439,87 @@ export default {
 }
 /* From Uiverse.io by Vazafirst */
 #page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
 #h3 {
-  color: rgb(82, 79, 79);
+    color: rgb(82, 79, 79);
 }
 
 #ring {
-  width: 190px;
-  height: 190px;
-  border: 1px solid transparent;
-  border-radius: 50%;
-  position: absolute;
+    width: 190px;
+    height: 190px;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    position: absolute;
 }
 
 #ring:nth-child(1) {
-  border-bottom: 8px solid rgb(240, 42, 230);
-  animation: rotate1 2s linear infinite;
+    border-bottom: 8px solid rgb(240, 42, 230);
+    animation: rotate1 2s linear infinite;
 }
 
 @keyframes rotate1 {
-  from {
-    transform: rotateX(50deg) rotateZ(110deg);
-  }
+    from {
+        transform: rotateX(50deg) rotateZ(110deg);
+    }
 
-  to {
-    transform: rotateX(50deg) rotateZ(470deg);
-  }
+    to {
+        transform: rotateX(50deg) rotateZ(470deg);
+    }
 }
 
 #ring:nth-child(2) {
-  border-bottom: 8px solid rgb(240, 19, 67);
-  animation: rotate2 2s linear infinite;
+    border-bottom: 8px solid rgb(240, 19, 67);
+    animation: rotate2 2s linear infinite;
 }
 
 @keyframes rotate2 {
-  from {
-    transform: rotateX(20deg) rotateY(50deg) rotateZ(20deg);
-  }
+    from {
+        transform: rotateX(20deg) rotateY(50deg) rotateZ(20deg);
+    }
 
-  to {
-    transform: rotateX(20deg) rotateY(50deg) rotateZ(380deg);
-  }
+    to {
+        transform: rotateX(20deg) rotateY(50deg) rotateZ(380deg);
+    }
 }
 
 #ring:nth-child(3) {
-  border-bottom: 8px solid rgb(3, 170, 170);
-  animation: rotate3 2s linear infinite;
+    border-bottom: 8px solid rgb(3, 170, 170);
+    animation: rotate3 2s linear infinite;
 }
 
 @keyframes rotate3 {
-  from {
-    transform: rotateX(40deg) rotateY(130deg) rotateZ(450deg);
-  }
+    from {
+        transform: rotateX(40deg) rotateY(130deg) rotateZ(450deg);
+    }
 
-  to {
-    transform: rotateX(40deg) rotateY(130deg) rotateZ(90deg);
-  }
+    to {
+        transform: rotateX(40deg) rotateY(130deg) rotateZ(90deg);
+    }
 }
 
 #ring:nth-child(4) {
-  border-bottom: 8px solid rgb(207, 135, 1);
-  animation: rotate4 2s linear infinite;
+    border-bottom: 8px solid rgb(207, 135, 1);
+    animation: rotate4 2s linear infinite;
 }
 
 @keyframes rotate4 {
-  from {
-    transform: rotateX(70deg) rotateZ(270deg);
-  }
+    from {
+        transform: rotateX(70deg) rotateZ(270deg);
+    }
 
-  to {
-    transform: rotateX(70deg) rotateZ(630deg);
-  }
+    to {
+        transform: rotateX(70deg) rotateZ(630deg);
+    }
 }
 </style>
