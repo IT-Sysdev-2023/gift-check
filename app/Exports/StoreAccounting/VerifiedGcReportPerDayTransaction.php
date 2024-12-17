@@ -20,8 +20,9 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 
-class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents
+class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents,  WithCustomStartCell
 {
 
     public function __construct(protected array $requirements, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
@@ -139,6 +140,10 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
 
         ];
     }
+    public function startCell(): string
+    {
+        return 'A7';
+    }
     // public function countRecords()
     // {
     //     return $this->query()->count();
@@ -163,7 +168,7 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
     public function styles(Worksheet $sheet)
     {
         return [
-            1 => ['font' => ['bold' => true]],
+            7 => ['font' => ['bold' => true]],
         ];
     }
 

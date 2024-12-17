@@ -22,8 +22,9 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 
-class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents
+class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell
 {
 
     public function __construct(protected Collection $data, protected string|int $store, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
@@ -33,7 +34,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
     public function collection()
     {
         $transformData = collect();
-        $arr_perdate = [];
+        $arr_perdate = collect();
         $amounts = [
             'SM' => 0,
             'HF' => 0,
@@ -58,6 +59,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
             'SOD' => 0,
             'WHOLESALE' => 0
         ];
+        
         $regular = [
             'SM' => 0,
             'HF' => 0,
@@ -66,6 +68,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
             'SOD' => 0,
             'WHOLESALE' => 0
         ];
+
         $bng = [
             'SM' => 0,
             'HF' => 0,
@@ -74,6 +77,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
             'SOD' => 0,
             'WHOLESALE' => 0
         ];
+
         $promo = [
             'SM' => 0,
             'HF' => 0,
@@ -82,86 +86,62 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
             'SOD' => 0,
             'WHOLESALE' => 0
         ];
+
         $cntr = 0;
         $datedisplay = '';
 
-        $this->data->each(function ($item) use (&$amounts, &$special, &$bng, &$promo, &$regular, &$cntr, &$purchased, &$arr_perdate, $datedisplay) {
+        $this->data->each(function ($item) use (&$amounts, &$special, &$bng, &$promo, &$regular, &$cntr, &$purchased, &$arr_perdate, &$datedisplay) {
 
             if ((float) $item['purchasecred'] > 0) {
 
                 $terminal = explode(",", $item['terminalno']);
                 $purchase = explode(",", $item['purchaseamt']);
 
+                // dd($purchase);
                 collect($terminal)->each(function ($item, $key) use ($purchase, &$amounts) {
                     $explodeTerminal = explode('-', $item)[0] ?? null;
 
-                    if ($amounts[$explodeTerminal]) {
-                        $amounts[$explodeTerminal] += (float) $purchase[$key];
-                    }
+                    $amounts[$explodeTerminal] += (float) $purchase[$key];
                 });
             }
-            if ($item['date'] != $datedisplay) {
 
-                if ($cntr === 1) {
+            $gcTypeMapping = [
+                'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
+                'REGULAR' => ['target' => 'regular', 'array' => &$regular],
+                'BEAM AND GO' => ['target' => 'bng', 'array' => &$bng],
+                'PROMOTIONAL GC' => ['target' => 'promo', 'array' => &$promo],
+            ];
 
-                    $datedisplay = $item['date'];
+            if (($cntr === 1) || $item['date'] === $datedisplay) {
+                $datedisplay = $item['date'];
 
-                    $gcTypeMapping = [
-                        'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
-                        'REGULAR' => ['target' => 'regular', 'array' => &$regular],
-                        'BEAM AND GO' => ['target' => 'bng', 'array' => &$bng],
-                        'PROMOTIONAL GC' => ['target' => 'promo', 'array' => &$promo],
-                    ];
+                $mapping = $gcTypeMapping[$item['gc_type']];
 
-                    $mapping = $gcTypeMapping[$item['gc_type']];
-
-                    foreach ($amounts as $key => $value) {
-                        $mapping['array'][$key] += $value; // Update corresponding array
-                    }
-
-                    $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
-                } else {
-
-                    $arr_perdate[] = array(
-                        'arr_perdate' => $datedisplay,
-                        'regular' => $purchased['regular'],
-                        'special' => $purchased['special'],
-                        'bng' => $purchased['bng'],
-                        'promo' => $purchased['promo'],
-                        'terminalreg' => $regular,
-                        'terminalspec' => $special,
-                        'terminalbng' => $bng,
-                        'terminalpromo' => $promo
-                    );
-
-                    $regular = collect($regular)->map(fn($val, $key) => 0)->toArray();
-                    $special = collect($special)->map(fn($val, $key) => 0)->toArray();
-                    $bng = collect($bng)->map(fn($val, $key) => 0)->toArray();
-                    $promo = collect($promo)->map(fn($val, $key) => 0)->toArray();
-
-                    $purchased = collect($purchased)->map(fn($val, $key) => 0)->toArray();
-
-                    $datedisplay = $item['date'];
-
-                    $gcTypeMapping = [
-                        'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
-                        'REGULAR' => ['target' => 'regular', 'array' => &$regular],
-                    ];
-
-                    $mapping = $gcTypeMapping[$item['gc_type']];
-
-                    foreach ($amounts as $key => $value) {
-                        $mapping['array'][$key] += $value; // Update corresponding array
-                    }
-
-                    $purchased[$mapping['target']] += $item['purchasecred'];
+                foreach ($amounts as $key => $value) {
+                    $mapping['array'][$key] += $value; // Update corresponding array
                 }
+                $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
+
             } else {
+
+                $arr_perdate->push([
+                    'arr_perdate' => $datedisplay,
+                    'regular' => $purchased['regular'],
+                    'special' => $purchased['special'],
+                    'bng' => $purchased['bng'],
+                    'promo' => $purchased['promo'],
+                    'terminalreg' => $regular,
+                    'terminalspec' => $special,
+                    'terminalbng' => $bng,
+                    'terminalpromo' => $promo
+                ]);
+
+                //Reset to Zero
+                $this->resetArrays($regular, $special, $bng, $promo, $purchased);
+
                 $gcTypeMapping = [
                     'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
                     'REGULAR' => ['target' => 'regular', 'array' => &$regular],
-                    'BEAM AND GO' => ['target' => 'bng', 'array' => &$bng],
-                    'PROMOTIONAL GC' => ['target' => 'promo', 'array' => &$promo],
                 ];
 
                 $mapping = $gcTypeMapping[$item['gc_type']];
@@ -170,65 +150,106 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                     $mapping['array'][$key] += $value; // Update corresponding array
                 }
 
-                $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
+                $purchased[$mapping['target']] += $item['purchasecred'];
             }
 
-            $amounts = collect($amounts)->map(fn($val, $key) => 0)->toArray();
-            $cntr++;
+            $amounts = array_fill_keys(array_keys($amounts), 0);
 
-            if($this->data->count() === $cntr){
-                $arr_perdate[] =  [
-                    'arr_perdate'   =>  $datedisplay,
-                    'regular'       =>  $purchased['regular'],
-                    'special'       =>  $purchased['special'],
-                    'bng'           =>  $purchased['bng'],
-                    'promo'         =>  $purchased['promo'],
-                    'terminalreg'   =>  $regular,
-                    'terminalspec'  =>  $special,
-                    'terminalbng'   =>  $bng,
-                    'terminalpromo' =>  $promo
-                ]; 
+            $cntr++;
+            if ($this->data->count() === $cntr) {
+                $arr_perdate->push([
+                    'arr_perdate' => $datedisplay,
+                    'regular' => $purchased['regular'],
+                    'special' => $purchased['special'],
+                    'bng' => $purchased['bng'],
+                    'promo' => $purchased['promo'],
+                    'terminalreg' => $regular,
+                    'terminalspec' => $special,
+                    'terminalbng' => $bng,
+                    'terminalpromo' => $promo
+                ]);
             }
         });
 
-        dd($arr_perdate);
-        return;
+        return $arr_perdate->filter(fn($i) => $i['arr_perdate'] !== '');
     }
-    public function map($data): array
+    public function resetArrays(&$regular, &$special, &$bng, &$promo, &$purchased)
     {
-        // $this->broadcastProgress("Generating Barcode Records");
-        return [
-            (new \DateTime($data['date']))->format('F j, Y'),
-            $data['barcode'],
-            $data['denomination'],
-            $data['purchasecred'],
-            Str::headline($data['cus_fname'] . '_' . $data['cus_lname'], ),
-            $data['balance'],
-            $data['businessunit'],
-            $data['terminalno'],
-            $data['valid_type'],
-            $data['gc_type'],
-            $data['vsdate'] . ', ' . $data['vstime'],
-        ];
+        foreach ([$regular, $special, $bng, $promo, $purchased] as &$array) {
+            $array = array_fill_keys(array_keys($array), 0);
+        }
     }
 
+    public function map($data): array
+    {
+        dd($data);
+        // $this->broadcastProgress("Generating Barcode Records");
+        return [
+            $data['arr_perdate'],
+            [
+                'REGULAR',
+                'SPECIAL EXTERNAL',
+                'BEAM AND GO'
+            ]
+            // [
+            //     $data['regular'],
+            //     $data['special'],
+            //     $data['bng'],
+            //     $data['promo'],
+            // ],
+            // [
+            //     $data['terminalreg']['SM'],
+            //     $data['terminalspec']['SM'],
+            //     $data['terminalbng']['SM'],
+            //     $data['terminalpromo']['SM'],
+            // ],
+            // [
+            //     $data['terminalreg']['HF'],
+            //     $data['terminalspec']['HF'],
+            //     $data['terminalbng']['HF'],
+            //     $data['terminalpromo']['HF'],
+            // ],
+            // [
+            //     $data['terminalreg']['MP'],
+            //     $data['terminalspec']['MP'],
+            //     $data['terminalbng']['MP'],
+            //     $data['terminalpromo']['MP'],
+            // ],
+            // [
+            //     $data['terminalreg']['FR'],
+            //     $data['terminalspec']['FR'],
+            //     $data['terminalbng']['FR'],
+            //     $data['terminalpromo']['FR'],
+            // ],
+            // [
+            //     $data['terminalreg']['WHOLESALE'],
+            //     $data['terminalspec']['WHOLESALE'],
+            //     $data['terminalbng']['WHOLESALE'],
+            //     $data['terminalpromo']['WHOLESALE'],
+            // ],
+        ];
+    }
+    public function startCell(): string
+    {
+        return 'A7';
+    }
     public function registerEvents(): array
     {
 
         return [
-            BeforeSheet::class => function (BeforeSheet $event) {
-                $sheet = $event->sheet;
-                $storeName = Store::where('store_id', $this->store)->value('store_name');
+            // BeforeSheet::class => function (BeforeSheet $event) {
+            //     $sheet = $event->sheet;
+            //     $storeName = Store::where('store_id', $this->store)->value('store_name');
 
-                $sheet->setCellValue('D1', 'ALTURAS GROUP OF COMPANIES');
-                $sheet->setCellValue('D2', 'CUSTOMER FINANCIAL SERVICES CORP');
-                $sheet->setCellValue('D3', 'MONTHLY REPORT ON GIFT CHECK (Per GC Type & BU)');
-                $sheet->getStyle('D1:D3')->getFont()->setBold(true);
-                $sheet->getStyle('D1:D3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            //     $sheet->setCellValue('D1', 'ALTURAS GROUP OF COMPANIES');
+            //     $sheet->setCellValue('D2', 'CUSTOMER FINANCIAL SERVICES CORP');
+            //     $sheet->setCellValue('D3', 'MONTHLY REPORT ON GIFT CHECK (Per GC Type & BU)');
+            //     $sheet->getStyle('D1:D3')->getFont()->setBold(true);
+            //     $sheet->getStyle('D1:D3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-                $sheet->setCellValue('D5', 'BUSINESS UNIT:' . $storeName);
-                $sheet->getStyle('D5')->getFont()->setBold(true);
-            }
+            //     $sheet->setCellValue('D5', 'BUSINESS UNIT:' . $storeName);
+            //     $sheet->getStyle('D5')->getFont()->setBold(true);
+            // }
 
         ];
     }
@@ -252,6 +273,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
             'MP',
             'FR',
             'SOD',
+            'WHOLESALE',
         ];
     }
     public function styles(Worksheet $sheet)
