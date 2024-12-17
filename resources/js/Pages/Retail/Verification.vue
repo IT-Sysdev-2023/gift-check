@@ -16,13 +16,19 @@
                         <a-select-option value="STORE DEPARTMENT">STORE DEPARTMENT</a-select-option>
                         <a-select-option value="WHOLESALE">WHOLESALE</a-select-option>
                     </a-select>
+                    <div>
+                        <a-button style="background-color: #1e90ff; color:white; margin-left: 70%; margin-top: 10px" @click="addCustomerButton">
+                            <PlusOutlined />
+                            Add Customer
+                        </a-button>
+                    </div>
 
                     <p class="mt-2 ml-1">
                         Customer
                     </p>
-                    <a-select show-search placeholder="Search here..." :default-active-first-option="false"
+                    <a-select allow-clear show-search placeholder="Search customer here..." :default-active-first-option="false"
                         v-model:value="form.customer" style="width: 100%" :show-arrow="false" :filter-option="false"
-                        :not-found-content="isRetrieving ? undefined : null
+                        :not-found-content="isRetrieving ? undefined : 'No Customer found'
                             " :options="optionCustomer" @search="debounceCustomer">
                         <template v-if="isRetrieving" #notFoundContent>
                             <a-spin size="small" />
@@ -50,7 +56,7 @@
                     <template #icon>
                         <FastForwardOutlined />
                     </template>
-                    {{ form.processing ? 'Verifieng Barcode...' : 'Verify Barcode' }}
+                    {{ form.processing ? 'Verifying Barcode...' : 'Verify Barcode' }}
                 </a-button>
                 <!-- {{ notif.data }} -->
                 <a-alert v-if="notif.status" :message="notif.msg" class="mb-1 mt-2" :type="notif.status" show-icon />
@@ -104,6 +110,29 @@
                 </a-card>
             </a-col>
         </a-row>
+        <a-modal title="Add Customer" v-model:open="addCustomerModal" @ok="customerSubmit">
+            <a-form-item :validate-status="addingCustomer.errors?.firstname ? 'error' : ''"
+            :help="addingCustomer.errors.firstname">
+                Firstname:
+                <a-input allow-clear v-model:value="addingCustomer.firstname" placeholder="firstname"></a-input>
+            </a-form-item>
+            <a-form-item :validate-status="addingCustomer.errors?.lastname ? 'error' : ''"
+            :help="addingCustomer.errors.lastname">
+                Lastname:
+                <a-input allow-clear v-model:value="addingCustomer.lastname" placeholder="lastname"></a-input>
+            </a-form-item>
+            <a-form-item :validate-status="addingCustomer.errors?.middlename ? 'error' : ''"
+            :help="addingCustomer.errors.middlename">
+                Middlename:
+                <a-input allow-clear v-model:value="addingCustomer.middlename" placeholder="middlename"></a-input>
+            </a-form-item>
+            <a-form-item :validate-status="addingCustomer.errors?.extention ? 'error': ''"
+            :help="addingCustomer.errors?.extention">
+                Name Extention: (ex: jr, sr, III)
+                <a-input allow-clear v-model:value="addingCustomer.extention" placeholder="name extention"></a-input>
+            </a-form-item>
+        </a-modal>
+
     </AuthenticatedLayout>
 </template>
 
@@ -115,6 +144,8 @@ import { notification } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import { ref } from 'vue';
 import { Empty } from 'ant-design-vue';
+import AddOrderDetails from '../Admin/Tabs/AddOrderDetails.vue';
+import axios from 'axios';
 const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 
 
@@ -130,12 +161,75 @@ const props = defineProps({
     empty: Boolean,
 })
 
+const addingCustomer = useForm ({
+    firstname: '',
+    lastname: '',
+    middlename: '',
+    extention: '',
+    errors: {}
+})
+
+const addCustomerModal = ref(false);
 const optionCustomer = ref([]);
 const viewing = ref([]);
 const notif = ref([]);
 const isRetrieving = ref(false);
 const skeleton = ref(false);
 const status = ref({});
+
+const addCustomerButton = () => {
+    addCustomerModal.value =  true
+}
+
+const customerSubmit = async () => {
+    addingCustomer.errors = {};
+    if (!addingCustomer.firstname) {
+        addingCustomer.errors.firstname = 'Firstname field is required';
+    }
+    if (!addingCustomer.lastname) {
+        addingCustomer.errors.lastname = 'Lastname field is required';
+    }
+    if (!addingCustomer.middlename) {
+        addingCustomer.errors.middlename = 'Middlename field is required';
+    }
+    if (Object.keys(addingCustomer.errors).length > 0) {
+        return;
+    }
+    try {
+        const { data } = await axios.post(route('search.addCustomer'), addingCustomer);
+        const fullName = `${addingCustomer.firstname} ${addingCustomer.middlename} ${addingCustomer.lastname} ${addingCustomer.extention}`;
+        // alert(data.data.cus_id);
+        optionCustomer.value = [{
+            label: fullName,
+            value: data.data.cus_id,
+        }];
+        form.customer = data.data.cus_id;
+
+
+        addCustomerModal.value = false;
+        addingCustomer.firstname = '';
+        addingCustomer.lastname = '';
+        addingCustomer.middlename = '';
+        addingCustomer.extention = '';
+
+
+         notification.success({
+            message: 'Success',
+            description: 'Successfully adding Customer'
+         });
+
+    }
+    catch (error) {
+        console.error('Error adding Customer', error);
+        notification.error({
+            message: 'Error Adding',
+            description: 'Failed to add Customer'
+        });
+    }
+
+}
+
+
 
 const submit = () => {
     form.transform((data) => ({

@@ -30,10 +30,15 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
         $data = $this->getVerifiedData($db, $this->requirements);
 
         return [
+            // Per Day
             new VerifiedGcReportPerDay($data, $this->progress, $this->reportId, $this->user),
+            
+            //By Month Summary Per Day
             new VerifiedGcReportPerDayTransaction($this->requirements, $this->progress, $this->reportId, $this->user),
+            
+            //By Gc Type & BU
             new VerifiedGcReportPerGcType($data, $this->requirements['selectedStore'], $this->progress, $this->reportId, $this->user),
-            // new SpgcApprovedPerCustomer($this->transactionDate, $this->progress, $this->reportId, $this->user),
+          
         ];
     }
 
