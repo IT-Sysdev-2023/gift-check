@@ -1,10 +1,10 @@
 <template>
     <a-card>
-        <a-card style="width: 59%; margin-left: 42%;">
+        <a-card style="width: 59%; margin-left: 42%">
             <a-tabs>
                 <a-tab-pane key="1">
                     <template #tab>
-                        <span style="font-weight: bold;">
+                        <span style="font-weight: bold">
                             <!-- <span style="color: green;">
                                 <DatabaseOutlined />
                             </span> -->
@@ -12,42 +12,57 @@
                             Tagbilaran
                         </span>
                     </template>
-                       <div v-if="isloading">
-                            <div>
-<div id="page">
-        <div id="container">
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
-        </div>
-</div>
+                    <div v-if="isloading">
+                        <div>
+                            <div id="page">
+                                <div id="container">
+                                    <div id="ring"></div>
+                                    <div id="ring"></div>
+                                    <div id="ring"></div>
+                                    <div id="ring"></div>
+                                    <div style="font-weight: bold" id="h3">
+                                        Generating EXCEL please wait...
+                                    </div>
+                                </div>
                             </div>
-                    	</div>
+                        </div>
+                    </div>
 
                     <div class="input-wrapper">
-                        <input type="search" placeholder="Input search here..." name="text" class="input"
-                            v-model="tagbilaranSearch" />
+                        <input
+                            type="search"
+                            placeholder="Input search here..."
+                            name="text"
+                            class="input"
+                            v-model="tagbilaranSearch"
+                        />
                     </div>
                     <!-- <span style="margin-left: 60%; font-weight: bold;">
                         <a-input-search allow-clear v-model:value="tagbilaranSearch" placeholder="Input search here!" enter-button
                             style="width: 40%;" />
                     </span> -->
-                    <div style="font-weight: bold; margin-top: 20px;">
-                        <span style="margin-left: 40%;">Table Showing Tagbilaran</span>
+                    <div style="font-weight: bold; margin-top: 20px">
+                        <span style="margin-left: 40%"
+                            >Table Showing Tagbilaran</span
+                        >
                     </div>
-                    <div style="margin-top: 10px;">
-                        <a-table :columns="varianceTable" :data-source="variance.tagbilaranData.data"
-                            :pagination="false" size="small">
+                    <div style="margin-top: 10px">
+                        <a-table
+                            :columns="varianceTable"
+                            :data-source="variance.tagbilaranData.data"
+                            :pagination="false"
+                            size="small"
+                        >
                         </a-table>
-                        <pagination :datarecords="variance.tagbilaranData" class="mt-5" />
+                        <pagination
+                            :datarecords="variance.tagbilaranData"
+                            class="mt-5"
+                        />
                     </div>
-
                 </a-tab-pane>
                 <a-tab-pane key="2">
                     <template #tab>
-                        <span style="font-weight: bold;">
+                        <span style="font-weight: bold">
                             <!-- <span style="color: green;">
                                 <DatabaseOutlined />
                             </span> -->
@@ -55,19 +70,21 @@
                             Talibon
                         </span>
                     </template>
-                                           <div v-if="isloading">
-                            <div>
-<div id="page">
-        <div id="container">
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div id="ring"></div>
-            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
-        </div>
-</div>
+                    <div v-if="isloading">
+                        <div>
+                            <div id="page">
+                                <div id="container">
+                                    <div id="ring"></div>
+                                    <div id="ring"></div>
+                                    <div id="ring"></div>
+                                    <div id="ring"></div>
+                                    <div style="font-weight: bold" id="h3">
+                                        Generating EXCEL please wait...
+                                    </div>
+                                </div>
                             </div>
-                    	</div>
+                        </div>
+                    </div>
 
                     <!-- <a-button style="background-color: green; color:white; margin-top: 10px;"
                         @click="SelectCustomerName">
@@ -75,120 +92,254 @@
                         Generate Excel
                     </a-button> -->
                     <div class="input-wrapper">
-                        <input type="search" placeholder="Input search here..." name="text" class="input"
-                            v-model="talibonSearch" />
+                        <input
+                            type="search"
+                            placeholder="Input search here..."
+                            name="text"
+                            class="input"
+                            v-model="talibonSearch"
+                        />
                     </div>
                     <!-- <span style="margin-left: 60%; font-weight: bold;">
                         <a-input-search allow-clear v-model:value="talibonSearch" placeholder="Input search here!" enter-button
                             style="width: 40%;" />
                     </span> -->
-                    <div style="font-weight: bold; margin-top: 20px;">
-                        <span style="margin-left: 40%;">Table Showing Tubigon</span>
+                    <div style="font-weight: bold; margin-top: 20px">
+                        <span style="margin-left: 40%"
+                            >Table Showing Tubigon</span
+                        >
                     </div>
-                    <div style="margin-top: 10px;">
-                        <a-table :columns="talibonData" :data-source="variance.talibonData.data" :pagination="false"
-                            size="small">
-
+                    <div style="margin-top: 10px">
+                        <a-table
+                            :columns="talibonData"
+                            :data-source="variance.talibonData.data"
+                            :pagination="false"
+                            size="small"
+                        >
                         </a-table>
-                        <pagination :datarecords="variance.talibonData" class="mt-5" />
+                        <pagination
+                            :datarecords="variance.talibonData"
+                            class="mt-5"
+                        />
                     </div>
-
                 </a-tab-pane>
             </a-tabs>
         </a-card>
-        <a-button style="background-color: green; color:white; margin-top: 10px; margin-left: 85%;"
-            @click="SelectCustomerName">
+        <a-button
+            style="
+                background-color: green;
+                color: white;
+                margin-top: 10px;
+                margin-left: 85%;
+            "
+            @click="SelectCustomerName"
+        >
             <FileExcelOutlined />
             Generate Excel
         </a-button>
 
-        <a-card style="width: 40%; position: absolute; top:25px;">
-            <span style="margin-left: 35%; font-weight: bold; font-size: 15px;">
+        <a-card style="width: 40%; position: absolute; top: 25px">
+            <span style="margin-left: 35%; font-weight: bold; font-size: 15px">
                 <span>
                     <DatabaseOutlined />
                 </span>
                 CHECK VARIANCE
             </span>
-            <div style="font-weight: bold; margin-top: 20px;">
+            <div style="font-weight: bold; margin-top: 20px">
                 Customer Name:
             </div>
 
-            <a-form-item :validate-status="varianceData.errors.customerName ? 'error' : ''"
-                :help="varianceData.errors.customerName">
-
+            <a-form-item
+                :validate-status="
+                    varianceData.errors.customerName ? 'error' : ''
+                "
+                :help="varianceData.errors.customerName"
+            >
                 <a-select v-model:value="varianceData.customerName">
-                    <a-select-option v-for="item in companyNameList" :key="item.spcus_id" :value="item.spcus_id">
-                        {{ `${item.spcus_companyname} * ${item.spcus_acctname}` }}
+                    <a-select-option
+                        v-for="item in companyNameList"
+                        :key="item.spcus_id"
+                        :value="item.spcus_id"
+                    >
+                        {{
+                            `${item.spcus_companyname} * ${item.spcus_acctname}`
+                        }}
                     </a-select-option>
                 </a-select>
             </a-form-item>
-            <div style="margin-top: 15px;">
-                <span v-if="formatted" style="color:#1e90ff; font-weight: bold">
+            <div style="margin-top: 15px">
+                <span
+                    v-if="formatted"
+                    style="color: #1e90ff; font-weight: bold"
+                >
                     Select:
                 </span>
-                <span v-if="formatted" style="margin-left: 10px;">
+                <span v-if="formatted" style="margin-left: 10px">
                     {{ this.formatted }}
                 </span>
-                <span v-if="variance.formatCusName && !formatted" style="color:green; font-weight: bold;">
+                <span
+                    v-if="variance.formatCusName && !formatted"
+                    style="color: green; font-weight: bold"
+                >
                     Selected Customer Name:
                 </span>
-               <span v-if="variance.formatCusName && !formatted" style="margin-left: 10px;">
+                <span
+                    v-if="variance.formatCusName && !formatted"
+                    style="margin-left: 10px"
+                >
                     {{ this.variance.formatCusName }}
                 </span>
-                <span v-if="!variance.formatCusName && !formatted" style="color:red">
+                <span
+                    v-if="!variance.formatCusName && !formatted"
+                    style="color: red"
+                >
                     No Selected Customer Name !
                 </span>
             </div>
-            <a-button style="background-color:#1e90ff; color:white; margin-top: 10px;" @click="selectButton">
+            <a-button
+                style="
+                    background-color: #1e90ff;
+                    color: white;
+                    margin-top: 10px;
+                "
+                @click="selectButton"
+            >
                 <FileExcelOutlined />
                 Select
             </a-button>
 
             <div v-if="varianceData.customerName" class="loader">
-                <div><span style="color:red; font-weight: bold">
+                <div>
+                    <span style="color: red; font-weight: bold">
                         Press Select
-                    </span></div>
+                    </span>
+                </div>
                 <div class="truckWrapper">
                     <div class="truckBody">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 198 93" class="trucksvg">
-                            <path stroke-width="3" stroke="#282828" fill="#F83D3D"
-                                d="M135 22.5H177.264C178.295 22.5 179.22 23.133 179.594 24.0939L192.33 56.8443C192.442 57.1332 192.5 57.4404 192.5 57.7504V89C192.5 90.3807 191.381 91.5 190 91.5H135C133.619 91.5 132.5 90.3807 132.5 89V25C132.5 23.6193 133.619 22.5 135 22.5Z">
-                            </path>
-                            <path stroke-width="3" stroke="#282828" fill="#7D7C7C"
-                                d="M146 33.5H181.741C182.779 33.5 183.709 34.1415 184.078 35.112L190.538 52.112C191.16 53.748 189.951 55.5 188.201 55.5H146C144.619 55.5 143.5 54.3807 143.5 53V36C143.5 34.6193 144.619 33.5 146 33.5Z">
-                            </path>
-                            <path stroke-width="2" stroke="#282828" fill="#282828"
-                                d="M150 65C150 65.39 149.763 65.8656 149.127 66.2893C148.499 66.7083 147.573 67 146.5 67C145.427 67 144.501 66.7083 143.873 66.2893C143.237 65.8656 143 65.39 143 65C143 64.61 143.237 64.1344 143.873 63.7107C144.501 63.2917 145.427 63 146.5 63C147.573 63 148.499 63.2917 149.127 63.7107C149.763 64.1344 150 64.61 150 65Z">
-                            </path>
-                            <rect stroke-width="2" stroke="#282828" fill="#FFFCAB" rx="1" height="7" width="5" y="63"
-                                x="187">
-                            </rect>
-                            <rect stroke-width="2" stroke="#282828" fill="#282828" rx="1" height="11" width="4" y="81"
-                                x="193">
-                            </rect>
-                            <rect stroke-width="3" stroke="#282828" fill="#DFDFDF" rx="2.5" height="90" width="121"
-                                y="1.5" x="6.5">
-                            </rect>
-                            <rect stroke-width="2" stroke="#282828" fill="#DFDFDF" rx="2" height="4" width="6" y="84"
-                                x="1">
-                            </rect>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 198 93"
+                            class="trucksvg"
+                        >
+                            <path
+                                stroke-width="3"
+                                stroke="#282828"
+                                fill="#F83D3D"
+                                d="M135 22.5H177.264C178.295 22.5 179.22 23.133 179.594 24.0939L192.33 56.8443C192.442 57.1332 192.5 57.4404 192.5 57.7504V89C192.5 90.3807 191.381 91.5 190 91.5H135C133.619 91.5 132.5 90.3807 132.5 89V25C132.5 23.6193 133.619 22.5 135 22.5Z"
+                            ></path>
+                            <path
+                                stroke-width="3"
+                                stroke="#282828"
+                                fill="#7D7C7C"
+                                d="M146 33.5H181.741C182.779 33.5 183.709 34.1415 184.078 35.112L190.538 52.112C191.16 53.748 189.951 55.5 188.201 55.5H146C144.619 55.5 143.5 54.3807 143.5 53V36C143.5 34.6193 144.619 33.5 146 33.5Z"
+                            ></path>
+                            <path
+                                stroke-width="2"
+                                stroke="#282828"
+                                fill="#282828"
+                                d="M150 65C150 65.39 149.763 65.8656 149.127 66.2893C148.499 66.7083 147.573 67 146.5 67C145.427 67 144.501 66.7083 143.873 66.2893C143.237 65.8656 143 65.39 143 65C143 64.61 143.237 64.1344 143.873 63.7107C144.501 63.2917 145.427 63 146.5 63C147.573 63 148.499 63.2917 149.127 63.7107C149.763 64.1344 150 64.61 150 65Z"
+                            ></path>
+                            <rect
+                                stroke-width="2"
+                                stroke="#282828"
+                                fill="#FFFCAB"
+                                rx="1"
+                                height="7"
+                                width="5"
+                                y="63"
+                                x="187"
+                            ></rect>
+                            <rect
+                                stroke-width="2"
+                                stroke="#282828"
+                                fill="#282828"
+                                rx="1"
+                                height="11"
+                                width="4"
+                                y="81"
+                                x="193"
+                            ></rect>
+                            <rect
+                                stroke-width="3"
+                                stroke="#282828"
+                                fill="#DFDFDF"
+                                rx="2.5"
+                                height="90"
+                                width="121"
+                                y="1.5"
+                                x="6.5"
+                            ></rect>
+                            <rect
+                                stroke-width="2"
+                                stroke="#282828"
+                                fill="#DFDFDF"
+                                rx="2"
+                                height="4"
+                                width="6"
+                                y="84"
+                                x="1"
+                            ></rect>
                         </svg>
                     </div>
                     <div class="truckTires">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" class="tiresvg">
-                            <circle stroke-width="3" stroke="#282828" fill="#282828" r="13.5" cy="15" cx="15"></circle>
-                            <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 30 30"
+                            class="tiresvg"
+                        >
+                            <circle
+                                stroke-width="3"
+                                stroke="#282828"
+                                fill="#282828"
+                                r="13.5"
+                                cy="15"
+                                cx="15"
+                            ></circle>
+                            <circle
+                                fill="#DFDFDF"
+                                r="7"
+                                cy="15"
+                                cx="15"
+                            ></circle>
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" class="tiresvg">
-                            <circle stroke-width="3" stroke="#282828" fill="#282828" r="13.5" cy="15" cx="15"></circle>
-                            <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 30 30"
+                            class="tiresvg"
+                        >
+                            <circle
+                                stroke-width="3"
+                                stroke="#282828"
+                                fill="#282828"
+                                r="13.5"
+                                cy="15"
+                                cx="15"
+                            ></circle>
+                            <circle
+                                fill="#DFDFDF"
+                                r="7"
+                                cy="15"
+                                cx="15"
+                            ></circle>
                         </svg>
                     </div>
                     <div class="road"></div>
 
-                    <svg xml:space="preserve" viewBox="0 0 453.459 453.459" xmlns:xlink="http://www.w3.org/1999/xlink"
-                        xmlns="http://www.w3.org/2000/svg" id="Capa_1" version="1.1" fill="#000000" class="lampPost">
-                        <path d="M252.882,0c-37.781,0-68.686,29.953-70.245,67.358h-6.917v8.954c-26.109,2.163-45.463,10.011-45.463,19.366h9.993
+                    <svg
+                        xml:space="preserve"
+                        viewBox="0 0 453.459 453.459"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        xmlns="http://www.w3.org/2000/svg"
+                        id="Capa_1"
+                        version="1.1"
+                        fill="#000000"
+                        class="lampPost"
+                    >
+                        <path
+                            d="M252.882,0c-37.781,0-68.686,29.953-70.245,67.358h-6.917v8.954c-26.109,2.163-45.463,10.011-45.463,19.366h9.993
                             c-1.65,5.146-2.507,10.54-2.507,16.017c0,28.956,23.558,52.514,52.514,52.514c28.956,0,52.514-23.558,52.514-52.514
                             c0-5.478-0.856-10.872-2.506-16.017h9.992c0-9.354-19.352-17.204-45.463-19.366v-8.954h-6.149C200.189,38.779,223.924,16,252.882,16
                             c29.952,0,54.32,24.368,54.32,54.32c0,28.774-11.078,37.009-25.105,47.437c-17.444,12.968-37.216,27.667-37.216,78.884v113.914
@@ -196,27 +347,28 @@
                             v-11.202c18.625-19.715-4.794-87.527-8.227-115.459c2.029-1.683,3.322-4.223,3.322-7.066c0-5.068-4.107-9.177-9.176-9.177h-0.795
                             V196.641c0-43.174,14.942-54.283,30.762-66.043c14.793-10.997,31.559-23.461,31.559-60.277C323.202,31.545,291.656,0,252.882,0z
                             M232.77,111.694c0,23.442-19.071,42.514-42.514,42.514c-23.442,0-42.514-19.072-42.514-42.514c0-5.531,1.078-10.957,3.141-16.017
-                            h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"></path>
+                            h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"
+                        ></path>
                     </svg>
                 </div>
             </div>
         </a-card>
-
-
     </a-card>
     <!-- {{ variance.selectedCustomer }} -->
-
 </template>
 
 <script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { CloseSquareFilled, ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { createVNode } from 'vue';
-import { Modal, message } from 'ant-design-vue';
-import Pagination from '@/Components/Pagination.vue';
-import { notification } from 'ant-design-vue';
-import { tuple } from 'ant-design-vue/es/_util/type';
-import axios from 'axios';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import {
+    CloseSquareFilled,
+    ExclamationCircleOutlined,
+} from "@ant-design/icons-vue";
+import { createVNode } from "vue";
+import { Modal, message } from "ant-design-vue";
+import Pagination from "@/Components/Pagination.vue";
+import { notification } from "ant-design-vue";
+import { tuple } from "ant-design-vue/es/_util/type";
+import axios from "axios";
 
 export default {
     components: { Pagination },
@@ -227,7 +379,7 @@ export default {
             required: true,
         },
         // customer: Object
-        variance: Object
+        variance: Object,
     },
     data() {
         return {
@@ -236,148 +388,157 @@ export default {
             talibonSearch: this.variance.talibonSearch,
             tagbilaranSearch: this.variance.tagbSearch,
             varianceData: this.$inertia.form({
-                customerName: '',
-                errors: {}
+                customerName: "",
+                errors: {},
             }),
-            selectedFormat: '',
+            selectedFormat: "",
             varianceTable: [
                 {
-                    title: 'Barcode',
-                    dataIndex: 'barcode'
+                    title: "Barcode",
+                    dataIndex: "barcode",
                 },
                 {
-                    title: 'Denomination',
-                    dataIndex: 'denom'
+                    title: "Denomination",
+                    dataIndex: "denom",
                 },
                 {
-                    title: 'Customer Name',
-                    dataIndex: 'cusname'
+                    title: "Customer Name",
+                    dataIndex: "cusname",
                 },
                 {
-                    title: 'Verify Date',
-                    dataIndex: 'verifydate'
+                    title: "Verify Date",
+                    dataIndex: "verifydate",
                 },
                 {
-                    title: 'Store',
-                    dataIndex: 'store'
+                    title: "Store",
+                    dataIndex: "store",
                 },
                 {
-                    title: 'Transaction No',
-                    dataIndex: 'transno'
+                    title: "Transaction No",
+                    dataIndex: "transno",
                 },
             ],
             talibonData: [
                 {
-                    title: 'Barcode',
-                    dataIndex: 'barcode'
+                    title: "Barcode",
+                    dataIndex: "barcode",
                 },
                 {
-                    title: 'Denomination',
-                    dataIndex: 'denom'
+                    title: "Denomination",
+                    dataIndex: "denom",
                 },
                 {
-                    title: 'Customer Name',
-                    dataIndex: 'cusname'
+                    title: "Customer Name",
+                    dataIndex: "cusname",
                 },
                 {
-                    title: 'Verify Date',
-                    dataIndex: 'verifydate'
+                    title: "Verify Date",
+                    dataIndex: "verifydate",
                 },
                 {
-                    title: 'Store',
-                    dataIndex: 'store'
+                    title: "Store",
+                    dataIndex: "store",
                 },
                 {
-                    title: 'Transaction No',
-                    dataIndex: 'transno'
+                    title: "Transaction No",
+                    dataIndex: "transno",
                 },
             ],
-        }
+        };
     },
     computed: {
         formatted() {
             const selectedCustomer = this.companyNameList.find(
-                (item) => item.spcus_id === this.varianceData.customerName
+                (item) => item.spcus_id === this.varianceData.customerName,
             );
             return selectedCustomer
                 ? `${selectedCustomer.spcus_companyname} - ${selectedCustomer.spcus_acctname}`
-                : '';
+                : "";
         },
     },
     watch: {
-        'varianceData.customerName'() {
+        "varianceData.customerName"() {
             this.selectedFormat = this.formatted;
         },
         tagbilaranSearch(search) {
-             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
-            if(searchValidation.test(search)){
-                const openNotificationWithIcon = (type) =>{
+            const searchValidation =
+                /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid input',
-                        description: 'Search contains invalid symbol or emojis',
-                        placement: 'topRight'
+                        message: "Invalid input",
+                        description: "Search contains invalid symbol or emojis",
+                        placement: "topRight",
                     });
                 };
-                openNotificationWithIcon('warning');
+                openNotificationWithIcon("warning");
                 return;
             }
             const tagbSearch = {
                 tagbSearch: search,
                 customerName: this.variance.selectedCustomer,
                 formatCusName: this.variance.formatCusName,
-            }
-            this.$inertia.get(route('storeaccounting.CheckVariance', tagbSearch), {
-            }, {
-                preserveState: true
-            })
+            };
+            this.$inertia.get(
+                route("storeaccounting.CheckVariance", tagbSearch),
+                {},
+                {
+                    preserveState: true,
+                },
+            );
         },
         talibonSearch(search) {
-             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
-            if(searchValidation.test(search)){
-                const openNotificationWithIcon = (type) =>{
+            const searchValidation =
+                /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid input',
-                        description: 'Search contains invalid symbol or emojis',
-                        placement: 'topRight'
+                        message: "Invalid input",
+                        description: "Search contains invalid symbol or emojis",
+                        placement: "topRight",
                     });
                 };
-                openNotificationWithIcon('warning');
+                openNotificationWithIcon("warning");
                 return;
             }
             const talibonSearch = {
                 talibonSearch: search,
                 customerName: this.variance.selectedCustomer,
                 formatCusName: this.variance.formatCusName,
-            }
-            this.$inertia.get(route('storeaccounting.CheckVariance', talibonSearch), {
-
-            }, {
-                preserveState: true
-            })
-        }
+            };
+            this.$inertia.get(
+                route("storeaccounting.CheckVariance", talibonSearch),
+                {},
+                {
+                    preserveState: true,
+                },
+            );
+        },
     },
     methods: {
-
         selectButton() {
-
             this.varianceData.errors = {};
             if (!this.varianceData.customerName) {
-                this.varianceData.errors.customerName = "Customer Name field is required";
+                this.varianceData.errors.customerName =
+                    "Customer Name field is required";
                 return;
             }
             const data = {
                 customerName: this.varianceData.customerName,
-                formatCusName: this.selectedFormat
-            }
-            this.$inertia.get(route('storeaccounting.CheckVariance', data))
+                formatCusName: this.selectedFormat,
+            };
+            this.$inertia.get(route("storeaccounting.CheckVariance", data));
         },
 
         SelectCustomerName() {
-            if (!this.variance.selectedCustomer && !this.variance.formatCusName) {
+            if (
+                !this.variance.selectedCustomer &&
+                !this.variance.formatCusName
+            ) {
                 notification.warning({
-                    message: 'Customer field required',
+                    message: "Customer field required",
                     description:
-                        'Please select customer name first before generating',
+                        "Please select customer name first before generating",
                 });
                 return;
             }
@@ -387,56 +548,60 @@ export default {
             // };
 
             Modal.confirm({
-                title: 'Confirmation',
-                content: 'Are you sure you want to generate EXCEL?',
-                okText: 'Yes',
-                cancelText: 'No',
+                title: "Confirmation",
+                content: "Are you sure you want to generate EXCEL?",
+                okText: "Yes",
+                cancelText: "No",
                 onOk: () => {
                     this.isloading = true;
                     // const hideLoading = message.loading('Generating EXCEL please wait...', 0);
 
-
                     axios({
-                        method: 'get',
-                        url: route('storeaccounting.varianceExcelExport'),
-                        responseType: 'blob',
+                        method: "get",
+                        url: route("storeaccounting.varianceExcelExport"),
+                        responseType: "blob",
                         params: {
                             customerName: this.variance.selectedCustomer,
-                            formatCusName: this.variance.formatCusName
+                            formatCusName: this.variance.formatCusName,
                         },
                     })
                         .then((response) => {
-                         const fileURL = window.URL.createObjectURL(new Blob([response.data]));
-                            const fileLink = document.createElement('a');
+                            const fileURL = window.URL.createObjectURL(
+                                new Blob([response.data]),
+                            );
+                            const fileLink = document.createElement("a");
                             fileLink.href = fileURL;
-                            fileLink.setAttribute('download', 'CheckVariance-file Excel.xlsx');
+                            fileLink.setAttribute(
+                                "download",
+                                "CheckVariance-file Excel.xlsx",
+                            );
                             document.body.appendChild(fileLink);
                             fileLink.click();
                             document.body.removeChild(fileLink);
 
                             // hideLoading();
                             this.isloading = false;
-                            message.success('EXCEL generated successfully!', 5);
-
+                            message.success("EXCEL generated successfully!", 5);
                         })
                         .catch((error) => {
-                         console.error('Error generating EXCEL:', error);
+                            console.error("Error generating EXCEL:", error);
                             hideLoading();
                             notification.error({
-                                message: 'Error',
-                                description: 'Failed to generate EXCEL. Please try again later.',
-                                placement: 'topRight',
+                                message: "Error",
+                                description:
+                                    "Failed to generate EXCEL. Please try again later.",
+                                placement: "topRight",
                             });
                         });
                     // window.location.href = route('storeaccounting.varianceExcelExport', varianceData);
                     // setTimeout(hide, 1500);
                 },
                 onCancel() {
-                    console.log('Cancel');
+                    console.log("Cancel");
                 },
             });
-        }
-    }
+        },
+    },
 };
 </script>
 
