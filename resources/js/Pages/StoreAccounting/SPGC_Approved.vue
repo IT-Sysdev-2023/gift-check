@@ -752,7 +752,7 @@ export default {
                             fileLink.href = fileURL;
                             fileLink.setAttribute(
                                 "download",
-                                "Approved-file.pdf",
+                                "PDF Approved-file.pdf",
                             );
                             document.body.appendChild(fileLink);
                             fileLink.click();
@@ -819,7 +819,7 @@ export default {
                             fileLink.href = fileURL;
                             fileLink.setAttribute(
                                 "download",
-                                "Approved Per Customer Excel.xlsx",
+                                "EXCEL Approved-file.xlsx",
                             );
                             document.body.appendChild(fileLink);
                             fileLink.click();
@@ -866,7 +866,6 @@ export default {
 .input-wrapper input:focus {
     outline-color: whitesmoke;
 }
-/* From Uiverse.io by Vazafirst */
 #page {
     display: flex;
     justify-content: center;

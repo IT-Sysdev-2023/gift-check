@@ -28,6 +28,13 @@
             >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
+                        <!-- <label title="Isssue Receipt" class="toggle-switch">
+                            <input type="checkbox" v-model="record.status" @change="issueReceipt(record)" />
+                            <span class="toggle-switch__slider">
+
+                            </span>
+
+                        </label> -->
                         <a-switch
                             title="Issue Receipt"
                             v-model:checked="record.status"
@@ -290,4 +297,5 @@ export default {
     min-width: 120px;
     margin-top: 1%;
 }
+
 </style>
