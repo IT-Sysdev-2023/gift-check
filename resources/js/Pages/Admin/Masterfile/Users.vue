@@ -665,6 +665,16 @@ export default {
                             description: 'Users added successfully!',
                         });
                         this.open = false
+                        //  form: this.$inertia.form({
+                        this.form.username= '',
+                        this.form.firstname= '',
+                        this.form.lastname= '',
+                        this.form.emp_id= '',
+                        this.form.user_role= '',
+                        this.form.store_name= '',
+                        this.form.employee_type= '',
+                        this.form.retail_group= '',
+                        this.form.it_type= ''
 
                     } else if (props.flash.error) {
                         notification.warning({
@@ -744,7 +754,7 @@ export default {
 
         //     })
         // }
-        // showDeleteConfirm(rec) { 
+        // showDeleteConfirm(rec) {
         //     Modal.confirm({
         //         title: 'Are you sure update this task?',
         //         icon: createVNode(ExclamationCircleOutlined),
@@ -752,7 +762,7 @@ export default {
         //         okText: 'Yes',
         //         okType: 'danger',
         //         cancelText: 'No',
-        //         onOk: () => { 
+        //         onOk: () => {
         //             this.dataforResetPassword.full_name = rec.full_name;
         //             this.dataforResetPassword.user_id = rec.user_id;
 

@@ -29,6 +29,7 @@ use App\Models\SpecialExternalCustomer;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\PurchaseOrderRequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use Illuminate\Support\Facades\DB;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class AdminController extends Controller
@@ -595,62 +596,72 @@ class AdminController extends Controller
         $special = SpecialExternalCustomer::get();
         $store = Store::get();
         $data = Customer::get();
-
-        // $selectEntries = $request->input('value', 10);
         $searchTerm = $request->input('data', '');
-
         $activeTab = $request->input('tabs', 'store_customer');
         // dd($activeTab);
 
-        $data = Customer::select(
-            'cus_id',
-            'cus_store_register',
-            'cus_register_at',
-            'cus_register_by',
-            'cus_fname',
-            'cus_lname',
-            'cus_mname',
-            'cus_namext',
-            'stores.store_id',
-            'stores.store_name',
-            'institut_customer.ins_id',
-            'institut_customer.ins_name as ins_name',
-            'institut_customer.ins_status as ins_status',
-            'institut_customer.ins_custype as ins_custype',
-            'institut_customer.ins_gctype as ins_gctype',
-            'institut_customer.ins_date_created as ins_date_created',
-            'institut_customer.ins_by as ins_by',
-            'special_external_customer.spcus_id',
-            'special_external_customer.spcus_companyname as spcus_companyname',
-            'special_external_customer.spcus_acctname as spcus_acctname',
-            'special_external_customer.spcus_address as spcus_address',
-            'special_external_customer.spcus_cperson as spcus_cperson',
-            'special_external_customer.spcus_cnumber as spcus_cnumber',
-            'special_external_customer.spcus_type as spcus_type',
-            'users.user_id',
-            'users.firstname as firstname',
-            'users.lastname as lastname',
-            User::raw("CONCAT(users.firstname, ' ', users.lastname) as fullname")
+        $data = DB::table('customers')
+            ->select(
+                'cus_id',
+                'cus_store_register',
+                'cus_register_at',
+                'cus_register_by',
+                'cus_fname',
+                'cus_lname',
+                'cus_mname',
+                'cus_namext',
+                'stores.store_id',
+                'stores.store_name',
+                'institut_customer.ins_id',
+                'institut_customer.ins_name as ins_name',
+                'institut_customer.ins_status as ins_status',
+                'institut_customer.ins_custype as ins_custype',
+                'institut_customer.ins_gctype as ins_gctype',
+                'institut_customer.ins_date_created as ins_date_created',
+                'institut_customer.ins_by as ins_by',
+                'special_external_customer.spcus_id',
+                'special_external_customer.spcus_companyname as spcus_companyname',
+                'special_external_customer.spcus_acctname as spcus_acctname',
+                'special_external_customer.spcus_address as spcus_address',
+                'special_external_customer.spcus_cperson as spcus_cperson',
+                'special_external_customer.spcus_cnumber as spcus_cnumber',
+                'special_external_customer.spcus_type as spcus_type',
+                'users.user_id',
+                'users.firstname as firstname',
+                'users.lastname as lastname',
+                User::raw("CONCAT(users.firstname, ' ', users.lastname) as fullname")
 
-        )
-            ->when($searchTerm, function ($query) use ($searchTerm) {
-                $query->where(function ($query) use ($searchTerm) {
-                    $query->where('cus_fname', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('cus_lname', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('cus_mname', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('cus_namext', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('ins_name', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('ins_status', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('ins_custype', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('ins_gctype', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('spcus_companyname', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('spcus_acctname', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('spcus_address', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('spcus_cperson', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('spcus_cnumber', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('firstname', 'like', '%' . $searchTerm . '%');
-                });
-            })
+            )
+            ->whereAny([
+                'cus_id',
+                'cus_store_register',
+                'cus_register_at',
+                'cus_register_by',
+                'cus_fname',
+                'cus_lname',
+                'cus_mname',
+                'cus_namext',
+                'stores.store_id',
+                'stores.store_name',
+                'institut_customer.ins_id',
+                'institut_customer.ins_name',
+                'institut_customer.ins_status',
+                'institut_customer.ins_custype',
+                'institut_customer.ins_gctype',
+                'institut_customer.ins_date_created',
+                'institut_customer.ins_by',
+                'special_external_customer.spcus_id',
+                'special_external_customer.spcus_companyname',
+                'special_external_customer.spcus_acctname',
+                'special_external_customer.spcus_address',
+                'special_external_customer.spcus_cperson',
+                'special_external_customer.spcus_cnumber',
+                'special_external_customer.spcus_type',
+                'users.user_id',
+                'users.firstname',
+                'users.lastname',
+            ], 'like', '%' . $searchTerm . '%')
+
             ->leftJoin('users', 'cus_register_by', '=', 'users.user_id')
             ->leftJoin('institut_customer', 'cus_id', '=', 'institut_customer.ins_id')
             ->leftJoin('special_external_customer', 'cus_id', '=', 'special_external_customer.spcus_id')
@@ -659,17 +670,17 @@ class AdminController extends Controller
         if ($activeTab === 'store_customer') {
             $data = $data->whereNotNull('cus_id')
                 ->orderBy('cus_id', 'asc')
-                ->paginate(10, '')
+                ->paginate(10)
                 ->withQueryString();
         } elseif ($activeTab === 'institutional_customer') {
-            $data = $data->whereNotNull('institut_customer.ins_id')
+            $data =  $data->whereNotNull('institut_customer.ins_id')
                 ->orderBy('institut_customer.ins_id', 'ASC')
-                ->paginate(10, '')
+                ->paginate(10)
                 ->withQueryString();
         } elseif ($activeTab === 'special_customer') {
             $data = $data->whereNotNull('special_external_customer.spcus_id')
                 ->orderBy('special_external_customer.spcus_id', 'ASC')
-                ->paginate(10, '')
+                ->paginate(10)
                 ->withQueryString();
         }
 
@@ -771,8 +782,6 @@ class AdminController extends Controller
             'has_local' => '1',
             'store_textfile_ip' => '172.16.161.205\CFS_Txt\GiftCheck',
             'store_initial' => '',
-            'updated_at' => now(),
-            'created_at' => now(),
 
         ]);
 
@@ -847,19 +856,30 @@ class AdminController extends Controller
 
 
         $data = Denomination::get();
-        // dd($data = Denomination::all());
-        $entriesPerPage = $request->input('value', '');
-        $searchTerm = $request->input('data', 10);
-        $data = Denomination::query();
-        // dd($data = Denomination::get());
-        if ($searchTerm) {
-            $data = $data->where(function ($query) use ($searchTerm) {
-                $query->where('denomination', 'like', '%' . $searchTerm . '%')
-                    ->orwhere('denom_barcode_start', 'like', '%' . $searchTerm . '%');
-            });
-        }
-        $data = $data->orderByDesc('denom_id')
-            ->paginate($entriesPerPage)
+        $searchTerm = $request->input('data', '');
+        $data = DB::table('denomination')
+            ->select(
+                'denom_id',
+                'denom_code',
+                'denomination',
+                'denom_fad_item_number',
+                'denom_barcode_start',
+                'denom_type',
+                'denom_status',
+                'denom_createdby',
+            )
+            ->whereAny([
+                'denom_id',
+                'denom_code',
+                'denomination',
+                'denom_fad_item_number',
+                'denom_barcode_start',
+                'denom_type',
+                'denom_status',
+                'denom_createdby'
+            ], 'like', '%' . $searchTerm . '%')
+            ->orderBy('denom_id', 'ASC')
+            ->paginate(10)
             ->withQueryString();
 
         return inertia('Admin/Masterfile/DenominationSetup', [

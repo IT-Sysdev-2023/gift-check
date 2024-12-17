@@ -1,26 +1,38 @@
 <template>
     <a-card>
         <a-card>
-            <div style="font-weight: bold;">
-                <span >
-                    {{ storeName }} - Verified GC
-                </span>
+            <div style="font-weight: bold">
+                <span> {{ storeName }} - Verified GC </span>
             </div>
         </a-card>
         <div class="input-wrapper">
-            <input type="search" placeholder="Input search here..." name="text" class="input" v-model="alturasSearchBox"/>
+            <input
+                type="search"
+                placeholder="Input search here..."
+                name="text"
+                class="input"
+                v-model="alturasSearchBox"
+            />
         </div>
 
         <!-- <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
             <a-input-search allow-clear v-model:value="alturasSearchBox" style=" width:90%" enter-button
                 placeholder="Input search here!" />
         </div> -->
-        <div style="margin-top: 10px;">
-            <a-table :data-source="data.data" :columns="alturasMallColumns" :pagination="false" size="small">
+        <div style="margin-top: 10px">
+            <a-table
+                :data-source="data.data"
+                :columns="alturasMallColumns"
+                :pagination="false"
+                size="small"
+            >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'view'">
-                        <a-button @click="viewAlturasMall(record)" class="me-2 me-sm-5"
-                            style="color:white; background-color: #1e90ff;">
+                        <a-button
+                            @click="viewAlturasMall(record)"
+                            class="me-2 me-sm-5"
+                            style="color: white; background-color: #1e90ff"
+                        >
                             <EyeOutlined />
                         </a-button>
                     </template>
@@ -42,13 +54,12 @@
         entries
     </div> -->
 
-
     <!-- {{ storeName }} -->
 </template>
 <script>
 // import { defineComponent } from '@vue/composition-api'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { notification } from 'ant-design-vue';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { notification } from "ant-design-vue";
 
 export default {
     layout: AuthenticatedLayout,
@@ -57,7 +68,7 @@ export default {
         id: String,
         search: String,
         pagination: String,
-        storeName: String
+        storeName: String,
     },
 
     data() {
@@ -69,74 +80,81 @@ export default {
             alturasSearchBox: this.search,
             alturasMallColumns: [
                 {
-                    title: 'Barcode #',
-                    dataIndex: 'vs_barcode'
+                    title: "Barcode #",
+                    dataIndex: "vs_barcode",
                 },
                 {
-                    title: 'Denomination',
-                    dataIndex: 'vs_tf_denomination'
+                    title: "Denomination",
+                    dataIndex: "vs_tf_denomination",
                 },
                 {
-                    title: 'Date Verified/Reverified',
-                    dataIndex: 'newDate'
+                    title: "Date Verified/Reverified",
+                    dataIndex: "newDate",
                 },
                 {
-                    title: 'Verified/Reverified By',
-                    dataIndex: 'verby'
+                    title: "Verified/Reverified By",
+                    dataIndex: "verby",
                 },
                 {
-                    title: 'Customer',
-                    dataIndex: 'customer'
+                    title: "Customer",
+                    dataIndex: "customer",
                 },
                 {
-                    title: 'Balance',
-                    dataIndex: 'vs_tf_balance'
+                    title: "Balance",
+                    dataIndex: "vs_tf_balance",
                 },
                 {
-                    title: 'View',
-                    dataIndex: 'view'
+                    title: "View",
+                    dataIndex: "view",
                 },
-            ]
-        }
-
+            ],
+        };
     },
     watch: {
         alturasSearchBox(search) {
             // alert
-           const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
-            if(searchValidation.test(search)){
-                const openNotificationWithIcon = (type) =>{
+            const searchValidation =
+                /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
                     notification[type]({
-                        message: 'Invalid input',
-                        description: 'Search contains invalid symbol or emojis',
-                        placement: 'topRight'
+                        message: "Invalid input",
+                        description: "Search contains invalid symbol or emojis",
+                        placement: "topRight",
                     });
                 };
-                openNotificationWithIcon('warning');
+                openNotificationWithIcon("warning");
                 return;
             }
-            this.$inertia.get(route('storeaccounting.altaCitta', this.id), {
-                search: search
-            }, {
-                preserveState: true
-            })
-        }
-
+            this.$inertia.get(
+                route("storeaccounting.altaCitta", this.id),
+                {
+                    search: search,
+                },
+                {
+                    preserveState: true,
+                },
+            );
+        },
     },
     methods: {
         PaginationEntries(entries) {
             console.log(entries);
-            this.$inertia.get(route('storeaccounting.altaCitta', this.id), {
-                pagination: entries
-            })
+            this.$inertia.get(route("storeaccounting.altaCitta", this.id), {
+                pagination: entries,
+            });
         },
         viewAlturasMall(rec) {
             // this.selectecBarcode = rec.vs_barcode
-            this.$inertia.get(route('storeaccounting.altaCittaPosTransaction', rec.vs_barcode));
-        }
-    }
-
-}
+            this.$inertia.get(
+                route(
+                    "storeaccounting.altaCittaPosTransaction",
+                    rec.vs_barcode,
+                ),
+            );
+        },
+    },
+};
 </script>
 <style scope>
 .input-wrapper input {

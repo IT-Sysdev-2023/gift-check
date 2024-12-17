@@ -534,8 +534,6 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('budget-adjustments-approval-{id}', [FinanceController::class, 'budgetAdjustmentsApproval'])->name('approval');
                 Route::post('budget-adjustments-submit', [FinanceController::class, 'budgetAdjustmentSubmission'])->name('submit');
             });
-
-
         });
 
         Route::get('/download/{filename}', function ($filename) {
@@ -604,8 +602,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('store-ledger-details', [RetailController::class, 'storeLedgerdetails'])->name('storeledgerdetails');
             });
 
-            Route::name('sgc_item_setup')->group(function(){
-                Route::get('sgc_item_setup',[RetailController::class, 'sgc_item_setup'])->name('sgc_item_setup');
+            Route::name('sgc_item_setup')->group(function () {
+                Route::get('sgc_item_setup', [RetailController::class, 'sgc_item_setup'])->name('sgc_item_setup');
             });
         });
     });
@@ -670,7 +668,6 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
             Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
-
         });
     });
 
@@ -737,8 +734,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('check-by', [QueryFilterController::class, 'getCheckBy'])->name('checkBy');
             Route::get('search-customer', [QueryFilterController::class, 'customer'])->name('customer');
             Route::post('add-customer', [QueryFilterController::class, 'addCustomer'])->name('addCustomer');
-
-
         });
     });
 

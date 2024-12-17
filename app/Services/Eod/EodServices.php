@@ -41,6 +41,7 @@ class EodServices extends FileHandler
         $eod->transform(function ($item) {
             $item->dateFmatted = Date::parse($item->vs_date)->toFormattedDateString();
             $item->fullname = $item->firstname . ' ' . $item->lastname;
+            $item->status = is_null($item->vs_reverifydate) ? 'Verified' : 'Reverified';
             return $item;
         });
 

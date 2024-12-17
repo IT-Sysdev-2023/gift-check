@@ -11,12 +11,7 @@
             />
         </div>
         <div style="margin-top: 10px">
-            <a-table
-                :dataSource="data.data"
-                :columns="columns"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :dataSource="data.data" :columns="columns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
                         <a-button
@@ -33,22 +28,6 @@
             <pagination :datarecords="data" class="mt-5" />
         </div>
     </a-card>
-    <!-- <a-title style="font-size: 20px; display: flex; align-items: center; color: #0286df">
-        <FundFilled style="margin-right: 8px; color:#0286df" />
-        Setup Store Revolving Fund
-    </a-title>
-    <span style="font-weight: bold;">
-        Show
-        <a-select id="select_entries" v-model:value="dataForSelectEntries.select_entries"
-            style="margin-top: 10px; background-color: #0286df; border: 1px solid #0286df" placeholder="10"
-            @change="changeSelectEntries">
-            <a-select-option value="10">10</a-select-option>
-            <a-select-option value="25">25</a-select-option>
-            <a-select-option value="50">50</a-select-option>
-            <a-select-option value="100">100</a-select-option>
-        </a-select>
-        entries
-    </span> -->
 
     <a-modal
         v-model:open="modalForUpdateFund"
