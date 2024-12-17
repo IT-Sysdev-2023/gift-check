@@ -9,16 +9,33 @@
                     <template #tab>
                         <span style="font-weight: bold">
                             <FilePdfOutlined />
-                           Pdf per Customer
+                            Pdf per Customer
                         </span>
                     </template>
 
-                    <a-card style="margin-top: 5px;">
+                    <a-card>
+                        <div v-if="isloading">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating PDF please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
 
-                        <span style="font-weight: bold; margin-left: 60%;">
+                        <div class="input-wrapper">
+                            <input type="search" placeholder="Input search here..." name="text" class="input"
+                                v-model="pdfPerCustomerSearch" />
+                        </div>
+                        <!-- <span style="font-weight: bold; margin-left: 60%;">
                             <a-input-search allow-clear v-model:value="pdfPerCustomerSearch" enter-button
                                 placeholder="Input search here!" style="width: 35%;" />
-                        </span>
+                        </span> -->
                         <div style="margin-top: 10px;margin-left: 30px;">
                             <span style="color:red; font-style: oblique;">
                                 <span v-if="message">
@@ -27,6 +44,7 @@
                                 {{ this.message }}
                             </span>
                         </div>
+
                         <div>
                             <span style="font-weight: bold; margin-left: 30%;">
                                 Table showing PDF per customer
@@ -52,16 +70,33 @@
                     <template #tab>
                         <span style="font-weight: bold;">
                             <FilePdfOutlined />
-                           Pdf per Barcode
+                            Pdf per Barcode
                         </span>
                     </template>
 
                     <a-card style="margin-top: 5px;">
+                        <div v-if="isloading">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating PDF please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
 
-                        <span style="font-weight: bold; margin-left: 60%;">
+                        <div class="input-wrapper">
+                            <input type="search" placeholder="Input search here..." name="text" class="input"
+                                v-model="pdfPerBarcodeSearch" />
+                        </div>
+                        <!-- <span style="font-weight: bold; margin-left: 60%;">
                             <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch" enter-button
                                 placeholder="Input search here!" style="width: 35%;" />
-                        </span>
+                        </span> -->
                         <div style="margin-top: 10px;margin-left: 30px;">
                             <span style="color:red; font-style: oblique;">
                                 <span v-if="message">
@@ -96,15 +131,32 @@
                     <template #tab>
                         <span style="font-weight: bold;">
                             <FileExcelOutlined />
-                          Excel per Customer
+                            Excel per Customer
                         </span>
                     </template>
                     <a-card style="margin-top: 5px;">
+                        <div v-if="isloadingExcel">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
 
-                        <span style="font-weight: bold; margin-left: 60%;">
-                            <a-input-search allow-clear v-model:value="spgcApprovedSearch" placeholder="Input search here!" enter-button
-                                style="width: 35%;" />
-                        </span>
+                        <div class="input-wrapper">
+                            <input type="search" placeholder="Input search here..." name="text" class="input"
+                                v-model="spgcApprovedSearch" />
+                        </div>
+                        <!-- <span style="font-weight: bold; margin-left: 60%;">
+                            <a-input-search allow-clear v-model:value="spgcApprovedSearch"
+                                placeholder="Input search here!" enter-button style="width: 35%;" />
+                        </span> -->
                         <div style="margin-top: 10px;margin-left: 30px;">
                             <span style="color:red; font-style: oblique;">
                                 <span v-if="message">
@@ -120,7 +172,7 @@
                             </span>
                         </div>
                         <div style="margin-top: 20px;">
-                            <a-table :columns=" perCustomerReleaseTable" :data-source="data.dataCustomer.data"
+                            <a-table :columns="perCustomerReleaseTable" :data-source="data.dataCustomer.data"
                                 :pagination="false" size="small">
 
                             </a-table>
@@ -139,17 +191,34 @@
                     <template #tab>
                         <span style="font-weight: bold;">
                             <FileExcelOutlined />
-                          Excel per Barcode
+                            Excel per Barcode
                         </span>
                     </template>
 
                     <a-card style="margin-top: 5px; ">
+                         <div v-if="isloadingExcel">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
 
-                        <span style="font-weight: bold; margin-left: 60%;">
+                        <div class="input-wrapper">
+                            <input type="search" placeholder="Input search here..." name="text" class="input"
+                                v-model="spgcApprovedSearchPerBarcode" />
+                        </div>
+
+                        <!-- <span style="font-weight: bold; margin-left: 60%;">
                             <a-input-search allow-clear v-model:value="spgcApprovedSearchPerBarcode" enter-button
-                                placeholder="Input search here!"
-                                style="width: 35%;" />
-                        </span>
+                                placeholder="Input search here!" style="width: 35%;" />
+                        </span> -->
                         <div style="margin-top: 10px;margin-left: 30px;">
                             <span style="color:red; font-style: oblique;">
                                 <span v-if="message">
@@ -246,7 +315,6 @@
                     No Date Selected !
                 </span>
             </div>
-
         </a-card>
     </a-card>
 
@@ -264,6 +332,7 @@ import { Modal } from 'ant-design-vue';
 import Pagination from '@/Components/Pagination.vue';
 import { notification } from 'ant-design-vue';
 import { message } from 'ant-design-vue';
+import axios from 'axios';
 
 
 
@@ -276,6 +345,8 @@ export default {
 
     data() {
         return {
+            isloading: false,
+            isloadingExcel: false,
             message: '',
             pdfPerBarcodeSearch: this.pdfPerBarcode,
             pdfPerCustomerSearch: this.pdfPerCustomer,
@@ -379,7 +450,7 @@ export default {
                     title: 'Date Approved',
                     dataIndex: 'daterel'
                 },
-                
+
             ],
 
 
@@ -388,7 +459,18 @@ export default {
     watch: {
         spgcApprovedSearch(search) {
             // alert(1)
-            console.log(search);
+            const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const searchData = {
                 perCustomer: search,
                 startDate: this.data.fromDate,
@@ -401,7 +483,18 @@ export default {
             });
         },
         spgcApprovedSearchPerBarcode(search) {
-            console.log(search);
+            const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const searchData = {
                 perBarcode: search,
                 startDate: this.data.fromDate,
@@ -414,27 +507,49 @@ export default {
             })
         },
         pdfPerCustomerSearch(search) {
-            console.log(search);
+            const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const pdfPerCustomerData = {
                 pdfPerCustomer: search,
                 startDate: this.data.fromDate,
                 endDate: this.data.endDate
             };
-            this.$inertia.get(route('storeaccounting.SPGCRelease', pdfPerCustomerData),{
+            this.$inertia.get(route('storeaccounting.SPGCRelease', pdfPerCustomerData), {
 
             }, {
                 preserveState: true
             })
         },
         pdfPerBarcodeSearch(search) {
-            console.log(search);
+            const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const perBarcodeData = {
                 pdfPerBarcode: search,
                 startDate: this.data.fromDate,
                 endDate: this.data.endDate
             }
             this.$inertia.get(route('storeaccounting.SPGCRelease', perBarcodeData), {
-                
+
             }, {
                 preserveState: true
             })
@@ -483,14 +598,40 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                   
-                   
+                    this.isloading = true;
+                    // const hideLoading = message.loading('Generating PDF please wait...', 0);
 
-                    window.location.href = route('storeaccounting.releasePdf', {
-                        startDate: this.data.fromDate,
-                        endDate: this.data.endDate
-                    });
-                   
+                    axios({
+                        method: 'get',
+                        url: route('storeaccounting.releasePdf'),
+                        responseType: 'blob',
+                        params: {
+                            startDate: this.data.fromDate,
+                            endDate: this.data.endDate
+                        },
+                    })
+                    .then((response) => {
+                        const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                        const fileLink = document.createElement('a');
+                        fileLink.href = fileURL;
+                        fileLink.setAttribute('download', 'Release-file.pdf');
+                        document.body.appendChild(fileLink);
+                        fileLink.click();
+                        document.body.removeChild(fileLink);
+
+                        // hideLoading();
+                        this.isloading = false;
+                        message.success('PDF generated successfully!', 5);
+                    })
+                        .catch((error) => {
+                            console.error('Error generating PDF:', error);
+                            hideLoading();
+                            notification.error({
+                                message: 'Error',
+                                description: 'Failed to generate PDF. Please try again later.',
+                                placement: 'topRight',
+                            });
+                        });
 
                 },
                 onCancel() {
@@ -517,12 +658,40 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                    
-                    window.location.href = route('storeaccounting.releaseExcel', {
-                        startDate: this.data.fromDate,
-                        endDate: this.data.endDate
-                    });
+                    this.isloadingExcel = true;
+                    // const hideLoading = message.loading('Generating EXCEL please wait...', 0);
 
+                    axios({
+                        method: 'get',
+                        url: route('storeaccounting.releaseExcel'),
+                        responseType: 'blob',
+                        params: {
+                             startDate: this.data.fromDate,
+                        endDate: this.data.endDate
+                        }
+                    })
+                        .then((response) => {
+                            const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                            const fileLink = document.createElement('a');
+                            fileLink.href = fileURL;
+                            fileLink.setAttribute('download', 'Release-file Excel.xlsx');
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                            document.body.removeChild(fileLink);
+
+                            // hideLoading();
+                            this.isloadingExcel = false;
+                            message.success('EXCEL generated successfully!', 5);
+                        })
+                        .catch((error) => {
+                         console.error('Error generating EXCEL:', error);
+                            hideLoading();
+                            notification.error({
+                                message: 'Error',
+                                description: 'Failed to generate EXCEL. Please try again later.',
+                                placement: 'topRight',
+                            });
+                        });
                 },
                 onCancel() {
                     console.log('Cancel');
@@ -533,3 +702,108 @@ export default {
 
 }
 </script>
+<style scope>
+.input-wrapper input {
+    background-color: whitesmoke;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 16em;
+    border-radius: 2rem;
+    color: black;
+    box-shadow: 0 0.4rem #1e90ff;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 70%;
+}
+
+.input-wrapper input:focus {
+    outline-color: whitesmoke;
+}
+/* From Uiverse.io by Vazafirst */
+#page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+#h3 {
+  color: rgb(82, 79, 79);
+}
+
+#ring {
+  width: 190px;
+  height: 190px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  position: absolute;
+}
+
+#ring:nth-child(1) {
+  border-bottom: 8px solid rgb(240, 42, 230);
+  animation: rotate1 2s linear infinite;
+}
+
+@keyframes rotate1 {
+  from {
+    transform: rotateX(50deg) rotateZ(110deg);
+  }
+
+  to {
+    transform: rotateX(50deg) rotateZ(470deg);
+  }
+}
+
+#ring:nth-child(2) {
+  border-bottom: 8px solid rgb(240, 19, 67);
+  animation: rotate2 2s linear infinite;
+}
+
+@keyframes rotate2 {
+  from {
+    transform: rotateX(20deg) rotateY(50deg) rotateZ(20deg);
+  }
+
+  to {
+    transform: rotateX(20deg) rotateY(50deg) rotateZ(380deg);
+  }
+}
+
+#ring:nth-child(3) {
+  border-bottom: 8px solid rgb(3, 170, 170);
+  animation: rotate3 2s linear infinite;
+}
+
+@keyframes rotate3 {
+  from {
+    transform: rotateX(40deg) rotateY(130deg) rotateZ(450deg);
+  }
+
+  to {
+    transform: rotateX(40deg) rotateY(130deg) rotateZ(90deg);
+  }
+}
+
+#ring:nth-child(4) {
+  border-bottom: 8px solid rgb(207, 135, 1);
+  animation: rotate4 2s linear infinite;
+}
+
+@keyframes rotate4 {
+  from {
+    transform: rotateX(70deg) rotateZ(270deg);
+  }
+
+  to {
+    transform: rotateX(70deg) rotateZ(630deg);
+  }
+}
+/* Improving visualization in light mode */
+</style>

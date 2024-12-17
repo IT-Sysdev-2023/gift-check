@@ -9,7 +9,8 @@ class Suppliergc extends Model
 {
     use HasFactory;
 
-    protected $table= 'suppliergc';
-
-    protected $primaryKey= 'suppgc_id';
+    protected $table = 'suppliergc';
+    protected $guarded = [];
+    protected $primaryKey = 'suppgc_id';
+    public $timestamps = false;
 }

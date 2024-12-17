@@ -5,9 +5,11 @@
                 GC Barcode #{{ barcodeNumber }} POS Transaction
             </div>
         </a-card>
-        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
-            <a-input-search allow-clear v-model:value="alturasSearch" style="width: 90%;" enter-button />
+
+        <div class="input-wrapper">
+            <input type="search" placeholder="Input search here..." name="text" class="input" v-model="alturasSearch"/>
         </div>
+
         <div style="margin-top: 10px;">
             <a-table :data-source="data.data" :columns="alturasPosTransaction" :pagination="false" size="small">
             </a-table>
@@ -19,9 +21,9 @@
     <!-- {{ data }} -->
 </template>
 <script>
-// import { defineComponent } from '@vue/composition-api'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
+import { notification } from 'ant-design-vue';
 export default {
     components: { Pagination },
     layout: AuthenticatedLayout,
@@ -79,7 +81,18 @@ export default {
     },
     watch: {
         alturasSearch(search) {
-            console.log(search);
+           const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             this.$inertia.get(route('storeaccounting.ubayDistributionPosTransaction', this.barcodeNumber), {
                 search: search
             }, {

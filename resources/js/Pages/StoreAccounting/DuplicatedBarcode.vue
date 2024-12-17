@@ -17,11 +17,28 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+                                <div v-if="isloading">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="cebuTagbilaranSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="cebuTagbilaranSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tagbilaran
@@ -50,11 +67,28 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+                             <div v-if="isloading">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="cebuTalibonSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="cebuTalibonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Talibon
@@ -75,6 +109,19 @@
                             </span>
                         </a-tab-pane>
                         <a-tab-pane key="3">
+                         <div v-if="isloading">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
                             <template #tab>
                                 <span style="font-weight: bold;">
                                     <DashOutlined />
@@ -82,11 +129,16 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="cebuTubigonSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="cebuTubigonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tubigon
@@ -121,22 +173,35 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px;">
-                        <span :style="{ fontSize: iconSize + 'px' }">
+                        <!-- <span :style="{ fontSize: iconSize + 'px' }">
                             <FileSearchOutlined />
-                        </span>
+                        </span> -->
 
-                        <a-input type="file" id="barcodeFile" @change="handleFileChange"
-                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" />
+                        <div class="container">
+                            <div class="folder">
+                                <div class="front-side">
+                                    <div class="tip"></div>
+                                    <div class="cover"></div>
+                                </div>
+                                <div class="back-side cover"></div>
+                            </div>
+                            <label class="custom-file-upload">
+                                <input class="title" type="file" @change="handleFileChange" />
+                                Choose a file
+                            </label>
+                        </div>
+
+                        <!-- <a-input type="file" id="barcodeFile" @change="handleFileChange"
+                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" /> -->
                     </div>
-                    <div style="margin-top: 10px;">
-                        <span v-if="textfile && !cebu.selectedCebuFile" style="color:green; font-weight: bold;">Selected
-                            TextFile: </span>
-                        <span style="margin-left: 5px; text-decoration: underline;">
+                    <div style="margin-top: 20px;">
+                        <span v-if="textfile" style="color:green; font-weight: bold;">Select: </span>
+                        <span style="margin-left: 10x;">
                             {{ this.textfile }}
                         </span>
-                        <span v-if="cebu.selectedCebuFile" style="font-weight: bold; color:green">Selected
+                        <span v-if="cebu.selectedCebuFile && !textfile" style="font-weight: bold; color:green">Selected
                             TextFile:</span>
-                        <span style="margin-left: 5px; text-decoration: underline;">
+                        <span style="margin-left: 5px;">
                             {{ this.cebu.selectedCebuFile }}
                         </span>
                         <span v-if="!textfile && !cebu.selectedCebuFile" style="font-weight: bold;">
@@ -177,11 +242,28 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+                             <div v-if="isloadingAltta">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="alttaTagbilaranSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="alttaTagbilaranSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tagbilaran
@@ -210,11 +292,29 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+                                <div v-if="isloadingAltta">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
+
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="alttaTalibonSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="alttaTalibonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px;">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Talibon
@@ -243,11 +343,29 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div style="margin-left: 60%;">
+                                <div v-if="isloadingAltta">
+                            <div>
+<div id="page">
+        <div id="container">
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div id="ring"></div>
+            <div style="font-weight: bold;" id="h3">Generating EXCEL please wait...</div>
+        </div>
+</div>
+                            </div>
+                    	</div>
+
+                                <div class="input-wrapper">
+                                    <input type="search" placeholder="Input search here..." name="text" class="input"
+                                        v-model="alttaTubigonSearch" />
+                                </div>
+                                <!-- <div style="margin-left: 60%;">
 
                                     <a-input-search allow-clear v-model:value="alttaTubigonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%;  " />
-                                </div>
+                                </div> -->
                                 <div style=" margin-top: 10px">
                                     <span style="font-weight: bold; margin-left: 40%;">
                                         Table Showing Tubigon
@@ -284,23 +402,38 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px;">
-                        <span :style="{ fontSize: iconSize + 'px' }">
+                        <!-- <span :style="{ fontSize: iconSize + 'px' }">
                             <FileSearchOutlined />
-                        </span>
+                        </span> -->
 
-                        <a-input type="file" id="barcodeFile" @change="handleFileChangeAltta"
+                        <div class="container">
+                            <div class="folder">
+                                <div class="front-side">
+                                    <div class="tip"></div>
+                                    <div class="cover"></div>
+                                </div>
+                                <div class="back-side cover"></div>
+                            </div>
+                            <label class="custom-file-upload">
+                                <input class="title" type="file" @change="handleFileChangeAltta" />
+                                Choose a file
+                            </label>
+                        </div>
+
+                        <!-- <a-input type="file" id="barcodeFile" @change="handleFileChangeAltta"
                             enctype="multipart/form-data"
-                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" />
+                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" /> -->
                     </div>
-                    <div style="margin-top: 10px;">
-                        <span v-if="altaTextFile" style="color:green; font-weight: bold;">Selected TextFile: </span>
-                        <span style="margin-left: 5px; text-decoration: underline;">
+                    <div style="margin-top: 20px;">
+                        <span v-if="altaTextFile" style="color:green; font-weight: bold;">Select: </span>
+                        <span style="margin-left: 5px;">
                             {{ this.altaTextFile }}
                         </span>
 
-                        <span v-if="altta.selectedFile" style="color:green; font-weight: bold;">Selected
+                        <span v-if="altta.selectedFile && !altaTextFile"
+                            style="color:green; font-weight: bold;">Selected
                             TextFile:</span>
-                        <span style="margin-left: 5px; text-decoration: underline;">
+                        <span style="margin-left: 5px;">
                             {{ this.altta.selectedFile }}
                         </span>
 
@@ -327,7 +460,6 @@
         </a-tabs>
     </a-card>
 </template>
-
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { TagsOutlined, FileSearchOutlined, CheckOutlined, PlayCircleFilled } from '@ant-design/icons-vue';
@@ -338,6 +470,7 @@ import { message, Modal } from 'ant-design-vue';
 import ColumnGroup from 'ant-design-vue/es/vc-table/sugar/ColumnGroup';
 import Pagination from '@/Components/Pagination.vue';
 import { mapState } from 'pinia';
+import axios from 'axios';
 
 
 export default {
@@ -349,6 +482,10 @@ export default {
     },
     data() {
         return {
+            isloading: false,
+            isloadingAltta: false,
+
+
             cebuTagbilaranSearch: this.cebu.tagbilaranSearch,
             cebuTalibonSearch: this.cebu.talibonSearch,
             cebuTubigonSearch: this.cebu.tubigonSearch,
@@ -447,7 +584,18 @@ export default {
     },
     watch: {
         cebuTagbilaranSearch(search) {
-            console.log(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const data = {
                 search1: search,
                 barcodes: this.cebu.cebu
@@ -460,7 +608,18 @@ export default {
             })
         },
         cebuTalibonSearch(search) {
-            console.log(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const data1 = {
                 search2: search,
                 barcodes: this.cebu.cebu
@@ -472,7 +631,18 @@ export default {
             })
         },
         cebuTubigonSearch(search) {
-            console.log(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             const data2 = {
                 search3: search,
                 barcodes: this.cebu.cebu
@@ -484,7 +654,18 @@ export default {
             })
         },
         alttaTagbilaranSearch(search) {
-            console.log(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             // const data4 = {
             //     search4: search,
             //     // alttaBarcodeSearch: this.altta.alttaTable,
@@ -499,7 +680,18 @@ export default {
             })
         },
         alttaTalibonSearch(search) {
-            console.log(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             this.$inertia.get(route('storeaccounting.DuplicatedBarcodes'), {
                 search5: search,
                 AlttaData: this.altta.alttaTable
@@ -508,7 +700,18 @@ export default {
             })
         },
         alttaTubigonSearch(search) {
-            console.log(search);
+             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             this.$inertia.get(route('storeaccounting.DuplicatedBarcodes'), {
                 search6: search,
                 AlttaData: this.altta.alttaTable
@@ -537,7 +740,38 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                    window.location.href = route('storeaccounting.barcodes', { barcodes: data })
+                    this.isloadingAltta = true;
+                    axios({
+                        method: 'get',
+                        url: route('storeaccounting.barcodes'),
+                        responseType: 'blob',
+                        params: {
+                            barcodes: data
+                        }
+                    })
+                        .then((response) => {
+                            const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                            const fileLink = document.createElement('a');
+                            fileLink.href = fileURL;
+                            fileLink.setAttribute('download', 'Altta Release-file Excel.xlsx');
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                            document.body.removeChild(fileLink);
+
+                            // hideLoading();
+                            this.isloadingAltta = false;
+                            message.success('EXCEL generated successfully!', 5);
+                        })
+                        .catch((error) => {
+                            console.error('Error generating EXCEL:', error);
+                            hideLoading();
+                            notification.error({
+                                message: 'Error',
+                                description: 'Failed to generate EXCEL. Please try again later.',
+                                placement: 'topRight',
+                            });
+                        });
+                    // window.location.href = route('storeaccounting.barcodes', { barcodes: data })
                 },
                 onCancel: () => {
                     console.log('Cancel');
@@ -638,7 +872,38 @@ export default {
                 okText: 'Yes',
                 cancelText: 'No',
                 onOk: () => {
-                    window.location.href = route('storeaccounting.barcodes', { barcodes: data });
+                    this.isloading = true;
+                    axios({
+                        method: 'get',
+                        url: route('storeaccounting.barcodes'),
+                        responseType: 'blob',
+                        params: {
+                            barcodes: data
+                        }
+                    })
+                    .then((response) => {
+                            const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                            const fileLink = document.createElement('a');
+                            fileLink.href = fileURL;
+                            fileLink.setAttribute('download', 'Duplicate Barcode-file Excel.xlsx');
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                            document.body.removeChild(fileLink);
+
+                            // hideLoading();
+                            this.isloading = false;
+                            message.success('EXCEL generated successfully!', 5);
+                        })
+                        .catch((error) => {
+                         console.error('Error generating EXCEL:', error);
+                            hideLoading();
+                            notification.error({
+                                message: 'Error',
+                                description: 'Failed to generate EXCEL. Please try again later.',
+                                placement: 'topRight',
+                            });
+                        });
+                    // window.location.href = route('storeaccounting.barcodes', { barcodes: data });
                 },
                 onCancel() {
                     console.log('Cancel');
@@ -727,7 +992,7 @@ export default {
 
 };
 </script>
-<style scoped>
+<!-- <style scoped>
 @keyframes wave {
 
     0%,
@@ -744,5 +1009,233 @@ export default {
 
 .wave-animation {
     animation: wave 1s infinite;
+}
+</style> -->
+<style scope>
+.input-wrapper input {
+    background-color: whitesmoke;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 16em;
+    border-radius: 2rem;
+    color: black;
+    box-shadow: 0 0.4rem #1e90ff;
+    cursor: pointer;
+    margin-left: 70%;
+}
+
+.input-wrapper input:focus {
+    outline-color: whitesmoke;
+}
+/*select folder css*/
+.container {
+    --transition: 350ms;
+    --folder-W: 80px;
+    --folder-H: 60px;
+    margin-top:80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px;
+    background: linear-gradient(135deg, #6dd5ed, #2193b0);
+    border-radius: 15px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    height: calc(var(--folder-H) * 1.7);
+    position: relative;
+}
+
+.folder {
+    position: absolute;
+    top: -20px;
+    left: calc(50% - 60px);
+    animation: float 2.5s infinite ease-in-out;
+    transition: transform var(--transition) ease;
+}
+
+.folder:hover {
+    transform: scale(1.05);
+}
+
+.folder .front-side,
+.folder .back-side {
+    position: absolute;
+    transition: transform var(--transition);
+    transform-origin: bottom center;
+}
+
+.folder .back-side::before,
+.folder .back-side::after {
+    content: "";
+    display: block;
+    background-color: white;
+    opacity: 0.5;
+    z-index: 0;
+    width: var(--folder-W);
+    height: var(--folder-H);
+    position: absolute;
+    transform-origin: bottom center;
+    border-radius: 15px;
+    transition: transform 350ms;
+    z-index: 0;
+}
+
+.container:hover .back-side::before {
+    transform: rotateX(-5deg) skewX(5deg);
+}
+
+.container:hover .back-side::after {
+    transform: rotateX(-15deg) skewX(12deg);
+}
+
+.folder .front-side {
+    z-index: 1;
+}
+
+.container:hover .front-side {
+    transform: rotateX(-40deg) skewX(15deg);
+}
+
+.folder .tip {
+    background: linear-gradient(135deg, #ff9a56, #ff6f56);
+    width: 80px;
+    height: 20px;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: -10px;
+    z-index: 2;
+}
+
+.folder .cover {
+    background: linear-gradient(135deg, #ffe563, #ffc663);
+    width: var(--folder-W);
+    height: var(--folder-H);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.custom-file-upload {
+    font-size: 1.1em;
+    color: #ffffff;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background var(--transition) ease;
+    display: inline-block;
+    width: 100%;
+    padding: 10px 35px;
+    position: relative;
+}
+
+.custom-file-upload:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.custom-file-upload input[type="file"] {
+    display: none;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+/* From Uiverse.io by Vazafirst */
+#page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+#h3 {
+  color: rgb(82, 79, 79);
+}
+
+#ring {
+  width: 190px;
+  height: 190px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  position: absolute;
+}
+
+#ring:nth-child(1) {
+  border-bottom: 8px solid rgb(240, 42, 230);
+  animation: rotate1 2s linear infinite;
+}
+
+@keyframes rotate1 {
+  from {
+    transform: rotateX(50deg) rotateZ(110deg);
+  }
+
+  to {
+    transform: rotateX(50deg) rotateZ(470deg);
+  }
+}
+
+#ring:nth-child(2) {
+  border-bottom: 8px solid rgb(240, 19, 67);
+  animation: rotate2 2s linear infinite;
+}
+
+@keyframes rotate2 {
+  from {
+    transform: rotateX(20deg) rotateY(50deg) rotateZ(20deg);
+  }
+
+  to {
+    transform: rotateX(20deg) rotateY(50deg) rotateZ(380deg);
+  }
+}
+
+#ring:nth-child(3) {
+  border-bottom: 8px solid rgb(3, 170, 170);
+  animation: rotate3 2s linear infinite;
+}
+
+@keyframes rotate3 {
+  from {
+    transform: rotateX(40deg) rotateY(130deg) rotateZ(450deg);
+  }
+
+  to {
+    transform: rotateX(40deg) rotateY(130deg) rotateZ(90deg);
+  }
+}
+
+#ring:nth-child(4) {
+  border-bottom: 8px solid rgb(207, 135, 1);
+  animation: rotate4 2s linear infinite;
+}
+
+@keyframes rotate4 {
+  from {
+    transform: rotateX(70deg) rotateZ(270deg);
+  }
+
+  to {
+    transform: rotateX(70deg) rotateZ(630deg);
+  }
 }
 </style>

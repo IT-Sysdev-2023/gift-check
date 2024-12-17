@@ -13,9 +13,7 @@
                 v-for="denom of denoms"
                 :key="denom.denomination"
                 :tab="denom.denomination_format"
-                ></a-tab-pane
-            >
-            
+            ></a-tab-pane>
         </a-tabs>
         <a-table
             bordered
@@ -47,38 +45,37 @@
 </template>
 
 <script lang="ts" setup>
-import axios from "axios";
+import { AxiosOnPaginationTypes } from "@/types";
+import { AllocatedGcTypes, StoreDenomination } from "@/types/treasury";
 import { ref } from "vue";
 
 const activeKey = ref("all");
-const props = defineProps<{
+defineProps<{
     title: string;
-    denoms: any;
+    denoms: StoreDenomination[] | null;
     open: boolean;
     data: {
-        data: any[];
+        data: AllocatedGcTypes[];
     };
     columns: {
         title: string;
         dataIndex: string;
     }[];
 }>();
+
 const emit = defineEmits<{
     (e: "update:open", value: boolean): void;
-    (e: "handlePagination", link): void;
-    (e: "handleTabChange", value): void;
+    (e: "handlePagination", link: AxiosOnPaginationTypes): void;
+    (e: "handleTabChange", value: string): void;
 }>();
 
 const handleClose = () => {
     emit("update:open", false);
 };
-const handleTab = (val) =>{
+const handleTab = (val: string) => {
     emit("handleTabChange", val);
-}
-const getValue = (record, index) => {
-    return index.reduce((acc, index) => acc[index], record);
 };
-const onChangePagination = async (link) => {
+const onChangePagination = async (link: AxiosOnPaginationTypes) => {
     emit("handlePagination", link);
 };
 </script>

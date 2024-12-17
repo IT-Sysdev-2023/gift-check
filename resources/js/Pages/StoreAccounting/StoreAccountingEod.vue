@@ -5,10 +5,16 @@
                 EOD Date: {{ selectedEODDate }}
             </div>
         </a-card>
-        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
+
+        <div class="input-wrapper">
+            <input type="search" placeholder="Input search here..." name="text" class="input" v-model="searchTerm" />
+        </div>
+
+        <!-- <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
             <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here!" enter-button
                 style="width:90%;" />
-        </div>
+        </div> -->
+
         <div style="margin-top: 10px;">
             <a-table :data-source="data.data" :columns="searchColumns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
@@ -64,6 +70,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Modal } from 'ant-design-vue';
 import { DatabaseOutlined } from '@ant-design/icons-vue';
 import Pagination from '@/Components/Pagination.vue';
+import { notification } from 'ant-design-vue';
 export default {
     layout: AuthenticatedLayout,
     props: {
@@ -182,6 +189,18 @@ export default {
     },
     watch: {
         searchTerm(search) {
+            const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if (searchValidation.test(search)){
+             const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message:'Invalid input',
+                        description: 'Search contains invalid symbols or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                    openNotificationWithIcon('warning');
+                    return;
+            }
             this.$inertia.get(route('storeaccounting.storeeod', this.ideod), {
                 search: search,
 
@@ -229,3 +248,23 @@ export default {
 }
 
 </script>
+<style scoped>
+/* From Uiverse.io by adamgiebl */
+.input-wrapper input {
+    background-color: whitesmoke;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 16em;
+    border-radius: 2rem;
+    color: black;
+    box-shadow: 0 0.4rem #1e90ff;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 70%;
+}
+
+.input-wrapper input:focus {
+    outline-color: whitesmoke;
+}
+</style>

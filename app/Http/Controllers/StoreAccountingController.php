@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StoreAccounting\VerifiedGcReportMultiExport;
+use App\Models\Store;
+use App\Models\StoreLocalServer;
+use App\Services\Documents\ExportHandler;
 use Exception;
 use Illuminate\Support\Str;
 
@@ -10,7 +14,6 @@ use Illuminate\Pagination\Paginator;
 use Carbon\Carbon;
 use App\Models\User;
 use Inertia\Inertia;
-use App\Models\Store;
 use App\Models\Customer;
 use App\Models\StoreEod;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -49,6 +52,7 @@ use App\Exports\DuplicateBarcodeExcel\allDuplicateExcel;
 use App\Exports\SPGCApprovedExcel\allApprovedExcel;
 use App\Exports\SPGCReleasedExcel\allReleasedExcel;
 use App\Exports\VerifiedGCReportMonthly\allVerifiedReport;
+use Illuminate\Database\Query\Builder;
 
 class StoreAccountingController extends Controller
 {
@@ -388,7 +392,7 @@ class StoreAccountingController extends Controller
                 ->get();
 
 
-            // dd($payment->insp_trid);        
+            // dd($payment->insp_trid);
             if ($mainData) {
 
                 $data = InstitutTransactionsItem::select(
@@ -437,7 +441,7 @@ class StoreAccountingController extends Controller
                         'dateverify' => $newData->vs_date,
                         'verifyby' => $newData->fullname,
                         'rdateverify' => $newData->vs_reverifydate,
-                        'rverifyby' =>  $newData->vs_reverifyby,
+                        'rverifyby' => $newData->vs_reverifyby,
                         'customer' => $newData->customerFullname,
                         'used' => $newData->vs_tf_used,
                         'balanced' => $newData->vs_tf_balance,
@@ -449,7 +453,6 @@ class StoreAccountingController extends Controller
         }
 
         // elseif statement if the insp_paymentcustomer is equal to stores----------------------------
-
         elseif ($payment->insp_paymentcustomer == 'stores') {
             $mainData = ApprovedGcrequest::select(
                 'approved_gcrequest.agcr_request_id',
@@ -517,7 +520,7 @@ class StoreAccountingController extends Controller
                         'dateverify' => $newData->vs_date,
                         'verifyby' => $newData->fullname,
                         'rdateverify' => $newData->vs_reverifydate,
-                        'rverifyby' =>  $newData->vs_reverifyby,
+                        'rverifyby' => $newData->vs_reverifyby,
                         'customer' => $newData->customerFullname,
                         'used' => $newData->vs_tf_used,
                         'balanced' => $newData->vs_tf_balance,
@@ -528,7 +531,6 @@ class StoreAccountingController extends Controller
         }
 
         // elseif statement if the insp_paymentcustomer is equal to special external----------------------------
-
         elseif ($payment->insp_paymentcustomer == 'special external') {
             $mainData = SpecialExternalGcrequest::select(
                 'special_external_gcrequest.spexgc_id',
@@ -777,7 +779,7 @@ class StoreAccountingController extends Controller
             });
         }
         $viewStoreSalesData = $viewStoreSalesData->paginate(10)->withQueryString();
-        // ->orderByDesc('sales_id')->paginate(10)->withQueryString();	
+        // ->orderByDesc('sales_id')->paginate(10)->withQueryString();
 
 
         return Inertia::render('StoreAccounting/StoreAccountingViewStore', [
@@ -913,7 +915,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1006,7 +1009,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1098,7 +1102,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1191,7 +1196,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1284,7 +1290,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1376,7 +1383,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1468,7 +1476,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1560,7 +1569,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1652,7 +1662,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1744,7 +1755,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1836,7 +1848,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1928,7 +1941,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1940,18 +1954,68 @@ class StoreAccountingController extends Controller
     }
     public function verifiedGCReport()
     {
-        return Inertia::render('StoreAccounting/VerifiedGCReport');
+        return Inertia::render('StoreAccounting/VerifiedGCReport', [
+            'stores' => Store::selectStore()->get()
+        ]);
     }
 
     public function verifiedGcSubmit(Request $request)
     {
-
         return excel::download(new allVerifiedReport($request->all()), 'Verified Report.xlsx');
     }
 
     public function verifiedGcYearlySubmit(Request $request)
     {
-        dd($request->toArray());
+        // $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
+
+        // if ($isExists) {
+        //     $lserver = StoreLocalServer::where('stlocser_storeid', $request->selectedStore)
+        //         ->value('stlocser_ip');
+
+        //     $parts = collect(explode('.', $lserver));
+        //     $result = $parts->slice(2)->implode('.');
+
+        //     $server = DB::connection('mariadb-' . $result)->table('store_verification');
+        //     $data = self::getStoreVerification($server, $request);
+        // } else {
+        //     $data = self::getStoreVerification(new StoreVerification, $request);
+        // }
+        $doc= new VerifiedGcReportMultiExport($request->all(), $request->user());
+        (new ExportHandler())
+        ->setFolder('Reports')
+        ->setSubfolderAsUsertype($request->user()->usertype)
+        ->setFileName('SPGC Approved Report-' . $request->user()->user_id, $request->year)
+        ->exportDocument('excel', $doc, function($docu, $document){
+
+            // if($docu === 'excel'){
+            //     $document->progress['isDone'] = true;
+            //     AccountingReportEvent::dispatch($this->user, $document->progress, $document->reportId);
+            // }else{
+            //     $this->broadcastProgress($this->user, "Done", true);
+            // }
+        });
+
+        dd(1);
+    }
+    private static function getTextfile($server, $barcode)
+    {
+        return $server->table('store_eod_textfile_transactions')
+            ->select('seodtt_bu', 'seodtt_terminalno', 'seodtt_credpuramt')
+            ->where('seodtt_barcode', $barcode)->get();
+    }
+
+
+    private static function getStoreVerification($model, Request $request)
+    {
+        return $model->where(fn($q) =>
+            $q->whereYear('vs_date', $request->year)
+                ->orWhereYear('vs_reverifydate', $request->year))
+            ->where('vs_store', $request->selectedStore)
+            ->when($request->user()->username === 'flora2', function (Builder $builder) {
+                $builder->where('vs_gctype', 3);
+            })
+            ->limit(10)
+            ->get();
     }
     public function storeGCPurchasedReport()
     {
@@ -2085,7 +2149,7 @@ class StoreAccountingController extends Controller
                                         ' ',special_external_gcrequest_emp_assign.spexgcemp_lname) LIKE ? ", ["%$searchQuery%"])
                         ->orWhere('spexgcemp_denom', 'like', '%' . $searchQuery . '%')
                         ->orWhere('spexgc_num', 'like', '%' . $searchQuery . '%')
-                        ->orWhereRaw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') LIKE ?",  ["%$searchQuery%"])
+                        ->orWhereRaw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') LIKE ?", ["%$searchQuery%"])
                         ->orWhereRaw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%m/%d/%Y') LIKE ?", ["%$searchQuery%"]);
                 });
             })
@@ -2249,6 +2313,7 @@ class StoreAccountingController extends Controller
         $pdf = Pdf::loadView('pdf.approved', ['dataPerCustomer' => $perCustomer, 'dataPerBarcode' => $perBarcode]);
 
         return $pdf->download('Approved-file.pdf');
+
     }
 
     public function SPGCRelease(Request $request)
@@ -2332,8 +2397,8 @@ class StoreAccountingController extends Controller
                     $query->where('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'like', '%' . $searchTerm . '%')
                         ->orWhereRaw("DATE_FORMAT(special_external_gcrequest.spexgc_datereq, '%M %d %Y') LIKE ?", ["%$searchTerm%"])
                         ->orWhere('special_external_gcrequest_emp_assign.spexgcemp_denom', 'like', '%' . $searchTerm . '%')
-                        ->orWhereRaw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', 
-                    special_external_gcrequest_emp_assign.spexgcemp_mname, ' ', 
+                        ->orWhereRaw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ',
+                    special_external_gcrequest_emp_assign.spexgcemp_mname, ' ',
                     special_external_gcrequest_emp_assign.spexgcemp_lname) LIKE ?", ["%$searchTerm%"])
                         ->orWhere('special_external_gcrequest.spexgc_num', 'like', '%' . $searchTerm . '%')
                         ->orWhereRaw("DATE_FORMAT(approved_request.reqap_date, '%M %d %Y') LIKE ?", ["%$searchTerm%"]);
@@ -2550,12 +2615,12 @@ class StoreAccountingController extends Controller
                 'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
                 'store_verification.vs_date as verdate',
                 'store_verification.vs_time as vertime',
-                DB::raw("(CASE 
+                DB::raw("(CASE
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END) as store")
             )
             ->when($alttaTagbilaranSearch, function ($query) use ($alttaTagbilaranSearch) {
@@ -2573,7 +2638,7 @@ class StoreAccountingController extends Controller
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END)LIKE ?", ["%$alttaTagbilaranSearch%"]);
                 });
             })
@@ -2595,12 +2660,12 @@ class StoreAccountingController extends Controller
                 'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
                 'store_verification.vs_date as verdate',
                 'store_verification.vs_time as vertime',
-                DB::raw("(CASE 
+                DB::raw("(CASE
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END) as store")
             )
             ->when($talibonSearch, function ($query) use ($talibonSearch) {
@@ -2618,7 +2683,7 @@ class StoreAccountingController extends Controller
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END)LIKE ?", ["%$talibonSearch%"]);
                 });
             })
@@ -2640,12 +2705,12 @@ class StoreAccountingController extends Controller
                 'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
                 'store_verification.vs_date as verdate',
                 'store_verification.vs_time as vertime',
-                DB::raw("(CASE 
+                DB::raw("(CASE
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END) as store")
             )
             ->when($tubigonSearch, function ($query) use ($tubigonSearch) {
@@ -2663,7 +2728,7 @@ class StoreAccountingController extends Controller
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END)LIKE ?", ["%$tubigonSearch%"]);
                 });
             })
@@ -2710,12 +2775,12 @@ class StoreAccountingController extends Controller
                 'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
                 'store_verification.vs_date as verdate',
                 'store_verification.vs_time as vertime',
-                DB::raw("(CASE 
+                DB::raw("(CASE
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END) as store")
             )
             ->when($tagbilaranSearch, function ($query) use ($tagbilaranSearch) {
@@ -2733,7 +2798,7 @@ class StoreAccountingController extends Controller
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END)LIKE ?", ["%$tagbilaranSearch%"]);
                 });
             })
@@ -2754,12 +2819,12 @@ class StoreAccountingController extends Controller
                 'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
                 'store_verification.vs_date as verdate',
                 'store_verification.vs_time as vertime',
-                DB::raw("(CASE 
+                DB::raw("(CASE
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END) as store")
             )
             ->when($talibonSearch, function ($query) use ($talibonSearch) {
@@ -2777,7 +2842,7 @@ class StoreAccountingController extends Controller
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END)LIKE ?", ["%$talibonSearch%"]);
                 });
             })
@@ -2798,12 +2863,12 @@ class StoreAccountingController extends Controller
                 'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
                 'store_verification.vs_date as verdate',
                 'store_verification.vs_time as vertime',
-                DB::raw("(CASE 
+                DB::raw("(CASE
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END) as store")
             )
             ->when($tubigonSearch, function ($query) use ($tubigonSearch) {
@@ -2821,7 +2886,7 @@ class StoreAccountingController extends Controller
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END)LIKE ?", ["%$tubigonSearch%"]);
                 });
             })
@@ -2925,13 +2990,13 @@ class StoreAccountingController extends Controller
             $transno = $row->seodtt_transno ?? 'N/A';
 
             return [
-                'barcode'    => $row->spexgcemp_barcode,
-                'denom'      => number_format($row->spexgcemp_denom, 2),
-                'cusname'    => $row->cusname,
+                'barcode' => $row->spexgcemp_barcode,
+                'denom' => number_format($row->spexgcemp_denom, 2),
+                'cusname' => $row->cusname,
                 'verifydate' => $date,
-                'store'      => $store,
-                'transno'    => $transno,
-                'status'     => $status,
+                'store' => $store,
+                'transno' => $transno,
+                'status' => $status,
             ];
         });
 

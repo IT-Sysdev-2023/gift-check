@@ -55,13 +55,7 @@
                         >
                             <a-input-number
                                 style="width: 100%"
-                                :formatter="
-                                    (value) =>
-                                        `₱ ${value}`.replace(
-                                            /\B(?=(\d{3})+(?!\d))/g,
-                                            ','
-                                        )
-                                "
+                                :formatter="currencyFormatter"
                                 v-model:value="formState.budget"
                                 :min="0"
                                 @change="clearError('budget')"
@@ -131,16 +125,16 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import type { UploadChangeParam } from "ant-design-vue";
-import { ref } from "vue";
-import dayjs, { Dayjs } from "dayjs";
+import { currencyFormatter } from "@/Mixin/UiUtilities";
+import dayjs from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import type { UploadFile } from "ant-design-vue";
 import { PageWithSharedProps } from "@/types/index";
-import { onProgress } from "@/Mixin/UiUtilities";
+import { getError, onProgress } from "@/Mixin/UiUtilities";
+
 interface FormStateGc {
-    file: UploadFile;
+    file: UploadFile | null;
     budget: number;
     remarks: string;
     adjustmentType: string | null;
@@ -183,29 +177,16 @@ const onSubmit = () => {
         {
             onSuccess: ({ props }) => {
                 openLeftNotification(props.flash);
-                if (props.flash.success) {
+                if (props.flash?.success) {
                     router.visit(route("treasury.dashboard"));
-                    // stream.value = `data:application/pdf;base64,${props.flash.stream}`;
-                    // openIframe.value = true;
                 }
             },
-        }
+        },
     );
 };
 
 const categoryHandler = (cat: string) => {
     formState.adjustmentType = cat;
 };
-const closeIframe = () => {
-    router.visit(route("treasury.dashboard"));
-};
-const getErrorStatus = (field: string) => {
-    return formState.errors[field] ? "error" : "";
-};
-const getErrorMessage = (field: string) => {
-    return formState.errors[field];
-};
-const clearError = (field: string) => {
-    formState.errors[field] = null;
-};
+const { getErrorMessage, getErrorStatus, clearError } = getError(formState);
 </script>

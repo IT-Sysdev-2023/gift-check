@@ -9,7 +9,7 @@
             </template>
             <a-card>
                 <div class="flex justify-end">
-                    <a-input-search v-model:value="form.search" placeholder="input search text" style="width: 300px"
+                    <a-input-search allow-clear v-model:value="form.search" placeholder="input search text" style="width: 300px"
                         @search="onSearch" class="mb-2" />
                 </div>
                 <a-table size="small" bordered :data-source="record.data" :columns="columns" :pagination="false">

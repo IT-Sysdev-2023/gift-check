@@ -6,7 +6,9 @@
                 Back to Dashboard
             </a-button>
         </div>
-        <a-table :dataSource="data" :columns="columns" bordered size="small">
+        <a-input-search allow-clear enter-button placeholder="Input search here..." v-model:value="approvedGcRequestSearch" style="width:25%; margin-left:75%"/>
+
+        <a-table :dataSource="data.data" :columns="columns" bordered size="small" :pagination="false" style="margin-top: 10px">
             <template v-slot:bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'View'">
                     <a-button type="primary" @click="approvedSpexGcDetails(record)">
@@ -15,6 +17,13 @@
                 </template>
             </template>
         </a-table>
+        <pagination :datarecords="data" class="mt-5" />
+        <!-- {{ data }} -->
+        <a-modal v-model:open="openModal" @ok="okay">
+            <span style="color:red">
+                {{ this.searchMessage }}
+            </span>
+        </a-modal>
     </a-card>
     <a-drawer :placement="placement" :height="520" :closable="true" :open="open" @close="onClose">
         <a-tabs v-model:activeKey="activeKey">
@@ -85,8 +94,12 @@
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import axios from "axios";
+import Pagination from '@/Components/Pagination.vue';
+import {notification} from 'ant-design-vue';
+
 
 export default {
+  components: { Pagination },
     layout: AuthenticatedLayout,
 
     props: {
@@ -95,6 +108,9 @@ export default {
     },
     data() {
         return {
+            openModal: false,
+            searchMessage: '',
+            approvedGcRequestSearch: '',
             details: '',
             selectedData: null,
             open: false,
@@ -123,6 +139,28 @@ export default {
             return this.paymentTypeText();
         }
     },
+    watch: {
+        approvedGcRequestSearch(search){
+           const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+                }
+            this.$inertia.get(route('finance.approvedGc.approved'),{
+                search: search
+            },{
+                preserveState: true
+            });
+
+        }
+    },
     methods: {
         approvedSpexGcDetails(data) {
             axios.get(route('finance.approvedGc.selected.approved'), {
@@ -147,8 +185,11 @@ export default {
                 '5': 'On Account'
             };
             return this.selectedData ? paymentTypes[this.selectedData.spexgc_paymentype] || '' : '';
+        },
+        okay (){
+            this.openModal =false;
         }
 
     },
-};
+}
 </script>

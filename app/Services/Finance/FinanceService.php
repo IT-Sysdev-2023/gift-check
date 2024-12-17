@@ -3,10 +3,12 @@
 namespace App\Services\Finance;
 
 use App\Helpers\NumberHelper;
+use App\Models\ApprovedAdjustmentRequest;
 use App\Models\ApprovedBudgetRequest;
 use App\Models\Assignatory;
 use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
+use App\Models\CancelledAdjRequest;
 use App\Models\CancelledBudgetRequest;
 use App\Models\LedgerBudget;
 use App\Models\PromogcPreapproved;
@@ -14,6 +16,7 @@ use App\Models\User;
 use App\Services\Documents\FileHandler;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Faker\Core\Number;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
@@ -251,8 +254,9 @@ class FinanceService extends FileHandler
         });
     }
 
-    public function getApprovedBudget()
+    public function getApprovedBudget($request)
     {
+        $search = $request->search;
         $data = BudgetRequest::select(
             'br_id',
             'br_request',
@@ -263,6 +267,21 @@ class FinanceService extends FileHandler
             'br_requested_by',
             'br_request_status',
         )
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('br_id', 'like', '%' . $search . '%')
+                        ->orWhere('br_request', 'like', '%' . $search . '%')
+                        ->orWhere('br_requested_at', 'like', '%' . $search . '%')
+                        ->orWhere('br_no', 'like', '%' . $search . '%')
+                        ->orWhere('abr_approved_by', 'like', '%' . $search . '%')
+                        ->orWhere('abr_approved_at', 'like', '%' . $search . '%')
+                        ->orWhere('br_requested_by', 'like', '%' . $search . '%')
+                        ->orWhere('br_request_status', 'like', '%' . $search . '%')
+                        ->orWhereHas('user', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ['%' . $search . '%']);
+                        });
+                });
+            })
             ->with('user:user_id,firstname,lastname')
             ->leftJoin('approved_budget_request', 'abr_budget_request_id', '=', 'br_id')
             ->where('br_request_status', '1')
@@ -360,8 +379,149 @@ class FinanceService extends FileHandler
             ->where('prapp_reqid', $id)
             ->first();
     }
+    public function getAssigners()
+    {
 
-    public function bugdetAdSubmission($request) {
-        dd($request->all());
+        $data = Assignatory::whereIn('assig_dept', [request()->user()->usertype, '1'])->get();
+
+        $data->transform(function ($item) {
+            return (object) [
+                'value' => $item->assig_id,
+                'label' => $item->assig_name,
+            ];
+        });
+
+        return $data;
     }
+
+    private function currentBudget()
+    {
+        $ledger = LedgerBudget::select('bdebit_amt', 'bcredit_amt')->where('bcus_guide', '!=', 'dti')->get();
+
+        $debit = $ledger->sum('bdebit_amt');
+        $credit = $ledger->sum('bcredit_amt');
+
+        return $debit - $credit;
+    }
+
+    public function getLedgerNumber()
+    {
+        return LedgerBudget::orderBy('bledger_id')->take(1)->value('bledger_no') ?? 1;
+    }
+
+    public function bugdetAdSubmission($request)
+    {
+
+        // dd($request);
+        if ($request['atype'] === 'negative') {
+
+            $entry = 'bcredit_amt';
+
+            if ($request['adjrequest'] > $this->currentBudget()) {
+                return response()->json([
+                    'status' => 'error',
+                    'title' => 'Amount is greater than current budget'
+                ]);
+            }
+        } else {
+            $entry = 'bdebit_amt';
+        }
+
+        if ($request['status'] === '1') {
+            if ($request['bgroup'] === '1') {
+                if ($request['recapp'] !== '1') {
+                    $approved = false;
+                }
+            }
+
+            if ($approved) {
+
+                $this->folderName = 'approvedAdjustmentRequest';
+
+
+                DB::transaction(function () use ($request, $entry) {
+
+                    $file =  $this->createFileName($request);
+
+                    LedgerBudget::create([
+                        'bledger_no' => $this->getLedgerNumber(),
+                        'bledger_trid' => $request['id'],
+                        'bledger_datetime' => now(),
+                        'bledger_type' => 'BA',
+                        $entry => $request['adjrequest'],
+                        'bledger_typeid' =>  $request['btype'],
+                        'bledger_group' => $request['bgroup'],
+                    ]);
+
+                    ApprovedAdjustmentRequest::create([
+                        'app_adj_request_id' => $request['id'],
+                        'app_approved_by' => $request['appby'],
+                        'app_checked_by' => $request['checkby'],
+                        'app_approved_at' => now(),
+                        'app_prepared_by' => request()->user()->user_id,
+                        'app_adj_remark' => $request['remarks'],
+                        'app_file_doc_no' => $file ?? '',
+                        'app_ledgerefnum' => $this->getLedgerNumber(),
+                    ]);
+
+                    if ($this->getAdjustmentBudget($request['id']) === 0) {
+                        BudgetAdjustment::where('adj_id', $request['id'])->where('adj_request_status', '0')
+                            ->update([
+                                'adj_request_status' => $request['status']
+                            ]);
+                    } else {
+                        return response()->json([
+                            'status' => 'error',
+                            'title' => 'Error',
+                            'msg' => 'Adjustment Request already approved/cancelled'
+                        ]);
+                    }
+
+                    $this->saveFile($request, $file);
+                });
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'title' => 'Error',
+                    'msg' => 'Budget Adjustment Needs Recommendation Approval from Retail Group ' . $request['bgroup'] . '.'
+                ]);
+            }
+        }else{
+            DB::transaction(function () use ($request) {
+                BudgetAdjustment::where('adj_id', $request['id'])->where('adj_request_status', '0')->update([
+                    'adj_request_status' => $request['status'],
+                ]);
+
+              $cancelled =  CancelledAdjRequest::create([
+                    'cadj_req_id' => $request['id'],
+                    'cadj_at' => now(),
+                    'cadj_by' => request()->user()->user_id,
+                ]);
+
+                if($cancelled->wasRecentlyCreated){
+                    return response()->json([
+                        'status' => 'error',
+                        'title' => 'Error',
+                        'msg' => 'Budget Adjustment request cancelled.'
+                    ]);
+                }else{
+                    return response()->json([
+                        'status' => 'error',
+                        'title' => 'Error',
+                        'msg' => 'Budget Adjustment already approved/cancelled'
+                    ]);
+                }
+            });
+        }
+    }
+
+
+    private function getAdjustmentBudget($id)
+    {
+        return BudgetAdjustment::where('adj_id', $id)->value('adj_request_status');
+    }
+    // public function bugdetAdSubmission($request)
+    // {
+    //     dd($request->all());
+    // }
 }

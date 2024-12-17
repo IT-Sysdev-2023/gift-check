@@ -47,7 +47,7 @@ class verifiedReportMonthly implements FromCollection, WithTitle, WithHeadings, 
     public function collection()
     {
         $verifiedData = $this->perDay($this->verifiedMonthly);
-        dd($verifiedData);
+        // dd($verifiedData);
         return collect($verifiedData);
     }
 
@@ -74,11 +74,9 @@ class verifiedReportMonthly implements FromCollection, WithTitle, WithHeadings, 
 
     private function getConnection($storeId)
     {
-        // Check if the store has a local server connection and return the connection
         $store = DB::table('stores')->where('store_id', $storeId)->first();
 
         if ($store && $store->has_local) {
-            // Assume the local server connection details are stored in the 'store_local_server' table
             $localServer = DB::table('store_local_server')->where('stlocser_storeid', $storeId)->first();
 
             if ($localServer) {
@@ -86,13 +84,12 @@ class verifiedReportMonthly implements FromCollection, WithTitle, WithHeadings, 
             }
         }
 
-        return null; // Return null if no local server connection is found
+        return null; 
     }
 
     private function connectToLocalServer($localServer)
     {
-        // Attempt to connect to the local server
-        return @localserver_connect(
+        return @localserver(
             $localServer->stlocser_ip,
             $localServer->stlocser_username,
             $localServer->stlocser_password,

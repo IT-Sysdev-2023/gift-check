@@ -56,7 +56,9 @@
                         </a-row>
 
                         <a-form-item label="Budget" name="budget">
-                            <ant-input-number v-model:amount="formState.budget"/>
+                            <ant-input-number
+                                v-model:amount="formState.budget"
+                            />
                         </a-form-item>
 
                         <a-form-item label="Remarks:" name="remarks">
@@ -149,7 +151,6 @@
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
-
                 </a-card>
                 <a-card>
                     <a-statistic
@@ -162,7 +163,6 @@
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
-
                 </a-card>
                 <a-card>
                     <a-statistic
@@ -176,7 +176,6 @@
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
-
                 </a-card>
             </a-col>
         </a-row>
@@ -184,8 +183,7 @@
 </template>
 <script lang="ts" setup>
 import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayout.vue";
-import { ref } from "vue";
-import type { UploadChangeParam, UploadProps } from "ant-design-vue";
+import type { UploadChangeParam } from "ant-design-vue";
 import { usePage, useForm, router } from "@inertiajs/vue3";
 import dayjs, { Dayjs } from "dayjs";
 import {
@@ -219,7 +217,7 @@ const props = defineProps<{
 
 const page = usePage<PageProps>().props;
 
-const fileList = ref<UploadProps["fileList"]>([]);
+// const fileList = ref<UploadProps["fileList"]>([]);
 
 const formState = useForm<FormState>({
     brno: props.data.br_no,
@@ -232,10 +230,10 @@ const formState = useForm<FormState>({
     group: props.data.br_group,
     file: null,
 });
-const disabledDate = (current: Dayjs) => {
-    // Can not select days before today and today
-    return current && current < dayjs().startOf("day");
-};
+// const disabledDate = (current: Dayjs) => {
+//     // Can not select days before today and today
+//     return current && current < dayjs().startOf("day");
+// };
 const handleChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };

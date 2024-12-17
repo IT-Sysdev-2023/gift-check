@@ -64,7 +64,7 @@
                             label="Uploaded image preview:"
                             v-if="record.data.pe_file_docno"
                         >
-                            <ant-image-preview  :images="imagePreview"/>
+                            <ant-image-preview :images="imagePreview" />
                         </a-form-item>
 
                         <a-form-item
@@ -90,12 +90,26 @@
                                     <span>Quantity</span>
                                 </a-col>
                             </a-row>
-                            <a-row :gutter="16" class="mt-5" v-for="(item, index) of formState.denom" :key="index">
+                            <a-row
+                                :gutter="16"
+                                class="mt-5"
+                                v-for="(item, index) of formState.denom"
+                                :key="index"
+                            >
                                 <a-col :span="12">
-                                    <a-input :value="item.denomination_format" readonly class="text-end" />
+                                    <a-input
+                                        :value="item.denomination_format"
+                                        readonly
+                                        class="text-end"
+                                    />
                                 </a-col>
                                 <a-col :span="12" style="text-align: center">
-                                    <a-input-number id="inputNumber" v-model:value="item.qty" placeholder="0" :min="0">
+                                    <a-input-number
+                                        id="inputNumber"
+                                        v-model:value="item.qty"
+                                        placeholder="0"
+                                        :min="0"
+                                    >
                                         <template #upIcon>
                                             <ArrowUpOutlined />
                                         </template>
@@ -105,7 +119,10 @@
                                     </a-input-number>
                                 </a-col>
                             </a-row>
-                            <div class="mt-5 text-red-500 text-center" v-if="formState.errors.denom">
+                            <div
+                                class="mt-5 text-red-500 text-center"
+                                v-if="formState.errors.denom"
+                            >
                                 {{ formState.errors.denom }}
                             </div>
                         </a-card>
@@ -124,26 +141,24 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import type { UploadChangeParam } from "ant-design-vue";
 import dayjs from "dayjs";
 import { router, useForm } from "@inertiajs/vue3";
-import { FormStateGc } from "@/types/index";
-import { onProgress } from "@/Mixin/UiUtilities";
+import { getError, onProgress } from "@/Mixin/UiUtilities";
+import { ProductionRequest } from "@/types/treasury";
 
 const props = defineProps<{
     title?: string;
-    record: {data: any};
+    record: { data: ProductionRequest };
     denomination: {
         data: {
-            id: number,
-            denomination: number,
-            denomination_format: string,
-            qty: number
-        }[]
+            id: number;
+            denomination: number;
+            denomination_format: string;
+            qty: number;
+        }[];
     };
     remainingBudget: string;
 }>();
-
 const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
 
@@ -159,36 +174,25 @@ const imagePreview = [
     {
         uid: props.record.data.pe_id,
         name: props.record.data.pe_file_docno,
-        url: '/storage/productionRequestFile/' + props.record.data.pe_file_docno,
-    }
-]
+        url:
+            "/storage/productionRequestFile/" + props.record.data.pe_file_docno,
+    },
+];
 const { openLeftNotification } = onProgress();
-const handleChange = (file: UploadChangeParam) => {
-    formState.file = file.file;
-};
+// const handleChange = (file: UploadChangeParam) => {
+//     formState.file = file.file;
+// };
 
 const onSubmit = () => {
-    formState
-        .post(route("treasury.production.request.pendingSubmission"), {
-            onSuccess: ({ props }) => {
-                openLeftNotification(props.flash);
-                if (props.flash.success) {
-                    router.visit(route('treasury.dashboard'));
-                }
-            },
-        });
-};
-const getErrorStatus = (field: string) => {
-    // return formState.errors[field] ? "error" : "";
-};
-const getErrorMessage = (field: string) => {
-    // return formState.errors[field];
-};
-const clearError = (field: string) => {
-    // formState.errors[field] = null;
+    formState.post(route("treasury.production.request.pendingSubmission"), {
+        onSuccess: ({ props }) => {
+            openLeftNotification(props.flash);
+            if (props.flash?.success) {
+                router.visit(route("treasury.dashboard"));
+            }
+        },
+    });
 };
 
-const disabledDate = (current) => {
-    return current && current < new Date().setHours(0, 0, 0, 0);
-};
+const { getErrorMessage, getErrorStatus, clearError } = getError(formState);
 </script>

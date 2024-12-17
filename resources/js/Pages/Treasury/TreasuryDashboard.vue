@@ -9,7 +9,7 @@
         </template>
 
         <div class="py-0">
-            <div class="max-w-auto mx-auto sm:px-6 lg:px-8 ">
+            <div class="max-w-auto mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <a-row
@@ -87,8 +87,6 @@
                                         "
                                     />
                                 </m-card>
-                               
-                                
                             </a-col>
                             <a-col :span="8">
                                 <m-card
@@ -102,7 +100,7 @@
                                     :aRoute="storeGcReleased"
                                     :cRoute="storeGcCancelled"
                                 />
-                                
+
                                 <a-card
                                     title="Adjustment"
                                     class="mb-5 uppercase"
@@ -185,13 +183,13 @@ const routeTo = (type: string, status: string) => {
 
 // Budget request handlers
 const budgetRequestPending = computed(() =>
-    routeTo("budget.request", "pending")
+    routeTo("budget.request", "pending"),
 );
 const budgetRequestApproved = computed(() =>
-    routeTo("budget.request", "approved")
+    routeTo("budget.request", "approved"),
 );
 const budgetRequestCancelled = computed(() =>
-    routeTo("budget.request", "cancelled")
+    routeTo("budget.request", "cancelled"),
 );
 
 // Store GC request handlers
@@ -201,44 +199,44 @@ const storeGcCancelled = computed(() => routeTo("store.gc", "cancelled"));
 
 // GC Production request handlers
 const pendingProductionRequest = computed(() =>
-    routeTo("production.request", "pending")
+    routeTo("production.request", "pending"),
 );
 const approvedProductionRequest = computed(() =>
-    routeTo("production.request", "approved")
+    routeTo("production.request", "approved"),
 );
 const cancelledProductionRequest = computed(() =>
-    routeTo("production.request", "cancelled")
+    routeTo("production.request", "cancelled"),
 );
 
 //Special GC Request
 const specialGcPending = computed(() => routeTo("special.gc", "pending"));
 const gcReleasing = computed(() => routeTo("special.gc", "gcReleasing"));
 const specialReleasedGc = computed(() =>
-    routeTo("special.gc", "specialReleasedGc")
+    routeTo("special.gc", "specialReleasedGc"),
 );
-const reviewedGcReleasing = computed(() =>
-    routeTo("special.gc", "reviewedGcReleasing")
-);
+// const reviewedGcReleasing = computed(() =>
+//     routeTo("special.gc", "reviewedGcReleasing")
+// );
 const approvedRequest = computed(() =>
-    routeTo("special.gc", "approvedRequest")
+    routeTo("special.gc", "approvedRequest"),
 );
 const cancelledSpecialRequest = computed(() =>
-    routeTo("special.gc", "cancelledRequest")
+    routeTo("special.gc", "cancelledRequest"),
 );
 
 //Adjustment
 const budgetAdjustments = computed(() =>
-    routeTo("adjustment", "budgetAdjustmentsUpdate")
+    routeTo("adjustment", "budgetAdjustmentsUpdate"),
 );
 const allocationAdjustment = computed(() =>
-    routeTo("adjustment", "allocation")
+    routeTo("adjustment", "allocation"),
 );
 
 //Promo Gc Released
 const promoGcReleased = computed(() => routeTo("promo.gc", "released"));
 //Institution Gc Sales
 const institutionGc = computed(() =>
-    routeTo("transactions.institution.gc.sales", "transaction")
+    routeTo("transactions.institution.gc.sales", "transaction"),
 );
 const eodList = computed(() => routeTo("transactions.eod", "eodList"));
 </script>

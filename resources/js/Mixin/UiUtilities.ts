@@ -4,7 +4,7 @@ import { ref } from "vue";
 import { InertiaForm } from "@inertiajs/vue3";
 
 export function highlighten() {
-    const highlightText = (text: string, searchQuery: any) => {
+    const highlightText = (text: string, searchQuery: string) => {
         if (!searchQuery) return text;
         if (text != null) {
             const regex = new RegExp(searchQuery, "gi");

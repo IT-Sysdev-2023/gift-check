@@ -24,10 +24,8 @@
                         <a-form-item
                             label="Store:"
                             name="store"
-                            :validate-status="
-                                getErrorStatus(formState, 'store')
-                            "
-                            :help="getErrorMessage(formState, 'store')"
+                            :validate-status="getErrorStatus('store')"
+                            :help="getErrorMessage('store')"
                         >
                             <ant-select
                                 :options="stores"
@@ -105,7 +103,10 @@
                         </a-form-item>
 
                         <div>
-                            <div class="flex justify-end" style="margin-right: 80px;">
+                            <div
+                                class="flex justify-end"
+                                style="margin-right: 80px"
+                            >
                                 <a-form-item class="text-end">
                                     <a-button type="primary" html-type="submit"
                                         >Submit</a-button
@@ -224,7 +225,7 @@
                         key: 'validate',
                     },
                 ]"
-                :data-source="forAllocationData.data"
+                :data-source="forAllocationData?.data"
             >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key == 'denom'">
@@ -250,34 +251,37 @@
 </template>
 
 <script setup lang="ts">
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import { getError, onProgress } from "@/Mixin/UiUtilities";
+import {
+    Denomination,
+    GcAllocationForm,
+    HandleSelectTypes,
+    StoreDenomination,
+} from "@/types/treasury";
+import { AxiosOnPaginationTypes, ForAllocationTypes } from "@/types";
 
 const props = defineProps<{
     title: string;
-    stores: { value: number; label: string }[];
-    gcTypes: { value: number; label: string }[];
-    denoms: any[];
+    stores: HandleSelectTypes[];
+    gcTypes: HandleSelectTypes[];
+    denoms: Denomination[];
 }>();
 
 const activeScannedKey = ref("all");
 const allocatedData = ref([]);
-const allocatedGc = ref(null);
-const allDenoms = ref(null);
+const allocatedGc = ref<string | null>(null);
+const allDenoms = ref<StoreDenomination[] | null>(null);
 const currentDate = dayjs().format("MMM DD, YYYY");
 const openModal = ref(false);
-
-const forAllocationData = ref<any>([]);
+const forAllocationData = ref<ForAllocationTypes | null>(null);
 const gcAllocationModal = ref<boolean>(false);
-const formState = useForm<{
-    store: number;
-    gcType: number;
-    denomination: any[];
-}>({
+const { openLeftNotification } = onProgress();
+
+const formState = useForm<GcAllocationForm>({
     store: 0,
     gcType: 1,
     denomination: props.denoms.map((item) => ({
@@ -316,46 +320,42 @@ const columns = [
 
 const viewGcAllocation = async () => {
     const { data } = await axios.get(
-        route("treasury.transactions.gcallocation.forallocation")
+        route("treasury.transactions.gcallocation.forallocation"),
     );
     forAllocationData.value = data;
     gcAllocationModal.value = true;
 };
 
-const handleStoreChange = async (
-    value: number,
-    obj: { value: number; label: string }
-) => {
-    clearError(formState, "store");
+const handleStoreChange = async (_: number, obj: HandleSelectTypes) => {
+    clearError("store");
     allocatedGc.value = obj.label;
     formState.store = obj.value;
 
     const { data } = await axios.get(
         route("treasury.transactions.gcallocation.storeAllocation"),
-        { params: { store: formState.store, type: formState.gcType } }
+        { params: { store: formState.store, type: formState.gcType } },
     );
     allDenoms.value = data;
 };
 
-const forAllocationPagination = async (link) => {
+const forAllocationPagination = async (link: AxiosOnPaginationTypes) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
         forAllocationData.value = data;
     }
 };
 
-const handleGcTypeChange = async (value: number) => {
-    clearError(formState, "gcType");
-    formState.gcType = value;
+// const handleGcTypeChange = async (value: number) => {
+//     clearError("gcType");
+//     formState.gcType = value;
 
-    const { data } = await axios.get(
-        route("treasury.transactions.gcallocation.storeAllocation"),
-        { params: { store: formState.store, type: formState.gcType } }
-    );
-    allDenoms.value = data;
-};
+//     const { data } = await axios.get(
+//         route("treasury.transactions.gcallocation.storeAllocation"),
+//         { params: { store: formState.store, type: formState.gcType } }
+//     );
+//     allDenoms.value = data;
+// };
 
-const { openLeftNotification } = onProgress();
 const onSubmit = () => {
     formState
         .transform((data) => ({
@@ -364,7 +364,7 @@ const onSubmit = () => {
                 (item) =>
                     item.denomination !== 0 &&
                     item.qty !== 0 &&
-                    item.qty !== null
+                    item.qty !== null,
             ),
         }))
         .post(route("treasury.transactions.gcallocation.store"), {
@@ -383,12 +383,13 @@ const viewAllocatedGc = async () => {
                 store: formState.store,
                 type: formState.gcType,
             },
-        }
+        },
     );
     allocatedData.value = data;
     openModal.value = true;
 };
-const handleTabChange = async (value) => {
+
+const handleTabChange = async (value: string) => {
     const text = value == "all" ? "" : value;
     const { data } = await axios.get(
         route("treasury.transactions.gcallocation.viewAllocatedGc"),
@@ -398,11 +399,11 @@ const handleTabChange = async (value) => {
                 type: formState.gcType,
                 search: text,
             },
-        }
+        },
     );
     allocatedData.value = data;
 };
-const viewGcAllocationTab = async (value) => {
+const viewGcAllocationTab = async (value: string) => {
     const text = value == "all" ? "" : value;
     const { data } = await axios.get(
         route("treasury.transactions.gcallocation.forallocation"),
@@ -410,15 +411,15 @@ const viewGcAllocationTab = async (value) => {
             params: {
                 search: text,
             },
-        }
+        },
     );
     forAllocationData.value = data;
 };
-const onChangePagination = async (link) => {
+const onChangePagination = async (link: AxiosOnPaginationTypes) => {
     if (link.url) {
         const { data } = await axios.get(link.url);
         allocatedData.value = data;
     }
 };
-const { getErrorMessage, getErrorStatus, clearError } = getError();
+const { getErrorMessage, getErrorStatus, clearError } = getError(formState);
 </script>

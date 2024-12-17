@@ -12,7 +12,6 @@ class AllocationAdjustmentItem extends Model
     protected $primaryKey = 'addji_id';
 
     protected $guarded = [];
-
     public $timestamps = false;
 
     public function scopeFilterDenomination(Builder $builder, $filter)

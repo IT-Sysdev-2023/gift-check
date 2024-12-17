@@ -20,7 +20,9 @@ class VarianceExcel implements FromCollection, ShouldAutoSize, WithTitle, WithSt
 
     public function __construct($request)
     {
+        // dd();
         $this->VarianceData = $request;
+
     }
 
     public function collection()

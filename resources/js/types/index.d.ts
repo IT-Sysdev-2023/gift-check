@@ -1,3 +1,4 @@
+import type { InertiaPage } from "@inertiajs/core";
 export interface User {
     user_id: number;
     name: string;
@@ -64,46 +65,54 @@ export interface FormStateGc {
     dateNeeded: null;
 }
 
-export interface PaginationTypes {
-    data: any[];
+export interface PaginationMeta {
+    current_page: number;
+    from: number;
+    last_page: number;
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+}
+export interface PaginationTypes<T = unknown> {
+    data: T[];
     links: {
         first: string;
         last: string;
         prev: null;
         next: null;
     };
-    meta: {
-        current_page: number;
-        from: number;
-        last_page: number;
-        path: string;
-        per_page: number;
-        to: number;
-        total: number;
-    };
+    meta: PaginationMeta;
 }
+
+export interface ForAllocationTypes {
+    data: PaginationMeta;
+}
+export interface AxiosOnPaginationTypes {
+    active: boolean;
+    label: string;
+    url: string;
+}
+export interface AxiosPagination<T = unknown> {
+    links: AxiosOnPaginationTypes[];
+    data: T[];
+    from: number;
+    to: number;
+    total: number;
+}
+
+type DashboardStatus = Record<"pending" | "approved" | "cancelled", number>;
 
 export interface TreasuryDashboardTypes {
     data?: {
-        budgetRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-        };
+        budgetRequest: DashboardStatus;
         storeGcRequest: {
             pending: number;
             released: number;
             cancelled: number;
         };
-        gcProductionRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
-        };
-        specialGcRequest: {
-            pending: number;
-            approved: number;
-            cancelled: number;
+        gcProductionRequest: DashboardStatus;
+        specialGcRequest: DashboardStatus & {
             released: number;
             internalReviewed: number;
         };

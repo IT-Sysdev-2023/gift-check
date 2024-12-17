@@ -19,11 +19,10 @@
 </template>
 
 <script setup lang="ts">
-
 interface Props {
     label: string;
     routeTo: string;
-    count: number;
+    count: number | string;
     color?: string;
 }
 

@@ -38,10 +38,8 @@
                         <a-form-item
                             label="Received By:"
                             name="rec"
-                            :validate-status="
-                                getErrorStatus(formState, 'receivedBy')
-                            "
-                            :help="getErrorMessage(formState, 'receivedBy')"
+                            :validate-status="getErrorStatus('receivedBy')"
+                            :help="getErrorMessage('receivedBy')"
                         >
                             <a-input
                                 v-model:value="formState.receivedBy"
@@ -53,10 +51,8 @@
                         <a-form-item
                             label="Check By:"
                             name="check"
-                            :validate-status="
-                                getErrorStatus(formState, 'checkedBy')
-                            "
-                            :help="getErrorMessage(formState, 'checkedBy')"
+                            :validate-status="getErrorStatus('checkedBy')"
+                            :help="getErrorMessage('checkedBy')"
                         >
                             <ant-select
                                 :options="checkBy"
@@ -66,10 +62,8 @@
                         <a-form-item
                             label="Remarks:"
                             name="re"
-                            :validate-status="
-                                getErrorStatus(formState, 'remarks')
-                            "
-                            :help="getErrorMessage(formState, 'remarks')"
+                            :validate-status="getErrorStatus('remarks')"
+                            :help="getErrorMessage('remarks')"
                         >
                             <a-textarea
                                 v-model:value="formState.remarks"
@@ -84,11 +78,9 @@
                                     label="Customer:"
                                     name="cus"
                                     :validate-status="
-                                        getErrorStatus(formState, 'customer')
+                                        getErrorStatus('customer')
                                     "
-                                    :help="
-                                        getErrorMessage(formState, 'customer')
-                                    "
+                                    :help="getErrorMessage('customer')"
                                 >
                                     <ant-select
                                         :options="customer"
@@ -99,14 +91,9 @@
                                     label="Payment Fund:"
                                     name="fund"
                                     :validate-status="
-                                        getErrorStatus(formState, 'paymentFund')
+                                        getErrorStatus('paymentFund')
                                     "
-                                    :help="
-                                        getErrorMessage(
-                                            formState,
-                                            'paymentFund',
-                                        )
-                                    "
+                                    :help="getErrorMessage('paymentFund')"
                                 >
                                     <ant-select
                                         :options="paymentFund"
@@ -347,5 +334,5 @@ const handlePaymentFund = (value) => {
     formState.paymentFund = value;
     formState.clearErrors("paymentFund");
 };
-const { getErrorMessage, getErrorStatus } = getError();
+const { getErrorMessage, getErrorStatus } = getError(formState);
 </script>

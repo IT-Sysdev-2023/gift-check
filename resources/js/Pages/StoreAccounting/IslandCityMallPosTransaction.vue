@@ -5,10 +5,17 @@
                 GC Barcode #{{ barcodeNumber }} POS Transaction
             </div>
         </a-card>
+
+        <div class="input-wrapper">
+            <input type="search" placeholder="Input search here..." name="text" class="input"
+                v-model="alturasSearch" />
+        </div>
+<!--
         <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
             <a-input-search allow-clear v-model:value="alturasSearch" style="width: 90%;" enter-button
                 placeholder="Input search here!" />
-        </div>
+        </div> -->
+
         <div style="margin-top: 10;">
             <a-table :data-source="data.data" :columns="alturasPosTransaction" :pagination="false" size="small"
                 style="margin-top: 10px;">
@@ -27,6 +34,7 @@
 // import { defineComponent } from '@vue/composition-api'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
+import { notification } from 'ant-design-vue';
 export default {
     components: { Pagination },
     layout: AuthenticatedLayout,
@@ -84,7 +92,18 @@ export default {
     },
     watch: {
         alturasSearch(search) {
-            console.log(search);
+            const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+            if(searchValidation.test(search)){
+                const openNotificationWithIcon = (type) =>{
+                    notification[type]({
+                        message: 'Invalid input',
+                        description: 'Search contains invalid symbol or emojis',
+                        placement: 'topRight'
+                    });
+                };
+                openNotificationWithIcon('warning');
+                return;
+            }
             this.$inertia.get(route('storeaccounting.islandCityMallPosTransaction', this.barcodeNumber), {
                 search: search
             }, {
@@ -94,3 +113,22 @@ export default {
     }
 }
 </script>
+<style scope>
+.input-wrapper input {
+    background-color: whitesmoke;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 16em;
+    border-radius: 2rem;
+    color: black;
+    box-shadow: 0 0.4rem #1e90ff;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 70%;
+}
+
+.input-wrapper input:focus {
+    outline-color: whitesmoke;
+}
+</style>

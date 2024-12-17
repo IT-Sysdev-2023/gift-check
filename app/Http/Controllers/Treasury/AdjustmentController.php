@@ -138,8 +138,7 @@ class AdjustmentController extends Controller
                 if ($isSuccess->wasRecentlyCreated) {
                     $denom = collect($request->denomination);
                     if ($request->adjType == 'n') {
-                        $denom->each(function ($item, $key) use ($request, $isSuccess) {
-
+                        $denom->each(function ($item, $_) use ($request, $isSuccess) {
                             $r = Gc::whereHas('gcLocation', function ($q) use ($request) {
                                 $q->where([['loc_store_id', $request->store], ['loc_gc_type', $request->gcType]]);
                             })->where([['gc_allocated', '*'], ['gc_released', ''], ['denom_id', $item['denom_id']]])->orderByDesc('barcode_no')->limit($item['qty'])->get();
@@ -158,10 +157,10 @@ class AdjustmentController extends Controller
                         });
 
                     } else {
-                        $denom->each(function ($item, $key) use ($request, $isSuccess) {
-                            $gc = Gc::where([['gc_validated', '*'], ['denom_id', $item['denom_id'], ['gc_allocated', ''], ['gc_ispromo', ''], ['gc_cancelled', '']]])
+                        $denom->each(function ($item, $_) use ($request, $isSuccess) {
+                          
+                            $gc = Gc::where([ ['gc_validated', '*'], ['denom_id', $item['denom_id']], ['gc_allocated', ''], ['gc_ispromo', ''], ['gc_cancelled', '']])
                                 ->orderBy('gc_id')->limit($item['qty'])->get();
-
                             $gc->each(function ($q) use ($isSuccess, $request) {
                                 $barcode = $q->barcode_no;
 
@@ -173,6 +172,7 @@ class AdjustmentController extends Controller
                                 GcLocation::create([
                                     'loc_barcode_no' => $barcode,
                                     'loc_store_id' => $request->store,
+                                    'loc_rel' => '*',
                                     'loc_date' => now(),
                                     'loc_time' => now(),
                                     'loc_gc_type' => $request->gcType,
