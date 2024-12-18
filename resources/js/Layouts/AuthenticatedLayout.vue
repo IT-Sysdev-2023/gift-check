@@ -145,7 +145,12 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                         <UserOutlined />
                         <span>User Guide</span>
                     </a-menu-item>
-                    <a-menu-item key="menu-item-about-us">
+                    <a-menu-item
+                        key="menu-item-about-us"
+                        @click="
+                            () => $inertia.get(route('storeaccounting.storeAccountingAboutUs'))
+                        "
+                    >
                         <InfoCircleOutlined />
                         <span>About Us</span>
                     </a-menu-item>

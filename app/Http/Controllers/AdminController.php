@@ -93,9 +93,6 @@ class AdminController extends Controller
         $StoreStaff = StoreStaff::get();
         $access_page = AccessPage::get();
 
-        $selectEntries = $request->input('value', 10);
-        // $filterStore = $request->input('store', 'Select Store');
-
         $usersQuery = User::select(
             'users.user_id',
             'stores.store_id',
@@ -132,7 +129,7 @@ class AdminController extends Controller
             });
         }
         $users = $usersQuery->orderByDesc('users.user_id')
-            ->paginate($selectEntries)
+            ->paginate(10)
             ->withQueryString();
 
         $noDataFound = false;
@@ -317,7 +314,7 @@ class AdminController extends Controller
             'username' => 'required|max:50',
             'firstname' => 'required|max:50',
             'lastname' => 'required|max:50',
-            'emp_id' => 'required|max:15',
+            'emp_id' => 'required|integer',
             'employee_type' => 'required',
             'user_role' => [
                 Rule::requiredIf(function () use ($request) {

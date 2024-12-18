@@ -1966,6 +1966,7 @@ class StoreAccountingController extends Controller
 
     public function verifiedGcYearlySubmit(Request $request)
     {
+        // dd();
         // $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
 
         // if ($isExists) {
@@ -3070,5 +3071,9 @@ class StoreAccountingController extends Controller
     {
         // dd($request->toArray());
         return Excel::download(new VarianceCombinationExcel($request->toArray()), 'Variance Excel Generate.xlsx');
+    }
+
+    public function aboutUs(Request $request){
+        return inertia('AboutUs');
     }
 }
