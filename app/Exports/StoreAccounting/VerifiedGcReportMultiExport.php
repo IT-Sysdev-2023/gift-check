@@ -32,13 +32,13 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
         return [
             // Per Day
             new VerifiedGcReportPerDay($data, $this->progress, $this->reportId, $this->user),
-            
+
             //By Month Summary Per Day
             new VerifiedGcReportPerDayTransaction($this->requirements, $this->progress, $this->reportId, $this->user),
-            
+
             //By Gc Type & BU
             new VerifiedGcReportPerGcType($data, $this->requirements['selectedStore'], $this->progress, $this->reportId, $this->user),
-          
+
         ];
     }
 
@@ -66,7 +66,7 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
 
         $transformedData = collect();
 
-        $data->each(function ($q) use ($db, &$transformedData) {
+        $data->each(function ($q) use ($db, & $transformedData) {
 
             $balance = 0;
             $purchasecred = 0;
