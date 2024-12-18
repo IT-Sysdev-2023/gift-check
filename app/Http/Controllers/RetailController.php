@@ -35,6 +35,7 @@ use App\Models\TransactionRefund;
 use App\Models\TransactionRevalidation;
 use App\Models\TransactionSale;
 use App\Models\TransactionStore;
+use App\Models\TransferRequest;
 use App\Services\Admin\AdminServices;
 use App\Services\Finance\FinanceService;
 use App\Services\RetailStore\RetailServices;
@@ -867,7 +868,22 @@ class RetailController extends Controller
         return Inertia::render('Retail/SGC_item_setup');
     }
 
+    public function gctransferList()
+    {
+        $data = TransferRequest::select(
+            'transfer_request.tr_reqid',
+            'transfer_request.t_reqnum',
+            'transfer_request.t_reqdatereq',
+            'transfer_request.t_reqstatus',
+            'stores.store_name',
+            DB::raw("CONCAT(users.firstname, ' ', users.lastname) AS prepby")
+        )
+            ->leftJoin('stores', 'stores.store_id', '=', 'transfer_request.t_reqstoreto')
+            ->leftJoin('users', 'users.user_id', '=', 'transfer_request.t_reqby')
+            ->where('transfer_request.t_reqstoreby', '=', '1')
+            ->orderBy('transfer_request.tr_reqid', 'desc')
+            ->get();
+        dd($data->toArray());
 
-
-
+    }
 }
