@@ -15,7 +15,8 @@
                                 <a-form-item label="Username" has-feedback :help="form.errors.username"
                                     :validate-status="form.errors.username ? 'error' : ''
                                         ">
-                                    <a-input @keyup.enter="login" v-model:value="form.username" @change="form.errors.username = ''" />
+                                    <a-input @keyup.enter="login" v-model:value="form.username"
+                                        @change="form.errors.username = ''" />
                                 </a-form-item>
                                 <a-form-item label="Password" has-feedback :help="form.errors.password"
                                     :validate-status="form.errors.password ? 'error' : ''
@@ -62,6 +63,9 @@ const login = () => {
         },
         onSuccess: () => {
             form.reset()
+        },
+        onError: () => {
+            loading.value = false
         }
     })
 }
