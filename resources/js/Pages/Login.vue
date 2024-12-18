@@ -1,185 +1,69 @@
-<script setup lang="ts">
-import { useForm } from '@inertiajs/vue3';
-import InputError from '@/Components/InputError.vue';
-
-defineProps<{
-    canResetPassword?: boolean;
-    status?: string;
-}>();
-
-const form: any = useForm({
-    username: '',
-    password: '',
-    remember: false,
-});
-
-const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => {
-            form.reset('password');
-        },
-    });
-};
-</script>
-
 <template>
-    <a-row :gutter="[16, 16]" style="background-image: url('/bg-circuit.png');">
-        <a-col :span="12">
-            <div class="flex justify-center items-center" style="height: 90vh; margin-top: 30px;">
-                <img src="/gcicon.png" alt="logoimage">
+    <div class="h-screen bg-[#f3f4f6]" style="  display: flex; justify-content: center; align-items: center">
+        <div class="rounded"
+            style="height: 80%; width: 90%; display: flex; justify-content: center;align-items: center;">
+            <div style="width: 99%; height: 99%;">
+                <a-row style="height:500px; padding:0;margin: 0">
+                    <a-col :span="12" class="bg-white">
+                        <div style="height: 250px; display: flex; justify-content: center;align-items: center;">
+                            <div
+                                style="background-image: url('gcicon.png'); background-size: cover; height: 200px; width: 200px;">
+                            </div>
+                        </div>
+                        <div style="height: 300px; display: flex; justify-content: center; align-items: center;">
+                            <div style="height: 250px;  width: 400px;">
+                                <a-form-item label="Username" has-feedback :help="form.errors.username"
+                                    :validate-status="form.errors.username ? 'error' : ''
+                                        ">
+                                    <a-input @keyup.enter="login" v-model:value="form.username" @change="form.errors.username = ''" />
+                                </a-form-item>
+                                <a-form-item label="Password" has-feedback :help="form.errors.password"
+                                    :validate-status="form.errors.password ? 'error' : ''
+                                        ">
+                                    <a-input @keyup.enter="login" type="password" v-model:value="form.password"
+                                        @change="form.errors.password = ''" />
+                                </a-form-item>
+                                <div>
+                                    <div class="flex justify-center">
+                                        <a-button :loading="loading" @click="login" style="width: 200px;"
+                                            type="primary">Login</a-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a-col>
+                    <a-col class="bg-blue-100" :span="12">
+                        <div
+                            style="background-image: url('background.png'); background-size: cover; background-repeat: no-repeat; height: 100%;">
+                        </div>
+                    </a-col>
+                </a-row>
             </div>
-        </a-col>
-        <a-col :span="12">
-            <body>
-                <div class="container">
-                    <div class="login-box">
-                        <h2>Login</h2>
-                        <form action="#" @submit.prevent="submit">
-                            <div class="input-box">
-                                <input name="username" 
-                                       v-model="form.username" 
-                                       type="text" 
-                                       required>
-                                <label>Username</label>
-                                <InputError class="mt-2" :message="form.errors.username" />
-                            </div>
-                            <div class="input-box">
-                                <input name="password" 
-                                       v-model="form.password" 
-                                       type="password" 
-                                       required>
-                                <label>Password</label>
-                                <InputError class="mt-2" :message="form.errors.password" />
-                            </div>
-                            <button type="submit" class="btn">Login</button>
-                        </form>
-                    </div>
-                </div>
-            </body>
-        </a-col>
-    </a-row>
+        </div>
+    </div>
 </template>
 
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+<script setup>
+import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+
+const loading = ref(false);
+
+const form = useForm({
+    username: '',
+    password: '',
+});
+
+const login = () => {
+    form.post(route('login'), {
+        onStart: () => {
+            loading.value = true
+        },
+        onSuccess: () => {
+            form.reset()
+        }
+    })
 }
 
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.container {
-    position: relative;
-    width: 400px;
-    height: 400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow:  0px 0px 5px 2px floralwhite;
-    border-radius: 10px;
-}
-
-.container span {
-    position: absolute;
-    left: 0;
-    width: 32px;
-    height: 6px;
-    background: #2c4766;
-    border-radius: 8px;
-    transform-origin: 128px;
-    transform: scale(2.2) rotate(calc(var(--i) * (360deg / 50)));
-    animation: animateBlink 3s linear infinite;
-    animation-delay: calc(var(--i) * (3s / 50));
-}
-
-@keyframes animateBlink {
-    0% {
-        background: #0ef;
-    }
-
-    25% {
-        background: #2c4766;
-    }
-}
-
-.login-box {
-    position: absolute;
-    width: 400px;
-}
-
-.login-box form {
-    width: 100%;
-    padding: 0 50px;
-}
-
-h2 {
-    font-size: 2em;
-    color: #0ef;
-    text-align: center;
-}
-
-.input-box {
-    position: relative;
-    margin: 25px 0;
-}
-
-.input-box input {
-    width: 100%;
-    height: 50px;
-    background: transparent;
-    border: 2px solid #2c4766;
-    outline: none;
-    border-radius: 40px;
-    font-size: 1em;
-    color: #fff;
-    padding: 0 20px;
-    transition: .5s ease;
-}
-
-.input-box input:focus {
-    border-color: #0ef;
-}
-
-.input-box label {
-    position: absolute;
-    top: -10px; /* Position the label at the top */
-    left: 20px;
-    font-size: .8em; /* Smaller font size */
-    background: #1f293a;
-    padding: 0 6px;
-    color: #0ef;
-    transition: .5s ease;
-    border-radius: 5px;
-}
-
-
-
-.btn {
-    width: 100%;
-    height: 45px;
-    background: #0ef;
-    border: none;
-    outline: none;
-    border-radius: 40px;
-    cursor: pointer;
-    font-size: 1em;
-    color: #1f293a;
-    font-weight: 600;
-}
-
-
-
-p {
-    color: #fff;
-    font-size: .75rem;
-}
-</style>
+</script>
