@@ -59,7 +59,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
             'SOD' => 0,
             'WHOLESALE' => 0
         ];
-        
+
         $regular = [
             'SM' => 0,
             'HF' => 0,
@@ -89,7 +89,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
 
         $cntr = 0;
         $datedisplay = '';
-
+        // dd($this->data->sortByDesc('date'));
         $this->data->each(function ($item) use (&$amounts, &$special, &$bng, &$promo, &$regular, &$cntr, &$purchased, &$arr_perdate, &$datedisplay) {
 
             if ((float) $item['purchasecred'] > 0) {
@@ -97,7 +97,6 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                 $terminal = explode(",", $item['terminalno']);
                 $purchase = explode(",", $item['purchaseamt']);
 
-                // dd($purchase);
                 collect($terminal)->each(function ($item, $key) use ($purchase, &$amounts) {
                     $explodeTerminal = explode('-', $item)[0] ?? null;
 
@@ -112,8 +111,8 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                 'PROMOTIONAL GC' => ['target' => 'promo', 'array' => &$promo],
             ];
 
-            if (($cntr === 1) || $item['date'] === $datedisplay) {
-                $datedisplay = $item['date'];
+            // dump($item['date']);
+            if ($datedisplay === $item['date']) {
 
                 $mapping = $gcTypeMapping[$item['gc_type']];
 
@@ -123,7 +122,10 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                 $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
 
             } else {
-
+                // if ($item['date'] === "2018-12-31") {
+                //     dump($item['date']);
+                // }
+                $amounts = array_fill_keys(array_keys($amounts), 0);
                 $arr_perdate->push([
                     'arr_perdate' => $datedisplay,
                     'regular' => $purchased['regular'],
@@ -135,98 +137,78 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                     'terminalbng' => $bng,
                     'terminalpromo' => $promo
                 ]);
+                //Reset KEYS to Zero
+                $purchased = array_fill_keys(array_keys($purchased), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
+                $regular = array_fill_keys(array_keys($regular), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
+                $special = array_fill_keys(array_keys($special), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
+                $bng = array_fill_keys(array_keys($bng), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
+                $promo = array_fill_keys(array_keys($promo), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
 
-                //Reset to Zero
-                $this->resetArrays($regular, $special, $bng, $promo, $purchased);
-
-                $gcTypeMapping = [
-                    'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
-                    'REGULAR' => ['target' => 'regular', 'array' => &$regular],
-                ];
-
+                //Assign new data
                 $mapping = $gcTypeMapping[$item['gc_type']];
-
                 foreach ($amounts as $key => $value) {
                     $mapping['array'][$key] += $value; // Update corresponding array
                 }
-
                 $purchased[$mapping['target']] += $item['purchasecred'];
             }
 
+            $datedisplay = $item['date'];
             $amounts = array_fill_keys(array_keys($amounts), 0);
-
-            $cntr++;
-            if ($this->data->count() === $cntr) {
-                $arr_perdate->push([
-                    'arr_perdate' => $datedisplay,
-                    'regular' => $purchased['regular'],
-                    'special' => $purchased['special'],
-                    'bng' => $purchased['bng'],
-                    'promo' => $purchased['promo'],
-                    'terminalreg' => $regular,
-                    'terminalspec' => $special,
-                    'terminalbng' => $bng,
-                    'terminalpromo' => $promo
-                ]);
-            }
         });
 
+        // $Yarugay = $arr_perdate->filter(fn($i) => $i['arr_perdate'] !== '')->groupBy('arr_perdate');
+
+        dd($arr_perdate);
+
+        //Exclude the the empty date
         return $arr_perdate->filter(fn($i) => $i['arr_perdate'] !== '');
-    }
-    public function resetArrays(&$regular, &$special, &$bng, &$promo, &$purchased)
-    {
-        foreach ([$regular, $special, $bng, $promo, $purchased] as &$array) {
-            $array = array_fill_keys(array_keys($array), 0);
-        }
     }
 
     public function map($data): array
     {
-        dd($data);
-        // $this->broadcastProgress("Generating Barcode Records");
+
         return [
-            $data['arr_perdate'],
             [
+                $data['arr_perdate'],
                 'REGULAR',
+                $data['regular'],
+                $data['terminalreg']['SM'],
+                $data['terminalreg']['HF'],
+                $data['terminalreg']['MP'],
+                $data['terminalreg']['FR'],
+                $data['terminalreg']['WHOLESALE']
+            ],
+            [
+                '',
                 'SPECIAL EXTERNAL',
-                'BEAM AND GO'
+                $data['special'],
+                $data['terminalspec']['SM'],
+                $data['terminalspec']['HF'],
+                $data['terminalspec']['MP'],
+                $data['terminalspec']['FR'],
+                $data['terminalspec']['WHOLESALE'],
+
+            ],
+            [
+                '',
+                'BEAM AND GO',
+                $data['bng'],
+                $data['terminalbng']['SM'],
+                $data['terminalbng']['HF'],
+                $data['terminalbng']['MP'],
+                $data['terminalbng']['FR'],
+                $data['terminalbng']['WHOLESALE'],
+            ],
+            [
+                '',
+                'PROMOTIONAL GC',
+                $data['promo'],
+                $data['terminalpromo']['SM'],
+                $data['terminalpromo']['HF'],
+                $data['terminalpromo']['MP'],
+                $data['terminalpromo']['FR'],
+                $data['terminalpromo']['WHOLESALE'],
             ]
-            // [
-            //     $data['regular'],
-            //     $data['special'],
-            //     $data['bng'],
-            //     $data['promo'],
-            // ],
-            // [
-            //     $data['terminalreg']['SM'],
-            //     $data['terminalspec']['SM'],
-            //     $data['terminalbng']['SM'],
-            //     $data['terminalpromo']['SM'],
-            // ],
-            // [
-            //     $data['terminalreg']['HF'],
-            //     $data['terminalspec']['HF'],
-            //     $data['terminalbng']['HF'],
-            //     $data['terminalpromo']['HF'],
-            // ],
-            // [
-            //     $data['terminalreg']['MP'],
-            //     $data['terminalspec']['MP'],
-            //     $data['terminalbng']['MP'],
-            //     $data['terminalpromo']['MP'],
-            // ],
-            // [
-            //     $data['terminalreg']['FR'],
-            //     $data['terminalspec']['FR'],
-            //     $data['terminalbng']['FR'],
-            //     $data['terminalpromo']['FR'],
-            // ],
-            // [
-            //     $data['terminalreg']['WHOLESALE'],
-            //     $data['terminalspec']['WHOLESALE'],
-            //     $data['terminalbng']['WHOLESALE'],
-            //     $data['terminalpromo']['WHOLESALE'],
-            // ],
         ];
     }
     public function startCell(): string
