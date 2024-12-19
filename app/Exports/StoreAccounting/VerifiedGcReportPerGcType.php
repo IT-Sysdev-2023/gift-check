@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -24,7 +26,7 @@ use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 
-class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell
+class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell, WithColumnFormatting
 {
 
     public function __construct(protected Collection $data, protected string|int $store, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
@@ -33,17 +35,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
     }
     public function collection()
     {
-        $transformData = collect();
         $arr_perdate = collect();
-        $amounts = [
-            'SM' => 0,
-            'HF' => 0,
-            'MP' => 0,
-            'FR' => 0,
-            'SOD' => 0,
-            'WHOLESALE' => 0,
-        ];
-
         $purchased = [
             'special' => 0,
             'regular' => 0,
@@ -88,9 +80,9 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
         ];
 
         $datedisplay = '';
-        
+
         $this->data->groupBy('date')->each(function ($items, $date) use (&$special, &$bng, &$promo, &$regular, &$cntr, &$purchased, &$arr_perdate, &$datedisplay) {
-            
+
             $gcTypeMapping = [
                 'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
                 'REGULAR' => ['target' => 'regular', 'array' => &$regular],
@@ -101,7 +93,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                 if ((float) $item['purchasecred'] > 0) {
                     $terminal = explode(",", $item['terminalno']);
                     $purchase = explode(",", $item['purchaseamt']);
-        
+
                     collect($terminal)->each(function ($i, $key) use ($purchase, &$purchased, $gcTypeMapping, $item) {
                         $explodeTerminal = explode('-', $i)[0] ?? null;
 
@@ -123,7 +115,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                 'terminalbng' => $bng,
                 'terminalpromo' => $promo,
             ]);
-        
+
             // Reset arrays for the next date
 
             $purchased = array_fill_keys(array_keys($purchased), 0);
@@ -132,7 +124,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
             $bng = array_fill_keys(array_keys($bng), 0);
             $promo = array_fill_keys(array_keys($promo), 0);
         });
-        
+
         return $arr_perdate;
     }
 
@@ -187,23 +179,39 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
     {
         return 'A7';
     }
+    public function columnFormats(): array
+    {
+        return [
+            'C' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'D' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'E' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'F' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'G' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'H' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'I' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+        ];
+    }
     public function registerEvents(): array
     {
 
         return [
-            // BeforeSheet::class => function (BeforeSheet $event) {
-            //     $sheet = $event->sheet;
-            //     $storeName = Store::where('store_id', $this->store)->value('store_name');
+            BeforeSheet::class => function (BeforeSheet $event) {
+                $sheet = $event->sheet;
+                $storeName = Store::where('store_id', $this->store)->value('store_name');
 
-            //     $sheet->setCellValue('D1', 'ALTURAS GROUP OF COMPANIES');
-            //     $sheet->setCellValue('D2', 'CUSTOMER FINANCIAL SERVICES CORP');
-            //     $sheet->setCellValue('D3', 'MONTHLY REPORT ON GIFT CHECK (Per GC Type & BU)');
-            //     $sheet->getStyle('D1:D3')->getFont()->setBold(true);
-            //     $sheet->getStyle('D1:D3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->setCellValue('C1', 'ALTURAS GROUP OF COMPANIES');
+                $sheet->setCellValue('C2', 'CUSTOMER FINANCIAL SERVICES CORP');
+                $sheet->setCellValue('B3', 'MONTHLY REPORT ON GIFT CHECK (Per GC Type & BU)');
+                $sheet->setCellValue('C5', 'BUSINESS UNIT:' . $storeName);
 
-            //     $sheet->setCellValue('D5', 'BUSINESS UNIT:' . $storeName);
-            //     $sheet->getStyle('D5')->getFont()->setBold(true);
-            // }
+                $sheet->mergeCells('C1:E1');
+                $sheet->mergeCells('C2:E2');
+                $sheet->mergeCells('B3:F3');
+                $sheet->mergeCells('C5:E5');
+            
+                $sheet->getStyle('B1:C5')->getFont()->setBold(true);
+                $sheet->getStyle('B1:C5')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            }
 
         ];
     }
