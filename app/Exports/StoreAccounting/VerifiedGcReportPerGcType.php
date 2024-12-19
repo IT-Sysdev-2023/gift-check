@@ -87,85 +87,33 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
             'WHOLESALE' => 0
         ];
 
-        $cntr = 0;
         $datedisplay = '';
-        // dd($this->data);
-        $this->data->each(function ($item) use (&$amounts, &$special, &$bng, &$promo, &$regular, &$cntr, &$purchased, &$arr_perdate, &$datedisplay) {
-
-            if ((float) $item['purchasecred'] > 0) {
-
-                $terminal = explode(",", $item['terminalno']);
-                $purchase = explode(",", $item['purchaseamt']);
-
-                collect($terminal)->each(function ($item, $key) use ($purchase, &$amounts) {
-                    $explodeTerminal = explode('-', $item)[0] ?? null;
-
-                    $amounts[$explodeTerminal] += (float) $purchase[$key];
-                });
-            }
-
+        
+        $this->data->groupBy('date')->each(function ($items, $date) use (&$special, &$bng, &$promo, &$regular, &$cntr, &$purchased, &$arr_perdate, &$datedisplay) {
+            
             $gcTypeMapping = [
                 'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
                 'REGULAR' => ['target' => 'regular', 'array' => &$regular],
                 'BEAM AND GO' => ['target' => 'bng', 'array' => &$bng],
                 'PROMOTIONAL GC' => ['target' => 'promo', 'array' => &$promo],
             ];
-           
-            if ($datedisplay === $item['date']) {
+            foreach ($items as $item) {
+                if ((float) $item['purchasecred'] > 0) {
+                    $terminal = explode(",", $item['terminalno']);
+                    $purchase = explode(",", $item['purchaseamt']);
+        
+                    collect($terminal)->each(function ($i, $key) use ($purchase, &$purchased, $gcTypeMapping, $item) {
+                        $explodeTerminal = explode('-', $i)[0] ?? null;
 
-                $mapping = $gcTypeMapping[$item['gc_type']];
+                        $mapping = $gcTypeMapping[$item['gc_type']];
 
-                foreach ($amounts as $key => $value) {
-                    // dump($key, $value);
-                    $mapping['array'][$key] += $value; // Update corresponding array
+                        $mapping['array'][$explodeTerminal] += (float) $purchase[$key];
+                        $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
+                    });
                 }
-                $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
-
-            } else {
-                $mapping = $gcTypeMapping[$item['gc_type']];
-
-                foreach ($amounts as $key => $value) {
-                    $mapping['array'][$key] += $value; // Update corresponding array
-                }
-             
-                $arr_perdate->push([
-                    'arr_perdate' => $datedisplay,
-                    'regular' => $purchased['regular'],
-                    'special' => $purchased['special'],
-                    'bng' => $purchased['bng'],
-                    'promo' => $purchased['promo'],
-                    'terminalreg' => $regular,
-                    'terminalspec' => $special,
-                    'terminalbng' => $bng,
-                    'terminalpromo' => $promo
-                ]);
-
-                $amounts = array_fill_keys(array_keys($amounts), 0);
-                //Reset KEYS to Zero
-                $purchased = array_fill_keys(array_keys($purchased), 0);
-                $regular = array_fill_keys(array_keys($regular), 0);
-                $special = array_fill_keys(array_keys($special), 0);
-                $bng = array_fill_keys(array_keys($bng), 0);
-                $promo = array_fill_keys(array_keys($promo), 0);
-
-                //Assign new data
-                $mapping = $gcTypeMapping[$item['gc_type']];
-                foreach ($amounts as $key => $value) {
-                    $mapping['array'][$key] += $value; // Update corresponding array
-                }
-                $purchased[$mapping['target']] += $item['purchasecred'];
             }
-
-            $datedisplay = $item['date'];
-            $amounts = array_fill_keys(array_keys($amounts), 0);
-        });
-
-       
-        // Add the final date's data
-        if (!empty($datedisplay)) {
-
             $arr_perdate->push([
-                'arr_perdate' => $datedisplay,
+                'arr_perdate' => $date,
                 'regular' => $purchased['regular'],
                 'special' => $purchased['special'],
                 'bng' => $purchased['bng'],
@@ -173,13 +121,19 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                 'terminalreg' => $regular,
                 'terminalspec' => $special,
                 'terminalbng' => $bng,
-                'terminalpromo' => $promo
+                'terminalpromo' => $promo,
             ]);
-        }
-        // dd($arr_perdate);
+        
+            // Reset arrays for the next date
 
-        //Exclude the the empty date
-        return $arr_perdate->filter(fn($i) => $i['arr_perdate'] !== '');
+            $purchased = array_fill_keys(array_keys($purchased), 0);
+            $regular = array_fill_keys(array_keys($regular), 0);
+            $special = array_fill_keys(array_keys($special), 0);
+            $bng = array_fill_keys(array_keys($bng), 0);
+            $promo = array_fill_keys(array_keys($promo), 0);
+        });
+        
+        return $arr_perdate;
     }
 
     public function map($data): array
