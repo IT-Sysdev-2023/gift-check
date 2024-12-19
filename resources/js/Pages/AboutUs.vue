@@ -17,9 +17,8 @@
             <span>EXIT</span>
         </button>
     </div>
-    <a-modal v-model:open="backButton">
-        under construction
-    </a-modal>
+    <a-modal v-model:open="backButton"> under construction </a-modal>
+
     <!-- welcome text  -->
     <div class="container">
         <div class="title">
@@ -83,6 +82,7 @@
             align-content: center;
             justify-content: center;
             font-weight: bold;
+            font-size: large;
         "
     >
         SUPERVISED BY
@@ -90,7 +90,7 @@
 
     <!-- supervised by card -->
 
-    <div class="card" style="margin-left: 22%; position: absolute; top: 45%">
+    <div class="card" style="margin-left: 20%; position: absolute; top: 45%">
         <div>
             <img
                 src="/images/maamFuertes.jpg"
@@ -113,7 +113,7 @@
         </div>
         <button @click="fuertesModalOpen" class="card-button">More info</button>
     </div>
-    <div style="margin-left: 60%; position: absolute; top: 45%" class="card">
+    <div style="margin-left: 58%; position: absolute; top: 45%" class="card">
         <div>
             <img
                 src="/images/maamTina.jpg"
@@ -142,6 +142,7 @@
             align-content: center;
             justify-content: center;
             font-weight: bold;
+            font-size: large;
         "
     >
         GC PROGRAMMERS
@@ -233,17 +234,7 @@
 
     <!-- analyst -->
 
-    <div
-        style="
-            margin-top: 35%;
-            display: flex;
-            align-content: center;
-            justify-content: center;
-            font-weight: bold;
-        "
-    >
-        SYSTEM ANALYST
-    </div>
+    <h5 id="animated">GC SYSTEM ANALYST</h5>
 
     <div style="margin-left: 20%; position: absolute; top: 200%" class="card">
         <div>
@@ -315,7 +306,7 @@
             ></path>
         </svg>
     </button>
-    <a-modal v-model:open="fuertesModal" closable="false" footer="">
+    <a-modal v-model:open="fuertesModal" :footer="false">
         <div
             class="w-60 bg-gradient-to-l from-slate-300 to-slate-100 text-slate-600 border border-slate-300 grid grid-col-2 justify-center p-4 gap-4 rounded-lg shadow-md"
         >
@@ -353,7 +344,7 @@
             </div>
         </div>
     </a-modal>
-    <a-modal v-model:open="tinaModal" closable="false" footer="">
+    <a-modal v-model:open="tinaModal" :footer="false">
         <div
             class="w-60 bg-gradient-to-l from-slate-300 to-slate-100 text-slate-600 border border-slate-300 grid grid-col-2 justify-center p-4 gap-4 rounded-lg shadow-md"
         >
@@ -391,7 +382,7 @@
             </div>
         </div>
     </a-modal>
-    <a-modal v-model:open="kentModal" closable="false" footer="">
+    <a-modal v-model:open="kentModal" :footer="false">
         <div
             class="w-60 bg-gradient-to-l from-slate-300 to-slate-100 text-slate-600 border border-slate-300 grid grid-col-2 justify-center p-4 gap-4 rounded-lg shadow-md"
         >
@@ -432,7 +423,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, registerRuntimeCompiler } from "vue";
 import axios, { Axios } from "axios";
 import StoreAccountingDashboard from "./StoreAccounting/StoreAccountingDashboard.vue";
 import { notification } from "ant-design-vue";
@@ -456,7 +447,7 @@ const kentModalOpen = () => {
 };
 
 const handleScroll = () => {
-    showButton.value = window.scrollY > 20;
+    showButton.value = window.scrollY > 100;
 };
 const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -470,11 +461,54 @@ onUnmounted(() => {
     window.removeEventListener("scroll", handleScroll);
 });
 </script>
+<style>
+h5 {
+  position: absolute;
+  top: 50%;
+  transform: translate(calc(50vw - 50%), -55%);
+  font-size: 2em;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.wavy {
+  animation: animate 7s ease-in-out infinite;
+}
+
+@keyframes animate {
+  0%, 100% {
+    clip-path: polygon(0 45%, 6% 38%, 20% 27%, 38% 24%, 40% 47%, 49% 64%, 51% 72%, 74% 78%, 79% 75%, 100% 67%, 100% 100%);
+  }
+  50% {
+    clip-path: polygon(0 59%, 5% 71%, 24% 86%, 34% 71%, 41% 64%, 41% 46%, 51% 35%, 74% 21%, 89% 35%, 100% 42%, 100% 100%);
+  }
+}
+
+/* Color gradient */
+.wavy::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to bottom, #4a4a4a 0%, #10a8d7 50%, #4a4a4a 100%);
+  background-size: 100% 200%;
+  animation: color-wave 7s ease-in-out infinite;
+}
+
+@keyframes color-wave {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
+  }
+}
+</style>
 
 <style scoped>
 /* Back button */
 button {
-    margin-top: 20px;
     font-weight: bold;
     display: flex;
     height: 3em;
@@ -488,6 +522,8 @@ button {
     cursor: pointer;
     border: none;
     background: #fff;
+    position: absolute;
+    top: 10px;
 }
 
 button > svg {
@@ -559,6 +595,7 @@ button:hover {
 }
 
 .card-button {
+    margin-top: 100%;
     transform: translate(-50%, 125%);
     width: 60%;
     border-radius: 1rem;
@@ -1054,6 +1091,7 @@ button:hover {
     transition-duration: 0.3s;
     overflow: hidden;
     position: fixed;
+    margin-top: 42%;
     bottom: 20px;
     right: 30px;
     z-index: 99;
@@ -1206,4 +1244,3 @@ body {
     background-color: var(--white);
 }
 </style>
-<style scoped></style>

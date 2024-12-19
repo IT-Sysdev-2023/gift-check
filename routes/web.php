@@ -605,8 +605,8 @@ Route::middleware(['auth'])->group(function () {
             Route::name('sgc_item_setup')->group(function () {
                 Route::get('sgc_item_setup', [RetailController::class, 'sgc_item_setup'])->name('sgc_item_setup');
             });
-            Route::name('gc-transfer.')->group(function (){
-                Route::get('gc-transfer-list',[RetailController::class, 'gctransferList'])->name('list');
+            Route::name('gc-transfer.')->group(function () {
+                Route::get('gc-transfer-list', [RetailController::class, 'gctransferList'])->name('list');
             });
         });
     });
@@ -851,6 +851,7 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
                             Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
+                            Route::get('status', [StoreAccountingController::class, 'status'])->name('status');
                         }
                     );
             }
