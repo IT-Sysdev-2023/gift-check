@@ -89,7 +89,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
 
         $cntr = 0;
         $datedisplay = '';
-        // dd($this->data->sortByDesc('date'));
+        // dd($this->data);
         $this->data->each(function ($item) use (&$amounts, &$special, &$bng, &$promo, &$regular, &$cntr, &$purchased, &$arr_perdate, &$datedisplay) {
 
             if ((float) $item['purchasecred'] > 0) {
@@ -110,22 +110,24 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                 'BEAM AND GO' => ['target' => 'bng', 'array' => &$bng],
                 'PROMOTIONAL GC' => ['target' => 'promo', 'array' => &$promo],
             ];
-
-            // dump($item['date']);
+           
             if ($datedisplay === $item['date']) {
 
                 $mapping = $gcTypeMapping[$item['gc_type']];
 
                 foreach ($amounts as $key => $value) {
+                    // dump($key, $value);
                     $mapping['array'][$key] += $value; // Update corresponding array
                 }
                 $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
 
             } else {
-                // if ($item['date'] === "2018-12-31") {
-                //     dump($item['date']);
-                // }
-                $amounts = array_fill_keys(array_keys($amounts), 0);
+                $mapping = $gcTypeMapping[$item['gc_type']];
+
+                foreach ($amounts as $key => $value) {
+                    $mapping['array'][$key] += $value; // Update corresponding array
+                }
+             
                 $arr_perdate->push([
                     'arr_perdate' => $datedisplay,
                     'regular' => $purchased['regular'],
@@ -137,12 +139,14 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                     'terminalbng' => $bng,
                     'terminalpromo' => $promo
                 ]);
+
+                $amounts = array_fill_keys(array_keys($amounts), 0);
                 //Reset KEYS to Zero
-                $purchased = array_fill_keys(array_keys($purchased), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
-                $regular = array_fill_keys(array_keys($regular), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
-                $special = array_fill_keys(array_keys($special), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
-                $bng = array_fill_keys(array_keys($bng), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
-                $promo = array_fill_keys(array_keys($promo), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
+                $purchased = array_fill_keys(array_keys($purchased), 0);
+                $regular = array_fill_keys(array_keys($regular), 0);
+                $special = array_fill_keys(array_keys($special), 0);
+                $bng = array_fill_keys(array_keys($bng), 0);
+                $promo = array_fill_keys(array_keys($promo), 0);
 
                 //Assign new data
                 $mapping = $gcTypeMapping[$item['gc_type']];
@@ -156,9 +160,23 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
             $amounts = array_fill_keys(array_keys($amounts), 0);
         });
 
-        // $Yarugay = $arr_perdate->filter(fn($i) => $i['arr_perdate'] !== '')->groupBy('arr_perdate');
+       
+        // Add the final date's data
+        if (!empty($datedisplay)) {
 
-        dd($arr_perdate);
+            $arr_perdate->push([
+                'arr_perdate' => $datedisplay,
+                'regular' => $purchased['regular'],
+                'special' => $purchased['special'],
+                'bng' => $purchased['bng'],
+                'promo' => $purchased['promo'],
+                'terminalreg' => $regular,
+                'terminalspec' => $special,
+                'terminalbng' => $bng,
+                'terminalpromo' => $promo
+            ]);
+        }
+        // dd($arr_perdate);
 
         //Exclude the the empty date
         return $arr_perdate->filter(fn($i) => $i['arr_perdate'] !== '');
