@@ -367,7 +367,9 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 // import { defineComponent } from '@vue/composition-api'
 import { ref } from "vue";
 import { Modal } from "ant-design-vue";
-import { router } from "@inertiajs/core";
+import axios from "axios";
+import { notification } from "ant-design-vue";
+import { useQueueState } from "@/stores/queue-state";
 
 defineProps(["stores"]);
 const GCDataTypeMonthly = ref({
@@ -432,6 +434,7 @@ const submitGCReportsMonthly = () => {
         },
     });
 };
+const state = useQueueState();
 
 const submitGCReportsYearly = () => {
     GCDataTypeYearly.value.errors = {};
@@ -457,7 +460,27 @@ const submitGCReportsYearly = () => {
         selectedStore: selectedStore,
         year: year,
     };
-    console.log(yearlyData);
-    router.get(route("storeaccounting.verifiedGcYearlySubmit"), yearlyData);
+
+    axios
+        .get(route("storeaccounting.verifiedGcYearlySubmit"), {
+            params: { ...yearlyData
+            },
+        }).then((e) => {
+            state.setGenerateButton(true);
+            state.setFloatButton(true);
+
+            state.setOpenFloat(true);
+        })
+        .catch((e) => {
+
+            let message = "please check all the fields";
+            if (e.status === 404) {
+                message = e.response.data.error;
+            }
+            notification.error({
+                message: "Opps Something Went wrong",
+                description: `${message}`,
+            });
+        });
 };
 </script>

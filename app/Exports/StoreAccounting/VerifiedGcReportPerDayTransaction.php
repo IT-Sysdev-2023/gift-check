@@ -3,6 +3,7 @@
 namespace App\Exports\StoreAccounting;
 
 use App\Events\AccountingReportEvent;
+use App\Events\StoreAccountReportEvent;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
 use App\Models\User;
@@ -37,7 +38,7 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
     }
     public function map($data): array
     {
-        // $this->broadcastProgress("Generating Barcode Records");
+        $this->broadcast("Gc Report Per Day Transaction");
         return [
             (new \DateTime($data['date']))->format('F j, Y'),
             $data['totverifiedgc'],
@@ -171,11 +172,12 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
             7 => ['font' => ['bold' => true]],
         ];
     }
+    private function broadcast(string $info, bool $isDone = false, $id = null)
+    {
+        $this->progress['info'] = $info;
+        $this->progress['progress']['currentRow']++;
+        $this->progress['isDone'] = $isDone;
 
-    // private function broadcastProgress(string $info)
-    // {
-    //     $this->progress['info'] = $info;
-    //     $this->progress['progress']['currentRow']++;
-    //     AccountingReportEvent::dispatch($this->user, $this->progress, $this->reportId);
-    // }
+        StoreAccountReportEvent::dispatch($this->user, $this->progress, $id ?? $this->reportId);
+    }
 }

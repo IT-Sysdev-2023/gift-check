@@ -3,6 +3,7 @@
 namespace App\Exports\StoreAccounting;
 
 use App\Events\AccountingReportEvent;
+use App\Events\StoreAccountReportEvent;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
 use App\Models\User;
@@ -29,7 +30,7 @@ use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell, WithColumnFormatting
 {
 
-    public function __construct(protected Collection $data, protected string|int $store, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
+    public function __construct(protected Collection $data, protected string|int|null $store = null, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
     {
 
     }
@@ -130,7 +131,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
 
     public function map($data): array
     {
-
+        $this->broadcast("Gc Report Per Gc Type");
         return [
             [
                 $data['arr_perdate'],
@@ -215,10 +216,6 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
 
         ];
     }
-    // public function countRecords()
-    // {
-    //     return $this->query()->count();
-    // }
     public function title(): string
     {
         return 'By Gc Type & BU';
@@ -245,10 +242,12 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
         ];
     }
 
-    // private function broadcastProgress(string $info)
-    // {
-    //     $this->progress['info'] = $info;
-    //     $this->progress['progress']['currentRow']++;
-    //     AccountingReportEvent::dispatch($this->user, $this->progress, $this->reportId);
-    // }
+    private function broadcast(string $info, bool $isDone = false, $id = null)
+    {
+        $this->progress['info'] = $info;
+        $this->progress['progress']['currentRow']++;
+        $this->progress['isDone'] = $isDone;
+
+        StoreAccountReportEvent::dispatch($this->user, $this->progress, $id ?? $this->reportId);
+    }
 }

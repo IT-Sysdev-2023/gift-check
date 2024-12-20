@@ -852,6 +852,10 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
                             Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
+
+                            Route::name('reports.')->group(function () {
+                                Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
+                            });
                         }
                     );
             }

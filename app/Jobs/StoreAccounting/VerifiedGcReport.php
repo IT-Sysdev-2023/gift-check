@@ -4,6 +4,8 @@ namespace App\Jobs\StoreAccounting;
 
 use App\Exports\StoreAccounting\VerifiedGcReportMultiExport;
 use App\Services\Documents\ExportHandler;
+use App\Services\StoreAccounting\Reports\VerifiedGcReportGenerator;
+use App\Services\StoreAccounting\Reports\VerifiedGcReportHandler;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Auth;
@@ -19,10 +21,9 @@ class VerifiedGcReport implements ShouldQueue
      */
 
      private array $request;
-     private User|null $user;
+     protected User|null $user;
     public function __construct($request)
     {
-        // parent::__construct();
         $this->request = $request;
         $this->user = Auth::user();
     }
@@ -32,11 +33,13 @@ class VerifiedGcReport implements ShouldQueue
      */
     public function handle(): void
     {
+        //Check Existence
         $doc= new VerifiedGcReportMultiExport($this->request, $this->user);
         (new ExportHandler())
         ->setFolder('Reports')
         ->setSubfolderAsUsertype($this->user->usertype)
         ->setFileName('Verified Gc Report (Yearly)-' . $this->user->user_id, $this->request['year'])
-        ->exportDocument('excel', $doc);
+        ->exportDocument('excel', $doc)
+        ->deleteFileIn(now()->addDays(2));
     }
 }

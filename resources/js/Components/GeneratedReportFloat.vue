@@ -5,7 +5,10 @@
         :style="{ right: '24px' }"
         v-model:open="state.isFloatOpen"
     >
-        <!-- YOURE VISITING THIS PAGE.., THIS MEANS YOU HAVE REACH THE END OF PROGRAMMER -->
+        <!-- YOURE VISITING THIS PAGE.., THIS MEANS YOU HAVE REACHED THE DYNAMIC BROADCASTING EVENT, 
+            THIS COMPONENT IS BEING USED ACCROSS DIFFERENT USERTYPES 
+            DONT YOU DARE TO CHANGE SOMETHING IN THIS COMPONENT UNLESS YOU KNOW WHAT YOU'RE DOING YOU UNDERSTAND? 
+            INGNA SA YES master!-->
 
         <template #icon>
             <a-badge dot :offset="[0, -12]">
@@ -68,7 +71,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, computed, watch, onBeforeUnmount } from "vue";
+import { onMounted, reactive, computed, onBeforeUnmount } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { PageWithSharedProps } from "@/types/index";
 import { useQueueState } from "@/stores/queue-state";
@@ -82,7 +85,7 @@ interface ProgressData {
     totalRow: number;
     store?: string;
     info: string;
-    isDone?: boolean
+    isDone?: boolean;
 }
 
 interface ReportProgress {
@@ -113,13 +116,14 @@ onMounted(() => {
     window.Echo.private(`${listenTo.channel}${page.auth.user.user_id}`).listen(
         listenTo.listen,
         (e) => {
+            console.log(e);
             state.setGenerateButton(false);
             reportProgress[e.reportId] = {
                 reportType: e.reportType,
                 percentage: e.percentage,
                 data: e.data,
             };
-        }
+        },
     );
 });
 
@@ -136,6 +140,12 @@ const whichShouldListenTo = computed(() => {
             listen: "AccountingReportEvent",
             route: "accounting.reports.generatedReports",
         };
+    } else if (storeaccounting.value) {
+        return {
+            channel: "storeaccounting-report.",
+            listen: "StoreAccountReportEvent",
+            route: "accounting.reports.generatedReports",
+        };
     } else {
         return {
             channel: "",
@@ -150,7 +160,7 @@ onBeforeUnmount(() => {
 const isProgressFinish = () => {
     if (
         Object.values(reportProgress).every(
-            (report) => report.percentage >= 100
+            (report) => report.percentage >= 100,
         )
     ) {
         state.setFloatButton(false);

@@ -2,6 +2,7 @@
 
 namespace App\Exports\StoreAccounting;
 
+use App\Events\StoreAccountReportEvent;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
 use App\Models\User;
@@ -14,31 +15,33 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
 {
     use Exportable;
+
+    private $data;
     public function __construct(protected array $requirements, protected User $user)
     {
-        parent::__construct();
-        // $this->progress['name'] = "Excel SPGC Approved Report";
+        parent::__construct($user);
+        $this->progress['name'] = "Excel Verified Gc Report(Yearly)";
+
+        $db = self::getServerDatabase($this->requirements['selectedStore']);
+        $this->data = $this->getVerifiedData($db, $this->requirements);
 
         // //Count Total Rows for Broadcasting
-        // $this->progress['progress']['totalRow'] += (new SpgcApprovedPerBarcode($transactionDate))->query()->count();
-        // $this->progress['progress']['totalRow'] += (new SpgcApprovedPerCustomer($transactionDate))->query()->get()->count();
+        $this->progress['progress']['totalRow'] += (new VerifiedGcReportPerDay($this->data))->collection()->count();
+        $this->progress['progress']['totalRow'] += (new VerifiedGcReportPerDayTransaction($this->requirements))->collection()->count();
+        $this->progress['progress']['totalRow'] += (new VerifiedGcReportPerGcType($this->data))->collection()->count();
     }
 
     public function sheets(): array
     {
-        $db = self::getServerDatabase($this->requirements['selectedStore']);
-        $data = $this->getVerifiedData($db, $this->requirements);
-
         return [
             // Per Day
-            new VerifiedGcReportPerDay($data, $this->progress, $this->reportId, $this->user),
+            new VerifiedGcReportPerDay($this->data, $this->progress, $this->reportId, $this->user),
 
             //By Month Summary Per Day
             new VerifiedGcReportPerDayTransaction($this->requirements, $this->progress, $this->reportId, $this->user),
 
             //By Gc Type & BU
-            new VerifiedGcReportPerGcType($data, $this->requirements['selectedStore'], $this->progress, $this->reportId, $this->user),
-
+            new VerifiedGcReportPerGcType($this->data, $this->requirements['selectedStore'], $this->progress, $this->reportId, $this->user),
         ];
     }
 
@@ -67,7 +70,6 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
         $transformedData = collect();
 
         $data->each(function ($q) use ($db, & $transformedData) {
-
             $balance = 0;
             $purchasecred = 0;
             $vsdate = '';
@@ -104,7 +106,6 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
                 $balance = $q->vs_tf_balance;
                 $vsdate = $q->vs_date;
                 $vstime = $q->vs_time;
-
             }
 
             $transformedData->push([

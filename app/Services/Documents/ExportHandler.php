@@ -47,7 +47,9 @@ class ExportHandler extends FileHandler
     public function exportToExcel($model)
     {
         $folderName = $this->folder() . 'excel/';
-        Excel::store($model, "{$folderName}{$this->filename}.xlsx", 'public');
+        $filePath = "{$folderName}{$this->filename}.xlsx";
+        Excel::store($model, $filePath, 'public');
+        $this->fullPath = $filePath;
         return $this;
     }
 
@@ -72,19 +74,19 @@ class ExportHandler extends FileHandler
             'pdf' => fn() => $this->exportToPdf($document),
             'excel' => fn() => $this->exportToExcel($document),
         ];
-    
+
         if (!array_key_exists($format, $exportMethods)) {
             throw new InvalidArgumentException("Unsupported format: $format");
         }
-    
+
         // Execute the appropriate export method
         $exportMethods[$format]();
-    
+
         // Invoke the callback if provided
         if ($callback !== null) {
             $callback($format, $document);
         }
-
+        return $this;
     }
 
     public function deleteFileIn($date)
