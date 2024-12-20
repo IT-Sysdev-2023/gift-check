@@ -22,8 +22,11 @@ class VerifiedGcReport implements ShouldQueue
 
      private array $request;
      protected User|null $user;
-    public function __construct($request)
+
+    protected $db;
+    public function __construct($request, $db)
     {
+        $this->db = $db;
         $this->request = $request;
         $this->user = Auth::user();
     }
@@ -34,7 +37,7 @@ class VerifiedGcReport implements ShouldQueue
     public function handle(): void
     {
         //Check Existence
-        $doc= new VerifiedGcReportMultiExport($this->request, $this->user);
+        $doc= new VerifiedGcReportMultiExport($this->request, $this->user, $this->db);
         (new ExportHandler())
         ->setFolder('Reports')
         ->setSubfolderAsUsertype($this->user->usertype)

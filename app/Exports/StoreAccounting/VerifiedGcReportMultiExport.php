@@ -5,6 +5,7 @@ namespace App\Exports\StoreAccounting;
 use App\Events\StoreAccountReportEvent;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
+use App\Models\StoreVerification;
 use App\Models\User;
 use App\Services\Progress;
 use Illuminate\Support\Facades\Log;
@@ -17,13 +18,14 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
     use Exportable;
 
     private $data;
-    public function __construct(protected array $requirements, protected User $user)
+    public function __construct(protected array $requirements, protected User $user, protected $db)
     {
         parent::__construct($user);
         $this->progress['name'] = "Excel Verified Gc Report(Yearly)";
+        // $this->isLocal ? DB::table('store_verification')  :
+        $server = $this->getServerDatabase($db);
 
-        $db = self::getServerDatabase($this->requirements['selectedStore']);
-        $this->data = $this->getVerifiedData($db, $this->requirements);
+        $this->data = $this->getVerifiedData($server, $this->requirements);
 
         // //Count Total Rows for Broadcasting
         $this->progress['progress']['totalRow'] += (new VerifiedGcReportPerDay($this->data))->collection()->count();
@@ -38,7 +40,7 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
             new VerifiedGcReportPerDay($this->data, $this->progress, $this->reportId, $this->user),
 
             //By Month Summary Per Day
-            new VerifiedGcReportPerDayTransaction($this->requirements, $this->progress, $this->reportId, $this->user),
+            new VerifiedGcReportPerDayTransaction($this->requirements, $this->progress, $this->reportId, $this->user, $this->db),
 
             //By Gc Type & BU
             new VerifiedGcReportPerGcType($this->data, $this->requirements['selectedStore'], $this->progress, $this->reportId, $this->user),
@@ -69,7 +71,7 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
 
         $transformedData = collect();
 
-        $data->each(function ($q) use ($db, & $transformedData) {
+        $data->each(function ($q) use ($db, &$transformedData) {
             $balance = 0;
             $purchasecred = 0;
             $vsdate = '';
@@ -136,14 +138,17 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
             ->select('seodtt_bu', 'seodtt_terminalno', 'seodtt_credpuramt')
             ->where('seodtt_barcode', $barcode)->get();
     }
-    private static function getServerDatabase($store)
+    private function getServerDatabase($connection)
     {
-        $lserver = StoreLocalServer::where('stlocser_storeid', $store)
-            ->value('stlocser_ip');
+        // $lserver = StoreLocalServer::where('stlocser_storeid', $store)
+        //     ->value('stlocser_ip');
+        //     Log::info($islocal);
+        // $parts = collect(explode('.', $lserver));
+        // $result = $islocal == 1 ? '' : '-' . $parts->slice(2)->implode('.');
 
-        $parts = collect(explode('.', $lserver));
-        $result = $parts->slice(2)->implode('.');
+        return DB::connection($connection);
 
-        return DB::connection('mariadb-' . $result);
+
+
     }
 }

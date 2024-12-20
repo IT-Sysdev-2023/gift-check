@@ -12,37 +12,39 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
-class ReportService{
+class ReportService
+{
     public function verifiedGcYearlySubmit(Request $request)
     {
         // dd();
         $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
+       
+        if ($isExists) { //OTHER SERVER
+            VerifiedGcReport::dispatch($request->all(), self::getServerDatabase($request->selectedStore, false));
 
-        if ($isExists) {
-            VerifiedGcReport::dispatch($request->all());
-            // $lserver = StoreLocalServer::where('stlocser_storeid', $request->selectedStore)
-            //     ->value('stlocser_ip');
+        } else { //LOCAL
 
-            // $parts = collect(explode('.', $lserver));
-            // $result = $parts->slice(2)->implode('.');
-
-            // $server = DB::connection('mariadb-' . $result)->table('store_verification');
-            // $data = self::getStoreVerification($server, $request);
-        } else {
-            $data = self::getStoreVerification(new StoreVerification, $request);
+            VerifiedGcReport::dispatch($request->all(), self::getServerDatabase($request->selectedStore, true));
         }
-
-
-        
     }
+    private static function getServerDatabase(string| int $store, bool $islocal)
+    {
 
+        $lserver = StoreLocalServer::where('stlocser_storeid', $store)
+            ->value('stlocser_ip');
+
+        $parts = collect(explode('.', $lserver));
+        $result = $islocal ? '' : '-' . $parts->slice(2)->implode('.');
+
+        return 'mariadb' . $result;
+    }
     public function generatedReports(Request $request)
-	{
-		$getFiles = (new ImportHandler())->getFileReports($request->user()->usertype);
-		return inertia('Treasury/Reports/GeneratedReports', [
-			'files' => $getFiles
-		]);
-	}
+    {
+        $getFiles = (new ImportHandler())->getFileReports($request->user()->usertype);
+        return inertia('Treasury/Reports/GeneratedReports', [
+            'files' => $getFiles
+        ]);
+    }
     private static function getStoreVerification($model, Request $request)
     {
         return $model->where(fn($q) =>
