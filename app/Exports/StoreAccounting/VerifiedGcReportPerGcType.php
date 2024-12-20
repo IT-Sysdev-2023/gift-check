@@ -96,7 +96,7 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                     $purchase = explode(",", $item['purchaseamt']);
 
                     collect($terminal)->each(function ($i, $key) use ($purchase, &$purchased, $gcTypeMapping, $item) {
-                        $explodeTerminal = explode('-', $i)[0] ?? null;
+                        $explodeTerminal = Str::trim(explode('-', $i)[0]) ?? null;
 
                         $mapping = $gcTypeMapping[$item['gc_type']];
 
