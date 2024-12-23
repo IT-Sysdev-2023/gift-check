@@ -124,8 +124,8 @@
                         style="
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
-                        "
+                                Times New Romanserif, serif; "
+
                     ></div>
                 </div>
                 <div>
@@ -134,11 +134,10 @@
                             style="
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                                 font-size: 50px;
                             "
-                            >Welcome to</span
-                        >
+                            >Welcome to</span>
 
                         <span
                             class="wave-text"
@@ -146,6 +145,7 @@
                                 font-size: 90px;
                                 color: #eb5b00;
                                 font-weight: bold;
+                                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
                             "
                         >
                             GIFT CHECK</span
@@ -207,7 +207,7 @@
                         margin-top: 5%;
                         color: #003140;
                         font-family: Cambria, Cochin, Georgia, Times,
-                            &quot;Times New Roman&quot;, serif;
+                            Times New Roman, serif;
                     "
                 >
                     <div>SUPERVISED BY</div>
@@ -280,7 +280,7 @@
                     font-size: large;
                     color: #003140;
                     font-family: Cambria, Cochin, Georgia, Times,
-                        &quot;Times New Roman&quot;, serif;
+                        Times New Roman, serif;
                     margin-top: 5%;
                 "
             >
@@ -421,7 +421,7 @@
                                 font-size: larger;
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                             "
                         >
                             WHO ?
@@ -432,7 +432,7 @@
                             style="
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                                 font-size: x-large;
                                 text-align: center;
                                 color: #008bf8;
@@ -448,13 +448,13 @@
                                     system-ui,
                                     -apple-system,
                                     BlinkMacSystemFont,
-                                    &quot;Segoe UI&quot;,
+                                    Segoe UI,
                                     Roboto,
                                     Oxygen,
                                     Ubuntu,
                                     Cantarell,
-                                    &quot;Open Sans&quot;,
-                                    &quot;Helvetica Neue&quot;,
+                                    Open Sans,
+                                    Helvetica Neue,
                                     sans-serif;
                             "
                         >
@@ -470,7 +470,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         MOTTO IN LIFE ?
@@ -480,8 +480,8 @@
                             style="
                                 font-weight: bold;
                                 color: red;
-                                font-family: &quot;Franklin Gothic Medium&quot;,
-                                    &quot;Arial Narrow&quot;, Arial, sans-serif;
+                                font-family: Franklin Gothic Medium,
+                                    Arial Narrow, Arial, sans-serif;
                             "
                         >
                             <span>"WAY CHANCE"</span>
@@ -493,7 +493,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         CONTACT US ?
@@ -638,7 +638,7 @@
                                 font-size: larger;
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                             "
                         >
                             WHO ?
@@ -649,7 +649,7 @@
                             style="
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                                 font-size: x-large;
                                 text-align: center;
                                 color: #008bf8;
@@ -665,13 +665,13 @@
                                     system-ui,
                                     -apple-system,
                                     BlinkMacSystemFont,
-                                    &quot;Segoe UI&quot;,
+                                    Segoe UI,
                                     Roboto,
                                     Oxygen,
                                     Ubuntu,
                                     Cantarell,
-                                    &quot;Open Sans&quot;,
-                                    &quot;Helvetica Neue&quot;,
+                                    Open Sans,
+                                    Helvetica Neue,
                                     sans-serif;
                             "
                         >
@@ -687,7 +687,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         MOTTO IN LIFE ?
@@ -697,8 +697,8 @@
                             style="
                                 font-weight: bold;
                                 color: red;
-                                font-family: &quot;Franklin Gothic Medium&quot;,
-                                    &quot;Arial Narrow&quot;, Arial, sans-serif;
+                                font-family: Franklin Gothic Medium,
+                                    Arial Narrow, Arial, sans-serif;
                             "
                         >
                             <span>"NA UNSA NAMAN NI?"</span>
@@ -710,7 +710,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         CONTACT US ?
@@ -858,7 +858,7 @@
                                 font-size: larger;
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                             "
                         >
                             WHO ?
@@ -869,7 +869,7 @@
                             style="
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                                 font-size: x-large;
                                 text-align: center;
                                 color: #008bf8;
@@ -885,13 +885,13 @@
                                     system-ui,
                                     -apple-system,
                                     BlinkMacSystemFont,
-                                    &quot;Segoe UI&quot;,
+                                    Segoe UI,
                                     Roboto,
                                     Oxygen,
                                     Ubuntu,
                                     Cantarell,
-                                    &quot;Open Sans&quot;,
-                                    &quot;Helvetica Neue&quot;,
+                                    Open Sans,
+                                    Helvetica Neue,
                                     sans-serif;
                             "
                         >
@@ -907,7 +907,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         MOTTO IN LIFE ?
@@ -917,8 +917,8 @@
                             style="
                                 font-weight: bold;
                                 color: red;
-                                font-family: &quot;Franklin Gothic Medium&quot;,
-                                    &quot;Arial Narrow&quot;, Arial, sans-serif;
+                                font-family: Franklin Gothic Medium,
+                                    Arial Narrow, Arial, sans-serif;
                             "
                         >
                             <span>"LIFE IS LIFE"</span>
@@ -930,7 +930,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         CONTACT US ?
@@ -1075,7 +1075,7 @@
                                 font-size: larger;
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                             "
                         >
                             WHO ?
@@ -1086,7 +1086,7 @@
                             style="
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                                 font-size: x-large;
                                 text-align: center;
                                 color: #008bf8;
@@ -1102,13 +1102,13 @@
                                     system-ui,
                                     -apple-system,
                                     BlinkMacSystemFont,
-                                    &quot;Segoe UI&quot;,
+                                    Segoe UI,
                                     Roboto,
                                     Oxygen,
                                     Ubuntu,
                                     Cantarell,
-                                    &quot;Open Sans&quot;,
-                                    &quot;Helvetica Neue&quot;,
+                                    Open Sans,
+                                    Helvetica Neue,
                                     sans-serif;
                             "
                         >
@@ -1124,7 +1124,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         MOTTO IN LIFE ?
@@ -1134,8 +1134,8 @@
                             style="
                                 font-weight: bold;
                                 color: red;
-                                font-family: &quot;Franklin Gothic Medium&quot;,
-                                    &quot;Arial Narrow&quot;, Arial, sans-serif;
+                                font-family: Franklin Gothic Medium,
+                                    Arial Narrow, Arial, sans-serif;
                             "
                         >
                             <span
@@ -1150,7 +1150,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         CONTACT US ?
@@ -1299,7 +1299,7 @@
                     font-size: large;
 
                     font-family: Cambria, Cochin, Georgia, Times,
-                        &quot;Times New Roman&quot;, serif;
+                        Times New Roman, serif;
                     margin-top: 5%;
                 "
             >
@@ -1414,7 +1414,7 @@
                                 font-size: larger;
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                             "
                         >
                             WHO ?
@@ -1425,7 +1425,7 @@
                             style="
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                                 font-size: x-large;
                                 text-align: center;
                                 color: #008bf8;
@@ -1441,13 +1441,13 @@
                                     system-ui,
                                     -apple-system,
                                     BlinkMacSystemFont,
-                                    &quot;Segoe UI&quot;,
+                                    Segoe UI,
                                     Roboto,
                                     Oxygen,
                                     Ubuntu,
                                     Cantarell,
-                                    &quot;Open Sans&quot;,
-                                    &quot;Helvetica Neue&quot;,
+                                    Open Sans,
+                                    Helvetica Neue,
                                     sans-serif;
                             "
                         >
@@ -1463,7 +1463,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         MOTTO IN LIFE ?
@@ -1473,8 +1473,8 @@
                             style="
                                 font-weight: bold;
                                 color: red;
-                                font-family: &quot;Franklin Gothic Medium&quot;,
-                                    &quot;Arial Narrow&quot;, Arial, sans-serif;
+                                font-family: Franklin Gothic Medium,
+                                    Arial Narrow, Arial, sans-serif;
                             "
                         >
                             <span>What's she said "WAKO KAHIBAW"</span>
@@ -1486,7 +1486,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         CONTACT US ?
@@ -1636,7 +1636,7 @@
                                 font-size: larger;
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                             "
                         >
                             WHO ?
@@ -1647,7 +1647,7 @@
                             style="
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                                 font-size: x-large;
                                 text-align: center;
                                 color: #008bf8;
@@ -1663,13 +1663,13 @@
                                     system-ui,
                                     -apple-system,
                                     BlinkMacSystemFont,
-                                    &quot;Segoe UI&quot;,
+                                    Segoe UI,
                                     Roboto,
                                     Oxygen,
                                     Ubuntu,
                                     Cantarell,
-                                    &quot;Open Sans&quot;,
-                                    &quot;Helvetica Neue&quot;,
+                                    Open Sans,
+                                    Helvetica Neue,
                                     sans-serif;
                             "
                         >
@@ -1685,7 +1685,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         MOTTO IN LIFE ?
@@ -1695,8 +1695,8 @@
                             style="
                                 font-weight: bold;
                                 color: red;
-                                font-family: &quot;Franklin Gothic Medium&quot;,
-                                    &quot;Arial Narrow&quot;, Arial, sans-serif;
+                                font-family: Franklin Gothic Medium,
+                                    Arial Narrow, Arial, sans-serif;
                             "
                         >
                             <span
@@ -1710,7 +1710,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         CONTACT US ?
@@ -1858,7 +1858,7 @@
                                 font-size: larger;
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                             "
                         >
                             WHO ?
@@ -1869,7 +1869,7 @@
                             style="
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                                 font-size: x-large;
                                 text-align: center;
                                 color: #008bf8;
@@ -1885,13 +1885,13 @@
                                     system-ui,
                                     -apple-system,
                                     BlinkMacSystemFont,
-                                    &quot;Segoe UI&quot;,
+                                    Segoe UI,
                                     Roboto,
                                     Oxygen,
                                     Ubuntu,
                                     Cantarell,
-                                    &quot;Open Sans&quot;,
-                                    &quot;Helvetica Neue&quot;,
+                                    Open Sans,
+                                    Helvetica Neue,
                                     sans-serif;
                             "
                         >
@@ -1907,7 +1907,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         MOTTO IN LIFE ?
@@ -1917,8 +1917,8 @@
                             style="
                                 font-weight: bold;
                                 color: red;
-                                font-family: &quot;Franklin Gothic Medium&quot;,
-                                    &quot;Arial Narrow&quot;, Arial, sans-serif;
+                                font-family: Franklin Gothic Medium,
+                                    Arial Narrow, Arial, sans-serif;
                             "
                         >
                             <span>"HOY LAINA MAN MO ?"</span>
@@ -1930,7 +1930,7 @@
                             font-size: large;
                             font-weight: bold;
                             font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                                Times New Roman, serif;
                         "
                     >
                         CONTACT US ?
@@ -2071,7 +2071,7 @@
                         margin-left: 16%;
                         font-weight: bold;
                         font-family: Cambria, Cochin, Georgia, Times,
-                            &quot;Times New Roman&quot;, serif;
+                            Times New Roman, serif;
                     "
                 >
                     ABOUT GIFT CHECK ?
@@ -2119,7 +2119,7 @@
                             style="
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                             "
                             >By:</span
                         >
@@ -2128,7 +2128,7 @@
                                 font-weight: bold;
                                 color: black;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                                 font-size: large;
                             "
                         >
@@ -2140,7 +2140,7 @@
                                 font-size: 12px;
                                 font-weight: bold;
                                 font-family: Cambria, Cochin, Georgia, Times,
-                                    &quot;Times New Roman&quot;, serif;
+                                    Times New Roman, serif;
                             "
                         >
                             GC Sr / Programmer
