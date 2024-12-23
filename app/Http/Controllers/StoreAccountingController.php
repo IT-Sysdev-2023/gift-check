@@ -1964,7 +1964,7 @@ class StoreAccountingController extends Controller
         return excel::download(new allVerifiedReport($request->all()), 'Verified Report.xlsx');
     }
 
-    
+
     private static function getTextfile($server, $barcode)
     {
         return $server->table('store_eod_textfile_transactions')
@@ -3030,7 +3030,7 @@ class StoreAccountingController extends Controller
     }
 
     public function aboutUs(Request $request){
-        return inertia('About_Us');
+        return inertia('AboutUs');
     }
 
 }
