@@ -16,18 +16,37 @@ class ReportService
 {
     public function verifiedGcYearlySubmit(Request $request)
     {
-        // dd();
         $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
-       
+
         if ($isExists) { //OTHER SERVER
-            VerifiedGcReport::dispatch($request->all(), self::getServerDatabase($request->selectedStore, false));
+            $server = self::getServerDatabase($request->selectedStore, false);
+
+            if (self::checkReveriedData($server, $request->selectedStore, $request->year)) {
+                VerifiedGcReport::dispatch($request->all(), $server);
+            } else {
+                return response()->json('No record Found in this date Transaction', 404);
+            }
 
         } else { //LOCAL
 
-            VerifiedGcReport::dispatch($request->all(), self::getServerDatabase($request->selectedStore, true));
+            $server = self::getServerDatabase($request->selectedStore, true);
+            if (self::checkReveriedData($server, $request->selectedStore, $request->year)) {
+                VerifiedGcReport::dispatch($request->all(), $server);
+            } else {
+                return response()->json('No record Found in this date Transaction', 404);
+            }
         }
     }
-    private static function getServerDatabase(string| int $store, bool $islocal)
+
+    public static function checkReveriedData($db, $store, $year)
+    {
+        return DB::connection($db)->table('store_verification')
+            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->whereYear('vs_date', $year)
+            ->where('vs_store', $store)
+            ->exists();
+    }
+    private static function getServerDatabase(string|int $store, bool $islocal)
     {
 
         $lserver = StoreLocalServer::where('stlocser_storeid', $store)
