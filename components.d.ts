@@ -10,6 +10,7 @@ declare module 'vue' {
     AAlert: typeof import('ant-design-vue/es')['Alert']
     AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
+    About_Us: typeof import('./resources/js/Pages/About_Us.vue')['default']
     AboutUs: typeof import('./resources/js/Pages/AboutUs.vue')['default']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
