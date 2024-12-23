@@ -3,6 +3,7 @@
 namespace App\Exports\StoreAccounting;
 
 use App\Events\AccountingReportEvent;
+use App\Events\StoreAccountReportEvent;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
 use App\Models\User;
@@ -20,23 +21,24 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 
-class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents
+class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell
 {
 
-    public function __construct(protected array $requirements, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
+    public function __construct(protected array $requirements, protected &$progress = null, protected $reportId = null, protected ?User $user = null, protected $db = null)
     {
 
     }
     public function collection()
     {
-        $db = self::getServerDatabase($this->requirements['selectedStore']);
+        $db = $this->getServerDatabase($this->db);
 
         return $this->getVerifiedData($db, $this->requirements);
     }
     public function map($data): array
     {
-        // $this->broadcastProgress("Generating Barcode Records");
+        $this->broadcast("Gc Report Per Day Transaction");
         return [
             (new \DateTime($data['date']))->format('F j, Y'),
             $data['totverifiedgc'],
@@ -91,7 +93,7 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->whereYear('vs_reverifydate', $requirements['year'])
             ->where('vs_store', $requirements['selectedStore'])
-            ->groupBy('vs_date','vs_reverifydate')
+            ->groupBy('vs_date', 'vs_reverifydate')
             ->cursor();
 
         $query2->each(function ($q) use (&$transformedData) {
@@ -109,15 +111,18 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
         return $transformedData;
     }
 
-    private static function getServerDatabase($store)
+    private function getServerDatabase($connection)
     {
-        $lserver = StoreLocalServer::where('stlocser_storeid', $store)
-            ->value('stlocser_ip');
 
-        $parts = collect(explode('.', $lserver));
-        $result = $parts->slice(2)->implode('.');
+        // $lserver = StoreLocalServer::where('stlocser_storeid', $store)
+        //     ->value('stlocser_ip');
+        // Log::info($islocal);
+        // $parts = collect(explode('.', $lserver));
+        // $result = $islocal == 1 ? '' : '-' . $parts->slice(2)->implode('.');
 
-        return DB::connection('mariadb-' . $result);
+        return DB::connection($connection);
+
+
     }
 
     public function registerEvents(): array
@@ -138,6 +143,10 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
             }
 
         ];
+    }
+    public function startCell(): string
+    {
+        return 'A7';
     }
     // public function countRecords()
     // {
@@ -163,14 +172,15 @@ class VerifiedGcReportPerDayTransaction implements FromCollection, ShouldAutoSiz
     public function styles(Worksheet $sheet)
     {
         return [
-            1 => ['font' => ['bold' => true]],
+            7 => ['font' => ['bold' => true]],
         ];
     }
+    private function broadcast(string $info, bool $isDone = false, $id = null)
+    {
+        $this->progress['info'] = $info;
+        $this->progress['progress']['currentRow']++;
+        $this->progress['isDone'] = $isDone;
 
-    // private function broadcastProgress(string $info)
-    // {
-    //     $this->progress['info'] = $info;
-    //     $this->progress['progress']['currentRow']++;
-    //     AccountingReportEvent::dispatch($this->user, $this->progress, $this->reportId);
-    // }
+        StoreAccountReportEvent::dispatch($this->user, $this->progress, $id ?? $this->reportId);
+    }
 }

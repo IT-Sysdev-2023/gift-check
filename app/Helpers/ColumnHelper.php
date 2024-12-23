@@ -84,6 +84,7 @@ class ColumnHelper
         [
             'title' => 'Status',
             'key' => 'status',
+            'dataIndex' => 'status',
 
         ],
     ];
