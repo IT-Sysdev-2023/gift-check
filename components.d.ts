@@ -335,7 +335,6 @@ declare module 'vue' {
     PieChartOutlined: typeof import('@ant-design/icons-vue')['PieChartOutlined']
     PlazaMarcela: typeof import('./resources/js/Pages/StoreAccounting/PlazaMarcela.vue')['default']
     PlazaMarcelaPosTransaction: typeof import('./resources/js/Pages/StoreAccounting/PlazaMarcelaPosTransaction.vue')['default']
-    PlusCircleOutlined: typeof import('@ant-design/icons-vue')['PlusCircleOutlined']
     PlusOutlined: typeof import('@ant-design/icons-vue')['PlusOutlined']
     PlusSquareOutlined: typeof import('@ant-design/icons-vue')['PlusSquareOutlined']
     PoweroffOutlined: typeof import('@ant-design/icons-vue')['PoweroffOutlined']
