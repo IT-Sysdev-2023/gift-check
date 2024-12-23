@@ -2285,7 +2285,6 @@
                         Copyright © 2024 gift-check.com All Rights Reserved. -
                         Legal
                     </h2>
-                    <p style="text-align: center"></p>
                 </div>
             </div>
         </div>
