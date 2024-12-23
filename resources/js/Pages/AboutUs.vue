@@ -15,7 +15,7 @@
     >
         <!-- Logo -->
         <div style="font-weight: bold">
-            <a href="https://gift-check.com">
+            <a class="headings-Hover" @click="scrollToPage('headingsPage')">
                 <img
                     src="/images/giftchecklogo.webp"
                     style="
@@ -69,11 +69,7 @@
 
         <!-- EXIT Button -->
         <button
-            @click="
-                () => {
-                    exitModal = true;
-                }
-            "
+            onclick="location.href='http://127.0.0.1/';"
             class="animated-button"
         >
             <svg
@@ -97,9 +93,6 @@
                 ></path>
             </svg>
         </button>
-        <a-modal v-model:open="exitModal" :footer="false">
-            <h1>No function yet</h1>
-        </a-modal>
     </header>
 
     <!-- scroll up button  -->
@@ -174,7 +167,6 @@
                     />
                 </div>
             </div>
-
             <!-- BIBLE VERSE MESSAGE  -->
             <div
                 style="
@@ -2292,7 +2284,6 @@
 </template>
 
 <script setup>
-import { router } from "@inertiajs/core";
 import { onMounted, ref, onUnmounted } from "vue";
 
 const showScrollButton = ref(false);
