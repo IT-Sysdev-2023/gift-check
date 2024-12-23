@@ -100,6 +100,7 @@ Route::middleware('auth')->group(function () {
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing,admin');
 
     Route::get('storeaccounting-dashboard', [StoreAccountingController::class, 'storeAccountingDashboard'])->name('storeaccounting.dashboard');
+
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -851,7 +852,6 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
                             Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
-                            Route::get('status', [StoreAccountingController::class, 'status'])->name('status');
                         }
                     );
             }

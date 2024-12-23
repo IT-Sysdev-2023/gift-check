@@ -15,23 +15,21 @@
     >
         <!-- Logo -->
         <div style="font-weight: bold">
-            <link>
-                <a  href="https://gift-check.com">
-                    <img
-                        src="/images/giftchecklogo.webp"
-                        style="
-                            border-radius: 50%;
-                            border: 5px solid white;
-                            width: 120px;
-                            height: 120px;
-                            display: inline;
-                            justify-content: center;
-                            align-items: center;
-                            cursor: pointer;
-                        "
-                    />
-                </a>
-            </link>
+            <a href="https://gift-check.com">
+                <img
+                    src="/images/giftchecklogo.webp"
+                    style="
+                        border-radius: 50%;
+                        border: 5px solid white;
+                        width: 120px;
+                        height: 120px;
+                        display: inline;
+                        justify-content: center;
+                        align-items: center;
+                        cursor: pointer;
+                    "
+                />
+            </a>
         </div>
         <!-- Navigation -->
         <nav>
@@ -44,92 +42,40 @@
                     gap: 40px;
                 "
             >
-                <link>
-                    <a
-                        @click="scrollToPage('headingsPage')"
-                        style="
-                        font-size: 17px;
-                        cursor: pointer;
-                            color: #003140;
-                            font-weight: bold;
-                            background-color: #fbf8ef;
-                            border: 3px solid #fbf8ef;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
-                        "
-                        >Home</a
-                    >
-                </link>
-                <link>
-                    <a
-                        @click="scrollToPage('supervisedPage')"
-                        style="
-                        font-size: 17px;
-                        cursor: pointer;
-                            color: #003140;
-                            font-weight: bold;
-                            background-color: #fbf8ef;
-                            border: 3px solid #fbf8ef;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
-                        "
-                    >
-                        Supervised By</a
-                    >
-                </link>
-                <link>
-                    <a
-                        @click="scrollToPage('programmerPage')"
-                        style="
-                        font-size: 17px;
-                        cursor: pointer;
-                            color: #003140;
-                            font-weight: bold;
-                            background-color: #fbf8ef;
-                            border: 3px solid #fbf8ef;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
-                        "
-                        >Programmers</a
-                    >
-                </link>
-                <link>
-                    <a
-                        @click="scrollToPage('analystPage')"
-                        style="
-                        font-size: 17px;
-                        cursor: pointer;
-                            color: #003140;
-                            font-weight: bold;
-                            background-color: #fbf8ef;
-                            border: 3px solid #fbf8ef;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
-                        "
-                        >System Analyst</a
-                    >
-                </link>
-                <link>
-                    <a
-                        @click="scrollToPage('aboutUsPage')"
-                        style="
-                        font-size: 17px;
-                        cursor: pointer;
-                            color: #003140;
-                            font-weight: bold;
-                            background-color: #fbf8ef;
-                            border: 3px solid #fbf8ef;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
-                        "
-                        >About Us</a
-                    >
-                </link>
+                <!-- HOME  -->
+                <a class="headings-Hover" @click="scrollToPage('headingsPage')"
+                    >Home</a
+                >
+                <!-- SUPERVISED BY  -->
+                <a
+                    class="headings-Hover" @click="scrollToPage('supervisedPage')"
+                >
+                    Supervised By</a
+                >
+                <!-- PROGRAMMERS  -->
+                <a class="headings-Hover" @click="scrollToPage('programmerPage')"
+                    >Programmers</a
+                >
+                <!-- SYSTEM ANALYST  -->
+                <a class="headings-Hover" @click="scrollToPage('analystPage')"
+                    >System Analyst</a
+                >
+                <!-- ABOUT US  -->
+                <a class="headings-Hover" @click="scrollToPage('aboutUsPage')"
+                    >About GC</a
+                >
             </ul>
         </nav>
 
         <!-- EXIT Button -->
-        <button @click="() => {exitModal = true}" class="animated-button">
+        <button
+            @click="
+                () => {
+                    exitModal = true;
+                }
+            "
+            class="animated-button"
+        >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="arr-2"
@@ -152,7 +98,7 @@
             </svg>
         </button>
         <a-modal v-model:open="exitModal" :footer="false">
-            <h1> No function yet</h1>
+            <h1>No function yet</h1>
         </a-modal>
     </header>
 
@@ -167,7 +113,7 @@
         </button>
     </div>
 
-    <!-- HEADINGS PAGE  -->
+    <!-- FIRST PAGE  -->
     <a-card>
         <div ref="headingsPage">
             <!-- headings  -->
@@ -191,24 +137,29 @@
                                     &quot;Times New Roman&quot;, serif;
                                 font-size: 50px;
                             "
-                            >Welcome to</span>
+                            >Welcome to</span
+                        >
 
-                        <span class="wave-text"
+                        <span
+                            class="wave-text"
                             style="
                                 font-size: 90px;
-                                color:#eb5b00;
+                                color: #eb5b00;
                                 font-weight: bold;
                             "
                         >
-                            GIFT CHECK</span>
-                            <span>
-                                <div class="bird-loader">
+                            GIFT CHECK</span
+                        >
+                        <span>
+                            <div class="bird-loader">
                                 <div class="dot-1"></div>
-                                <div class="dot-2">-  -</div>
+                                <div class="dot-2">- -</div>
                                 <div class="dot-3"></div>
-                                </div>
-                            </span>
-                        <span style="font-weight: bold; font-size: 30px">Team / Family</span>
+                            </div>
+                        </span>
+                        <span style="font-weight: bold; font-size: 30px"
+                            >Team / Family</span
+                        >
                     </div>
                     <img
                         src="https://user-images.githubusercontent.com/74038190/212749447-bfb7e725-6987-49d9-ae85-2015e3e7cc41.gif"
@@ -224,7 +175,7 @@
                 </div>
             </div>
 
-            <!-- quote message  -->
+            <!-- BIBLE VERSE MESSAGE  -->
             <div
                 style="
                     text-align: center;
@@ -270,6 +221,7 @@
                         justify-content: center;
                     "
                 >
+                <!-- MAAM Fuertes  -->
                     <div>
                         <div class="card">
                             <div>
@@ -285,19 +237,17 @@
                                 <p class="text-body">Group Managing Director</p>
                                 <p
                                     style="
-                                        position: absolute;
-                                        top: 85%;
-                                        margin-left: 30px;
                                         color: #eb5b00;
                                         font-weight: bold;
+                                        text-align: center
                                     "
                                 >
                                     CIA, CSCU, CISA, REB, REA, CICA, CrFA
                                 </p>
                             </div>
-                            <button class="card-button">More info</button>
                         </div>
                     </div>
+                    <!-- MAAM TINA  -->
                     <div style="margin-left: 10%">
                         <div class="card">
                             <div>
@@ -312,7 +262,6 @@
                                 </p>
                                 <p class="text-body">Jr Supervisor</p>
                             </div>
-                            <button class="card-button">More info</button>
                         </div>
                     </div>
                 </div>
@@ -347,6 +296,7 @@
                     margin-top: 25px;
                 "
             >
+            <!-- KENT CARD BOX  -->
                 <div>
                     <div class="card">
                         <div>
@@ -365,13 +315,16 @@
                                     kentModal = true;
                                 }
                             "
+                            style="cursor: pointer"
                             class="card-button"
                         >
                             More info
                         </button>
                     </div>
                 </div>
-                <div style="margin-left: 40px">
+
+                <!-- JESSAN CARD BOX  -->
+                <div style="margin-left: 5px">
                     <div class="card">
                         <div>
                             <img
@@ -389,13 +342,16 @@
                                     jessanModal = true;
                                 }
                             "
+                            style="cursor: pointer"
                             class="card-button"
                         >
                             More info
                         </button>
                     </div>
                 </div>
-                <div style="margin-left: 40px">
+
+                <!-- BIBONG CARD BOX  -->
+                <div style="margin-left: 5px">
                     <div class="card">
                         <div>
                             <img
@@ -413,13 +369,16 @@
                                     harveyModal = true;
                                 }
                             "
+                            style="cursor: pointer"
                             class="card-button"
                         >
                             More info
                         </button>
                     </div>
                 </div>
-                <div style="margin-left: 40px">
+
+                <!-- TEOFREDO CARD BOX  -->
+                <div style="margin-left: 5px">
                     <div class="card">
                         <div>
                             <img
@@ -437,12 +396,16 @@
                                     teofredoModal = true;
                                 }
                             "
+                            style="cursor: pointer"
                             class="card-button"
                         >
                             More info
                         </button>
                     </div>
                 </div>
+
+                <!-- PROGRAMMERS MODAL -->
+
                 <!-- kent modal  -->
                 <a-modal
                     v-model:open="kentModal"
@@ -450,7 +413,7 @@
                     style="width: 45%"
                 >
                     <div>
-                        <img src="/images/manny.webp" class="profile-picture" />
+                        <img src="/images/kentoy.jpg" class="profile-picture" />
                         <div class="loader">ACTIVE ...</div>
 
                         <div
@@ -660,17 +623,14 @@
                     </a-card>
                 </a-modal>
 
-                <!-- jessan Modal  -->
+                <!-- JESSAN MODAL  -->
                 <a-modal
                     v-model:open="jessanModal"
                     :footer="false"
                     style="width: 45%"
                 >
                     <div>
-                        <img
-                            src="/images/bossing.webp"
-                            class="profile-picture"
-                        />
+                        <img src="/images/san.jpg" class="profile-picture" />
                         <div class="loader">ACTIVE ...</div>
 
                         <div
@@ -880,14 +840,17 @@
                     </a-card>
                 </a-modal>
 
-                <!-- bibong modal  -->
+                <!-- BIBONG MODAL  -->
                 <a-modal
                     v-model:open="harveyModal"
                     :footer="false"
                     style="width: 45%"
                 >
                     <div>
-                        <img src="/images/coco.webp" class="profile-picture" />
+                        <img
+                            src="/images/bibong final.jpg"
+                            class="profile-picture"
+                        />
                         <div class="loader">ACTIVE ...</div>
 
                         <div
@@ -1097,14 +1060,14 @@
                     </a-card>
                 </a-modal>
 
-                <!-- teofredo modal  -->
+                <!-- TEOFREDO MODAL  -->
                 <a-modal
                     v-model:open="teofredoModal"
                     :footer="false"
                     style="width: 45%"
                 >
                     <div>
-                        <img src="/images/jonny.webp" class="profile-picture" />
+                        <img src="/images/teo.jpg" class="profile-picture" />
                         <div class="loader">ACTIVE ...</div>
 
                         <div
@@ -1177,7 +1140,7 @@
                         >
                             <span
                                 >"BISAN UNSA KALISOD SA KINABUHI AYAW KALIMOT OG
-                                PA __"</span
+                                ?"</span
                             >
                         </div>
                     </a-card>
@@ -1321,17 +1284,129 @@
                     </a-card>
                 </a-modal>
 
-                <!-- claire Modal  -->
+            </div>
+        </div>
+    </a-card>
+
+    <!-- SYSTEM ANALYST PAGE  -->
+    <a-card>
+        <div ref="analystPage">
+            <!-- SYSTEM ANALYSE PAGE  -->
+            <div
+                style="
+                    text-align: center;
+                    font-weight: bold;
+                    font-size: large;
+
+                    font-family: Cambria, Cochin, Georgia, Times,
+                        &quot;Times New Roman&quot;, serif;
+                    margin-top: 5%;
+                "
+            >
+                <div>SYSTEM ANALYST</div>
+            </div>
+
+            <!-- SYSTEM ANALYST  -->
+            <div
+                style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-top: 25px;
+                "
+            >
+            <!-- MAAM CLAIRE  -->
+                <div>
+                    <div class="card">
+                        <div>
+                            <img
+                                src="/images/claire.jpg"
+                                class="profile-picture"
+                            />
+                        </div>
+                        <div class="card-details">
+                            <p class="text-title">Claire Joy B. Cagas</p>
+                            <p class="text-body">GC System Analyst</p>
+                        </div>
+                        <button
+                            @click="
+                                () => {
+                                    claireModal = true;
+                                }
+                            "
+                            style="cursor: pointer"
+                            class="card-button"
+                        >
+                            More info
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MAAM NORIEN  -->
+                <div style="margin-left: 40px">
+                    <div class="card">
+                        <div>
+                            <img
+                                src="/images/noriens.jpg"
+                                class="profile-picture"
+                            />
+                        </div>
+                        <div class="card-details">
+                            <p class="text-title">Caren S. Norien</p>
+                            <p class="text-body">GC System Analyst</p>
+                        </div>
+                        <button
+                            @click="
+                                () => {
+                                    norienModal = true;
+                                }
+                            "
+                            style="cursor: pointer"
+                            class="card-button"
+                        >
+                            More info
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MAAM MARICEL  -->
+                <div style="margin-left: 40px">
+                    <div class="card">
+                        <div>
+                            <img
+                                src="/images/mariscel.jpg"
+                                class="profile-picture"
+                            />
+                        </div>
+                        <div class="card-details">
+                            <p class="text-title">Maricel D. Dupit</p>
+                            <p class="text-body">GC System Analyst</p>
+                        </div>
+                        <button
+                            @click="
+                                () => {
+                                    maricelModal = true;
+                                }
+                            "
+                            style="cursor: pointer"
+                            class="card-button"
+                        >
+                            More info
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <!-- SYSTEM ANALYST MODAL  -->
+
+                <!-- CLAIRE MODAL  -->
                 <a-modal
                     v-model:open="claireModal"
                     :footer="false"
                     style="width: 45%"
                 >
                     <div>
-                        <img
-                            src="/images/cutedog.webp"
-                            class="profile-picture"
-                        />
+                        <img src="/images/claire.jpg" class="profile-picture" />
                         <div class="loader">ACTIVE ...</div>
 
                         <div
@@ -1543,14 +1618,17 @@
                     </a-card>
                 </a-modal>
 
-                <!-- norienModal  -->
+                <!-- NORIEN MODAL  -->
                 <a-modal
                     v-model:open="norienModal"
                     :footer="false"
                     style="width: 45%"
                 >
                     <div>
-                        <img src="/images/dog.webp" class="profile-picture" />
+                        <img
+                            src="/images/noriens.jpg"
+                            class="profile-picture"
+                        />
                         <div class="loader">ACTIVE ...</div>
 
                         <div
@@ -1762,7 +1840,7 @@
                     </a-card>
                 </a-modal>
 
-                <!-- maricel modal  -->
+                <!-- MARICEL MODAL  -->
                 <a-modal
                     v-model:open="maricelModal"
                     :footer="false"
@@ -1770,7 +1848,7 @@
                 >
                     <div>
                         <img
-                            src="/images/male dog.webp"
+                            src="/images/mariscel.jpg"
                             class="profile-picture"
                         />
                         <div class="loader">ACTIVE ...</div>
@@ -1981,114 +2059,9 @@
                         </div>
                     </a-card>
                 </a-modal>
-            </div>
-        </div>
     </a-card>
 
-    <!-- SYSTEM ANALYST PAGE  -->
-    <a-card>
-        <div ref="analystPage">
-            <!-- system analyst block  -->
-            <div
-                style="
-                    text-align: center;
-                    font-weight: bold;
-                    font-size: large;
-
-                    font-family: Cambria, Cochin, Georgia, Times,
-                        &quot;Times New Roman&quot;, serif;
-                    margin-top: 5%;
-                "
-            >
-                <div>SYSTEM ANALYST</div>
-            </div>
-
-            <!-- system analyst  -->
-            <div
-                style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin-top: 25px;
-                "
-            >
-                <div>
-                    <div class="card">
-                        <div>
-                            <img
-                                src="/images/claire.jpg"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div class="card-details">
-                            <p class="text-title">Claire Joy B. Cagas</p>
-                            <p class="text-body">GC System Analyst</p>
-                        </div>
-                        <button
-                            @click="
-                                () => {
-                                    claireModal = true;
-                                }
-                            "
-                            class="card-button"
-                        >
-                            More info
-                        </button>
-                    </div>
-                </div>
-                <div style="margin-left: 40px">
-                    <div class="card">
-                        <div>
-                            <img
-                                src="/images/noriens.jpg"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div class="card-details">
-                            <p class="text-title">Caren S. Norien</p>
-                            <p class="text-body">GC System Analyst</p>
-                        </div>
-                        <button
-                            @click="
-                                () => {
-                                    norienModal = true;
-                                }
-                            "
-                            class="card-button"
-                        >
-                            More info
-                        </button>
-                    </div>
-                </div>
-                <div style="margin-left: 40px">
-                    <div class="card">
-                        <div>
-                            <img
-                                src="/images/mariscel.jpg"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div class="card-details">
-                            <p class="text-title">Maricel D. Dupit</p>
-                            <p class="text-body">GC System Analyst</p>
-                        </div>
-                        <button
-                            @click="
-                                () => {
-                                    maricelModal = true;
-                                }
-                            "
-                            class="card-button"
-                        >
-                            More info
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </a-card>
-
-    <!-- ABOUT US PAGE  -->
+    <!-- ABOUT GIFT CHECK PAGE  -->
     <a-card>
         <div ref="aboutUsPage">
             <!-- About GIFT CHECK  -->
@@ -2103,7 +2076,14 @@
                 >
                     ABOUT GIFT CHECK ?
                 </h1>
-                <div style="width: 70%; text-align: center; margin-left: 16%; margin-top: 20px">
+                <div
+                    style="
+                        width: 70%;
+                        text-align: center;
+                        margin-left: 16%;
+                        margin-top: 20px;
+                    "
+                >
                     <span style="text-align: center; font-size: 16px">
                         <span style="font-weight: bold; color: #003140">
                             GIFT CHECK
@@ -2130,7 +2110,8 @@
                         functionality remains intact. Code must evolve with the
                         technological environment.
                         <div style="font-weight: bold; color: red">
-                            " FAILURE TO DO SO WILL LEAD TO UNFORESEEN CONSEQUENCES. YOU FEEL ME ? k*p*l 😆 "
+                            " FAILURE TO DO SO WILL LEAD TO UNFORESEEN
+                            CONSEQUENCES. YOU FEEL ME ?😆 "
                         </div>
                     </span>
                     <div style="margin-top: 20px">
@@ -2158,7 +2139,8 @@
                                 color: #eb5b00;
                                 font-size: 12px;
                                 font-weight: bold;
-                                font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+                                font-family: Cambria, Cochin, Georgia, Times,
+                                    &quot;Times New Roman&quot;, serif;
                             "
                         >
                             GC Sr / Programmer
@@ -2169,14 +2151,14 @@
         </div>
     </a-card>
 
-    <!-- footers  -->
+    <!-- FOOTER SECTION  -->
     <a-card style="background-color: #fbf8ef">
         <div>
             <div style="margin-top: 20px">
                 <div>
                     <div>
                         <ul class="example-2">
-                             <li class="icon-content">
+                            <li class="icon-content">
                                 <a
                                     href="https://linkedin.com/"
                                     aria-label="LinkedIn"
@@ -2184,17 +2166,17 @@
                                 >
                                     <div class="filled"></div>
 
-                                <svg
+                                    <svg
                                         class="twitter"
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 48 48"
                                         fill="currentColor"
                                         height="1.8em"
                                     >
-                                    <path
-                                        d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.598,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429"
-                                    ></path>
-                                </svg>
+                                        <path
+                                            d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.598,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429"
+                                        ></path>
+                                    </svg>
                                 </a>
                                 <div class="tooltip">Twitter</div>
                             </li>
@@ -2206,15 +2188,15 @@
                                 >
                                     <div class="filled"></div>
 
-                                   <svg
-                                         xmlns="http://www.w3.org/2000/svg"
-                                         fill="currentColor"
-                                         height="1.2em"
-                                         viewBox="0 0 320 512"
-                                        >
-                                            <path
-                                                d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"
-                                            ></path>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor"
+                                        height="1.2em"
+                                        viewBox="0 0 320 512"
+                                    >
+                                        <path
+                                            d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"
+                                        ></path>
                                     </svg>
                                 </a>
                                 <div class="tooltip">Facebook</div>
@@ -2451,13 +2433,13 @@ const maricelModal = ref(false);
 <style scoped>
 .card {
     margin-top: 20px;
-    width: 350px;
+    width: 380px;
     height: 500px;
     border-radius: 20px;
-    background: FBF8EF;
+    background: #fbf8ef;
     position: relative;
     padding: 1.8rem;
-    border: 2px solid FBF8EF;
+    /* border: 2px solid white; */
     transition: 0.5s ease-out;
     overflow: visible;
 }
@@ -2540,7 +2522,7 @@ const maricelModal = ref(false);
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color:#013040;
+    background-color: #013040;
     border: none;
     font-weight: 600;
     display: flex;
@@ -3353,114 +3335,145 @@ ul {
 <style scoped>
 .bird-loader {
     margin-left: 70%;
-  height: 50px;
-  width: 20rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
+    height: 50px;
+    width: 20rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
 }
 
 .dot-2 {
-  background-color: black;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  padding: 4px;
-  color: white;
+    background-color: black;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    padding: 4px;
+    color: white;
 }
 
 .dot-1,
 .dot-3 {
-  background-color: black;
-  height: 30px;
-  width: 20px;
-  border-radius: 50%;
-  text-align: center;
-  animation: flap-wings 1s infinite ease-in-out;
+    background-color: black;
+    height: 30px;
+    width: 20px;
+    border-radius: 50%;
+    text-align: center;
+    animation: flap-wings 1s infinite ease-in-out;
 }
 
 .dot-2 {
-  position: relative;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  background-color: black;
-  animation: flap-wings 1s infinite ease-in-out;
-  animation-delay: 0.1s;
+    position: relative;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: black;
+    animation: flap-wings 1s infinite ease-in-out;
+    animation-delay: 0.1s;
 }
 
 .dot-2::before,
 .dot-2::after {
-  content: "";
-  position: absolute;
-  background-color: black;
+    content: "";
+    position: absolute;
+    background-color: black;
 }
 
 .dot-2::before {
-  height: 20px;
-  width: 10px;
-  bottom: 20px;
-  left: 1px;
-  border-radius: 50% 50% 0 0;
-  transform: rotate(-20deg);
+    height: 20px;
+    width: 10px;
+    bottom: 20px;
+    left: 1px;
+    border-radius: 50% 50% 0 0;
+    transform: rotate(-20deg);
 }
 
 .dot-2::after {
-  height: 20px;
-  width: 10px;
-  bottom: 20px;
-  left: 19px;
-  transform: rotate(20deg);
-  border-radius: 50% 50% 0 0;
+    height: 20px;
+    width: 10px;
+    bottom: 20px;
+    left: 19px;
+    transform: rotate(20deg);
+    border-radius: 50% 50% 0 0;
 }
 
 .dot-1::before,
 .dot-1::after,
 .dot-3::before,
 .dot-3::after {
-  content: "";
-  position: absolute;
-  background-color: white;
+    content: "";
+    position: absolute;
+    background-color: white;
 }
 
 .dot-1::before,
 .dot-3::before {
-  height: 30px;
-  width: 20px;
-  top: 10px;
-  left: 0;
-  background-color: #e8e8e8;
- /*chnage this if u need dark mode to #212121 if need light mode #e8e8e8*/
-  border-radius: 50% 50% 0 0;
+    height: 30px;
+    width: 20px;
+    top: 10px;
+    left: 0;
+    background-color: #e8e8e8;
+    /*chnage this if u need dark mode to #212121 if need light mode #e8e8e8*/
+    border-radius: 50% 50% 0 0;
 }
 
 @keyframes flap-wings {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
+    0%,
+    100% {
+        transform: translateY(0);
+    }
 
-  50% {
-    transform: translateY(-20px);
-  }
+    50% {
+        transform: translateY(-20px);
+    }
 }
 </style>
 
 <!-- wave text  -->
 <style scoped>
+@keyframes colorWave {
+    0% {
+        color: #eb5b00;
+    }
+    25% {
+        color: #525b44;
+    }
+    50% {
+        color: #013040;
+    }
+    75% {
+        color: #3b1c32;
+    }
+    100% {
+        color: #eb5b00;
+    }
+}
 
-  @keyframes colorWave {
-            0% { color: #eb5b00; }
-            25% { color: #525B44; }
-            50% { color: #013040; }
-            75% { color: #3B1C32; }
-            100% { color: #eb5b00; }
-        }
+.wave-text {
+    font-size: 90px;
+    font-weight: bold;
+    animation: colorWave 3s infinite;
+}
+</style>
 
-        .wave-text {
-            font-size: 90px;
-            font-weight: bold;
-            animation: colorWave 3s infinite;
-        }
+<!-- heading Hover  -->
+<style scoped>
+.headings-Hover {
+    font-size: 17px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #003140;
+    font-weight: bold;
+    background-color: #fbf8ef;
+    border: 3px solid #fbf8ef;
+    font-family:
+        Cambria,
+        Cochin,
+        Georgia,
+        Times,
+        Times New Roman serif;
+}
+.headings-Hover:hover {
+    text-decoration: underline;
+}
 </style>

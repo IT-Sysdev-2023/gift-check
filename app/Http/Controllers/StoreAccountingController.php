@@ -3077,7 +3077,4 @@ class StoreAccountingController extends Controller
         return inertia('About_Us');
     }
 
-    public function status(Request $request){
-        dd();
-    }
 }
