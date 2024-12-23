@@ -73,7 +73,6 @@ Route::get('kanding', function () {
 //* Please install "Better Comments extension" to see comments clearly
 //! AUTHENTICATION SECTION
 Route::middleware('auth')->group(function () {
-
     Route::get('employee', [UserDetailsController::class, 'index']);
     Route::get('get-employee', [UserDetailsController::class, 'getEmp'])->name('get.employee');
     Route::post('add-employee-{id}', [UserDetailsController::class, 'addEmp'])->name('add.employee');
@@ -852,7 +851,6 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-                            Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
 
                             Route::name('reports.')->group(function () {
                                 Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
@@ -861,6 +859,7 @@ Route::middleware(['auth'])->group(function () {
                     );
             }
         );
+    Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
 });
 
 require __DIR__ . '/auth.php';
