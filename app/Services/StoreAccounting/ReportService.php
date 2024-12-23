@@ -22,9 +22,11 @@ class ReportService
             $server = self::getServerDatabase($request->selectedStore, false);
 
             if (self::checkReveriedData($server, $request->selectedStore, $request->year)) {
+
                 VerifiedGcReport::dispatch($request->all(), $server);
+                
             } else {
-                return response()->json('No record Found in this date Transaction', 404);
+                return response()->json('No record Found on this date', 404);
             }
 
         } else { //LOCAL
@@ -33,7 +35,7 @@ class ReportService
             if (self::checkReveriedData($server, $request->selectedStore, $request->year)) {
                 VerifiedGcReport::dispatch($request->all(), $server);
             } else {
-                return response()->json('No record Found in this date Transaction', 404);
+                return response()->json('No record Found on this date', 404);
             }
         }
     }

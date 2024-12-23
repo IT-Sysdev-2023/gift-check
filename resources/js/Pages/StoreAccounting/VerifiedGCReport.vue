@@ -475,7 +475,7 @@ const submitGCReportsYearly = () => {
 
             let message = "please check all the fields";
             if (e.status === 404) {
-                message = e.response.data.error;
+                message = e.response.data;
             }
             notification.error({
                 message: "Opps Something Went wrong",
