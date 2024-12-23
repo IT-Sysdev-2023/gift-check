@@ -36,12 +36,13 @@ class VerifiedGcReport implements ShouldQueue
      */
     public function handle(): void
     {
-        //Check Existence
+        $label = isset($this->request['month']) ? 'Monthly' : 'Yearly';
+
         $doc= new VerifiedGcReportMultiExport($this->request, $this->user, $this->db);
         (new ExportHandler())
         ->setFolder('Reports')
         ->setSubfolderAsUsertype($this->user->usertype)
-        ->setFileName('Verified Gc Report (Yearly)-' . $this->user->user_id, $this->request['year'])
+        ->setFileName("Verified Gc Report ($label)-" . $this->user->user_id, $this->request['year'])
         ->exportDocument('excel', $doc)
         ->deleteFileIn(now()->addDays(2));
     }

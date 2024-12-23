@@ -13,12 +13,11 @@ class ReportController extends Controller
     }
 
     public function verifiedGcYearlySubmit(Request $request){
+        // dd($request->all());
         return $this->reportService->verifiedGcYearlySubmit($request);
     }
 
     public function listOfGeneratedReports(Request $request){
         return $this->reportService->generatedReports($request);
     }
-
-   
 }

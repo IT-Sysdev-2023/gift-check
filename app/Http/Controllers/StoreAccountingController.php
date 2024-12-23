@@ -1959,12 +1959,6 @@ class StoreAccountingController extends Controller
         ]);
     }
 
-    public function verifiedGcSubmit(Request $request)
-    {
-        return excel::download(new allVerifiedReport($request->all()), 'Verified Report.xlsx');
-    }
-
-
     private static function getTextfile($server, $barcode)
     {
         return $server->table('store_eod_textfile_transactions')
