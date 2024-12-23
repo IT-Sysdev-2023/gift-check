@@ -3,6 +3,7 @@
 namespace App\Services\Documents;
 
 use App\Jobs\DeleteFile;
+use GuzzleHttp\Exception\InvalidArgumentException;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -46,7 +47,9 @@ class ExportHandler extends FileHandler
     public function exportToExcel($model)
     {
         $folderName = $this->folder() . 'excel/';
-        Excel::store($model, "{$folderName}{$this->filename}.xlsx", 'public');
+        $filePath = "{$folderName}{$this->filename}.xlsx";
+        Excel::store($model, $filePath, 'public');
+        $this->fullPath = $filePath;
         return $this;
     }
 
@@ -57,6 +60,7 @@ class ExportHandler extends FileHandler
         $this->fullPath = $filename;
         return $this;
     }
+
     /**
      * Export the given document in the specified format.
      *
@@ -66,14 +70,23 @@ class ExportHandler extends FileHandler
      */
     public function exportDocument(string $format, $document, ?callable $callback = null)
     {
-        if ($format === 'pdf') {
-            $this->exportToPdf($document);
-            $callback('pdf', $document);
-        } else { //excel
-            $this->exportToExcel($document);
-            $callback('excel', $document);
+        $exportMethods = [
+            'pdf' => fn() => $this->exportToPdf($document),
+            'excel' => fn() => $this->exportToExcel($document),
+        ];
+
+        if (!array_key_exists($format, $exportMethods)) {
+            throw new InvalidArgumentException("Unsupported format: $format");
         }
 
+        // Execute the appropriate export method
+        $exportMethods[$format]();
+
+        // Invoke the callback if provided
+        if ($callback !== null) {
+            $callback($format, $document);
+        }
+        return $this;
     }
 
     public function deleteFileIn($date)

@@ -13,3 +13,4 @@ Broadcast::channel('treasury-report.{id}', fn(User $user, $id) => (int) $user->u
 Broadcast::channel('accounting-report.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
 Broadcast::channel('generate-verified-excel.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
 Broadcast::channel('verified-gc-report-pdf.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);
+Broadcast::channel('storeaccounting-report.{id}', fn(User $user, $id) => (int) $user->user_id === (int) $id);

@@ -52,7 +52,7 @@ use App\Exports\DuplicateBarcodeExcel\allDuplicateExcel;
 use App\Exports\SPGCApprovedExcel\allApprovedExcel;
 use App\Exports\SPGCReleasedExcel\allReleasedExcel;
 use App\Exports\VerifiedGCReportMonthly\allVerifiedReport;
-use Illuminate\Database\Query\Builder;
+
 
 class StoreAccountingController extends Controller
 {
@@ -1964,40 +1964,7 @@ class StoreAccountingController extends Controller
         return excel::download(new allVerifiedReport($request->all()), 'Verified Report.xlsx');
     }
 
-    public function verifiedGcYearlySubmit(Request $request)
-    {
-        // dd();
-        // $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
-
-        // if ($isExists) {
-        //     $lserver = StoreLocalServer::where('stlocser_storeid', $request->selectedStore)
-        //         ->value('stlocser_ip');
-
-        //     $parts = collect(explode('.', $lserver));
-        //     $result = $parts->slice(2)->implode('.');
-
-        //     $server = DB::connection('mariadb-' . $result)->table('store_verification');
-        //     $data = self::getStoreVerification($server, $request);
-        // } else {
-        //     $data = self::getStoreVerification(new StoreVerification, $request);
-        // }
-        $doc= new VerifiedGcReportMultiExport($request->all(), $request->user());
-        (new ExportHandler())
-        ->setFolder('Reports')
-        ->setSubfolderAsUsertype($request->user()->usertype)
-        ->setFileName('SPGC Approved Report-' . $request->user()->user_id, $request->year)
-        ->exportDocument('excel', $doc, function($docu, $document){
-
-            // if($docu === 'excel'){
-            //     $document->progress['isDone'] = true;
-            //     AccountingReportEvent::dispatch($this->user, $document->progress, $document->reportId);
-            // }else{
-            //     $this->broadcastProgress($this->user, "Done", true);
-            // }
-        });
-
-        dd(1);
-    }
+    
     private static function getTextfile($server, $barcode)
     {
         return $server->table('store_eod_textfile_transactions')
@@ -2006,18 +1973,7 @@ class StoreAccountingController extends Controller
     }
 
 
-    private static function getStoreVerification($model, Request $request)
-    {
-        return $model->where(fn($q) =>
-            $q->whereYear('vs_date', $request->year)
-                ->orWhereYear('vs_reverifydate', $request->year))
-            ->where('vs_store', $request->selectedStore)
-            ->when($request->user()->username === 'flora2', function (Builder $builder) {
-                $builder->where('vs_gctype', 3);
-            })
-            ->limit(10)
-            ->get();
-    }
+
     public function storeGCPurchasedReport()
     {
         return Inertia::render('StoreAccounting/StoreGCPurchased');

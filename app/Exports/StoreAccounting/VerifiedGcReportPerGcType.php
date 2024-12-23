@@ -3,6 +3,7 @@
 namespace App\Exports\StoreAccounting;
 
 use App\Events\AccountingReportEvent;
+use App\Events\StoreAccountReportEvent;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
 use App\Models\User;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -24,26 +27,16 @@ use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 
-class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell
+class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell, WithColumnFormatting
 {
 
-    public function __construct(protected Collection $data, protected string|int $store, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
+    public function __construct(protected Collection $data, protected string|int|null $store = null, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
     {
 
     }
     public function collection()
     {
-        $transformData = collect();
         $arr_perdate = collect();
-        $amounts = [
-            'SM' => 0,
-            'HF' => 0,
-            'MP' => 0,
-            'FR' => 0,
-            'SOD' => 0,
-            'WHOLESALE' => 0,
-        ];
-
         $purchased = [
             'special' => 0,
             'regular' => 0,
@@ -87,22 +80,9 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
             'WHOLESALE' => 0
         ];
 
-        $cntr = 0;
         $datedisplay = '';
-        // dd($this->data->sortByDesc('date'));
-        $this->data->each(function ($item) use (&$amounts, &$special, &$bng, &$promo, &$regular, &$cntr, &$purchased, &$arr_perdate, &$datedisplay) {
 
-            if ((float) $item['purchasecred'] > 0) {
-
-                $terminal = explode(",", $item['terminalno']);
-                $purchase = explode(",", $item['purchaseamt']);
-
-                collect($terminal)->each(function ($item, $key) use ($purchase, &$amounts) {
-                    $explodeTerminal = explode('-', $item)[0] ?? null;
-
-                    $amounts[$explodeTerminal] += (float) $purchase[$key];
-                });
-            }
+        $this->data->groupBy('date')->each(function ($items, $date) use (&$special, &$bng, &$promo, &$regular, &$cntr, &$purchased, &$arr_perdate, &$datedisplay) {
 
             $gcTypeMapping = [
                 'SPECIAL EXTERNAL' => ['target' => 'special', 'array' => &$special],
@@ -110,63 +90,48 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
                 'BEAM AND GO' => ['target' => 'bng', 'array' => &$bng],
                 'PROMOTIONAL GC' => ['target' => 'promo', 'array' => &$promo],
             ];
+            foreach ($items as $item) {
+                if ((float) $item['purchasecred'] > 0) {
+                    $terminal = explode(",", $item['terminalno']);
+                    $purchase = explode(",", $item['purchaseamt']);
 
-            // dump($item['date']);
-            if ($datedisplay === $item['date']) {
+                    collect($terminal)->each(function ($i, $key) use ($purchase, &$purchased, $gcTypeMapping, $item) {
+                        $explodeTerminal = Str::trim(explode('-', $i)[0]) ?? null;
 
-                $mapping = $gcTypeMapping[$item['gc_type']];
+                        $mapping = $gcTypeMapping[$item['gc_type']];
 
-                foreach ($amounts as $key => $value) {
-                    $mapping['array'][$key] += $value; // Update corresponding array
+                        $mapping['array'][$explodeTerminal] += (float) $purchase[$key];
+                        $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
+                    });
                 }
-                $purchased[$mapping['target']] += $item['purchasecred']; // Update purchasecred
-
-            } else {
-                // if ($item['date'] === "2018-12-31") {
-                //     dump($item['date']);
-                // }
-                $amounts = array_fill_keys(array_keys($amounts), 0);
-                $arr_perdate->push([
-                    'arr_perdate' => $datedisplay,
-                    'regular' => $purchased['regular'],
-                    'special' => $purchased['special'],
-                    'bng' => $purchased['bng'],
-                    'promo' => $purchased['promo'],
-                    'terminalreg' => $regular,
-                    'terminalspec' => $special,
-                    'terminalbng' => $bng,
-                    'terminalpromo' => $promo
-                ]);
-                //Reset KEYS to Zero
-                $purchased = array_fill_keys(array_keys($purchased), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
-                $regular = array_fill_keys(array_keys($regular), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
-                $special = array_fill_keys(array_keys($special), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
-                $bng = array_fill_keys(array_keys($bng), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
-                $promo = array_fill_keys(array_keys($promo), 0); // gi separate sa function ky d mugana kung adto ibutang, sabot ka (maam neil pa)
-
-                //Assign new data
-                $mapping = $gcTypeMapping[$item['gc_type']];
-                foreach ($amounts as $key => $value) {
-                    $mapping['array'][$key] += $value; // Update corresponding array
-                }
-                $purchased[$mapping['target']] += $item['purchasecred'];
             }
+            $arr_perdate->push([
+                'arr_perdate' => $date,
+                'regular' => $purchased['regular'],
+                'special' => $purchased['special'],
+                'bng' => $purchased['bng'],
+                'promo' => $purchased['promo'],
+                'terminalreg' => $regular,
+                'terminalspec' => $special,
+                'terminalbng' => $bng,
+                'terminalpromo' => $promo,
+            ]);
 
-            $datedisplay = $item['date'];
-            $amounts = array_fill_keys(array_keys($amounts), 0);
+            // Reset arrays for the next date
+
+            $purchased = array_fill_keys(array_keys($purchased), 0);
+            $regular = array_fill_keys(array_keys($regular), 0);
+            $special = array_fill_keys(array_keys($special), 0);
+            $bng = array_fill_keys(array_keys($bng), 0);
+            $promo = array_fill_keys(array_keys($promo), 0);
         });
 
-        // $Yarugay = $arr_perdate->filter(fn($i) => $i['arr_perdate'] !== '')->groupBy('arr_perdate');
-
-        dd($arr_perdate);
-
-        //Exclude the the empty date
-        return $arr_perdate->filter(fn($i) => $i['arr_perdate'] !== '');
+        return $arr_perdate;
     }
 
     public function map($data): array
     {
-
+        $this->broadcast("Gc Report Per Gc Type");
         return [
             [
                 $data['arr_perdate'],
@@ -215,30 +180,42 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
     {
         return 'A7';
     }
+    public function columnFormats(): array
+    {
+        return [
+            'C' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'D' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'E' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'F' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'G' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'H' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+            'I' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2,
+        ];
+    }
     public function registerEvents(): array
     {
 
         return [
-            // BeforeSheet::class => function (BeforeSheet $event) {
-            //     $sheet = $event->sheet;
-            //     $storeName = Store::where('store_id', $this->store)->value('store_name');
+            BeforeSheet::class => function (BeforeSheet $event) {
+                $sheet = $event->sheet;
+                $storeName = Store::where('store_id', $this->store)->value('store_name');
 
-            //     $sheet->setCellValue('D1', 'ALTURAS GROUP OF COMPANIES');
-            //     $sheet->setCellValue('D2', 'CUSTOMER FINANCIAL SERVICES CORP');
-            //     $sheet->setCellValue('D3', 'MONTHLY REPORT ON GIFT CHECK (Per GC Type & BU)');
-            //     $sheet->getStyle('D1:D3')->getFont()->setBold(true);
-            //     $sheet->getStyle('D1:D3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->setCellValue('C1', 'ALTURAS GROUP OF COMPANIES');
+                $sheet->setCellValue('C2', 'CUSTOMER FINANCIAL SERVICES CORP');
+                $sheet->setCellValue('B3', 'MONTHLY REPORT ON GIFT CHECK (Per GC Type & BU)');
+                $sheet->setCellValue('C5', 'BUSINESS UNIT:' . $storeName);
 
-            //     $sheet->setCellValue('D5', 'BUSINESS UNIT:' . $storeName);
-            //     $sheet->getStyle('D5')->getFont()->setBold(true);
-            // }
+                $sheet->mergeCells('C1:E1');
+                $sheet->mergeCells('C2:E2');
+                $sheet->mergeCells('B3:F3');
+                $sheet->mergeCells('C5:E5');
+            
+                $sheet->getStyle('B1:C5')->getFont()->setBold(true);
+                $sheet->getStyle('B1:C5')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            }
 
         ];
     }
-    // public function countRecords()
-    // {
-    //     return $this->query()->count();
-    // }
     public function title(): string
     {
         return 'By Gc Type & BU';
@@ -265,10 +242,12 @@ class VerifiedGcReportPerGcType implements FromCollection, ShouldAutoSize, WithT
         ];
     }
 
-    // private function broadcastProgress(string $info)
-    // {
-    //     $this->progress['info'] = $info;
-    //     $this->progress['progress']['currentRow']++;
-    //     AccountingReportEvent::dispatch($this->user, $this->progress, $this->reportId);
-    // }
+    private function broadcast(string $info, bool $isDone = false, $id = null)
+    {
+        $this->progress['info'] = $info;
+        $this->progress['progress']['currentRow']++;
+        $this->progress['isDone'] = $isDone;
+
+        StoreAccountReportEvent::dispatch($this->user, $this->progress, $id ?? $this->reportId);
+    }
 }

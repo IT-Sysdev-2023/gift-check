@@ -10,8 +10,10 @@ class Progress
 {
     protected $progress;
     protected $reportId;
-    public function __construct()
+    protected User $user;
+    public function __construct(?User $user = null)
     {
+        $this->user = $user;
         $this->reportId = (string) Str::uuid();
         $this->progress = [
             'name' => 'Accounting Report',
@@ -30,6 +32,17 @@ class Progress
         $this->progress['progress']['currentRow']++;
         $this->progress['isDone'] = $isDone;
         AccountingReportEvent::dispatch($user, $this->progress, $id ?? $this->reportId);
+    }
+
+    protected function broadcast(string $info, string $eventClass, bool $isDone = false, $id = null)
+    {
+        $this->progress['info'] = $info;
+        $this->progress['progress']['currentRow']++;
+        $this->progress['isDone'] = $isDone;
+
+        if($eventClass){
+            $eventClass::dispatch($this->user, $this->progress, $id ?? $this->reportId);
+        }
     }
 
 }

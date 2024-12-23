@@ -13,6 +13,7 @@ use App\Http\Controllers\EodController;
 use App\Http\Controllers\FadController;
 use App\Http\Controllers\Iad\Dashboard\SpecialExternalGcRequestController;
 use App\Http\Controllers\MarketingController;
+use App\Http\Controllers\StoreAccounting\ReportController;
 use App\Http\Controllers\Treasury\PromoGcReleasedController;
 use App\Http\Controllers\Treasury\ReportsController;
 use \App\Http\Controllers\Treasury\MasterfileController;
@@ -817,7 +818,7 @@ Route::middleware(['auth'])->group(function () {
                             //verified gc report
                             Route::get('verified-gc-report', [StoreAccountingController::class, 'verifiedGCReport'])->name('verifiedGCReport');
                             Route::get('verified-gc-submit', [StoreAccountingController::class, 'verifiedGcSubmit'])->name('verifiedGcSubmit');
-                            Route::get('verified-yearly-submit', [StoreAccountingController::class, 'verifiedGcYearlySubmit'])->name('verifiedGcYearlySubmit');
+                            Route::get('verified-yearly-submit', [ReportController::class, 'verifiedGcYearlySubmit'])->name('verifiedGcYearlySubmit');
                             //store gc purchased
                             Route::get('store-gc-purchased', [StoreAccountingController::class, 'storeGCPurchasedReport'])->name('storeGCPurchasedReport');
                             Route::get('store-monthly-submit', [StoreAccountingController::class, 'billingMonthlySubmit'])->name('billingMonthlySubmit');
@@ -852,6 +853,10 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
                             Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
+
+                            Route::name('reports.')->group(function () {
+                                Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
+                            });
                         }
                     );
             }
