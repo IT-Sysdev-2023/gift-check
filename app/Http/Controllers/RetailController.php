@@ -352,7 +352,7 @@ class RetailController extends Controller
 
     public function submitVerify(Request $request)
     {
-        dd($request->all()); 
+        dd($request->all());
 
         return $this->retail->submitVerify($request);
 
@@ -886,4 +886,11 @@ class RetailController extends Controller
         dd($data->toArray());
 
     }
+
+    public function suppliergcverification()
+    {
+        dd(1);
+    }
+
+
 }
