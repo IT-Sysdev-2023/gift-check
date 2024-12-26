@@ -120,37 +120,8 @@
                             >
                                 <div>Year:</div>
 
-                                <a-select
-                                    placeholder="Select Year"
-                                    v-model:value="
-                                        GCDataTypeMonthly.year
-                                    "
-                                >
-                                    <a-select-option value="2017"
-                                        >2017</a-select-option
-                                    >
-                                    <a-select-option value="2018"
-                                        >2018</a-select-option
-                                    >
-                                    <a-select-option value="2019"
-                                        >2019</a-select-option
-                                    >
-                                    <a-select-option value="2020"
-                                        >2020</a-select-option
-                                    >
-                                    <a-select-option value="2021"
-                                        >2021</a-select-option
-                                    >
-                                    <a-select-option value="2022"
-                                        >2022</a-select-option
-                                    >
-                                    <a-select-option value="2023"
-                                        >2023</a-select-option
-                                    >
-                                    <a-select-option value="2024"
-                                        >2024</a-select-option
-                                    >
-                                </a-select>
+                                <a-date-picker v-model:value="GCDataTypeMonthly.year" picker="year"  :disabled-date="disabledDate"/>
+                               
                             </a-form-item>
                         </div>
                         <a-button
@@ -221,36 +192,7 @@
                                 :help="GCDataTypeYearly.errors.year"
                             >
                                 <div>Year:</div>
-                                <a-select
-                                    style="width: 30%"
-                                    placeholder="Select Year"
-                                    v-model:value="GCDataTypeYearly.year"
-                                >
-                                    <a-select-option value="2017"
-                                        >2017</a-select-option
-                                    >
-                                    <a-select-option value="2018"
-                                        >2018</a-select-option
-                                    >
-                                    <a-select-option value="2019"
-                                        >2019</a-select-option
-                                    >
-                                    <a-select-option value="2020"
-                                        >2020</a-select-option
-                                    >
-                                    <a-select-option value="2021"
-                                        >2021</a-select-option
-                                    >
-                                    <a-select-option value="2022"
-                                        >2022</a-select-option
-                                    >
-                                    <a-select-option value="2023"
-                                        >2023</a-select-option
-                                    >
-                                    <a-select-option value="2024"
-                                        >2024</a-select-option
-                                    >
-                                </a-select>
+                                <a-date-picker v-model:value="GCDataTypeYearly.year" picker="year"  :disabled-date="disabledDate"/>
                             </a-form-item>
                         </div>
                         <a-button
@@ -273,6 +215,7 @@ import { Modal } from "ant-design-vue";
 import axios from "axios";
 import { notification } from "ant-design-vue";
 import { useQueueState } from "@/stores/queue-state";
+import dayjs from "dayjs";
 
 defineProps(["stores"]);
 const GCDataTypeMonthly = ref({
@@ -313,9 +256,11 @@ const submitGCReportsMonthly = () => {
     ) {
         return;
     }
+
+    const yearFormat = dayjs(year).year();
     const monthlyData = {
         dataTypeMonthly: dataTypeMonthly,
-        year: year,
+        year: yearFormat,
         month: month,
         selectedStore: selectedStore,
     };
@@ -350,6 +295,11 @@ const submitGCReportsMonthly = () => {
         },
     });
 };
+
+const disabledDate = (current) => {
+    return current && current > dayjs().startOf("day");
+};
+
 const state = useQueueState();
 
 const submitGCReportsYearly = () => {
@@ -371,10 +321,12 @@ const submitGCReportsYearly = () => {
         return;
     }
 
+    const yearFormat = dayjs(year).year();
+
     const yearlyData = {
         GCDataType: GCDataType,
         selectedStore: selectedStore,
-        year: year,
+        year: yearFormat,
     };
 
     axios

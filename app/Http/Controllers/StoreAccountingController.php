@@ -1975,6 +1975,7 @@ class StoreAccountingController extends Controller
 
     public function billingMonthlySubmit(Request $request)
     {
+        dd(1);
         dd($request->toArray());
     }
 
