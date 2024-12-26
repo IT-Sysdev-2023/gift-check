@@ -819,7 +819,6 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('pos-transaction-ascTech-{barcode}', [StoreAccountingController::class, 'transactionAscTech'])->name('ascTechPosTransaction');
                             //verified gc report
                             Route::get('verified-gc-report', [StoreAccountingController::class, 'verifiedGCReport'])->name('verifiedGCReport');
-                            Route::get('verified-gc-submit', [StoreAccountingController::class, 'verifiedGcSubmit'])->name('verifiedGcSubmit');
                             Route::get('verified-yearly-submit', [ReportController::class, 'verifiedGcYearlySubmit'])->name('verifiedGcYearlySubmit');
                             //store gc purchased
                             Route::get('store-gc-purchased', [StoreAccountingController::class, 'storeGCPurchasedReport'])->name('storeGCPurchasedReport');

@@ -169,6 +169,13 @@
                 Verified Store Purchased
             </span>
         </a-menu-item>
+        <a-menu-item class="menu-item" @click="() => $inertia.get(route('storeaccounting.generatedReports'))"
+            key="verifiedStore">
+            <DatabaseOutlined />
+            <span style="font-size: small;">
+                Generated Reports
+            </span>
+        </a-menu-item>
     </a-sub-menu>
 
     <a-sub-menu key="storeAccounting.reports">
