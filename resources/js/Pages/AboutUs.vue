@@ -15,18 +15,17 @@
     >
         <!-- Logo -->
         <div style="font-weight: bold">
-            <a class="headings-Hover" @click="scrollToPage('headingsPage')">
+            <a class="headings-Hover">
                 <img
-                    src="/images/giftchecklogo.webp"
+                    src="/gcicon.png"
                     style="
-                        border-radius: 50%;
+                        border-radius: 10%;
                         border: 5px solid white;
                         width: 120px;
                         height: 120px;
                         display: inline;
                         justify-content: center;
                         align-items: center;
-                        cursor: pointer;
                     "
                 />
             </a>
