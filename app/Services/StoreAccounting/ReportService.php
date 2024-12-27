@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Services\StoreAccounting;
+use App\DatabaseConnectionService;
 use App\Exports\StoreAccounting\VerifiedGcReportMultiExport;
 use App\Jobs\StoreAccounting\VerifiedGcReport;
+use App\Jobs\StoreGcPurchasedReport;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
 use App\Models\StoreVerification;
@@ -14,17 +16,21 @@ use Illuminate\Support\Facades\DB;
 
 class ReportService
 {
+
+    public function __construct(protected DatabaseConnectionService $databaseConnectionService)
+    {
+    }
     public function verifiedGcYearlySubmit(Request $request)
     {
         $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
 
+        $isMonthtly = isset($request->month) ? $request->month : null;
+
         if ($isExists) { //OTHER SERVER
             $server = self::getServerDatabase($request->selectedStore, false);
 
-            if (self::checkReveriedData($server, $request->selectedStore, $request->year)) {
-
+            if (self::checkReveriedData($server, $request->selectedStore, $request->year, $isMonthtly)) {
                 VerifiedGcReport::dispatch($request->all(), $server);
-                
             } else {
                 return response()->json('No record Found on this date', 404);
             }
@@ -32,7 +38,7 @@ class ReportService
         } else { //LOCAL
 
             $server = self::getServerDatabase($request->selectedStore, true);
-            if (self::checkReveriedData($server, $request->selectedStore, $request->year)) {
+            if (self::checkReveriedData($server, $request->selectedStore, $request->year, $isMonthtly)) {
                 VerifiedGcReport::dispatch($request->all(), $server);
             } else {
                 return response()->json('No record Found on this date', 404);
@@ -40,11 +46,76 @@ class ReportService
         }
     }
 
-    public static function checkReveriedData($db, $store, $year)
+    private static function checkReveriedData($db, $store, $year, $month)
     {
         return DB::connection($db)->table('store_verification')
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->whereYear('vs_date', $year)
+            ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
+            ->where('vs_store', $store)
+            ->exists();
+    }
+
+    public function billingMonthlyReport(Request $request)
+    {
+        $request->validate(
+            [
+                'year' => 'required',
+                'month' => 'required',
+                'selectedStore' => 'required',
+                'StoreDataType' => 'required'
+            ]
+        );
+
+        $isMonthtly = isset($request->month) ? $request->month : null;
+
+        if ($request->StoreDataType === 'store-sales') {
+
+            $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
+
+            if ($isExists) { //OTHER SERVER
+
+                if (self::checkBillingMonthlyReport($request->selectedStore, $request->year, $isMonthtly, false)) {
+                    dd(1);
+                    StoreGcPurchasedReport::dispatch($request->all(), false);
+                    // VerifiedGcReport::dispatch($request->all(), $server);
+
+                } else {
+                    return response()->json('No record Found on this date', 404);
+                }
+
+            } else { //LOCAL
+
+                if (self::checkBillingMonthlyReport($request->selectedStore, $request->year, $isMonthtly, true)) {
+                    // dd(2);
+                    StoreGcPurchasedReport::dispatch($request->all(), true);
+                    // VerifiedGcReport::dispatch($request->all(), $server);
+                } else {
+                    return response()->json('No record Found on this date', 404);
+                }
+            }
+
+        }
+
+        // dd($request->toArray());
+    }
+
+    private function checkBillingMonthlyReport($store, $year, $month, $isLocal)
+    {
+        $server = $this->databaseConnectionService->getLocalConnection($isLocal, $store);
+        return $server->table('store_verification')
+            ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+
+            ->where(
+                fn($query) =>
+                $query->whereYear('vs_date', $year)
+                    ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
+            )
+            ->orWhere(
+                fn($query) =>
+                $query->whereYear('vs_reverifydate', $year)
+                    ->when(!is_null($month), fn($q) => $q->whereMonth('vs_reverifydate', $month))
+            )
             ->where('vs_store', $store)
             ->exists();
     }
@@ -59,6 +130,7 @@ class ReportService
 
         return 'mariadb' . $result;
     }
+
     public function generatedReports(Request $request)
     {
         $getFiles = (new ImportHandler())->getFileReports($request->user()->usertype);

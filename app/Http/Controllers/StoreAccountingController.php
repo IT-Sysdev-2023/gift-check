@@ -1970,19 +1970,12 @@ class StoreAccountingController extends Controller
 
     public function storeGCPurchasedReport()
     {
-        return Inertia::render('StoreAccounting/StoreGCPurchased');
+        return Inertia::render('StoreAccounting/StoreGCPurchased', [
+            'stores' => Store::selectStore()->get()
+        ]);
     }
 
-    public function billingMonthlySubmit(Request $request)
-    {
-        dd(1);
-        dd($request->toArray());
-    }
-
-    public function billingYearlySubmit(Request $request)
-    {
-        dd($request->toArray());
-    }
+  
     public function redeemReport()
     {
         return Inertia::render('StoreAccounting/SPGCRedeemReport');
@@ -3024,7 +3017,8 @@ class StoreAccountingController extends Controller
         return Excel::download(new VarianceCombinationExcel($request->toArray()), 'Variance Excel Generate.xlsx');
     }
 
-    public function aboutUs(Request $request){
+    public function aboutUs(Request $request)
+    {
         return inertia('AboutUs');
     }
 

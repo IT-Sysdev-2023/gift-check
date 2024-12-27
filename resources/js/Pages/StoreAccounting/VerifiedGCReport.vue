@@ -264,7 +264,6 @@ const submitGCReportsMonthly = () => {
         month: month,
         selectedStore: selectedStore,
     };
-    // console.log(monthlyData);
     Modal.confirm({
         title: "Confirmation",
         content: "Are you sure you want to generate?",

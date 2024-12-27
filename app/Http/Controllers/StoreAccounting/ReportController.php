@@ -20,4 +20,15 @@ class ReportController extends Controller
     public function listOfGeneratedReports(Request $request){
         return $this->reportService->generatedReports($request);
     }
+
+    public function billingMonthlySubmit(Request $request)
+    {
+        return $this->reportService->billingMonthlyReport($request);
+    }
+
+    public function billingYearlySubmit(Request $request)
+    {
+        // dd(2);
+        dd($request->toArray());
+    }
 }
