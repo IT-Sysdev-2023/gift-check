@@ -43,24 +43,39 @@
                         homePage = true;
                         pdfGcProductionRegularGc = false;
                         pdfhowToMakeGCProductionPerPage = false;
+                        pdfHowToRequestPromo = false;
+                        pdfHowToRequestSpecialExternal = false;
+                        pdfTreasuryDepartment = false;
                     }
                 "
                 style="cursor: pointer"
             >
-                <div class="navigation-card">
-                    <a href="#" class="tab">
-                        <svg
-                            class="svgIcon"
-                            viewBox="0 0 104 100"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M100.5 40.75V96.5H66V68.5V65H62.5H43H39.5V68.5V96.5H3.5V40.75L52 4.375L100.5 40.75Z"
-                                stroke="black"
-                                stroke-width="12"
-                            ></path>
-                        </svg>
+                <div class="menu">
+                    <a href="#" class="link">
+                        <span class="link-icon">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="192"
+                                height="192"
+                                fill="currentColor"
+                                viewBox="0 0 256 256"
+                            >
+                                <rect
+                                    width="256"
+                                    height="256"
+                                    fill="none"
+                                ></rect>
+                                <path
+                                    d="M213.3815,109.61945,133.376,36.88436a8,8,0,0,0-10.76339.00036l-79.9945,72.73477A8,8,0,0,0,40,115.53855V208a8,8,0,0,0,8,8H208a8,8,0,0,0,8-8V115.53887A8,8,0,0,0,213.3815,109.61945Z"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="16"
+                                ></path>
+                            </svg>
+                        </span>
+                        <span class="link-title">Home</span>
                     </a>
                 </div>
             </a>
@@ -98,19 +113,22 @@
                                     @click="
                                         () => {
                                             gcRequisitionPerStorePerPage = true;
-                                            howToMakeGCProductionPerPage
+                                            howToMakeGCProductionPerPage;
                                             pdfhowToMakeGCProductionPerPage = false;
                                             howToRequestPromoPerPage = false;
                                             howToRequestSpecialExternalPerPage = false;
                                             treasuryDepartmentPerPage = false;
                                             homePage = false;
                                             pdfGcProductionRegularGc = false;
+                                            pdfHowToRequestPromo = false;
+                                            pdfHowToRequestSpecialExternal = false;
+                                            pdfTreasuryDepartment = false;
                                         }
                                     "
                                     class="heading-button"
                                     href="javascript:;"
-                                    ><AppstoreAddOutlined /> GC Requisition Per
-                                    Store</a
+                                >
+                                    GC Requisition Per Store</a
                                 >
                             </a-menu-item>
                             <a-menu-item>
@@ -119,18 +137,21 @@
                                         () => {
                                             howToMakeGCProductionPerPage = true;
                                             gcRequisitionPerStorePerPage = false;
-                                            howToRequestPromoPerPage = f
+                                            howToRequestPromoPerPage = f;
                                             pdfhowToMakeGCProductionPerPage = false;
                                             howToRequestSpecialExternalPerPage = false;
                                             treasuryDepartmentPerPage = false;
                                             homePage = false;
                                             pdfGcProductionRegularGc = false;
+                                            pdfHowToRequestPromo = false;
+                                            pdfHowToRequestSpecialExternal = false;
+                                            pdfTreasuryDepartment = false;
                                         }
                                     "
                                     class="heading-button"
                                     href="javascript:;"
-                                    ><FundProjectionScreenOutlined /> How to
-                                    Make GC Production (Regular GC)</a
+                                >
+                                    How to Make GC Production (Regular GC)</a
                                 >
                             </a-menu-item>
                             <a-menu-item>
@@ -140,17 +161,20 @@
                                             howToRequestPromoPerPage = true;
                                             howToMakeGCProductionPerPage = false;
                                             gcRequisitionPerStorePerPage = false;
-                                            howToRequestSpecialExternalP
+                                            howToRequestSpecialExternalP;
                                             pdfhowToMakeGCProductionPerPage = false;
                                             treasuryDepartmentPerPage = false;
                                             homePage = false;
                                             pdfGcProductionRegularGc = false;
+                                            pdfHowToRequestPromo = false;
+                                            pdfHowToRequestSpecialExternal = false;
+                                            pdfTreasuryDepartment = false;
                                         }
                                     "
                                     class="heading-button"
                                     href="javascript:;"
-                                    ><PullRequestOutlined /> How to Request
-                                    Promo</a
+                                >
+                                    How to Request Promo</a
                                 >
                             </a-menu-item>
                             <a-menu-item>
@@ -162,15 +186,18 @@
                                             howToMakeGCProductionPerPage = false;
                                             gcRequisitionPerStorePerPage = false;
                                             treasuryDepartmentPerPage =
-                                            pdfhowToMakeGCProductionPerPage = false;
+                                                pdfhowToMakeGCProductionPerPage = false;
                                             homePage = false;
                                             pdfGcProductionRegularGc = false;
+                                            pdfHowToRequestPromo = false;
+                                            pdfHowToRequestSpecialExternal = false;
+                                            pdfTreasuryDepartment = false;
                                         }
                                     "
                                     class="heading-button"
                                     href="javascript:;"
-                                    ><ForkOutlined /> How to Request Special
-                                    External GC</a
+                                >
+                                    How to Request Special External GC</a
                                 >
                             </a-menu-item>
                             <a-menu-item>
@@ -183,13 +210,17 @@
                                             howToMakeGCProductionPerPage = false;
                                             gcRequisitionPerStorePerPage = false;
                                             homePage = false;
-                                            pdfhowToMakeGCProductionPerPage = false
+                                            pdfhowToMakeGCProductionPerPage = false;
                                             pdfGcProductionRegularGc = false;
+                                            pdfHowToRequestPromo = false;
+                                            pdfHowToRequestSpecialExternal = false;
+                                            pdfTreasuryDepartment = false;
                                         }
                                     "
                                     class="heading-button"
                                     href="javascript:;"
-                                    ><ShopOutlined /> Treasury Department</a
+                                >
+                                    Treasury Department</a
                                 >
                             </a-menu-item>
                             <a-menu-item>
@@ -202,8 +233,11 @@
                                             howToMakeGCProductionPerPage = true;
                                             gcRequisitionPerStorePerPage = true;
                                             homePage = false;
-                                            pdfhowToMakeGCProductionPerPage = false
+                                            pdfhowToMakeGCProductionPerPage = false;
                                             pdfGcProductionRegularGc = false;
+                                            pdfHowToRequestPromo = false;
+                                            pdfHowToRequestSpecialExternal = false;
+                                            pdfTreasuryDepartment = false;
                                         }
                                     "
                                     class="heading-button"
@@ -242,13 +276,16 @@
                                             howToRequestSpecialExternalPerPage = false;
                                             treasuryDepartmentPerPage = false;
                                             pdfhowToMakeGCProductionPerPage = false;
+                                            pdfHowToRequestPromo = false;
+                                            pdfHowToRequestSpecialExternal = false;
+                                            pdfTreasuryDepartment = false;
                                             homePage = false;
                                         }
                                     "
                                     class="heading-button"
                                     href="javascript:;"
-                                    ><FilePdfOutlined /> GC Requisition Per
-                                    Store</a
+                                >
+                                    GC Requisition Per Store</a
                                 >
                             </a-menu-item>
                             <a-menu-item>
@@ -262,29 +299,108 @@
                                             howToRequestPromoPerPage = false;
                                             howToRequestSpecialExternalPerPage = false;
                                             treasuryDepartmentPerPage = false;
+                                            pdfHowToRequestPromo = false;
+                                            pdfHowToRequestSpecialExternal = false;
+                                            pdfTreasuryDepartment = false;
                                             homePage = false;
                                         }
                                     "
                                     class="heading-button"
                                     href="javascript:;"
-                                    ><FilePdfOutlined /> How to Make GC
-                                    Production (Regular GC)</a
+                                >
+                                    How to Make GC Production (Regular GC)</a
                                 >
                             </a-menu-item>
                             <a-menu-item>
-                                <a class="heading-button" href="javascript:;"
-                                    ><FilePdfOutlined /> How to Request Promo</a
+                                <a
+                                    @click="
+                                        () => {
+                                            pdfHowToRequestPromo = true;
+                                            pdfhowToMakeGCProductionPerPage = false;
+                                            pdfGcProductionRegularGc = false;
+                                            gcRequisitionPerStorePerPage = false;
+                                            howToMakeGCProductionPerPage = false;
+                                            howToRequestPromoPerPage = false;
+                                            howToRequestSpecialExternalPerPage = false;
+                                            treasuryDepartmentPerPage = false;
+                                            pdfHowToRequestSpecialExternal = false;
+                                            pdfTreasuryDepartment = false;
+                                            homePage = false;
+                                        }
+                                    "
+                                    class="heading-button"
+                                    href="javascript:;"
+                                >
+                                    How to Request Promo</a
                                 >
                             </a-menu-item>
                             <a-menu-item>
-                                <a class="heading-button" href="javascript:;"
-                                    ><FilePdfOutlined /> How to Request Special
-                                    External GC</a
+                                <a
+                                    @click="
+                                        () => {
+                                            pdfHowToRequestSpecialExternal = true;
+                                            pdfHowToRequestPromo = false;
+                                            pdfhowToMakeGCProductionPerPage = false;
+                                            pdfGcProductionRegularGc = false;
+                                            gcRequisitionPerStorePerPage = false;
+                                            howToMakeGCProductionPerPage = false;
+                                            howToRequestPromoPerPage = false;
+                                            howToRequestSpecialExternalPerPage = false;
+                                            treasuryDepartmentPerPage = false;
+                                            pdfTreasuryDepartment = false;
+                                            homePage = false;
+                                        }
+                                    "
+                                    class="heading-button"
+                                    href="javascript:;"
+                                >
+                                    How to Request Special External GC</a
                                 >
                             </a-menu-item>
                             <a-menu-item>
-                                <a class="heading-button" href="javascript:;"
-                                    ><FilePdfOutlined /> Treasury Department</a
+                                <a
+                                    @click="
+                                        () => {
+                                            pdfTreasuryDepartment = true;
+                                            pdfHowToRequestSpecialExternal = false;
+                                            pdfHowToRequestPromo = false;
+                                            pdfhowToMakeGCProductionPerPage = false;
+                                            pdfGcProductionRegularGc = false;
+                                            gcRequisitionPerStorePerPage = false;
+                                            howToMakeGCProductionPerPage = false;
+                                            howToRequestPromoPerPage = false;
+                                            howToRequestSpecialExternalPerPage = false;
+                                            treasuryDepartmentPerPage = false;
+                                            homePage = false;
+                                        }
+                                    "
+                                    class="heading-button"
+                                    href="javascript:;"
+                                >
+                                    Treasury Department</a
+                                >
+                            </a-menu-item>
+                            <a-menu-item>
+                                <a
+                                    @click="
+                                        () => {
+                                            pdfTreasuryDepartment = true;
+                                            pdfHowToRequestSpecialExternal = true;
+                                            pdfHowToRequestPromo = true;
+                                            pdfhowToMakeGCProductionPerPage = true;
+                                            pdfGcProductionRegularGc = true;
+                                            gcRequisitionPerStorePerPage = false;
+                                            howToMakeGCProductionPerPage = false;
+                                            howToRequestPromoPerPage = false;
+                                            howToRequestSpecialExternalPerPage = false;
+                                            treasuryDepartmentPerPage = false;
+                                            homePage = false;
+                                        }
+                                    "
+                                    class="heading-button"
+                                    href="javascript:;"
+                                >
+                                    <EyeOutlined /> Show All</a
                                 >
                             </a-menu-item>
                         </a-menu>
@@ -1299,7 +1415,7 @@
     </a-card>
 
     <!-- How to Make GC Production (Regular GC) PDF  -->
-    <a-card v-if="pdfhowToMakeGCProductionPerPage" style="text-align: center;">
+    <a-card v-if="pdfhowToMakeGCProductionPerPage" style="text-align: center">
         <span
             style="
                 font-size: 40px;
@@ -1314,6 +1430,72 @@
         <div>
             <iframe
                 src="/images/userGuidePics/pdfUserGuide/HOW TO MAKE GC PRODUCTION REQUEST (REGULAR GC).pdf"
+                style="width: 90%; height: 1000px; border: none"
+            >
+            </iframe>
+        </div>
+    </a-card>
+
+    <!-- How to Request Promo PDF  -->
+    <a-card v-if="pdfHowToRequestPromo" style="text-align: center">
+        <span
+            style="
+                font-size: 40px;
+                color: #eb5b00;
+                font-weight: bold;
+                font-family: Cambria, Cochin, Georgia, Times,
+                    &quot;Times New Roman&quot;, serif;
+            "
+        >
+            How to Request Promo PDF
+        </span>
+        <div>
+            <iframe
+                src="/images/userGuidePics/pdfUserGuide/HOW TO REQUEST PROMO.pdf"
+                style="width: 90%; height: 1000px; border: none"
+            >
+            </iframe>
+        </div>
+    </a-card>
+
+    <!-- How to Request Special External GC PDF  -->
+    <a-card v-if="pdfHowToRequestSpecialExternal" style="text-align: center">
+        <span
+            style="
+                font-size: 40px;
+                color: #eb5b00;
+                font-weight: bold;
+                font-family: Cambria, Cochin, Georgia, Times,
+                    &quot;Times New Roman&quot;, serif;
+            "
+        >
+            How to Request Special External GC PDF
+        </span>
+        <div>
+            <iframe
+                src="/images/userGuidePics/pdfUserGuide/HOW TO REQUEST SPECIAL EXTERNAL GC.pdf"
+                style="width: 90%; height: 1000px; border: none"
+            >
+            </iframe>
+        </div>
+    </a-card>
+
+    <!-- Treasury Department PDF  -->
+    <a-card v-if="pdfTreasuryDepartment" style="text-align: center">
+        <span
+            style="
+                font-size: 40px;
+                color: #eb5b00;
+                font-weight: bold;
+                font-family: Cambria, Cochin, Georgia, Times,
+                    &quot;Times New Roman&quot;, serif;
+            "
+        >
+            Treasury Department PDF
+        </span>
+        <div>
+            <iframe
+                src="/images/userGuidePics/pdfUserGuide/BUDGET REQUEST.pdf"
                 style="width: 90%; height: 1000px; border: none"
             >
             </iframe>
@@ -1450,6 +1632,7 @@
     </a-card>
 </template>
 <script setup>
+import { EyeOutlined } from "@ant-design/icons-vue";
 import { onMounted, onUnmounted, ref } from "vue";
 const showScrollButton = ref(false);
 
@@ -1485,6 +1668,9 @@ const homePage = ref(true);
 // VIEW PER PDF
 const pdfGcProductionRegularGc = ref(false);
 const pdfhowToMakeGCProductionPerPage = ref(false);
+const pdfHowToRequestPromo = ref(false);
+const pdfHowToRequestSpecialExternal = ref(false);
+const pdfTreasuryDepartment = ref(false);
 </script>
 
 <!-- heading-button  -->
@@ -1791,33 +1977,78 @@ ul {
 
 <!-- HOME ICON BUTTON  -->
 <style scoped>
-.navigation-card {
-    width: fit-content;
-    height: fit-content;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 30px;
+.menu {
+    padding: 0.5rem;
     background-color: #fbf8ef;
-    padding: 5px 5px;
-    border-radius: 50px;
-    cursor: pointer;
-}
-.tab {
+    position: relative;
     display: flex;
-    align-items: center;
     justify-content: center;
-    width: 50px;
-    height: 50px;
-    overflow: hidden;
-    background-color: rgb(252, 252, 252);
-    padding: 15px;
-    border-radius: 50%;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.3s;
+    border-radius: 100px;
+    box-shadow: 0 10px 25px 0 rgba(#000, 0.075);
 }
-.tab:hover {
-    background-color: #20e584;
+
+.link {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 50px;
+    border-radius: 8px;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    transform-origin: center left;
+    transition: width 0.2s ease-in;
+    text-decoration: none;
+    color: inherit;
+    &:before {
+        position: absolute;
+        z-index: -1;
+        content: "";
+        display: block;
+        border-radius: 8px;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        transform: translateX(100%);
+        transition: transform 0.2s ease-in;
+        transform-origin: center right;
+        background-color: #20e584;
+    }
+
+    &:hover,
+    &:focus {
+        outline: 0;
+        width: 130px;
+
+        &:before,
+        .link-title {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+}
+
+.link-icon {
+    width: 28px;
+    height: 28px;
+    display: block;
+    flex-shrink: 0;
+    left: 18px;
+    position: absolute;
+    svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+.link-title {
+    transform: translateX(100%);
+    transition: transform 0.2s ease-in;
+    transform-origin: center right;
+    display: block;
+    text-align: center;
+    text-indent: 28px;
+    width: 100%;
 }
 </style>
