@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 
 class VerifiedGcReport implements ShouldQueue
@@ -36,7 +37,8 @@ class VerifiedGcReport implements ShouldQueue
      */
     public function handle(): void
     {
-        $label = isset($this->request['month']) ? 'Monthly' : 'Yearly';
+        $monthName = isset($this->request['month']) ? Date::create(0, $this->request['month'])->format('F') : '';
+        $label = isset($this->request['month']) ? "{$monthName}-{$this->request['year']}" : "{$this->request['year']}";
 
         $doc= new VerifiedGcReportMultiExport($this->request, $this->user, $this->db);
         (new ExportHandler())

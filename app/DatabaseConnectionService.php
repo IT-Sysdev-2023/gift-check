@@ -53,8 +53,8 @@ class DatabaseConnectionService
         return $this->getConnection($lserver->stlocser_ip, 'gc_local', $lserver->stlocser_username, $lserver->stlocser_password);
     }
 
-    public function getLocalConnection(bool $isLocal, $store){
-        return $isLocal ? DB::connection('mariadb') : $this->localServer($store);
+    public function getLocalConnection( $isLocal, $store){
+        return $isLocal==2 ? DB::connection('mariadb') : $this->localServer($store);
     }
 
 

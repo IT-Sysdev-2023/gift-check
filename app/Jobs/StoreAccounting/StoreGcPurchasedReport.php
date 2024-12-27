@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\StoreAccounting;
 
 use App\DatabaseConnectionService;
 use App\Exports\StoreAccounting\StoreGcPurchasedReportExport;
@@ -10,9 +10,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
-class StoreGcPurchasedReport implements ShouldQueue
+class StoreGcPurchasedReport extends DatabaseConnectionService implements ShouldQueue
 {
     use Queueable;
 
@@ -22,8 +24,8 @@ class StoreGcPurchasedReport implements ShouldQueue
 
     private array $request;
     protected User|null $user;
-    protected bool $local;
-    public function __construct($request, bool $isLocal, protected DatabaseConnectionService $db)
+    protected $local;
+    public function __construct($request, $isLocal)
     {
         $this->local = $isLocal;
         $this->request = $request;
@@ -35,15 +37,22 @@ class StoreGcPurchasedReport implements ShouldQueue
      */
     public function handle(): void
     {
-        $label = isset($this->request['month']) ? 'Monthly' : 'Yearly';
-        $db = $this->db->getLocalConnection($this->local, $this->request['selectedStore']);
+        $label = isset($this->request['month']) ? $this->monthToName() : $this->request['year'];
+        $db = $this->getLocalConnection($this->local, $this->request['selectedStore']);
+        Log::info($this->local);
         $doc = new StoreGcPurchasedReportExport($db, $this->request, $this->user);
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
-            ->setFileName("Verified Gc Report ($label)-" . $this->user->user_id, $this->request['year'])
+            ->setFileName("Store Gc Purchased Report ($label)-" . $this->user->user_id, $this->request['year'])
             ->exportDocument('excel', $doc)
             ->deleteFileIn(now()->addDays(2));
+    }
+
+    public function monthToName()
+    {
+        $date = Date::create(0, $this->request['month'])->format('F');
+        return "{$date}-{$this->request['year']}";
     }
 
 }

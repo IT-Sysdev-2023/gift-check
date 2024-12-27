@@ -14,13 +14,16 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Events\BeforeSheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles
+class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents
 {
 
     public function __construct(protected $database, protected $request, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
@@ -28,12 +31,6 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
     }
     public function collection()
     {
-
-    }
-
-    public function data()
-    {
-
         $data = $this->database->table('store_eod_textfile_transactions')
             ->selectRaw("DATE(store_verification.vs_date) as datever,
                     DATE(store_verification.vs_reverifydate) as daterev,
@@ -55,7 +52,7 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
             ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->whereYear('vs_date', $this->request['year'])
-            ->whereMonth('vs_date', $this->request['month'])
+            ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
             ->where('vs_store', $this->request['selectedStore'])
             ->orderBy('store_verification.vs_date')->get();
 
@@ -73,10 +70,10 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
         $data->each(function ($item) use ($purchasecred, $balance, $bus, $tnum, $puramt, $initial, &$transformedData) {
 
             $gctype = match ($item->vs_gctype) {
-                '1' => 'REGULAR',
-                '3' => 'SPECIAL EXTERNAL',
-                '6' => 'BEAM AND GO',
-                '4' => 'PROMOTIONAL GC'
+                1 => 'REGULAR',
+                3 => 'SPECIAL EXTERNAL',
+                6 => 'BEAM AND GO',
+                4 => 'PROMOTIONAL GC'
             };
 
             if ($item->daterev != '') {
@@ -99,10 +96,10 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
 
                 $purchasecred = $item->vs_tf_purchasecredit;
                 $balance = $item->vs_tf_balance;
-                $vsdate = $item->vs_date;
-                $vstime = $item->vs_time;
-
             }
+
+            $vsdate = $item->vs_date;
+            $vstime = $item->vs_time;
 
             $transformedData->push([
                 'date' => $item->datever,
@@ -132,7 +129,31 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
         });
 
         return $transformedData;
+    }
+    public function registerEvents(): array
+    {
 
+        return [
+            BeforeSheet::class => function (BeforeSheet $event) {
+                $sheet = $event->sheet;
+                $storeName = Store::where('store_id', $this->request['selectedStore'])->value('store_name');
+
+                $sheet->setCellValue('C1', 'ALTURAS GROUP OF COMPANIES');
+                $sheet->setCellValue('C2', 'CUSTOMER FINANCIAL SERVICES CORP');
+                $sheet->setCellValue('B3', 'MONTHLY REPORT ON GIFT CHECK (Store Billing)');
+                $sheet->setCellValue('C4', 'PERIOD COVER:' . $this->request['year']);
+                $sheet->setCellValue('C6', 'STORE VERIFIED:' . $storeName);
+
+                $sheet->mergeCells('C1:E1');
+                $sheet->mergeCells('C2:E2');
+                $sheet->mergeCells('B3:F3');
+                $sheet->mergeCells('C6:E5');
+            
+                $sheet->getStyle('B1:C6')->getFont()->setBold(true);
+                $sheet->getStyle('B1:C6')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            }
+
+        ];
     }
     public function map($data): array
     {
@@ -141,7 +162,7 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
         // Build the full name
         $fullname = trim("{$data['cus_fname']} {$data['cus_lname']} " .
             ($data['cus_mname'] ?? '') .
-            ($data['cus_namext'] ? " {$data['cus_namext']}" : ''));
+            ($data['cus_namext'] ? " {$data['cus_namext']}." : ''));
 
         // Combine date and time
         $datetime = "{$data['vsdate']} {$data['vstime']}";
@@ -160,13 +181,13 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
         };
 
         $storePurchased = match ($data['trans_store']) {
-            '1' => 'ALTURAS MALL',
-            '2' => 'ALTURAS TALIBON',
-            '3' => 'ISLAND CITY MALL',
-            '4' => 'PLAZA MARCELA',
-            '6' => 'COLONNADE COLON',
-            '7' => 'COLONNADE MANDAUE',
-            '8' => 'ALTA CITA',
+            1 => 'ALTURAS MALL',
+            2 => 'ALTURAS TALIBON',
+            3 => 'ISLAND CITY MALL',
+            4 => 'PLAZA MARCELA',
+            6 => 'COLONNADE COLON',
+            7 => 'COLONNADE MANDAUE',
+            8 => 'ALTA CITA',
         };
 
         return [
@@ -175,7 +196,7 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
             $data['denomination'],
             $data['purchasecred'],
             $data['balance'],
-            $fullname,
+            Str::upper($fullname),
             $storePurchased,
             $data['trans_number'],
             $bu,

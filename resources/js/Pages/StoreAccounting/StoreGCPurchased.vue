@@ -134,16 +134,16 @@
                     <div style="margin-top: 20px">
                         <a-form-item
                             :validate-status="
-                                billYearly.errors.storeYearlyData ? 'error' : ''
+                                billYearly.errors.StoreDataType ? 'error' : ''
                             "
-                            :help="billYearly.errors.storeYearlyData"
+                            :help="billYearly.errors.StoreDataType"
                         >
                             <div>Data Type:</div>
 
                             <a-select
                                 style="width: 30%"
                                 placeholder="Select"
-                                v-model:value="billYearly.storeYearlyData"
+                                v-model:value="billYearly.StoreDataType"
                             >
                                 <a-select-option value=""
                                     >---Select---</a-select-option
@@ -214,11 +214,11 @@ const billMonthly = useForm(
 );
 
 const billYearly = useForm(
-    "get",
-    route("storeaccounting.billingYearlySubmit"),
+    "post",
+    route("storeaccounting.billingMonthlySubmit"),
     {
         year: "",
-        storeYearlyData: "",
+        StoreDataType: "",
         selectedStore: "",
     },
 );
@@ -226,7 +226,8 @@ const billYearly = useForm(
 const monthlySubmitButton = () => {
     billMonthly.transform((data) => ({
         ...data,
-        year: dayjs(data.year).year()
+        year: dayjs(data.year).year(),
+        isMonthly: true
     })).submit({
         onSuccess: () => billMonthly.reset(),
     });
@@ -236,14 +237,22 @@ const disabledDate = (current) => {
 };
 
 const yearlySubmitButton = () => {
-    const { year, storeYearlyData, selectedStore } = billYearly.value;
+    billYearly.transform((data) => ({
+        ...data,
+        year: dayjs(data.year).year()
+    })).submit({
+        onSuccess: () => billYearly.reset(),
+    });
 
-    const yearlyData = {
-        year: year,
-        storeYearlyData: storeYearlyData,
-        selectedStore: selectedStore,
-    };
-    console.log(yearlyData);
-    this.$inertia.get(route("storeaccounting.billingYearlySubmit"), yearlyData);
+    
+    // const { year, storeYearlyData, selectedStore } = billYearly.value;
+
+    // const yearlyData = {
+    //     year: year,
+    //     storeYearlyData: storeYearlyData,
+    //     selectedStore: selectedStore,
+    // };
+    // console.log(yearlyData);
+    // this.$inertia.get(route("storeaccounting.billingYearlySubmit"), yearlyData);
 };
 </script>

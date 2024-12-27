@@ -29,6 +29,6 @@ class ReportController extends Controller
     public function billingYearlySubmit(Request $request)
     {
         // dd(2);
-        dd($request->toArray());
+        return $this->reportService->billingMonthlyReport($request);
     }
 }

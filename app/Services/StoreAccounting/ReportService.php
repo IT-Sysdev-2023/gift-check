@@ -2,19 +2,21 @@
 
 namespace App\Services\StoreAccounting;
 use App\DatabaseConnectionService;
+use App\Exports\StoreAccounting\StoreGcPurchasedReportExport;
 use App\Exports\StoreAccounting\VerifiedGcReportMultiExport;
+use App\Jobs\StoreAccounting\StoreGcPurchasedReport;
 use App\Jobs\StoreAccounting\VerifiedGcReport;
-use App\Jobs\StoreGcPurchasedReport;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
 use App\Models\StoreVerification;
 use App\Services\Documents\ExportHandler;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Services\Documents\ImportHandler;
 use Illuminate\Http\Request;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
-class ReportService
+class ReportService extends DatabaseConnectionService
 {
 
     public function __construct(protected DatabaseConnectionService $databaseConnectionService)
@@ -61,9 +63,9 @@ class ReportService
         $request->validate(
             [
                 'year' => 'required',
-                'month' => 'required',
+                'month' => 'required_if:isMonthly,true',
                 'selectedStore' => 'required',
-                'StoreDataType' => 'required'
+                'StoreDataType' => 'required',
             ]
         );
 
@@ -76,9 +78,10 @@ class ReportService
             if ($isExists) { //OTHER SERVER
 
                 if (self::checkBillingMonthlyReport($request->selectedStore, $request->year, $isMonthtly, false)) {
-                    dd(1);
-                    StoreGcPurchasedReport::dispatch($request->all(), false);
-                    // VerifiedGcReport::dispatch($request->all(), $server);
+  
+                    StoreGcPurchasedReport::dispatch($request->all(), 1);
+                    // dd(1);
+    
 
                 } else {
                     return response()->json('No record Found on this date', 404);
@@ -88,8 +91,7 @@ class ReportService
 
                 if (self::checkBillingMonthlyReport($request->selectedStore, $request->year, $isMonthtly, true)) {
                     // dd(2);
-                    StoreGcPurchasedReport::dispatch($request->all(), true);
-                    // VerifiedGcReport::dispatch($request->all(), $server);
+                    StoreGcPurchasedReport::dispatch($request->all(), 2);
                 } else {
                     return response()->json('No record Found on this date', 404);
                 }
