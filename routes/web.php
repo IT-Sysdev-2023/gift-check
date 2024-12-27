@@ -73,7 +73,6 @@ Route::get('kanding', function () {
 //* Please install "Better Comments extension" to see comments clearly
 //! AUTHENTICATION SECTION
 Route::middleware('auth')->group(function () {
-
     Route::get('employee', [UserDetailsController::class, 'index']);
     Route::get('get-employee', [UserDetailsController::class, 'getEmp'])->name('get.employee');
     Route::post('add-employee-{id}', [UserDetailsController::class, 'addEmp'])->name('add.employee');
@@ -820,12 +819,11 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('pos-transaction-ascTech-{barcode}', [StoreAccountingController::class, 'transactionAscTech'])->name('ascTechPosTransaction');
                             //verified gc report
                             Route::get('verified-gc-report', [StoreAccountingController::class, 'verifiedGCReport'])->name('verifiedGCReport');
-                            Route::get('verified-gc-submit', [StoreAccountingController::class, 'verifiedGcSubmit'])->name('verifiedGcSubmit');
                             Route::get('verified-yearly-submit', [ReportController::class, 'verifiedGcYearlySubmit'])->name('verifiedGcYearlySubmit');
                             //store gc purchased
                             Route::get('store-gc-purchased', [StoreAccountingController::class, 'storeGCPurchasedReport'])->name('storeGCPurchasedReport');
-                            Route::get('store-monthly-submit', [StoreAccountingController::class, 'billingMonthlySubmit'])->name('billingMonthlySubmit');
-                            Route::get('store-yearly-submit', [StoreAccountingController::class, 'billingYearlySubmit'])->name('billingYearlySubmit');
+                            Route::post('store-monthly-submit', [ReportController::class, 'billingMonthlySubmit'])->name('billingMonthlySubmit')->middleware([HandlePrecognitiveRequests::class]);
+                            Route::get('store-yearly-submit', [ReportController::class, 'billingYearlySubmit'])->name('billingYearlySubmit');
                             // redeem report
                             Route::get('redeem-report-purchased', [StoreAccountingController::class, 'redeemReport'])->name('redeemReport');
                             Route::get('redeem-monthly-submit', [StoreAccountingController::class, 'monthlyRedeemSubmit'])->name('monthlyRedeemSubmit');
@@ -855,7 +853,6 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-                            Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
 
                             Route::name('reports.')->group(function () {
                                 Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
@@ -864,6 +861,7 @@ Route::middleware(['auth'])->group(function () {
                     );
             }
         );
+    Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
 });
 
 require __DIR__ . '/auth.php';

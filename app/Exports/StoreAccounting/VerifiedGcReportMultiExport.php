@@ -21,7 +21,9 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
     public function __construct(protected array $requirements, protected User $user, protected $db)
     {
         parent::__construct($user);
-        $this->progress['name'] = "Excel Verified Gc Report(Yearly)";
+
+        $label = isset($requirements['month']) ? 'Monthly' : 'Yearly';
+        $this->progress['name'] = "Excel Verified Gc Report ($label)";
         // $this->isLocal ? DB::table('store_verification')  :
         $server = $this->getServerDatabase($db);
 
@@ -66,6 +68,7 @@ class VerifiedGcReportMultiExport extends Progress implements WithMultipleSheets
         store_verification.vs_time")
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->whereYear('vs_date', $requirements['year'])
+            ->when(isset($requirements['month']), fn($q) => $q->whereMonth('vs_date', $requirements['month']))
             ->where('vs_store', $requirements['selectedStore'])
             ->cursor();
 

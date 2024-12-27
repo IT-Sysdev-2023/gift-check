@@ -39,120 +39,23 @@
                             <a-form-item
                                 :validate-status="
                                     GCDataTypeMonthly.errors
-                                        .selectedStoreMonthly
+                                        .selectedStore
                                         ? 'error'
                                         : ''
                                 "
                                 :help="
                                     GCDataTypeMonthly.errors
-                                        .selectedStoreMonthly
+                                        .selectedStore
                                 "
                             >
                                 <div>Store:</div>
                                 <a-select
                                     v-model:value="
-                                        GCDataTypeMonthly.selectedStoreMonthly
+                                        GCDataTypeMonthly.selectedStore
                                     "
                                     placeholder="Select Store"
-                                >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="1"
-                                        >Alturas Mall</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="2"
-                                        >Alturas Talibon</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="3"
-                                        >Island City Mall</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="4"
-                                        >Plaza Marcela</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="5"
-                                        >Alturas Tubigon</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="6"
-                                        >Colonade Colon</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="7"
-                                        >Colonade Mandaue</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="8"
-                                        >Alta Citta</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="9"
-                                        >Farmers Market</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="10"
-                                        >Ubay Distribution
-                                        Center</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="11"
-                                        >Screenville</a-select-option
-                                    >
-                                    <a-select-option
-                                        v-if="
-                                            GCDataTypeMonthly.dataTypeMonthly ===
-                                            'verifiedGC'
-                                        "
-                                        value="12"
-                                        >Asc Tech</a-select-option
-                                    >
-                                </a-select>
+                                    :options="stores"
+                                />
                             </a-form-item>
 
                             <a-form-item
@@ -209,45 +112,16 @@
 
                             <a-form-item
                                 :validate-status="
-                                    GCDataTypeMonthly.errors.yearMonthly
+                                    GCDataTypeMonthly.errors.year
                                         ? 'error'
                                         : ''
                                 "
-                                :help="GCDataTypeMonthly.errors.yearMonthly"
+                                :help="GCDataTypeMonthly.errors.year"
                             >
                                 <div>Year:</div>
 
-                                <a-select
-                                    placeholder="Select Year"
-                                    v-model:value="
-                                        GCDataTypeMonthly.yearMonthly
-                                    "
-                                >
-                                    <a-select-option value="2017"
-                                        >2017</a-select-option
-                                    >
-                                    <a-select-option value="2018"
-                                        >2018</a-select-option
-                                    >
-                                    <a-select-option value="2019"
-                                        >2019</a-select-option
-                                    >
-                                    <a-select-option value="2020"
-                                        >2020</a-select-option
-                                    >
-                                    <a-select-option value="2021"
-                                        >2021</a-select-option
-                                    >
-                                    <a-select-option value="2022"
-                                        >2022</a-select-option
-                                    >
-                                    <a-select-option value="2023"
-                                        >2023</a-select-option
-                                    >
-                                    <a-select-option value="2024"
-                                        >2024</a-select-option
-                                    >
-                                </a-select>
+                                <a-date-picker v-model:value="GCDataTypeMonthly.year" picker="year"  :disabled-date="disabledDate"/>
+                               
                             </a-form-item>
                         </div>
                         <a-button
@@ -300,7 +174,7 @@
                                 "
                                 :help="GCDataTypeYearly.errors.selectedStore"
                             >
-                                <div>Store121:</div>
+                                <div>Store:</div>
                                 <a-select
                                     v-model:value="
                                         GCDataTypeYearly.selectedStore
@@ -318,36 +192,7 @@
                                 :help="GCDataTypeYearly.errors.year"
                             >
                                 <div>Year:</div>
-                                <a-select
-                                    style="width: 30%"
-                                    placeholder="Select Year"
-                                    v-model:value="GCDataTypeYearly.year"
-                                >
-                                    <a-select-option value="2017"
-                                        >2017</a-select-option
-                                    >
-                                    <a-select-option value="2018"
-                                        >2018</a-select-option
-                                    >
-                                    <a-select-option value="2019"
-                                        >2019</a-select-option
-                                    >
-                                    <a-select-option value="2020"
-                                        >2020</a-select-option
-                                    >
-                                    <a-select-option value="2021"
-                                        >2021</a-select-option
-                                    >
-                                    <a-select-option value="2022"
-                                        >2022</a-select-option
-                                    >
-                                    <a-select-option value="2023"
-                                        >2023</a-select-option
-                                    >
-                                    <a-select-option value="2024"
-                                        >2024</a-select-option
-                                    >
-                                </a-select>
+                                <a-date-picker v-model:value="GCDataTypeYearly.year" picker="year"  :disabled-date="disabledDate"/>
                             </a-form-item>
                         </div>
                         <a-button
@@ -370,13 +215,14 @@ import { Modal } from "ant-design-vue";
 import axios from "axios";
 import { notification } from "ant-design-vue";
 import { useQueueState } from "@/stores/queue-state";
+import dayjs from "dayjs";
 
 defineProps(["stores"]);
 const GCDataTypeMonthly = ref({
     dataTypeMonthly: "",
-    yearMonthly: "",
+    year: "",
     month: "",
-    selectedStoreMonthly: "",
+    selectedStore: "",
     errors: {},
 });
 
@@ -389,34 +235,35 @@ const GCDataTypeYearly = ref({
 
 const submitGCReportsMonthly = () => {
     GCDataTypeMonthly.value.errors = {};
-    const { dataTypeMonthly, yearMonthly, month, selectedStoreMonthly } =
+    const { dataTypeMonthly, year, month, selectedStore } =
         GCDataTypeMonthly.value;
     if (!dataTypeMonthly)
         GCDataTypeMonthly.value.errors.dataTypeMonthly =
             " Data type field is required";
-    if (!selectedStoreMonthly)
-        GCDataTypeMonthly.value.errors.selectedStoreMonthly =
+    if (!selectedStore)
+        GCDataTypeMonthly.value.errors.selectedStore =
             "Store field is required";
-    if (!yearMonthly)
-        GCDataTypeMonthly.value.errors.yearMonthly = "Year field is required";
+    if (!year)
+        GCDataTypeMonthly.value.errors.year = "Year field is required";
     if (!month)
         GCDataTypeMonthly.value.errors.month = "Month field is required";
 
     if (
         GCDataTypeMonthly.value.errors.dataTypeMonthly ||
-        GCDataTypeMonthly.value.errors.yearMonthly ||
+        GCDataTypeMonthly.value.errors.year ||
         GCDataTypeMonthly.value.errors.month ||
-        GCDataTypeMonthly.value.errors.selectedStoreMonthly
+        GCDataTypeMonthly.value.errors.selectedStore
     ) {
         return;
     }
+
+    const yearFormat = dayjs(year).year();
     const monthlyData = {
         dataTypeMonthly: dataTypeMonthly,
-        yearMonthly: yearMonthly,
+        year: yearFormat,
         month: month,
-        selectedStoreMonthly: selectedStoreMonthly,
+        selectedStore: selectedStore,
     };
-    console.log(monthlyData);
     Modal.confirm({
         title: "Confirmation",
         content: "Are you sure you want to generate?",
@@ -424,16 +271,34 @@ const submitGCReportsMonthly = () => {
         okType: "danger",
         cancelText: "No",
         onOk: () => {
-            window.location.href = route(
-                "storeaccounting.verifiedGcSubmit",
-                monthlyData,
-            );
-        },
-        onCancel() {
-            console.log("Cancel");
+            axios
+                .get(route("storeaccounting.verifiedGcYearlySubmit"), {
+                    params: { ...monthlyData },
+                })
+                .then((e) => {
+                    state.setGenerateButton(true);
+                    state.setFloatButton(true);
+
+                    state.setOpenFloat(true);
+                })
+                .catch((e) => {
+                    let message = "please check all the fields";
+                    if (e.status === 404) {
+                        message = e.response.data;
+                    }
+                    notification.error({
+                        message: "Opps Something Went wrong",
+                        description: `${message}`,
+                    });
+                });
         },
     });
 };
+
+const disabledDate = (current) => {
+    return current && current > dayjs().startOf("day");
+};
+
 const state = useQueueState();
 
 const submitGCReportsYearly = () => {
@@ -455,27 +320,28 @@ const submitGCReportsYearly = () => {
         return;
     }
 
+    const yearFormat = dayjs(year).year();
+
     const yearlyData = {
         GCDataType: GCDataType,
         selectedStore: selectedStore,
-        year: year,
+        year: yearFormat,
     };
 
     axios
         .get(route("storeaccounting.verifiedGcYearlySubmit"), {
-            params: { ...yearlyData
-            },
-        }).then((e) => {
+            params: { ...yearlyData },
+        })
+        .then((e) => {
             state.setGenerateButton(true);
             state.setFloatButton(true);
 
             state.setOpenFloat(true);
         })
         .catch((e) => {
-
             let message = "please check all the fields";
             if (e.status === 404) {
-                message = e.response.data.error;
+                message = e.response.data;
             }
             notification.error({
                 message: "Opps Something Went wrong",

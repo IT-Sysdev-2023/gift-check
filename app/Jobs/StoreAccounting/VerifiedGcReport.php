@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 
 class VerifiedGcReport implements ShouldQueue
@@ -36,12 +37,14 @@ class VerifiedGcReport implements ShouldQueue
      */
     public function handle(): void
     {
-        //Check Existence
+        $monthName = isset($this->request['month']) ? Date::create(0, $this->request['month'])->format('F') : '';
+        $label = isset($this->request['month']) ? "{$monthName}-{$this->request['year']}" : "{$this->request['year']}";
+
         $doc= new VerifiedGcReportMultiExport($this->request, $this->user, $this->db);
         (new ExportHandler())
         ->setFolder('Reports')
         ->setSubfolderAsUsertype($this->user->usertype)
-        ->setFileName('Verified Gc Report (Yearly)-' . $this->user->user_id, $this->request['year'])
+        ->setFileName("Verified Gc Report ($label)-" . $this->user->user_id, $this->request['year'])
         ->exportDocument('excel', $doc)
         ->deleteFileIn(now()->addDays(2));
     }
