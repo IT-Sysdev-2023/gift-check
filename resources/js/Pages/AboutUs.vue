@@ -140,15 +140,8 @@
                                 font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
                             "
                         >
-                            GIFT CHECK</span
+                            GIFT CHECK </span
                         >
-                        <span>
-                            <div class="bird-loader">
-                                <div class="dot-1"></div>
-                                <div class="dot-2">- -</div>
-                                <div class="dot-3"></div>
-                            </div>
-                        </span>
                         <span style="font-weight: bold; font-size: 30px"
                             >Team / Family</span
                         >
@@ -233,7 +226,7 @@
                                         text-align: center
                                     "
                                 >
-                                    CIA, CSCU, CISA, REB, REA, CICA, CrFA
+                                    CPA, CIA, CSCU, CISA, REB, REA, CICA, CrFA , REC
                                 </p>
                             </div>
                         </div>
@@ -2286,7 +2279,8 @@
 import { onMounted, ref, onUnmounted } from "vue";
 
 const showScrollButton = ref(false);
-const exitModal = ref(false);
+// const exitModal = ref(false);
+
 
 const handleScroll = () => {
     showScrollButton.value = window.scrollY > 450;
@@ -3316,104 +3310,6 @@ ul {
     80%,
     85% {
         transform: translateY(0.15vmax);
-    }
-}
-</style>
-
-<!-- bird stylessss -->
-<style scoped>
-.bird-loader {
-    margin-left: 70%;
-    height: 50px;
-    width: 20rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-}
-
-.dot-2 {
-    background-color: black;
-    height: 30px;
-    width: 30px;
-    border-radius: 50%;
-    padding: 4px;
-    color: white;
-}
-
-.dot-1,
-.dot-3 {
-    background-color: black;
-    height: 30px;
-    width: 20px;
-    border-radius: 50%;
-    text-align: center;
-    animation: flap-wings 1s infinite ease-in-out;
-}
-
-.dot-2 {
-    position: relative;
-    height: 30px;
-    width: 30px;
-    border-radius: 50%;
-    background-color: black;
-    animation: flap-wings 1s infinite ease-in-out;
-    animation-delay: 0.1s;
-}
-
-.dot-2::before,
-.dot-2::after {
-    content: "";
-    position: absolute;
-    background-color: black;
-}
-
-.dot-2::before {
-    height: 20px;
-    width: 10px;
-    bottom: 20px;
-    left: 1px;
-    border-radius: 50% 50% 0 0;
-    transform: rotate(-20deg);
-}
-
-.dot-2::after {
-    height: 20px;
-    width: 10px;
-    bottom: 20px;
-    left: 19px;
-    transform: rotate(20deg);
-    border-radius: 50% 50% 0 0;
-}
-
-.dot-1::before,
-.dot-1::after,
-.dot-3::before,
-.dot-3::after {
-    content: "";
-    position: absolute;
-    background-color: white;
-}
-
-.dot-1::before,
-.dot-3::before {
-    height: 30px;
-    width: 20px;
-    top: 10px;
-    left: 0;
-    background-color: #e8e8e8;
-    /*chnage this if u need dark mode to #212121 if need light mode #e8e8e8*/
-    border-radius: 50% 50% 0 0;
-}
-
-@keyframes flap-wings {
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-20px);
     }
 }
 </style>
