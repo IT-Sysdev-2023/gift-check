@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Helpers\NumberHelper;
 use App\Models\ApprovedGcrequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,9 +21,9 @@ class BudgetLedgerResource extends JsonResource
             'ledger_no' => $this->bledger_no,
             'date' => $this->bledger_datetime->toFormattedDateString(),
             'transaction' => $this->transactionType($this->bledger_type, $this->approvedGcRequest?->storeGcRequest?->store),
-            'debit' => $this->bdebit_amt,
-            'credit' => $this->bcredit_amt,
-            
+            'debit' => NumberHelper::currency($this->bdebit_amt),
+            'credit' => NumberHelper::currency($this->bcredit_amt),
+
         ];
     }
 
