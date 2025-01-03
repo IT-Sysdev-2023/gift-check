@@ -119,7 +119,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Total Gc',
-            'dataIndex' => 'pgcreq_total',
+            'dataIndex' => 'total',
 
         ],
         [
@@ -471,7 +471,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Total GC',
-            'dataIndex' => 'pgcreq_total',
+            'dataIndex' => 'total',
         ],
         [
             'title' => 'Requested by',

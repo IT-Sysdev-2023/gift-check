@@ -70,7 +70,8 @@
                             </a-card>
                         </a-col>
                     </a-row>
-                    <a-button class="mt-5" block style="background-color: #FC6736; color: white;" @click="() => $inertia.get(route('custodian.approved.reprint.request', record.docs.doc_trid))">
+                    <!-- {{ record.special.spexgc_id }} -->
+                    <a-button class="mt-5" block style="background-color: #FC6736; color: white;" @click="() => $inertia.get(route('custodian.approved.reprint.request', record.special.spexgc_id))">
                         <template #icon>
                             <FastForwardOutlined />
                         </template>
