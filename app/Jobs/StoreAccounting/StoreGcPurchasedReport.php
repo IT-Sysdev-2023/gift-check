@@ -41,13 +41,13 @@ class StoreGcPurchasedReport extends DatabaseConnectionService implements Should
         $label = isset($this->request['month']) ? $this->monthToName() : $this->request['year'];
         $db = $this->getLocalConnection($this->local, $this->request['selectedStore']);
        
-        $doc = new StoreGcPurchasedReportExport($db, $this->request, $this->local);
+        $doc = new StoreGcPurchasedReportExport($db, $this->request, $this->local, $this->user);
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
-            ->setFileName("Store Gc Purchased Report ($label)-" . $this->user->user_id, $this->request['year'])
-            ->exportDocument('excel', $doc)
-            ->deleteFileIn(now()->addDays(2));
+            ->setFileName("Store Gc Purchased Report ($label)-" . $this->user->user_id, $this->request['year']);
+            // ->exportDocument('excel', $doc)
+            // ->deleteFileIn(now()->addDays(2));
     }
 
     public function monthToName()

@@ -198,15 +198,18 @@
 </template>
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { useQueueState } from "@/stores/queue-state";
 import dayjs from "dayjs";
 import { useForm } from "laravel-precognition-vue-inertia";
 
 defineProps(["stores"]);
+const state = useQueueState();
+
 const billMonthly = useForm(
     "post",
     route("storeaccounting.billingMonthlySubmit"),
     {
-        year: '',
+        year: "",
         month: "",
         selectedStore: "",
         StoreDataType: "",
@@ -224,27 +227,35 @@ const billYearly = useForm(
 );
 
 const monthlySubmitButton = () => {
-    billMonthly.transform((data) => ({
-        ...data,
-        year: dayjs(data.year).year(),
-        isMonthly: true
-    })).submit({
-        onSuccess: () => billMonthly.reset(),
-    });
+    billMonthly
+        .transform((data) => ({
+            ...data,
+            year: dayjs(data.year).year(),
+            isMonthly: true,
+        }))
+        .submit({
+            onSuccess: () => billMonthly.reset(),
+        });
 };
 const disabledDate = (current) => {
     return current && current > dayjs().startOf("day");
 };
 
 const yearlySubmitButton = () => {
-    billYearly.transform((data) => ({
-        ...data,
-        year: dayjs(data.year).year()
-    })).submit({
-        onSuccess: () => billYearly.reset(),
-    });
+    billYearly
+        .transform((data) => ({
+            ...data,
+            year: dayjs(data.year).year(),
+        }))
+        .submit({
+            onStart: () => {
+                state.setGenerateButton(true);
+                state.setFloatButton(true);
+                state.setOpenFloat(true);
+            },
+            onSuccess: () => billYearly.reset(),
+        });
 
-    
     // const { year, storeYearlyData, selectedStore } = billYearly.value;
 
     // const yearlyData = {
