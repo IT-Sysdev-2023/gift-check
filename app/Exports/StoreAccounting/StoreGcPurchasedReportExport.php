@@ -27,38 +27,70 @@ use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell
 {
 
-    public function __construct(protected $database, protected $request, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
+    public function __construct(protected $database, protected $request, protected bool $isLocal, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
     {
     }
     public function collection()
     {
-        $data = $this->database->table('store_eod_textfile_transactions')
-            ->selectRaw("DATE(store_verification.vs_date) as datever,
-                    DATE(store_verification.vs_reverifydate) as daterev,
-                    store_verification.vs_barcode,
-                    store_verification.vs_tf_denomination,
-                    store_verification.vs_tf_purchasecredit,
-                    store_eod_textfile_transactions.seodtt_bu,
-                    store_eod_textfile_transactions.seodtt_transno,
-                    store_verification.vs_store,
-                    customers.cus_fname,
-                    customers.cus_lname,
-                    customers.cus_mname,   
-                    customers.cus_namext,
-                    store_verification.vs_tf_balance,
-                    store_verification.vs_gctype,
-                    store_verification.vs_date,
-                    store_verification.vs_time")
-            ->join('store_verification', 'store_verification.vs_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
-            ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
-            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-            ->whereYear('vs_date', $this->request['year'])
-            ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
-            ->where('vs_store', $this->request['selectedStore'])
-            ->orderBy('store_verification.vs_date')
-            ->get();
+        if ($this->isLocal) {
 
+            $data = $this->database->table('store_eod_textfile_transactions')
+                ->selectRaw("DATE(store_verification.vs_date) as datever,
+                DATE(store_verification.vs_reverifydate) as daterev,
+                store_verification.vs_barcode,
+                store_verification.vs_tf_denomination,
+                store_verification.vs_tf_purchasecredit,
+                store_eod_textfile_transactions.seodtt_bu,
+                store_eod_textfile_transactions.seodtt_transno,
+                store_verification.vs_store,
+                customers.cus_fname,
+                customers.cus_lname,
+                customers.cus_mname,   
+                customers.cus_namext,
+                store_verification.vs_tf_balance,
+                store_verification.vs_gctype,
+                store_verification.vs_date,
+                store_verification.vs_time")
+                ->join('transaction_sales', 'transaction_sales.sales_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
+                ->join('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_sales.sales_transaction_id')
+                ->join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
+                ->join('store_verification', 'store_verification.vs_barcode', '=', 'transaction_sales.sales_barcode')
+                ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+                ->whereYear('vs_date', $this->request['year'])
+                ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
+                ->where('trans_store', $this->request['selectedStore'])
+                ->whereRaw('stores.store_initial <> SUBSTRING(store_eod_textfile_transactions.seodtt_bu, 1, 5)')
+                ->orderBy('trans_sid')
+                ->get();
+        } else {
 
+            $data = $this->database->table('store_eod_textfile_transactions')
+                ->selectRaw("DATE(store_verification.vs_date) as datever,
+                DATE(store_verification.vs_reverifydate) as daterev,
+                store_verification.vs_barcode,
+                store_verification.vs_tf_denomination,
+                store_verification.vs_tf_purchasecredit,
+                store_eod_textfile_transactions.seodtt_bu,
+                store_eod_textfile_transactions.seodtt_transno,
+                store_verification.vs_store,
+                customers.cus_fname,
+                customers.cus_lname,
+                customers.cus_mname,   
+                customers.cus_namext,
+                store_verification.vs_tf_balance,
+                store_verification.vs_gctype,
+                store_verification.vs_date,
+                store_verification.vs_time")
+                ->join('store_verification', 'store_verification.vs_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
+                ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+                ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+                ->whereYear('vs_date', $this->request['year'])
+                ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
+                ->where('vs_store', $this->request['selectedStore'])
+                ->orderBy('store_verification.vs_date')
+                ->get();
+
+        }
 
         $purchasecred = 0;
         $balance = 0;
@@ -155,7 +187,7 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
                 $sheet->mergeCells('C2:E2');
                 $sheet->mergeCells('B3:F3');
                 $sheet->mergeCells('C6:E6');
-            
+
                 $sheet->getStyle('B1:C6')->getFont()->setBold(true);
                 $sheet->getStyle('B1:C6')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             }
@@ -226,7 +258,6 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
             'BARCODE',
             'DENOMINATION',
             'AMOUNT REDEEM',
-            'CUSTOMER NAME',
             'BALANCE',
             'CUSTOMER NAME',
             'STORE PURCHASED',

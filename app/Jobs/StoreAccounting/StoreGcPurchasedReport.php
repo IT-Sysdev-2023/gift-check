@@ -41,7 +41,7 @@ class StoreGcPurchasedReport extends DatabaseConnectionService implements Should
         $label = isset($this->request['month']) ? $this->monthToName() : $this->request['year'];
         $db = $this->getLocalConnection($this->local, $this->request['selectedStore']);
        
-        $doc = new StoreGcPurchasedReportExport($db, $this->request);
+        $doc = new StoreGcPurchasedReportExport($db, $this->request, $this->local);
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
