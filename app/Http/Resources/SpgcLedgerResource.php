@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Helpers\NumberHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,8 +20,8 @@ class SpgcLedgerResource extends JsonResource
             'ledger_no' => $this->spgcledger_no,
             'date' => $this->spgcledger_datetime->toFormattedDateString(),
             'transaction' => $this->transactionType($this->spgcledger_type),
-            'debit' => $this->spgcledger_debit,
-            'credit' => $this->spgcledger_credit,
+            'debit' => NumberHelper::currency($this->spgcledger_debit),
+            'credit' => NumberHelper::currency($this->spgcledger_credit),
 
         ];
     }
