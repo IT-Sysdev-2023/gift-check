@@ -44,6 +44,7 @@ class RetailGroupServices extends FileHandler
             ->paginate(10)->withQueryString();
 
         $data->transform(function ($item) {
+            $item->total = NumberHelper::currency($item->pgcreq_total);
             $item->fullname = $item->userReqby->full_name;
             $item->needed = Date::parse($item->pgcreq_dateneeded)->toFormattedDateString();
             $item->req = Date::parse($item->pgcreq_datereq)->toFormattedDateString();
@@ -230,6 +231,7 @@ class RetailGroupServices extends FileHandler
             $item->recby = $item->approvedReq->user->full_name;
             $item->reqdate = $item->pgcreq_datereq->toFormattedDateString();
             $item->dateneed = $item->pgcreq_dateneeded->toFormattedDateString();
+            $item->total = NumberHelper::currency($item->pgcreq_total);
 
             return $item;
         });

@@ -126,6 +126,7 @@ class CustodianController extends Controller
 
     public function reprintRequest($id)
     {
+
         return (new ReprintPdf)->reprintRequestService($id);
     }
 
