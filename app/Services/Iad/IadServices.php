@@ -666,6 +666,7 @@ class IadServices extends FileHandler
             ->paginate(10)->withQueryString();
 
         $storeVerification->transform(function ($item) {
+            $item->denomination = NumberHelper::currency($item->vs_tf_denomination);
             $item->storename = $item->store->store_name;
             $item->customername = $item->customer->full_name;
             $item->gctype = empty($item->gc_treasury_release) ? Str::ucfirst($item->type->gctype) :  Str::ucfirst($item->type->gctype) . " (Institutional GC)";
