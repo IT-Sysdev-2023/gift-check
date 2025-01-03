@@ -3,7 +3,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "node build.js && vue-tsc && vite build"
+        "build": "node build-drawing.js && vue-tsc && vite build"
     },
     "devDependencies": {
         "@eslint/js": "^9.16.0",
