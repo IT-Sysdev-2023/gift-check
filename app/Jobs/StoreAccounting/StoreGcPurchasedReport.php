@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Throwable; // Ensure this is imported
 
 class StoreGcPurchasedReport extends DatabaseConnectionService implements ShouldQueue
 {
@@ -24,8 +25,8 @@ class StoreGcPurchasedReport extends DatabaseConnectionService implements Should
 
     private array $request;
     protected User|null $user;
-    protected $local;
-    public function __construct($request, $isLocal)
+    protected bool $local;
+    public function __construct($request, bool $isLocal)
     {
         $this->local = $isLocal;
         $this->request = $request;
@@ -39,8 +40,8 @@ class StoreGcPurchasedReport extends DatabaseConnectionService implements Should
     {
         $label = isset($this->request['month']) ? $this->monthToName() : $this->request['year'];
         $db = $this->getLocalConnection($this->local, $this->request['selectedStore']);
-        Log::info($this->local);
-        $doc = new StoreGcPurchasedReportExport($db, $this->request, $this->user);
+       
+        $doc = new StoreGcPurchasedReportExport($db, $this->request);
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
@@ -51,8 +52,17 @@ class StoreGcPurchasedReport extends DatabaseConnectionService implements Should
 
     public function monthToName()
     {
-        $date = Date::create(0, $this->request['month'])->format('F');
+        $date = Date::create(0, $this->request['month'])->format('F'); // Convert integer date into date name
         return "{$date}-{$this->request['year']}";
+    }
+
+    public function failed(Throwable $exception)
+    {
+        Log::error('Job failed', [
+            'job' => static::class,
+            'exception' => $exception->getMessage(),
+            'stack' => $exception->getTraceAsString(),
+        ]);
     }
 
 }

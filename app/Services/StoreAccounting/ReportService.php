@@ -10,6 +10,7 @@ use App\Models\Store;
 use App\Models\StoreLocalServer;
 use App\Models\StoreVerification;
 use App\Services\Documents\ExportHandler;
+use Illuminate\Support\Facades\Date;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Services\Documents\ImportHandler;
 use Illuminate\Http\Request;
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\DB;
 class ReportService extends DatabaseConnectionService
 {
 
+    const LOCAL_DB = false;
+    const REMOTE_SERVERS_DB = true;
     public function __construct(protected DatabaseConnectionService $databaseConnectionService)
     {
     }
@@ -29,7 +32,7 @@ class ReportService extends DatabaseConnectionService
         $isMonthtly = isset($request->month) ? $request->month : null;
 
         if ($isExists) { //OTHER SERVER
-            $server = self::getServerDatabase($request->selectedStore, false);
+            $server = self::getServerDatabase($request->selectedStore, self::LOCAL_DB);
 
             if (self::checkReveriedData($server, $request->selectedStore, $request->year, $isMonthtly)) {
                 VerifiedGcReport::dispatch($request->all(), $server);
@@ -39,7 +42,7 @@ class ReportService extends DatabaseConnectionService
 
         } else { //LOCAL
 
-            $server = self::getServerDatabase($request->selectedStore, true);
+            $server = self::getServerDatabase($request->selectedStore, self::REMOTE_SERVERS_DB);
             if (self::checkReveriedData($server, $request->selectedStore, $request->year, $isMonthtly)) {
                 VerifiedGcReport::dispatch($request->all(), $server);
             } else {
@@ -78,10 +81,8 @@ class ReportService extends DatabaseConnectionService
             if ($isExists) { //OTHER SERVER
 
                 if (self::checkBillingMonthlyReport($request->selectedStore, $request->year, $isMonthtly, false)) {
-  
-                    StoreGcPurchasedReport::dispatch($request->all(), 1);
-                    // dd(1);
-    
+
+                    StoreGcPurchasedReport::dispatch($request->all(), self::LOCAL_DB);
 
                 } else {
                     return response()->json('No record Found on this date', 404);
@@ -91,7 +92,7 @@ class ReportService extends DatabaseConnectionService
 
                 if (self::checkBillingMonthlyReport($request->selectedStore, $request->year, $isMonthtly, true)) {
                     // dd(2);
-                    StoreGcPurchasedReport::dispatch($request->all(), 2);
+                    StoreGcPurchasedReport::dispatch($request->all(), self::REMOTE_SERVERS_DB);
                 } else {
                     return response()->json('No record Found on this date', 404);
                 }

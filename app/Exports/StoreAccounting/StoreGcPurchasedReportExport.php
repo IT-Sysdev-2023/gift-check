@@ -22,8 +22,9 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 
-class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents
+class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell
 {
 
     public function __construct(protected $database, protected $request, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
@@ -54,7 +55,8 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
             ->whereYear('vs_date', $this->request['year'])
             ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
             ->where('vs_store', $this->request['selectedStore'])
-            ->orderBy('store_verification.vs_date')->get();
+            ->orderBy('store_verification.vs_date')
+            ->get();
 
 
 
@@ -130,6 +132,11 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
 
         return $transformedData;
     }
+
+    public function startCell(): string
+    {
+        return 'A8';
+    }
     public function registerEvents(): array
     {
 
@@ -147,7 +154,7 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
                 $sheet->mergeCells('C1:E1');
                 $sheet->mergeCells('C2:E2');
                 $sheet->mergeCells('B3:F3');
-                $sheet->mergeCells('C6:E5');
+                $sheet->mergeCells('C6:E6');
             
                 $sheet->getStyle('B1:C6')->getFont()->setBold(true);
                 $sheet->getStyle('B1:C6')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
@@ -234,7 +241,7 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
     public function styles(Worksheet $sheet)
     {
         return [
-            1 => ['font' => ['bold' => true]],
+            8 => ['font' => ['bold' => true]],
         ];
     }
 
