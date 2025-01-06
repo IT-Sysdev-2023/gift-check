@@ -10,12 +10,7 @@
                 </template>
                 <a-card>
                     <div style="margin-top: 20px">
-                        <a-form-item
-                            :validate-status="
-                                billMonthly.errors.StoreDataType ? 'error' : ''
-                            "
-                            :help="billMonthly.errors.StoreDataType"
-                        >
+                        <a-form-item>
                             <div>Data Type:</div>
 
                             <a-select
@@ -32,12 +27,7 @@
                             </a-select>
                         </a-form-item>
 
-                        <a-form-item
-                            :validate-status="
-                                billMonthly.errors.selectedStore ? 'error' : ''
-                            "
-                            :help="billMonthly.errors.selectedStore"
-                        >
+                        <a-form-item>
                             <div>Store:</div>
                             <a-select
                                 v-model:value="billMonthly.selectedStore"
@@ -47,58 +37,15 @@
                             />
                         </a-form-item>
 
-                        <a-form-item
-                            :validate-status="
-                                billMonthly.errors.month ? 'error' : ''
-                            "
-                            :help="billMonthly.errors.month"
-                        >
-                            <div>Month:</div>
-                            <a-select
-                                style="width: 30%"
-                                placeholder="Select Month"
+                        <a-form-item>
+                            <div>Month & Year:</div>
+                            <a-date-picker
                                 v-model:value="billMonthly.month"
-                            >
-                                <a-select-option value="January"
-                                    >January</a-select-option
-                                >
-                                <a-select-option value="February"
-                                    >February</a-select-option
-                                >
-                                <a-select-option value="March"
-                                    >March</a-select-option
-                                >
-                                <a-select-option value="April"
-                                    >April</a-select-option
-                                >
-                                <a-select-option value="May"
-                                    >May</a-select-option
-                                >
-                                <a-select-option value="June"
-                                    >June</a-select-option
-                                >
-                                <a-select-option value="July"
-                                    >July</a-select-option
-                                >
-                                <a-select-option value="August"
-                                    >August</a-select-option
-                                >
-                                <a-select-option value="September"
-                                    >September</a-select-option
-                                >
-                                <a-select-option value="October"
-                                    >October</a-select-option
-                                >
-                                <a-select-option value="November"
-                                    >November</a-select-option
-                                >
-                                <a-select-option value="December"
-                                    >December</a-select-option
-                                >
-                            </a-select>
+                                picker="month"
+                            />
                         </a-form-item>
 
-                        <a-form-item
+                        <!-- <a-form-item
                             :validate-status="
                                 billMonthly.errors.year ? 'error' : ''
                             "
@@ -110,7 +57,7 @@
                                 picker="year"
                                 :disabled-date="disabledDate"
                             />
-                        </a-form-item>
+                        </a-form-item> -->
                     </div>
                     <div>
                         <a-button
@@ -133,10 +80,6 @@
                 <a-card>
                     <div style="margin-top: 20px">
                         <a-form-item
-                            :validate-status="
-                                billYearly.errors.StoreDataType ? 'error' : ''
-                            "
-                            :help="billYearly.errors.StoreDataType"
                         >
                             <div>Data Type:</div>
 
@@ -155,10 +98,6 @@
                         </a-form-item>
 
                         <a-form-item
-                            :validate-status="
-                                billYearly.errors.selectedStore ? 'error' : ''
-                            "
-                            :help="billYearly.errors.selectedStore"
                         >
                             <div>Store:</div>
                             <a-select
@@ -170,10 +109,6 @@
                         </a-form-item>
 
                         <a-form-item
-                            :validate-status="
-                                billYearly.errors.year ? 'error' : ''
-                            "
-                            :help="billYearly.errors.year"
                         >
                             <div>Year:</div>
                             <a-date-picker
@@ -196,67 +131,88 @@
         </a-tabs>
     </AuthenticatedLayout>
 </template>
-<script setup>
+<script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useQueueState } from "@/stores/queue-state";
 import dayjs from "dayjs";
-import { useForm } from "laravel-precognition-vue";
+import { notification } from "ant-design-vue";
+import axios from "axios";
+import { ref } from "vue";
 
 defineProps(["stores"]);
 const state = useQueueState();
 
-const billMonthly = useForm(
-    "post",
-    route("storeaccounting.billingMonthlySubmit"),
-    {
-        year: "",
-        month: "",
-        selectedStore: "",
-        StoreDataType: "",
-        isMonthly: true,
-    },
-);
+const billMonthly = ref({
+    year: "",
+    month: "",
+    selectedStore: "",
+    StoreDataType: "",
+});
 
-const billYearly = useForm(
-    "post",
-    route("storeaccounting.billingMonthlySubmit"),
-    {
-        year: "",
-        StoreDataType: "",
-        selectedStore: "",
-    },
-);
+const billYearly = ref({
+    year: "",
+    StoreDataType: "",
+    selectedStore: "",
+});
 
-const monthlySubmitButton = () => {
-    billMonthly
-        .setData({
-            year: dayjs(billMonthly.year).year(),
-        })
-        .submit({
-            onSuccess: () => billMonthly.reset(),
-        })
-        .then((res) => {
-            state.setGenerateButton(true);
-            state.setFloatButton(true);
-            state.setOpenFloat(true);
-        });
-};
 const disabledDate = (current) => {
     return current && current > dayjs().startOf("day");
 };
 
-const yearlySubmitButton = () => {
-    billYearly
-        .setData({
-            year: dayjs(billYearly.year).year(),
+const monthlySubmitButton = async () => {
+    await axios
+        .post(route("storeaccounting.generateStorePurchasedReport"), {
+            month: dayjs(billMonthly.value.month).month() + 1, // cause in Dayjs January returns indexed 0
+            year: dayjs(billMonthly.value.month).year(),
+            selectedStore: billMonthly.value.selectedStore,
+            StoreDataType: billMonthly.value.StoreDataType,
+            isMonthly: true,
         })
-        .submit({
-            onSuccess: () => billYearly.reset(),
-        })
-        .then((res) => {
+        .then(() => {
             state.setGenerateButton(true);
             state.setFloatButton(true);
             state.setOpenFloat(true);
+        })
+        .catch(({ response }) => {
+            // console.log(response.data.message);
+            if (response.status === 422) {
+                notification.error({
+                    message: "Fields are Required!",
+                    description: response.data.message,
+                });
+            } else {
+                notification.error({
+                    message: "Error!",
+                    description: "No record Found on this date.",
+                });
+            }
+        });
+};
+
+const yearlySubmitButton = async () => {
+    await axios
+        .post(route("storeaccounting.generateStorePurchasedReport"), {
+            year: dayjs(billYearly.value.year).year(),
+            StoreDataType: billYearly.value.StoreDataType,
+            selectedStore: billYearly.value.selectedStore,
+        })
+        .then(() => {
+            state.setGenerateButton(true);
+            state.setFloatButton(true);
+            state.setOpenFloat(true);
+        })
+        .catch(({ response }) => {
+            if (response.status === 422) {
+                notification.error({
+                    message: "Fields are Required!",
+                    description: response.data.message,
+                });
+            } else {
+                notification.error({
+                    message: "Error!",
+                    description: "No record Found on this date.",
+                });
+            }
         });
 };
 </script>

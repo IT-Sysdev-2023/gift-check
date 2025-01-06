@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\DB;
 class ReportService extends DatabaseConnectionService
 {
 
-    const LOCAL_DB = false;
-    const REMOTE_SERVERS_DB = true;
+    const REMOTE_SERVER_DB = false;
+    const LOCAL_DB = true;
     public function __construct(protected DatabaseConnectionService $databaseConnectionService)
     {
     }
@@ -32,7 +32,7 @@ class ReportService extends DatabaseConnectionService
         $isMonthtly = isset($request->month) ? $request->month : null;
 
         if ($isExists) { //OTHER SERVER
-            $server = self::getServerDatabase($request->selectedStore, self::LOCAL_DB);
+            $server = self::getServerDatabase($request->selectedStore, self::REMOTE_SERVER_DB);
 
             if (self::checkReveriedData($server, $request->selectedStore, $request->year, $isMonthtly)) {
                 VerifiedGcReport::dispatch($request->all(), $server);
@@ -42,7 +42,7 @@ class ReportService extends DatabaseConnectionService
 
         } else { //LOCAL
 
-            $server = self::getServerDatabase($request->selectedStore, self::REMOTE_SERVERS_DB);
+            $server = self::getServerDatabase($request->selectedStore, self::LOCAL_DB);
             if (self::checkReveriedData($server, $request->selectedStore, $request->year, $isMonthtly)) {
                 VerifiedGcReport::dispatch($request->all(), $server);
             } else {
@@ -61,7 +61,7 @@ class ReportService extends DatabaseConnectionService
             ->exists();
     }
 
-    public function billingMonthlyReport(Request $request)
+    public function billingReport(Request $request)
     {
         $request->validate(
             [
@@ -80,9 +80,9 @@ class ReportService extends DatabaseConnectionService
           
             if ($isExists) { //OTHER SERVER
 
-                if (self::checkBillingMonthlyReport($request->selectedStore, $request->year, $isMonthtly, false)) {
+                if (self::checkRemoteDbReport($request->selectedStore, $request->year, $isMonthtly, false)) {
                   
-                    StoreGcPurchasedReport::dispatch($request->all(), self::LOCAL_DB);
+                    StoreGcPurchasedReport::dispatch($request->all(), self::REMOTE_SERVER_DB);
                    
                 } else {
                     return response()->json('No record Found on this date', 404);
@@ -90,9 +90,9 @@ class ReportService extends DatabaseConnectionService
 
             } else { //LOCAL
 
-                if (self::checkBillingMonthlyReport($request->selectedStore, $request->year, $isMonthtly, true)) {
+                if (self::checkLocalDbBillingReport($request->selectedStore, $request->year, $isMonthtly, true)) {
 
-                    StoreGcPurchasedReport::dispatch($request->all(), self::REMOTE_SERVERS_DB);
+                    StoreGcPurchasedReport::dispatch($request->all(), self::LOCAL_DB);
                   
                 } else {
                     return response()->json('No record Found on this date', 404);
@@ -103,24 +103,34 @@ class ReportService extends DatabaseConnectionService
 
     }
 
-    private function checkBillingMonthlyReport($store, $year, $month, $isLocal)
+    private function checkRemoteDbReport($store, $year, $month, $isLocal)
     {
         $server = $this->databaseConnectionService->getLocalConnection($isLocal, $store);
-        return $server->table('store_verification')
-            ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+        return $server->table('store_eod_textfile_transactions')
+                ->join('store_verification', 'store_verification.vs_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
+                ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+                ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+                ->whereYear('vs_date', $year)
+                ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
+                ->where('vs_store', $store)
+                ->exists();
+    }
 
-            ->where(
-                fn($query) =>
-                $query->whereYear('vs_date', $year)
-                    ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
-            )
-            ->orWhere(
-                fn($query) =>
-                $query->whereYear('vs_reverifydate', $year)
-                    ->when(!is_null($month), fn($q) => $q->whereMonth('vs_reverifydate', $month))
-            )
-            ->where('vs_store', $store)
-            ->exists();
+    private function checkLocalDbBillingReport($store, $year, $month, $isLocal){
+
+        // dd($store, $year, $month, $isLocal);
+        $server = $this->databaseConnectionService->getLocalConnection($isLocal, $store);
+        return  $server->table('store_eod_textfile_transactions')
+                ->join('transaction_sales', 'transaction_sales.sales_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
+                ->join('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_sales.sales_transaction_id')
+                ->join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
+                ->join('store_verification', 'store_verification.vs_barcode', '=', 'transaction_sales.sales_barcode')
+                ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+                ->whereYear('vs_date', $year)
+                ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
+                ->where('trans_store', $store)
+                ->whereRaw('stores.store_initial <> SUBSTRING(store_eod_textfile_transactions.seodtt_bu, 1, 5)')
+                ->exists();
     }
     private static function getServerDatabase(string|int $store, bool $islocal)
     {

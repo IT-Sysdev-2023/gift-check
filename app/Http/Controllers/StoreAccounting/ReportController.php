@@ -21,14 +21,9 @@ class ReportController extends Controller
         return $this->reportService->generatedReports($request);
     }
 
-    public function billingMonthlySubmit(Request $request)
+    public function generateStorePurchasedReport(Request $request)
     {
-        return $this->reportService->billingMonthlyReport($request);
+        return $this->reportService->billingReport($request);
     }
 
-    public function billingYearlySubmit(Request $request)
-    {
-        // dd(2);
-        return $this->reportService->billingMonthlyReport($request);
-    }
 }

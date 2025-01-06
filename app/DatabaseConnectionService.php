@@ -10,12 +10,6 @@ class DatabaseConnectionService
     /**
      * Create a new class instance.
      */
-
-    protected string $host;
-    protected string $database;
-    protected string $username;
-    protected string $password;
-
     public function __construct()
     {
         //

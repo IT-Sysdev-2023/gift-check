@@ -824,8 +824,7 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('verified-yearly-submit', [ReportController::class, 'verifiedGcYearlySubmit'])->name('verifiedGcYearlySubmit');
                             //store gc purchased
                             Route::get('store-gc-purchased', [StoreAccountingController::class, 'storeGCPurchasedReport'])->name('storeGCPurchasedReport');
-                            Route::post('store-monthly-submit', [ReportController::class, 'billingMonthlySubmit'])->name('billingMonthlySubmit')->middleware([HandlePrecognitiveRequests::class]);
-                            Route::get('store-yearly-submit', [ReportController::class, 'billingYearlySubmit'])->name('billingYearlySubmit');
+                            Route::post('store-monthly-submit', [ReportController::class, 'generateStorePurchasedReport'])->name('generateStorePurchasedReport');
                             // redeem report
                             Route::get('redeem-report-purchased', [StoreAccountingController::class, 'redeemReport'])->name('redeemReport');
                             Route::get('redeem-monthly-submit', [StoreAccountingController::class, 'monthlyRedeemSubmit'])->name('monthlyRedeemSubmit');

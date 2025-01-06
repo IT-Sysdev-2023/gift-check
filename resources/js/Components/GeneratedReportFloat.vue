@@ -144,7 +144,7 @@ const whichShouldListenTo = computed(() => {
         return {
             channel: "storeaccounting-report.",
             listen: "StoreAccountReportEvent",
-            route: "accounting.reports.generatedReports",
+            route: "storeaccounting.reports.generatedReports",
         };
     } else {
         return {
