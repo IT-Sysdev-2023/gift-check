@@ -196,7 +196,8 @@ class AdminServices
 
             ]);
         }
-        $q2 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'gc.barcode_no')->where('vs_barcode', $request->barcode);
+        $q2 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'gc.barcode_no')
+        ->where('vs_barcode', $request->barcode);
 
         $vs_date = $q2->first()->vs_date ?? null;
         $rev_date = $q2->first()->vs_reverifydate ?? null;
@@ -388,7 +389,8 @@ class AdminServices
         $query =  $promo->join('promo_gc', 'promo_gc.prom_barcode', '=', 'prreltoi_barcode')
             ->leftJoin('promo', 'promo.promo_id', '=', 'promo_gc.prom_promoid')
             ->leftJoin('promogc_released', 'prgcrel_barcode', '=', 'prreltoi_barcode')
-            ->where('promo_gc.prom_barcode', $request->barcode)->first();
+            ->where('promo_gc.prom_barcode', $request->barcode)
+            ->first();
 
         // dd($query->promo_name);
         if (empty($query->promo_name)) {
