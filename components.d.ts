@@ -15,6 +15,7 @@ declare module 'vue' {
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
     ABreadcrumbSeparator: typeof import('ant-design-vue/es')['BreadcrumbSeparator']
     ABudgetDetailsDrawer: typeof import('./resources/js/Pages/Finance/Drawer/ABudgetDetailsDrawer.vue')['default']
+    ABudgetDetailsModal: typeof import('./resources/js/Pages/Finance/Drawer/ABudgetDetailsModal.vue')['default']
     AButton: typeof import('ant-design-vue/es')['Button']
     ACard: typeof import('ant-design-vue/es')['Card']
     AccountingDashboard: typeof import('./resources/js/Pages/Accounting/AccountingDashboard.vue')['default']

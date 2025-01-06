@@ -13,7 +13,7 @@
             </a-table>
             <pagination :datarecords="records" class="mt-5"/>
         </a-card>
-        <production-cancel-drawer @close-drawer="close" :open="array.openDrawer" :record="array.cancelledDetails"/>
+        <production-cancel-drawer @close-drawer="close" v-model:open="array.openDrawer" :record="array.cancelledDetails"/>
     </AuthenticatedLayout>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-    <a-drawer :width="800" title="Basic Drawer" placement="left" @close="close">
+    <a-modal style="width: auto; top: 50px;" title="Details"  @close="close">
         <a-descriptions size="small" layout="vertical" bordered>
             <a-descriptions-item label="Pr No">{{ record.data.pe_num }}</a-descriptions-item>
             <a-descriptions-item label="Date Requested">{{record.data.req_date}}</a-descriptions-item>
@@ -25,7 +25,7 @@
                 dataIndex: 'Denomination',
             },
         ]" />
-    </a-drawer>
+    </a-modal>
 
 </template>
 <script setup>
