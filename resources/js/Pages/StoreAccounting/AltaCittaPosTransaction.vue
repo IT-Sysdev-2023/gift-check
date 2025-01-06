@@ -6,7 +6,7 @@
             </div>
         </a-card>
 
-        <div class="input-wrapper">
+        <!-- <div class="input-wrapper">
             <input
                 type="search"
                 placeholder="Input search here..."
@@ -14,6 +14,9 @@
                 class="input"
                 v-model="alturasSearch"
             />
+        </div> -->
+        <div>
+            <a-input type="search" placeholder="Input search here..." v-model:value="alturasSearch"/>
         </div>
 
         <div style="margin-top: 10px">

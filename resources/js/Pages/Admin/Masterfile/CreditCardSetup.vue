@@ -55,28 +55,9 @@
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {
-    FormOutlined,
-    DeleteOutlined,
-    PlusSquareOutlined,
-    UserOutlined,
-    UnlockTwoTone,
-    CloseCircleTwoTone,
-    AppstoreTwoTone,
-} from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 export default {
     layout: AuthenticatedLayout,
-    components: {
-        FormOutlined,
-        DeleteOutlined,
-        PlusSquareOutlined,
-        UserOutlined,
-        UnlockTwoTone,
-        CloseCircleTwoTone,
-        AppstoreTwoTone,
-    },
-
     props: {
         data: Object,
         search: String,
@@ -148,11 +129,11 @@ export default {
                             message: props.flash.success,
                             description: "Added successfully!",
                         });
-                        (this.addCreditCard = false),
-                        this.form.ccard_name = '',
-                            this.$inertia.get(
-                                route("Admin/Masterfile/CreditCardSetup"),
-                            );
+                        this.addCreditCard = false;
+                        this.form.ccard_name = "";
+                        this.$inertia.get(
+                            route("Admin/Masterfile/CreditCardSetup"),
+                        );
                     } else if (props.flash.error) {
                         notification.error({
                             message: props.flash.error,

@@ -442,32 +442,39 @@ class AdminController extends Controller
 
     public function usersResetPassword(Request $request)
     {
-        // dd($request->user_id);
+        // dd($request->password);
 
         $defaultPassword = 'GC2015';
 
         $user = User::where('user_id', $request->user_id)->first();
+        if (!$user) {
+            return back()->with(
+                'error',
+                'User not found'
+            );
+        }
+        if (Hash::needsRehash($user->password)) {
+            $user->password = Hash::make($user->password);
+            $user->save();
+            return back()->with(
+                'success',
+                'Password was rehashed successfully'
+            );
+        }
+
         if (Hash::check($defaultPassword, $user->password)) {
             return back()->with(
                 'error',
-                'OPPS'
+                'Opps'
             );
         }
-        $newPassword = Hash::make($defaultPassword);
 
-        $onSuccess = User::where('user_id', $request->user_id)->update([
-            'password' => $newPassword
-        ]);
+        $newPassword = Hash::make($defaultPassword);
+        $onSuccess = $user->update(['password' => $newPassword]);
         if ($onSuccess) {
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
+            return back()->with('success', 'Password reset successfully.');
         } else {
-            return back()->with(
-                'error',
-                'FAILED TO RESET'
-            );
+            return back()->with('error', 'Failed to reset the password.');
         }
     }
     public function eodReports(Request $request)

@@ -11,7 +11,12 @@
             />
         </div>
         <div style="margin-top: 10px">
-            <a-table :dataSource="data.data" :columns="columns" :pagination="false" size="small">
+            <a-table
+                :dataSource="data.data"
+                :columns="columns"
+                :pagination="false"
+                size="small"
+            >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
                         <a-button
@@ -72,10 +77,8 @@
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { notification } from "ant-design-vue";
-import { FundTwoTone } from "@ant-design/icons-vue";
 export default {
     layout: AuthenticatedLayout,
-    components: { FundTwoTone },
     props: {
         data: Object,
         search: String,

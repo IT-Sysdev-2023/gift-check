@@ -540,17 +540,11 @@
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { UserAddOutlined } from "@ant-design/icons-vue";
-import { Modal } from "ant-design-vue";
-// import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-// import { createVNode } from 'vue';
-import {
-    legacyLogicalPropertiesTransformer,
-    message,
-    notification,
-} from "ant-design-vue";
+import { notification } from "ant-design-vue";
 export default {
     layout: AuthenticatedLayout,
     components: { UserAddOutlined },
+    name: "UserView",
     props: {
         access_page: Object,
         users: Object,
@@ -862,7 +856,6 @@ export default {
                 this.dataForUpdateUser.errors.store_name =
                     "The store name field is required";
             }
-            0;
             this.$inertia.post(
                 route("admin.masterfile.updateUser"),
                 {
@@ -897,15 +890,15 @@ export default {
                             description: "Users added successfully!",
                         });
                         this.open = false;
-                        (this.form.username = ""),
-                            (this.form.firstname = ""),
-                            (this.form.lastname = ""),
-                            (this.form.emp_id = ""),
-                            (this.form.user_role = ""),
-                            (this.form.store_name = ""),
-                            (this.form.employee_type = ""),
-                            (this.form.retail_group = ""),
-                            (this.form.it_type = "");
+                        this.form.username = "";
+                        this.form.firstname = "";
+                        this.form.lastname = "";
+                        this.form.emp_id = "";
+                        this.form.user_role = "";
+                        this.form.store_name = "";
+                        this.form.employee_type = "";
+                        this.form.retail_group = "";
+                        this.form.it_type = "";
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
@@ -920,7 +913,6 @@ export default {
             this.dataforResetPassword.full_name = rec.full_name;
             this.dataforResetPassword.username = rec.username;
             this.dataforResetPassword.user_id = rec.user_id;
-            this.dataforResetPassword.data;
             this.modalforresetPassword = true;
         },
         submitResetPassword() {

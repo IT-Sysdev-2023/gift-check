@@ -6,14 +6,14 @@
             </div>
         </a-card>
 
-        <div class="input-wrapper">
+        <!-- <div class="input-wrapper">
             <input type="search" placeholder="Input search here..." name="text" class="input"
                 v-model="storeSearchBox" />
-        </div>
-        <!-- <div style="margin-top: 10px; margin-left: 70%; font-weight: bold;">
+        </div> -->
+        <div style="margin-top: 10px; margin-left: 70%; font-weight: bold;">
             <a-input-search allow-clear v-model:value="storeSearchBox" placeholder="Input search here!" enter-button
                 style="width: 90%;" />
-        </div> -->
+        </div>
 
         <div style="margin-top: 10px;">
             <a-table :data-source="viewStoreSalesData.data" :columns="viewStoreColumns" size="small"
@@ -52,7 +52,8 @@
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
-import {notification}  from 'ant-design-vue';
+import { notification } from 'ant-design-vue';
+import axios from 'axios';
 export default {
   components: { Pagination },
     layout: AuthenticatedLayout,
