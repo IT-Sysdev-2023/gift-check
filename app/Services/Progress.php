@@ -34,7 +34,7 @@ class Progress
         AccountingReportEvent::dispatch($user, $this->progress, $id ?? $this->reportId);
     }
 
-    protected function broadcast(string $info, string $eventClass, bool $isDone = false, $id = null)
+    protected function broadcast(string $info, $eventClass, bool $isDone = false, $id = null)
     {
         $this->progress['info'] = $info;
         $this->progress['progress']['currentRow']++;

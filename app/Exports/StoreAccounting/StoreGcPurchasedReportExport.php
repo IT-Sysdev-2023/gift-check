@@ -7,6 +7,7 @@ use App\Events\StoreAccountReportEvent;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
 use App\Models\User;
+use App\Services\Progress;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,11 +25,14 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 
-class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell
+class StoreGcPurchasedReportExport extends Progress implements FromCollection, ShouldAutoSize, WithTitle, WithHeadings, WithMapping, WithStyles, WithEvents, WithCustomStartCell
 {
 
-    public function __construct(protected $database, protected $request, protected bool $isLocal, protected &$progress = null, protected $reportId = null, protected ?User $user = null)
+    public function __construct(protected $database, protected $request, protected bool $isLocal, protected User $user)
     {
+        parent::__construct($user);
+        $this->progress['name'] = 'Store Gc Purchased Report';
+
     }
     public function collection()
     {
@@ -92,6 +96,7 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
 
         }
 
+        // $this->progress['progress']['totalRow'] += $data->count();
         $purchasecred = 0;
         $balance = 0;
         $bus = "";
@@ -196,7 +201,7 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
     }
     public function map($data): array
     {
-        // $this->broadcast("GC report Per Day!");
+        $this->broadcast("Generating Report!", StoreAccountReportEvent::class, );
 
         // Build the full name
         $fullname = trim("{$data['cus_fname']} {$data['cus_lname']} " .
@@ -276,12 +281,4 @@ class StoreGcPurchasedReportExport implements FromCollection, ShouldAutoSize, Wi
         ];
     }
 
-    private function broadcast(string $info, bool $isDone = false, $id = null)
-    {
-        $this->progress['info'] = $info;
-        $this->progress['progress']['currentRow']++;
-        $this->progress['isDone'] = $isDone;
-
-        StoreAccountReportEvent::dispatch($this->user, $this->progress, $id ?? $this->reportId);
-    }
 }
