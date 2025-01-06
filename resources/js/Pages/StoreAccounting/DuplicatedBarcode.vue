@@ -36,7 +36,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="input-wrapper">
+                                <!-- <div class="input-wrapper">
                                     <input
                                         type="search"
                                         placeholder="Input search here..."
@@ -44,12 +44,16 @@
                                         class="input"
                                         v-model="cebuTagbilaranSearch"
                                     />
-                                </div>
-                                <!-- <div style="margin-left: 60%;">
-
-                                    <a-input-search allow-clear v-model:value="cebuTagbilaranSearch" enter-button
-                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
+                                <div style="margin-left: 60%">
+                                    <a-input-search
+                                        allow-clear
+                                        v-model:value="cebuTagbilaranSearch"
+                                        enter-button
+                                        placeholder="Input search here! "
+                                        style="width: 100%"
+                                    />
+                                </div>
                                 <div style="margin-top: 10px">
                                     <span
                                         style="
@@ -115,7 +119,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="input-wrapper">
+                                <!-- <div class="input-wrapper">
                                     <input
                                         type="search"
                                         placeholder="Input search here..."
@@ -123,12 +127,16 @@
                                         class="input"
                                         v-model="cebuTalibonSearch"
                                     />
-                                </div>
-                                <!-- <div style="margin-left: 60%;">
-
-                                    <a-input-search allow-clear v-model:value="cebuTalibonSearch" enter-button
-                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
+                                <div style="margin-left: 60%">
+                                    <a-input-search
+                                        allow-clear
+                                        v-model:value="cebuTalibonSearch"
+                                        enter-button
+                                        placeholder="Input search here! "
+                                        style="width: 100%"
+                                    />
+                                </div>
                                 <div style="margin-top: 10px">
                                     <span
                                         style="
@@ -192,7 +200,7 @@
                                 </span>
                             </template>
                             <a-card>
-                                <div class="input-wrapper">
+                                <!-- <div class="input-wrapper">
                                     <input
                                         type="search"
                                         placeholder="Input search here..."
@@ -200,12 +208,16 @@
                                         class="input"
                                         v-model="cebuTubigonSearch"
                                     />
-                                </div>
-                                <!-- <div style="margin-left: 60%;">
-
-                                    <a-input-search allow-clear v-model:value="cebuTubigonSearch" enter-button
-                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
+                                <div style="margin-left: 60%">
+                                    <a-input-search
+                                        allow-clear
+                                        v-model:value="cebuTubigonSearch"
+                                        enter-button
+                                        placeholder="Input search here! "
+                                        style="width: 100%"
+                                    />
+                                </div>
                                 <div style="margin-top: 10px">
                                     <span
                                         style="
@@ -377,7 +389,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="input-wrapper">
+                                <!-- <div class="input-wrapper">
                                     <input
                                         type="search"
                                         placeholder="Input search here..."
@@ -385,12 +397,16 @@
                                         class="input"
                                         v-model="alttaTagbilaranSearch"
                                     />
-                                </div>
-                                <!-- <div style="margin-left: 60%;">
-
-                                    <a-input-search allow-clear v-model:value="alttaTagbilaranSearch" enter-button
-                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
+                                <div style="margin-left: 60%">
+                                    <a-input-search
+                                        allow-clear
+                                        v-model:value="alttaTagbilaranSearch"
+                                        enter-button
+                                        placeholder="Input search here! "
+                                        style="width: 100%"
+                                    />
+                                </div>
                                 <div style="margin-top: 10px">
                                     <span
                                         style="
@@ -456,7 +472,7 @@
                                     </div>
                                 </div>
 
-                                <div class="input-wrapper">
+                                <!-- <div class="input-wrapper">
                                     <input
                                         type="search"
                                         placeholder="Input search here..."
@@ -464,12 +480,16 @@
                                         class="input"
                                         v-model="alttaTalibonSearch"
                                     />
-                                </div>
-                                <!-- <div style="margin-left: 60%;">
-
-                                    <a-input-search allow-clear v-model:value="alttaTalibonSearch" enter-button
-                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
+                                <div style="margin-left: 60%">
+                                    <a-input-search
+                                        allow-clear
+                                        v-model:value="alttaTalibonSearch"
+                                        enter-button
+                                        placeholder="Input search here! "
+                                        style="width: 100%"
+                                    />
+                                </div>
                                 <div style="margin-top: 10px">
                                     <span
                                         style="
@@ -535,7 +555,7 @@
                                     </div>
                                 </div>
 
-                                <div class="input-wrapper">
+                                <!-- <div class="input-wrapper">
                                     <input
                                         type="search"
                                         placeholder="Input search here..."
@@ -543,12 +563,16 @@
                                         class="input"
                                         v-model="alttaTubigonSearch"
                                     />
-                                </div>
-                                <!-- <div style="margin-left: 60%;">
-
-                                    <a-input-search allow-clear v-model:value="alttaTubigonSearch" enter-button
-                                        placeholder="Input search here! " style="width: 100%;  " />
                                 </div> -->
+                                <div style="margin-left: 60%">
+                                    <a-input-search
+                                        allow-clear
+                                        v-model:value="alttaTubigonSearch"
+                                        enter-button
+                                        placeholder="Input search here! "
+                                        style="width: 100%"
+                                    />
+                                </div>
                                 <div style="margin-top: 10px">
                                     <span
                                         style="
@@ -691,19 +715,9 @@
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {
-    TagsOutlined,
-    FileSearchOutlined,
-    CheckOutlined,
-    PlayCircleFilled,
-} from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
-import Description from "../Treasury/Description.vue";
-import { placements } from "ant-design-vue/es/vc-tour/placements";
 import { message, Modal } from "ant-design-vue";
-import ColumnGroup from "ant-design-vue/es/vc-table/sugar/ColumnGroup";
 import Pagination from "@/Components/Pagination.vue";
-import { mapState } from "pinia";
 import axios from "axios";
 
 export default {
@@ -1023,7 +1037,6 @@ export default {
                         })
                         .catch((error) => {
                             console.error("Error generating EXCEL:", error);
-                            hideLoading();
                             notification.error({
                                 message: "Error",
                                 description:
@@ -1060,7 +1073,7 @@ export default {
         },
         extractBarcodesAltta() {
             const regex = /\b\d{1,20}\b/g;
-            const barcodes = content.match(regex);
+            const barcodes = this.altaContent.match(regex);
             return barcodes
                 ? barcodes.map((barcode) => barcode.trim().replace(/\t/g, ""))
                 : [];
@@ -1168,7 +1181,6 @@ export default {
                         })
                         .catch((error) => {
                             console.error("Error generating EXCEL:", error);
-                            hideLoading();
                             notification.error({
                                 message: "Error",
                                 description:

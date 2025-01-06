@@ -6,14 +6,14 @@
             </div>
         </a-card>
 
-        <div class="input-wrapper">
+        <!-- <div class="input-wrapper">
             <input type="search" placeholder="Input search here..." name="text" class="input" v-model="searchTerm" />
-        </div>
+        </div> -->
 
-        <!-- <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
+        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
             <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here!" enter-button
                 style="width:90%;" />
-        </div> -->
+        </div>
 
         <div style="margin-top: 10px;">
             <a-table :data-source="data.data" :columns="searchColumns" :pagination="false" size="small">
@@ -67,10 +67,8 @@
 
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Modal } from 'ant-design-vue';
-import { DatabaseOutlined } from '@ant-design/icons-vue';
-import Pagination from '@/Components/Pagination.vue';
 import { notification } from 'ant-design-vue';
+import axios from 'axios';
 export default {
     layout: AuthenticatedLayout,
     props: {

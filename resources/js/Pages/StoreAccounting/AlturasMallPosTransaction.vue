@@ -6,16 +6,16 @@
             </div>
         </a-card>
 
-        <div class="input-wrapper">
+        <!-- <div class="input-wrapper">
             <input type="search" placeholder="Input search here..." name="text" class="input"
                 v-model="alturasSearch" />
-        </div>
+        </div> -->
 
-        <!-- <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
+        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
 
             <a-input-search allow-clear v-model:value="alturasSearch" style="width: 90%;" enter-button
                 placeholder="Input search here!" />
-        </div> -->
+        </div>
         <div style="margin-top: 10px;">
             <a-table :data-source="data.data" :columns="alturasPosTransaction" :pagination="false" size="small">
 

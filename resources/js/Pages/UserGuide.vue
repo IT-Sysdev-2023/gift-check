@@ -1383,8 +1383,8 @@
         <div>
             <a>
                 <img
-                    src="https://private-user-images.githubusercontent.com/74038190/238353467-897cd757-ea1f-492d-aaf9-6d1674177e08.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzUxNzg2MjAsIm5iZiI6MTczNTE3ODMyMCwicGF0aCI6Ii83NDAzODE5MC8yMzgzNTM0NjctODk3Y2Q3NTctZWExZi00OTJkLWFhZjktNmQxNjc0MTc3ZTA4LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDEyMjYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQxMjI2VDAxNTg0MFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWJkNDJkODMzNWM0ZDNjM2RlZjZmMjk1NDAzN2IyMzVjOWQ4ZWMyNTIwMjAzN2EyZDgxZDFjOWVhMWJkM2Q4NWUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.9LzOTrI52pHUFyYbSSmd3z-HhTVU2vfJTVeQH0Pyiss"
-                    style="width: 1200px; height: 500px"
+                    src="https://user-images.githubusercontent.com/74038190/221352975-94759904-aa4c-4032-a8ab-b546efb9c478.gif"
+                    style="width: 1100px; height: 500px"
                 />
             </a>
         </div>

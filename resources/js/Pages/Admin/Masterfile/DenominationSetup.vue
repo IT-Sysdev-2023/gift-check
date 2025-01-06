@@ -149,29 +149,13 @@
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {
-    FormOutlined,
-    DeleteOutlined,
-    PlusSquareOutlined,
-    UserOutlined,
-    UnlockTwoTone,
-    CloseCircleTwoTone,
-    AppstoreTwoTone,
-    UndoOutlined,
-} from "@ant-design/icons-vue";
+import { FormOutlined } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 
 export default {
     layout: AuthenticatedLayout,
     components: {
         FormOutlined,
-        DeleteOutlined,
-        PlusSquareOutlined,
-        UserOutlined,
-        UnlockTwoTone,
-        CloseCircleTwoTone,
-        AppstoreTwoTone,
-        UndoOutlined,
     },
     props: {
         data: Object,
@@ -240,8 +224,8 @@ export default {
                             description: "Denomination successfully save!",
                         });
                         this.addDenomination = false;
-                        (this.form.denomination = ""),
-                            (this.form.barcodeNumStart = "");
+                        this.form.denomination = "";
+                        this.form.barcodeNumStart = "";
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
