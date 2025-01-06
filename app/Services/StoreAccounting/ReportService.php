@@ -77,21 +77,13 @@ class ReportService extends DatabaseConnectionService
         if ($request->StoreDataType === 'store-sales') {
 
             $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
-
+          
             if ($isExists) { //OTHER SERVER
 
                 if (self::checkBillingMonthlyReport($request->selectedStore, $request->year, $isMonthtly, false)) {
-
+                  
                     StoreGcPurchasedReport::dispatch($request->all(), self::LOCAL_DB);
-                    // $db = $this->getLocalConnection(false, $request->selectedStore);
-
-                    // $doc = new StoreGcPurchasedReportExport($db, $request->all(), false);
-                    // (new ExportHandler())
-                    //     ->setFolder('Reports')
-                    //     ->setSubfolderAsUsertype($request->user()->usertype)
-                    //     ->setFileName("Store Gc Purchased Report-" . $request->user()->user_id, $request->year)
-                    //     ->exportDocument('excel', $doc)
-                    //     ->deleteFileIn(now()->addDays(2));
+                   
                 } else {
                     return response()->json('No record Found on this date', 404);
                 }
@@ -99,17 +91,9 @@ class ReportService extends DatabaseConnectionService
             } else { //LOCAL
 
                 if (self::checkBillingMonthlyReport($request->selectedStore, $request->year, $isMonthtly, true)) {
-                    // dd(2);
-                    StoreGcPurchasedReport::dispatch($request->all(), self::REMOTE_SERVERS_DB);
-                    // $db = $this->getLocalConnection(true, $request->selectedStore);
 
-                    // $doc = new StoreGcPurchasedReportExport($db, $request->all(), true);
-                    // (new ExportHandler())
-                    //     ->setFolder('Reports')
-                    //     ->setSubfolderAsUsertype($request->user()->usertype)
-                    //     ->setFileName("Store Gc Purchased Report-" . $request->user()->user_id, $request->year)
-                    //     ->exportDocument('excel', $doc)
-                    //     ->deleteFileIn(now()->addDays(2));
+                    StoreGcPurchasedReport::dispatch($request->all(), self::REMOTE_SERVERS_DB);
+                  
                 } else {
                     return response()->json('No record Found on this date', 404);
                 }
@@ -117,7 +101,6 @@ class ReportService extends DatabaseConnectionService
 
         }
 
-        // dd($request->toArray());
     }
 
     private function checkBillingMonthlyReport($store, $year, $month, $isLocal)

@@ -39,6 +39,7 @@ class StoreGcPurchasedReport extends DatabaseConnectionService implements Should
     public function handle(): void
     {
         $label = isset($this->request['month']) ? $this->monthToName() : $this->request['year'];
+
         $db = $this->getLocalConnection($this->local, $this->request['selectedStore']);
        
         $doc = new StoreGcPurchasedReportExport($db, $this->request, $this->local, $this->user);

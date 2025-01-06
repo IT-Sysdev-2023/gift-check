@@ -213,6 +213,7 @@ const billMonthly = useForm(
         month: "",
         selectedStore: "",
         StoreDataType: "",
+        isMonthly: true,
     },
 );
 
@@ -228,11 +229,9 @@ const billYearly = useForm(
 
 const monthlySubmitButton = () => {
     billMonthly
-        .setData((data) => ({
-            ...data,
-            year: dayjs(data.year).year(),
-            isMonthly: true,
-        }))
+        .setData({
+            year: dayjs(billMonthly.year).year(),
+        })
         .submit({
             onSuccess: () => billMonthly.reset(),
         })
@@ -248,10 +247,9 @@ const disabledDate = (current) => {
 
 const yearlySubmitButton = () => {
     billYearly
-        .setData((data) => ({
-            ...data,
-            year: dayjs(data.year).year(),
-        }))
+        .setData({
+            year: dayjs(billYearly.year).year(),
+        })
         .submit({
             onSuccess: () => billYearly.reset(),
         })

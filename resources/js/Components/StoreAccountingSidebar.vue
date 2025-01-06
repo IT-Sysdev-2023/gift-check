@@ -213,6 +213,13 @@
                 Check Variance
             </span>
         </a-menu-item>
+        <a-menu-item class="menu-item" @click="() => $inertia.get(route('storeaccounting.reports.generatedReports'))"
+            key="generatedReports">
+            <DatabaseOutlined />
+            <span>
+                Generated Reports
+            </span>
+        </a-menu-item>
     </a-sub-menu>
 
 </template>
