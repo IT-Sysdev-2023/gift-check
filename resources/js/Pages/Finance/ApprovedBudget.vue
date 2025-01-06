@@ -41,8 +41,8 @@
                 </template>
             </a-table>
             <pagination class="mt-5" :datarecords="record" />
-            <a-budget-details-drawer
-                v-model:open="drawer"
+            <a-budget-details-modal
+                v-model:open="viewModal"
                 :selected="viewSelected"
             />
         </a-card>
@@ -66,7 +66,7 @@ defineProps({
     columns: Array,
 });
 
-const drawer = ref(false);
+const viewModal = ref(false);
 const viewSelected = ref({});
 const approvedBudgetSearch = ref("");
 const searchMessage = ref("");
@@ -81,7 +81,7 @@ const view = async (id) => {
         .get(route("finance.budget.approved.details", id))
         .then((res) => {
             viewSelected.value = res.data;
-            drawer.value = true;
+            viewModal.value = true;
         });
 };
 const reprint = (id) => {
