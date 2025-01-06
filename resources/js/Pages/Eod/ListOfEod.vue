@@ -10,12 +10,13 @@
             >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'storename'">
+                        <!-- {{  }} -->
                         <span v-if="record.storename == null">
                             All Stores
                         </span>
                     </template>
                     <template v-if="column.key === 'view'">
-                        <a-button>
+                        <a-button @click="view(record.steod_id)">
                             <template #icon>
                                 <EyeOutlined />
                             </template>
@@ -33,13 +34,16 @@
             <span class="label label-primary">reverified</span>';  ?></td> -->
     </AuthenticatedLayout>
 </template>
-<script setup>
+<script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { router } from "@inertiajs/core";
+import { useForm } from "laravel-precognition-vue";
 import { ref } from "vue";
 
 defineProps({
     record: Object,
 });
+
 
 const columns = ref([
     {
@@ -66,4 +70,7 @@ const columns = ref([
         align: "center",
     },
 ]);
+const view = (steod_id: number) => {
+    router.get(route('eod.store.view', steod_id));
+}
 </script>
