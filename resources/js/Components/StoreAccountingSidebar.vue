@@ -169,13 +169,6 @@
                 Verified Store Purchased
             </span>
         </a-menu-item>
-        <a-menu-item class="menu-item" @click="() => $inertia.get(route('storeaccounting.generatedReports'))"
-            key="verifiedStore">
-            <DatabaseOutlined />
-            <span style="font-size: small;">
-                Generated Reports
-            </span>
-        </a-menu-item>
     </a-sub-menu>
 
     <a-sub-menu key="storeAccounting.reports">
@@ -213,14 +206,14 @@
                 Check Variance
             </span>
         </a-menu-item>
-        <a-menu-item class="menu-item" @click="() => $inertia.get(route('storeaccounting.reports.generatedReports'))"
-            key="generatedReports">
-            <DatabaseOutlined />
-            <span>
-                Generated Reports
-            </span>
-        </a-menu-item>
     </a-sub-menu>
+    <a-menu-item key="generatedReports">
+        <DashboardOutlined />
+        <span>
+            <Link :href="route('storeaccounting.reports.generatedReports')">
+            Generated Reports</Link>
+        </span>
+    </a-menu-item>
 
 </template>
 <script setup lang="ts">
