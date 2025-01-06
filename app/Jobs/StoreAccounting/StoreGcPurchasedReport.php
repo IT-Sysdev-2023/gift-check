@@ -45,9 +45,9 @@ class StoreGcPurchasedReport extends DatabaseConnectionService implements Should
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
-            ->setFileName("Store Gc Purchased Report ($label)-" . $this->user->user_id, $this->request['year']);
-            // ->exportDocument('excel', $doc)
-            // ->deleteFileIn(now()->addDays(2));
+            ->setFileName("Store Gc Purchased Report ($label)-" . $this->user->user_id, $this->request['year'])
+            ->exportDocument('excel', $doc)
+            ->deleteFileIn(now()->addDays(2));
     }
 
     public function monthToName()

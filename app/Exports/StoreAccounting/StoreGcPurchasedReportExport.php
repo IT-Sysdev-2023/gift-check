@@ -36,67 +36,9 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
     }
     public function collection()
     {
-        if ($this->isLocal) {
+        $data = $this->query();
 
-            $data = $this->database->table('store_eod_textfile_transactions')
-                ->selectRaw("DATE(store_verification.vs_date) as datever,
-                DATE(store_verification.vs_reverifydate) as daterev,
-                store_verification.vs_barcode,
-                store_verification.vs_tf_denomination,
-                store_verification.vs_tf_purchasecredit,
-                store_eod_textfile_transactions.seodtt_bu,
-                store_eod_textfile_transactions.seodtt_transno,
-                store_verification.vs_store,
-                customers.cus_fname,
-                customers.cus_lname,
-                customers.cus_mname,   
-                customers.cus_namext,
-                store_verification.vs_tf_balance,
-                store_verification.vs_gctype,
-                store_verification.vs_date,
-                store_verification.vs_time")
-                ->join('transaction_sales', 'transaction_sales.sales_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
-                ->join('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_sales.sales_transaction_id')
-                ->join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
-                ->join('store_verification', 'store_verification.vs_barcode', '=', 'transaction_sales.sales_barcode')
-                ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-                ->whereYear('vs_date', $this->request['year'])
-                ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
-                ->where('trans_store', $this->request['selectedStore'])
-                ->whereRaw('stores.store_initial <> SUBSTRING(store_eod_textfile_transactions.seodtt_bu, 1, 5)')
-                ->orderBy('trans_sid')
-                ->get();
-        } else {
-
-            $data = $this->database->table('store_eod_textfile_transactions')
-                ->selectRaw("DATE(store_verification.vs_date) as datever,
-                DATE(store_verification.vs_reverifydate) as daterev,
-                store_verification.vs_barcode,
-                store_verification.vs_tf_denomination,
-                store_verification.vs_tf_purchasecredit,
-                store_eod_textfile_transactions.seodtt_bu,
-                store_eod_textfile_transactions.seodtt_transno,
-                store_verification.vs_store,
-                customers.cus_fname,
-                customers.cus_lname,
-                customers.cus_mname,   
-                customers.cus_namext,
-                store_verification.vs_tf_balance,
-                store_verification.vs_gctype,
-                store_verification.vs_date,
-                store_verification.vs_time")
-                ->join('store_verification', 'store_verification.vs_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
-                ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
-                ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-                ->whereYear('vs_date', $this->request['year'])
-                ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
-                ->where('vs_store', $this->request['selectedStore'])
-                ->orderBy('store_verification.vs_date')
-                ->get();
-
-        }
-
-        // $this->progress['progress']['totalRow'] += $data->count();
+        $this->progress['progress']['totalRow'] += $data->count();
         $purchasecred = 0;
         $balance = 0;
         $bus = "";
@@ -107,7 +49,8 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
         $transformedData = collect();
 
         $data->each(function ($item) use ($purchasecred, $balance, $bus, $tnum, $puramt, $initial, &$transformedData) {
-
+            
+            $this->broadcast("Generating Report!", StoreAccountReportEvent::class);
             $gctype = match ($item->vs_gctype) {
                 1 => 'REGULAR',
                 3 => 'SPECIAL EXTERNAL',
@@ -170,6 +113,67 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
         return $transformedData;
     }
 
+    public function query(){
+        if ($this->isLocal) {
+
+            return $this->database->table('store_eod_textfile_transactions')
+                ->selectRaw("DATE(store_verification.vs_date) as datever,
+                DATE(store_verification.vs_reverifydate) as daterev,
+                store_verification.vs_barcode,
+                store_verification.vs_tf_denomination,
+                store_verification.vs_tf_purchasecredit,
+                store_eod_textfile_transactions.seodtt_bu,
+                store_eod_textfile_transactions.seodtt_transno,
+                store_verification.vs_store,
+                customers.cus_fname,
+                customers.cus_lname,
+                customers.cus_mname,   
+                customers.cus_namext,
+                store_verification.vs_tf_balance,
+                store_verification.vs_gctype,
+                store_verification.vs_date,
+                store_verification.vs_time")
+                ->join('transaction_sales', 'transaction_sales.sales_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
+                ->join('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_sales.sales_transaction_id')
+                ->join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
+                ->join('store_verification', 'store_verification.vs_barcode', '=', 'transaction_sales.sales_barcode')
+                ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+                ->whereYear('vs_date', $this->request['year'])
+                ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
+                ->where('trans_store', $this->request['selectedStore'])
+                ->whereRaw('stores.store_initial <> SUBSTRING(store_eod_textfile_transactions.seodtt_bu, 1, 5)')
+                ->orderBy('trans_sid')
+                ->get();
+        } else {
+
+            return $this->database->table('store_eod_textfile_transactions')
+                ->selectRaw("DATE(store_verification.vs_date) as datever,
+                DATE(store_verification.vs_reverifydate) as daterev,
+                store_verification.vs_barcode,
+                store_verification.vs_tf_denomination,
+                store_verification.vs_tf_purchasecredit,
+                store_eod_textfile_transactions.seodtt_bu,
+                store_eod_textfile_transactions.seodtt_transno,
+                store_verification.vs_store,
+                customers.cus_fname,
+                customers.cus_lname,
+                customers.cus_mname,   
+                customers.cus_namext,
+                store_verification.vs_tf_balance,
+                store_verification.vs_gctype,
+                store_verification.vs_date,
+                store_verification.vs_time")
+                ->join('store_verification', 'store_verification.vs_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
+                ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+                ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+                ->whereYear('vs_date', $this->request['year'])
+                ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
+                ->where('vs_store', $this->request['selectedStore'])
+                ->orderBy('store_verification.vs_date')
+                ->get();
+
+        }
+    }
     public function startCell(): string
     {
         return 'A8';
@@ -201,7 +205,7 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
     }
     public function map($data): array
     {
-        $this->broadcast("Generating Report!", StoreAccountReportEvent::class, );
+        
 
         // Build the full name
         $fullname = trim("{$data['cus_fname']} {$data['cus_lname']} " .
