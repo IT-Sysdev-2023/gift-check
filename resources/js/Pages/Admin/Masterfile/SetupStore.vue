@@ -123,30 +123,9 @@
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {
-    FormOutlined,
-    DeleteOutlined,
-    PlusSquareOutlined,
-    UserOutlined,
-    UnlockTwoTone,
-    CloseCircleTwoTone,
-    AppstoreTwoTone,
-    UndoOutlined,
-    CloseSquareFilled,
-} from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 export default {
     layout: AuthenticatedLayout,
-    components: {
-        FormOutlined,
-        DeleteOutlined,
-        PlusSquareOutlined,
-        UserOutlined,
-        UnlockTwoTone,
-        CloseCircleTwoTone,
-        AppstoreTwoTone,
-        UndoOutlined,
-    },
     props: {
         data: Object,
         search: String,
@@ -224,12 +203,10 @@ export default {
                             description: "Successfully adding store!",
                         });
                         this.addStore = false;
-                        (this.form.store_name = ""),
-                            (this.form.store_code = ""),
-                            (this.form.company_code = ""),
-                            this.$inertia.get(
-                                route("Admin/Masterfile/SetupStore"),
-                            );
+                        this.form.store_name = "";
+                        this.form.store_code = "";
+                        this.form.company_code = "";
+                        this.$inertia.get(route("Admin/Masterfile/SetupStore"));
                     } else if (props.flash.error) {
                         notification.error({
                             message: props.flash.error,
@@ -297,5 +274,4 @@ export default {
     min-width: 120px;
     margin-top: 1%;
 }
-
 </style>

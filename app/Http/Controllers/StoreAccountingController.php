@@ -3022,4 +3022,8 @@ class StoreAccountingController extends Controller
         return inertia('AboutUs');
     }
 
+    public function userGuide (Request $request){
+        return inertia('UserGuide');
+    }
+
 }

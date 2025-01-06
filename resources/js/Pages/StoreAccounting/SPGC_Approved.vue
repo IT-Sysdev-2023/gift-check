@@ -34,7 +34,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="input-wrapper">
+                            <!-- <div class="input-wrapper">
                                 <input
                                     type="search"
                                     placeholder="Input search here..."
@@ -42,7 +42,17 @@
                                     class="input"
                                     v-model="pdfPerCustomerSearch"
                                 />
-                            </div>
+                            </div> -->
+
+                            <span style="font-weight: bold; margin-left: 60%">
+                                <a-input-search
+                                    allow-clear
+                                    v-model:value="pdfPerCustomerSearch"
+                                    enter-button
+                                    placeholder="Input search here!"
+                                    style="width: 35%"
+                                />
+                            </span>
 
                             <div style="margin-top: 10px; margin-left: 30px">
                                 <span style="color: red; font-style: oblique">
@@ -117,7 +127,7 @@
                                 </div>
                             </div>
 
-                            <div class="input-wrapper">
+                            <!-- <div class="input-wrapper">
                                 <input
                                     type="search"
                                     placeholder="Input search here..."
@@ -125,11 +135,16 @@
                                     class="input"
                                     v-model="pdfPerBarcodeSearch"
                                 />
-                            </div>
-                            <!-- <span style="font-weight: bold; margin-left: 60%;">
-                                <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch" enter-button
-                                    placeholder="Input search here!" style="width: 35%;" />
-                            </span> -->
+                            </div> -->
+                            <span style="font-weight: bold; margin-left: 60%">
+                                <a-input-search
+                                    allow-clear
+                                    v-model:value="pdfPerBarcodeSearch"
+                                    enter-button
+                                    placeholder="Input search here!"
+                                    style="width: 35%"
+                                />
+                            </span>
                             <div style="margin-top: 10px; margin-left: 30px">
                                 <span style="color: red; font-style: oblique">
                                     <span v-if="message">
@@ -204,7 +219,7 @@
                                 </div>
                             </div>
 
-                            <div class="input-wrapper">
+                            <!-- <div class="input-wrapper">
                                 <input
                                     type="search"
                                     placeholder="Input search here..."
@@ -212,12 +227,19 @@
                                     class="input"
                                     v-model="spgcApprovedSearchPerCustomer"
                                 />
-                            </div>
+                            </div> -->
 
-                            <!-- <span style="font-weight: bold; margin-left: 60%;">
-                                <a-input-search allow-clear v-model:value="spgcApprovedSearchPerCustomer" enter-button
-                                    placeholder="Input search here!" style="width: 35%;" />
-                            </span> -->
+                            <span style="font-weight: bold; margin-left: 60%">
+                                <a-input-search
+                                    allow-clear
+                                    v-model:value="
+                                        spgcApprovedSearchPerCustomer
+                                    "
+                                    enter-button
+                                    placeholder="Input search here!"
+                                    style="width: 35%"
+                                />
+                            </span>
                             <div style="margin-top: 10px; margin-left: 30px">
                                 <span style="color: red; font-style: oblique">
                                     <span v-if="message">
@@ -288,7 +310,7 @@
                                 </div>
                             </div>
 
-                            <div class="input-wrapper">
+                            <!-- <div class="input-wrapper">
                                 <input
                                     type="search"
                                     placeholder="Input search here..."
@@ -296,11 +318,16 @@
                                     class="input"
                                     v-model="spgcApprovedSearch"
                                 />
-                            </div>
-                            <!-- <span style="font-weight: bold; margin-left: 60%;">
-                                <a-input-search allow-clear v-model:value="spgcApprovedSearch" enter-button
-                                    placeholder="Input search here!" style="width: 35%;" />
-                            </span> -->
+                            </div> -->
+                            <span style="font-weight: bold; margin-left: 60%">
+                                <a-input-search
+                                    allow-clear
+                                    v-model:value="spgcApprovedSearch"
+                                    enter-button
+                                    placeholder="Input search here!"
+                                    style="width: 35%"
+                                />
+                            </span>
                             <div style="margin-top: 10px; margin-left: 30px">
                                 <span style="color: red; font-style: oblique">
                                     <span v-if="message">
@@ -444,11 +471,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 // import dayjs from 'dayjs';
 import Pagination from "@/Components/Pagination.vue";
-import {
-    ExclamationCircleOutlined,
-    WindowsFilled,
-} from "@ant-design/icons-vue";
-import { createVNode } from "vue";
 import { message, Modal } from "ant-design-vue";
 import { notification } from "ant-design-vue";
 import axios from "axios";
@@ -764,7 +786,6 @@ export default {
                         })
                         .catch((error) => {
                             console.error("Error generating PDF:", error);
-                            hideLoading();
                             notification.error({
                                 message: "Error",
                                 description:
@@ -831,7 +852,6 @@ export default {
                         })
                         .catch((error) => {
                             console.error("Error generating EXCEL:", error);
-                            hideLoading();
                             notification.error({
                                 message: "Error",
                                 description:

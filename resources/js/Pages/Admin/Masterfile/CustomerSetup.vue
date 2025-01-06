@@ -1,25 +1,44 @@
 <template>
-
     <a-card>
         <a-card title="CUSTOMER SETUP"></a-card>
-        <div style="margin-left: 70%; margin-top: 10px;">
-            <a-input-search allow-clear placeholder="input search text" v-model:value="searchTerm" size="medium"
-                style="width: 80%;" />
+        <div style="margin-left: 70%; margin-top: 10px">
+            <a-input-search
+                allow-clear
+                placeholder="input search text"
+                v-model:value="searchTerm"
+                size="medium"
+                style="width: 80%"
+            />
         </div>
-        <a-tabs id="tabs" v-model:value="dataFortabs.tabs" @change="tabIndentifier" style="margin-top: 10px;">
+        <a-tabs
+            id="tabs"
+            v-model:value="dataFortabs.tabs"
+            @change="tabIndentifier"
+            style="margin-top: 10px"
+        >
             <!-- -------------------------------------------------------------------store customer---------------------------------------------------------------- -->
             <a-tab-pane key="store_customer">
                 <template #tab>
-                    <span style="font-weight: bold;">
+                    <span style="font-weight: bold">
                         <DashOutlined />
                         Regular Customer
                     </span>
                 </template>
-                <a-table :columns="columns" bordered :data-source="data.data" :pagination="false" size="small">
+                <a-table
+                    :columns="columns"
+                    bordered
+                    :data-source="data.data"
+                    :pagination="false"
+                    size="small"
+                >
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">
-                            <a-button @click="updateStoreCustomer(record)" title="Update" class="me-2 me-sm-5"
-                                style="color: white; background-color: green;">
+                            <a-button
+                                @click="updateStoreCustomer(record)"
+                                title="Update"
+                                class="me-2 me-sm-5"
+                                style="color: white; background-color: green"
+                            >
                                 <FormOutlined />
                             </a-button>
                         </template>
@@ -30,17 +49,26 @@
             <!-- ------------------------------------------------------------------institutional customer------------------------------------------------->
             <a-tab-pane key="institutional_customer">
                 <template #tab>
-                    <span style="font-weight: bold;">
+                    <span style="font-weight: bold">
                         <DashOutlined />
                         Institutional Customer
                     </span>
                 </template>
-                <a-table :columns="institutionalColumns" bordered :data-source="data.data" :pagination="false"
-                    size="small">
+                <a-table
+                    :columns="institutionalColumns"
+                    bordered
+                    :data-source="data.data"
+                    :pagination="false"
+                    size="small"
+                >
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">
-                            <a-button @click="updateInstitutional(record)" title="Update" class="me-2 me-sm-5"
-                                style="color: white; background-color: green;">
+                            <a-button
+                                @click="updateInstitutional(record)"
+                                title="Update"
+                                class="me-2 me-sm-5"
+                                style="color: white; background-color: green"
+                            >
                                 <FormOutlined />
                             </a-button>
                         </template>
@@ -51,16 +79,26 @@
             <!-- --------------------------------------------------------------------special customer---------------------------------------------------->
             <a-tab-pane key="special_customer">
                 <template #tab>
-                    <span style="font-weight: bold;">
+                    <span style="font-weight: bold">
                         <DashOutlined />
                         Special Customer
                     </span>
                 </template>
-                <a-table :columns="specialColumns" bordered :data-source="data.data" :pagination="false" size="small">
+                <a-table
+                    :columns="specialColumns"
+                    bordered
+                    :data-source="data.data"
+                    :pagination="false"
+                    size="small"
+                >
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">
-                            <a-button @click="updateSpecialCustomer(record)" title="Update" class="me-2 me-sm-5"
-                                style="color: white; background-color: green;">
+                            <a-button
+                                @click="updateSpecialCustomer(record)"
+                                title="Update"
+                                class="me-2 me-sm-5"
+                                style="color: white; background-color: green"
+                            >
                                 <FormOutlined />
                             </a-button>
                         </template>
@@ -83,144 +121,249 @@
         entries
     </span> -->
 
-
-
     <a-modal v-model:open="modalForStoreCustomer" @ok="storeCustomerUpdate">
-        <span style="color: #0286df; font-size: 17px;">
-            <AppstoreOutlined style="margin-right: 8px;" />Update Store Customer
+        <span style="color: #0286df; font-size: 17px">
+            <AppstoreOutlined style="margin-right: 8px" />Update Store Customer
         </span>
-        <a-form-item for="firstname" :validate-status="dataForStoreCustomer.errors?.cus_fname ? 'error' : ''"
-            :help="dataForStoreCustomer.errors?.cus_fname" style="margin-top: 10px;">
+        <a-form-item
+            for="firstname"
+            :validate-status="
+                dataForStoreCustomer.errors?.cus_fname ? 'error' : ''
+            "
+            :help="dataForStoreCustomer.errors?.cus_fname"
+            style="margin-top: 10px"
+        >
             Firstname:
-            <a-input allow-clear v-model:value="dataForStoreCustomer.cus_fname" placeholder="Firstname" />
+            <a-input
+                allow-clear
+                v-model:value="dataForStoreCustomer.cus_fname"
+                placeholder="Firstname"
+            />
         </a-form-item>
-        <a-form-item for="lastname" :validate-status="dataForStoreCustomer.errors?.cus_lname ? 'error' : ''"
-            :help="dataForStoreCustomer.errors?.cus_lname">
+        <a-form-item
+            for="lastname"
+            :validate-status="
+                dataForStoreCustomer.errors?.cus_lname ? 'error' : ''
+            "
+            :help="dataForStoreCustomer.errors?.cus_lname"
+        >
             Lastname:
-            <a-input allow-clear v-model:value="dataForStoreCustomer.cus_lname" placeholder="Lastname" />
+            <a-input
+                allow-clear
+                v-model:value="dataForStoreCustomer.cus_lname"
+                placeholder="Lastname"
+            />
         </a-form-item>
-        <a-form-item for="store_register"
-            :validate-status="dataForStoreCustomer.errors?.cus_store_register ? 'error' : ''"
-            :help="dataForStoreCustomer.errors?.cus_store_register">
+        <a-form-item
+            for="store_register"
+            :validate-status="
+                dataForStoreCustomer.errors?.cus_store_register ? 'error' : ''
+            "
+            :help="dataForStoreCustomer.errors?.cus_store_register"
+        >
             Customer Store Register:
-            <a-select v-model:value="dataForStoreCustomer.cus_store_register" placeholder="Customer store register">
-                <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
+            <a-select
+                v-model:value="dataForStoreCustomer.cus_store_register"
+                placeholder="Customer store register"
+            >
+                <a-select-option
+                    v-for="item in store"
+                    :key="item.store_id"
+                    :value="item.store_id"
+                >
                     {{ item.store_name }}
                 </a-select-option>
             </a-select>
         </a-form-item>
     </a-modal>
 
-
-    <a-modal v-model:open="modalForInstitutionalCustomer" @ok="institutionalCustomerUpdate">
-        <span style="color: #0286df; font-size: 17px;">
-            <UngroupOutlined style="margin-right: 8px;" /> Update Institute Customer
+    <a-modal
+        v-model:open="modalForInstitutionalCustomer"
+        @ok="institutionalCustomerUpdate"
+    >
+        <span style="color: #0286df; font-size: 17px">
+            <UngroupOutlined style="margin-right: 8px" /> Update Institute
+            Customer
         </span>
-        <a-form-item for="institute_name" :validate-status="dataForInstituteCustomer.errors?.ins_name ? 'error' : ''"
-            :help="dataForInstituteCustomer.errors?.ins_name" style="margin-top: 10px;">
+        <a-form-item
+            for="institute_name"
+            :validate-status="
+                dataForInstituteCustomer.errors?.ins_name ? 'error' : ''
+            "
+            :help="dataForInstituteCustomer.errors?.ins_name"
+            style="margin-top: 10px"
+        >
             Name:
-            <a-input allow-clear v-model:value="dataForInstituteCustomer.ins_name" placeholder="Name" />
+            <a-input
+                allow-clear
+                v-model:value="dataForInstituteCustomer.ins_name"
+                placeholder="Name"
+            />
         </a-form-item>
 
-        <a-form-item for="institute_customer_type"
-            :validate-status="dataForInstituteCustomer.errors?.ins_custype ? 'error' : ''"
-            :help="dataForInstituteCustomer.errors?.ins_custype">
+        <a-form-item
+            for="institute_customer_type"
+            :validate-status="
+                dataForInstituteCustomer.errors?.ins_custype ? 'error' : ''
+            "
+            :help="dataForInstituteCustomer.errors?.ins_custype"
+        >
             Institute Customer Type:
-            <a-select v-model:value="dataForInstituteCustomer.ins_custype" placeholder="Institute Customer Type">
+            <a-select
+                v-model:value="dataForInstituteCustomer.ins_custype"
+                placeholder="Institute Customer Type"
+            >
                 <a-select-option value="internal">INTERNAL </a-select-option>
                 <a-select-option value="external">EXTERNAL </a-select-option>
             </a-select>
         </a-form-item>
 
-        <a-form-item for="institute_gctype"
-            :validate-status="dataForInstituteCustomer.errors?.ins_gctype ? 'error' : ''"
+        <a-form-item
+            for="institute_gctype"
+            :validate-status="
+                dataForInstituteCustomer.errors?.ins_gctype ? 'error' : ''
+            "
             :help="dataForInstituteCustomer.errors?.ins_gctype"
-            v-if="dataForInstituteCustomer.ins_custype === 'internal'">
+            v-if="dataForInstituteCustomer.ins_custype === 'internal'"
+        >
             Institute GC Type:
-            <a-select v-model:value="dataForInstituteCustomer.ins_gctype" placeholder="Institute GC Type">
+            <a-select
+                v-model:value="dataForInstituteCustomer.ins_gctype"
+                placeholder="Institute GC Type"
+            >
                 <a-select-option value="1">REGULAR</a-select-option>
                 <a-select-option value="4">PROMO</a-select-option>
             </a-select>
         </a-form-item>
 
-        <a-form-item for="institute_status"
-            :validate-status="dataForInstituteCustomer.errors?.ins_status ? 'error' : ''"
-            :help="dataForInstituteCustomer.errors?.ins_status">
+        <a-form-item
+            for="institute_status"
+            :validate-status="
+                dataForInstituteCustomer.errors?.ins_status ? 'error' : ''
+            "
+            :help="dataForInstituteCustomer.errors?.ins_status"
+        >
             Status:
-            <a-select v-model:value="dataForInstituteCustomer.ins_status" placeholder="Institute Status">
+            <a-select
+                v-model:value="dataForInstituteCustomer.ins_status"
+                placeholder="Institute Status"
+            >
                 <a-select-option value="active">ACTIVE</a-select-option>
                 <a-select-option value="inactive">INACTIVE</a-select-option>
             </a-select>
         </a-form-item>
-
     </a-modal>
 
     <a-modal v-model:open="modalForSpecialCustomer" @ok="specialCustomerUpdate">
-        <span style="color: #0286df; font-size: 17px;">
-            <CustomerServiceOutlined style="margin-right: 8px;" /> Update Special Customer
+        <span style="color: #0286df; font-size: 17px">
+            <CustomerServiceOutlined style="margin-right: 8px" /> Update Special
+            Customer
         </span>
 
-        <a-form-item for="sp_customer_company_name"
-            :validate-status="dataForSpecialCustomer.errors?.spcus_companyname ? 'error' : ''"
-            :help="dataForSpecialCustomer.errors?.spcus_companyname" style="margin-top: 10px;">
+        <a-form-item
+            for="sp_customer_company_name"
+            :validate-status="
+                dataForSpecialCustomer.errors?.spcus_companyname ? 'error' : ''
+            "
+            :help="dataForSpecialCustomer.errors?.spcus_companyname"
+            style="margin-top: 10px"
+        >
             SP Company Name:
-            <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_companyname"
-                placeholder="SP Company Name" />
+            <a-input
+                allow-clear
+                v-model:value="dataForSpecialCustomer.spcus_companyname"
+                placeholder="SP Company Name"
+            />
         </a-form-item>
 
-        <a-form-item for="sp_customer_account_name"
-            :validate-status="dataForSpecialCustomer.errors?.spcus_acctname ? 'error' : ''"
-            :help="dataForSpecialCustomer.errors?.spcus_acctname">
+        <a-form-item
+            for="sp_customer_account_name"
+            :validate-status="
+                dataForSpecialCustomer.errors?.spcus_acctname ? 'error' : ''
+            "
+            :help="dataForSpecialCustomer.errors?.spcus_acctname"
+        >
             SP Account Name:
-            <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_acctname" placeholder="SP Company Name" />
+            <a-input
+                allow-clear
+                v-model:value="dataForSpecialCustomer.spcus_acctname"
+                placeholder="SP Company Name"
+            />
         </a-form-item>
 
-        <a-form-item for="sp_customer_address"
-            :validate-status="dataForSpecialCustomer.errors?.spcus_address ? 'error' : ''"
-            :help="dataForSpecialCustomer.errors?.spcus_address">
+        <a-form-item
+            for="sp_customer_address"
+            :validate-status="
+                dataForSpecialCustomer.errors?.spcus_address ? 'error' : ''
+            "
+            :help="dataForSpecialCustomer.errors?.spcus_address"
+        >
             SP Customer Type:
-            <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_address"
-                placeholder="SP Customer Address" />
+            <a-input
+                allow-clear
+                v-model:value="dataForSpecialCustomer.spcus_address"
+                placeholder="SP Customer Address"
+            />
         </a-form-item>
 
-        <a-form-item for="sp_contact_person"
-            :validate-status="dataForSpecialCustomer.errors?.spcus_cperson ? 'error' : ''"
-            :help="dataForSpecialCustomer.errors?.spcus_cperson">
+        <a-form-item
+            for="sp_contact_person"
+            :validate-status="
+                dataForSpecialCustomer.errors?.spcus_cperson ? 'error' : ''
+            "
+            :help="dataForSpecialCustomer.errors?.spcus_cperson"
+        >
             SP Contact Person:
-            <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_cperson" placeholder="SP Contact Person" />
+            <a-input
+                allow-clear
+                v-model:value="dataForSpecialCustomer.spcus_cperson"
+                placeholder="SP Contact Person"
+            />
         </a-form-item>
 
-        <a-form-item for="sp_contact_number"
-            :validate-status="dataForSpecialCustomer.errors?.spcus_cnumber ? 'error' : ''"
-            :help="dataForSpecialCustomer.errors?.spcus_cnumber">
+        <a-form-item
+            for="sp_contact_number"
+            :validate-status="
+                dataForSpecialCustomer.errors?.spcus_cnumber ? 'error' : ''
+            "
+            :help="dataForSpecialCustomer.errors?.spcus_cnumber"
+        >
             SP Contact Number:
-            <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_cnumber" placeholder="SP Contact Number" />
+            <a-input
+                allow-clear
+                v-model:value="dataForSpecialCustomer.spcus_cnumber"
+                placeholder="SP Contact Number"
+            />
         </a-form-item>
 
-        <a-form-item for="sp_customer_type" :validate-status="dataForSpecialCustomer.errors?.spcus_type ? 'error' : ''"
-            :help="dataForSpecialCustomer.errors?.spcus_type">
+        <a-form-item
+            for="sp_customer_type"
+            :validate-status="
+                dataForSpecialCustomer.errors?.spcus_type ? 'error' : ''
+            "
+            :help="dataForSpecialCustomer.errors?.spcus_type"
+        >
             SP Customer Type:
-            <a-select v-model:value="dataForSpecialCustomer.spcus_type" placeholder-="SP Customer Type">
+            <a-select
+                v-model:value="dataForSpecialCustomer.spcus_type"
+                placeholder-="SP Customer Type"
+            >
                 <a-select-option value="1">INTERNAL</a-select-option>
                 <a-select-option value="2">EXTERNAL</a-select-option>
             </a-select>
         </a-form-item>
-
     </a-modal>
 
-
-
     <!-- {{ data }} -->
-
 </template>
 <script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { message, notification } from 'ant-design-vue';
-import { FormOutlined, DeleteOutlined, PlusSquareOutlined, UserOutlined, UnlockTwoTone, CloseCircleTwoTone, AppstoreTwoTone, UndoOutlined } from '@ant-design/icons-vue';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { notification } from "ant-design-vue";
+import { FormOutlined } from "@ant-design/icons-vue";
 
 export default {
     layout: AuthenticatedLayout,
-    components: { FormOutlined, DeleteOutlined, PlusSquareOutlined, UserOutlined, UnlockTwoTone, CloseCircleTwoTone, AppstoreTwoTone, UndoOutlined },
+    components: { FormOutlined },
     props: {
         data: Object,
         search: String,
@@ -230,292 +373,319 @@ export default {
         store: Object,
         // institutionalCustomer: Object,
         // specialCustomer: Object
-
     },
     data() {
         return {
             modalForStoreCustomer: false,
             dataForStoreCustomer: this.$inertia.form({
-                cus_fname: '',
-                cus_lname: '',
-                cus_store_register: '',
-                errors: {}
-
+                cus_fname: "",
+                cus_lname: "",
+                cus_store_register: "",
+                errors: {},
             }),
             dataForInstituteCustomer: this.$inertia.form({
-                ins_name: '',
-                ins_status: '',
-                ins_custype: '',
-                ins_gctype: '',
-                errors: {}
+                ins_name: "",
+                ins_status: "",
+                ins_custype: "",
+                ins_gctype: "",
+                errors: {},
             }),
             dataForSpecialCustomer: this.$inertia.form({
-                spcus_companyname: '',
-                spcus_acctname: '',
-                spcus_address: '',
-                spcus_cperson: '',
-                spcus_cnumber: '',
-                spcus_type: '',
-                errors: {}
+                spcus_companyname: "",
+                spcus_acctname: "",
+                spcus_address: "",
+                spcus_cperson: "",
+                spcus_cnumber: "",
+                spcus_type: "",
+                errors: {},
             }),
             modalForInstitutionalCustomer: false,
             modalForSpecialCustomer: false,
             dataForSelectEntries: {
-                select_entries: this.value
+                select_entries: this.value,
             },
             dataFortabs: {
-                tabs: ''
+                tabs: "",
             },
             searchTerm: this.search,
             columns: [
                 {
-                    title: 'Firstname',
-                    dataIndex: 'cus_fname',
+                    title: "Firstname",
+                    dataIndex: "cus_fname",
                     sorter: (a, b) => {
-                        return a.cus_fname.charAt(0).toUpperCase().localeCompare(b.cus_fname.charAt(0).toUpperCase());
+                        return a.cus_fname
+                            .charAt(0)
+                            .toUpperCase()
+                            .localeCompare(b.cus_fname.charAt(0).toUpperCase());
                     },
                 },
                 {
-                    title: 'Lastname',
-                    dataIndex: 'cus_lname',
+                    title: "Lastname",
+                    dataIndex: "cus_lname",
                     sorter: (a, b) => {
-                        return a.cus_lname.charAt(0).toUpperCase().localeCompare(b.cus_lname.charAt(0).toUpperCase());
-                    }
+                        return a.cus_lname
+                            .charAt(0)
+                            .toUpperCase()
+                            .localeCompare(b.cus_lname.charAt(0).toUpperCase());
+                    },
                 },
                 {
-                    title: 'Customer Store Register',
-                    dataIndex: 'store_name',
+                    title: "Customer Store Register",
+                    dataIndex: "store_name",
                     filters: [
                         {
-                            text: 'Alturas Mall',
-                            value: 'Alturas Mall',
+                            text: "Alturas Mall",
+                            value: "Alturas Mall",
                         },
                         {
-                            text: 'Alturas Talibon',
-                            value: 'Alturas Talibon',
+                            text: "Alturas Talibon",
+                            value: "Alturas Talibon",
                         },
                         {
-                            text: 'Island City Mall',
-                            value: 'Island City Mall',
+                            text: "Island City Mall",
+                            value: "Island City Mall",
                         },
                         {
-                            text: 'Plaza Marcela',
-                            value: 'Plaza Marcela',
+                            text: "Plaza Marcela",
+                            value: "Plaza Marcela",
                         },
                         {
-                            text: 'Alturas Tubigon',
-                            value: 'Alturas Tubigon',
+                            text: "Alturas Tubigon",
+                            value: "Alturas Tubigon",
                         },
                         {
-                            text: 'Colonade Colon',
-                            value: 'Colonade Colon',
+                            text: "Colonade Colon",
+                            value: "Colonade Colon",
                         },
                         {
-                            text: 'Colonade Mandaue',
-                            value: 'Colonade Mandaue',
+                            text: "Colonade Mandaue",
+                            value: "Colonade Mandaue",
                         },
                         {
-                            text: 'Alta Citta',
-                            value: 'Alta Citta',
+                            text: "Alta Citta",
+                            value: "Alta Citta",
                         },
                         {
-                            text: 'Farmers Market',
-                            value: 'Farmers Market',
+                            text: "Farmers Market",
+                            value: "Farmers Market",
                         },
                         {
-                            text: 'Ubay Distribution Center',
-                            value: 'Ubay Distribution Center',
+                            text: "Ubay Distribution Center",
+                            value: "Ubay Distribution Center",
                         },
                         {
-                            text: 'Screenville',
-                            value: 'Screenville',
+                            text: "Screenville",
+                            value: "Screenville",
                         },
                         {
-                            text: 'Asc Tech',
-                            value: 'Asc Tech',
-                        }
+                            text: "Asc Tech",
+                            value: "Asc Tech",
+                        },
                     ],
                     onFilter: (value, record) => record.store_name === value,
-
                 },
                 {
-                    title: 'Customer Register At',
-                    dataIndex: 'cus_register_at'
+                    title: "Customer Register At",
+                    dataIndex: "cus_register_at",
                 },
                 {
-                    title: 'Customer Register By',
-                    dataIndex: 'fullname'
+                    title: "Customer Register By",
+                    dataIndex: "fullname",
                 },
                 {
-                    title: 'Action',
-                    dataIndex: 'action'
-                }
+                    title: "Action",
+                    dataIndex: "action",
+                },
             ],
             institutionalColumns: [
                 {
-                    title: 'Name',
-                    dataIndex: 'ins_name',
+                    title: "Name",
+                    dataIndex: "ins_name",
                     sorter: (a, b) => {
-                        return a.ins_name.charAt(0).toUpperCase().localeCompare(b.ins_name.charAt(0).toUpperCase());
-                    }
+                        return a.ins_name
+                            .charAt(0)
+                            .toUpperCase()
+                            .localeCompare(b.ins_name.charAt(0).toUpperCase());
+                    },
                 },
 
                 {
-                    title: 'Customer Type',
-                    dataIndex: 'ins_custype',
+                    title: "Customer Type",
+                    dataIndex: "ins_custype",
                     filters: [
                         {
-                            text: 'INTERNAL',
-                            value: 'internal'
-
+                            text: "INTERNAL",
+                            value: "internal",
                         },
                         {
-                            text: 'EXTERNAL',
-                            value: 'external'
+                            text: "EXTERNAL",
+                            value: "external",
                         },
-
                     ],
                     onFilter: (value, record) => record.ins_custype === value,
                 },
                 {
-                    title: 'GC Type',
-                    dataIndex: 'ins_gctype',
+                    title: "GC Type",
+                    dataIndex: "ins_gctype",
                     filters: [
                         {
-                            text: 'REGULAR',
-                            value: 1
+                            text: "REGULAR",
+                            value: 1,
                         },
                         {
-                            text: 'PROMO',
-                            value: 4
+                            text: "PROMO",
+                            value: 4,
                         },
                     ],
                     onFilter: (value, record) => record.ins_gctype === value,
                 },
                 {
-                    title: 'Date Created',
-                    dataIndex: 'ins_date_created'
+                    title: "Date Created",
+                    dataIndex: "ins_date_created",
                 },
                 {
-                    title: 'Created By',
-                    dataIndex: 'fullname'
+                    title: "Created By",
+                    dataIndex: "fullname",
                 },
                 {
-                    title: 'Status',
-                    dataIndex: 'ins_status'
+                    title: "Status",
+                    dataIndex: "ins_status",
                 },
                 {
-                    title: 'Action',
-                    dataIndex: 'action'
-                }
+                    title: "Action",
+                    dataIndex: "action",
+                },
             ],
             specialColumns: [
                 {
-                    title: 'SP Customer Company Name',
-                    dataIndex: 'spcus_companyname',
+                    title: "SP Customer Company Name",
+                    dataIndex: "spcus_companyname",
                     sorter: (a, b) => {
-                        return a.spcus_companyname.charAt(0).toUpperCase().localeCompare(b.spcus_companyname.charAt(0).toUpperCase());
-                    }
+                        return a.spcus_companyname
+                            .charAt(0)
+                            .toUpperCase()
+                            .localeCompare(
+                                b.spcus_companyname.charAt(0).toUpperCase(),
+                            );
+                    },
                 },
                 {
-                    title: 'SP Customer Account Name',
-                    dataIndex: 'spcus_acctname',
+                    title: "SP Customer Account Name",
+                    dataIndex: "spcus_acctname",
                     sorter: (a, b) => {
-                        return a.spcus_acctname.charAt(0).toUpperCase().localeCompare(b.spcus_acctname.charAt(0).toUpperCase());
-                    }
+                        return a.spcus_acctname
+                            .charAt(0)
+                            .toUpperCase()
+                            .localeCompare(
+                                b.spcus_acctname.charAt(0).toUpperCase(),
+                            );
+                    },
                 },
                 {
-                    title: 'SP Customer Address',
-                    dataIndex: 'spcus_address'
+                    title: "SP Customer Address",
+                    dataIndex: "spcus_address",
                 },
                 {
-                    title: 'SP Contact Person',
-                    dataIndex: 'spcus_cperson'
+                    title: "SP Contact Person",
+                    dataIndex: "spcus_cperson",
                 },
                 {
-                    title: 'SP Contact Number',
-                    dataIndex: 'spcus_cnumber'
+                    title: "SP Contact Number",
+                    dataIndex: "spcus_cnumber",
                 },
                 {
-                    title: 'SP Customer Type',
-                    dataIndex: 'spcus_type'
-
+                    title: "SP Customer Type",
+                    dataIndex: "spcus_type",
                 },
                 {
-                    title: 'Action',
-                    dataIndex: 'action'
-                }
-            ]
-        }
+                    title: "Action",
+                    dataIndex: "action",
+                },
+            ],
+        };
     },
     watch: {
         searchTerm(newVal) {
             console.log(newVal);
-            this.$inertia.get(route('admin.masterfile.customer.setup'), {
-                data: newVal
-            }, {
-                preserveState: true
-            })
-        }
+            this.$inertia.get(
+                route("admin.masterfile.customer.setup"),
+                {
+                    data: newVal,
+                },
+                {
+                    preserveState: true,
+                },
+            );
+        },
     },
     methods: {
         tabIndentifier(tabs) {
             console.log(tabs);
-            this.$inertia.get(route('admin.masterfile.customer.setup'), {
-                tabs: tabs
-            }, {
-                preserveScroll: true,
-                preserveState: true
-            })
-
+            this.$inertia.get(
+                route("admin.masterfile.customer.setup"),
+                {
+                    tabs: tabs,
+                },
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                },
+            );
         },
         changeSelectEntries(value) {
             console.log(value);
-            this.$inertia.get(route('admin.masterfile.customer.setup'), {
-                value: value
-            }, {
-                preserveScroll: true,
-                preserveState: true
-            })
+            this.$inertia.get(
+                route("admin.masterfile.customer.setup"),
+                {
+                    value: value,
+                },
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                },
+            );
         },
         updateStoreCustomer(data) {
             this.modalForStoreCustomer = true;
-            this.dataForStoreCustomer.cus_id = data.cus_id
+            this.dataForStoreCustomer.cus_id = data.cus_id;
             this.dataForStoreCustomer.cus_fname = data.cus_fname;
             this.dataForStoreCustomer.cus_lname = data.cus_lname;
-            this.dataForStoreCustomer.cus_store_register = data.store_name
-            this.dataForStoreCustomer.cus_store_register = data.cus_store_register;
-
+            this.dataForStoreCustomer.cus_store_register = data.store_name;
+            this.dataForStoreCustomer.cus_store_register =
+                data.cus_store_register;
         },
         storeCustomerUpdate() {
             this.dataForStoreCustomer.errors = {};
             if (!this.dataForStoreCustomer.cus_fname) {
-                this.dataForStoreCustomer.errors.cus_fname = "The firstname field is required";
+                this.dataForStoreCustomer.errors.cus_fname =
+                    "The firstname field is required";
             }
             if (!this.dataForStoreCustomer.cus_lname) {
-                this.dataForStoreCustomer.errors.cus_lname = "The lastname field is required";
+                this.dataForStoreCustomer.errors.cus_lname =
+                    "The lastname field is required";
             }
-            this.$inertia.post(route('admin.masterfile.updateCustomerStoreRegister'), {
-                ...this.dataForStoreCustomer
-
-            }, {
-                onSuccess: ({ props }) => {
-                    if (props.flash.success) {
-                        notification.success({
-                            message: props.flash.success,
-                            description: `${this.dataForStoreCustomer.cus_fname} data updated successfully!`
-                        })
-                        this.modalForStoreCustomer = false
-                    }
-                    else if (props.flash.error) {
-                        notification.warning({
-                            message: props.flash.error,
-                            description: `${this.dataForStoreCustomer.cus_fname} data has no changes happen, update first before submitting`
-                        })
-                    }
-                }
-            })
-
+            this.$inertia.post(
+                route("admin.masterfile.updateCustomerStoreRegister"),
+                {
+                    ...this.dataForStoreCustomer,
+                },
+                {
+                    onSuccess: ({ props }) => {
+                        if (props.flash.success) {
+                            notification.success({
+                                message: props.flash.success,
+                                description: `${this.dataForStoreCustomer.cus_fname} data updated successfully!`,
+                            });
+                            this.modalForStoreCustomer = false;
+                        } else if (props.flash.error) {
+                            notification.warning({
+                                message: props.flash.error,
+                                description: `${this.dataForStoreCustomer.cus_fname} data has no changes happen, update first before submitting`,
+                            });
+                        }
+                    },
+                },
+            );
         },
 
         updateInstitutional(data) {
@@ -525,40 +695,42 @@ export default {
             this.dataForInstituteCustomer.ins_custype = data.ins_custype;
             this.dataForInstituteCustomer.ins_status = data.ins_status;
             this.dataForInstituteCustomer.ins_gctype = data.ins_gctype;
-
         },
         institutionalCustomerUpdate() {
             this.dataForInstituteCustomer.errors = {};
             if (!this.dataForInstituteCustomer.ins_name) {
-                this.dataForInstituteCustomer.errors.ins_name = "The name field is required";
+                this.dataForInstituteCustomer.errors.ins_name =
+                    "The name field is required";
             }
-            this.$inertia.post(route('admin.masterfile.UpdateInstituteCustomer'), {
-                ...this.dataForInstituteCustomer
-            }, {
-                onSuccess: ({ props }) => {
-                    if (props.flash.success) {
-                        notification.success({
-                            message: props.flash.success,
-                            description: `${this.dataForInstituteCustomer.ins_name} data updated successfully!`
-                        })
-                        this.modalForInstitutionalCustomer = false
-                    }
-                    else if (props.flash.error) {
-                        notification.warning({
-                            message: props.flash.error,
-                            description: `${this.dataForInstituteCustomer.ins_name} data has no changes happen, update first before submitting!`
-                        })
-                    }
-                }
-            }
-            )
-
+            this.$inertia.post(
+                route("admin.masterfile.UpdateInstituteCustomer"),
+                {
+                    ...this.dataForInstituteCustomer,
+                },
+                {
+                    onSuccess: ({ props }) => {
+                        if (props.flash.success) {
+                            notification.success({
+                                message: props.flash.success,
+                                description: `${this.dataForInstituteCustomer.ins_name} data updated successfully!`,
+                            });
+                            this.modalForInstitutionalCustomer = false;
+                        } else if (props.flash.error) {
+                            notification.warning({
+                                message: props.flash.error,
+                                description: `${this.dataForInstituteCustomer.ins_name} data has no changes happen, update first before submitting!`,
+                            });
+                        }
+                    },
+                },
+            );
         },
 
         updateSpecialCustomer(data) {
             this.modalForSpecialCustomer = true;
             this.dataForSpecialCustomer.spcus_id = data.spcus_id;
-            this.dataForSpecialCustomer.spcus_companyname = data.spcus_companyname;
+            this.dataForSpecialCustomer.spcus_companyname =
+                data.spcus_companyname;
             this.dataForSpecialCustomer.spcus_acctname = data.spcus_acctname;
             this.dataForSpecialCustomer.spcus_address = data.spcus_address;
             this.dataForSpecialCustomer.spcus_cperson = data.spcus_cperson;
@@ -568,37 +740,38 @@ export default {
         specialCustomerUpdate() {
             this.dataForSpecialCustomer.errors = {};
             if (!this.dataForSpecialCustomer.spcus_companyname) {
-                this.dataForSpecialCustomer.errors.spcus_companyname = "The company name field is required ";
+                this.dataForSpecialCustomer.errors.spcus_companyname =
+                    "The company name field is required ";
             }
             if (!this.dataForSpecialCustomer.spcus_acctname) {
-                this.dataForSpecialCustomer.errors.spcus_acctname = "The SP account name field is required ";
+                this.dataForSpecialCustomer.errors.spcus_acctname =
+                    "The SP account name field is required ";
             }
-            this.$inertia.post(route('admin.masterfile.updateSpecialCustomer'), {
-                ...this.dataForSpecialCustomer
-            }, {
-                onSuccess: ({ props }) => {
-                    if (props.flash.success) {
-                        notification.success({
-                            message: props.flash.success,
-                            description: `${this.dataForSpecialCustomer.spcus_companyname} data updated successfully!`
-                        })
-                        this.modalForSpecialCustomer = false;
-                    } else if (props.flash.error) {
-                        notification.warning({
-                            message: props.flash.error,
-                            description: `${this.dataForSpecialCustomer.spcus_companyname} data has no changes happen, update first before submitting!`
-
-                        })
-                    }
-
-                }
-            })
-
-
-        }
-
-    }
-}
+            this.$inertia.post(
+                route("admin.masterfile.updateSpecialCustomer"),
+                {
+                    ...this.dataForSpecialCustomer,
+                },
+                {
+                    onSuccess: ({ props }) => {
+                        if (props.flash.success) {
+                            notification.success({
+                                message: props.flash.success,
+                                description: `${this.dataForSpecialCustomer.spcus_companyname} data updated successfully!`,
+                            });
+                            this.modalForSpecialCustomer = false;
+                        } else if (props.flash.error) {
+                            notification.warning({
+                                message: props.flash.error,
+                                description: `${this.dataForSpecialCustomer.spcus_companyname} data has no changes happen, update first before submitting!`,
+                            });
+                        }
+                    },
+                },
+            );
+        },
+    },
+};
 </script>
 <style scoped>
 .customer-search-button {

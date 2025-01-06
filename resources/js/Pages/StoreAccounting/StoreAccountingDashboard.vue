@@ -3,17 +3,17 @@
 
         <a-card style="font-weight: bold;" title="EOD LIST"></a-card>
 
-        <div class="input-wrapper">
+        <!-- <div class="input-wrapper">
             <input type="search" placeholder="Input search here..." name="text" class="input" v-model="searchTerm" />
-        </div>
+        </div> -->
 
 
-        <!-- <div style=" margin-left: 70%; margin-top: 10px;">
+        <div style=" margin-left: 70%; margin-top: 10px;">
             <span>
                 <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here!" enter-button
                     style="width:90%;" />
             </span>
-        </div> -->
+        </div>
         <div style="margin-top: 10px;">
             <a-table :data-source="data.data" :columns="columns" :pagination="false" size="small"
                 style="border: 1px solid #f5f5f5;">
@@ -35,8 +35,8 @@
 
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { DatabaseOutlined } from '@ant-design/icons-vue';
-import Pagination from '@/Components/Pagination.vue';
+// import { DatabaseOutlined } from '@ant-design/icons-vue';
+// import Pagination from '@/Components/Pagination.vue';
 import { notification } from 'ant-design-vue';
 
 export default {

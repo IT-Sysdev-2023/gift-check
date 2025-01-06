@@ -3,14 +3,14 @@
     <a-card>
         <a-card title=" TREASURY SALES"></a-card>
 
-        <div class="input-wrapper">
+        <!-- <div class="input-wrapper">
             <input type="search" placeholder="Input search here..." name="text" class="input" v-model="salesSearchBox" />
-        </div>
+        </div> -->
 
-        <!-- <div style="margin-top: 10px; margin-left: 70%;">
+        <div style="margin-top: 10px; margin-left: 70%;">
             <a-input-search allow-clear v-model:value="salesSearchBox" placeholder="Input search here!" enter-button
                 style="width: 90%;" />
-        </div> -->
+        </div>
 
 
         <div style="margin-top: 10px;">
@@ -47,8 +47,6 @@
 </template>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Pagination from '@/Components/Pagination.vue';
-import { setInputSelection } from 'ant-design-vue/es/vc-mentions/src/util';
 import { notification } from 'ant-design-vue'
 export default {
 

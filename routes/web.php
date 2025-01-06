@@ -863,7 +863,11 @@ Route::middleware(['auth'])->group(function () {
                     );
             }
         );
-    Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
+        // About Us
+    Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('AboutUs');
+
+    // Users Guide
+    Route::get('user-guide', [StoreAccountingController::class, 'userGuide'])->name('UserGuide');
 });
 
 require __DIR__ . '/auth.php';

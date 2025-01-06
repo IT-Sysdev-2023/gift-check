@@ -28,7 +28,7 @@
                         </div>
                     </div>
 
-                    <div class="input-wrapper">
+                    <!-- <div class="input-wrapper">
                         <input
                             type="search"
                             placeholder="Input search here..."
@@ -36,11 +36,16 @@
                             class="input"
                             v-model="tagbilaranSearch"
                         />
-                    </div>
-                    <!-- <span style="margin-left: 60%; font-weight: bold;">
-                        <a-input-search allow-clear v-model:value="tagbilaranSearch" placeholder="Input search here!" enter-button
-                            style="width: 40%;" />
-                    </span> -->
+                    </div> -->
+                    <span style="margin-left: 60%; font-weight: bold">
+                        <a-input-search
+                            allow-clear
+                            v-model:value="tagbilaranSearch"
+                            placeholder="Input search here!"
+                            enter-button
+                            style="width: 40%"
+                        />
+                    </span>
                     <div style="font-weight: bold; margin-top: 20px">
                         <span style="margin-left: 40%"
                             >Table Showing Tagbilaran</span
@@ -91,7 +96,7 @@
                         <FileExcelOutlined />
                         Generate Excel
                     </a-button> -->
-                    <div class="input-wrapper">
+                    <!-- <div class="input-wrapper">
                         <input
                             type="search"
                             placeholder="Input search here..."
@@ -99,11 +104,16 @@
                             class="input"
                             v-model="talibonSearch"
                         />
-                    </div>
-                    <!-- <span style="margin-left: 60%; font-weight: bold;">
-                        <a-input-search allow-clear v-model:value="talibonSearch" placeholder="Input search here!" enter-button
-                            style="width: 40%;" />
-                    </span> -->
+                    </div> -->
+                    <span style="margin-left: 60%; font-weight: bold">
+                        <a-input-search
+                            allow-clear
+                            v-model:value="talibonSearch"
+                            placeholder="Input search here!"
+                            enter-button
+                            style="width: 40%"
+                        />
+                    </span>
                     <div style="font-weight: bold; margin-top: 20px">
                         <span style="margin-left: 40%"
                             >Table Showing Tubigon</span
@@ -359,15 +369,9 @@
 
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {
-    CloseSquareFilled,
-    ExclamationCircleOutlined,
-} from "@ant-design/icons-vue";
-import { createVNode } from "vue";
 import { Modal, message } from "ant-design-vue";
 import Pagination from "@/Components/Pagination.vue";
 import { notification } from "ant-design-vue";
-import { tuple } from "ant-design-vue/es/_util/type";
 import axios from "axios";
 
 export default {
@@ -585,7 +589,6 @@ export default {
                         })
                         .catch((error) => {
                             console.error("Error generating EXCEL:", error);
-                            hideLoading();
                             notification.error({
                                 message: "Error",
                                 description:
