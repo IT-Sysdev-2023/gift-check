@@ -537,11 +537,13 @@ Route::middleware(['auth'])->group(function () {
             });
         });
 
-        Route::get('/download/{filename}', function ($filename) {
-            $filePath = storage_path('app/' . $filename);
-            return response()->download($filePath);
-        })->name('download');
     })->middleware('userType:finance');
+
+    Route::get('/download/{filename}', function ($filename) {
+        // dd();
+        $filePath = storage_path('app/' . $filename);
+        return response()->download($filePath);
+    })->name('download');
 
     //? Retail
     Route::middleware('userType:retail,admin')->prefix('retail')->group(function () {
@@ -555,7 +557,7 @@ Route::middleware(['auth'])->group(function () {
             Route::name('validate.')->group(function () {
                 Route::get('validate-barcode', [RetailController::class, 'validateBarcode'])->name('barcode');
             });
-            Route::name('gcrequest.')->group(function () {
+            Route::name('gcre.7quest.')->group(function () {
                 Route::get('pendingList', [RetailController::class, 'pendingGcRequestList'])->name('pending.list');
                 Route::get('pendingdetail', [RetailController::class, 'pendingGcRequestdetail'])->name('pending.detail');
                 Route::get('cancel-request', [RetailController::class, 'cancelRequest'])->name('cancel');
