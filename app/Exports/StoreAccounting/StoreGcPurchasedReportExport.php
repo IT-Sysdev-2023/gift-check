@@ -49,7 +49,7 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
         $transformedData = collect();
 
         $data->each(function ($item) use ($purchasecred, $balance, $bus, $tnum, $puramt, $initial, &$transformedData) {
-            
+
             $this->broadcast("Generating Report!", StoreAccountReportEvent::class);
             $gctype = match ($item->vs_gctype) {
                 1 => 'REGULAR',
@@ -113,7 +113,8 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
         return $transformedData;
     }
 
-    public function query(){
+    public function query()
+    {
         if ($this->isLocal) {
 
             return $this->database->table('store_eod_textfile_transactions')
@@ -185,10 +186,11 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
             BeforeSheet::class => function (BeforeSheet $event) {
                 $sheet = $event->sheet;
                 $storeName = Store::where('store_id', $this->request['selectedStore'])->value('store_name');
+                $date = isset($this->request['month']) ? 'Monthly' : 'Yearly';
 
                 $sheet->setCellValue('C1', 'ALTURAS GROUP OF COMPANIES');
                 $sheet->setCellValue('C2', 'CUSTOMER FINANCIAL SERVICES CORP');
-                $sheet->setCellValue('B3', 'MONTHLY REPORT ON GIFT CHECK (Store Billing)');
+                $sheet->setCellValue('B3', "{$date} REPORT ON GIFT CHECK (Store Billing)");
                 $sheet->setCellValue('C4', 'PERIOD COVER:' . $this->request['year']);
                 $sheet->setCellValue('C6', 'STORE VERIFIED:' . $storeName);
 
@@ -205,7 +207,7 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
     }
     public function map($data): array
     {
-        
+
 
         // Build the full name
         $fullname = trim("{$data['cus_fname']} {$data['cus_lname']} " .
