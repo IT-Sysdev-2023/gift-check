@@ -116,7 +116,12 @@
         </a-tabs>
     </AuthenticatedLayout>
 </template>
+<<<<<<< HEAD
 <script setup lang="ts">
+=======
+<script>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+>>>>>>> gamale
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";

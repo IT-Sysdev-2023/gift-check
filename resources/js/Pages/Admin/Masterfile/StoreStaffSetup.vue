@@ -2,8 +2,9 @@
     <a-card>
         <div>
             <a-button
+                class="back-button"
                 @click="backButton"
-                style="color: red; border: 1px solid whitesmoke"
+                style="border: 1px solid whitesmoke"
                 ><RollbackOutlined />Back</a-button
             >
         </div>
@@ -668,5 +669,9 @@ export default {
     margin-right: 8%;
     min-width: 120px;
     margin-top: 1%;
+}
+.back-button {
+    font-weight: bold;
+    font-family: "Poppins", sans-serif;
 }
 </style>

@@ -121,7 +121,7 @@
                                 <div>Year:</div>
 
                                 <a-date-picker v-model:value="GCDataTypeMonthly.year" picker="year"  :disabled-date="disabledDate"/>
-                               
+
                             </a-form-item>
                         </div>
                         <a-button
@@ -275,7 +275,7 @@ const submitGCReportsMonthly = () => {
                 .get(route("storeaccounting.verifiedGcYearlySubmit"), {
                     params: { ...monthlyData },
                 })
-                .then((e) => {
+                .then(() => {
                     state.setGenerateButton(true);
                     state.setFloatButton(true);
 
@@ -332,7 +332,7 @@ const submitGCReportsYearly = () => {
         .get(route("storeaccounting.verifiedGcYearlySubmit"), {
             params: { ...yearlyData },
         })
-        .then((e) => {
+        .then(() => {
             state.setGenerateButton(true);
             state.setFloatButton(true);
 
