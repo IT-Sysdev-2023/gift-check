@@ -217,9 +217,7 @@
     </div>
 </template>
 <script>
-// import { defineComponent } from '@vue/composition-api'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import SpgcLedger from '../Finance/SpgcLedger.vue';
 
 export default {
     layout: AuthenticatedLayout,

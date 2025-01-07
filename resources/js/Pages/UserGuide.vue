@@ -98,8 +98,7 @@
                         class="ant-dropdown-link"
                         @click.prevent
                         style="
-                            font-family: &quot;Segoe UI&quot;, Tahoma, Geneva,
-                                Verdana, sans-serif;
+                            font-family: sans-serif;
                             font-weight: bold;
                             font-size: 17px;
                             color: #003140;
@@ -253,8 +252,7 @@
                 <a-dropdown>
                     <a
                         style="
-                            font-family: &quot;Segoe UI&quot;, Tahoma, Geneva,
-                                Verdana, sans-serif;
+                            font-family: sans-serif;
                             font-weight: bold;
                             color: #003140;
                             font-size: 17px;
@@ -459,8 +457,7 @@
                 font-size: 40px;
                 color: #eb5b00;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
         >
             GC Requisition Per Store
@@ -472,8 +469,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -489,8 +486,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -507,8 +504,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -525,8 +522,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -543,8 +540,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -561,8 +558,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -579,8 +576,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -597,8 +594,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -615,8 +612,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -641,8 +638,7 @@
                 font-size: 40px;
                 color: #eb5b00;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
         >
             How to Make GC Production (Regular GC)
@@ -654,8 +650,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -671,8 +667,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -689,8 +685,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -707,8 +703,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -725,8 +721,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -743,8 +739,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -761,8 +757,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -779,8 +775,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -797,8 +793,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -815,8 +811,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -833,8 +829,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -851,8 +847,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -875,8 +871,7 @@
                 font-size: 40px;
                 color: #eb5b00;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
         >
             How to Request Promo
@@ -888,8 +883,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -905,8 +900,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -923,8 +918,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -941,8 +936,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -959,8 +954,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -977,8 +972,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -995,8 +990,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1013,8 +1008,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1031,8 +1026,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1049,8 +1044,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1067,8 +1062,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1091,8 +1086,7 @@
                 font-size: 40px;
                 color: #eb5b00;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
         >
             How to Request Special External GC
@@ -1104,8 +1098,7 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
                             margin-top: 100px;
                         "
                     >
@@ -1121,8 +1114,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1139,8 +1132,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1157,8 +1150,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1175,8 +1168,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1193,8 +1186,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1211,8 +1204,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1229,8 +1222,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1247,8 +1240,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1265,8 +1258,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1283,8 +1276,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1307,8 +1300,7 @@
                 font-size: 40px;
                 color: #eb5b00;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
         >
             Treasury Department
@@ -1320,8 +1312,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1337,8 +1329,8 @@
                         style="
                             font-weight: bold;
                             color: black;
-                            font-family: Cambria, Cochin, Georgia, Times,
-                                &quot;Times New Roman&quot;, serif;
+                            font-family: sans-serif;
+
                             margin-top: 100px;
                         "
                     >
@@ -1361,8 +1353,7 @@
                 font-size: 40px;
                 color: #276047;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
             >Welcome to</span
         >
@@ -1372,8 +1363,8 @@
         <span
             style="
                 font-size: 30px;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
+
                 font-weight: bold;
                 color: #003140;
             "
@@ -1399,8 +1390,7 @@
                 font-size: 40px;
                 color: #eb5b00;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
         >
             GC Requisition Per Store PDF
@@ -1421,8 +1411,7 @@
                 font-size: 40px;
                 color: #eb5b00;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
         >
             How to Make GC Production (Regular GC) PDF
@@ -1443,8 +1432,7 @@
                 font-size: 40px;
                 color: #eb5b00;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
         >
             How to Request Promo PDF
@@ -1465,8 +1453,7 @@
                 font-size: 40px;
                 color: #eb5b00;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
         >
             How to Request Special External GC PDF
@@ -1487,8 +1474,7 @@
                 font-size: 40px;
                 color: #eb5b00;
                 font-weight: bold;
-                font-family: Cambria, Cochin, Georgia, Times,
-                    &quot;Times New Roman&quot;, serif;
+                font-family: sans-serif;
             "
         >
             Treasury Department PDF
@@ -1509,7 +1495,7 @@
                 <ul class="example-2">
                     <li class="icon-content">
                         <a
-                            href="https://linkedin.com/"
+                            href="https://twitter.com/"
                             aria-label="LinkedIn"
                             data-social="linkedin"
                         >
@@ -1531,7 +1517,7 @@
                     </li>
                     <li class="icon-content">
                         <a
-                            href="https://linkedin.com/"
+                            href="https://facebook.com/"
                             aria-label="LinkedIn"
                             data-social="linkedin"
                         >
