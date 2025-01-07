@@ -1978,18 +1978,11 @@ class StoreAccountingController extends Controller
   
     public function redeemReport()
     {
-        return Inertia::render('StoreAccounting/SPGCRedeemReport');
+        return Inertia::render('StoreAccounting/SPGCRedeemReport', [
+            'stores' => Store::selectStore()->get()
+        ]);
     }
 
-    public function monthlyRedeemSubmit(Request $request)
-    {
-        dd($request->toArray());
-    }
-
-    public function yearlyRedeemSubmit(Request $request)
-    {
-        dd($request->toArray());
-    }
 
     public function verifiedStore()
     {

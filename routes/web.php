@@ -827,8 +827,7 @@ Route::middleware(['auth'])->group(function () {
                             Route::post('store-monthly-submit', [ReportController::class, 'generateStorePurchasedReport'])->name('generateStorePurchasedReport');
                             // redeem report
                             Route::get('redeem-report-purchased', [StoreAccountingController::class, 'redeemReport'])->name('redeemReport');
-                            Route::get('redeem-monthly-submit', [StoreAccountingController::class, 'monthlyRedeemSubmit'])->name('monthlyRedeemSubmit');
-                            Route::get('redeem-yearly-submit', [StoreAccountingController::class, 'yearlyRedeemSubmit'])->name('yearlyRedeemSubmit');
+                            Route::post('redeem-monthly-submit', [ReportController::class, 'redeemReportSubmit'])->name('redeemReportSubmit');
                             // verified store
                             Route::get('verified-store-purchased', [StoreAccountingController::class, 'verifiedStore'])->name('verifiedStore');
                             Route::get('monthly-submit', [StoreAccountingController::class, 'puchasedMonthlySubmit'])->name('puchasedMonthlySubmit');

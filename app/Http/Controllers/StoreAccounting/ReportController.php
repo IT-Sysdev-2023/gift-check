@@ -26,4 +26,9 @@ class ReportController extends Controller
         return $this->reportService->billingReport($request);
     }
 
+    public function redeemReportSubmit(Request $request)
+    {
+        return $this->reportService->redeemReport($request);
+    }
+
 }

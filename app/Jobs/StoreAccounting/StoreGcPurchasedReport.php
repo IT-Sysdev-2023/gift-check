@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable; // Ensure this is imported
 
-class StoreGcPurchasedReport extends DatabaseConnectionService implements ShouldQueue
+class StoreGcPurchasedReport implements ShouldQueue
 {
     use Queueable;
 
@@ -40,7 +40,7 @@ class StoreGcPurchasedReport extends DatabaseConnectionService implements Should
     {
         $label = isset($this->request['month']) ? $this->monthToName() : $this->request['year'];
 
-        $db = $this->getLocalConnection($this->local, $this->request['selectedStore']);
+        $db = DatabaseConnectionService::getLocalConnection($this->local, $this->request['selectedStore']);
        
         $doc = new StoreGcPurchasedReportExport($db, $this->request, $this->local, $this->user);
         (new ExportHandler())
