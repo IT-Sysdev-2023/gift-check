@@ -94,4 +94,8 @@ class EodController extends Controller
     public function toEndOfDay(){
        EodScheduler::dispatch();
     }
+
+    public function eodView($id){
+        
+    }
 }

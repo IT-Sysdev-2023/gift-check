@@ -1,21 +1,32 @@
 <template>
     <a-card>
-        <a-card title="USERS SETUP"> </a-card>
+        <div>
+            <a-button
+                @click="backButton"
+                style="color: red; border: 1px solid whitesmoke"
+                ><RollbackOutlined /> Back</a-button
+            >
+        </div>
 
         <div style="margin-left: 82.5%">
             <a-button
-                style="background-color: #1e90ff; color: white"
+                style="background-color: #1b76f8; color: white"
                 @click="() => (open = true)"
             >
                 <PlusOutlined />Add New User
             </a-button>
         </div>
 
-        <div style="margin-top: 10px; margin-left: 70%">
+        <div>
+            <h2>Users Setup</h2>
+        </div>
+
+        <div style="margin-left: 70%">
             <a-input-search
                 allow-clear
                 v-model:value="searchTerm"
                 size="medium"
+                enter-button
                 placeholder="Input search here!"
                 style="width: 80%"
             />
@@ -42,7 +53,7 @@
                         <a-button
                             @click="resetPassword(record)"
                             title="Reset Password"
-                            style="color: white; background-color: #1e90ff"
+                            style="color: white; background-color: #1b76f8"
                         >
                             <UndoOutlined />
                         </a-button>
@@ -956,51 +967,9 @@ export default {
                 },
             );
         },
-        // DangerButton() {
-        //     Modal.confirm({
-        //         title: 'Are you sure?',
-        //         content: 'Really ?',
-        //         okText: 'Yes',
-        //         cancelText: 'No',
-        //         onOk: () => {
-        //             Modal.confirm({
-        //                 title: 'Are you sure? like 100% ?',
-        //                 content: 'Really , Really?',
-        //                 okText: 'Yes',
-        //                 cancelText: 'No',
-        //                 onOk: () => {
-        //                     this.danger = true;
-        //                 }
-        //             })
-        //         },
-        //         onCancel: () => {
-        //             Modal.confirm({
-        //                 title: 'Why?',
-        //                 content: 'Are you afraid?'
-        //             })
-        //         }
-
-        //     })
-        // }
-        // showDeleteConfirm(rec) {
-        //     Modal.confirm({
-        //         title: 'Are you sure update this task?',
-        //         icon: createVNode(ExclamationCircleOutlined),
-        //         content: 'Some descriptions',
-        //         okText: 'Yes',
-        //         okType: 'danger',
-        //         cancelText: 'No',
-        //         onOk: () => {
-        //             this.dataforResetPassword.full_name = rec.full_name;
-        //             this.dataforResetPassword.user_id = rec.user_id;
-
-        //             this.submitResetPassword();
-        //         },
-        //         onCancel() {
-        //             console.log('Cancel');
-        //         },
-        //     });
-        // },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
+        },
     },
 };
 </script>

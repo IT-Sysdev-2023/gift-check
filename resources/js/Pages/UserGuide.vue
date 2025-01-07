@@ -1689,7 +1689,6 @@ const pdfTreasuryDepartment = ref(false);
         Times New Roman serif;
 }
 .heading-button:hover {
-    text-decoration: underline;
     background-color: #20e584;
 }
 </style>
