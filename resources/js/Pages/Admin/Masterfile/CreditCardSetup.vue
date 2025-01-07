@@ -1,5 +1,12 @@
 <template>
     <a-card>
+        <div>
+            <a-button
+                @click="backButton"
+                style="border: 1px solid whitesmoke"
+                ><RollbackOutlined />Back</a-button
+            >
+        </div>
         <div style="margin-left: 79%">
             <a-button
                 style="background-color: #1b76f8; color: white"
@@ -158,6 +165,9 @@ export default {
                     preserveState: true,
                 },
             );
+        },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
         },
     },
 };
