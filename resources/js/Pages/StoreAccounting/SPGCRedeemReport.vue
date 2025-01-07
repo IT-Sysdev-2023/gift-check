@@ -44,7 +44,7 @@
                                 picker="month"
                                 :disabled-date="disabledDate"
                             />
-                            
+
                         </a-form-item>
                     </div>
                     <div>
@@ -116,13 +116,8 @@
         </a-tabs>
     </AuthenticatedLayout>
 </template>
-<<<<<<< HEAD
-<script setup lang="ts">
-=======
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
->>>>>>> gamale
 
+<script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import axios from "axios";
