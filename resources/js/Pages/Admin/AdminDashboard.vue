@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a-card title="MASTERFILE"></a-card>
+        <h2>Masterfile</h2>
     </div>
         <a-form-item style="margin-top: 20px;">
             <a-card @click="() => $inertia.get(route('admin.masterfile.users'))" class="card-hover"

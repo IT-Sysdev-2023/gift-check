@@ -1,18 +1,28 @@
 <template>
     <a-card>
-        <a-card title="DENOMINATION SETUP"> </a-card>
+        <div>
+            <a-button
+                @click="backButton"
+                style="color: red; border: 1px solid whitesmoke"
+                ><RollbackOutlined />Back</a-button
+            >
+        </div>
         <div style="margin-left: 77.5%">
             <a-button
-                style="background-color: #1e90ff; color: white"
+                style="background-color: #1b76f8; color: white"
                 @click="() => (addDenomination = true)"
             >
                 <PlusOutlined /> Add New Denomination
             </a-button>
         </div>
+        <div>
+            <h2>Denomination Setup</h2>
+        </div>
 
-        <div style="margin-left: 70%; margin-top: 10px">
+        <div style="margin-left: 70%">
             <a-input-search
                 allow-clear
+                enter-button
                 v-model:value="searchTerm"
                 placeholder="Input search here"
                 size="medium"
@@ -296,6 +306,9 @@ export default {
                     preserveScroll: true,
                 },
             );
+        },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
         },
     },
 };
