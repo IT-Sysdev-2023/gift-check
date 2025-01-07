@@ -1,15 +1,26 @@
 <template>
     <a-card>
-        <a-card title="SETUP STORE REVOLVING FUND"></a-card>
+        <div>
+            <a-button
+                @click="backButton"
+                style="color: red; border: 1px solid whitesmoke"
+                ><RollbackOutlined />Back</a-button
+            >
+        </div>
+        <div style="margin-top: 20px;">
+            <h2>Revolving Fund Setup</h2>
+        </div>
 
-        <div style="margin-left: 70%; margin-top: 10px">
+        <div style="margin-left: 70%">
             <a-input-search
                 size="medium"
+                enter-button
                 placeholder=" Search User"
                 v-model:value="searchTerm"
                 style="width: 80%"
             />
         </div>
+
         <div style="margin-top: 10px">
             <a-table
                 :dataSource="data.data"
@@ -191,6 +202,9 @@ export default {
                     preserveState: true,
                 },
             );
+        },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
         },
     },
 };

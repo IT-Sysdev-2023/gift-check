@@ -1,18 +1,21 @@
 <template>
     <a-card>
-        <a-card title="CREDIT CARD SETUP"> </a-card>
         <div style="margin-left: 79%">
             <a-button
-                style="background-color: #1e90ff; color: white"
+                style="background-color: #1b76f8; color: white"
                 @click="() => (addCreditCard = true)"
             >
                 <PlusOutlined /> Add New Credit Card
             </a-button>
         </div>
+        <div>
+            <h2>Credit Card Setup</h2>
+        </div>
 
         <div style="margin-left: 70%; margin-top: 10px">
             <a-input-search
                 allow-clear
+                enter-button
                 v-model:value="searchTerm"
                 placeholder="Input search here!"
                 size="medium"
