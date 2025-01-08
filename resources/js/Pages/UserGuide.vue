@@ -448,6 +448,41 @@
         </button>
     </div>
 
+    <!-- Home Page  -->
+    <a-card v-if="homePage" style="text-align: center"
+        ><span
+            style="
+                font-size: 40px;
+                color: #276047;
+                font-weight: bold;
+                font-family: sans-serif;
+            "
+            >Welcome to</span
+        >
+        <span style="font-size: 80px" class="gift-check-colors">
+            GIFT CHECK
+        </span>
+        <span
+            style="
+                font-size: 30px;
+                font-family: sans-serif;
+
+                font-weight: bold;
+                color: #003140;
+            "
+        >
+            User Guide
+        </span>
+        <div>
+            <a>
+                <img
+                    src="https://user-images.githubusercontent.com/74038190/221352975-94759904-aa4c-4032-a8ab-b546efb9c478.gif"
+                    style="width: 1100px; height: 500px"
+                />
+            </a>
+        </div>
+    </a-card>
+
     <!-- CARDS CONTAIN THE USERS GUIDE -->
 
     <!-- GC Requisition Per Store  -->
@@ -478,7 +513,7 @@
                     </div>
                     <img
                         src="/images/userGuidePics/gcRequisitionPerStore/1.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -496,7 +531,7 @@
 
                     <img
                         src="/images/userGuidePics/gcRequisitionPerStore/2.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -514,7 +549,7 @@
 
                     <img
                         src="/images/userGuidePics/gcRequisitionPerStore/3.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -532,7 +567,7 @@
 
                     <img
                         src="/images/userGuidePics/gcRequisitionPerStore/4.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -550,7 +585,7 @@
 
                     <img
                         src="/images/userGuidePics/gcRequisitionPerStore/5.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -568,7 +603,7 @@
 
                     <img
                         src="/images/userGuidePics/gcRequisitionPerStore/6.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -586,7 +621,7 @@
 
                     <img
                         src="/images/userGuidePics/gcRequisitionPerStore/7.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -604,7 +639,7 @@
 
                     <img
                         src="/images/userGuidePics/gcRequisitionPerStore/8.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -622,7 +657,7 @@
 
                     <img
                         src="/images/userGuidePics/gcRequisitionPerStore/9.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
             </ul>
@@ -659,7 +694,7 @@
                     </div>
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/1.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -677,7 +712,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/2.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -695,7 +730,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/3.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -713,7 +748,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/4.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -731,7 +766,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/5.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -749,7 +784,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/6.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -767,7 +802,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/7.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -785,7 +820,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/8.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -803,7 +838,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/9.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -821,7 +856,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/10.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -839,7 +874,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/11.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -857,7 +892,7 @@
 
                     <img
                         src="/images/userGuidePics/howToMakeGcProduction(RegularGc)/12.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
             </ul>
@@ -892,7 +927,7 @@
                     </h2>
                     <img
                         src="/images/userGuidePics/howToRequestPromo/1.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -910,7 +945,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestPromo/2.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -928,7 +963,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestPromo/3.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -946,7 +981,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestPromo/4.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -964,7 +999,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestPromo/5.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -982,7 +1017,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestPromo/6.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1000,7 +1035,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestPromo/7.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1018,7 +1053,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestPromo/8.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1036,7 +1071,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestPromo/9.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1054,7 +1089,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestPromo/10.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1072,7 +1107,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestPromo/11.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
             </ul>
@@ -1106,7 +1141,7 @@
                     </h2>
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/1.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1124,7 +1159,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/2.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1142,7 +1177,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/3.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1160,7 +1195,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/4.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1178,7 +1213,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/5.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1196,7 +1231,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/6.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1214,7 +1249,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/7.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1232,7 +1267,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/8.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1250,7 +1285,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/9.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1268,7 +1303,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/10.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1286,7 +1321,7 @@
 
                     <img
                         src="/images/userGuidePics/howToRequestSpecialExternalGc/11.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
             </ul>
@@ -1321,7 +1356,7 @@
                     </h2>
                     <img
                         src="/images/userGuidePics/treasuryDepartment/1.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
                 <a>
@@ -1339,45 +1374,10 @@
 
                     <img
                         src="/images/userGuidePics/treasuryDepartment/2.jpg"
-                        style="width: 1000px; height: 1500px"
+                        style="width: 80%; height: 1600px"
                     />
                 </a>
             </ul>
-        </div>
-    </a-card>
-
-    <!-- Home Page  -->
-    <a-card v-if="homePage" style="text-align: center"
-        ><span
-            style="
-                font-size: 40px;
-                color: #276047;
-                font-weight: bold;
-                font-family: sans-serif;
-            "
-            >Welcome to</span
-        >
-        <span style="font-size: 80px" class="gift-check-colors">
-            GIFT CHECK
-        </span>
-        <span
-            style="
-                font-size: 30px;
-                font-family: sans-serif;
-
-                font-weight: bold;
-                color: #003140;
-            "
-        >
-            User Guide
-        </span>
-        <div>
-            <a>
-                <img
-                    src="https://user-images.githubusercontent.com/74038190/221352975-94759904-aa4c-4032-a8ab-b546efb9c478.gif"
-                    style="width: 1100px; height: 500px"
-                />
-            </a>
         </div>
     </a-card>
 
@@ -1398,7 +1398,7 @@
         <div>
             <iframe
                 src="/images/userGuidePics/pdfUserGuide/GC REQUISITION PER STORE.pdf"
-                style="width: 90%; height: 1000px; border: none"
+                style="width: 100%; height: 1000px; border: none"
             >
             </iframe>
         </div>
@@ -1419,7 +1419,7 @@
         <div>
             <iframe
                 src="/images/userGuidePics/pdfUserGuide/HOW TO MAKE GC PRODUCTION REQUEST (REGULAR GC).pdf"
-                style="width: 90%; height: 1000px; border: none"
+                style="width: 100%; height: 1000px; border: none"
             >
             </iframe>
         </div>
@@ -1440,7 +1440,7 @@
         <div>
             <iframe
                 src="/images/userGuidePics/pdfUserGuide/HOW TO REQUEST PROMO.pdf"
-                style="width: 90%; height: 1000px; border: none"
+                style="width: 100%; height: 1000px; border: none"
             >
             </iframe>
         </div>
@@ -1461,7 +1461,7 @@
         <div>
             <iframe
                 src="/images/userGuidePics/pdfUserGuide/HOW TO REQUEST SPECIAL EXTERNAL GC.pdf"
-                style="width: 90%; height: 1000px; border: none"
+                style="width: 100%; height: 1000px; border: none"
             >
             </iframe>
         </div>
@@ -1482,7 +1482,7 @@
         <div>
             <iframe
                 src="/images/userGuidePics/pdfUserGuide/BUDGET REQUEST.pdf"
-                style="width: 90%; height: 1000px; border: none"
+                style="width: 100%; height: 1000px; border: none"
             >
             </iframe>
         </div>

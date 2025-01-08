@@ -1975,7 +1975,7 @@ class StoreAccountingController extends Controller
         ]);
     }
 
-  
+
     public function redeemReport()
     {
         return Inertia::render('StoreAccounting/SPGCRedeemReport', [
