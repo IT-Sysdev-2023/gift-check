@@ -51,7 +51,7 @@
             for="ccard_name"
             :validate-status="form.errors.ccard_name ? 'error' : ''"
             :help="form.errors.ccard_name"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold;"
         >
             Credit Name:
             <a-input

@@ -79,6 +79,7 @@
             <span
                 style="
                     color: #c7253e;
+                    font-family: sans-serif;
                     margin-left: 5px;
                     margin-right: 5px;
                     text-decoration: underline;
@@ -92,7 +93,7 @@
 
     <!-- this is for update part -->
     <a-modal v-model:open="openmodalforupdate" @ok="updateStoreStaff">
-        <span style="color: #0286df; font-size: 17px">
+        <span style="color: #0286df; font-size: 17px; font-family: sans-serif">
             <UserAddOutlined style="margin-right: 8px" />
             Update User
         </span>
@@ -101,7 +102,7 @@
             for="ss_username"
             :validate-status="dataForUpdate.errors?.ss_username ? 'error' : ''"
             :help="dataForUpdate.errors?.ss_username"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold"
         >
             Username:
             <a-input
@@ -115,6 +116,7 @@
             for="ss_firstname"
             :validate-status="dataForUpdate.errors?.ss_firstname ? 'error' : ''"
             :help="dataForUpdate.errors?.ss_firstname"
+            style="margin-top: 10px; font-weight: bold"
         >
             firstname:
             <a-input
@@ -128,6 +130,7 @@
             for="ss_lastname"
             :validate-status="dataForUpdate.errors?.ss_lastname ? 'error' : ''"
             :help="dataForUpdate.errors?.ss_lastname"
+            style="margin-top: 10px; font-weight: bold"
         >
             Lastname:
             <a-input
@@ -141,6 +144,7 @@
             for="ss_idnumber"
             :validate-status="dataForUpdate.errors?.ss_idnumber ? 'error' : ''"
             :help="dataForUpdate.errors?.ss_idnumber"
+            style="margin-top: 10px; font-weight: bold"
         >
             Employee ID:
             <a-input
@@ -154,6 +158,7 @@
             for="ss_store"
             :validate-status="dataForUpdate.errors?.ss_store ? 'error' : ''"
             :help="dataForUpdate.errors?.ss_store"
+            style="margin-top: 10px; font-weight: bold"
         >
             Store Assigned:
             <a-select
@@ -174,6 +179,7 @@
             for="ss_usertype"
             :validate-status="dataForUpdate.errors?.ss_usertype ? 'error' : ''"
             :help="dataForUpdate.errors?.ss_usertype"
+            style="margin-top: 10px; font-weight: bold"
         >
             User Type:
             <a-select
@@ -185,12 +191,12 @@
                 <a-select-option value="cashier">CASHIER</a-select-option>
                 <a-select-option value="manager">MANAGER</a-select-option>
             </a-select>
-            <!-- <a-input v-model:value="dataForUpdate.ss_usertype" placeholder="User Type" /> -->
         </a-form-item>
     </a-modal>
+
     <!-- this is for adding user part -->
     <a-modal v-model:open="open" @ok="handleOk">
-        <span style="color: #0286df; font-size: 17px">
+        <span style="color: #0286df; font-size: 17px; font-family: sans-serif">
             <UserAddOutlined style="margin-right: 8px" />
             Add New User
         </span>
@@ -199,7 +205,7 @@
             for="username"
             :validate-status="form.errors.username ? 'error' : ''"
             :help="form.errors.username"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold"
         >
             Username:
             <a-input
@@ -213,6 +219,7 @@
             for="firstname"
             :validate-status="form.errors.firstname ? 'error' : ''"
             :help="form.errors.firstname"
+            style="margin-top: 10px; font-weight: bold"
         >
             Firstname:
             <a-input
@@ -226,6 +233,7 @@
             for="lastname"
             :validate-status="form.errors.lastname ? 'error' : ''"
             :help="form.errors.lastname"
+            style="margin-top: 10px; font-weight: bold"
         >
             Lastname:
             <a-input
@@ -239,6 +247,7 @@
             for="employee_id"
             :validate-status="form.errors.employee_id ? 'error' : ''"
             :help="form.errors.employee_id"
+            style="margin-top: 10px; font-weight: bold"
         >
             Employee ID:
             <a-input
@@ -252,6 +261,7 @@
             for="password"
             :validate-status="form.errors.password ? 'error' : ''"
             :help="form.errors.password"
+            style="margin-top: 10px; font-weight: bold"
         >
             Password:
             <a-input
@@ -266,6 +276,7 @@
             for="store_name"
             :validate-status="form.errors.store_id ? 'error' : ''"
             :help="form.errors.store_id"
+            style="margin-top: 10px; font-weight: bold"
             >Store Assigned:
             <a-select
                 v-model:value="form.store_id"
@@ -285,6 +296,7 @@
             for="user_type"
             :validate-status="form.errors.usertype ? 'error' : ''"
             :help="form.errors.usertype"
+            style="margin-top: 10px; font-weight: bold"
         >
             User Type:
             <a-select
@@ -298,7 +310,7 @@
             </a-select>
         </a-form-item>
     </a-modal>
-    {{ data.store_name }}
+    <!-- {{ data.data }} -->
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
@@ -341,16 +353,6 @@ export default {
                 store_id: "",
                 usertype: "",
             }),
-
-            // form: this.$inertia.form({
-            //     username: '',
-            //     firstname: '',
-            //     lastname: '',
-            //     employee_id: '',
-            //     password: '',
-            //     store_id: '',
-            //     usertype: ''
-            // }),
 
             dataForUpdate: this.$inertia.form({
                 ss_username: "",

@@ -202,7 +202,7 @@
                     style="
                         text-align: center;
                         font-weight: bold;
-                        font-size: large;
+                        font-size: x-large;
                         margin-top: 5%;
                         color: #003140;
                         font-family:
@@ -282,7 +282,7 @@
                 style="
                     text-align: center;
                     font-weight: bold;
-                    font-size: large;
+                    font-size: x-large;
                     color: #003140;
                     font-family:
                         Cambria,
@@ -1397,7 +1397,7 @@
                 style="
                     text-align: center;
                     font-weight: bold;
-                    font-size: large;
+                    font-size: x-large;
 
                     font-family:
                         Cambria,

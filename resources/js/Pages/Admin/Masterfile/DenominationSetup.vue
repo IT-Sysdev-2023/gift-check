@@ -54,23 +54,7 @@
         </div>
     </a-card>
 
-    <!-- <a-title style="font-size: 20px; display: flex; align-items: center; color:#0286df">
-        <BarcodeOutlined style=" margin-right: 8px; color:#0286df" />
-        Denomination Setup
-    </a-title>
-    <span style="font-weight: bold;">
-        Show
-        <a-select id="select_entries" v-model:value="dataForSelectEntries.select_entries"
-            style=" margin-top: 10px;background-color: #0286df; border: 1px solid #0286df" placeholder="10"
-            @change="handleSelectChange">
-            <a-select-option value="10">10</a-select-option>
-            <a-select-option value="25">25</a-select-option>
-            <a-select-option value="50">50</a-select-option>
-            <a-select-option value="100">100</a-select-option>
-        </a-select>
-        entries
-    </span> -->
-
+    <!-- Add New Denomination Modal  -->
     <a-modal v-model:open="addDenomination" @ok="handleOk">
         <span style="color: #0286df; font-size: 17px">
             <BarcodeOutlined style="margin-right: 8px" />
@@ -81,7 +65,7 @@
             for="denomination"
             :validate-status="form.errors.denomination ? 'error' : ''"
             :help="form.errors.denomination"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold"
             >Denomination:
             <a-input
                 allow-clear
@@ -95,6 +79,7 @@
             for="barcodeNumStart"
             :validate-status="form.errors.barcodeNumStart ? 'error' : ''"
             :help="form.errors.barcodeNumStart"
+            style="margin-top: 10px; font-weight: bold"
             >Barcode # Start:
             <a-input
                 allow-clear
@@ -105,6 +90,7 @@
         </a-form-item>
     </a-modal>
 
+    <!-- Update Denomination Modal  -->
     <a-modal v-model:open="updateDenominationModal" @ok="updateDenomination">
         <span style="color: #0286df; font-size: 17px">
             <BarcodeOutlined style="margin-right: 8px" />
@@ -115,7 +101,7 @@
             for="denomination"
             :validate-status="updateDenom.errors?.denomination ? 'error' : ''"
             :help="updateDenom.errors?.denomination"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold"
             >Denomination:
             <a-input
                 allow-clear
@@ -130,6 +116,7 @@
             :validate-status="
                 updateDenom.errors?.denom_barcode_start ? 'error' : ''
             "
+            style="margin-top: 10px; font-weight: bold"
             :help="updateDenom.errors?.denom_barcode_start"
             >Barcode # Start:
             <a-input
@@ -146,6 +133,7 @@
                 updateDenom.errors?.denom_fad_item_number ? 'error' : ''
             "
             :help="updateDenom.errors?.denom_fad_item_number"
+            style="margin-top: 10px; font-weight: bold"
         >
             FAD Item #:
             <a-input

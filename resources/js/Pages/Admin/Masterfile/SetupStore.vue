@@ -59,7 +59,7 @@
     </a-card>
 
     <a-modal v-model:open="addStore" @ok="handleOk">
-        <span style="color: #0286df; font-size: 17px">
+        <span style="color: #0286df; font-size: 17px; font-family: sans-serif">
             <AppstoreAddOutlined style="margin-right: 8px" />
             Add New Store
         </span>
@@ -68,7 +68,7 @@
             for="store_name"
             :validate-status="form.errors.store_name ? 'error' : ''"
             :help="form.errors.store_name"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold"
             >Store Name:
             <a-input
                 allow-clear
@@ -81,6 +81,8 @@
             for="store_code"
             :validate-status="form.errors.store_code ? 'error' : ''"
             :help="form.errors.store_code"
+            style="margin-top: 10px; font-weight: bold"
+
         >
             Store Code:
             <div>
@@ -97,6 +99,8 @@
             for=" company_code"
             :validate-status="form.errors.company_code ? 'error' : ''"
             :help="form.errors.company_code"
+            style="margin-top: 10px; font-weight: bold"
+
         >
             Company Code:
             <div>
@@ -113,6 +117,8 @@
             for=" default_password"
             :validate-status="form.errors.default_password ? 'error' : ''"
             :help="form.errors.default_password"
+            style="margin-top: 10px; font-weight: bold"
+
         >
             Default Password:
             <a-input
