@@ -19,14 +19,14 @@ class ReportsHelper
             ->exists();
     }
 
-    public static function checkRemoteDbReport($store, $year, $month, $isLocal)
+    public static function checkRemoteDbBillingReport($store, $year, $month, $isLocal)
     {
         $server = DatabaseConnectionService::getLocalConnection($isLocal, $store);
         return $server->table('store_eod_textfile_transactions')
             ->join('store_verification', 'store_verification.vs_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
             ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-            ->whereYear('vs_date', $year)
+            ->whereYear('vs_date', operator: $year)
             ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
             ->where('vs_store', $store)
             ->exists();
@@ -49,7 +49,9 @@ class ReportsHelper
             ->exists();
     }
 
-    public static function checkRemoteDbBillingReport($isLocal, $store, $month, $year){
+
+    public static function checkRedeemReport($isLocal, $store, $year, $month)
+    {
         $server = DatabaseConnectionService::getLocalConnection($isLocal, $store);
         return $server->table('store_verification')
             ->join('special_external_gcrequest_emp_assign', 'special_external_gcrequest_emp_assign.spexgcemp_barcode', '=', 'store_verification.vs_barcode')
@@ -62,6 +64,7 @@ class ReportsHelper
             ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
             ->where('vs_store', $store)
             ->where('special_external_gcrequest.spexgc_promo', '*')
+            ->orderBy('vs_id')
             ->exists();
     }
 }

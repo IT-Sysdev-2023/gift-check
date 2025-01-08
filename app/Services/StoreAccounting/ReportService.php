@@ -1,9 +1,7 @@
 <?php
 
 namespace App\Services\StoreAccounting;
-use App\Exports\StoreAccounting\StoreGcPurchasedReportExport;
-use App\Exports\StoreAccounting\VerifiedGcReportMultiExport;
-use App\Jobs\StoreAccounting\SPGCRedeemReport;
+use App\Jobs\StoreAccounting\SpgcRedeemReport;
 use App\Jobs\StoreAccounting\StoreGcPurchasedReport;
 use App\Jobs\StoreAccounting\VerifiedGcReport;
 use App\Models\Store;
@@ -64,7 +62,7 @@ class ReportService
 
             if ($isExists) { //OTHER SERVER
 
-                if (ReportsHelper::checkRemoteDbReport($request->selectedStore, $request->year, $isMonthtly, self::REMOTE_SERVER_DB)) {
+                if (ReportsHelper::checkRemoteDbBillingReport($request->selectedStore, $request->year, $isMonthtly, self::REMOTE_SERVER_DB)) {
 
                     StoreGcPurchasedReport::dispatch($request->all(), self::REMOTE_SERVER_DB);
 
@@ -103,9 +101,9 @@ class ReportService
 
             if ($isExists) { //OTHER SERVER
 
-                if (ReportsHelper::checkRemoteDbBillingReport(self::REMOTE_SERVER_DB, $request->selectedStore, $isMonthtly, $request->year)) {
+                if (ReportsHelper::checkRedeemReport(self::REMOTE_SERVER_DB, $request->selectedStore, $request->year, $isMonthtly)) {
 
-                    SPGCRedeemReport::dispatch($request->all(), self::REMOTE_SERVER_DB);
+                    SpgcRedeemReport::dispatch($request->all(), self::REMOTE_SERVER_DB);
 
                 } else {
                     return response()->json('No record Found on this date', 404);
@@ -113,7 +111,7 @@ class ReportService
 
             } else { //LOCAL
 
-                if (ReportsHelper::checkLocalDbBillingReport($request->selectedStore, $request->year, $isMonthtly, self::LOCAL_DB)) {
+                if (ReportsHelper::checkRedeemReport(self::LOCAL_DB, $request->selectedStore, $request->year, $isMonthtly)) {
 
                     SPGCRedeemReport::dispatch($request->all(), self::LOCAL_DB);
 

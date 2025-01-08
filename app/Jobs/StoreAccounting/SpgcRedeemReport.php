@@ -2,27 +2,22 @@
 
 namespace App\Jobs\StoreAccounting;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use App\DatabaseConnectionService;
 use App\Exports\StoreAccounting\SpgcRedeemReportExport;
 use App\Exports\StoreAccounting\StoreGcPurchasedReportExport;
 use App\Models\StoreLocalServer;
 use App\Services\Documents\ExportHandler;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Throwable; // Ensure this is imported
-
-class SPGCRedeemReport implements ShouldQueue
+use Throwable; 
+class SpgcRedeemReport implements ShouldQueue
 {
     use Queueable;
-
-    /**
-     * Create a new job instance.
-     */
 
     private array $request;
     protected User|null $user;
@@ -66,5 +61,4 @@ class SPGCRedeemReport implements ShouldQueue
             'stack' => $exception->getTraceAsString(),
         ]);
     }
-
 }

@@ -118,6 +118,8 @@
 </template>
 
 <script setup lang="ts">
+
+
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import axios from "axios";

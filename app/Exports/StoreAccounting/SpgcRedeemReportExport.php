@@ -44,12 +44,10 @@ class SpgcRedeemReportExport extends Progress implements FromCollection, ShouldA
         $balance = 0;
         $bus = "";
         $tnum = "";
-        $puramt = "";
-        $initial = '';
 
         $transformedData = collect();
 
-        $data->each(function ($item) use ($purchasecred, $balance, $bus, $tnum, $puramt, $initial, &$transformedData) {
+        $data->each(function ($item) use ($purchasecred, $balance, $bus, $tnum, &$transformedData) {
 
             $this->broadcast("Generating Report!", StoreAccountReportEvent::class);
 
@@ -148,8 +146,8 @@ class SpgcRedeemReportExport extends Progress implements FromCollection, ShouldA
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->whereYear('vs_date', $this->request['year'])
-            ->when(!is_null($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
-            ->where('vs_store', $this->request['store'])
+            ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
+            ->where('vs_store', $this->request['selectedStore'])
             ->where('special_external_gcrequest.spexgc_promo', '*')
             ->orderBy('vs_id')
             ->get();
