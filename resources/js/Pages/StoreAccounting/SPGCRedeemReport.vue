@@ -186,7 +186,6 @@ const yearlyRedeemButton = async() => {
             state.setOpenFloat(true);
         })
          .catch(({ response }) => {
-             // console.log(response.data.message);
              if (response.status === 422) {
                  notification.error({
                      message: "Fields are Required!",
