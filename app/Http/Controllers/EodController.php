@@ -95,7 +95,11 @@ class EodController extends Controller
        EodScheduler::dispatch();
     }
 
-    public function eodView($id){
-        
+    public function eodView(Request $request, $id){
+        $eod = $this->eodServices->getEodListDetails($id);
+        dd($eod->toArray($request));
+        return inertia('Eod/EodDetails/EodListDetails',[
+            'record' => $eod,
+        ]);
     }
 }

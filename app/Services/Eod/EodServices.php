@@ -2,6 +2,7 @@
 
 namespace App\Services\Eod;
 
+use App\Http\Resources\EodListDetailResources;
 use App\Models\Store;
 use App\Models\StoreEod;
 use App\Models\StoreEodItem;
@@ -11,9 +12,7 @@ use App\Services\Documents\FileHandler;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
-use function Sodium\compare;
 
 class EodServices extends FileHandler
 {
@@ -406,5 +405,19 @@ class EodServices extends FileHandler
     public function generatePdf(int $id)
     {
         return $this->retrieveFile("{$this->folderName}/treasuryEod", "eod{$id}.pdf");
+    }
+    public function getEodListDetails($id){
+
+      $query = StoreEodItem::with(
+        'storeverification.customer',
+        'storeverification.user',
+        'storeverification.type',
+        'storeverification.store'
+        )
+        ->where('st_eod_trid' , $id)
+        ->paginate(10);
+
+
+        return  EodListDetailResources::collection($query);
     }
 }
