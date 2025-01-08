@@ -3,6 +3,7 @@
 namespace App\Jobs\StoreAccounting;
 
 use App\DatabaseConnectionService;
+use App\Exports\StoreAccounting\SpgcRedeemReportExport;
 use App\Exports\StoreAccounting\StoreGcPurchasedReportExport;
 use App\Models\StoreLocalServer;
 use App\Services\Documents\ExportHandler;
@@ -42,7 +43,7 @@ class SPGCRedeemReport implements ShouldQueue
 
         $db = DatabaseConnectionService::getLocalConnection($this->local, $this->request['selectedStore']);
        
-        $doc = new StoreGcPurchasedReportExport($db, $this->request, $this->local, $this->user);
+        $doc = new SpgcRedeemReportExport($db, $this->request, $this->local, $this->user);
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
