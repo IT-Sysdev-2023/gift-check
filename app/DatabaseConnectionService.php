@@ -18,7 +18,7 @@ class DatabaseConnectionService
     public function setHost(){
 
     }
-    public function getConnection($host, $database, $username, $password)
+    public static function getConnection($host, $database, $username, $password)
     {
         config(['database.connections.server_connection' => [
             'driver' => 'mariadb',
@@ -39,16 +39,16 @@ class DatabaseConnectionService
         return DB::connection('server_connection');
     }
 
-    protected function localServer(string|int $store)
+    protected static function localServer(string|int $store)
     {
         $lserver = StoreLocalServer::where('stlocser_storeid', $store)
             ->first(['stlocser_ip', 'stlocser_username', 'stlocser_password']);
 
-        return $this->getConnection($lserver->stlocser_ip, 'gc_local', $lserver->stlocser_username, $lserver->stlocser_password);
+        return self::getConnection($lserver->stlocser_ip, 'gc_local', $lserver->stlocser_username, $lserver->stlocser_password);
     }
 
-    public function getLocalConnection(bool $isLocal, $store){
-        return  $isLocal ? DB::connection('mariadb') : $this->localServer($store);
+    public static function getLocalConnection(bool $isLocal, $store){
+        return  $isLocal ? DB::connection('mariadb') : self::localServer($store);
     }
 
 

@@ -151,8 +151,8 @@
                                 font-size: 90px;
                                 color: #eb5b00;
                                 font-weight: bold;
-                                font-family: &quot;Franklin Gothic Medium&quot;,
-                                    &quot;Arial Narrow&quot;, Arial, sans-serif;
+                                font-family: 'Franklin Gothic Medium',
+                                    'Arial Narrow', Arial, sans-serif;
                             "
                         >
                             GIFT CHECK
@@ -2485,6 +2485,7 @@ onUnmounted(() => {
 });
 
 // page scrolling
+
 const supervisedPage = ref(false);
 const programmerPage = ref(false);
 const analystPage = ref(false);
@@ -2770,6 +2771,7 @@ const maricelModal = ref(false);
     font-size: 20px;
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
+    background-clip: text;
     animation: animate8345 9s linear infinite;
     font-weight: bold;
 }

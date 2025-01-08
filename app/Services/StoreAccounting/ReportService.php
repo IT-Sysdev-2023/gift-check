@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Services\StoreAccounting;
-use App\DatabaseConnectionService;
 use App\Exports\StoreAccounting\StoreGcPurchasedReportExport;
 use App\Exports\StoreAccounting\VerifiedGcReportMultiExport;
+use App\Jobs\StoreAccounting\SPGCRedeemReport;
 use App\Jobs\StoreAccounting\StoreGcPurchasedReport;
 use App\Jobs\StoreAccounting\VerifiedGcReport;
 use App\Models\Store;
@@ -15,16 +15,13 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Services\Documents\ImportHandler;
 use Illuminate\Http\Request;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Facades\DB;
 
-class ReportService extends DatabaseConnectionService
+
+class ReportService
 {
 
     const REMOTE_SERVER_DB = false;
     const LOCAL_DB = true;
-    public function __construct(protected DatabaseConnectionService $databaseConnectionService)
-    {
-    }
     public function verifiedGcYearlySubmit(Request $request)
     {
         $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
@@ -32,33 +29,20 @@ class ReportService extends DatabaseConnectionService
         $isMonthtly = isset($request->month) ? $request->month : null;
 
         if ($isExists) { //OTHER SERVER
-            $server = self::getServerDatabase($request->selectedStore, self::REMOTE_SERVER_DB);
 
-            if (self::checkReveriedData($server, $request->selectedStore, $request->year, $isMonthtly)) {
-                VerifiedGcReport::dispatch($request->all(), $server);
+            if (ReportsHelper::checkReveriedData(self::REMOTE_SERVER_DB, $request->selectedStore, $request->year, $isMonthtly)) {
+                VerifiedGcReport::dispatch($request->all(), self::REMOTE_SERVER_DB);
             } else {
                 return response()->json('No record Found on this date', 404);
             }
 
         } else { //LOCAL
-
-            $server = self::getServerDatabase($request->selectedStore, self::LOCAL_DB);
-            if (self::checkReveriedData($server, $request->selectedStore, $request->year, $isMonthtly)) {
-                VerifiedGcReport::dispatch($request->all(), $server);
+            if (ReportsHelper::checkReveriedData(self::LOCAL_DB, $request->selectedStore, $request->year, $isMonthtly)) {
+                VerifiedGcReport::dispatch($request->all(), self::LOCAL_DB);
             } else {
                 return response()->json('No record Found on this date', 404);
             }
         }
-    }
-
-    private static function checkReveriedData($db, $store, $year, $month)
-    {
-        return DB::connection($db)->table('store_verification')
-            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-            ->whereYear('vs_date', $year)
-            ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
-            ->where('vs_store', $store)
-            ->exists();
     }
 
     public function billingReport(Request $request)
@@ -77,23 +61,23 @@ class ReportService extends DatabaseConnectionService
         if ($request->StoreDataType === 'store-sales') {
 
             $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
-          
+
             if ($isExists) { //OTHER SERVER
 
-                if (self::checkRemoteDbReport($request->selectedStore, $request->year, $isMonthtly, false)) {
-                  
+                if (ReportsHelper::checkRemoteDbReport($request->selectedStore, $request->year, $isMonthtly, self::REMOTE_SERVER_DB)) {
+
                     StoreGcPurchasedReport::dispatch($request->all(), self::REMOTE_SERVER_DB);
-                   
+
                 } else {
                     return response()->json('No record Found on this date', 404);
                 }
 
             } else { //LOCAL
 
-                if (self::checkLocalDbBillingReport($request->selectedStore, $request->year, $isMonthtly, true)) {
+                if (ReportsHelper::checkLocalDbBillingReport($request->selectedStore, $request->year, $isMonthtly, self::LOCAL_DB)) {
 
                     StoreGcPurchasedReport::dispatch($request->all(), self::LOCAL_DB);
-                  
+
                 } else {
                     return response()->json('No record Found on this date', 404);
                 }
@@ -103,45 +87,41 @@ class ReportService extends DatabaseConnectionService
 
     }
 
-    private function checkRemoteDbReport($store, $year, $month, $isLocal)
+    public function redeemReport(Request $request)
     {
-        $server = $this->databaseConnectionService->getLocalConnection($isLocal, $store);
-        return $server->table('store_eod_textfile_transactions')
-                ->join('store_verification', 'store_verification.vs_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
-                ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
-                ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-                ->whereYear('vs_date', $year)
-                ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
-                ->where('vs_store', $store)
-                ->exists();
-    }
+        $request->validate([
+            "year" => 'required',
+            "selectedStore" => 'required',
+            "SPGCDataType" => "required"
+        ]);
 
-    private function checkLocalDbBillingReport($store, $year, $month, $isLocal){
+        $isMonthtly = isset($request->month) ? $request->month : null;
 
-        // dd($store, $year, $month, $isLocal);
-        $server = $this->databaseConnectionService->getLocalConnection($isLocal, $store);
-        return  $server->table('store_eod_textfile_transactions')
-                ->join('transaction_sales', 'transaction_sales.sales_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
-                ->join('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_sales.sales_transaction_id')
-                ->join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
-                ->join('store_verification', 'store_verification.vs_barcode', '=', 'transaction_sales.sales_barcode')
-                ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-                ->whereYear('vs_date', $year)
-                ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
-                ->where('trans_store', $store)
-                ->whereRaw('stores.store_initial <> SUBSTRING(store_eod_textfile_transactions.seodtt_bu, 1, 5)')
-                ->exists();
-    }
-    private static function getServerDatabase(string|int $store, bool $islocal)
-    {
+        if ($request->SPGCDataType === 'srv') {
 
-        $lserver = StoreLocalServer::where('stlocser_storeid', $store)
-            ->value('stlocser_ip');
+            $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
 
-        $parts = collect(explode('.', $lserver));
-        $result = $islocal ? '' : '-' . $parts->slice(2)->implode('.');
+            if ($isExists) { //OTHER SERVER
 
-        return 'mariadb' . $result;
+                if (ReportsHelper::checkRemoteDbBillingReport(self::REMOTE_SERVER_DB, $request->selectedStore, $isMonthtly, $request->year)) {
+
+                    SPGCRedeemReport::dispatch($request->all(), self::REMOTE_SERVER_DB);
+
+                } else {
+                    return response()->json('No record Found on this date', 404);
+                }
+
+            } else { //LOCAL
+
+                if (ReportsHelper::checkLocalDbBillingReport($request->selectedStore, $request->year, $isMonthtly, self::LOCAL_DB)) {
+
+                    SPGCRedeemReport::dispatch($request->all(), self::LOCAL_DB);
+
+                } else {
+                    return response()->json('No record Found on this date', 404);
+                }
+            }
+        }
     }
 
     public function generatedReports(Request $request)
@@ -150,17 +130,5 @@ class ReportService extends DatabaseConnectionService
         return inertia('Treasury/Reports/GeneratedReports', [
             'files' => $getFiles
         ]);
-    }
-    private static function getStoreVerification($model, Request $request)
-    {
-        return $model->where(fn($q) =>
-            $q->whereYear('vs_date', $request->year)
-                ->orWhereYear('vs_reverifydate', $request->year))
-            ->where('vs_store', $request->selectedStore)
-            ->when($request->user()->username === 'flora2', function (Builder $builder) {
-                $builder->where('vs_gctype', 3);
-            })
-            ->limit(10)
-            ->get();
     }
 }

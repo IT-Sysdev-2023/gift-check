@@ -1,8 +1,19 @@
 <template>
     <a-card>
-        <a-card title="CUSTOMER SETUP"></a-card>
-        <div style="margin-left: 70%; margin-top: 10px">
+        <div>
+            <a-button
+                class="back-button"
+                @click="backButton"
+                style="border: 1px solid whitesmoke"
+                ><RollbackOutlined />Back</a-button
+            >
+        </div>
+        <div style="margin-top: 20px;">
+            <h2>Customer Setup</h2>
+        </div>
+        <div style="margin-left: 70%;">
             <a-input-search
+                enter-button
                 allow-clear
                 placeholder="input search text"
                 v-model:value="searchTerm"
@@ -10,6 +21,7 @@
                 style="width: 80%"
             />
         </div>
+
         <a-tabs
             id="tabs"
             v-model:value="dataFortabs.tabs"
@@ -108,18 +120,6 @@
             </a-tab-pane>
         </a-tabs>
     </a-card>
-
-    <!-- <span style="font-weight: bold;">
-        Show
-        <a-select id="select_entries" v-model:value="dataForSelectEntries.select_entries" @change="changeSelectEntries"
-            style="background-color: #0286df; border: 1px solid #0286df; margin-top: 10px;" placeholder="10">
-            <a-select-option value="10">10</a-select-option>
-            <a-select-option value="25">25</a-select-option>
-            <a-select-option value="50">50</a-select-option>
-            <a-select-option value="100">100</a-select-option>
-        </a-select>
-        entries
-    </span> -->
 
     <a-modal v-model:open="modalForStoreCustomer" @ok="storeCustomerUpdate">
         <span style="color: #0286df; font-size: 17px">
@@ -371,8 +371,6 @@ export default {
         institutional: Object,
         special: Object,
         store: Object,
-        // institutionalCustomer: Object,
-        // specialCustomer: Object
     },
     data() {
         return {
@@ -770,6 +768,9 @@ export default {
                 },
             );
         },
+        backButton() {
+            this.$inertia.get(route('admin.dashboard'))
+        }
     },
 };
 </script>
@@ -784,5 +785,9 @@ export default {
     width: 20%;
     min-width: 120px;
     border: 1px solid #0286df;
+}
+.back-button {
+    font-weight: bold;
+    font-family: "Poppins", sans-serif;
 }
 </style>

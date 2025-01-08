@@ -276,6 +276,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import pickBy from "lodash/pickBy";
 import { notification } from 'ant-design-vue';
 import { useForm } from '@inertiajs/vue3';
+import axios from 'axios';
 export default {
     layout: AuthenticatedLayout,
     props: {

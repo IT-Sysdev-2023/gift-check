@@ -1,19 +1,32 @@
 <template>
     <a-card>
-        <a-card title="STORE STAFF SETUP"> </a-card>
+        <div>
+            <a-button
+                class="back-button"
+                @click="backButton"
+                style="border: 1px solid whitesmoke"
+                ><RollbackOutlined />Back</a-button
+            >
+        </div>
+
         <div style="margin-left: 82.5%">
             <a-button
-                style="background-color: #1e90ff; color: white"
+                style="background-color: #1b76f8; color: white"
                 @click="() => (open = true)"
             >
                 <PlusOutlined /> Add New User
             </a-button>
         </div>
 
-        <div style="margin-left: 70%; margin-top: 10px">
+        <div>
+            <h2>Store Staff Setup</h2>
+        </div>
+
+        <div style="margin-left: 70%">
             <a-input-search
                 allow-clear
                 placeholder="Input search here!"
+                enter-button
                 v-model:value="searchTerm"
                 size="medium"
                 style="width: 80%"
@@ -39,7 +52,7 @@
                         <a-button
                             @click="changePassword(record)"
                             title="Change Password"
-                            style="color: white; background-color: #1e90ff"
+                            style="color: white; background-color: #1b76f8"
                         >
                             <UndoOutlined />
                         </a-button>
@@ -628,6 +641,9 @@ export default {
                 },
             );
         },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
+        },
     },
 };
 </script>
@@ -653,5 +669,9 @@ export default {
     margin-right: 8%;
     min-width: 120px;
     margin-top: 1%;
+}
+.back-button {
+    font-weight: bold;
+    font-family: "Poppins", sans-serif;
 }
 </style>

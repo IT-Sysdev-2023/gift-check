@@ -1,18 +1,29 @@
 <template>
     <a-card>
-        <a-card title="STORE SETUP"> </a-card>
+        <div>
+            <a-button
+                class="back-button"
+                @click="backButton"
+                style="border: 1px solid whitesmoke"
+                ><RollbackOutlined />Back</a-button
+            >
+        </div>
         <div style="margin-left: 82%">
             <a-button
-                style="background-color: #1e90ff; color: white"
+                style="background-color: #1b76f8; color: white"
                 @click="() => (addStore = true)"
             >
                 <PlusOutlined /> Add New Store
             </a-button>
         </div>
+        <div>
+            <h2>Store Setup</h2>
+        </div>
 
-        <div style="margin-left: 70%; margin-top: 10px">
+        <div style="margin-left: 70%">
             <a-input-search
                 allow-clear
+                enter-button
                 v-model:value="searchTerm"
                 placeholder="Input search here!"
                 size="medium"
@@ -28,13 +39,6 @@
             >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
-                        <!-- <label title="Isssue Receipt" class="toggle-switch">
-                            <input type="checkbox" v-model="record.status" @change="issueReceipt(record)" />
-                            <span class="toggle-switch__slider">
-
-                            </span>
-
-                        </label> -->
                         <a-switch
                             title="Issue Receipt"
                             v-model:checked="record.status"
@@ -43,7 +47,7 @@
                             un-checked-children="NO"
                             :style="{
                                 backgroundColor: record.status
-                                    ? '#0286df'
+                                    ? '#1b76f8'
                                     : 'darkgray',
                             }"
                         />
@@ -248,6 +252,9 @@ export default {
                 },
             );
         },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
+        },
     },
 };
 </script>
@@ -273,5 +280,9 @@ export default {
     margin-right: 8.2%;
     min-width: 120px;
     margin-top: 1%;
+}
+.back-button {
+    font-weight: bold;
+    font-family: "Poppins", sans-serif;
 }
 </style>

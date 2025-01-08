@@ -3,6 +3,7 @@
 namespace App\Jobs\StoreAccounting;
 
 use App\DatabaseConnectionService;
+use App\Exports\StoreAccounting\SpgcRedeemReportExport;
 use App\Exports\StoreAccounting\StoreGcPurchasedReportExport;
 use App\Models\StoreLocalServer;
 use App\Services\Documents\ExportHandler;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable; // Ensure this is imported
 
-class StoreGcPurchasedReport implements ShouldQueue
+class SPGCRedeemReport implements ShouldQueue
 {
     use Queueable;
 
@@ -42,11 +43,11 @@ class StoreGcPurchasedReport implements ShouldQueue
 
         $db = DatabaseConnectionService::getLocalConnection($this->local, $this->request['selectedStore']);
        
-        $doc = new StoreGcPurchasedReportExport($db, $this->request, $this->local, $this->user);
+        $doc = new SpgcRedeemReportExport($db, $this->request, $this->local, $this->user);
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
-            ->setFileName("Store Gc Purchased Report ($label)-" . $this->user->user_id, $this->request['year'])
+            ->setFileName("Special Gc Redeem Report ($label)-" . $this->user->user_id, $this->request['year'])
             ->exportDocument('excel', $doc)
             ->deleteFileIn(now()->addDays(2));
     }
