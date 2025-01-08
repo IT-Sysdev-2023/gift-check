@@ -221,6 +221,7 @@ declare module 'vue' {
     Envelope: typeof import('./resources/js/Pages/Treasury/Transactions/ProductionRequest/Envelope.vue')['default']
     EodDashboard: typeof import('./resources/js/Pages/Eod/EodDashboard.vue')['default']
     EodList: typeof import('./resources/js/Pages/Eod/Cards/EodList.vue')['default']
+    EodListDetails: typeof import('./resources/js/Pages/Eod/EodDetails/EodListDetails.vue')['default']
     EodListTreasury: typeof import('./resources/js/Pages/Treasury/Dashboard/Eod/EodListTreasury.vue')['default']
     EodReport: typeof import('./resources/js/Pages/Treasury/Reports/EodReport.vue')['default']
     EodReports: typeof import('./resources/js/Pages/Admin/EodReports.vue')['default']
