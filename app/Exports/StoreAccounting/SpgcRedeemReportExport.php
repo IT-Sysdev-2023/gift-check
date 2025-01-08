@@ -190,7 +190,6 @@ class SpgcRedeemReportExport extends Progress implements FromCollection, ShouldA
             ($data['cus_mname'] ?? '') .
             ($data['cus_namext'] ? " {$data['cus_namext']}." : ''));
 
-
         return [
             (new \DateTime($data['date']))->format('F j, Y'),
             $data['barcode'],

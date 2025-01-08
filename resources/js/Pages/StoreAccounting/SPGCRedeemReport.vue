@@ -147,7 +147,7 @@ const state = useQueueState();
 const monthlySubmitButton = async () => {
     await axios
         .post(route("storeaccounting.redeemReportSubmit"), {
-            month: dayjs(monthlyRedeem.value.year).month() + 1, // cause in Dayjs January returns indexed 0
+            month: dayjs(monthlyRedeem.value.year).month() + 1, // cause in Dayjs January returns 0 in month
             year: dayjs(monthlyRedeem.value.year).year(),
             selectedStore: monthlyRedeem.value.selectedStore,
             SPGCDataType: monthlyRedeem.value.SPGCDataType,
