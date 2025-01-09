@@ -1986,17 +1986,9 @@ class StoreAccountingController extends Controller
 
     public function verifiedStore()
     {
-        return Inertia::render('StoreAccounting/VerifiedStore');
-    }
-
-    public function puchasedMonthlySubmit(Request $request)
-    {
-        dd($request->toArray());
-    }
-
-    public function purchasedYearlySubmit(Request $request)
-    {
-        dd($request->toArray());
+        return Inertia::render('StoreAccounting/VerifiedStore', [
+            'stores' => Store::selectStore()->get()
+        ]);
     }
 
     public function SPGCApproved(Request $request)

@@ -31,4 +31,17 @@ class ReportController extends Controller
         return $this->reportService->redeemReport($request);
     }
 
+    public function verifiedStoreSubmit(Request $request)
+    {
+        $request->validate([
+            'year' => 'required',
+            'store' => 'required',
+            'type' => 'required',
+        ]);
+
+        
+        
+        dd($request->all());
+    }
+
 }

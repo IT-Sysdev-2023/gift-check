@@ -831,8 +831,7 @@ Route::middleware(['auth'])->group(function () {
                             Route::post('redeem-monthly-submit', [ReportController::class, 'redeemReportSubmit'])->name('redeemReportSubmit');
                             // verified store
                             Route::get('verified-store-purchased', [StoreAccountingController::class, 'verifiedStore'])->name('verifiedStore');
-                            Route::get('monthly-submit', [StoreAccountingController::class, 'puchasedMonthlySubmit'])->name('puchasedMonthlySubmit');
-                            Route::get('yearly-submit', [StoreAccountingController::class, 'purchasedYearlySubmit'])->name('purchasedYearlySubmit');
+                            Route::post('yearly-submit', [ReportController::class, 'verifiedStoreSubmit'])->name('verifiedStoreSubmit');
                             // spgc approved
                             Route::get('spgc-approved', [StoreAccountingController::class, 'SPGCApproved'])->name('SPGCApproved');
                             Route::get('generate-excel-perCustomer', [StoreAccountingController::class, 'SPGCExcel'])->name('SPGCApprovedExcel');
