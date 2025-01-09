@@ -463,6 +463,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
             Route::get('list', [EodController::class, 'list'])->name('list');
             Route::get('eod-view-{id}', [EodController::class, 'eodView'])->name('store.view');
+            Route::get('eod-txt-{id}', [EodController::class, 'eodViewDeodViewDetails'])->name('txt');
+
         });
     });
 

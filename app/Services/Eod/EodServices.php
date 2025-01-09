@@ -168,9 +168,7 @@ class EodServices extends FileHandler
                         $this->storeVerificationTextFile($item, $id, $wholesaletime);
 
                         $this->storeEodItem($item, $id);
-
                     });
-
                 } else {
 
                     $file = $item['txtfile_ip'] . '\\' . $item['ver_textfilename'];
@@ -406,18 +404,39 @@ class EodServices extends FileHandler
     {
         return $this->retrieveFile("{$this->folderName}/treasuryEod", "eod{$id}.pdf");
     }
-    public function getEodListDetails($id){
+    public function getEodListDetails($id)
+    {
 
-      $query = StoreEodItem::with(
-        'storeverification.customer',
-        'storeverification.user',
-        'storeverification.type',
-        'storeverification.store'
+        $query = StoreEodItem::with(
+            'storeverification:vs_barcode,vs_cn,vs_store,vs_by,vs_date,vs_reverifydate,vs_gctype,vs_tf_denomination,vs_tf_balance,vs_time',
+            'storeverification.customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext',
+            'storeverification.user:user_id,firstname,lastname',
+            'storeverification.type:gc_type_id,gctype',
+            'storeverification.store:store_id,store_name'
         )
-        ->where('st_eod_trid' , $id)
-        ->paginate(10);
+            ->where('st_eod_trid', $id)
+            ->orderByDesc('st_eod_barcode')
+            ->paginate(10);
 
+        return EodListDetailResources::collection($query);
+    }
 
-        return  EodListDetailResources::collection($query);
+    public function getEodListDetailsTxt($barcode)
+    {
+       return StoreEodTextfileTransaction::select(
+            'seodtt_line',
+            'seodtt_creditlimit',
+            'seodtt_credpuramt',
+            'seodtt_addonamt',
+            'seodtt_balance',
+            'seodtt_transno',
+            'seodtt_timetrnx',
+            'seodtt_bu',
+            'seodtt_terminalno',
+            'seodtt_ackslipno',
+            'seodtt_crditpurchaseamt'
+        )->where('seodtt_barcode', $barcode)
+        ->orderBy('seodtt_id')
+        ->get();
     }
 }
