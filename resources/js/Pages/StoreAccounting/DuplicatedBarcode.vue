@@ -1273,15 +1273,12 @@ export default {
                     },
                 });
             } else {
-                const notificationWithIcon = (type) => {
-                    notification[type]({
+                    notification.warning({
                         message: "File Selection Required",
                         description:
                             "Please choose file first or the selected Textfile has no data found",
                         placement: "topRight",
                     });
-                };
-                notificationWithIcon("warning");
                 return;
             }
         },

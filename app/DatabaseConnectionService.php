@@ -39,7 +39,7 @@ class DatabaseConnectionService
         return DB::connection('server_connection');
     }
 
-    protected static function localServer(string|int $store)
+    public static function localServer(string|int $store)
     {
         $lserver = StoreLocalServer::where('stlocser_storeid', $store)
             ->first(['stlocser_ip', 'stlocser_username', 'stlocser_password']);

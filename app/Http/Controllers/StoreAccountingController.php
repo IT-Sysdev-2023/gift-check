@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DatabaseConnectionService;
 use App\Exports\StoreAccounting\VerifiedGcReportMultiExport;
 use App\Models\Store;
 use App\Models\StoreLocalServer;
@@ -2578,7 +2579,7 @@ class StoreAccountingController extends Controller
 
         $talibonSearch = $request->input('search5', '');
 
-        $talibon = DB::table('store_verification')
+        $talibon = DatabaseConnectionService::localServer(2)->table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->select(
@@ -2623,7 +2624,7 @@ class StoreAccountingController extends Controller
 
         $tubigonSearch = $request->input('search6', '');
 
-        $tubigon = DB::table('store_verification')
+        $tubigon = DatabaseConnectionService::localServer(5)->table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->select(
@@ -2737,7 +2738,7 @@ class StoreAccountingController extends Controller
             ->withQueryString();
 
         $talibonSearch = $request->input('search2', '');
-        $talibon = DB::table('store_verification')
+        $talibon = DatabaseConnectionService::localServer(2)->table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->select(
@@ -2781,7 +2782,7 @@ class StoreAccountingController extends Controller
             ->withQueryString();
 
         $tubigonSearch = $request->input('search3', '');
-        $tubigon = DB::table('store_verification')
+        $tubigon = DatabaseConnectionService::localServer(5)->table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->select(
@@ -2938,7 +2939,7 @@ class StoreAccountingController extends Controller
 
         $talibonSearch = $request->talibonSearch;
 
-        $talibon = DB::table('special_external_gcrequest_emp_assign')
+        $talibon = DatabaseConnectionService::localServer(2)->table('special_external_gcrequest_emp_assign')
             ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
             ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
