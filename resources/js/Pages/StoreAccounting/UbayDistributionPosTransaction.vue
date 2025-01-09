@@ -1,14 +1,26 @@
 <template>
     <a-card>
-        <a-card>
-            <div style="font-weight: bold">
-                GC Barcode #{{ barcodeNumber }} POS Transaction
-            </div>
-        </a-card>
+        <a-button
+            @click="
+                () =>
+                    $inertia.get(
+                        route('storeaccounting.ubayDistribution', { id: 10 }),
+                    )
+            "
+        >
+            <RollbackOutlined />Back
+        </a-button>
+        <span
+            style="
+                font-weight: bold;
+                font-family: sans-serif;
+                font-size: 50px;
+                margin-left: 50px;
+            "
+        >
+            GC Barcode #{{ barcodeNumber }} POS Transaction
+        </span>
 
-        <!-- <div class="input-wrapper">
-            <input type="search" placeholder="Input search here..." name="text" class="input" v-model="alturasSearch"/>
-        </div> -->
         <div>
             <a-input
                 allow-clear

@@ -1,13 +1,23 @@
 <template>
     <a-card>
-        <a-card>
-            <div style="font-weight: bold">
-                GC Barcode #{{ barcodeNumber }} POS Transaction
-            </div>
-        </a-card>
-        <!-- <div class="input-wrapper">
-            <input type="search" placeholder="Input search here..." name="text" class="input" v-model="alturasSearch" />
-        </div> -->
+        <a-button
+            @click="
+                () =>
+                    $inertia.get(
+                        route('storeaccounting.farmersMarket', { id: 9 }),
+                    )
+            "
+        ><RollbackOutlined />Back</a-button>
+        <span
+            style="
+                font-weight: bold;
+                font-family: sans-serif;
+                font-size: 1rem;
+                margin-left: 50px;
+            "
+        >
+            GC Barcode #{{ barcodeNumber }} POS Transaction
+        </span>
 
         <div style="font-weight: bold; margin-left: 70%; margin-top: 10px">
             <a-input-search
@@ -33,7 +43,6 @@
     <!-- {{ data }} -->
 </template>
 <script>
-// import { defineComponent } from '@vue/composition-api'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Pagination from "@/Components/Pagination.vue";
 import { notification } from "ant-design-vue";

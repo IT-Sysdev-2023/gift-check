@@ -100,7 +100,6 @@ Route::middleware('auth')->group(function () {
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing,admin');
 
     Route::get('storeaccounting-dashboard', [StoreAccountingController::class, 'storeAccountingDashboard'])->name('storeaccounting.dashboard');
-
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -537,7 +536,6 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('budget-adjustments-submit', [FinanceController::class, 'budgetAdjustmentSubmission'])->name('submit');
             });
         });
-
     })->middleware('userType:finance');
 
     Route::get('/download/{filename}', function ($filename) {
@@ -613,7 +611,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('gc-transfer-list', [RetailController::class, 'gctransferList'])->name('list');
             });
             Route::name('supplier-gc-verification')->group(function () {
-                Route::get('create', [RetailController::class,'suppliergcverification'])->name('suppliergcverification');
+                Route::get('create', [RetailController::class, 'suppliergcverification'])->name('suppliergcverification');
             });
         });
     });
@@ -862,7 +860,7 @@ Route::middleware(['auth'])->group(function () {
                     );
             }
         );
-        // About Us
+    // About Us
     Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('AboutUs');
 
     // Users Guide

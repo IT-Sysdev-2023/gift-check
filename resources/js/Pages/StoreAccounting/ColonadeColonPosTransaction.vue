@@ -1,22 +1,32 @@
 <template>
     <a-card>
-        <a-card>
-            <div style="font-weight: bold">
-                GC Barcode #{{ barcodeNumber }} POS Transaction
-            </div>
-        </a-card>
-        <!-- <div class="input-wrapper">
-            <input
-                type="search"
-                placeholder="Input search here..."
-                name="text"
-                class="input"
-                v-model="alturasSearch"
-            />
-        </div> -->
+        <a-button
+            @click="
+                () =>
+                    $inertia.get(
+                        route('storeaccounting.colonadeColon', { id: 6 }),
+                    )
+            "
+            ><RollbackOutlined />Back</a-button
+        >
+        <span
+            style="
+                font-weight: bold;
+                font-family: sans-serif;
+                font-size: 1rem;
+                margin-left: 50px;
+            "
+        >
+            GC Barcode #{{ barcodeNumber }} POS Transaction
+        </span>
 
-        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
-            <a-input-search allow-clear v-model:value="alturasSearch" style="width: 90%;" enter-button />
+        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px">
+            <a-input-search
+                allow-clear
+                v-model:value="alturasSearch"
+                style="width: 90%"
+                enter-button
+            />
         </div>
         <div style="margin-top: 10px">
             <a-table
