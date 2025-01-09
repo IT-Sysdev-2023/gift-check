@@ -191,7 +191,8 @@ class CustodianController extends Controller
     }
     public function releasedDetails($id){
         return inertia('Custodian/ReleasedDetailComponent', [
-            'records' => $this->custodianservices->fetchReleasedDetails($id)
+            'records' => $this->custodianservices->fetchReleasedDetails($id),
+            'id' => $id
         ]);
     }
 }

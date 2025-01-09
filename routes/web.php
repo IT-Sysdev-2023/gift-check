@@ -677,6 +677,7 @@ Route::middleware(['auth'])->group(function () {
             });
 
             Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
+            Route::get('released-reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request.released');
             Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
         });
     });
