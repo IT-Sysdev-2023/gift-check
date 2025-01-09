@@ -1,5 +1,10 @@
 <template>
     <AuthenticatedLayout>
+        <!--WARNING!
+            THIS COMPONENT IS BEING USED ACCROSS DIFFERENT USERTYPES 
+            DONT YOU DARE TO CHANGE SOMETHING IN THIS COMPONENT UNLESS YOU KNOW WHAT YOU'RE DOING YOU PIECE OF SH*T? 
+            INGNA SA YES master! HAHAHAHA 
+        -->
         <Head title="List Of Generated Reports" />
         <a-breadcrumb>
             <a-breadcrumb-item>
@@ -33,7 +38,7 @@
                         active
                     >
                         <a-list-item-meta
-                            :description="'Will be deleted: ' + item.expiration"
+                            :description="'Will be deleted in: ' + item.expiration"
                         >
                             <template #title>
                                 <span>{{ item.filename }}</span>
