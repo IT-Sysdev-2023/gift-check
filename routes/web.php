@@ -610,8 +610,8 @@ Route::middleware(['auth'])->group(function () {
             Route::name('gc-transfer.')->group(function () {
                 Route::get('gc-transfer-list', [RetailController::class, 'gctransferList'])->name('list');
             });
-            Route::name('supplier-gc-verification')->group(function () {
-                Route::get('create', [RetailController::class,'suppliergcverification'])->name('suppliergcverification');
+            Route::name('supplier-gc-verification.')->group(function () {
+                Route::get('supplier-gc-verification', [RetailController::class,'suppliergcverification'])->name('suppliergcverification');
             });
         });
     });
