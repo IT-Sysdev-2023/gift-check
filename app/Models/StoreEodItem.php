@@ -15,4 +15,12 @@ class StoreEodItem extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public function storeverification(){
+        return $this->belongsTo(StoreVerification::class, 'st_eod_barcode', 'vs_barcode');
+    }
+
+    // public function customers(){
+    //     // return $this->belongsTo(Customer)
+    // }
 }

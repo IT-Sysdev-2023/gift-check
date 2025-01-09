@@ -889,7 +889,7 @@ class RetailController extends Controller
 
     public function suppliergcverification()
     {
-        dd(1);
+        return inertia('Retail/SupplierGcVerification');
     }
 
 
