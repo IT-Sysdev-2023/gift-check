@@ -63,16 +63,12 @@
 
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import axios, { AxiosResponse } from "axios";
-import { Dayjs } from "dayjs";
-import { useForm } from "laravel-precognition-vue";
-import { PageWithSharedProps } from "@/types/index";
-import { usePage } from "@inertiajs/vue3";
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import axios from "axios";
+
+import { ref } from "vue";
 import { notification } from "ant-design-vue";
 import { useQueueState } from "@/stores/queue-state";
 
-const page = usePage<PageWithSharedProps>().props;
 defineProps<{
     title: string;
     store: {
@@ -80,11 +76,6 @@ defineProps<{
         value: string;
     }[];
 }>();
-
-// let eventReceived; // Holds the resolve function of the promise
-// const waitForEvent = new Promise((resolve) => {
-//     eventReceived = resolve; // Set the resolve function for later
-// });
 
 const handleStore = (val) => {
     formState.value.store = val;
@@ -106,7 +97,7 @@ const onSubmit = async () => {
                 ...formState.value,
             },
         })
-        .then((e) => {
+        .then(() => {
             state.setGenerateButton(true);
             state.setFloatButton(true);
             state.setOpenFloat(true);
@@ -127,9 +118,9 @@ const onSubmit = async () => {
 //     leaveChannel();
 // });
 
-const leaveChannel = () => {
-    window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);
-};
+// const leaveChannel = () => {
+//     window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);
+// };
 
 const labelCol = { style: { width: "150px" } };
 const wrapperCol = { span: 14 };

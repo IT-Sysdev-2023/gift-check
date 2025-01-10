@@ -70,7 +70,7 @@ Route::get('kanding', function () {
 });
 
 
-//* Please install "Better Comments extension" to see comments clearly
+//* Please install "Better Comments extension in VS Code" to see comments clearly
 //! AUTHENTICATION SECTION
 Route::middleware('auth')->group(function () {
     Route::get('employee', [UserDetailsController::class, 'index']);

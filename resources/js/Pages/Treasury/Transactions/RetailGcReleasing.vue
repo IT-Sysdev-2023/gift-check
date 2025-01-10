@@ -1,9 +1,7 @@
 <script setup>
 import { highlighten } from "@/../../resources/js/Mixin/UiUtilities";
-import { ref } from "vue";
 
 const { highlightText } = highlighten();
-
 </script>
 <template>
     <Head :title="title" />
@@ -80,8 +78,6 @@ import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayou
 import dayjs from "dayjs";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
-import _ from "lodash";
-import ProgressBar from "@/Components/Finance/ProgressBar.vue";
 
 export default {
     layout: AuthenticatedLayout,
