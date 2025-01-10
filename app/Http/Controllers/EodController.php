@@ -97,9 +97,14 @@ class EodController extends Controller
 
     public function eodView(Request $request, $id){
         $eod = $this->eodServices->getEodListDetails($id);
-        dd($eod->toArray($request));
         return inertia('Eod/EodDetails/EodListDetails',[
             'record' => $eod,
+        ]);
+    }
+
+    public function eodViewDeodViewDetails($barcode){
+        return response()->json([
+            'data' => $this->eodServices->getEodListDetailsTxt($barcode)
         ]);
     }
 }

@@ -37,6 +37,7 @@ class ReprintPdf
     }
     public function reprintRequestService($id)
     {
+        // dd($id);
         $html = $this->htmlStructure($id);
 
         $options = new Options();

@@ -100,7 +100,6 @@ Route::middleware('auth')->group(function () {
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing,admin');
 
     Route::get('storeaccounting-dashboard', [StoreAccountingController::class, 'storeAccountingDashboard'])->name('storeaccounting.dashboard');
-
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -463,6 +462,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
             Route::get('list', [EodController::class, 'list'])->name('list');
             Route::get('eod-view-{id}', [EodController::class, 'eodView'])->name('store.view');
+            Route::get('eod-txt-{id}', [EodController::class, 'eodViewDeodViewDetails'])->name('txt');
+
         });
     });
 
@@ -537,7 +538,6 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('budget-adjustments-submit', [FinanceController::class, 'budgetAdjustmentSubmission'])->name('submit');
             });
         });
-
     })->middleware('userType:finance');
 
     Route::get('/download/{filename}', function ($filename) {
@@ -677,6 +677,7 @@ Route::middleware(['auth'])->group(function () {
             });
 
             Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
+            Route::get('released-reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request.released');
             Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
         });
     });
@@ -861,7 +862,7 @@ Route::middleware(['auth'])->group(function () {
                     );
             }
         );
-        // About Us
+    // About Us
     Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('AboutUs');
 
     // Users Guide
