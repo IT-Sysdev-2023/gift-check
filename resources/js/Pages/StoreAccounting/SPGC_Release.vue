@@ -724,7 +724,7 @@ export default {
                             fileLink.href = fileURL;
                             fileLink.setAttribute(
                                 "download",
-                                "Release-file.pdf",
+                                "Pdf-Release-file.pdf",
                             );
                             document.body.appendChild(fileLink);
                             fileLink.click();

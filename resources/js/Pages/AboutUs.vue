@@ -2333,7 +2333,7 @@
                         <ul class="example-2">
                             <li class="icon-content">
                                 <a
-                                    href="https://linkedin.com/"
+                                    href="https://twitter.com/"
                                     aria-label="LinkedIn"
                                     data-social="linkedin"
                                 >
@@ -2355,7 +2355,7 @@
                             </li>
                             <li class="icon-content">
                                 <a
-                                    href="https://linkedin.com/"
+                                    href="https://facebook.com/"
                                     aria-label="LinkedIn"
                                     data-social="linkedin"
                                 >
