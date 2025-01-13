@@ -59,7 +59,7 @@
                     </template>
                 </template>
             </a-table>
-
+    
             <pagination :datarecords="record" class="mt-5" />
         </a-card>
     </AuthenticatedLayout>
