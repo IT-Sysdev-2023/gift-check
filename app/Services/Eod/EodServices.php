@@ -2,6 +2,7 @@
 
 namespace App\Services\Eod;
 
+use App\Helpers\NumberHelper;
 use App\Http\Resources\EodListDetailResources;
 use App\Models\Store;
 use App\Models\StoreEod;
@@ -11,6 +12,7 @@ use App\Models\StoreVerification;
 use App\Services\Documents\FileHandler;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 
 
@@ -23,7 +25,6 @@ class EodServices extends FileHandler
     }
     public function getVerifiedFromStore()
     {
-
         $eod = StoreVerification::selectFilter()->join('users', 'user_id', '=', 'vs_by')
             ->join('customers', 'cus_id', '=', 'vs_cn')
             ->join('stores', 'store_id', '=', 'vs_store')
@@ -35,12 +36,16 @@ class EodServices extends FileHandler
                     ->orWhereDate('vs_date', '<=', today());
             })
             ->orderByDesc('vs_id')
-            ->paginate(10)->withQueryString();
+            ->paginate(10)
+            ->withQueryString();
 
         $eod->transform(function ($item) {
             $item->dateFmatted = Date::parse($item->vs_date)->toFormattedDateString();
             $item->fullname = $item->firstname . ' ' . $item->lastname;
             $item->status = is_null($item->vs_reverifydate) ? 'Verified' : 'Reverified';
+            $item->date = Date::parse($item->vs_date)->toFormattedDateString();
+            $item->formattedType = Str::title($item->gctype);
+            $item->formattedDenom = NumberHelper::currency($item->vs_tf_denomination);
             return $item;
         });
 
@@ -115,8 +120,6 @@ class EodServices extends FileHandler
                 });
 
                 if ($res) {
-                    // dd();
-
                     $txtfiles_temp[] = [
                         'ver_barcode' => $item->vs_barcode,
                         'ver_textfilename' => $item->vs_tf,
@@ -157,7 +160,6 @@ class EodServices extends FileHandler
             }
 
             $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss) {
-                // dd($item);
 
                 if ($item['payto'] == '') {
 
