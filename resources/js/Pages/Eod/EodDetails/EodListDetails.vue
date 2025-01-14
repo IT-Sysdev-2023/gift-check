@@ -18,6 +18,7 @@
             <pagination-resource :datarecords="record" />
         </a-card>
 
+
         <a-modal v-model:open="openmodal" style="width: auto;" :footer="null">
             <template #title>
                 <p class="text-center">Text File Details</p>
