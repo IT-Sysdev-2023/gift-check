@@ -1,5 +1,8 @@
 <template>
     <AuthenticatedLayout>
+        <div class="flex justify-end">
+            <a-button class="m-2" @click="() => $inertia.get(route('eod.list'))"><RollbackOutlined /> Back to list</a-button>
+        </div>
         <a-card>
             <a-table :pagination="false" size="small" :data-source="record.data" :columns="columns">
                 <template #bodyCell="{ column, record }">

@@ -13,7 +13,7 @@
                         <a-descriptions-item label="Time Requested:">YES</a-descriptions-item>
                         <a-descriptions-item label="Requested Prepared By:">{{ data.approved.rname }}, {{
                             data.approved.rsname
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                         <a-descriptions-item label="Remarks" :span="2">
                             <a-badge status="processing" :text="data.approved.pe_remarks" />
                         </a-descriptions-item>
@@ -37,7 +37,9 @@
                     <a-button block class="mb-3" @click="requistion">
                         <ArrowsAltOutlined /> Requisiton Created Details
                     </a-button>
-                    <a-button block class="mb-3" type="primary">
+                    <a-button block class="mb-3" type="primary" @click="
+                        reprint(data.approved.pe_num)
+                        ">
                         <PrinterOutlined /> Reprint this Request Details
                     </a-button>
                 </a-col>
@@ -139,27 +141,34 @@
                 </a-card>
             </a-modal>
 
-            <a-modal v-model:open="ropen" :width="1000" >
+            <a-modal v-model:open="ropen" :width="1000">
                 <template #title>
-                 <p class="text-center"> Requisition Details</p>
+                    <p class="text-center"> Requisition Details</p>
                 </template>
                 <a-card>
                     <a-descriptions size="small" layout="vertical" bordered>
-                        <a-descriptions-item label="Request No">{{ requisitionDetails.requis_erno }}</a-descriptions-item>
-                        <a-descriptions-item label="Date Requested">{{ requisitionDetails.requis_req }}</a-descriptions-item>
+                        <a-descriptions-item label="Request No">{{ requisitionDetails.requis_erno
+                            }}</a-descriptions-item>
+                        <a-descriptions-item label="Date Requested">{{ requisitionDetails.requis_req
+                            }}</a-descriptions-item>
                         <a-descriptions-item label="Location">{{ requisitionDetails.requis_loc }}</a-descriptions-item>
-                        <a-descriptions-item label="Department">{{ requisitionDetails.requis_dept }}</a-descriptions-item>
-                        <a-descriptions-item label="Remarks" :span="3">{{ requisitionDetails.requis_rem }}</a-descriptions-item>
-                        <a-descriptions-item label="Checked By" >{{ requisitionDetails.requis_checked }}</a-descriptions-item>
-                        <a-descriptions-item label="Approved By" >{{ requisitionDetails.requis_approved }}</a-descriptions-item>
-                        <a-descriptions-item label="Prepared By" :span="2">{{ requisitionDetails.firstname }}, {{ requisitionDetails.lastname }}</a-descriptions-item>
+                        <a-descriptions-item label="Department">{{ requisitionDetails.requis_dept
+                            }}</a-descriptions-item>
+                        <a-descriptions-item label="Remarks" :span="3">{{ requisitionDetails.requis_rem
+                            }}</a-descriptions-item>
+                        <a-descriptions-item label="Checked By">{{ requisitionDetails.requis_checked
+                            }}</a-descriptions-item>
+                        <a-descriptions-item label="Approved By">{{ requisitionDetails.requis_approved
+                            }}</a-descriptions-item>
+                        <a-descriptions-item label="Prepared By" :span="2">{{ requisitionDetails.firstname }}, {{
+                            requisitionDetails.lastname }}</a-descriptions-item>
 
                         <a-descriptions-item label="Supplier Information" class="mt-4">
-                           <span class="font-bold"> Company Name:</span> {{ requisitionDetails.gcs_companyname }}
+                            <span class="font-bold"> Company Name:</span> {{ requisitionDetails.gcs_companyname }}
                             <br />
-                           <span class="font-bold"> Contact Person:</span> {{ requisitionDetails.gcs_contactperson }}
+                            <span class="font-bold"> Contact Person:</span> {{ requisitionDetails.gcs_contactperson }}
                             <br />
-                           <span class="font-bold"> Contact Number:</span> {{ requisitionDetails.gcs_contactnumber }}
+                            <span class="font-bold"> Contact Number:</span> {{ requisitionDetails.gcs_contactnumber }}
                             <br />
                             <span class="font-bold"> Company Address:</span> {{ requisitionDetails.gcs_address }}
                             <br />
@@ -175,6 +184,7 @@
 <script setup>
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
+import { notification } from "ant-design-vue";
 
 const props = defineProps({
     data: Object,
@@ -262,6 +272,34 @@ const requistion = async () => {
     } catch {
 
     }
+}
+
+const reprint = (prNo) => {
+    const url = route("treasury.production.request.reprint", {
+        id: prNo,
+    });
+
+    axios
+        .get(url, { responseType: "blob" })
+        .then((response) => {
+            const file = new Blob([response.data], {
+                type: "application/pdf",
+            });
+            const fileURL = URL.createObjectURL(file);
+            window.open(fileURL, "_blank");
+        })
+        .catch((error) => {
+            if (error.response && error.response.status === 404) {
+                notification.error({
+                    message: "Pdf not Found",
+                    description:
+                        "Pdf Not available in Marketing.",
+                });
+            } else {
+                console.error(error);
+                alert("An error occurred while generating the PDF.");
+            }
+        });
 }
 
 

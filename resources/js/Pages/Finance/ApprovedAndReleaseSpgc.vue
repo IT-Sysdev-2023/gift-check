@@ -1,6 +1,6 @@
 <template>
     <a-card>
-        <a-tabs v-model:activeKey="activeKey" @change="handlChangeTab">
+        <a-tabs type="card" v-model:activeKey="activeKey" @change="handlChangeTab">
             <a-tab-pane key="1">
                 <template #tab>
                     <span>
