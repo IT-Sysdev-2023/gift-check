@@ -9,8 +9,10 @@ import { ref, computed } from "vue";
 import type { FormInstance } from "ant-design-vue";
 import dayjs, { Dayjs } from "dayjs";
 import { notification } from "ant-design-vue";
+import { PageWithSharedProps } from "@/types";
 
 const dRoute = dashboardRoute();
+const pageProps = usePage<PageWithSharedProps>().props;
 const props = defineProps<{
     title: String;
     options: {
@@ -216,7 +218,7 @@ const handleCustomer = (value, obj) => {
                                     <a-statistic
                                         title="Updated By:"
                                         :precision="2"
-                                        :value="$page.props.auth.user.full_name"
+                                        :value="pageProps.props.auth.user.full_name"
                                     />
                                 </a-col>
                             </a-row>

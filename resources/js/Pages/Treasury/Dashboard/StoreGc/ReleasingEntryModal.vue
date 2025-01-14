@@ -55,7 +55,7 @@
                         </a-form-item>
                         <a-form-item label="Approved By:">
                             <a-input
-                                :value="$page.props.auth.user.full_name"
+                                :value="page.props.auth.user.full_name"
                                 readonly
                             />
                         </a-form-item>
