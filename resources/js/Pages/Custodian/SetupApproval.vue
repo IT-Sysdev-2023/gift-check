@@ -192,7 +192,7 @@
                         </a-row>
                     </a-card>
                     <a-card class="mt-3">
-                        <a-card >
+                        <a-card v-if="byBarcode">
                             <a-alert class="text-center" message="Enter Barcode" type="info" show-icon />
                             <div class="mt-5">
                                 <p class="ml-2">Enter Barcode</p>
@@ -201,7 +201,7 @@
                                         :help="errorBarcode.barcode">
                                         <a-input @change="() => errorBarcode = []" allow-clear placeholder="Barcode"
                                             @keyup.enter="printBarcode" v-model:value="formBarcode.barcode"
-                                            style="width: 100%; font-size: 20px; font-weight: bolder; height: 60px; color: white;" />
+                                            style="width: 100%; font-size: 20px; border: solid gray 1px; font-weight: bolder; height: 60px; color: white;" />
 
                                     </a-form-item>
                                 </a-form>
@@ -223,16 +223,16 @@
                                         :validate-status="errorByRange.barcodeStart ? 'error' : ''"
                                         :help="errorByRange.barcodeStart">
                                         <a-typography-text code>Barcode Start</a-typography-text>
-                                        <a-input-number allow-clear size="large" placeholder="Barcode Start"
+                                        <a-input allow-clear size="large" placeholder="Barcode Start"
                                             @keyup.enter="printBarcodeRange" v-model:value="formByRange.barcodeStart"
-                                            style="width: 100%" />
+                                            style="width: 100%; font-size: 20px; border: solid gray 1px; font-weight: bolder; height: 60px; color: white;" />
                                     </a-form-item>
                                     <a-form-item has-feedback :validate-status="errorByRange.barcodeEnd ? 'error' : ''"
                                         :help="errorByRange.barcodeEnd">
                                         <a-typography-text code>Barcode End</a-typography-text>
-                                        <a-input-number allow-clear size="large" @keyup.enter="printBarcodeRange"
+                                        <a-input allow-clear size="large" @keyup.enter="printBarcodeRange"
                                             placeholder="Barcode End" v-model:value="formByRange.barcodeEnd"
-                                            style="width: 100%" />
+                                            style="width: 100%; font-size: 20px; border: solid gray 1px; font-weight: bolder; height: 60px; color: white;" />
                                     </a-form-item>
                                 </a-form>
                                 <div class="flex justify-end">
