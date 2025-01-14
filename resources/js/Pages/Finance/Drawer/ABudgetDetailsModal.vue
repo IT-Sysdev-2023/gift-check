@@ -1,5 +1,5 @@
 <template>
-    <a-drawer style="height: 550px;" title="View Approved Budget Details" :placement="'top'">
+    <a-modal style="width: auto; top: 20px;" title="View Approved Budget Details" :placement="'top'">
         <a-card>
             <a-row :gutter="[16, 16]">
                 <a-col :span="12">
@@ -64,7 +64,7 @@
                 </a-col>
             </a-row>
         </a-card>
-    </a-drawer>
+    </a-modal>
 </template>
 <script setup>
 defineProps({

@@ -1,18 +1,29 @@
 <template>
     <a-card>
-        <a-card title="STORE SETUP"> </a-card>
+        <div>
+            <a-button
+                class="back-button"
+                @click="backButton"
+                style="border: 1px solid whitesmoke"
+                ><RollbackOutlined />Back</a-button
+            >
+        </div>
         <div style="margin-left: 82%">
             <a-button
-                style="background-color: #1e90ff; color: white"
+                style="background-color: #1b76f8; color: white"
                 @click="() => (addStore = true)"
             >
                 <PlusOutlined /> Add New Store
             </a-button>
         </div>
+        <div>
+            <h2>Store Setup</h2>
+        </div>
 
-        <div style="margin-left: 70%; margin-top: 10px">
+        <div style="margin-left: 70%">
             <a-input-search
                 allow-clear
+                enter-button
                 v-model:value="searchTerm"
                 placeholder="Input search here!"
                 size="medium"
@@ -28,13 +39,6 @@
             >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
-                        <!-- <label title="Isssue Receipt" class="toggle-switch">
-                            <input type="checkbox" v-model="record.status" @change="issueReceipt(record)" />
-                            <span class="toggle-switch__slider">
-
-                            </span>
-
-                        </label> -->
                         <a-switch
                             title="Issue Receipt"
                             v-model:checked="record.status"
@@ -43,7 +47,7 @@
                             un-checked-children="NO"
                             :style="{
                                 backgroundColor: record.status
-                                    ? '#0286df'
+                                    ? '#1b76f8'
                                     : 'darkgray',
                             }"
                         />
@@ -55,7 +59,7 @@
     </a-card>
 
     <a-modal v-model:open="addStore" @ok="handleOk">
-        <span style="color: #0286df; font-size: 17px">
+        <span style="color: #0286df; font-size: 17px; font-family: sans-serif">
             <AppstoreAddOutlined style="margin-right: 8px" />
             Add New Store
         </span>
@@ -64,7 +68,7 @@
             for="store_name"
             :validate-status="form.errors.store_name ? 'error' : ''"
             :help="form.errors.store_name"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold"
             >Store Name:
             <a-input
                 allow-clear
@@ -77,6 +81,8 @@
             for="store_code"
             :validate-status="form.errors.store_code ? 'error' : ''"
             :help="form.errors.store_code"
+            style="margin-top: 10px; font-weight: bold"
+
         >
             Store Code:
             <div>
@@ -93,6 +99,8 @@
             for=" company_code"
             :validate-status="form.errors.company_code ? 'error' : ''"
             :help="form.errors.company_code"
+            style="margin-top: 10px; font-weight: bold"
+
         >
             Company Code:
             <div>
@@ -109,6 +117,8 @@
             for=" default_password"
             :validate-status="form.errors.default_password ? 'error' : ''"
             :help="form.errors.default_password"
+            style="margin-top: 10px; font-weight: bold"
+
         >
             Default Password:
             <a-input
@@ -123,30 +133,9 @@
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {
-    FormOutlined,
-    DeleteOutlined,
-    PlusSquareOutlined,
-    UserOutlined,
-    UnlockTwoTone,
-    CloseCircleTwoTone,
-    AppstoreTwoTone,
-    UndoOutlined,
-    CloseSquareFilled,
-} from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 export default {
     layout: AuthenticatedLayout,
-    components: {
-        FormOutlined,
-        DeleteOutlined,
-        PlusSquareOutlined,
-        UserOutlined,
-        UnlockTwoTone,
-        CloseCircleTwoTone,
-        AppstoreTwoTone,
-        UndoOutlined,
-    },
     props: {
         data: Object,
         search: String,
@@ -224,12 +213,10 @@ export default {
                             description: "Successfully adding store!",
                         });
                         this.addStore = false;
-                        (this.form.store_name = ""),
-                            (this.form.store_code = ""),
-                            (this.form.company_code = ""),
-                            this.$inertia.get(
-                                route("Admin/Masterfile/SetupStore"),
-                            );
+                        this.form.store_name = "";
+                        this.form.store_code = "";
+                        this.form.company_code = "";
+                        this.$inertia.get(route("Admin/Masterfile/SetupStore"));
                     } else if (props.flash.error) {
                         notification.error({
                             message: props.flash.error,
@@ -271,6 +258,9 @@ export default {
                 },
             );
         },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
+        },
     },
 };
 </script>
@@ -297,5 +287,8 @@ export default {
     min-width: 120px;
     margin-top: 1%;
 }
-
+.back-button {
+    font-weight: bold;
+    font-family: "Poppins", sans-serif;
+}
 </style>

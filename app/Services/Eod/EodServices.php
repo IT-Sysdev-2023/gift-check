@@ -2,6 +2,8 @@
 
 namespace App\Services\Eod;
 
+use App\Helpers\NumberHelper;
+use App\Http\Resources\EodListDetailResources;
 use App\Models\Store;
 use App\Models\StoreEod;
 use App\Models\StoreEodItem;
@@ -10,10 +12,9 @@ use App\Models\StoreVerification;
 use App\Services\Documents\FileHandler;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
-use function Sodium\compare;
 
 class EodServices extends FileHandler
 {
@@ -24,7 +25,6 @@ class EodServices extends FileHandler
     }
     public function getVerifiedFromStore()
     {
-
         $eod = StoreVerification::selectFilter()->join('users', 'user_id', '=', 'vs_by')
             ->join('customers', 'cus_id', '=', 'vs_cn')
             ->join('stores', 'store_id', '=', 'vs_store')
@@ -36,12 +36,16 @@ class EodServices extends FileHandler
                     ->orWhereDate('vs_date', '<=', today());
             })
             ->orderByDesc('vs_id')
-            ->paginate(10)->withQueryString();
+            ->paginate(10)
+            ->withQueryString();
 
         $eod->transform(function ($item) {
             $item->dateFmatted = Date::parse($item->vs_date)->toFormattedDateString();
             $item->fullname = $item->firstname . ' ' . $item->lastname;
             $item->status = is_null($item->vs_reverifydate) ? 'Verified' : 'Reverified';
+            $item->date = Date::parse($item->vs_date)->toFormattedDateString();
+            $item->formattedType = Str::title($item->gctype);
+            $item->formattedDenom = NumberHelper::currency($item->vs_tf_denomination);
             return $item;
         });
 
@@ -53,12 +57,6 @@ class EodServices extends FileHandler
     {
 
         $wholesaletime = now()->format('H:i');
-
-        $user = 'Kenjey';
-        $password = 'ken';
-
-        exec('net use \\\172.16.42.143\Gift\\\\ /user:' . $user . ' ' . $password . ' /persistent:no');
-
 
         $store = StoreVerification::select(
             'username',
@@ -90,18 +88,13 @@ class EodServices extends FileHandler
             ]);
         } else {
 
-            if ($store->count() == 0) {
+            if ($store->count() === 0) {
+
                 return back()->with([
                     'status' => 'error',
                     'msg' => 'No TextFile Exists'
                 ]);
             }
-
-            $ip = '\\\172.16.42.143\Gift\\';
-
-            $quickCheck = collect(File::files($ip));
-
-            // dd($quickCheck->toArray());
 
             $txtfiles_temp = collect();
 
@@ -109,15 +102,18 @@ class EodServices extends FileHandler
 
             $error = false;
 
-            $store->each(function ($item) use ($quickCheck, $ip, &$txtfiles_temp, &$notFoundGC, &$error) {
+            $store->each(function ($item) use (&$txtfiles_temp, &$notFoundGC, &$error) {
+
+                // $ip = $this->getStoreIp($item->vs_store);
+                $ip = '\\\172.16.42.143\GiftCheckTextfile\\';
+
+                $quickCheck = collect(File::files($ip));
 
                 $res = $quickCheck->contains(function ($value, int $key) use ($item) {
                     return $value->getFilename() == $item->vs_tf;
                 });
 
                 if ($res) {
-                    // dd();
-
                     $txtfiles_temp[] = [
                         'ver_barcode' => $item->vs_barcode,
                         'ver_textfilename' => $item->vs_tf,
@@ -129,7 +125,8 @@ class EodServices extends FileHandler
                         'payto' => $item->vs_payto
                     ];
                 } else {
-                    if ($item->vs_payto == 'WHOLESALE') {
+                    if ($item->vs_payto === 'WHOLESALE') {
+
                         $txtfiles_temp[] = [
                             'ver_barcode' => $item->vs_barcode,
                             'ver_textfilename' => $item->vs_tf,
@@ -140,6 +137,7 @@ class EodServices extends FileHandler
                             'txtfile_ip' => $ip,
                             'payto' => $item->vs_payto
                         ];
+
                     } else {
                         $notFoundGC[] = $item->vs_tf;
                         $error = true;
@@ -158,7 +156,6 @@ class EodServices extends FileHandler
             }
 
             $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss) {
-                // dd($item);
 
                 if ($item['payto'] == '') {
 
@@ -169,9 +166,7 @@ class EodServices extends FileHandler
                         $this->storeVerificationTextFile($item, $id, $wholesaletime);
 
                         $this->storeEodItem($item, $id);
-
                     });
-
                 } else {
 
                     $file = $item['txtfile_ip'] . '\\' . $item['ver_textfilename'];
@@ -311,6 +306,10 @@ class EodServices extends FileHandler
             ]);
         }
     }
+    public function getStoreIp($store)
+    {
+        return Store::where('store_id', $store)->value('store_textfile_ip');
+    }
     private function storeEodTransaction($item, $exprn, $id)
     {
         StoreEodTextfileTransaction::create([
@@ -406,5 +405,40 @@ class EodServices extends FileHandler
     public function generatePdf(int $id)
     {
         return $this->retrieveFile("{$this->folderName}/treasuryEod", "eod{$id}.pdf");
+    }
+    public function getEodListDetails($id)
+    {
+
+        $query = StoreEodItem::with(
+            'storeverification:vs_barcode,vs_cn,vs_store,vs_by,vs_date,vs_reverifydate,vs_gctype,vs_tf_denomination,vs_tf_balance,vs_time',
+            'storeverification.customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext',
+            'storeverification.user:user_id,firstname,lastname',
+            'storeverification.type:gc_type_id,gctype',
+            'storeverification.store:store_id,store_name'
+        )
+            ->where('st_eod_trid', $id)
+            ->orderByDesc('st_eod_barcode')
+            ->paginate(10);
+
+        return EodListDetailResources::collection($query);
+    }
+
+    public function getEodListDetailsTxt($barcode)
+    {
+        return StoreEodTextfileTransaction::select(
+            'seodtt_line',
+            'seodtt_creditlimit',
+            'seodtt_credpuramt',
+            'seodtt_addonamt',
+            'seodtt_balance',
+            'seodtt_transno',
+            'seodtt_timetrnx',
+            'seodtt_bu',
+            'seodtt_terminalno',
+            'seodtt_ackslipno',
+            'seodtt_crditpurchaseamt'
+        )->where('seodtt_barcode', $barcode)
+            ->orderBy('seodtt_id')
+            ->get();
     }
 }

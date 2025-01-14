@@ -13,7 +13,7 @@ const page = usePage<PageWithSharedProps>().props;
 </script>
 
 <template>
-    <a-sub-menu v-if="page.auth.user.usertype  === '1'" key="retail-side-bar">
+    <a-sub-menu v-if="page.auth.user.usertype === '1'" key="retail-side-bar">
         <template #title>
             <span>
                 <SwapOutlined />
@@ -35,12 +35,16 @@ const page = usePage<PageWithSharedProps>().props;
                 </span>
             </template>
             <!-- <a-menu-item key="BeamAndGoConversion">Beam And Go Conversion</a-menu-item> -->
-            <a-menu-item @click="() => $inertia.get(route('retailstore.retailstore.gc.request'))" key="GCRequest">GC Request</a-menu-item>
-            <a-menu-item @click="() => $inertia.get(route('retial.'))" key="GCVerification">GC Verification</a-menu-item>
-            <a-menu-item key="GCTransfer" @click="()=> $inertia.get(route('retail.gc-transfer.gctransferList'))">GC Transfer</a-menu-item>
-            <a-menu-item key="StoreEOD" @click="()=>$inertia.get(route('retail.storeEod'))">Store EOD</a-menu-item>
-            <a-menu-item key="LostGC" @click="()=> $inertia.get(route('retail.lostGc'))">Lost GC</a-menu-item>
-            <a-menu-item key="SupplierGC">Supplier GC</a-menu-item>
+            <a-menu-item @click="() => $inertia.get(route('retailstore.retailstore.gc.request'))" key="GCRequest">GC
+                Request</a-menu-item>
+            <a-menu-item @click="() => $inertia.get(route('retial.'))" key="GCVerification">GC
+                Verification</a-menu-item>
+            <a-menu-item key="GCTransfer" @click="() => $inertia.get(route('retail.gc-transfer.gctransferList'))">GC
+                Transfer</a-menu-item>
+            <a-menu-item key="StoreEOD" @click="() => $inertia.get(route('retail.storeEod'))">Store EOD</a-menu-item>
+            <a-menu-item key="LostGC" @click="() => $inertia.get(route('retail.lostGc'))">Lost GC</a-menu-item>
+            <a-menu-item key="SupplierGC"
+                @click="() => $inertia.get(route('retail.supplier-gc-verification.suppliergcverification'))">Supplier GC</a-menu-item>
         </a-sub-menu>
 
         <a-sub-menu key="sales">
@@ -62,19 +66,25 @@ const page = usePage<PageWithSharedProps>().props;
                     <span>Masterfile</span>
                 </span>
             </template>
-            <a-menu-item key="customerSetuo" @click="()=> $inertia.get(route('retail.masterfile.customer_setup'))">Customer Setup</a-menu-item>
-            <a-menu-item key="sgcCompanySetup" @click="()=> $inertia.get(route('retail.sgc_company_setup.sgcsetup'))">SGC Company Setup</a-menu-item>
-            <a-menu-item key="sgcItemSetup" @click="()=> $inertia.get(route('retail.sgc_item_setupsgc_item_setup'))">SGC Item Setup</a-menu-item>
+            <a-menu-item key="customerSetuo"
+                @click="() => $inertia.get(route('retail.masterfile.customer_setup'))">Customer
+                Setup</a-menu-item>
+            <a-menu-item key="sgcCompanySetup"
+                @click="() => $inertia.get(route('retail.sgc_company_setup.sgcsetup'))">SGC
+                Company Setup</a-menu-item>
+            <a-menu-item key="sgcItemSetup" @click="() => $inertia.get(route('retail.sgc_item_setupsgc_item_setup'))">SGC
+                Item
+                Setup</a-menu-item>
         </a-sub-menu>
-        <a-menu-item key="storeLedger" @click="()=> $inertia.get(route('retail.store_ledger.storeledger'))">
+        <a-menu-item key="storeLedger" @click="() => $inertia.get(route('retail.store_ledger.storeledger'))">
             <BarcodeOutlined />
             <span>Store Ledger</span>
         </a-menu-item>
-        <a-menu-item key="verifiedGc" @click="()=> $inertia.get(route('retail.verified-gc.list'))">
+        <a-menu-item key="verifiedGc" @click="() => $inertia.get(route('retail.verified-gc.list'))">
             <BarcodeOutlined />
             <span>Verified GC</span>
         </a-menu-item>
-        <a-menu-item key="soldgc" @click="()=> $inertia.get(route('retail.soldGc'))">
+        <a-menu-item key="soldgc" @click="() => $inertia.get(route('retail.soldGc'))">
             <BarcodeOutlined />
             <span>Sold GC</span>
         </a-menu-item>
@@ -85,7 +95,9 @@ const page = usePage<PageWithSharedProps>().props;
                     <span>Reports</span>
                 </span>
             </template>
-            <a-menu-item key="verifiedGCReports" @click="()=> $inertia.get(route('retail.verified_gc_report.verified_gc_report'))">Verified GC Reports</a-menu-item>
+            <a-menu-item key="verifiedGCReports"
+                @click="() => $inertia.get(route('retail.verified_gc_report.verified_gc_report'))">Verified GC
+                Reports</a-menu-item>
             <!-- <a-menu-item key="beamAndGoGoReport">Beam and Go GC Report</a-menu-item> -->
         </a-sub-menu>
     </a-sub-menu>
@@ -105,12 +117,15 @@ const page = usePage<PageWithSharedProps>().props;
                 </span>
             </template>
             <!-- <a-menu-item key="BeamAndGoConversion">Beam And Go Conversion</a-menu-item> -->
-            <a-menu-item @click="() => $inertia.get(route('retail.gc.request'))" key="GCRequest">GC Request</a-menu-item>
-            <a-menu-item @click="() => $inertia.get(route('retail.verification.index'))" key="GCVerification">GC Verification</a-menu-item>
+            <a-menu-item @click="() => $inertia.get(route('retail.gc.request'))" key="GCRequest">GC
+                Request</a-menu-item>
+            <a-menu-item @click="() => $inertia.get(route('retail.verification.index'))" key="GCVerification">GC
+                Verification</a-menu-item>
             <a-menu-item key="GCTransfer" @click="() => $inertia.get(route('retail.list'))">GC Transfer</a-menu-item>
-            <a-menu-item key="StoreEOD" @click="()=>$inertia.get(route('retail.storeEod'))">Store EOD</a-menu-item>
-            <a-menu-item key="LostGC" @click="()=> $inertia.get(route('retail.lostGc'))">Lost GC</a-menu-item>
-            <a-menu-item key="SupplierGC">Supplier GC</a-menu-item>
+            <a-menu-item key="StoreEOD" @click="() => $inertia.get(route('retail.storeEod'))">Store EOD</a-menu-item>
+            <a-menu-item key="LostGC" @click="() => $inertia.get(route('retail.lostGc'))">Lost GC</a-menu-item>
+            <a-menu-item key="SupplierGC"
+                @click="() => $inertia.get(route('retail.supplier-gc-verification.suppliergcverification'))">Supplier GC</a-menu-item>
         </a-sub-menu>
 
         <a-sub-menu key="sales">
@@ -132,19 +147,24 @@ const page = usePage<PageWithSharedProps>().props;
                     <span>Masterfile</span>
                 </span>
             </template>
-            <a-menu-item key="customerSetuo" @click="()=> $inertia.get(route('retail.masterfile.customer_setup'))" >Customer Setup</a-menu-item>
-            <a-menu-item key="sgcCompanySetup"  @click="()=> $inertia.get(route('retail.sgc_company_setup.sgcsetup'))">SGC Company Setup</a-menu-item>
-            <a-menu-item key="sgcItemSetup" @click="()=> $inertia.get(route('retail.sgc_item_setupsgc_item_setup'))">SGC Item Setup</a-menu-item>
+            <a-menu-item key="customerSetuo"
+                @click="() => $inertia.get(route('retail.masterfile.customer_setup'))">Customer
+                Setup</a-menu-item>
+            <a-menu-item key="sgcCompanySetup"
+                @click="() => $inertia.get(route('retail.sgc_company_setup.sgcsetup'))">SGC
+                Company Setup</a-menu-item>
+            <a-menu-item key="sgcItemSetup" @click="() => $inertia.get(route('retail.sgc_item_setupsgc_item_setup'))">SGC
+                Item Setup</a-menu-item>
         </a-sub-menu>
-        <a-menu-item key="storeLedger" @click="()=> $inertia.get(route('retail.store_ledger.storeledger'))">
+        <a-menu-item key="storeLedger" @click="() => $inertia.get(route('retail.store_ledger.storeledger'))">
             <BarcodeOutlined />
             <span>Store Ledger</span>
         </a-menu-item>
-        <a-menu-item key="verifiedGc" @click="()=> $inertia.get(route('retail.verified-gc.list'))">
+        <a-menu-item key="verifiedGc" @click="() => $inertia.get(route('retail.verified-gc.list'))">
             <BarcodeOutlined />
             <span>Verified GC</span>
         </a-menu-item>
-        <a-menu-item key="soldgc"  @click="()=> $inertia.get(route('retail.soldGc'))">
+        <a-menu-item key="soldgc" @click="() => $inertia.get(route('retail.soldGc'))">
             <BarcodeOutlined />
             <span>Sold GC</span>
         </a-menu-item>
@@ -155,7 +175,9 @@ const page = usePage<PageWithSharedProps>().props;
                     <span>Reports</span>
                 </span>
             </template>
-            <a-menu-item key="verifiedGCReports" @click="()=> $inertia.get(route('retail.verified_gc_report.verified_gc_report'))">Verified GC Reports</a-menu-item>
+            <a-menu-item key="verifiedGCReports"
+                @click="() => $inertia.get(route('retail.verified_gc_report.verified_gc_report'))">Verified GC
+                Reports</a-menu-item>
             <!-- <a-menu-item key="beamAndGoGoReport">Beam and Go GC Report</a-menu-item> -->
         </a-sub-menu>
     </div>

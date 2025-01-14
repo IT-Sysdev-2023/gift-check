@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Documents;
 
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use App\DashboardRoutesTrait;
@@ -57,7 +58,7 @@ class ImportHandler extends FileHandler
                 'date' => $generatedAt->toDayDateTimeString(), // for Sorting
                 'icon' => $extension === 'pdf' ? 'pdf.png' : 'excel.png',
                 'generatedAt' => $generatedAt->diffForHumans(),
-                'expiration' => $generatedAt->addDays(2)->diffForHumans(),
+                'expiration' => $generatedAt->addDays(2)->diffForHumans(now(), CarbonInterface::DIFF_ABSOLUTE), //Remove from now in diffForHumans
             ];
         })->sortByDesc('date')->values();
     }

@@ -1,18 +1,28 @@
 <template>
     <a-card>
-        <a-card>
-            <div style="font-weight: bold">
-                GC Barcode #{{ barcodeNumber }} POS Transaction
-            </div>
-        </a-card>
+        <a-button
+            @click="
+                () =>
+                    $inertia.get(route('storeaccounting.altaCitta', { id: 8 }))
+            "
+            ><RollbackOutlined />Back</a-button
+        >
+        <span
+            style="
+                font-weight: bold;
+                font-family: sans-serif;
+                font-size: 50px;
+                margin-left: 50px;
+            "
+        >
+            GC Barcode #{{ barcodeNumber }} POS Transaction
+        </span>
 
-        <div class="input-wrapper">
-            <input
+        <div>
+            <a-input
                 type="search"
                 placeholder="Input search here..."
-                name="text"
-                class="input"
-                v-model="alturasSearch"
+                v-model:value="alturasSearch"
             />
         </div>
 
@@ -30,7 +40,6 @@
     <!-- {{ data }} -->
 </template>
 <script>
-// import { defineComponent } from '@vue/composition-api'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Pagination from "@/Components/Pagination.vue";
 import { notification } from "ant-design-vue";

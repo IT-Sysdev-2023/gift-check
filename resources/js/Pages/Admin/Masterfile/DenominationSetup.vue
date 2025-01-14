@@ -1,18 +1,29 @@
 <template>
     <a-card>
-        <a-card title="DENOMINATION SETUP"> </a-card>
+        <div>
+            <a-button
+                class="back-button"
+                @click="backButton"
+                style="border: 1px solid whitesmoke"
+                ><RollbackOutlined />Back</a-button
+            >
+        </div>
         <div style="margin-left: 77.5%">
             <a-button
-                style="background-color: #1e90ff; color: white"
+                style="background-color: #1b76f8; color: white"
                 @click="() => (addDenomination = true)"
             >
                 <PlusOutlined /> Add New Denomination
             </a-button>
         </div>
+        <div>
+            <h2>Denomination Setup</h2>
+        </div>
 
-        <div style="margin-left: 70%; margin-top: 10px">
+        <div style="margin-left: 70%">
             <a-input-search
                 allow-clear
+                enter-button
                 v-model:value="searchTerm"
                 placeholder="Input search here"
                 size="medium"
@@ -43,23 +54,7 @@
         </div>
     </a-card>
 
-    <!-- <a-title style="font-size: 20px; display: flex; align-items: center; color:#0286df">
-        <BarcodeOutlined style=" margin-right: 8px; color:#0286df" />
-        Denomination Setup
-    </a-title>
-    <span style="font-weight: bold;">
-        Show
-        <a-select id="select_entries" v-model:value="dataForSelectEntries.select_entries"
-            style=" margin-top: 10px;background-color: #0286df; border: 1px solid #0286df" placeholder="10"
-            @change="handleSelectChange">
-            <a-select-option value="10">10</a-select-option>
-            <a-select-option value="25">25</a-select-option>
-            <a-select-option value="50">50</a-select-option>
-            <a-select-option value="100">100</a-select-option>
-        </a-select>
-        entries
-    </span> -->
-
+    <!-- Add New Denomination Modal  -->
     <a-modal v-model:open="addDenomination" @ok="handleOk">
         <span style="color: #0286df; font-size: 17px">
             <BarcodeOutlined style="margin-right: 8px" />
@@ -70,7 +65,7 @@
             for="denomination"
             :validate-status="form.errors.denomination ? 'error' : ''"
             :help="form.errors.denomination"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold"
             >Denomination:
             <a-input
                 allow-clear
@@ -84,6 +79,7 @@
             for="barcodeNumStart"
             :validate-status="form.errors.barcodeNumStart ? 'error' : ''"
             :help="form.errors.barcodeNumStart"
+            style="margin-top: 10px; font-weight: bold"
             >Barcode # Start:
             <a-input
                 allow-clear
@@ -94,6 +90,7 @@
         </a-form-item>
     </a-modal>
 
+    <!-- Update Denomination Modal  -->
     <a-modal v-model:open="updateDenominationModal" @ok="updateDenomination">
         <span style="color: #0286df; font-size: 17px">
             <BarcodeOutlined style="margin-right: 8px" />
@@ -104,7 +101,7 @@
             for="denomination"
             :validate-status="updateDenom.errors?.denomination ? 'error' : ''"
             :help="updateDenom.errors?.denomination"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold"
             >Denomination:
             <a-input
                 allow-clear
@@ -119,6 +116,7 @@
             :validate-status="
                 updateDenom.errors?.denom_barcode_start ? 'error' : ''
             "
+            style="margin-top: 10px; font-weight: bold"
             :help="updateDenom.errors?.denom_barcode_start"
             >Barcode # Start:
             <a-input
@@ -135,6 +133,7 @@
                 updateDenom.errors?.denom_fad_item_number ? 'error' : ''
             "
             :help="updateDenom.errors?.denom_fad_item_number"
+            style="margin-top: 10px; font-weight: bold"
         >
             FAD Item #:
             <a-input
@@ -149,29 +148,13 @@
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {
-    FormOutlined,
-    DeleteOutlined,
-    PlusSquareOutlined,
-    UserOutlined,
-    UnlockTwoTone,
-    CloseCircleTwoTone,
-    AppstoreTwoTone,
-    UndoOutlined,
-} from "@ant-design/icons-vue";
+import { FormOutlined } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 
 export default {
     layout: AuthenticatedLayout,
     components: {
         FormOutlined,
-        DeleteOutlined,
-        PlusSquareOutlined,
-        UserOutlined,
-        UnlockTwoTone,
-        CloseCircleTwoTone,
-        AppstoreTwoTone,
-        UndoOutlined,
     },
     props: {
         data: Object,
@@ -240,8 +223,8 @@ export default {
                             description: "Denomination successfully save!",
                         });
                         this.addDenomination = false;
-                        (this.form.denomination = ""),
-                            (this.form.barcodeNumStart = "");
+                        this.form.denomination = "";
+                        this.form.barcodeNumStart = "";
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
@@ -313,6 +296,9 @@ export default {
                 },
             );
         },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
+        },
     },
 };
 </script>
@@ -338,5 +324,9 @@ export default {
     margin-right: 10%;
     min-width: 110px;
     margin-top: 1%;
+}
+.back-button {
+    font-weight: bold;
+    font-family: "Poppins", sans-serif;
 }
 </style>

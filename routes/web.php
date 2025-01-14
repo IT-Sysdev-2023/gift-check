@@ -70,10 +70,9 @@ Route::get('kanding', function () {
 });
 
 
-//* Please install "Better Comments extension" to see comments clearly
+//* Please install "Better Comments extension in VS Code" to see comments clearly
 //! AUTHENTICATION SECTION
 Route::middleware('auth')->group(function () {
-
     Route::get('employee', [UserDetailsController::class, 'index']);
     Route::get('get-employee', [UserDetailsController::class, 'getEmp'])->name('get.employee');
     Route::post('add-employee-{id}', [UserDetailsController::class, 'addEmp'])->name('add.employee');
@@ -101,7 +100,6 @@ Route::middleware('auth')->group(function () {
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing,admin');
 
     Route::get('storeaccounting-dashboard', [StoreAccountingController::class, 'storeAccountingDashboard'])->name('storeaccounting.dashboard');
-
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -264,7 +262,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     //? Treasury
-    Route::middleware('userType:treasury,admin')->group(function () {
+    Route::middleware('userType:treasury,admin,custodian')->group(function () {
         Route::prefix('treasury')->name('treasury.')->group(function () {
             Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
                 Route::get('approved', [BudgetRequestController::class, 'approvedRequest'])->name('approved');
@@ -463,6 +461,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('eod-verified-gc', [EodController::class, 'eodVerifiedGc'])->name('verified.gc');
             Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
             Route::get('list', [EodController::class, 'list'])->name('list');
+            Route::get('eod-view-{id}', [EodController::class, 'eodView'])->name('store.view');
+            Route::get('eod-txt-{id}', [EodController::class, 'eodViewDeodViewDetails'])->name('txt');
+
         });
     });
 
@@ -537,12 +538,13 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('budget-adjustments-submit', [FinanceController::class, 'budgetAdjustmentSubmission'])->name('submit');
             });
         });
-
-        Route::get('/download/{filename}', function ($filename) {
-            $filePath = storage_path('app/' . $filename);
-            return response()->download($filePath);
-        })->name('download');
     })->middleware('userType:finance');
+
+    Route::get('/download/{filename}', function ($filename) {
+        // dd();
+        $filePath = storage_path('app/' . $filename);
+        return response()->download($filePath);
+    })->name('download');
 
     //? Retail
     Route::middleware('userType:retail,admin')->prefix('retail')->group(function () {
@@ -610,8 +612,8 @@ Route::middleware(['auth'])->group(function () {
             Route::name('gc-transfer.')->group(function () {
                 Route::get('gc-transfer-list', [RetailController::class, 'gctransferList'])->name('list');
             });
-            Route::name('supplier-gc-verification')->group(function () {
-                Route::get('create', [RetailController::class,'suppliergcverification'])->name('suppliergcverification');
+            Route::name('supplier-gc-verification.')->group(function () {
+                Route::get('supplier-gc-verification', [RetailController::class,'suppliergcverification'])->name('suppliergcverification');
             });
         });
     });
@@ -675,6 +677,7 @@ Route::middleware(['auth'])->group(function () {
             });
 
             Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
+            Route::get('released-reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request.released');
             Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
         });
     });
@@ -820,20 +823,16 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('pos-transaction-ascTech-{barcode}', [StoreAccountingController::class, 'transactionAscTech'])->name('ascTechPosTransaction');
                             //verified gc report
                             Route::get('verified-gc-report', [StoreAccountingController::class, 'verifiedGCReport'])->name('verifiedGCReport');
-                            Route::get('verified-gc-submit', [StoreAccountingController::class, 'verifiedGcSubmit'])->name('verifiedGcSubmit');
                             Route::get('verified-yearly-submit', [ReportController::class, 'verifiedGcYearlySubmit'])->name('verifiedGcYearlySubmit');
                             //store gc purchased
                             Route::get('store-gc-purchased', [StoreAccountingController::class, 'storeGCPurchasedReport'])->name('storeGCPurchasedReport');
-                            Route::get('store-monthly-submit', [StoreAccountingController::class, 'billingMonthlySubmit'])->name('billingMonthlySubmit');
-                            Route::get('store-yearly-submit', [StoreAccountingController::class, 'billingYearlySubmit'])->name('billingYearlySubmit');
+                            Route::post('store-monthly-submit', [ReportController::class, 'generateStorePurchasedReport'])->name('generateStorePurchasedReport');
                             // redeem report
                             Route::get('redeem-report-purchased', [StoreAccountingController::class, 'redeemReport'])->name('redeemReport');
-                            Route::get('redeem-monthly-submit', [StoreAccountingController::class, 'monthlyRedeemSubmit'])->name('monthlyRedeemSubmit');
-                            Route::get('redeem-yearly-submit', [StoreAccountingController::class, 'yearlyRedeemSubmit'])->name('yearlyRedeemSubmit');
+                            Route::post('redeem-monthly-submit', [ReportController::class, 'redeemReportSubmit'])->name('redeemReportSubmit');
                             // verified store
                             Route::get('verified-store-purchased', [StoreAccountingController::class, 'verifiedStore'])->name('verifiedStore');
-                            Route::get('monthly-submit', [StoreAccountingController::class, 'puchasedMonthlySubmit'])->name('puchasedMonthlySubmit');
-                            Route::get('yearly-submit', [StoreAccountingController::class, 'purchasedYearlySubmit'])->name('purchasedYearlySubmit');
+                            Route::post('yearly-submit', [ReportController::class, 'verifiedStoreSubmit'])->name('verifiedStoreSubmit');
                             // spgc approved
                             Route::get('spgc-approved', [StoreAccountingController::class, 'SPGCApproved'])->name('SPGCApproved');
                             Route::get('generate-excel-perCustomer', [StoreAccountingController::class, 'SPGCExcel'])->name('SPGCApprovedExcel');
@@ -855,7 +854,6 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-                            Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('storeAccountingAboutUs');
 
                             Route::name('reports.')->group(function () {
                                 Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
@@ -864,6 +862,11 @@ Route::middleware(['auth'])->group(function () {
                     );
             }
         );
+    // About Us
+    Route::get('store-about-us', [StoreAccountingController::class, 'aboutUs'])->name('AboutUs');
+
+    // Users Guide
+    Route::get('user-guide', [StoreAccountingController::class, 'userGuide'])->name('UserGuide');
 });
 
 require __DIR__ . '/auth.php';

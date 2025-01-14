@@ -48,7 +48,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Denomination',
-            'dataIndex' => 'vs_tf_denomination',
+            'dataIndex' => 'formattedDenom',
 
         ],
         [
@@ -58,12 +58,12 @@ class ColumnHelper
         ],
         [
             'title' => 'Gc Type',
-            'dataIndex' => 'gctype',
+            'dataIndex' => 'formattedType',
 
         ],
         [
             'title' => 'Date',
-            'dataIndex' => 'vs_date',
+            'dataIndex' => 'date',
 
         ],
         [
@@ -85,6 +85,7 @@ class ColumnHelper
             'title' => 'Status',
             'key' => 'status',
             'dataIndex' => 'status',
+            'align' =>  'center'
 
         ],
     ];
@@ -119,7 +120,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Total Gc',
-            'dataIndex' => 'pgcreq_total',
+            'dataIndex' => 'total',
 
         ],
         [
@@ -471,7 +472,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Total GC',
-            'dataIndex' => 'pgcreq_total',
+            'dataIndex' => 'total',
         ],
         [
             'title' => 'Requested by',

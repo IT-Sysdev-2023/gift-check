@@ -1,0 +1,55 @@
+<?php
+
+namespace App;
+
+use App\Models\StoreLocalServer;
+use Illuminate\Support\Facades\DB;
+
+class DatabaseConnectionService
+{
+    /**
+     * Create a new class instance.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    public function setHost(){
+
+    }
+    public static function getConnection($host, $database, $username, $password)
+    {
+        config(['database.connections.server_connection' => [
+            'driver' => 'mariadb',
+            'host' => $host,
+            'port' =>  '3306',
+            'database' => $database,
+            'username' => $username,
+            'password' => $password,
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => env('DB_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null
+        ]]);
+
+        return DB::connection('server_connection');
+    }
+
+    public static function localServer(string|int $store)
+    {
+        $lserver = StoreLocalServer::where('stlocser_storeid', $store)
+            ->first(['stlocser_ip', 'stlocser_username', 'stlocser_password']);
+
+        return self::getConnection($lserver->stlocser_ip, 'gc_local', $lserver->stlocser_username, $lserver->stlocser_password);
+    }
+
+    public static function getLocalConnection(bool $isLocal, $store){
+        return  $isLocal ? DB::connection('mariadb') : self::localServer($store);
+    }
+
+
+}

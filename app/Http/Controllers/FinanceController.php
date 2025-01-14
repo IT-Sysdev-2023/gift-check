@@ -428,6 +428,7 @@ class FinanceController extends Controller
 
     public function approvedGc(Request $request)
     {
+        
         $search = $request->search;
         $data = SpecialExternalGcrequest::where('special_external_gcrequest.spexgc_status', 'approved')
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')

@@ -141,16 +141,17 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                         v-if="retailgroup || curr == 'retailgroup'"
                     />
 
-                    <a-menu-item key="menu-item-user-guide">
+                    <a-menu-item
+                        key="menu-item-user-guide"
+                        @click="() => $inertia.get(route('UserGuide'))"
+                    >
                         <UserOutlined />
                         <span>User Guide</span>
                     </a-menu-item>
-                    
+
                     <a-menu-item
                         key="menu-item-about-us"
-                        @click="
-                            () => $inertia.get(route('storeaccounting.storeAccountingAboutUs'))
-                        "
+                        @click="() => $inertia.get(route('AboutUs'))"
                     >
                         <InfoCircleOutlined />
                         <span>About Us</span>

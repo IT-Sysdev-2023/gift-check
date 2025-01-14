@@ -1,21 +1,33 @@
 <template>
     <a-card>
-        <a-card title="USERS SETUP"> </a-card>
+        <div>
+            <a-button
+                class="back-button"
+                @click="backButton"
+                style="border: 1px solid whitesmoke"
+                ><RollbackOutlined /> Back</a-button
+            >
+        </div>
 
         <div style="margin-left: 82.5%">
             <a-button
-                style="background-color: #1e90ff; color: white"
+                style="background-color: #1b76f8; color: white"
                 @click="() => (open = true)"
             >
                 <PlusOutlined />Add New User
             </a-button>
         </div>
 
-        <div style="margin-top: 10px; margin-left: 70%">
+        <div>
+            <h2>Users Setup</h2>
+        </div>
+
+        <div style="margin-left: 70%">
             <a-input-search
                 allow-clear
                 v-model:value="searchTerm"
                 size="medium"
+                enter-button
                 placeholder="Input search here!"
                 style="width: 80%"
             />
@@ -42,7 +54,7 @@
                         <a-button
                             @click="resetPassword(record)"
                             title="Reset Password"
-                            style="color: white; background-color: #1e90ff"
+                            style="color: white; background-color: #1b76f8"
                         >
                             <UndoOutlined />
                         </a-button>
@@ -53,11 +65,7 @@
                     </template>
                 </template>
             </a-table>
-            <pagination
-                v-model:value="pagination"
-                :datarecords="users"
-                class="mt-5"
-            />
+            <pagination :datarecords="users" class="mt-5" />
         </div>
     </a-card>
 
@@ -73,7 +81,7 @@
             for="username"
             :validate-status="dataForUpdateUser.errors?.username ? 'error' : ''"
             :help="dataForUpdateUser.errors?.username"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold"
         >
             Username:
 
@@ -90,8 +98,9 @@
                 dataForUpdateUser.errors?.firstname ? 'error' : ''
             "
             :help="dataForUpdateUser.errors?.firstname"
+            style="font-weight: bold"
         >
-            firstname:
+            Firstname:
             <a-input
                 allow-clear
                 v-model:value="dataForUpdateUser.firstname"
@@ -103,6 +112,7 @@
             for="lastname"
             :validate-status="dataForUpdateUser.errors?.lastname ? 'error' : ''"
             :help="dataForUpdateUser.errors?.lastname"
+            style="font-weight: bold"
         >
             Lastname:
             <a-input
@@ -116,6 +126,7 @@
             for="emp_id"
             :validate-status="dataForUpdateUser.errors?.emp_id ? 'error' : ''"
             :help="dataForUpdateUser.errors?.emp_id"
+            style="font-weight: bold"
         >
             Employee ID:
             <a-input
@@ -130,6 +141,7 @@
             for="usertype"
             :validate-status="dataForUpdateUser.errors?.usertype ? 'error' : ''"
             :help="dataForUpdateUser.errors?.usertype"
+            style="font-weight: bold"
         >
             User Type:
             <a-select
@@ -157,6 +169,7 @@
             :validate-status="
                 dataForUpdateUser.errors?.store_assigned ? 'error' : ''
             "
+            style="font-weight: bold"
             :help="dataForUpdateUser.errors?.store_assigned"
             v-if="
                 (dataForUpdateUser.usertype === 7 ||
@@ -199,9 +212,10 @@
             :validate-status="
                 dataForUpdateUser.errors?.user_role ? 'error' : ''
             "
+            style="font-weight: bold"
             :help="dataForUpdateUser.errors?.user_role"
             v-if="
-                (dataForUpdateUser.it_type !== '2' &&
+                (dataForUpdateUser.it_type !== 'store_it' &&
                     dataForUpdateUser.usertype !== 'it_personnel') ||
                 dataForUpdateUser.usertype === 1 ||
                 dataForUpdateUser.usertype === 'administrator' ||
@@ -316,6 +330,7 @@
             :validate-status="
                 dataForUpdateUser.errors?.user_status ? 'error' : ''
             "
+            style="font-weight: bold"
             :help="dataForUpdateUser.errors?.user_status"
         >
             Status:
@@ -338,7 +353,7 @@
             <QuestionOutlined />
         </span>
 
-        <a-form-item for="password" style="font-style: initial">
+        <a-form-item for="password" style="font-family: sans-serif">
             Reset
             <span
                 style="
@@ -365,7 +380,7 @@
             for="username"
             :validate-status="form.errors.username ? 'error' : ''"
             :help="form.errors.username"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold;"
         >
             Username:
             <a-input
@@ -379,6 +394,8 @@
             for="firstname"
             :validate-status="form.errors.firstname ? 'error' : ''"
             :help="form.errors.firstname"
+            style="margin-top: 10px; font-weight: bold;"
+
         >
             Firstname:
             <a-input
@@ -392,6 +409,8 @@
             for="lastname"
             :validate-status="form.errors.lastname ? 'error' : ''"
             :help="form.errors.lastname"
+            style="margin-top: 10px; font-weight: bold;"
+
         >
             Lastname:
             <a-input
@@ -405,6 +424,8 @@
             for="employee_id"
             :validate-status="form.errors.emp_id ? 'error' : ''"
             :help="form.errors.emp_id"
+            style="margin-top: 10px; font-weight: bold;"
+
         >
             Employee_id:
             <a-input
@@ -418,6 +439,8 @@
             for="usertype"
             :validate-status="form.errors.employee_type ? 'error' : ''"
             :help="form.errors.employee_type"
+            style="margin-top: 10px; font-weight: bold;"
+
         >
             User Type:
             <a-select
@@ -438,6 +461,8 @@
         <a-form-item
             for="user_role"
             :validate-status="form.errors.user_role ? 'error' : ''"
+            style="margin-top: 10px; font-weight: bold;"
+
             :help="form.errors.user_role"
             v-if="
                 form.employee_type === 'administrator' ||
@@ -471,11 +496,13 @@
         <a-form-item
             for="store_assigned"
             :validate-status="form.errors.store_name ? 'error' : ''"
+            style="margin-top: 10px; font-weight: bold;"
+
             :help="form.errors.store_name"
             v-if="
                 form.employee_type === 'retailstore' ||
                 form.employee_type === 'store_accounting' ||
-                (form.it_type === '2' && form.employee_type !== 'cfs')
+                (form.it_type === 'store_it' && form.employee_type !== 'cfs')
             "
         >
             Store Assigned:
@@ -497,6 +524,8 @@
         <a-form-item
             for="retail_group"
             :validate-status="form.errors.retail_group ? 'error' : ''"
+            style="margin-top: 10px; font-weight: bold;"
+
             :help="form.errors.retail_group"
             v-if="form.employee_type === 'retailgroup'"
         >
@@ -515,6 +544,8 @@
         <a-form-item
             for="IT Type"
             :validate-status="form.errors.it_type ? 'error' : ''"
+            style="margin-top: 10px; font-weight: bold;"
+
             :help="form.errors.it_type"
             v-if="form.employee_type === 'it_personnel'"
         >
@@ -526,7 +557,7 @@
                 placeholder="Select IT Type"
             >
                 <a-select-option value="1">Corporate IT</a-select-option>
-                <a-select-option value="2">Store_IT</a-select-option>
+                <a-select-option value="store_it">Store_IT</a-select-option>
             </a-select>
         </a-form-item>
     </a-modal>
@@ -540,17 +571,11 @@
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { UserAddOutlined } from "@ant-design/icons-vue";
-import { Modal } from "ant-design-vue";
-// import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-// import { createVNode } from 'vue';
-import {
-    legacyLogicalPropertiesTransformer,
-    message,
-    notification,
-} from "ant-design-vue";
+import { notification } from "ant-design-vue";
 export default {
     layout: AuthenticatedLayout,
     components: { UserAddOutlined },
+    name: "UserView",
     props: {
         access_page: Object,
         users: Object,
@@ -862,7 +887,6 @@ export default {
                 this.dataForUpdateUser.errors.store_name =
                     "The store name field is required";
             }
-            0;
             this.$inertia.post(
                 route("admin.masterfile.updateUser"),
                 {
@@ -897,15 +921,15 @@ export default {
                             description: "Users added successfully!",
                         });
                         this.open = false;
-                        (this.form.username = ""),
-                            (this.form.firstname = ""),
-                            (this.form.lastname = ""),
-                            (this.form.emp_id = ""),
-                            (this.form.user_role = ""),
-                            (this.form.store_name = ""),
-                            (this.form.employee_type = ""),
-                            (this.form.retail_group = ""),
-                            (this.form.it_type = "");
+                        this.form.username = "";
+                        this.form.firstname = "";
+                        this.form.lastname = "";
+                        this.form.emp_id = "";
+                        this.form.user_role = "";
+                        this.form.store_name = "";
+                        this.form.employee_type = "";
+                        this.form.retail_group = "";
+                        this.form.it_type = "";
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
@@ -920,7 +944,6 @@ export default {
             this.dataforResetPassword.full_name = rec.full_name;
             this.dataforResetPassword.username = rec.username;
             this.dataforResetPassword.user_id = rec.user_id;
-            this.dataforResetPassword.data;
             this.modalforresetPassword = true;
         },
         submitResetPassword() {
@@ -964,51 +987,9 @@ export default {
                 },
             );
         },
-        // DangerButton() {
-        //     Modal.confirm({
-        //         title: 'Are you sure?',
-        //         content: 'Really ?',
-        //         okText: 'Yes',
-        //         cancelText: 'No',
-        //         onOk: () => {
-        //             Modal.confirm({
-        //                 title: 'Are you sure? like 100% ?',
-        //                 content: 'Really , Really?',
-        //                 okText: 'Yes',
-        //                 cancelText: 'No',
-        //                 onOk: () => {
-        //                     this.danger = true;
-        //                 }
-        //             })
-        //         },
-        //         onCancel: () => {
-        //             Modal.confirm({
-        //                 title: 'Why?',
-        //                 content: 'Are you afraid?'
-        //             })
-        //         }
-
-        //     })
-        // }
-        // showDeleteConfirm(rec) {
-        //     Modal.confirm({
-        //         title: 'Are you sure update this task?',
-        //         icon: createVNode(ExclamationCircleOutlined),
-        //         content: 'Some descriptions',
-        //         okText: 'Yes',
-        //         okType: 'danger',
-        //         cancelText: 'No',
-        //         onOk: () => {
-        //             this.dataforResetPassword.full_name = rec.full_name;
-        //             this.dataforResetPassword.user_id = rec.user_id;
-
-        //             this.submitResetPassword();
-        //         },
-        //         onCancel() {
-        //             console.log('Cancel');
-        //         },
-        //     });
-        // },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
+        },
     },
 };
 </script>
@@ -1034,5 +1015,9 @@ export default {
     margin-right: 8%;
     min-width: 120px;
     margin-top: 1%;
+}
+.back-button {
+    font-weight: bold;
+    font-family: "Poppins", sans-serif;
 }
 </style>

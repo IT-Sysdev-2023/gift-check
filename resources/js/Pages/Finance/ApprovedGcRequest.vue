@@ -25,7 +25,7 @@
             </span>
         </a-modal>
     </a-card>
-    <a-drawer :placement="placement" :height="520" :closable="true" :open="open" @close="onClose">
+    <a-modal style="width: auto; top: 50px;" v-model:open="open" >
         <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" :tab="'Special External GC Request # ' + selectedData.spexgc_num">
                 <a-row :gutter="[16, 16]">
@@ -87,7 +87,7 @@
                 <a-table :pagination="false" bordered :dataSource="barcode" :columns="barcodecolumns" />
             </a-tab-pane>
         </a-tabs>
-    </a-drawer>
+    </a-modal>
 
 </template>
 

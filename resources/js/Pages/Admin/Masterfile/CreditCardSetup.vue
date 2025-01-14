@@ -1,18 +1,28 @@
 <template>
     <a-card>
-        <a-card title="CREDIT CARD SETUP"> </a-card>
+        <div>
+            <a-button
+                @click="backButton"
+                style="border: 1px solid whitesmoke"
+                ><RollbackOutlined />Back</a-button
+            >
+        </div>
         <div style="margin-left: 79%">
             <a-button
-                style="background-color: #1e90ff; color: white"
+                style="background-color: #1b76f8; color: white"
                 @click="() => (addCreditCard = true)"
             >
                 <PlusOutlined /> Add New Credit Card
             </a-button>
         </div>
+        <div>
+            <h2>Credit Card Setup</h2>
+        </div>
 
         <div style="margin-left: 70%; margin-top: 10px">
             <a-input-search
                 allow-clear
+                enter-button
                 v-model:value="searchTerm"
                 placeholder="Input search here!"
                 size="medium"
@@ -41,7 +51,7 @@
             for="ccard_name"
             :validate-status="form.errors.ccard_name ? 'error' : ''"
             :help="form.errors.ccard_name"
-            style="margin-top: 10px"
+            style="margin-top: 10px; font-weight: bold;"
         >
             Credit Name:
             <a-input
@@ -55,28 +65,9 @@
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {
-    FormOutlined,
-    DeleteOutlined,
-    PlusSquareOutlined,
-    UserOutlined,
-    UnlockTwoTone,
-    CloseCircleTwoTone,
-    AppstoreTwoTone,
-} from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 export default {
     layout: AuthenticatedLayout,
-    components: {
-        FormOutlined,
-        DeleteOutlined,
-        PlusSquareOutlined,
-        UserOutlined,
-        UnlockTwoTone,
-        CloseCircleTwoTone,
-        AppstoreTwoTone,
-    },
-
     props: {
         data: Object,
         search: String,
@@ -148,11 +139,11 @@ export default {
                             message: props.flash.success,
                             description: "Added successfully!",
                         });
-                        (this.addCreditCard = false),
-                        this.form.ccard_name = '',
-                            this.$inertia.get(
-                                route("Admin/Masterfile/CreditCardSetup"),
-                            );
+                        this.addCreditCard = false;
+                        this.form.ccard_name = "";
+                        this.$inertia.get(
+                            route("Admin/Masterfile/CreditCardSetup"),
+                        );
                     } else if (props.flash.error) {
                         notification.error({
                             message: props.flash.error,
@@ -174,6 +165,9 @@ export default {
                     preserveState: true,
                 },
             );
+        },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
         },
     },
 };

@@ -63,6 +63,7 @@ const login = () => {
         },
         onSuccess: () => {
             form.reset()
+            loading.value = false
         },
         onError: () => {
             loading.value = false

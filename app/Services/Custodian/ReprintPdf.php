@@ -37,6 +37,7 @@ class ReprintPdf
     }
     public function reprintRequestService($id)
     {
+        // dd($id);
         $html = $this->htmlStructure($id);
 
         $options = new Options();
@@ -87,13 +88,13 @@ class ReprintPdf
         $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 20px">';
         $html .= '<tr>';
         $html .= '<td style="font-size: 12px; font-weight: 600; text-align: left;">Request No. ' . $sprequest->spexgc_num . '</td>';
-        $html .= '<td style="font-size: 12px; font-weight: 600; text-align: right;">Date Approved: ' .  Date::parse($sprequest->spexgc_datereq)->toFormattedDateString() .'</td>';
+        $html .= '<td style="font-size: 12px; font-weight: 600; text-align: right;">Date Approved: ' .  Date::parse($sprequest->spexgc_datereq)->toFormattedDateString() . '</td>';
         $html .= '</tr>';
         $html .= '</table>';
         $html .= '<table width="100%" style="border-collapse: collapse; margin-top: 2px">';
         $html .= '<tr>';
         $html .= '<td style="font-size: 12px; font-weight: 600; text-align: left;">Customer No. ' . '' . '</td>';
-        $html .= '<td style="font-size: 12px; font-weight: 600; text-align: right;">Date Needed: ' . Date::parse($sprequest->spexgc_dateneed)->toFormattedDateString() .'</td>';
+        $html .= '<td style="font-size: 12px; font-weight: 600; text-align: right;">Date Needed: ' . Date::parse($sprequest->spexgc_dateneed)->toFormattedDateString() . '</td>';
         $html .= '</tr>';
         $html .= '</table>';
         $html .= '<br><br>';
@@ -126,9 +127,23 @@ class ReprintPdf
         $html .= '</tbody></table>';
 
         $html .= '<div style="text-align: start; margin-top: 20px; margin-left: 2px">';
-        $html .= '<div style="font-size: 12px; font-weight: 600">Ar#:  ' . 'kanding' . '</div>';
+        $html .= '<div style="font-size: 12px; font-weight: 600">Ar#:  ' . '' . '</div>';
         $html .= '<div style="font-size: 12px; font-weight: 600">Total Gc: ' . $data->count() . '</div>';
         $html .= '<div style="font-size: 12px; font-weight: 600">Total Gc Amount: ' . $data->sum('spexgcemp_denom') . '</div>';
+        $html .= '
+<div style="width: 100%; font-size: 12px; text-align: center; margin-top: 50px;">
+    <div style="display: inline-block; text-align: center; width: 40%; margin-right: 10%;">
+        Prepared by:<br><br>
+        _______________________________<br>
+        (Signature Over Printed Name)
+    </div>
+    <div style="display: inline-block; text-align: center; width: 40%;">
+        Received by:<br><br>
+        _______________________________<br>
+        (Signature Over Printed Name)
+    </div>
+</div>';
+
         $html .= '</div>';
 
 

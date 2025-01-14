@@ -57,7 +57,7 @@
                             </a-descriptions>
 
                             <div class="mt-4">
-                                <a-button block type="primary">
+                                <a-button @click="reprint" block type="primary">
                                     Reprint this Request
                                 </a-button>
                             </div>
@@ -134,7 +134,7 @@
                    </a-card>
                 </a-tab-pane>
             </a-tabs>
-
+<!-- {{ id }} -->
         </a-card>
     </AuthenticatedLayout>
 </template>
@@ -142,6 +142,7 @@
 import dayjs from 'dayjs';
 import { Empty } from 'ant-design-vue';
 import { ref } from 'vue';
+import { router } from '@inertiajs/core';
 const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 
 const activeKey = ref('1');
@@ -195,7 +196,7 @@ interface Barcodes {
     spexgcemp_extname: string,
     spexgcemp_barcode: string,
 }
-defineProps<{
+const props = defineProps<{
     records: {
         spgc: Spgc,
         docs: Docs,
@@ -203,6 +204,7 @@ defineProps<{
         released: Released,
         barcodes: Barcodes,
     }
+    id: number,
 }>();
 
 
@@ -232,4 +234,7 @@ const columns = ref([
         dataIndex: 'spexgcemp_extname',
     },
 ]);
+const reprint = () => {
+    router.get(route('custodian.reprint.request.released', props.id))
+}
 </script>

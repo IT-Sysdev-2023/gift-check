@@ -66,7 +66,7 @@ class CustodianServices
         $data->transform(function ($item) {
             $item->fullname = $item->users->full_name;
             $item->bcheck_date = Date::parse($item->bcheck_date)->toFormattedDateString();
-            $item->denomination = $item->gc->denomination->denomination ?? null;
+            $item->denomination = NumberHelper::currency($item->gc->denomination->denomination) ?? null;
             return $item;
         });
 

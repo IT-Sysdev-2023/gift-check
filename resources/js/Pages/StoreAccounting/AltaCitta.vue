@@ -1,24 +1,20 @@
 <template>
     <a-card>
-        <a-card>
-            <div style="font-weight: bold">
-                <span> {{ storeName }} - Verified GC </span>
-            </div>
-        </a-card>
-        <div class="input-wrapper">
-            <input
-                type="search"
-                placeholder="Input search here..."
-                name="text"
-                class="input"
-                v-model="alturasSearchBox"
-            />
+        <div
+            style="font-weight: bold; font-family: sans-serif; font-size: 1rem"
+        >
+            <span> {{ storeName }} - Verified GC </span>
         </div>
 
-        <!-- <div style="font-weight: bold; margin-left: 70%; margin-top: 10px;">
-            <a-input-search allow-clear v-model:value="alturasSearchBox" style=" width:90%" enter-button
-                placeholder="Input search here!" />
-        </div> -->
+        <div style="font-weight: bold; margin-left: 70%; margin-top: 10px">
+            <a-input-search
+                allow-clear
+                v-model:value="alturasSearchBox"
+                style="width: 90%"
+                enter-button
+                placeholder="Input search here!"
+            />
+        </div>
         <div style="margin-top: 10px">
             <a-table
                 :data-source="data.data"
@@ -41,23 +37,9 @@
             <pagination :datarecords="data" class="mt-5" />
         </div>
     </a-card>
-
-    <!-- <div style="font-weight: bold;">
-        Select
-        <a-select id="select_entries" style="border:1px solid #1e90ff; background-color: #1e90ff;"
-            v-model:value="alturasPagination.select_entries" @change="PaginationEntries">
-            <a-select-option value="10">10</a-select-option>
-            <a-select-option value="20">20</a-select-option>
-            <a-select-option value="50">50</a-select-option>
-            <a-select-option value="100">100</a-select-option>
-        </a-select>
-        entries
-    </div> -->
-
     <!-- {{ storeName }} -->
 </template>
 <script>
-// import { defineComponent } from '@vue/composition-api'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { notification } from "ant-design-vue";
 

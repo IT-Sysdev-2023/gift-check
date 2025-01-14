@@ -11,32 +11,34 @@
         </a-button>
     </a-card>
 
-    <a-drawer :width="800" title="Gc For Allocation" placement="left" :open="openDrawer" @close="onClose">
+    <a-modal style="width: auto; top: 50px;" title="Gc For Allocation" v-model:open="openDrawer" @close="onClose">
         <template #extra>
             <a-button style="margin-right: 8px" @click="onClose">Exit</a-button>
         </template>
-        <a-table :pagination="false" bordered size="small" :data-source="dataValue.data" :columns="[
-            {
-                title: 'GC Barcode#',
-                dataIndex: 'barcode_no',
-            },
-            {
-                title: 'Denom',
-                dataIndex: 'denom',
-            },
-            {
-                title: 'Date Validated',
-                dataIndex: 'date',
-            },
-            {
-                title: 'Validated By',
-                dataIndex: 'valBy',
-            },
-        ]" />
+        <a-card>
+            <a-table :pagination="false" bordered size="small" :data-source="dataValue.data" :columns="[
+                {
+                    title: 'GC Barcode#',
+                    dataIndex: 'barcode_no',
+                },
+                {
+                    title: 'Denom',
+                    dataIndex: 'denom',
+                },
+                {
+                    title: 'Date Validated',
+                    dataIndex: 'date',
+                },
+                {
+                    title: 'Validated By',
+                    dataIndex: 'valBy',
+                },
+            ]" />
 
-        <pagination-axios-small :datarecords="dataValue"  @on-pagination="handleChangePagination"/>
+            <pagination-axios-small :datarecords="dataValue" @on-pagination="handleChangePagination" />
+        </a-card>
 
-    </a-drawer>
+    </a-modal>
 </template>
 <script setup>
 import axios from 'axios';

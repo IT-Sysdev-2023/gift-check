@@ -7,8 +7,8 @@
     >
         <!-- YOURE VISITING THIS PAGE.., THIS MEANS YOU HAVE REACHED THE DYNAMIC BROADCASTING EVENT, 
             THIS COMPONENT IS BEING USED ACCROSS DIFFERENT USERTYPES 
-            DONT YOU DARE TO CHANGE SOMETHING IN THIS COMPONENT UNLESS YOU KNOW WHAT YOU'RE DOING YOU UNDERSTAND? 
-            INGNA SA YES master!-->
+            DONT YOU DARE TO CHANGE SOMETHING IN THIS COMPONENT UNLESS YOU KNOW WHAT YOU'RE DOING YOU PIECE OF SH*T? 
+            INGNA SA YES master! HAHAHAHA-->
 
         <template #icon>
             <a-badge dot :offset="[0, -12]">
@@ -116,7 +116,7 @@ onMounted(() => {
     window.Echo.private(`${listenTo.channel}${page.auth.user.user_id}`).listen(
         listenTo.listen,
         (e) => {
-            console.log(e);
+            // console.log(e);
             state.setGenerateButton(false);
             reportProgress[e.reportId] = {
                 reportType: e.reportType,
@@ -144,7 +144,7 @@ const whichShouldListenTo = computed(() => {
         return {
             channel: "storeaccounting-report.",
             listen: "StoreAccountReportEvent",
-            route: "accounting.reports.generatedReports",
+            route: "storeaccounting.reports.generatedReports",
         };
     } else {
         return {

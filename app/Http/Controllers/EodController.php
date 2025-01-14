@@ -94,4 +94,17 @@ class EodController extends Controller
     public function toEndOfDay(){
        EodScheduler::dispatch();
     }
+
+    public function eodView(Request $request, $id){
+        $eod = $this->eodServices->getEodListDetails($id);
+        return inertia('Eod/EodDetails/EodListDetails',[
+            'record' => $eod,
+        ]);
+    }
+
+    public function eodViewDeodViewDetails($barcode){
+        return response()->json([
+            'data' => $this->eodServices->getEodListDetailsTxt($barcode)
+        ]);
+    }
 }

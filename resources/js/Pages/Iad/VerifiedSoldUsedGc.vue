@@ -60,7 +60,7 @@ const columns = ref([
     },
     {
         title: 'Denomination',
-        dataIndex: 'vs_tf_denomination',
+        dataIndex: 'denomination',
         key: 'name',
     },
     {

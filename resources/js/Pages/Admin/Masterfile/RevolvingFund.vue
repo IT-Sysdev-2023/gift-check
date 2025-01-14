@@ -1,17 +1,34 @@
 <template>
     <a-card>
-        <a-card title="SETUP STORE REVOLVING FUND"></a-card>
+        <div>
+            <a-button
+                class="back-button"
+                @click="backButton"
+                style="border: 1px solid whitesmoke"
+                ><RollbackOutlined />Back</a-button
+            >
+        </div>
+        <div style="margin-top: 20px;">
+            <h2>Revolving Fund Setup</h2>
+        </div>
 
-        <div style="margin-left: 70%; margin-top: 10px">
+        <div style="margin-left: 70%">
             <a-input-search
                 size="medium"
+                enter-button
                 placeholder=" Search User"
                 v-model:value="searchTerm"
                 style="width: 80%"
             />
         </div>
+
         <div style="margin-top: 10px">
-            <a-table :dataSource="data.data" :columns="columns" :pagination="false" size="small">
+            <a-table
+                :dataSource="data.data"
+                :columns="columns"
+                :pagination="false"
+                size="small"
+            >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
                         <a-button
@@ -72,10 +89,8 @@
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { notification } from "ant-design-vue";
-import { FundTwoTone } from "@ant-design/icons-vue";
 export default {
     layout: AuthenticatedLayout,
-    components: { FundTwoTone },
     props: {
         data: Object,
         search: String,
@@ -189,6 +204,9 @@ export default {
                 },
             );
         },
+        backButton() {
+            this.$inertia.get(route("admin.dashboard"));
+        },
     },
 };
 </script>
@@ -203,5 +221,9 @@ export default {
     width: 20%;
     min-width: 120px;
     border: 1px solid #0286df;
+}
+.back-button {
+    font-weight: bold;
+    font-family: "Poppins", sans-serif;
 }
 </style>

@@ -49,7 +49,7 @@ const view = async (id) => {
         peId.value = id;
         details.value = data;
     } catch (error) {
-
+        console.log('Error', error)
     }
 }
 watch(productionSearch, debounce(async(search) => {
