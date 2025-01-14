@@ -97,7 +97,7 @@
                             class="mt-5"
                         >
                             <a-input
-                                :value="$page.props.auth.user.full_name"
+                                :value="page.props.auth.user.full_name"
                                 readonly
                             />
                         </a-form-item>
@@ -251,7 +251,7 @@
 </template>
 
 <script setup lang="ts">
-import { router, useForm } from "@inertiajs/vue3";
+import { router, useForm, usePage } from "@inertiajs/vue3";
 import { ref } from "vue";
 import dayjs from "dayjs";
 import axios from "axios";
@@ -263,6 +263,7 @@ import {
     StoreDenomination,
 } from "@/types/treasury";
 import { AxiosOnPaginationTypes, ForAllocationTypes } from "@/types";
+import { PageWithSharedProps } from "@/types";
 
 const props = defineProps<{
     title: string;
@@ -271,6 +272,7 @@ const props = defineProps<{
     denoms: Denomination[];
 }>();
 
+const page = usePage<PageWithSharedProps>().props;
 const activeScannedKey = ref("all");
 const allocatedData = ref([]);
 const allocatedGc = ref<string | null>(null);

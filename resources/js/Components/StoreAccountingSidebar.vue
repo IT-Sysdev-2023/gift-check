@@ -20,7 +20,7 @@
         </template>
 
         <a-menu-item
-            @click="() => $inertia.get(route('storeaccounting.sales'))"
+            @click="() => router.get(route('storeaccounting.sales'))"
             key="treasurySales"
             class="menu-item"
         >
@@ -29,7 +29,7 @@
         </a-menu-item>
 
         <a-menu-item
-            @click="() => $inertia.get(route('storeaccounting.store'))"
+            @click="() => router.get(route('storeaccounting.store'))"
             key="storeSales"
             class="menu-item"
         >
@@ -50,7 +50,7 @@
             v-for="store in stores"
             :key="store.routeName"
             @click="
-                () => $inertia.get(route(store.routeName, { id: store.id }))
+                () => router.get(route(store.routeName, { id: store.id }))
             "
             class="menu-item"
         >
@@ -71,7 +71,7 @@
         <a-menu-item
             class="menu-item"
             @click="
-                () => $inertia.get(route('storeaccounting.verifiedGCReport'))
+                () => router.get(route('storeaccounting.verifiedGCReport'))
             "
             key="verifiedGCReport"
         >
@@ -82,7 +82,7 @@
             class="menu-item"
             @click="
                 () =>
-                    $inertia.get(
+                    router.get(
                         route('storeaccounting.storeGCPurchasedReport'),
                     )
             "
@@ -93,7 +93,7 @@
         </a-menu-item>
         <a-menu-item
             class="menu-item"
-            @click="() => $inertia.get(route('storeaccounting.redeemReport'))"
+            @click="() => router.get(route('storeaccounting.redeemReport'))"
             key="redeemReport"
         >
             <DatabaseOutlined />
@@ -101,7 +101,7 @@
         </a-menu-item>
         <a-menu-item
             class="menu-item"
-            @click="() => $inertia.get(route('storeaccounting.verifiedStore'))"
+            @click="() => router.get(route('storeaccounting.verifiedStore'))"
             key="verifiedStore"
         >
             <DatabaseOutlined />
@@ -118,7 +118,7 @@
         </template>
         <a-menu-item
             class="menu-item"
-            @click="() => $inertia.get(route('storeaccounting.SPGCApproved'))"
+            @click="() => router.get(route('storeaccounting.SPGCApproved'))"
             key="SPGCApproved"
         >
             <LikeOutlined />
@@ -126,7 +126,7 @@
         </a-menu-item>
         <a-menu-item
             class="menu-item"
-            @click="() => $inertia.get(route('storeaccounting.SPGCRelease'))"
+            @click="() => router.get(route('storeaccounting.SPGCRelease'))"
             key="SPGCRelease"
         >
             <ExportOutlined />
@@ -135,7 +135,7 @@
         <a-menu-item
             class="menu-item"
             @click="
-                () => $inertia.get(route('storeaccounting.DuplicatedBarcodes'))
+                () => router.get(route('storeaccounting.DuplicatedBarcodes'))
             "
             key="DuplicatedBarcodes"
         >
@@ -144,7 +144,7 @@
         </a-menu-item>
         <a-menu-item
             class="menu-item"
-            @click="() => $inertia.get(route('storeaccounting.CheckVariance'))"
+            @click="() => router.get(route('storeaccounting.CheckVariance'))"
             key="CheckVariance"
         >
             <DatabaseOutlined />
@@ -162,7 +162,7 @@
 </template>
 <script setup lang="ts">
 import { PageWithSharedProps } from "@/types";
-import { usePage } from "@inertiajs/vue3";
+import { usePage, router } from "@inertiajs/vue3";
 
 const page = usePage<PageWithSharedProps>().props;
 

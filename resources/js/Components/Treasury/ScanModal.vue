@@ -36,7 +36,7 @@
                 :span="2"
                 :labelStyle="{ fontWeight: 'bold' }"
             >
-                {{ $page.props.auth.user.full_name }}
+                {{ page.props.auth.user.full_name }}
             </a-descriptions-item>
             <a-descriptions-item
                 label="Scan Mode"
