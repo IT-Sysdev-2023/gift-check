@@ -1273,37 +1273,18 @@ export default {
                     },
                 });
             } else {
-                    notification.warning({
-                        message: "File Selection Required",
-                        description:
-                            "Please choose file first or the selected Textfile has no data found",
-                        placement: "topRight",
-                    });
+                notification.warning({
+                    message: "File Selection Required",
+                    description:
+                        "Please choose file first or the selected Textfile has no data found",
+                    placement: "topRight",
+                });
                 return;
             }
         },
     },
 };
 </script>
-<!-- <style scoped>
-@keyframes wave {
-
-    0%,
-    100% {
-        color: black;
-        font-weight: normal;
-    }
-
-    50% {
-        color: red;
-        font-weight: bold;
-    }
-}
-
-.wave-animation {
-    animation: wave 1s infinite;
-}
-</style> -->
 <style scope>
 .input-wrapper input {
     background-color: whitesmoke;

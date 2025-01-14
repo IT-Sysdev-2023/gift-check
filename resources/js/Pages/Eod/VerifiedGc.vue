@@ -18,7 +18,7 @@
                     >
                         <a-card>
                             <a-divider style="font-size: 14px; color: red"
-                                >not found barcodes</a-divider
+                                >There are {{ response.length }} Barcodes not found!</a-divider
                             >
                             <div class="scroll-container">
                                 <a-timeline class="mt-7">
