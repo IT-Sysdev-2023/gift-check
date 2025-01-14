@@ -134,7 +134,7 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, computed } from "vue";
+import { ref, computed } from "vue";
 import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayout.vue";
 import type { UploadChangeParam } from "ant-design-vue";
 import dayjs from "dayjs";
@@ -146,6 +146,7 @@ import type { UploadProps } from "ant-design-vue";
 import { createVNode } from "vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import { Modal } from "ant-design-vue";
+
 interface FormStateGc {
     trans: string;
     file: UploadProps["fileList"];
@@ -162,7 +163,11 @@ interface FormStateGc {
 const props = defineProps<{
     title?: string;
     trans: string;
-    options: any[];
+    options: {
+        value: string | number;
+        label: string;
+        account_name: string;
+    }[];
 }>();
 
 const titleGc = computed(() => {
@@ -170,7 +175,6 @@ const titleGc = computed(() => {
     return t + props.title;
 });
 // const switchGc = reactive({ state: false });
-const page = usePage<PageWithSharedProps>().props;
 const currentDate = dayjs().format("MMM DD, YYYY");
 const formRef = ref();
 
@@ -234,7 +238,7 @@ const onSubmit = () => {
     Modal.confirm({
         title: "Confirm your Action!",
         icon: createVNode(ExclamationCircleOutlined),
-        content: "You selected SPECIAL "+ t + 'GC',
+        content: "You selected SPECIAL " + t + "GC",
         okText: "Yes",
         okType: "danger",
         cancelText: "No",
@@ -244,7 +248,7 @@ const onSubmit = () => {
                     ...data,
                     dateNeeded: dayjs(data.dateNeeded).format("YYYY-MM-DD"),
                     denomination: data.denomination.filter(
-                        (item) => item.denomination !== 0 && item.qty !== 0
+                        (item) => item.denomination !== 0 && item.qty !== 0,
                     ),
                     file: data.file.map((item) => item.originFileObj),
                     total: data.denomination.reduce((acc, item) => {
@@ -261,7 +265,7 @@ const onSubmit = () => {
                                 openIframe.value = true;
                             }
                         },
-                    }
+                    },
                 );
         },
         onCancel() {

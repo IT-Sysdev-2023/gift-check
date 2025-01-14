@@ -916,8 +916,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1010,8 +1009,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1103,8 +1101,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1197,8 +1194,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1291,8 +1287,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1384,8 +1379,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1477,8 +1471,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1570,8 +1563,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1663,8 +1655,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1756,8 +1747,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1849,8 +1839,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1942,8 +1931,7 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        }
-        ;
+        };
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -2244,7 +2232,6 @@ class StoreAccountingController extends Controller
         $pdf = Pdf::loadView('pdf.approved', ['dataPerCustomer' => $perCustomer, 'dataPerBarcode' => $perBarcode]);
 
         return $pdf->download('Approved-file.pdf');
-
     }
 
     public function SPGCRelease(Request $request)
@@ -3008,8 +2995,8 @@ class StoreAccountingController extends Controller
         return inertia('AboutUs');
     }
 
-    public function userGuide (Request $request){
+    public function userGuide(Request $request)
+    {
         return inertia('UserGuide');
     }
-
 }

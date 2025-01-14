@@ -70,7 +70,7 @@ Route::get('kanding', function () {
 });
 
 
-//* Please install "Better Comments extension" to see comments clearly
+//* Please install "Better Comments extension in VS Code" to see comments clearly
 //! AUTHENTICATION SECTION
 Route::middleware('auth')->group(function () {
     Route::get('employee', [UserDetailsController::class, 'index']);
@@ -262,7 +262,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     //? Treasury
-    Route::middleware('userType:treasury,admin')->group(function () {
+    Route::middleware('userType:treasury,admin,custodian')->group(function () {
         Route::prefix('treasury')->name('treasury.')->group(function () {
             Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
                 Route::get('approved', [BudgetRequestController::class, 'approvedRequest'])->name('approved');

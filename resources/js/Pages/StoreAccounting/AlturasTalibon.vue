@@ -31,7 +31,7 @@
                             <EyeOutlined />
                         </a-button>
                     </template>
-                </template>
+                </template> 
             </a-table>
             <pagination :datarecords="data" class="mt-5" />
         </div>

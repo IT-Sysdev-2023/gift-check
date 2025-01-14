@@ -1,6 +1,6 @@
 <template>
-    <a-tabs v-model:activeKey="activeKey">
-        <a-tab-pane key="1">
+    <a-tabs v-model:activeKey="activeKey" type="card">
+        <a-tab-pane key="1" >
             <template #tab>
                 <span>
                     {{ title }}
@@ -214,7 +214,7 @@
         </a-tab-pane>
         <a-tab-pane key="2">
             <template #tab>
-                <span> GC Holder </span>
+                <span> GC Holder Details </span>
             </template>
             <a-table :dataSource="gcHolder" :columns="columns" />
         </a-tab-pane>

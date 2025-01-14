@@ -47,24 +47,16 @@
 
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import axios, { AxiosResponse } from "axios";
-import { PageWithSharedProps } from "@/types/index";
-import { usePage } from "@inertiajs/vue3";
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import axios from "axios";
+import { ref } from "vue";
 import { notification } from "ant-design-vue";
 import { useQueueState } from "@/stores/queue-state";
 
-const page = usePage<PageWithSharedProps>().props;
 defineProps<{
     title: string;
 }>();
 
-// interface FormState {
-//     reportType: string[];
-//     transactionDate: string;
-//     store: string;
-//     date: Dayjs;
-// }
+
 const formState = ref({
     transactionDate: "",
     date: null,
@@ -77,7 +69,7 @@ const onSubmit = () => {
         .get(route("treasury.reports.generate.eod"), {
             params: { ...formState.value },
         })
-        .then((e) => {
+        .then(() => {
             state.setGenerateButton(true);
             state.setFloatButton(true);
             state.setOpenFloat(true);
@@ -98,9 +90,9 @@ const onSubmit = () => {
 //     leaveChannel();
 // });
 
-const leaveChannel = () => {
-    window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);
-};
+// const leaveChannel = () => {
+//     window.Echo.leaveChannel(`treasury-report.${page.auth.user.user_id}`);
+// };
 
 const labelCol = { style: { width: "150px" } };
 const wrapperCol = { span: 14 };
