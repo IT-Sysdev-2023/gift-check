@@ -38,15 +38,11 @@
 
                             <a-form-item
                                 :validate-status="
-                                    GCDataTypeMonthly.errors
-                                        .selectedStore
+                                    GCDataTypeMonthly.errors.selectedStore
                                         ? 'error'
                                         : ''
                                 "
-                                :help="
-                                    GCDataTypeMonthly.errors
-                                        .selectedStore
-                                "
+                                :help="GCDataTypeMonthly.errors.selectedStore"
                             >
                                 <div>Store:</div>
                                 <a-select
@@ -112,16 +108,17 @@
 
                             <a-form-item
                                 :validate-status="
-                                    GCDataTypeMonthly.errors.year
-                                        ? 'error'
-                                        : ''
+                                    GCDataTypeMonthly.errors.year ? 'error' : ''
                                 "
                                 :help="GCDataTypeMonthly.errors.year"
                             >
                                 <div>Year:</div>
 
-                                <a-date-picker v-model:value="GCDataTypeMonthly.year" picker="year"  :disabled-date="disabledDate"/>
-
+                                <a-date-picker
+                                    v-model:value="GCDataTypeMonthly.year"
+                                    picker="year"
+                                    :disabled-date="disabledDate"
+                                />
                             </a-form-item>
                         </div>
                         <a-button
@@ -192,7 +189,11 @@
                                 :help="GCDataTypeYearly.errors.year"
                             >
                                 <div>Year:</div>
-                                <a-date-picker v-model:value="GCDataTypeYearly.year" picker="year"  :disabled-date="disabledDate"/>
+                                <a-date-picker
+                                    v-model:value="GCDataTypeYearly.year"
+                                    picker="year"
+                                    :disabled-date="disabledDate"
+                                />
                             </a-form-item>
                         </div>
                         <a-button
@@ -207,18 +208,18 @@
         </div>
     </AuthenticatedLayout>
 </template>
-<script setup>
+<script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-// import { defineComponent } from '@vue/composition-api'
 import { ref } from "vue";
 import { Modal } from "ant-design-vue";
 import axios from "axios";
 import { notification } from "ant-design-vue";
 import { useQueueState } from "@/stores/queue-state";
 import dayjs from "dayjs";
+import { gcMonthlyTypes, gcYearlyType } from "@/types/store-accounting";
 
 defineProps(["stores"]);
-const GCDataTypeMonthly = ref({
+const GCDataTypeMonthly = ref<gcMonthlyTypes>({
     dataTypeMonthly: "",
     year: "",
     month: "",
@@ -226,7 +227,7 @@ const GCDataTypeMonthly = ref({
     errors: {},
 });
 
-const GCDataTypeYearly = ref({
+const GCDataTypeYearly = ref<gcYearlyType>({
     GCDataType: "",
     selectedStore: "",
     year: "",
@@ -243,8 +244,7 @@ const submitGCReportsMonthly = () => {
     if (!selectedStore)
         GCDataTypeMonthly.value.errors.selectedStore =
             "Store field is required";
-    if (!year)
-        GCDataTypeMonthly.value.errors.year = "Year field is required";
+    if (!year) GCDataTypeMonthly.value.errors.year = "Year field is required";
     if (!month)
         GCDataTypeMonthly.value.errors.month = "Month field is required";
 
