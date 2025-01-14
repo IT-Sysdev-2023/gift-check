@@ -40,8 +40,7 @@ class FinanceController extends Controller
         public ApprovedReleasedPdfExcelService $appRelPdfExcelService,
         public DashboardClass $dashboardClass,
         public FinanceService $financeService
-    ) {
-    }
+    ) {}
 
     public function index()
     {
@@ -160,7 +159,9 @@ class FinanceController extends Controller
     {
 
         $gcType = $request->type;
-        $external = SpecialExternalGcRequest::with('specialExternalGcrequestItemsHasMany')->join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
+
+        $external = SpecialExternalGcRequest::with('specialExternalGcrequestItemsHasMany')
+            ->join('users', 'users.user_id', '=', 'special_external_gcrequest.spexgc_reqby')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
             ->where('special_external_gcrequest.spexgc_status', 'pending')
             ->where('spexgc_addemp', 'done')
@@ -313,7 +314,11 @@ class FinanceController extends Controller
         $ledgerBudgetNum = LedgerBudget::select('bledger_no')->orderByDesc('bledger_id')->first();
         $nextLedgerBudgetNum = (int) $ledgerBudgetNum->bledger_no + 1;
         $pending = SpecialExternalGcrequest::where('spexgc_id', $id)->where('spexgc_status', 'pending')->exists();
-        $specGet = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', '!=', '0')->orderByDesc('spexgcemp_id')->first()->spexgcemp_barcode + 1;
+
+        $specGet = SpecialExternalGcrequestEmpAssign::where('spexgcemp_barcode', '!=', '0')
+        ->orderByDesc('spexgcemp_barcode')
+        ->first()
+        ->spexgcemp_barcode + 1;
 
         if ($pending) {
             $cust = ($customer[0]->spexgc_company == 342 || $customer[0]->spexgc_company == 341) ? 'dti' : '';
@@ -428,7 +433,7 @@ class FinanceController extends Controller
 
     public function approvedGc(Request $request)
     {
-        
+
         $search = $request->search;
         $data = SpecialExternalGcrequest::where('special_external_gcrequest.spexgc_status', 'approved')
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')

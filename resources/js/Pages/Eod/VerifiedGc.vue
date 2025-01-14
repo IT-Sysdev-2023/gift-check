@@ -7,27 +7,17 @@
                     <span style="color: red"> Oppss barcode not found </span>
                 </div>
                 <a-collapse v-model:activeKey="activeKey" ghost>
-                    <a-collapse-panel
-                        key="1"
-                        :header="
-                            activeKey == '0'
-                                ? 'Expand this to see the not found barcodes'
-                                : 'Click here to hide the barcodes'
-                        "
-                        style="color: white"
-                    >
+                    <a-collapse-panel key="1" :header="activeKey == '0'
+                            ? 'Expand this to see the not found barcodes'
+                            : 'Click here to hide the barcodes'
+                        " style="color: white">
                         <a-card>
-                            <a-divider style="font-size: 14px; color: red"
-                                >There are {{ response.length }} Barcodes not found!</a-divider
-                            >
+                            <a-divider style="font-size: 14px; color: red">There are {{ response.length }} Barcodes not
+                                found!</a-divider>
                             <div class="scroll-container">
                                 <a-timeline class="mt-7">
-                                    <a-timeline-item
-                                        v-for="res in response"
-                                        :key="res"
-                                        color="red"
-                                        >{{ res }}</a-timeline-item
-                                    >
+                                    <a-timeline-item v-for="res in response" :key="res" color="red">{{ res
+                                        }}</a-timeline-item>
                                 </a-timeline>
                             </div>
                         </a-card>
@@ -35,24 +25,14 @@
                 </a-collapse>
             </div>
             <div class="flex justify-end">
-                <a-button
-                    class="mb-3"
-                    @click="submit"
-                    v-if="record.data.length"
-                >
+                <a-button size="large" type="dashed"  style="width: 100%; height: 80px;" class="mb-10" @click="submit" v-if="record.data.length">
                     <template #icon>
                         <SettingOutlined />
                     </template>
                     Start Process End Of Day
                 </a-button>
             </div>
-            <a-table
-                size="small"
-                :pagination="false"
-                :data-source="record.data"
-                :columns="columns"
-                bordered
-            >
+            <a-table size="small" :pagination="false" :data-source="record.data" :columns="columns" bordered>
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'status'">
                         <a-tag color="green">{{ record.status }}</a-tag>

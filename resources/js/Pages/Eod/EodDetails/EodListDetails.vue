@@ -1,5 +1,8 @@
 <template>
     <AuthenticatedLayout>
+        <div class="flex justify-end">
+            <a-button class="m-2" @click="() => router.get(route('eod.list'))"><RollbackOutlined /> Back to list</a-button>
+        </div>
         <a-card>
             <a-table :pagination="false" size="small" :data-source="record.data" :columns="columns">
                 <template #bodyCell="{ column, record }">
@@ -15,6 +18,7 @@
             <pagination-resource :datarecords="record" />
         </a-card>
 
+
         <a-modal v-model:open="openmodal" style="width: auto;" :footer="null">
             <template #title>
                 <p class="text-center">Text File Details</p>
@@ -29,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+import { router } from '@inertiajs/core';
 import axios from 'axios';
 import { ref } from 'vue';
 
