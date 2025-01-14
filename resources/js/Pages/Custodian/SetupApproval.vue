@@ -1,6 +1,6 @@
 <template>
     <!-- {{ record.docs.doc_trid }} -->
-    <a-tabs v-model:activeKey="activeKey1">
+    <a-tabs type="card" v-model:activeKey="activeKey1">
         <a-tab-pane key="1">
             <template #tab>
                 <span>
@@ -23,7 +23,8 @@
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Ar#">kanding</a-descriptions-item>
+                        <a-descriptions-item style="width: 50%;"
+                            label="Ar#">{{ record.special.spexgc_payment_arnum }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Payment Type">{{ record.special.paymentStatus
@@ -71,7 +72,8 @@
                         </a-col>
                     </a-row>
                     <!-- {{ record.special.spexgc_id }} -->
-                    <a-button class="mt-5" block style="background-color: #FC6736; color: white;" @click="() => $inertia.get(route('custodian.approved.reprint.request', record.special.spexgc_id))">
+                    <a-button class="mt-5" block style="background-color: #FC6736; color: white;"
+                        @click="() => $inertia.get(route('custodian.approved.reprint.request', record.special.spexgc_id))">
                         <template #icon>
                             <FastForwardOutlined />
                         </template>
@@ -85,17 +87,17 @@
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                                     <a-descriptions-item style="width: 50%;" label="Date Approved">{{
                                         record.special.dateapp
-                                        }}</a-descriptions-item>
+                                    }}</a-descriptions-item>
                                 </a-descriptions>
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                                     <a-descriptions-item style="width: 50%;" label="Chekced By">{{
                                         record.special.approved_request.reqap_checkedby
-                                        }}</a-descriptions-item>
+                                    }}</a-descriptions-item>
                                 </a-descriptions>
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                                     <a-descriptions-item style="width: 50%;" label="Prepared By">{{
                                         record.special.approved_request.reqap_approvedby
-                                        }}</a-descriptions-item>
+                                    }}</a-descriptions-item>
                                 </a-descriptions>
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                                     <a-descriptions-item style="width: 50%;"
@@ -113,146 +115,136 @@
                                 <a-typography-text code>Remarks:</a-typography-text>
                                 <a-textarea :rows="3" readonly :value="record.special.approved_request.reqap_remarks" />
                             </a-col>
+                            <a-popconfirm title="Managers Key" v-model:open="isByBarcode" @cancel="cancel"
+                                :show-cancel="false">
+                                <template #description>
 
+                                    <a-alert v-if="response?.status" :message="response?.msg" :type="response?.status"
+                                        show-icon />
+                                    <a-form name="basic" class="mt-5" autocomplete="off" @finish="onFinish"
+                                        @finishFailed="onFinishFailed">
+                                        <a-form-item label="Username" name="username"
+                                            :validate-status="error.username ? 'error' : ''" has-feedback
+                                            :help="error.username">
+                                            <a-input placeholder="Username" autocomplete="new-password"
+                                                v-model:value="form.username" @keyup.enter="managersKey('1')" />
+                                        </a-form-item>
+                                        <a-form-item label="Password" name="password"
+                                            :validate-status="error.password ? 'error' : ''" has-feedback
+                                            :help="error.password">
+                                            <a-input-password placeholder="Password" autocomplete="off"
+                                                v-model:value="form.password" @keyup.enter="managersKey('1')" />
+                                        </a-form-item>
+                                    </a-form>
+                                </template>
+                                <template #okButton>
+                                    <a-button type="primary" size="small" @click="managersKey('1')"
+                                        :loading="isSubmitting">
+                                        <template #icon>
+                                            <LockOutlined />
+                                        </template>
+                                        Continue?
+                                    </a-button>
+                                </template>
+                                <a-button block class="mt-3" style="height: 50px;" type="dashed"
+                                    @click="openManKey('1')">
+                                    <PrinterOutlined />
+                                    Print Request By Barcode
+                                </a-button>
+                            </a-popconfirm>
+
+                            <a-popconfirm title="Managers Key" v-model:open="isByRange" @cancel="cancel"
+                                :show-cancel="false">
+                                <template #description>
+
+                                    <a-alert v-if="response?.status" :message="response?.msg" :type="response?.status"
+                                        show-icon />
+                                    <a-form name="basic" class="mt-5" autocomplete="off" @finish="onFinish"
+                                        @finishFailed="onFinishFailed">
+                                        <a-form-item label="Username" name="username"
+                                            :validate-status="error.username ? 'error' : ''" has-feedback
+                                            :help="error.username">
+                                            <a-input placeholder="Username" autocomplete="new-password"
+                                                v-model:value="form.username" @keyup.enter="managersKey('2')" />
+                                        </a-form-item>
+                                        <a-form-item label="Password" name="password"
+                                            :validate-status="error.password ? 'error' : ''" has-feedback
+                                            :help="error.password">
+                                            <a-input-password placeholder="Password" autocomplete="off"
+                                                v-model:value="form.password" @keyup.enter="managersKey('2')" />
+                                        </a-form-item>
+                                    </a-form>
+                                </template>
+                                <template #okButton>
+                                    <a-button type="primary" size="small" @click="managersKey('2')"
+                                        :loading="isSubmitting">
+                                        <template #icon>
+                                            <LockOutlined />
+                                        </template>
+                                        Continue?
+                                    </a-button>
+                                </template>
+                                <a-button type="dashed" style="height: 50px;" block @click="openManKey('2')">
+                                    <PrinterOutlined />
+                                    Print Request By Range
+                                </a-button>
+                            </a-popconfirm>
                         </a-row>
                     </a-card>
                     <a-card class="mt-3">
-                        <a-row :gutter="[16, 16]">
-                            <a-col :span="8">
-                                <a-popconfirm title="Managers Key" v-model:open="isByBarcode" @cancel="cancel"
-                                    :show-cancel="false">
-                                    <template #description>
+                        <a-card >
+                            <a-alert class="text-center" message="Enter Barcode" type="info" show-icon />
+                            <div class="mt-5">
+                                <p class="ml-2">Enter Barcode</p>
+                                <a-form>
+                                    <a-form-item has-feedback :validate-status="errorBarcode.barcode ? 'error' : ''"
+                                        :help="errorBarcode.barcode">
+                                        <a-input @change="() => errorBarcode = []" allow-clear placeholder="Barcode"
+                                            @keyup.enter="printBarcode" v-model:value="formBarcode.barcode"
+                                            style="width: 100%; font-size: 20px; font-weight: bolder; height: 60px; color: white;" />
 
-                                        <a-alert v-if="response?.status" :message="response?.msg"
-                                            :type="response?.status" show-icon />
-                                        <a-form name="basic" class="mt-5" autocomplete="off" @finish="onFinish"
-                                            @finishFailed="onFinishFailed">
-                                            <a-form-item label="Username" name="username"
-                                                :validate-status="error.username ? 'error' : ''" has-feedback
-                                                :help="error.username">
-                                                <a-input placeholder="Username" autocomplete="new-password"
-                                                    v-model:value="form.username" @keyup.enter="managersKey('1')" />
-                                            </a-form-item>
-                                            <a-form-item label="Password" name="password"
-                                                :validate-status="error.password ? 'error' : ''" has-feedback
-                                                :help="error.password">
-                                                <a-input-password placeholder="Password" autocomplete="off"
-                                                    v-model:value="form.password" @keyup.enter="managersKey('1')" />
-                                            </a-form-item>
-                                        </a-form>
-                                    </template>
-                                    <template #okButton>
-                                        <a-button type="primary" size="small" @click="managersKey('1')"
-                                            :loading="isSubmitting">
-                                            <template #icon>
-                                                <LockOutlined />
-                                            </template>
-                                            Continue?
-                                        </a-button>
-                                    </template>
-                                    <a-button  class="mb-3" @click="openManKey('1')">
-                                        <PrinterOutlined />
-                                        Print Request By Barcode
+                                    </a-form-item>
+                                </a-form>
+                                <div class="flex justify-end">
+                                    <a-button type="primary" class="mt-10" @click="printBarcode">
+                                        <template #icon>
+                                            <FastForwardOutlined />
+                                        </template>
+                                        Preview Gift Check Barcode
                                     </a-button>
-                                </a-popconfirm>
-
-                                <a-popconfirm title="Managers Key" v-model:open="isByRange" @cancel="cancel"
-                                    :show-cancel="false">
-                                    <template #description>
-
-                                        <a-alert v-if="response?.status" :message="response?.msg"
-                                            :type="response?.status" show-icon />
-                                        <a-form name="basic" class="mt-5" autocomplete="off" @finish="onFinish"
-                                            @finishFailed="onFinishFailed">
-                                            <a-form-item label="Username" name="username"
-                                                :validate-status="error.username ? 'error' : ''" has-feedback
-                                                :help="error.username">
-                                                <a-input placeholder="Username" autocomplete="new-password"
-                                                    v-model:value="form.username" @keyup.enter="managersKey('2')" />
-                                            </a-form-item>
-                                            <a-form-item label="Password" name="password"
-                                                :validate-status="error.password ? 'error' : ''" has-feedback
-                                                :help="error.password">
-                                                <a-input-password placeholder="Password" autocomplete="off"
-                                                    v-model:value="form.password" @keyup.enter="managersKey('2')" />
-                                            </a-form-item>
-                                        </a-form>
-                                    </template>
-                                    <template #okButton>
-                                        <a-button type="primary" size="small" @click="managersKey('2')"
-                                            :loading="isSubmitting">
-                                            <template #icon>
-                                                <LockOutlined />
-                                            </template>
-                                            Continue?
-                                        </a-button>
-                                    </template>
-                                    <a-button block @click="openManKey('2')">
-                                        <PrinterOutlined />
-                                        Print Request By Range
+                                </div>
+                            </div>
+                        </a-card>
+                        <a-card v-if="byRange">
+                            <a-alert class="text-center" message="Enter Barcode Range" type="info" show-icon />
+                            <div class="mt-5">
+                                <a-form>
+                                    <a-form-item has-feedback
+                                        :validate-status="errorByRange.barcodeStart ? 'error' : ''"
+                                        :help="errorByRange.barcodeStart">
+                                        <a-typography-text code>Barcode Start</a-typography-text>
+                                        <a-input-number allow-clear size="large" placeholder="Barcode Start"
+                                            @keyup.enter="printBarcodeRange" v-model:value="formByRange.barcodeStart"
+                                            style="width: 100%" />
+                                    </a-form-item>
+                                    <a-form-item has-feedback :validate-status="errorByRange.barcodeEnd ? 'error' : ''"
+                                        :help="errorByRange.barcodeEnd">
+                                        <a-typography-text code>Barcode End</a-typography-text>
+                                        <a-input-number allow-clear size="large" @keyup.enter="printBarcodeRange"
+                                            placeholder="Barcode End" v-model:value="formByRange.barcodeEnd"
+                                            style="width: 100%" />
+                                    </a-form-item>
+                                </a-form>
+                                <div class="flex justify-end">
+                                    <a-button type="primary" class="mt-10" @click="printBarcodeRange">
+                                        <template #icon>
+                                            <FastForwardOutlined />
+                                        </template>
+                                        Preview Gift Check Barcode Range
                                     </a-button>
-                                </a-popconfirm>
-
-
-                            </a-col>
-                            <a-col :span="16">
-                                <a-card v-if="byBarcode">
-                                    <a-alert class="text-center" message="Enter Barcode" type="info" show-icon />
-                                    <div class="mt-5">
-                                        <p class="ml-2">Enter Barcode</p>
-                                        <a-form>
-                                            <a-form-item has-feedback
-                                                :validate-status="errorBarcode.barcode ? 'error' : ''"
-                                                :help="errorBarcode.barcode">
-                                                <a-input-number allow-clear size="large" placeholder="Barcode"
-                                                    @keyup.enter="printBarcode" v-model:value="formBarcode.barcode"
-                                                    style="width: 100%; color: white;" />
-
-                                            </a-form-item>
-                                        </a-form>
-                                        <div class="flex justify-end">
-                                            <a-button type="primary" class="mt-10" @click="printBarcode">
-                                                <template #icon>
-                                                    <FastForwardOutlined />
-                                                </template>
-                                                Preview Gift Check Barcode
-                                            </a-button>
-                                        </div>
-                                    </div>
-                                </a-card>
-                                <a-card v-if="byRange">
-                                    <a-alert class="text-center" message="Enter Barcode Range" type="info" show-icon />
-                                    <div class="mt-5">
-                                        <a-form>
-                                            <a-form-item has-feedback
-                                                :validate-status="errorByRange.barcodeStart ? 'error' : ''"
-                                                :help="errorByRange.barcodeStart">
-                                                <a-typography-text code>Barcode Start</a-typography-text>
-                                                <a-input-number allow-clear size="large" placeholder="Barcode Start"
-                                                    @keyup.enter="printBarcodeRange"
-                                                    v-model:value="formByRange.barcodeStart" style="width: 100%" />
-                                            </a-form-item>
-                                            <a-form-item has-feedback
-                                                :validate-status="errorByRange.barcodeEnd ? 'error' : ''"
-                                                :help="errorByRange.barcodeEnd">
-                                                <a-typography-text code>Barcode End</a-typography-text>
-                                                <a-input-number allow-clear size="large"
-                                                    @keyup.enter="printBarcodeRange" placeholder="Barcode End"
-                                                    v-model:value="formByRange.barcodeEnd" style="width: 100%" />
-                                            </a-form-item>
-                                        </a-form>
-                                        <div class="flex justify-end">
-                                            <a-button type="primary" class="mt-10" @click="printBarcodeRange">
-                                                <template #icon>
-                                                    <FastForwardOutlined />
-                                                </template>
-                                                Preview Gift Check Barcode Range
-                                            </a-button>
-                                        </div>
-                                    </div>
-                                </a-card>
-                            </a-col>
-                        </a-row>
+                                </div>
+                            </div>
+                        </a-card>
                     </a-card>
                 </a-col>
 
