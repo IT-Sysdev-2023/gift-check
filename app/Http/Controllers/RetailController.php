@@ -352,7 +352,6 @@ class RetailController extends Controller
 
     public function submitVerify(Request $request)
     {
-        dd($request->all());
 
         return $this->retail->submitVerify($request);
 
