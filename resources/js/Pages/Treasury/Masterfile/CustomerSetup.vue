@@ -168,10 +168,11 @@ import { useForm } from "laravel-precognition-vue";
 import { router } from "@inertiajs/core";
 import { ref, computed, watch } from "vue";
 import { ColumnTypes, InstitutCustomer, FilterTypes } from "@/types/treasury";
+import { AxiosResponse } from "axios";
 
 const props = defineProps<{
     title: string;
-    data: InstitutCustomer[];
+    data: { data: InstitutCustomer[] };
     columns: ColumnTypes[];
     filters: FilterTypes;
 }>();
@@ -211,11 +212,9 @@ const handleGcType = (val) => {
 };
 
 const onOk = () => {
-    console.log("object");
     formState.submit({
-        preserveScroll: true,
-        onSuccess: ({ data }) => {
-            openLeftNotification(data);
+        onSuccess: (pages: AxiosResponse) => {
+            openLeftNotification(pages.data);
             formState.reset();
             visible.value = false;
             router.visit(route(route().current()), { only: ["data"] });
