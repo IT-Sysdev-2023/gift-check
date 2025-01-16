@@ -310,7 +310,7 @@
             </a-select>
         </a-form-item>
     </a-modal>
-    <!-- {{ data.data }} -->
+    <!-- {{ store }} -->
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";

@@ -29,6 +29,7 @@ use App\Models\SpecialExternalCustomer;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\PurchaseOrderRequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Services\Treasury\Transactions\SpecialGcPaymentService;
 use Illuminate\Support\Facades\DB;
 use Symfony\Contracts\Service\Attribute\Required;
 
@@ -1051,7 +1052,7 @@ class AdminController extends Controller
         }
         $data = $data->orderByDesc('store_id')
             ->paginate($selectEntries)
-            ->withQuerystring();
+            ->withQueryString();
 
         return Inertia::render('Admin/Masterfile/RevolvingFund', [
             'data' => $data,
@@ -1059,6 +1060,69 @@ class AdminController extends Controller
             'value' => $request->value
         ]);
     }
+
+    public function tagHennan(Request $request)
+    {
+        $searchData = $request->input('searchData');
+        // dd($searchData);
+
+        $fullname = DB::table('special_gc_henanns')
+            ->select('fullname', 'hennan_id')
+            ->get();
+        $query = DB::table('special_external_gcrequest_emp_assign')
+            ->join('special_gc_henanns', 'special_gc_henanns.hennan_id', '=', 'special_external_gcrequest_emp_assign.tag')
+            ->select('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'special_external_gcrequest_emp_assign.tag', 'special_gc_henanns.fullname', 'special_gc_henanns.hennan_id')
+            // ->when($searchData, function ($query) use ($searchData) {
+            //     $query->where(function ($subQuery) use ($searchData) {
+            //         $subQuery->where('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'like', '%' . $searchData . '%')
+            //             ->orWhere('special_gc_henanns.fullname', 'like', '%' . $searchData . '%')
+            //             ->orWhere('special_gc_henanns.hennan_id', 'like', '%' . $searchData . '%');
+            //     });
+            // })
+            ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_id', 'DESC')
+            ->paginate(10)
+            ->withQueryString();
+
+        return Inertia::render('Admin/Masterfile/TagHennan', [
+            'data' => $query,
+            'fullname' => $fullname
+        ]);
+    }
+
+    public function updateTagHennan(Request $request)
+    {
+        // dd($request->spexgcemp_barcode);
+
+        $updateTag = DB::table('special_gc_henanns')->where('hennan_id', $request->hennan_id)->update([
+            'tagged' => '1',
+
+        ]);
+        $update = DB::table('special_external_gcrequest_emp_assign')->where('spexgcemp_barcode', $request->spexgcemp_barcode)->update([
+            'tag' => $request->hennan_id
+        ]);
+
+        // tagged value back to 0 if hennan_id is not found in the tag column
+        $updateTagBack = DB::table('special_gc_henanns')
+            ->leftJoin('special_external_gcrequest_emp_assign', 'special_gc_henanns.hennan_id', '=', 'special_external_gcrequest_emp_assign.tag')
+            ->whereNull('special_external_gcrequest_emp_assign.tag')
+            ->update([
+                'tagged' => '0',
+            ]);
+
+        if ($updateTag && $update && $updateTagBack) {
+
+            return back()->with(
+                'success',
+                'SUCCESS'
+            );
+        } else {
+            return back()->with(
+                'error',
+                'FAILED TO UPDATE'
+            );
+        }
+    }
+
     public function updateRevolvingFund(Request $request)
     {
         // dd($request->store_id);

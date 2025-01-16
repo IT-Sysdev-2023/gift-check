@@ -18,7 +18,7 @@
                 margin-left: 50px;
             "
         >
-            GC Barcode #{{ barcodeNumber }} POS Transaction
+            GC Barcode - <span style="font-weight: 100;">#{{ barcodeNumber }}</span> - POS Transaction
         </span>
 
         <div>

@@ -1,42 +1,25 @@
 <template>
     <a-card>
         <div>
-            <a-button
-                class="back-button"
-                @click="backButton"
-                style="border: 1px solid whitesmoke"
-                ><RollbackOutlined />Back</a-button
-            >
+            <a-button class="back-button" @click="backButton" style="border: 1px solid whitesmoke">
+                <RollbackOutlined />Back
+            </a-button>
         </div>
         <div style="margin-top: 20px;">
             <h2>Revolving Fund Setup</h2>
         </div>
 
         <div style="margin-left: 70%">
-            <a-input-search
-                size="medium"
-                enter-button
-                placeholder=" Search User"
-                v-model:value="searchTerm"
-                style="width: 80%"
-            />
+            <a-input-search size="medium" enter-button placeholder=" Search User" v-model:value="searchTerm"
+                style="width: 80%" />
         </div>
 
         <div style="margin-top: 10px">
-            <a-table
-                :dataSource="data.data"
-                :columns="columns"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :dataSource="data.data" :columns="columns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
-                        <a-button
-                            title="Update User"
-                            @click="updateFund(record)"
-                            class="me-2 me-sm-5"
-                            style="color: white; background-color: green"
-                        >
+                        <a-button title="Update User" @click="updateFund(record)" class="me-2 me-sm-5"
+                            style="color: white; background-color: green">
                             <FormOutlined />
                         </a-button>
                     </template>
@@ -46,39 +29,21 @@
         </div>
     </a-card>
 
-    <a-modal
-        v-model:open="modalForUpdateFund"
-        @ok="updatupdateRevolvingFundeFund"
-    >
+    <a-modal v-model:open="modalForUpdateFund" @ok="updatupdateRevolvingFundeFund">
         <span style="color: #0286df; font-size: 17px">
             <BarChartOutlined style="margin-right: 8px; color: #0286df" />
             Update Fund
         </span>
 
-        <a-form-item
-            for="r_fund"
-            :validate-status="form.errors?.r_fund ? 'error' : ''"
-            :help="form.errors?.r_fund"
-        >
+        <a-form-item for="r_fund" :validate-status="form.errors?.r_fund ? 'error' : ''" :help="form.errors?.r_fund">
             Revolving Fund:
-            <a-input
-                allow-clear
-                v-model:value="form.r_fund"
-                placeholder="Revolving Fund"
-            />
+            <a-input allow-clear v-model:value="form.r_fund" placeholder="Revolving Fund" />
         </a-form-item>
 
-        <a-form-item
-            for="store_status"
-            :validate-status="form.errors?.store_status ? 'erros' : ''"
-            :help="form.errors?.store_status"
-        >
+        <a-form-item for="store_status" :validate-status="form.errors?.store_status ? 'erros' : ''"
+            :help="form.errors?.store_status">
             Store Status:
-            <a-select
-                id="store_status"
-                v-model:value="form.store_status"
-                placeholder="Store Status"
-            >
+            <a-select id="store_status" v-model:value="form.store_status" placeholder="Store Status">
                 <a-select-option value="active">ACTIVE</a-select-option>
                 <a-select-option value="inactive">INACTIVE</a-select-option>
             </a-select>
@@ -222,6 +187,7 @@ export default {
     min-width: 120px;
     border: 1px solid #0286df;
 }
+
 .back-button {
     font-weight: bold;
     font-family: "Poppins", sans-serif;

@@ -151,8 +151,7 @@
                                 font-size: 90px;
                                 color: #eb5b00;
                                 font-weight: bold;
-                                font-family: 'Franklin Gothic Medium',
-                                    'Arial Narrow', Arial, sans-serif;
+                                font-family: sans-serif;
                             "
                         >
                             GIFT CHECK
@@ -481,7 +480,7 @@
                             <div>24 Years Old</div>
                             <div>Tubigon, Bohol</div>
                             <div>HEAD OFFICE-Information Technology</div>
-                            <div>Taken</div>
+                            <div>Single</div>
                         </div>
                     </a-card>
 
@@ -512,7 +511,7 @@
                                     sans-serif;
                             "
                         >
-                            <span>"WAY CHANCE"</span>
+                            <span>"None"</span>
                         </div>
                     </a-card>
 
@@ -719,9 +718,9 @@
                             "
                         >
                             <div>24 Years Old</div>
-                            <div>Taga-ilaha, Bohol</div>
+                            <div>Bohol</div>
                             <div>HEAD OFFICE-Information Technology</div>
-                            <div>Taken</div>
+                            <div>Single</div>
                         </div>
                     </a-card>
 
@@ -752,7 +751,7 @@
                                     sans-serif;
                             "
                         >
-                            <span>"NA UNSA NAMAN NI?"</span>
+                            <span>"None"</span>
                         </div>
                     </a-card>
 
@@ -962,9 +961,9 @@
                             "
                         >
                             <div>24 Years Old</div>
-                            <div>Taga-ilaha, Bohol</div>
+                            <div>Bohol</div>
                             <div>HEAD OFFICE-Information Technology</div>
-                            <div>Taken</div>
+                            <div>Single</div>
                         </div>
                     </a-card>
 
@@ -995,10 +994,9 @@
                                     sans-serif;
                             "
                         >
-                            <span>"LIFE IS LIFE"</span>
+                            <span>"None"</span>
                         </div>
                     </a-card>
-
                     <div
                         style="
                             font-size: large;
@@ -1235,10 +1233,7 @@
                                     sans-serif;
                             "
                         >
-                            <span
-                                >"BISAN UNSA KALISOD SA KINABUHI AYAW KALIMOT OG
-                                ?"</span
-                            >
+                            <span>"Do what makes you happy "</span>
                         </div>
                     </a-card>
 
@@ -1566,7 +1561,7 @@
                     <div>24 Years Old</div>
                     <div>Jagna, Bohol</div>
                     <div>HEAD OFFICE-Information Technology</div>
-                    <div>Taken</div>
+                    <div>Single</div>
                 </div>
             </a-card>
 
@@ -1597,7 +1592,7 @@
                             sans-serif;
                     "
                 >
-                    <span>What's she said "WAKO KAHIBAW"</span>
+                    <span>"None"</span>
                 </div>
             </a-card>
 
@@ -1802,7 +1797,7 @@
                     <div>24 Years Old</div>
                     <div>Catigbian, Bohol</div>
                     <div>HEAD OFFICE-Information Technology</div>
-                    <div>Taken</div>
+                    <div>Single</div>
                 </div>
             </a-card>
 
@@ -1833,7 +1828,7 @@
                             sans-serif;
                     "
                 >
-                    <span>ayaw kog ing a naa haa!! "PAKNGAN KARON"</span>
+                    <span>"None"</span>
                 </div>
             </a-card>
 
@@ -2038,7 +2033,7 @@
                     <div>24 Years Old</div>
                     <div>Ubay, Bohol</div>
                     <div>HEAD OFFICE-Information Technology</div>
-                    <div>Taken</div>
+                    <div>Single</div>
                 </div>
             </a-card>
 
@@ -2069,7 +2064,7 @@
                             sans-serif;
                     "
                 >
-                    <span>"HOY LAINA MAN MO ?"</span>
+                    <span>"None"</span>
                 </div>
             </a-card>
 
@@ -2242,82 +2237,28 @@
                         margin-top: 20px;
                     "
                 >
-                    <span style="text-align: center; font-size: 16px">
-                        <span style="font-weight: bold; color: #003140">
-                            GIFT CHECK
-                        </span>
-                        is a web application designed with expressive and
-                        elegant syntax. Anyone assigned to this project is
-                        responsible for maintaining the code's cleanliness and
-                        professionalism for future generations. Gift Check was
-                        once a disorganized application, but not anymore b*tch.
-                        <span style="font-weight: bold; color: #003140">
-                            NEW HEROES HAVE ARRIVED.
-                        </span>
-                        The old version of the GC system disregarded the
-                        principles of good programming. As a result, we rebuilt
-                        it to benefit the company and serve as a resource for
-                        aspiring programmers. This project incorporates many
-                        essential concepts of Laravel, purposefully restructured
-                        to enhance code readability, adhere to the SOLID
-                        principles, minimize redundancy, and optimize both
-                        queries and security. While much of the project has been
-                        improved, there may still be areas needing refinement.
-                        If you encounter anything inconvenient or inefficient,
-                        feel free to revise it—just ensure the overall
-                        functionality remains intact. Code must evolve with the
-                        technological environment.
-                        <div style="font-weight: bold; color: red">
-                            " FAILURE TO DO SO WILL LEAD TO UNFORESEEN
-                            CONSEQUENCES. YOU FEEL ME ?😆 "
-                        </div>
-                    </span>
-                    <div style="margin-top: 20px">
-                        <span
-                            style="
-                                font-weight: bold;
-                                font-family:
-                                    Cambria,
-                                    Cochin,
-                                    Georgia,
-                                    Times,
-                                    Times New Roman,
-                                    serif;
-                            "
-                            >By:</span
+                    <p style="font-size: 1rem; font-family: sans-serif">
+                        <span style="font-weight: bold"
+                            >Gift Check Monitoring System</span
                         >
-                        <span
-                            style="
-                                font-weight: bold;
-                                color: black;
-                                font-family:
-                                    Cambria,
-                                    Cochin,
-                                    Georgia,
-                                    Times,
-                                    Times New Roman,
-                                    serif;
-                                font-size: large;
-                            "
-                        >
-                            JESSAN PALBAN </span
-                        ><br />
-                        <span
-                            style="
-                                color: #eb5b00;
-                                font-size: 12px;
-                                font-weight: bold;
-                                font-family:
-                                    Cambria,
-                                    Cochin,
-                                    Georgia,
-                                    Times,
-                                    Times New Roman,
-                                    serif;
-                            "
-                        >
-                            GC Sr / Programmer
-                        </span>
+                        - is a system that manages all gift checks transactions.
+                        It includes Monitoring of Requests and Approval for
+                        Budget of GC Production, Procurement and Receiving of
+                        Gift Checks, Store GC Allocation, Store GC Request, GC
+                        Releasing and Budget Adjustments. It involves the
+                        following departments: Corporate Treasury, Corporate
+                        Finance, Corporate Marketing, FAD, IAD and Stores.
+                    </p>
+                    <div
+                        style="
+                            margin-top: 20px;
+                            font-size: 1rem;
+                            font-family: sans-serif;
+                            font-weight: bold;
+                        "
+                    >
+                        For questions and concerns contact: Corp IT - 1953 and
+                        Look for Norien or Claire. Thank You.
                     </div>
                 </div>
             </div>
