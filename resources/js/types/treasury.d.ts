@@ -152,3 +152,11 @@ export interface InstitutCustomer {
     user: User;
     gcType: GcTypes;
 }
+
+export interface PaymentFundTypes {
+    pay_id: number,
+    pay_desc: string,
+    pay_status:  string,
+    pay_dateadded:  string,
+    user?: User
+}
