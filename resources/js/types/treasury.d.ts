@@ -1,5 +1,15 @@
 import type { UploadFile } from "ant-design-vue";
 
+export interface ColumnTypes {
+    title: string;
+    dataIndex?: string;
+    key?: string;
+}
+
+export interface FilterTypes{
+    search?: string,
+    date?: string[]
+}
 export interface ReportsGeneratedTypes {
     files: {
         file: string;
@@ -133,4 +143,12 @@ export interface ProductionRequest {
     pe_requisition: null | string;
     pe_type: null | string;
     user?: User;
+}
+
+export interface InstitutCustomer {
+    ins_name: string;
+    ins_custype: string | number;
+    ins_date_created: string;
+    user: User;
+    gcType: GcTypes;
 }
