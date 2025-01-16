@@ -143,7 +143,7 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
 
                     <a-menu-item
                         key="menu-item-user-guide"
-                        @click="() => $inertia.get(route('UserGuide'))"
+                        @click="() => router.get(route('UserGuide'))"
                     >
                         <UserOutlined />
                         <span>User Guide</span>
@@ -151,7 +151,7 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
 
                     <a-menu-item
                         key="menu-item-about-us"
-                        @click="() => $inertia.get(route('AboutUs'))"
+                        @click="() => router.get(route('AboutUs'))"
                     >
                         <InfoCircleOutlined />
                         <span>About Us</span>
@@ -258,7 +258,7 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                             <a-button
                                 class="text-white"
                                 type="ghost"
-                                @click="() => $inertia.post(route('logout'))"
+                                @click="() => router.post(route('logout'))"
                             >
                                 <PoweroffOutlined />Logout
                             </a-button>

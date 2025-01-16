@@ -89,10 +89,10 @@
                                             <a-textarea v-model:value="formState.remarks"  />
                                         </a-form-item>
                                         <a-form-item label="Total Gc Scanned" name="totalGc">
-                                            <a-input-number readonly style="width: 100%;" :value="$page.props.flash.countSession" />
+                                            <a-input-number readonly style="width: 100%;" :value="page.props.flash.countSession" />
                                         </a-form-item>
                                         <a-form-item label="Total Denomination" name="denomination">
-                                            <a-input-number style="width: 100%;"  readonly :value="$page.props.flash.denominationSession" />
+                                            <a-input-number style="width: 100%;"  readonly :value="page.props.flash.denominationSession" />
                                         </a-form-item>
 
                                         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
@@ -139,12 +139,14 @@
 
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { useForm, router } from "@inertiajs/vue3";
+import { useForm, router, usePage } from "@inertiajs/vue3";
 import { ref } from "vue";
 import axios from "axios";
 import { onProgress } from "@/Mixin/UiUtilities";
 import { notification } from "ant-design-vue";
+import { PageWithSharedProps } from "@/types";
 
+const page = usePage<PageWithSharedProps>().props;
 const props = defineProps<{
     gcHolder: Object,
     gcholderCol: Object,

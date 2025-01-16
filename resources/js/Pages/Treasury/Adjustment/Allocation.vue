@@ -120,7 +120,7 @@
                             class="mt-5"
                         >
                             <a-input
-                                :value="$page.props.auth.user.full_name"
+                                :value="page.props.auth.user.full_name"
                                 readonly
                             />
                         </a-form-item>
@@ -275,11 +275,12 @@
 </template>
 
 <script setup lang="ts">
-import { router, useForm } from "@inertiajs/vue3";
+import { router, useForm, usePage } from "@inertiajs/vue3";
 import { ref } from "vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import { getError, onProgress } from "@/Mixin/UiUtilities";
+import { PageWithSharedProps } from "@/types";
 import {
     Denomination,
     AdjustmentAllocation,
@@ -303,7 +304,7 @@ const currentDate = dayjs().format("MMM DD, YYYY");
 const openModal = ref(false);
 const forAllocationData = ref<AxiosPagination<AdjustmentAllocation>>();
 const gcAllocationModal = ref<boolean>(false);
-
+    const page = usePage<PageWithSharedProps>().props;
 const formState = useForm({
     store: 0,
     gcType: 1,

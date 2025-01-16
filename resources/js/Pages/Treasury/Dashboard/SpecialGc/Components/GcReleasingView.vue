@@ -130,7 +130,7 @@
                     </a-form-item>
                     <a-form-item label="Released By">
                         <a-input
-                            :value="$page.props.auth.user.full_name"
+                            :value="page.props.auth.user.full_name"
                             readonly
                         />
                     </a-form-item>
@@ -177,8 +177,11 @@ import dayjs from "dayjs";
 import axios from "axios";
 import { ref } from "vue";
 import { computed } from "vue";
-import { router, useForm } from "@inertiajs/vue3";
+import { router, useForm, usePage } from "@inertiajs/vue3";
 import { onProgress } from "@/Mixin/UiUtilities";
+import { PageWithSharedProps } from "@/types";
+
+const page = usePage<PageWithSharedProps>().props;
 const props = defineProps<{
     title: string;
     id: number;
