@@ -6,9 +6,9 @@ export interface ColumnTypes {
     key?: string;
 }
 
-export interface FilterTypes{
-    search?: string,
-    date?: string[]
+export interface FilterTypes {
+    search?: string;
+    date?: string[];
 }
 export interface ReportsGeneratedTypes {
     files: {
@@ -154,9 +154,45 @@ export interface InstitutCustomer {
 }
 
 export interface PaymentFundTypes {
-    pay_id: number,
-    pay_desc: string,
-    pay_status:  string,
-    pay_dateadded:  string,
-    user?: User
+    pay_id: number;
+    pay_desc: string;
+    pay_status: string;
+    pay_dateadded: string;
+    user?: User;
+}
+
+export interface SpecialExternalCustomer {
+    spcus_id: number;
+    spcus_companyname: string;
+    spcus_acctname: string;
+    spcus_address: string;
+    spcus_cperson: string;
+    spcus_cnumber: string | number;
+    spcus_at: string;
+    user?: User;
+}
+
+export interface ApprovedBudgetRequest {
+    id: number;
+    approved_by: string;
+    approved_at: string;
+    file_doc_no: string;
+    checked_by: string;
+    budget_remark?: string;
+    user_prepared_by?: User;
+}
+
+export interface BudgetRequest {
+    br_id: number;
+    br_request: string;
+    br_requested_at: string;
+    br_requested_at_time: string;
+    br_no: string;
+    br_file_docno: string;
+    br_remarks?: string;
+    br_requested_needed?: string;
+    prepared_by?: User;
+    abr: ApprovedBudgetRequest;
+    cancelled_request?: any;
+    cancelled_by: User;
 }
