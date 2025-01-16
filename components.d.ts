@@ -487,6 +487,7 @@ declare module 'vue' {
     TableGcProduction: typeof import('./resources/js/Pages/Treasury/Dashboard/TableGcProduction.vue')['default']
     TableStoreGc: typeof import('./resources/js/Pages/Treasury/Dashboard/TableStoreGc.vue')['default']
     TagHennan: typeof import('./resources/js/Pages/Admin/Masterfile/TagHennan.vue')['default']
+    TagOutlined: typeof import('@ant-design/icons-vue')['TagOutlined']
     TagsFilled: typeof import('@ant-design/icons-vue')['TagsFilled']
     TagsOutlined: typeof import('@ant-design/icons-vue')['TagsOutlined']
     TextfileUploader: typeof import('./resources/js/Pages/Custodian/TextfileUploader.vue')['default']
