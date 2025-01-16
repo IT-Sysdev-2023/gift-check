@@ -2,7 +2,7 @@
     <div>
         <h2>Masterfile</h2>
     </div>
-    <div style="display: flex; margin-top: 2rem; justify-content: center; align-items: center;">
+    <div style="display: flex; margin-top: 2rem; justify-content: center; align-items: center">
         <a-form-item>
             <a-button @click="() => $inertia.get(route('admin.masterfile.users'))" class="buttons">
                 <UserOutlined /> Setup Users
@@ -34,7 +34,7 @@
             </a-button>
 
             <a-button @click="() => $inertia.get(route('admin.masterfile.tagHennan'))" class="buttons">
-                <FundFilled /> Tag Hennan
+                <TagOutlined /> Tag Hennan
             </a-button>
         </a-form-item>
 
@@ -57,8 +57,8 @@ export default {
 <style scoped>
 .button-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     margin-top: 20px;
 }
 
@@ -81,7 +81,7 @@ export default {
     color:white;
     transition: transform 0.2s ease;
     cursor: pointer;
-    gap:2rem
+    margin: 0 5px;
 }
 .buttons:hover{
     background-color: #1b76f8;

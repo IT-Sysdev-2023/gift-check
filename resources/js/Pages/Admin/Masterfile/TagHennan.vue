@@ -2,7 +2,7 @@
     <AuthenticatedLayout>
         <a-card>
             <div>
-                <a-button @click="backButton" style="font-weight: bold">
+                <a-button @click="backButton" style="font-weight: bold; position: absolute; right: 2rem">
                     <RollbackOutlined /> Back
                 </a-button>
             </div>
@@ -12,11 +12,13 @@
                     font-size: 1.5rem;
                     font-weight: bold;
                 ">
-                <span>Tag Hennan Setup</span>
+                <span>
+                    Tag Hennan Setup
+                </span>
             </div>
             <div>
-                <a-input-search allow-clear enter-button v-model:value="tagHennanSearch" size="medium"
-                    placeholder="Input search here..." style="width: 25%; margin-left: 70%" />
+                <a-input-search allow-clear @change="searchFunction" v-model:value="tagHennanSearch" size="medium"
+                    enter-button placeholder="Input search here..." style="width: 25%; margin-left: 70%" />
             </div>
             <span v-if="loading" style="
                     display: flex;
@@ -24,13 +26,21 @@
                     align-items: center;
                     z-index: 1000;
                 ">
-                <section class="dots-container">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </section>
+                <div class="loader">
+                    <div class="loaderMiniContainer">
+                        <div class="barContainer">
+                            <span class="bar"></span>
+                            <span class="bar bar2"></span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 101 114" class="svgIcon">
+                            <circle stroke-width="7" stroke="black" transform="rotate(36.0692 46.1726 46.1727)"
+                                r="29.5497" cy="46.1727" cx="46.1726"></circle>
+                            <line stroke-width="7" stroke="black" y2="111.784" x2="97.7088" y1="67.7837" x1="61.7089">
+                            </line>
+                        </svg>
+                    </div>
+                </div>
+
             </span>
             <div style="margin-top: 1rem">
                 <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
@@ -61,16 +71,12 @@
                     </a-form-item>
                 </div>
             </a-modal>
-            <a-modal v-model:open="search">
-                <h1>NO FUNCTION YET, ITS UNDER CONSTRUCTION</h1>
-            </a-modal>
-            <!-- {{ data }} -->
         </a-card>
     </AuthenticatedLayout>
 </template>
 <script setup>
 import Pagination from "@/Components/Pagination.vue";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { router } from "@inertiajs/core";
 import { notification } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
@@ -82,7 +88,6 @@ defineProps({
     fullname: Object,
 });
 const loading = ref(false);
-const search = ref(false);
 const tagHennanSearch = ref("");
 const form = ref([
     {
@@ -94,6 +99,28 @@ const form = ref([
 ]);
 
 const updateModal = ref(false);
+
+const searchFunction = () => {
+    router.get(route('admin.masterfile.tagHennan'), {
+        searchvalue: tagHennanSearch.value
+    },
+        {
+            onStart: () => {
+                loading.value = true
+
+            },
+            onSuccess: () => {
+                loading.value = false
+
+            },
+            onError: () => {
+                loading.value = false
+            },
+
+            preserveState: true
+        }
+    )
+}
 
 const columns = ref([
     {
@@ -118,6 +145,7 @@ const updateTagHennan = (data) => {
     updateModal.value = true;
     form.value = { ...data };
 };
+
 
 const submitUpdatedTag = () => {
     updateModal.value = false;
@@ -144,69 +172,90 @@ const submitUpdatedTag = () => {
         onCancel: () => {
             updateModal.value = false;
         },
+
         class: "test",
     });
 };
-
-watch(tagHennanSearch, () => {
-    search.value = true;
-})
-
 </script>
 
 <style scoped>
-.dots-container {
+.loader {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+}
+
+.loaderMiniContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 130px;
+    height: fit-content;
+}
+
+.barContainer {
     width: 100%;
-    z-index: 100;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 10px;
+    background-position: left;
 }
 
-.dot {
-    height: 20px;
-    width: 20px;
-    margin-right: 10px;
+.bar {
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(to right,
+            rgb(161, 94, 255),
+            rgb(217, 190, 255),
+            rgb(161, 94, 255));
+    background-size: 200% 100%;
     border-radius: 10px;
-    background-color: #b3d4fc;
-    animation: pulse 1.5s infinite ease-in-out;
-    z-index: 100;
+    animation: bar ease-in-out 3s infinite alternate-reverse;
 }
 
-.dot:last-child {
-    margin-right: 0;
-}
-
-.dot:nth-child(1) {
-    animation-delay: -0.3s;
-}
-
-.dot:nth-child(2) {
-    animation-delay: -0.1s;
-}
-
-.dot:nth-child(3) {
-    animation-delay: 0.1s;
-}
-
-@keyframes pulse {
+@keyframes bar {
     0% {
-        transform: scale(0.8);
-        background-color: #b3d4fc;
-        box-shadow: 0 0 0 0 rgba(178, 212, 252, 0.7);
-    }
-
-    50% {
-        transform: scale(1.2);
-        background-color: #6793fb;
-        box-shadow: 0 0 0 10px rgba(178, 212, 252, 0);
+        background-position: left;
     }
 
     100% {
-        transform: scale(0.8);
-        background-color: #b3d4fc;
-        box-shadow: 0 0 0 0 rgba(178, 212, 252, 0.7);
+        background-position: right;
     }
+}
+
+.bar2 {
+    width: 50%;
+}
+
+.svgIcon {
+    position: absolute;
+    left: -25px;
+    margin-top: 18px;
+    z-index: 2;
+    width: 70%;
+    animation: search ease-in-out 3s infinite alternate-reverse;
+}
+
+@keyframes search {
+    0% {
+        transform: translateX(0%) rotate(70deg);
+    }
+
+    100% {
+        transform: translateX(100px) rotate(10deg);
+    }
+}
+
+.svgIcon circle,
+line {
+    stroke: rgb(162, 55, 255);
+}
+
+.svgIcon circle {
+    fill: rgba(98, 65, 142, 0.238);
 }
 </style>

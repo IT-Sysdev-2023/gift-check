@@ -1,18 +1,12 @@
 <template>
     <a-card>
         <div>
-            <a-button
-                class="back-button"
-                @click="backButton"
-                style="border: 1px solid whitesmoke"
-                ><RollbackOutlined />Back</a-button
-            >
+            <a-button class="back-button" @click="backButton" style="border: 1px solid whitesmoke">
+                <RollbackOutlined />Back
+            </a-button>
         </div>
         <div style="margin-left: 82%">
-            <a-button
-                style="background-color: #1b76f8; color: white"
-                @click="() => (addStore = true)"
-            >
+            <a-button style="background-color: #1b76f8; color: white" @click="() => (addStore = true)">
                 <PlusOutlined /> Add New Store
             </a-button>
         </div>
@@ -21,36 +15,19 @@
         </div>
 
         <div style="margin-left: 70%">
-            <a-input-search
-                allow-clear
-                enter-button
-                v-model:value="searchTerm"
-                placeholder="Input search here!"
-                size="medium"
-                style="width: 80%"
-            />
+            <a-input-search allow-clear enter-button v-model:value="searchTerm" placeholder="Input search here!"
+                size="medium" style="width: 80%" />
         </div>
         <div style="margin-top: 10px">
-            <a-table
-                :columns="columns"
-                :data-source="data.data"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
-                        <a-switch
-                            title="Issue Receipt"
-                            v-model:checked="record.status"
-                            @change="issueReceipt(record)"
-                            checked-children="YES"
-                            un-checked-children="NO"
-                            :style="{
+                        <a-switch title="Issue Receipt" v-model:checked="record.status" @change="issueReceipt(record)"
+                            checked-children="YES" un-checked-children="NO" :style="{
                                 backgroundColor: record.status
                                     ? '#1b76f8'
                                     : 'darkgray',
-                            }"
-                        />
+                            }" />
                     </template>
                 </template>
             </a-table>
@@ -64,69 +41,33 @@
             Add New Store
         </span>
 
-        <a-form-item
-            for="store_name"
-            :validate-status="form.errors.store_name ? 'error' : ''"
-            :help="form.errors.store_name"
-            style="margin-top: 10px; font-weight: bold"
-            >Store Name:
-            <a-input
-                allow-clear
-                v-model:value="form.store_name"
-                placeholder="Store Name"
-            />
+        <a-form-item for="store_name" :validate-status="form.errors.store_name ? 'error' : ''"
+            :help="form.errors.store_name" style="margin-top: 10px; font-weight: bold">Store Name:
+            <a-input allow-clear v-model:value="form.store_name" placeholder="Store Name" />
         </a-form-item>
 
-        <a-form-item
-            for="store_code"
-            :validate-status="form.errors.store_code ? 'error' : ''"
-            :help="form.errors.store_code"
-            style="margin-top: 10px; font-weight: bold"
-
-        >
+        <a-form-item for="store_code" :validate-status="form.errors.store_code ? 'error' : ''"
+            :help="form.errors.store_code" style="margin-top: 10px; font-weight: bold">
             Store Code:
             <div>
-                <a-input-number
-                    id="inputNumber"
-                    v-model:value="form.store_code"
-                    placeholder="Store Code"
-                    style="width: 200px"
-                />
+                <a-input-number id="inputNumber" v-model:value="form.store_code" placeholder="Store Code"
+                    style="width: 200px" />
             </div>
         </a-form-item>
 
-        <a-form-item
-            for=" company_code"
-            :validate-status="form.errors.company_code ? 'error' : ''"
-            :help="form.errors.company_code"
-            style="margin-top: 10px; font-weight: bold"
-
-        >
+        <a-form-item for=" company_code" :validate-status="form.errors.company_code ? 'error' : ''"
+            :help="form.errors.company_code" style="margin-top: 10px; font-weight: bold">
             Company Code:
             <div>
-                <a-input-number
-                    id="inputNumber"
-                    v-model:value="form.company_code"
-                    placeholder="Company Code"
-                    style="width: 200px"
-                />
+                <a-input-number id="inputNumber" v-model:value="form.company_code" placeholder="Company Code"
+                    style="width: 200px" />
             </div>
         </a-form-item>
 
-        <a-form-item
-            for=" default_password"
-            :validate-status="form.errors.default_password ? 'error' : ''"
-            :help="form.errors.default_password"
-            style="margin-top: 10px; font-weight: bold"
-
-        >
+        <a-form-item for=" default_password" :validate-status="form.errors.default_password ? 'error' : ''"
+            :help="form.errors.default_password" style="margin-top: 10px; font-weight: bold">
             Default Password:
-            <a-input
-                allow-clear
-                type="password"
-                v-model:value="form.default_password"
-                placeholder="Default Password"
-            />
+            <a-input allow-clear type="password" v-model:value="form.default_password" placeholder="Default Password" />
         </a-form-item>
     </a-modal>
     <!-- {{ data }} -->
@@ -287,6 +228,7 @@ export default {
     min-width: 120px;
     margin-top: 1%;
 }
+
 .back-button {
     font-weight: bold;
     font-family: "Poppins", sans-serif;

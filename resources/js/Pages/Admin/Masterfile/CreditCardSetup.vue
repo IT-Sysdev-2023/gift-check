@@ -1,17 +1,12 @@
 <template>
     <a-card>
         <div>
-            <a-button
-                @click="backButton"
-                style="border: 1px solid whitesmoke"
-                ><RollbackOutlined />Back</a-button
-            >
+            <a-button @click="backButton" style="border: 1px solid whitesmoke">
+                <RollbackOutlined />Back
+            </a-button>
         </div>
         <div style="margin-left: 79%">
-            <a-button
-                style="background-color: #1b76f8; color: white"
-                @click="() => (addCreditCard = true)"
-            >
+            <a-button style="background-color: #1b76f8; color: white" @click="() => (addCreditCard = true)">
                 <PlusOutlined /> Add New Credit Card
             </a-button>
         </div>
@@ -20,22 +15,11 @@
         </div>
 
         <div style="margin-left: 70%; margin-top: 10px">
-            <a-input-search
-                allow-clear
-                enter-button
-                v-model:value="searchTerm"
-                placeholder="Input search here!"
-                size="medium"
-                style="width: 80%"
-            />
+            <a-input-search allow-clear enter-button v-model:value="searchTerm" placeholder="Input search here!"
+                size="medium" style="width: 80%" />
         </div>
         <div style="margin-top: 10px">
-            <a-table
-                :columns="columns"
-                :data-source="data.data"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
             </a-table>
             <pagination :datarecords="data" class="mt-5" />
         </div>
@@ -47,18 +31,10 @@
             Add New Credit Card
         </span>
 
-        <a-form-item
-            for="ccard_name"
-            :validate-status="form.errors.ccard_name ? 'error' : ''"
-            :help="form.errors.ccard_name"
-            style="margin-top: 10px; font-weight: bold;"
-        >
+        <a-form-item for="ccard_name" :validate-status="form.errors.ccard_name ? 'error' : ''"
+            :help="form.errors.ccard_name" style="margin-top: 10px; font-weight: bold;">
             Credit Name:
-            <a-input
-                allow-clear
-                v-model:value="form.ccard_name"
-                placeholder="Credit Card Name"
-            />
+            <a-input allow-clear v-model:value="form.ccard_name" placeholder="Credit Card Name" />
         </a-form-item>
     </a-modal>
     <!-- {{ data }} -->

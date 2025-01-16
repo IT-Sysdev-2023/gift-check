@@ -1,18 +1,12 @@
 <template>
     <a-card>
         <div>
-            <a-button
-                class="back-button"
-                @click="backButton"
-                style="border: 1px solid whitesmoke"
-                ><RollbackOutlined />Back</a-button
-            >
+            <a-button class="back-button" @click="backButton" style="border: 1px solid whitesmoke">
+                <RollbackOutlined />Back
+            </a-button>
         </div>
         <div style="margin-left: 77.5%">
-            <a-button
-                style="background-color: #1b76f8; color: white"
-                @click="() => (addDenomination = true)"
-            >
+            <a-button style="background-color: #1b76f8; color: white" @click="() => (addDenomination = true)">
                 <PlusOutlined /> Add New Denomination
             </a-button>
         </div>
@@ -21,30 +15,15 @@
         </div>
 
         <div style="margin-left: 70%">
-            <a-input-search
-                allow-clear
-                enter-button
-                v-model:value="searchTerm"
-                placeholder="Input search here"
-                size="medium"
-                style="width: 80%"
-            />
+            <a-input-search allow-clear enter-button v-model:value="searchTerm" placeholder="Input search here"
+                size="medium" style="width: 80%" />
         </div>
         <div style="margin-top: 10px">
-            <a-table
-                :columns="columns"
-                :dataSource="data.data"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :columns="columns" :dataSource="data.data" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
-                        <a-button
-                            @click="updateDenominationData(record)"
-                            title="Update"
-                            class="me-2 me-sm-5"
-                            style="color: white; background-color: green"
-                        >
+                        <a-button @click="updateDenominationData(record)" title="Update" class="me-2 me-sm-5"
+                            style="color: white; background-color: green">
                             <FormOutlined />
                         </a-button>
                     </template>
@@ -61,32 +40,14 @@
             Add New Denomination
         </span>
 
-        <a-form-item
-            for="denomination"
-            :validate-status="form.errors.denomination ? 'error' : ''"
-            :help="form.errors.denomination"
-            style="margin-top: 10px; font-weight: bold"
-            >Denomination:
-            <a-input
-                allow-clear
-                type="number"
-                v-model:value="form.denomination"
-                placeholder="Denomination"
-            />
+        <a-form-item for="denomination" :validate-status="form.errors.denomination ? 'error' : ''"
+            :help="form.errors.denomination" style="margin-top: 10px; font-weight: bold">Denomination:
+            <a-input allow-clear type="number" v-model:value="form.denomination" placeholder="Denomination" />
         </a-form-item>
 
-        <a-form-item
-            for="barcodeNumStart"
-            :validate-status="form.errors.barcodeNumStart ? 'error' : ''"
-            :help="form.errors.barcodeNumStart"
-            style="margin-top: 10px; font-weight: bold"
-            >Barcode # Start:
-            <a-input
-                allow-clear
-                type="number"
-                v-model:value="form.barcodeNumStart"
-                placeholder="Barcode # start"
-            />
+        <a-form-item for="barcodeNumStart" :validate-status="form.errors.barcodeNumStart ? 'error' : ''"
+            :help="form.errors.barcodeNumStart" style="margin-top: 10px; font-weight: bold">Barcode # Start:
+            <a-input allow-clear type="number" v-model:value="form.barcodeNumStart" placeholder="Barcode # start" />
         </a-form-item>
     </a-modal>
 
@@ -97,51 +58,23 @@
             Update Denomination
         </span>
 
-        <a-form-item
-            for="denomination"
-            :validate-status="updateDenom.errors?.denomination ? 'error' : ''"
-            :help="updateDenom.errors?.denomination"
-            style="margin-top: 10px; font-weight: bold"
-            >Denomination:
-            <a-input
-                allow-clear
-                type="number"
-                v-model:value="updateDenom.denomination"
-                placeholder="Denomination"
-            />
+        <a-form-item for="denomination" :validate-status="updateDenom.errors?.denomination ? 'error' : ''"
+            :help="updateDenom.errors?.denomination" style="margin-top: 10px; font-weight: bold">Denomination:
+            <a-input allow-clear type="number" v-model:value="updateDenom.denomination" placeholder="Denomination" />
         </a-form-item>
 
-        <a-form-item
-            for="denom_barcode_start"
-            :validate-status="
-                updateDenom.errors?.denom_barcode_start ? 'error' : ''
-            "
-            style="margin-top: 10px; font-weight: bold"
-            :help="updateDenom.errors?.denom_barcode_start"
-            >Barcode # Start:
-            <a-input
-                allow-clear
-                type="number"
-                v-model:value="updateDenom.denom_barcode_start"
-                placeholder="Barcode # start"
-            />
+        <a-form-item for="denom_barcode_start" :validate-status="updateDenom.errors?.denom_barcode_start ? 'error' : ''
+            " style="margin-top: 10px; font-weight: bold" :help="updateDenom.errors?.denom_barcode_start">Barcode #
+            Start:
+            <a-input allow-clear type="number" v-model:value="updateDenom.denom_barcode_start"
+                placeholder="Barcode # start" />
         </a-form-item>
 
-        <a-form-item
-            for="denom_fad_item_number"
-            :validate-status="
-                updateDenom.errors?.denom_fad_item_number ? 'error' : ''
-            "
-            :help="updateDenom.errors?.denom_fad_item_number"
-            style="margin-top: 10px; font-weight: bold"
-        >
+        <a-form-item for="denom_fad_item_number" :validate-status="updateDenom.errors?.denom_fad_item_number ? 'error' : ''
+            " :help="updateDenom.errors?.denom_fad_item_number" style="margin-top: 10px; font-weight: bold">
             FAD Item #:
-            <a-input
-                allow-clear
-                type="number"
-                v-model:value="updateDenom.denom_fad_item_number"
-                placeholder="FAD Item #"
-            />
+            <a-input allow-clear type="number" v-model:value="updateDenom.denom_fad_item_number"
+                placeholder="FAD Item #" />
         </a-form-item>
     </a-modal>
     <!-- {{ data }} -->
@@ -325,6 +258,7 @@ export default {
     min-width: 110px;
     margin-top: 1%;
 }
+
 .back-button {
     font-weight: bold;
     font-family: "Poppins", sans-serif;

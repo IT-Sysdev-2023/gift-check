@@ -1063,7 +1063,11 @@ class AdminController extends Controller
 
     public function tagHennan(Request $request)
     {
-        $searchData = $request->input('searchData');
+
+        // $searchValue = $request['searchValue'];
+        // dd($request->all());
+
+        // $searchData = $request->input('searchData');
         // dd($searchData);
 
         $fullname = DB::table('special_gc_henanns')
@@ -1072,20 +1076,17 @@ class AdminController extends Controller
         $query = DB::table('special_external_gcrequest_emp_assign')
             ->join('special_gc_henanns', 'special_gc_henanns.hennan_id', '=', 'special_external_gcrequest_emp_assign.tag')
             ->select('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'special_external_gcrequest_emp_assign.tag', 'special_gc_henanns.fullname', 'special_gc_henanns.hennan_id')
-            // ->when($searchData, function ($query) use ($searchData) {
-            //     $query->where(function ($subQuery) use ($searchData) {
-            //         $subQuery->where('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'like', '%' . $searchData . '%')
-            //             ->orWhere('special_gc_henanns.fullname', 'like', '%' . $searchData . '%')
-            //             ->orWhere('special_gc_henanns.hennan_id', 'like', '%' . $searchData . '%');
-            //     });
-            // })
+            ->whereAny([
+                'spexgcemp_barcode',
+                'fullname'
+            ], 'like', '%' . $request['searchvalue'] . '%')
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_id', 'DESC')
             ->paginate(10)
             ->withQueryString();
 
         return Inertia::render('Admin/Masterfile/TagHennan', [
             'data' => $query,
-            'fullname' => $fullname
+            'fullname' => $fullname,
         ]);
     }
 
@@ -1109,6 +1110,7 @@ class AdminController extends Controller
                 'tagged' => '0',
             ]);
 
+
         if ($updateTag && $update && $updateTagBack) {
 
             return back()->with(
@@ -1117,7 +1119,7 @@ class AdminController extends Controller
             );
         } else {
             return back()->with(
-                'error',
+                'warning',
                 'FAILED TO UPDATE'
             );
         }
