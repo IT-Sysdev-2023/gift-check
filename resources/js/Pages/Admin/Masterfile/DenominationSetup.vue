@@ -1,18 +1,12 @@
 <template>
     <a-card>
         <div>
-            <a-button
-                class="back-button"
-                @click="backButton"
-                style="border: 1px solid whitesmoke"
-                ><RollbackOutlined />Back</a-button
-            >
+            <a-button class="back-button" @click="backButton" style="font-weight: bold;">
+                <RollbackOutlined />Back
+            </a-button>
         </div>
         <div style="margin-left: 77.5%">
-            <a-button
-                style="background-color: #1b76f8; color: white"
-                @click="() => (addDenomination = true)"
-            >
+            <a-button style="background-color: #1b76f8; color: white" @click="() => (addDenomination = true)">
                 <PlusOutlined /> Add New Denomination
             </a-button>
         </div>
@@ -21,30 +15,30 @@
         </div>
 
         <div style="margin-left: 70%">
-            <a-input-search
-                allow-clear
-                enter-button
-                v-model:value="searchTerm"
-                placeholder="Input search here"
-                size="medium"
-                style="width: 80%"
-            />
+            <a-input-search allow-clear enter-button v-model:value="searchTerm" placeholder="Input search here"
+                size="medium" style="width: 80%" />
+        </div>
+        <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 3rem">
+            <div class="spinnerContainer">
+                <div class="spinner"></div>
+                <div class="loader">
+                    <p>loading</p>
+                    <div class="words">
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                    </div>
+                </div>
+            </div>
         </div>
         <div style="margin-top: 10px">
-            <a-table
-                :columns="columns"
-                :dataSource="data.data"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :columns="columns" :dataSource="data.data" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
-                        <a-button
-                            @click="updateDenominationData(record)"
-                            title="Update"
-                            class="me-2 me-sm-5"
-                            style="color: white; background-color: green"
-                        >
+                        <a-button @click="updateDenominationData(record)" title="Update" class="me-2 me-sm-5"
+                            style="color: white; background-color: green">
                             <FormOutlined />
                         </a-button>
                     </template>
@@ -61,32 +55,14 @@
             Add New Denomination
         </span>
 
-        <a-form-item
-            for="denomination"
-            :validate-status="form.errors.denomination ? 'error' : ''"
-            :help="form.errors.denomination"
-            style="margin-top: 10px; font-weight: bold"
-            >Denomination:
-            <a-input
-                allow-clear
-                type="number"
-                v-model:value="form.denomination"
-                placeholder="Denomination"
-            />
+        <a-form-item for="denomination" :validate-status="form.errors.denomination ? 'error' : ''"
+            :help="form.errors.denomination" style="margin-top: 10px; font-weight: bold">Denomination:
+            <a-input allow-clear type="number" v-model:value="form.denomination" placeholder="Denomination" />
         </a-form-item>
 
-        <a-form-item
-            for="barcodeNumStart"
-            :validate-status="form.errors.barcodeNumStart ? 'error' : ''"
-            :help="form.errors.barcodeNumStart"
-            style="margin-top: 10px; font-weight: bold"
-            >Barcode # Start:
-            <a-input
-                allow-clear
-                type="number"
-                v-model:value="form.barcodeNumStart"
-                placeholder="Barcode # start"
-            />
+        <a-form-item for="barcodeNumStart" :validate-status="form.errors.barcodeNumStart ? 'error' : ''"
+            :help="form.errors.barcodeNumStart" style="margin-top: 10px; font-weight: bold">Barcode # Start:
+            <a-input allow-clear type="number" v-model:value="form.barcodeNumStart" placeholder="Barcode # start" />
         </a-form-item>
     </a-modal>
 
@@ -97,51 +73,23 @@
             Update Denomination
         </span>
 
-        <a-form-item
-            for="denomination"
-            :validate-status="updateDenom.errors?.denomination ? 'error' : ''"
-            :help="updateDenom.errors?.denomination"
-            style="margin-top: 10px; font-weight: bold"
-            >Denomination:
-            <a-input
-                allow-clear
-                type="number"
-                v-model:value="updateDenom.denomination"
-                placeholder="Denomination"
-            />
+        <a-form-item for="denomination" :validate-status="updateDenom.errors?.denomination ? 'error' : ''"
+            :help="updateDenom.errors?.denomination" style="margin-top: 10px; font-weight: bold">Denomination:
+            <a-input allow-clear type="number" v-model:value="updateDenom.denomination" placeholder="Denomination" />
         </a-form-item>
 
-        <a-form-item
-            for="denom_barcode_start"
-            :validate-status="
-                updateDenom.errors?.denom_barcode_start ? 'error' : ''
-            "
-            style="margin-top: 10px; font-weight: bold"
-            :help="updateDenom.errors?.denom_barcode_start"
-            >Barcode # Start:
-            <a-input
-                allow-clear
-                type="number"
-                v-model:value="updateDenom.denom_barcode_start"
-                placeholder="Barcode # start"
-            />
+        <a-form-item for="denom_barcode_start" :validate-status="updateDenom.errors?.denom_barcode_start ? 'error' : ''
+            " style="margin-top: 10px; font-weight: bold" :help="updateDenom.errors?.denom_barcode_start">Barcode #
+            Start:
+            <a-input allow-clear type="number" v-model:value="updateDenom.denom_barcode_start"
+                placeholder="Barcode # start" />
         </a-form-item>
 
-        <a-form-item
-            for="denom_fad_item_number"
-            :validate-status="
-                updateDenom.errors?.denom_fad_item_number ? 'error' : ''
-            "
-            :help="updateDenom.errors?.denom_fad_item_number"
-            style="margin-top: 10px; font-weight: bold"
-        >
+        <a-form-item for="denom_fad_item_number" :validate-status="updateDenom.errors?.denom_fad_item_number ? 'error' : ''
+            " :help="updateDenom.errors?.denom_fad_item_number" style="margin-top: 10px; font-weight: bold">
             FAD Item #:
-            <a-input
-                allow-clear
-                type="number"
-                v-model:value="updateDenom.denom_fad_item_number"
-                placeholder="FAD Item #"
-            />
+            <a-input allow-clear type="number" v-model:value="updateDenom.denom_fad_item_number"
+                placeholder="FAD Item #" />
         </a-form-item>
     </a-modal>
     <!-- {{ data }} -->
@@ -163,6 +111,7 @@ export default {
     },
     data() {
         return {
+            loading: false,
             dataForSelectEntries: {
                 select_entries: this.value,
             },
@@ -207,7 +156,16 @@ export default {
                     data: newVal,
                 },
                 {
-                    preserveState: true,
+                    onStart: () => {
+                        this.loading = true;
+                    },
+                    onSuccess: () => {
+                        this.loading = false;
+                    },
+                    onError: () => {
+                        this.loading = false;
+                    },
+                    preserveState: true
                 },
             );
         },
@@ -302,7 +260,7 @@ export default {
     },
 };
 </script>
-<style>
+<style scoped>
 .denomination-button {
     text-align: right;
 }
@@ -325,8 +283,116 @@ export default {
     min-width: 110px;
     margin-top: 1%;
 }
+
 .back-button {
     font-weight: bold;
     font-family: "Poppins", sans-serif;
+}
+
+/* loading css  */
+.spinnerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.spinner {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    border: 4px solid #0000;
+    border-radius: 50%;
+    border-right-color: #299fff;
+    animation: tri-spinner 1s infinite linear;
+}
+
+.spinner::before,
+.spinner::after {
+    content: "";
+    grid-area: 1/1;
+    margin: 2px;
+    border: inherit;
+    border-radius: 50%;
+    animation: tri-spinner 2s infinite;
+}
+
+.spinner::after {
+    margin: 8px;
+    animation-duration: 3s;
+}
+
+@keyframes tri-spinner {
+    100% {
+        transform: rotate(1turn);
+    }
+}
+
+.loader {
+    color: #4a4a4a;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 25px;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 40px;
+    padding: 10px 10px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    border-radius: 8px;
+}
+
+.words {
+    overflow: hidden;
+}
+
+.word {
+    display: block;
+    height: 100%;
+    padding-left: 6px;
+    color: #299fff;
+    animation: cycle-words 5s infinite;
+}
+
+@keyframes cycle-words {
+    10% {
+        -webkit-transform: translateY(-105%);
+        transform: translateY(-105%);
+    }
+
+    25% {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%);
+    }
+
+    35% {
+        -webkit-transform: translateY(-205%);
+        transform: translateY(-205%);
+    }
+
+    50% {
+        -webkit-transform: translateY(-200%);
+        transform: translateY(-200%);
+    }
+
+    60% {
+        -webkit-transform: translateY(-305%);
+        transform: translateY(-305%);
+    }
+
+    75% {
+        -webkit-transform: translateY(-300%);
+        transform: translateY(-300%);
+    }
+
+    85% {
+        -webkit-transform: translateY(-405%);
+        transform: translateY(-405%);
+    }
+
+    100% {
+        -webkit-transform: translateY(-400%);
+        transform: translateY(-400%);
+    }
 }
 </style>
