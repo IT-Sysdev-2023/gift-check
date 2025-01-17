@@ -1,9 +1,4 @@
-<script setup>
-import { highlighten } from "@/Mixin/UiUtilities";
-import { ref } from "vue";
 
-const { highlightText } = highlighten();
-</script>
 <template>
     <Head :title="title" />
     <a-breadcrumb style="margin: 15px 0">
@@ -82,8 +77,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
-import _ from "lodash";
-import ProgressBar from "@/Components/Finance/ProgressBar.vue";
 import { router } from "@inertiajs/core";
 
 export default {

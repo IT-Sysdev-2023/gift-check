@@ -1,4 +1,5 @@
 import type { UploadFile } from "ant-design-vue";
+import { AxiosPagination } from ".";
 
 export interface ColumnTypes {
     title: string;
@@ -74,6 +75,15 @@ export interface BudgetAdjustmentForm<T> {
     adjustmentType: string | null;
 }
 
+export interface CancelledSpecialMoreDetails{
+    info: StoreGcRequest,
+    total: string,
+    denomination: AxiosPagination<{
+        denomination: number,
+        sri_items_quantity: number,
+        total: number
+    }>
+}
 //Models
 export interface CustodianSrrItems {
     cssitem_barcode: number;
@@ -195,4 +205,28 @@ export interface BudgetRequest {
     abr: ApprovedBudgetRequest;
     cancelled_request?: any;
     cancelled_by: User;
+}
+
+export interface Store {
+    store_id: number;
+    store_name: string;
+}
+
+export interface CancelledStoreGcRequest {
+    csgr_id: number;
+    csgr_gc_id: string | null;
+    csgr_by: number;
+    csgr_at: string;
+    user?: User;
+}
+export interface StoreGcRequest {
+    sgc_id: number;
+    sgc_num: string | number;
+    sgc_date_needed: string;
+    sgc_remarks: string;
+    sgc_date_request: string;
+    sgc_status: string;
+    store?: Store;
+    user?: User;
+    cancelledStoreGcRequest: CancelledStoreGcRequest;
 }
