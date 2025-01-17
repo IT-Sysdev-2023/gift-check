@@ -13,45 +13,28 @@
                         <a-form-item>
                             <div>Data Type:</div>
 
-                            <a-select
-                                style="width: 30%"
-                                placeholder="Select"
-                                v-model:value="monthlyRedeem.SPGCDataType"
-                            >
-                                <a-select-option value=""
-                                    >---Select---</a-select-option
-                                >
-                                <a-select-option value="srv"
-                                    >Store Redemption/Verification</a-select-option
-                                >
+                            <a-select style="width: 30%" placeholder="Select"
+                                v-model:value="monthlyRedeem.SPGCDataType">
+                                <a-select-option value="">---Select---</a-select-option>
+                                <a-select-option value="srv">Store Redemption/Verification</a-select-option>
                             </a-select>
                         </a-form-item>
 
                         <a-form-item>
                             <div>Store:</div>
-                            <a-select
-                                v-model:value="monthlyRedeem.selectedStore"
-                                style="width: 30%"
-                                placeholder="Select Store"
-                                :options="stores"
-                            />
+                            <a-select v-model:value="monthlyRedeem.selectedStore" style="width: 30%"
+                                placeholder="Select Store" :options="stores" />
                         </a-form-item>
 
                         <a-form-item>
                             <div>Month and Year:</div>
-                            <a-date-picker
-                                v-model:value="monthlyRedeem.year"
-                                picker="month"
-                                :disabled-date="disabledDate"
-                            />
+                            <a-date-picker v-model:value="monthlyRedeem.year" picker="month"
+                                :disabled-date="disabledDate" />
 
                         </a-form-item>
                     </div>
                     <div>
-                        <a-button
-                            @click="monthlySubmitButton"
-                            style="background-color: #1e90ff; color: white"
-                        >
+                        <a-button @click="monthlySubmitButton" style="background-color: #1e90ff; color: white">
                             <SendOutlined /> Submit
                         </a-button>
                     </div>
@@ -70,44 +53,26 @@
                         <a-form-item>
                             <div>Data Type:</div>
 
-                            <a-select
-                                style="width: 30%"
-                                placeholder="Select"
-                                v-model:value="yearlyRedeem.SPGCDataType"
-                            >
-                                <a-select-option value=""
-                                    >---Select---</a-select-option
-                                >
-                                <a-select-option value="srv"
-                                    >Store Redemption/Verification</a-select-option
-                                >
+                            <a-select style="width: 30%" placeholder="Select" v-model:value="yearlyRedeem.SPGCDataType">
+                                <a-select-option value="">---Select---</a-select-option>
+                                <a-select-option value="srv">Store Redemption/Verification</a-select-option>
                             </a-select>
                         </a-form-item>
 
                         <a-form-item>
                             <div>Store:</div>
-                            <a-select
-                                v-model:value="yearlyRedeem.selectedStore"
-                                style="width: 30%"
-                                placeholder="Select Store"
-                                :options="stores"
-                            />
+                            <a-select v-model:value="yearlyRedeem.selectedStore" style="width: 30%"
+                                placeholder="Select Store" :options="stores" />
                         </a-form-item>
 
                         <a-form-item>
                             <div>Year:</div>
-                            <a-date-picker
-                                v-model:value="yearlyRedeem.year"
-                                picker="year"
-                                :disabled-date="disabledDate"
-                            />
+                            <a-date-picker v-model:value="yearlyRedeem.year" picker="year"
+                                :disabled-date="disabledDate" />
                         </a-form-item>
                     </div>
                     <div>
-                        <a-button
-                            @click="yearlyRedeemButton"
-                            style="background-color: #1e90ff; color: white"
-                        >
+                        <a-button @click="yearlyRedeemButton" style="background-color: #1e90ff; color: white">
                             <SendOutlined /> Submit
                         </a-button>
                     </div>
@@ -157,23 +122,23 @@ const monthlySubmitButton = async () => {
             state.setFloatButton(true);
             state.setOpenFloat(true);
         })
-         .catch(({ response }) => {
-             // console.log(response.data.message);
-             if (response.status === 422) {
-                 notification.error({
-                     message: "Fields are Required!",
-                     description: response.data.message,
-                 });
-             } else {
-                 notification.error({
-                     message: "Error!",
-                     description: "No record Found on this date.",
-                 });
-             }
-         });
+        .catch(({ response }) => {
+            // console.log(response.data.message);
+            if (response.status === 422) {
+                notification.error({
+                    message: "Fields are Required!",
+                    description: response.data.message,
+                });
+            } else {
+                notification.error({
+                    message: "Error!",
+                    description: "No record Found on this date.",
+                });
+            }
+        });
 };
 
-const yearlyRedeemButton = async() => {
+const yearlyRedeemButton = async () => {
     await axios
         .post(route("storeaccounting.redeemReportSubmit"), {
             year: dayjs(yearlyRedeem.value.year).year(),
@@ -185,18 +150,18 @@ const yearlyRedeemButton = async() => {
             state.setFloatButton(true);
             state.setOpenFloat(true);
         })
-         .catch(({ response }) => {
-             if (response.status === 422) {
-                 notification.error({
-                     message: "Fields are Required!",
-                     description: response.data.message,
-                 });
-             } else {
-                 notification.error({
-                     message: "Error!",
-                     description: "No record Found on this date.",
-                 });
-             }
-         });
+        .catch(({ response }) => {
+            if (response.status === 422) {
+                notification.error({
+                    message: "Fields are Required!",
+                    description: response.data.message,
+                });
+            } else {
+                notification.error({
+                    message: "Error!",
+                    description: "No record Found on this date.",
+                });
+            }
+        });
 };
 </script>
