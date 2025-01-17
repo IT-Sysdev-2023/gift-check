@@ -1,7 +1,7 @@
 <template>
     <!-- HEADER SECTION PAGE  -->
     <header style="
-            background-color: #fbf8ef;
+            background-color: #fff;
             color: black;
             padding: 10px 20px;
             display: flex;
@@ -133,7 +133,7 @@
             <div style="
                     text-align: center;
                     font-weight: bold;
-                    color: #eb5b00;
+                    color: #1e181b;
                     font-size: x-large;
                     margin-top: 20px;
                 ">
@@ -254,8 +254,8 @@
                             <p class="text-body">GC Team Leader / Programmer</p>
                         </div>
                         <button @click="() => {
-                                kentModal = true;
-                            }
+                            kentModal = true;
+                        }
                             " style="cursor: pointer" class="card-button">
                             More info
                         </button>
@@ -273,8 +273,8 @@
                             <p class="text-body">GC Sr / Programmer</p>
                         </div>
                         <button @click="() => {
-                                jessanModal = true;
-                            }
+                            jessanModal = true;
+                        }
                             " style="cursor: pointer" class="card-button">
                             More info
                         </button>
@@ -292,8 +292,8 @@
                             <p class="text-body">GC Sr / Programmer</p>
                         </div>
                         <button @click="() => {
-                                harveyModal = true;
-                            }
+                            harveyModal = true;
+                        }
                             " style="cursor: pointer" class="card-button">
                             More info
                         </button>
@@ -311,8 +311,8 @@
                             <p class="text-body">GC Jr / Programmer</p>
                         </div>
                         <button @click="() => {
-                                teofredoModal = true;
-                            }
+                            teofredoModal = true;
+                        }
                             " style="cursor: pointer" class="card-button">
                             More info
                         </button>
@@ -1070,8 +1070,8 @@
                             <p class="text-body">GC System Analyst</p>
                         </div>
                         <button @click="() => {
-                                claireModal = true;
-                            }
+                            claireModal = true;
+                        }
                             " style="cursor: pointer" class="card-button">
                             More info
                         </button>
@@ -1089,8 +1089,8 @@
                             <p class="text-body">GC System Analyst</p>
                         </div>
                         <button @click="() => {
-                                norienModal = true;
-                            }
+                            norienModal = true;
+                        }
                             " style="cursor: pointer" class="card-button">
                             More info
                         </button>
@@ -1108,8 +1108,8 @@
                             <p class="text-body">GC System Analyst</p>
                         </div>
                         <button @click="() => {
-                                maricelModal = true;
-                            }
+                            maricelModal = true;
+                        }
                             " style="cursor: pointer" class="card-button">
                             More info
                         </button>
@@ -1691,7 +1691,7 @@
     </a-card>
 
     <!-- FOOTER SECTION  -->
-    <a-card style="background-color: #fbf8ef">
+    <a-card style="background-color: #eb5b00; position: absolute; left: 0; right:0;">
         <div>
             <div style="margin-top: 20px">
                 <div>
@@ -1764,9 +1764,9 @@
                     <h2 style="
                             text-align: center;
                             margin-top: 20px;
-                            color: #003140;
+                            color: #1e181b;
                         ">
-                        Copyright © 2024 gift-check.com All Rights Reserved. -
+                        Copyright © 2025 gift-check.com All Rights Reserved. -
                         Legal
                     </h2>
                 </div>
@@ -1918,10 +1918,9 @@ const maricelModal = ref(false);
     width: 380px;
     height: 500px;
     border-radius: 20px;
-    background: #fbf8ef;
+    background: #fff;
     position: relative;
     padding: 1.8rem;
-    /* border: 2px solid white; */
     transition: 0.5s ease-out;
     overflow: visible;
 }
@@ -1965,7 +1964,7 @@ const maricelModal = ref(false);
 
 /*Hover*/
 .card:hover {
-    border-color: #008bf8;
+    border-color: #eb5b00;
     box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
 }
 
@@ -2897,13 +2896,13 @@ ul {
 <!-- heading Hover  -->
 <style scoped>
 .headings-Hover {
-    font-size: 17px;
+    font-size: 20px;
     cursor: pointer;
     text-decoration: none;
     color: #003140;
     font-weight: bold;
-    background-color: #fbf8ef;
-    border: 3px solid #fbf8ef;
+    background-color: #fff;
+    border: 3px solid #fff;
     font-family:
         Cambria,
         Cochin,
@@ -2913,6 +2912,6 @@ ul {
 }
 
 .headings-Hover:hover {
-    text-decoration: underline;
+    color: #eb5b00;
 }
 </style>

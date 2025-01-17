@@ -32,6 +32,7 @@ use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
 use Illuminate\Support\Facades\DB;
 use Symfony\Contracts\Service\Attribute\Required;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -802,33 +803,37 @@ class AdminController extends Controller
         );
     }
 
-
     public function creditCardSetup(Request $request)
     {
-        // dd($request->all());
         $searchTerm = $request->input('data', '');
         $selectEntries = $request->input('value', 10);
 
-        $data = creditcard::query();
+        $dataQuery = creditcard::query();
 
         if ($searchTerm) {
-            $data->where(function ($query) use ($searchTerm) {
+            $dataQuery->where(function ($query) use ($searchTerm) {
                 $query->where('ccard_name', 'like', '%' . $searchTerm . '%')
                     ->orWhere('ccard_status', 'like', '%' . $searchTerm . '%')
                     ->orWhere('ccard_created', 'like', '%' . $searchTerm . '%')
                     ->orWhere('ccard_by', 'like', '%' . $searchTerm . '%');
             });
         }
-        $data = $data->orderByDesc('ccard_id')
-            ->paginate($selectEntries)
-            ->withQuerystring();
+
+        $data = $dataQuery->orderByDesc('ccard_id')
+        ->paginate($selectEntries)
+            ->through(function ($item) {
+                $item['ccard_created_formatted'] = Carbon::parse($item['ccard_created'])->format('Y-m-d H:i:s');
+                return $item;
+            })
+            ->withQueryString();
 
         return inertia('Admin/Masterfile/CreditCardSetup', [
             'data' => $data,
-            'search' => $request->data,
-            'value' => $request->value
+            'search' => $searchTerm,
+            'value' => $selectEntries,
         ]);
     }
+
 
     public function saveCreditCard(Request $request)
     {

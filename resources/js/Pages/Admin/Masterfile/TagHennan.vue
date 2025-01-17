@@ -2,7 +2,7 @@
     <AuthenticatedLayout>
         <a-card>
             <div>
-                <a-button @click="backButton" style="font-weight: bold; position: absolute; right: 2rem">
+                <a-button @click="backButton" style="font-weight: bold;">
                     <RollbackOutlined /> Back
                 </a-button>
             </div>
@@ -20,28 +20,21 @@
                 <a-input-search allow-clear @change="searchFunction" v-model:value="tagHennanSearch" size="medium"
                     enter-button placeholder="Input search here..." style="width: 25%; margin-left: 70%" />
             </div>
-            <span v-if="loading" style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 1000;
-                ">
-                <div class="loader">
-                    <div class="loaderMiniContainer">
-                        <div class="barContainer">
-                            <span class="bar"></span>
-                            <span class="bar bar2"></span>
+            <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 3rem">
+                <div class="spinnerContainer">
+                    <div class="spinner"></div>
+                    <div class="loader">
+                        <p>loading</p>
+                        <div class="words">
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 101 114" class="svgIcon">
-                            <circle stroke-width="7" stroke="black" transform="rotate(36.0692 46.1726 46.1727)"
-                                r="29.5497" cy="46.1727" cx="46.1726"></circle>
-                            <line stroke-width="7" stroke="black" y2="111.784" x2="97.7088" y1="67.7837" x1="61.7089">
-                            </line>
-                        </svg>
                     </div>
                 </div>
-
-            </span>
+            </div>
             <div style="margin-top: 1rem">
                 <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
@@ -179,83 +172,109 @@ const submitUpdatedTag = () => {
 </script>
 
 <style scoped>
-.loader {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.loaderMiniContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 130px;
-    height: fit-content;
-}
-
-.barContainer {
-    width: 100%;
-    height: fit-content;
+.spinnerContainer {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 10px;
-    background-position: left;
+    align-items: center;
 }
 
-.bar {
-    width: 100%;
-    height: 8px;
-    background: linear-gradient(to right,
-            rgb(161, 94, 255),
-            rgb(217, 190, 255),
-            rgb(161, 94, 255));
-    background-size: 200% 100%;
-    border-radius: 10px;
-    animation: bar ease-in-out 3s infinite alternate-reverse;
+.spinner {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    border: 4px solid #0000;
+    border-radius: 50%;
+    border-right-color: #299fff;
+    animation: tri-spinner 1s infinite linear;
 }
 
-@keyframes bar {
-    0% {
-        background-position: left;
+.spinner::before,
+.spinner::after {
+    content: "";
+    grid-area: 1/1;
+    margin: 2px;
+    border: inherit;
+    border-radius: 50%;
+    animation: tri-spinner 2s infinite;
+}
+
+.spinner::after {
+    margin: 8px;
+    animation-duration: 3s;
+}
+
+@keyframes tri-spinner {
+    100% {
+        transform: rotate(1turn);
+    }
+}
+
+.loader {
+    color: #4a4a4a;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 25px;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 40px;
+    padding: 10px 10px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    border-radius: 8px;
+}
+
+.words {
+    overflow: hidden;
+}
+
+.word {
+    display: block;
+    height: 100%;
+    padding-left: 6px;
+    color: #299fff;
+    animation: cycle-words 5s infinite;
+}
+
+@keyframes cycle-words {
+    10% {
+        -webkit-transform: translateY(-105%);
+        transform: translateY(-105%);
+    }
+
+    25% {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%);
+    }
+
+    35% {
+        -webkit-transform: translateY(-205%);
+        transform: translateY(-205%);
+    }
+
+    50% {
+        -webkit-transform: translateY(-200%);
+        transform: translateY(-200%);
+    }
+
+    60% {
+        -webkit-transform: translateY(-305%);
+        transform: translateY(-305%);
+    }
+
+    75% {
+        -webkit-transform: translateY(-300%);
+        transform: translateY(-300%);
+    }
+
+    85% {
+        -webkit-transform: translateY(-405%);
+        transform: translateY(-405%);
     }
 
     100% {
-        background-position: right;
+        -webkit-transform: translateY(-400%);
+        transform: translateY(-400%);
     }
-}
-
-.bar2 {
-    width: 50%;
-}
-
-.svgIcon {
-    position: absolute;
-    left: -25px;
-    margin-top: 18px;
-    z-index: 2;
-    width: 70%;
-    animation: search ease-in-out 3s infinite alternate-reverse;
-}
-
-@keyframes search {
-    0% {
-        transform: translateX(0%) rotate(70deg);
-    }
-
-    100% {
-        transform: translateX(100px) rotate(10deg);
-    }
-}
-
-.svgIcon circle,
-line {
-    stroke: rgb(162, 55, 255);
-}
-
-.svgIcon circle {
-    fill: rgba(98, 65, 142, 0.238);
 }
 </style>
