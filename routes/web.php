@@ -140,6 +140,11 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('issue-receipt', [AdminController::class, 'issueReceipt'])->name('issueReceipt');
                 Route::get('save-credit-card', [AdminController::class, 'saveCreditCard'])->name('saveCreditCard');
                 Route::get('revolving-fund', [AdminController::class, 'revolving_fund'])->name('revolvingFund');
+
+                Route::get('tag-hennan',[AdminController::class, 'tagHennan'])->name('tagHennan');
+                Route::get('update-tag-hennan',[AdminController::class, 'updateTagHennan'])->name('updateTagHennan');
+
+
                 route::get('save-denomination', [AdminController::class, 'saveDenomination'])->name('saveDenomination');
                 route::post('update-denomination', [AdminController::class, 'UpdateDenomination'])->name('saveUpdateDenomination');
                 route::post('update-user', [AdminController::class, 'updateUser'])->name('updateUser');

@@ -2,48 +2,43 @@
     <div>
         <h2>Masterfile</h2>
     </div>
-        <a-form-item style="margin-top: 20px;">
-            <a-card @click="() => $inertia.get(route('admin.masterfile.users'))" class="card-hover"
-                style=" background-color: #1e90ff ; color: white; width: 12%; height: auto; position: absolute; top:10px;">
+    <div style="display: flex; margin-top: 2rem; justify-content: center; align-items: center">
+        <a-form-item>
+            <a-button @click="() => $inertia.get(route('admin.masterfile.users'))" class="buttons">
                 <UserOutlined /> Setup Users
-            </a-card>
+            </a-button>
 
-            <a-card @click="() => $inertia.get(route('admin.masterfile.store.staff'))" class="card-hover"
-                style=" background-color: #1e90ff ; color: white; width: 15%; height: auto;  position: absolute; top:10px; margin-left: 12%;">
+            <a-button @click="() => $inertia.get(route('admin.masterfile.store.staff'))" class="buttons">
                 <AppstoreAddOutlined /> Setup Store Staff
-            </a-card>
+            </a-button>
 
-            <a-card @click="() => $inertia.get(route('admin.masterfile.customer.setup'))" class="card-hover"
-                style=" background-color: #1e90ff ; color: white; width: 15%; height: auto; position: absolute; top:10px; margin-left: 27%;  ">
+            <a-button @click="() => $inertia.get(route('admin.masterfile.customer.setup'))" class="buttons">
                 <CustomerServiceOutlined /> Setup Customer
-            </a-card>
+            </a-button>
 
-
-            <a-card @click="() => $inertia.get(route('admin.masterfile.setupStore'))" class="card-hover"
-                style=" background-color: #1e90ff ; color: white; width: 12%; height: auto; position: absolute; top:10px; margin-left: 42%; ">
+            <a-button @click="() => $inertia.get(route('admin.masterfile.setupStore'))" class="buttons">
                 <AppstoreFilled /> Setup Store
-            </a-card>
+            </a-button>
 
 
-            <a-card @click="() => $inertia.get(route('admin.masterfile.creditCardSetup'))" class="card-hover"
-                style=" background-color: #1e90ff ; color: white; width: 15%; height: auto; position: absolute; top:10px; margin-left: 54%; ">
+            <a-button @click="() => $inertia.get(route('admin.masterfile.creditCardSetup'))" class="buttons">
                 <CreditCardFilled /> Setup Credit Card
-            </a-card>
+            </a-button>
 
-
-
-            <a-card @click="() => $inertia.get(route('admin.masterfile.denominationSetup'))" class="card-hover"
-                style=" background-color: #1e90ff ; color: white; width: 17%; height: auto; position: absolute; top:10px; margin-left: 69%; ">
+            <a-button @click="() => $inertia.get(route('admin.masterfile.denominationSetup'))" class="buttons">
                 <BarcodeOutlined /> Setup Denomination
-            </a-card>
+            </a-button>
 
-
-
-            <a-card @click="() => $inertia.get(route('admin.masterfile.revolvingFund'))" class="card-hover"
-                style=" background-color: #1e90ff ; color: white; width: 15%; height: auto; position: absolute; top:10px; margin-left: 86%; ">
+            <a-button @click="() => $inertia.get(route('admin.masterfile.revolvingFund'))" class="buttons">
                 <FundFilled /> Revolving Fund
-            </a-card>
+            </a-button>
+
+            <a-button @click="() => $inertia.get(route('admin.masterfile.tagHennan'))" class="buttons">
+                <TagOutlined /> Tag Hennan
+            </a-button>
         </a-form-item>
+
+    </div>
 
     <!-- {{ users }} -->
 </template>
@@ -62,8 +57,8 @@ export default {
 <style scoped>
 .button-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     margin-top: 20px;
 }
 
@@ -77,6 +72,20 @@ export default {
 }
 
 .card-hover:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+.buttons{
+    background-color: #113961;
+    height: 5rem;
+    color:white;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+    margin: 0 5px;
+}
+.buttons:hover{
+    background-color: #1b76f8;
+    color:white;
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }

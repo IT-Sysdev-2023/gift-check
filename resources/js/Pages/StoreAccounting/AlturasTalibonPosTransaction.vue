@@ -7,7 +7,8 @@
                         route('storeaccounting.alturasTalibon', { id: 2 }),
                     )
             "
-        ><RollbackOutlined />Back</a-button>
+            ><RollbackOutlined />Back</a-button
+        >
         <span
             style="
                 background-color: #b0c4de;
@@ -16,7 +17,9 @@
                 margin-left: 50px;
             "
         >
-            GC Barcode #{{ barcodeNumber }} POS Transaction
+            GC Barcode -
+            <span style="font-weight: 100">#{{ barcodeNumber }}</span> - POS
+            Transaction
         </span>
 
         <div style="font-weight: bold; margin-left: 70%; margin-top: 10px">

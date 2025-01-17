@@ -36,19 +36,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="input-wrapper">
-                                    <input
-                                        type="search"
-                                        placeholder="Input search here..."
-                                        name="text"
-                                        class="input"
-                                        v-model="cebuTagbilaranSearch"
-                                    />
-                                </div> -->
+
                                 <div style="margin-left: 60%">
                                     <a-input-search
                                         allow-clear
-                                        v-model:value="cebuTagbilaranSearch"
+                                        v-model:value="cebuTagbilaraaanSearch"
                                         enter-button
                                         placeholder="Input search here! "
                                         style="width: 100%"
