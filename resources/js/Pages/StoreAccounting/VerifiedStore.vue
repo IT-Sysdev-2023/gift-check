@@ -9,111 +9,73 @@
                         Verified Store Purchased (Monthly)
                     </span>
                 </template>
-                <a-card>
-                    <div style="margin-top: 20px">
-                        <a-form-item>
-                            <div>Data Type:</div>
+<a-card>
+    <div style="margin-top: 20px">
+        <a-form-item>
+            <div>Data Type:</div>
 
-                            <a-select
-                                style="width: 30%"
-                                placeholder="Select"
-                                v-model:value="verifiedMonthly.type"
-                            >
-                                <a-select-option value=""
-                                    >---Select---</a-select-option
-                                >
-                                <a-select-option value="verifiedgc"
-                                    >Store Sales</a-select-option
-                                >
-                            </a-select>
-                        </a-form-item>
+            <a-select style="width: 30%" placeholder="Select" v-model:value="verifiedMonthly.type">
+                <a-select-option value="">---Select---</a-select-option>
+                <a-select-option value="verifiedgc">Store Sales</a-select-option>
+            </a-select>
+        </a-form-item>
 
-                        <a-form-item>
-                            <div>Store:</div>
-                            <a-select
-                                v-model:value="verifiedMonthly.selectedStore"
-                                style="width: 30%"
-                                placeholder="Select Store"
-                                :options="stores"
-                            />
-                        </a-form-item>
+        <a-form-item>
+            <div>Store:</div>
+            <a-select v-model:value="verifiedMonthly.selectedStore" style="width: 30%" placeholder="Select Store"
+                :options="stores" />
+        </a-form-item>
 
-                        <a-form-item>
-                            <div>Month and Year:</div>
-                            <a-date-picker
-                                v-model:value="verifiedMonthly.year"
-                                picker="month"
-                                :disabled-date="disabledDate"
-                            />
-                        </a-form-item>
-                    </div>
-                    <div>
-                        <a-button
-                            @click="monthlySubmitButton"
-                            style="background-color: #1e90ff; color: white"
-                        >
-                            <SendOutlined /> Submit
-                        </a-button>
-                    </div>
-                </a-card>
-            </a-tab-pane>
+        <a-form-item>
+            <div>Month and Year:</div>
+            <a-date-picker v-model:value="verifiedMonthly.year" picker="month" :disabled-date="disabledDate" />
+        </a-form-item>
+    </div>
+    <div>
+        <a-button @click="monthlySubmitButton" style="background-color: #1e90ff; color: white">
+            <SendOutlined /> Submit
+        </a-button>
+    </div>
+</a-card>
+</a-tab-pane>
 
-            <a-tab-pane key="2">
-                <template #tab>
+<a-tab-pane key="2">
+    <template #tab>
                     <span>
                         <PieChartOutlined />
                         Verified Store Purchased (Yearly)
                     </span>
                 </template>
-                <a-card>
-                    <div style="margin-top: 20px">
-                        <a-form-item>
-                            <div>Data Type:</div>
+    <a-card>
+        <div style="margin-top: 20px">
+            <a-form-item>
+                <div>Data Type:</div>
 
-                            <a-select
-                                style="width: 30%"
-                                placeholder="Select"
-                                v-model:value="verifiedYearly.type"
-                            >
-                                <a-select-option value=""
-                                    >---Select---</a-select-option
-                                >
-                                <a-select-option value="verifiedgc"
-                                    >Store Sales</a-select-option
-                                >
-                            </a-select>
-                        </a-form-item>
+                <a-select style="width: 30%" placeholder="Select" v-model:value="verifiedYearly.type">
+                    <a-select-option value="">---Select---</a-select-option>
+                    <a-select-option value="verifiedgc">Store Sales</a-select-option>
+                </a-select>
+            </a-form-item>
 
-                        <a-form-item>
-                            <div>Store:</div>
-                            <a-select
-                                v-model:value="verifiedYearly.selectedStore"
-                                style="width: 30%"
-                                placeholder="Select Store"
-                                :options="stores"
-                            />
-                        </a-form-item>
+            <a-form-item>
+                <div>Store:</div>
+                <a-select v-model:value="verifiedYearly.selectedStore" style="width: 30%" placeholder="Select Store"
+                    :options="stores" />
+            </a-form-item>
 
-                        <a-form-item>
-                            <div>Year:</div>
-                            <a-date-picker
-                                v-model:value="verifiedYearly.year"
-                                picker="year"
-                                :disabled-date="disabledDate"
-                            />
-                        </a-form-item>
-                    </div>
-                    <div>
-                        <a-button
-                            @click="yearlySubmitButton"
-                            style="background-color: #1e90ff; color: white"
-                        >
-                            <SendOutlined /> Submit
-                        </a-button>
-                    </div>
-                </a-card>
-            </a-tab-pane>
-        </a-tabs> -->
+            <a-form-item>
+                <div>Year:</div>
+                <a-date-picker v-model:value="verifiedYearly.year" picker="year" :disabled-date="disabledDate" />
+            </a-form-item>
+        </div>
+        <div>
+            <a-button @click="yearlySubmitButton" style="background-color: #1e90ff; color: white">
+                <SendOutlined /> Submit
+            </a-button>
+        </div>
+    </a-card>
+</a-tab-pane>
+</a-tabs> -->
     </AuthenticatedLayout>
 </template>
 
@@ -158,24 +120,24 @@ const monthlySubmitButton = async () => {
             state.setFloatButton(true);
             state.setOpenFloat(true);
         })
-         .catch(({ response }) => {
-             // console.log(response.data.message);
-             if (response.status === 422) {
-                 notification.error({
-                     message: "Fields are Required!",
-                     description: response.data.message,
-                 });
-             } else {
-                 notification.error({
-                     message: "Error!",
-                     description: "No record Found on this date.",
-                 });
-             }
-         });
+        .catch(({ response }) => {
+            // console.log(response.data.message);
+            if (response.status === 422) {
+                notification.error({
+                    message: "Fields are Required!",
+                    description: response.data.message,
+                });
+            } else {
+                notification.error({
+                    message: "Error!",
+                    description: "No record Found on this date.",
+                });
+            }
+        });
 
 };
 
-   
+
 // this.$inertia.get(
 //     route("storeaccounting.puchasedMonthlySubmit"),
 //     monthlyData,
@@ -194,20 +156,20 @@ const yearlySubmitButton = async () => {
             state.setFloatButton(true);
             state.setOpenFloat(true);
         })
-         .catch(({ response }) => {
-             // console.log(response.data.message);
-             if (response.status === 422) {
-                 notification.error({
-                     message: "Fields are Required!",
-                     description: response.data.message,
-                 });
-             } else {
-                 notification.error({
-                     message: "Error!",
-                     description: "No record Found on this date.",
-                 });
-             }
-         });
+        .catch(({ response }) => {
+            // console.log(response.data.message);
+            if (response.status === 422) {
+                notification.error({
+                    message: "Fields are Required!",
+                    description: response.data.message,
+                });
+            } else {
+                notification.error({
+                    message: "Error!",
+                    description: "No record Found on this date.",
+                });
+            }
+        });
     // this.$inertia.get(
     //     route("storeaccounting.purchasedYearlySubmit"),
     //     yearlyData,

@@ -25,10 +25,7 @@
                                                 <div id="ring"></div>
                                                 <div id="ring"></div>
                                                 <div id="ring"></div>
-                                                <div
-                                                    style="font-weight: bold"
-                                                    id="h3"
-                                                >
+                                                <div style="font-weight: bold" id="h3">
                                                     Generating EXCEL please
                                                     wait...
                                                 </div>
@@ -38,46 +35,28 @@
                                 </div>
 
                                 <div style="margin-left: 60%">
-                                    <a-input-search
-                                        allow-clear
-                                        v-model:value="cebuTagbilaraaanSearch"
-                                        enter-button
-                                        placeholder="Input search here! "
-                                        style="width: 100%"
-                                    />
+                                    <a-input-search allow-clear v-model:value="cebuTagbilaraaanSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%" />
                                 </div>
                                 <div style="margin-top: 10px">
-                                    <span
-                                        style="
+                                    <span style="
                                             font-weight: bold;
                                             margin-left: 40%;
-                                        "
-                                    >
+                                        ">
                                         Table Showing Tagbilaran
                                     </span>
                                 </div>
-                                <a-table
-                                    :columns="cebuTable"
-                                    :data-source="cebu.tagbilaran.data"
-                                    :pagination="false"
-                                    size="small"
-                                    style="margin-top: 5px"
-                                >
+                                <a-table :columns="cebuTable" :data-source="cebu.tagbilaran.data" :pagination="false"
+                                    size="small" style="margin-top: 5px">
                                 </a-table>
-                                <pagination
-                                    :datarecords="cebu.tagbilaran"
-                                    class="mt-5"
-                                />
+                                <pagination :datarecords="cebu.tagbilaran" class="mt-5" />
                             </a-card>
                             <span>
-                                <a-button
-                                    @click="cebuGenerateExcel"
-                                    style="
+                                <a-button @click="cebuGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
-                                    "
-                                >
+                                    ">
                                     <FileExcelOutlined />
 
                                     Generate Excel
@@ -100,10 +79,7 @@
                                                 <div id="ring"></div>
                                                 <div id="ring"></div>
                                                 <div id="ring"></div>
-                                                <div
-                                                    style="font-weight: bold"
-                                                    id="h3"
-                                                >
+                                                <div style="font-weight: bold" id="h3">
                                                     Generating EXCEL please
                                                     wait...
                                                 </div>
@@ -121,46 +97,28 @@
                                     />
                                 </div> -->
                                 <div style="margin-left: 60%">
-                                    <a-input-search
-                                        allow-clear
-                                        v-model:value="cebuTalibonSearch"
-                                        enter-button
-                                        placeholder="Input search here! "
-                                        style="width: 100%"
-                                    />
+                                    <a-input-search allow-clear v-model:value="cebuTalibonSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%" />
                                 </div>
                                 <div style="margin-top: 10px">
-                                    <span
-                                        style="
+                                    <span style="
                                             font-weight: bold;
                                             margin-left: 40%;
-                                        "
-                                    >
+                                        ">
                                         Table Showing Talibon
                                     </span>
                                 </div>
-                                <a-table
-                                    :columns="cebuTable"
-                                    :data-source="cebu.talibon.data"
-                                    :pagination="false"
-                                    size="small"
-                                    style="margin-top: 5px"
-                                >
+                                <a-table :columns="cebuTable" :data-source="cebu.talibon.data" :pagination="false"
+                                    size="small" style="margin-top: 5px">
                                 </a-table>
-                                <pagination
-                                    :datarecords="cebu.talibon"
-                                    class="mt-5"
-                                />
+                                <pagination :datarecords="cebu.talibon" class="mt-5" />
                             </a-card>
                             <span>
-                                <a-button
-                                    @click="cebuGenerateExcel"
-                                    style="
+                                <a-button @click="cebuGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
-                                    "
-                                >
+                                    ">
                                     <FileExcelOutlined />
                                     Generate Excel
                                 </a-button>
@@ -175,10 +133,7 @@
                                             <div id="ring"></div>
                                             <div id="ring"></div>
                                             <div id="ring"></div>
-                                            <div
-                                                style="font-weight: bold"
-                                                id="h3"
-                                            >
+                                            <div style="font-weight: bold" id="h3">
                                                 Generating EXCEL please wait...
                                             </div>
                                         </div>
@@ -202,46 +157,28 @@
                                     />
                                 </div> -->
                                 <div style="margin-left: 60%">
-                                    <a-input-search
-                                        allow-clear
-                                        v-model:value="cebuTubigonSearch"
-                                        enter-button
-                                        placeholder="Input search here! "
-                                        style="width: 100%"
-                                    />
+                                    <a-input-search allow-clear v-model:value="cebuTubigonSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%" />
                                 </div>
                                 <div style="margin-top: 10px">
-                                    <span
-                                        style="
+                                    <span style="
                                             font-weight: bold;
                                             margin-left: 40%;
-                                        "
-                                    >
+                                        ">
                                         Table Showing Tubigon
                                     </span>
                                 </div>
-                                <a-table
-                                    :columns="cebuTable"
-                                    :data-source="cebu.tubigon.data"
-                                    :pagination="false"
-                                    size="small"
-                                    style="margin-top: 5px"
-                                >
+                                <a-table :columns="cebuTable" :data-source="cebu.tubigon.data" :pagination="false"
+                                    size="small" style="margin-top: 5px">
                                 </a-table>
-                                <pagination
-                                    :datarecords="cebu.tubigon"
-                                    class="mt-5"
-                                />
+                                <pagination :datarecords="cebu.tubigon" class="mt-5" />
                             </a-card>
                             <span>
-                                <a-button
-                                    @click="cebuGenerateExcel"
-                                    style="
+                                <a-button @click="cebuGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
-                                    "
-                                >
+                                    ">
                                     <FileExcelOutlined />
                                     Generate Excel
                                 </a-button>
@@ -257,13 +194,11 @@
                         <span style="font-weight: bold; font-size: 15px">
                             Duplicate Barcodes
                         </span>
-                        <div
-                            style="
+                        <div style="
                                 margin-left: 50px;
                                 color: #1e90ff;
                                 font-weight: bold;
-                            "
-                        >
+                            ">
                             CEBU
                         </div>
                     </div>
@@ -281,11 +216,7 @@
                                 <div class="back-side cover"></div>
                             </div>
                             <label class="custom-file-upload">
-                                <input
-                                    class="title"
-                                    type="file"
-                                    @change="handleFileChange"
-                                />
+                                <input class="title" type="file" @change="handleFileChange" />
                                 Choose a file
                             </label>
                         </div>
@@ -294,48 +225,33 @@
                             style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" /> -->
                     </div>
                     <div style="margin-top: 20px">
-                        <span
-                            v-if="textfile"
-                            style="color: green; font-weight: bold"
-                            >Select:
+                        <span v-if="textfile" style="color: green; font-weight: bold">Select:
                         </span>
                         <span style="margin-left: 10x">
                             {{ this.textfile }}
                         </span>
-                        <span
-                            v-if="cebu.selectedCebuFile && !textfile"
-                            style="font-weight: bold; color: green"
-                            >Selected TextFile:</span
-                        >
+                        <span v-if="cebu.selectedCebuFile && !textfile" style="font-weight: bold; color: green">Selected
+                            TextFile:</span>
                         <span style="margin-left: 5px">
                             {{ this.cebu.selectedCebuFile }}
                         </span>
-                        <span
-                            v-if="!textfile && !cebu.selectedCebuFile"
-                            style="font-weight: bold"
-                        >
+                        <span v-if="!textfile && !cebu.selectedCebuFile" style="font-weight: bold">
                             Note:
                         </span>
-                        <span
-                            v-if="!textfile && !cebu.selectedCebuFile"
-                            style="
+                        <span v-if="!textfile && !cebu.selectedCebuFile" style="
                                 margin-left: 5px;
                                 color: red;
                                 font-weight: bold;
-                            "
-                        >
+                            ">
                             Choose TEXTFILE type only !
                         </span>
                     </div>
                     <div>
-                        <a-button
-                            @click="cebuReportButton"
-                            style="
+                        <a-button @click="cebuReportButton" style="
                                 background-color: #1e90ff;
                                 color: white;
                                 margin-top: 20px;
-                            "
-                        >
+                            ">
                             <FileExcelOutlined />
                             Check Duplicates
                         </a-button>
@@ -370,10 +286,7 @@
                                                 <div id="ring"></div>
                                                 <div id="ring"></div>
                                                 <div id="ring"></div>
-                                                <div
-                                                    style="font-weight: bold"
-                                                    id="h3"
-                                                >
+                                                <div style="font-weight: bold" id="h3">
                                                     Generating EXCEL please
                                                     wait...
                                                 </div>
@@ -391,46 +304,28 @@
                                     />
                                 </div> -->
                                 <div style="margin-left: 60%">
-                                    <a-input-search
-                                        allow-clear
-                                        v-model:value="alttaTagbilaranSearch"
-                                        enter-button
-                                        placeholder="Input search here! "
-                                        style="width: 100%"
-                                    />
+                                    <a-input-search allow-clear v-model:value="alttaTagbilaranSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%" />
                                 </div>
                                 <div style="margin-top: 10px">
-                                    <span
-                                        style="
+                                    <span style="
                                             font-weight: bold;
                                             margin-left: 40%;
-                                        "
-                                    >
+                                        ">
                                         Table Showing Tagbilaran
                                     </span>
                                 </div>
-                                <a-table
-                                    :columns="cebuTable"
-                                    :data-source="altta.tagbilaran.data"
-                                    :pagination="false"
-                                    size="small"
-                                    style="margin-top: 5px"
-                                >
+                                <a-table :columns="cebuTable" :data-source="altta.tagbilaran.data" :pagination="false"
+                                    size="small" style="margin-top: 5px">
                                 </a-table>
-                                <pagination
-                                    :datarecords="altta.tagbilaran"
-                                    class="mt-5"
-                                />
+                                <pagination :datarecords="altta.tagbilaran" class="mt-5" />
                             </a-card>
                             <span>
-                                <a-button
-                                    @click="alttaGenerateExcel"
-                                    style="
+                                <a-button @click="alttaGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
-                                    "
-                                >
+                                    ">
                                     <FileExcelOutlined />
                                     Generate Excel
                                 </a-button>
@@ -452,10 +347,7 @@
                                                 <div id="ring"></div>
                                                 <div id="ring"></div>
                                                 <div id="ring"></div>
-                                                <div
-                                                    style="font-weight: bold"
-                                                    id="h3"
-                                                >
+                                                <div style="font-weight: bold" id="h3">
                                                     Generating EXCEL please
                                                     wait...
                                                 </div>
@@ -474,46 +366,28 @@
                                     />
                                 </div> -->
                                 <div style="margin-left: 60%">
-                                    <a-input-search
-                                        allow-clear
-                                        v-model:value="alttaTalibonSearch"
-                                        enter-button
-                                        placeholder="Input search here! "
-                                        style="width: 100%"
-                                    />
+                                    <a-input-search allow-clear v-model:value="alttaTalibonSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%" />
                                 </div>
                                 <div style="margin-top: 10px">
-                                    <span
-                                        style="
+                                    <span style="
                                             font-weight: bold;
                                             margin-left: 40%;
-                                        "
-                                    >
+                                        ">
                                         Table Showing Talibon
                                     </span>
                                 </div>
-                                <a-table
-                                    :columns="cebuTable"
-                                    :data-source="altta.talibon.data"
-                                    :pagination="false"
-                                    size="small"
-                                    style="margin-top: 5px"
-                                >
+                                <a-table :columns="cebuTable" :data-source="altta.talibon.data" :pagination="false"
+                                    size="small" style="margin-top: 5px">
                                 </a-table>
-                                <pagination
-                                    :datarecords="altta.talibon"
-                                    class="mt-5"
-                                />
+                                <pagination :datarecords="altta.talibon" class="mt-5" />
                             </a-card>
                             <span>
-                                <a-button
-                                    @click="alttaGenerateExcel"
-                                    style="
+                                <a-button @click="alttaGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
-                                    "
-                                >
+                                    ">
                                     <FileExcelOutlined />
                                     Generate Excel
                                 </a-button>
@@ -535,10 +409,7 @@
                                                 <div id="ring"></div>
                                                 <div id="ring"></div>
                                                 <div id="ring"></div>
-                                                <div
-                                                    style="font-weight: bold"
-                                                    id="h3"
-                                                >
+                                                <div style="font-weight: bold" id="h3">
                                                     Generating EXCEL please
                                                     wait...
                                                 </div>
@@ -557,46 +428,28 @@
                                     />
                                 </div> -->
                                 <div style="margin-left: 60%">
-                                    <a-input-search
-                                        allow-clear
-                                        v-model:value="alttaTubigonSearch"
-                                        enter-button
-                                        placeholder="Input search here! "
-                                        style="width: 100%"
-                                    />
+                                    <a-input-search allow-clear v-model:value="alttaTubigonSearch" enter-button
+                                        placeholder="Input search here! " style="width: 100%" />
                                 </div>
                                 <div style="margin-top: 10px">
-                                    <span
-                                        style="
+                                    <span style="
                                             font-weight: bold;
                                             margin-left: 40%;
-                                        "
-                                    >
+                                        ">
                                         Table Showing Tubigon
                                     </span>
                                 </div>
-                                <a-table
-                                    :columns="cebuTable"
-                                    :data-source="altta.tubigon.data"
-                                    :pagination="false"
-                                    size="small"
-                                    style="margin-top: 5px"
-                                >
+                                <a-table :columns="cebuTable" :data-source="altta.tubigon.data" :pagination="false"
+                                    size="small" style="margin-top: 5px">
                                 </a-table>
-                                <pagination
-                                    :datarecords="altta.tubigon"
-                                    class="mt-5"
-                                />
+                                <pagination :datarecords="altta.tubigon" class="mt-5" />
                             </a-card>
                             <span>
-                                <a-button
-                                    @click="alttaGenerateExcel"
-                                    style="
+                                <a-button @click="alttaGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
-                                    "
-                                >
+                                    ">
                                     <FileExcelOutlined />
                                     Generate Excel
                                 </a-button>
@@ -613,13 +466,11 @@
                         <span style="font-weight: bold; font-size: 15px">
                             Duplicate Barcodes
                         </span>
-                        <div
-                            style="
+                        <div style="
                                 margin-left: 45px;
                                 color: #1e90ff;
                                 font-weight: bold;
-                            "
-                        >
+                            ">
                             ALTTA CITTA
                         </div>
                     </div>
@@ -637,11 +488,7 @@
                                 <div class="back-side cover"></div>
                             </div>
                             <label class="custom-file-upload">
-                                <input
-                                    class="title"
-                                    type="file"
-                                    @change="handleFileChangeAltta"
-                                />
+                                <input class="title" type="file" @change="handleFileChangeAltta" />
                                 Choose a file
                             </label>
                         </div>
@@ -651,50 +498,36 @@
                             style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" /> -->
                     </div>
                     <div style="margin-top: 20px">
-                        <span
-                            v-if="altaTextFile"
-                            style="color: green; font-weight: bold"
-                            >Select:
+                        <span v-if="altaTextFile" style="color: green; font-weight: bold">Select:
                         </span>
                         <span style="margin-left: 5px">
                             {{ this.altaTextFile }}
                         </span>
 
-                        <span
-                            v-if="altta.selectedFile && !altaTextFile"
-                            style="color: green; font-weight: bold"
-                            >Selected TextFile:</span
-                        >
+                        <span v-if="altta.selectedFile && !altaTextFile"
+                            style="color: green; font-weight: bold">Selected
+                            TextFile:</span>
                         <span style="margin-left: 5px">
                             {{ this.altta.selectedFile }}
                         </span>
 
-                        <span
-                            v-if="!altaTextFile && !altta.selectedFile"
-                            style="font-weight: bold"
-                        >
+                        <span v-if="!altaTextFile && !altta.selectedFile" style="font-weight: bold">
                             Note:
                         </span>
-                        <span
-                            v-if="!altaTextFile && !altta.selectedFile"
-                            style="
+                        <span v-if="!altaTextFile && !altta.selectedFile" style="
                                 margin-left: 5px;
                                 color: red;
                                 font-weight: bold;
-                            "
-                        >
+                            ">
                             Choose CSV type only !
                         </span>
                     </div>
                     <div>
-                        <a-button
-                            @click="alttaReportButton"
-                            style="
+                        <a-button @click="alttaReportButton" style="
                                 background-color: #1e90ff;
                                 color: white;
                                 margin-top: 20px;
-                            "
-                        >
+                            ">
                             <FileExcelOutlined />
                             Check Duplicates
                         </a-button>
@@ -1294,6 +1127,7 @@ export default {
 .input-wrapper input:focus {
     outline-color: whitesmoke;
 }
+
 /*select folder css*/
 .container {
     --transition: 350ms;
@@ -1419,6 +1253,7 @@ export default {
         transform: translateY(0px);
     }
 }
+
 /* From Uiverse.io by Vazafirst */
 #page {
     display: flex;

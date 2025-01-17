@@ -5,33 +5,20 @@
         </div>
 
         <div style="font-weight: bold; margin-left: 70%; margin-top: 10px">
-            <a-input-search
-                allow-clear
-                v-model:value="talibonSearchBox"
-                style="width: 90%"
-                enter-button
-                placeholder="Input search here!"
-            />
+            <a-input-search allow-clear v-model:value="talibonSearchBox" style="width: 90%" enter-button
+                placeholder="Input search here!" />
         </div>
         <div style="margin-top: 10px">
-            <a-table
-                :data-source="data.data"
-                :columns="alturasTalibonColumns"
-                :pagination="false"
-                size="small"
-                style="margin-top: 10px"
-            >
+            <a-table :data-source="data.data" :columns="alturasTalibonColumns" :pagination="false" size="small"
+                style="margin-top: 10px">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'view'">
-                        <a-button
-                            @click="viewAlturasTalibon(record)"
-                            class="me-2 me-sm-5"
-                            style="color: white; background-color: #1e90ff"
-                        >
+                        <a-button @click="viewAlturasTalibon(record)" class="me-2 me-sm-5"
+                            style="color: white; background-color: #1e90ff">
                             <EyeOutlined />
                         </a-button>
                     </template>
-                </template> 
+                </template>
             </a-table>
             <pagination :datarecords="data" class="mt-5" />
         </div>

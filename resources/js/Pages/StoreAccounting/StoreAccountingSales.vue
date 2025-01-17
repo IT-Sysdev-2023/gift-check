@@ -1,32 +1,20 @@
 <template>
     <a-card>
-        <div><h2>TREASURY SALES</h2></div>
+        <div>
+            <h2>TREASURY SALES</h2>
+        </div>
 
         <div style="margin-top: 10px; margin-left: 70%">
-            <a-input-search
-                allow-clear
-                v-model:value="salesSearchBox"
-                placeholder="Input search here!"
-                enter-button
-                style="width: 90%"
-            />
+            <a-input-search allow-clear v-model:value="salesSearchBox" placeholder="Input search here!" enter-button
+                style="width: 90%" />
         </div>
 
         <div style="margin-top: 10px">
-            <a-table
-                :data-source="data.data"
-                :columns="columns"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :data-source="data.data" :columns="columns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'view'">
-                        <a-button
-                            title="view"
-                            @click="viewSales(record)"
-                            class="me-2 me-sm-5"
-                            style="color: white; background-color: #1e90ff"
-                        >
+                        <a-button title="view" @click="viewSales(record)" class="me-2 me-sm-5"
+                            style="color: white; background-color: #1e90ff">
                             <EyeOutlined />
                         </a-button>
                     </template>
