@@ -47,7 +47,7 @@
                         </a-form-item>
                         <a-form-item label="Released By:">
                             <a-input
-                                :value="page.props.auth.user.full_name"
+                                :value="page.auth.user.full_name"
                                 readonly
                             />
                         </a-form-item>

@@ -12,7 +12,7 @@
                 <a-col :span="12">
                     <a-statistic
                         title="Prepared By"
-                        :value="page.props.auth.user.full_name"
+                        :value="page.auth.user.full_name"
                     />
                 </a-col>
                 <a-col :span="12">
