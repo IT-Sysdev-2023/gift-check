@@ -117,7 +117,8 @@ class AdminController extends Controller
             ->join('access_page', 'users.usertype', '=', 'access_page.access_no')
             ->leftJoin('stores', 'users.store_assigned', '=', 'stores.store_id');
 
-        $searchTerm = $request->input('data', '');
+        $searchTerm = $request['searchData'];
+        // dd($searchTerm);
 
 
         if ($searchTerm) {
@@ -144,8 +145,8 @@ class AdminController extends Controller
             return $item;
         });
 
-        return Inertia::render('Admin/Masterfile/Users', [
-            'users' => $users,
+        return Inertia::render('Admin/Masterfile/UserSetup', [
+            'data' => $users,
             'search' => $request->data,
             'access_page' => $access_page,
             'storestaff' => $StoreStaff,
@@ -159,238 +160,56 @@ class AdminController extends Controller
     {
 
         // dd($request->all());
-        // dd($request->usertype);
-
-
         $request->validate([
-            'username' => 'required|max:50',
-            'firstname' => 'required|max:50',
-            'lastname' => 'required|max:50',
-            'emp_id' => 'required',
+            'username' => 'required',
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'employee_id' => 'required',
             'usertype' => 'required',
+            'user_role' => [
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->input('usertype'), [2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14]) || $request->input('it_type') === 1;
+                }),
+            ],
             'store_assigned' => [
-                'sometimes',
                 Rule::requiredIf(function () use ($request) {
-                    $usertype = $request->input('usertype');
-                    $it_type = $request->input('it_type');
-
-                    $non_required_usertypes = [
-                        1,
-                        'administrator',
-                        2,
-                        'treasurydept',
-                        3,
-                        'finance',
-                        4,
-                        'custodian',
-                        5,
-                        'generalmanager',
-                        6,
-                        'marketing',
-                        8,
-                        'retailgroup',
-                        9,
-                        'accounting',
-                        10,
-                        'internal_audit',
-                        11,
-                        'finance_office',
-                        12,
-                        'it_personnel',
-                        13,
-                        'cfs'
-                    ];
-
-                    $is_in_non_required = in_array($usertype, $non_required_usertypes);
-
-                    $is_required = in_array($usertype, ['7', 'retailstore', 'store_accounting', '14']) ||
-                        in_array($it_type, ['2', 'store_it',]);
-
-                    return !$is_in_non_required && $is_required;
-                })
-            ],
-
-            'user_role' => [
-                'sometimes',
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('it_type') !== '2';
-                })
-            ],
-            'retail_group' => [
-                'sometimes',
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('usertype') === 'retailgroup' || $request->input('usertype') === 8;
-                })
-            ],
-            'it_type' => [
-                'sometimes',
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('usertype') === 'it_personnel' || $request->input('usertype') === 12;
-                })
-            ]
-        ]);
-
-
-        $userType = AccessPage::where('employee_type', $request->usertype)->first();
-        if ($userType) {
-            $user_type = $userType->access_no;
-        } else {
-            $user_type = $request->usertype;
-        }
-
-
-
-        $storeAssigned = Store::where('store_name', $request->store_assigned)->first();
-        if ($storeAssigned) {
-            $store_Assigned = $storeAssigned->store_code;
-        } else {
-            $store_Assigned = $request->store_assigned;
-        }
-
-        $updatedData = [
-            'username' => $request->username,
-            'firstname' => $request->firstname,
-            'lastname' => $request->lastname,
-            'emp_id' => $request->emp_id,
-            'usertype' => $user_type,
-            'user_role' => $request->user_role,
-            'user_status' => $request->user_status,
-        ];
-
-        if ($request->usertype !== 12 && $request->usertype !== 'it_personnel') {
-            $updatedData['it_type'] = null;
-        } else {
-            $updatedData['it_type'] = $request->it_type;
-        }
-
-        if ($request->usertype !== 8 && $request->usertype !== 'retailgroup') {
-            $updatedData['retail_group'] = null;
-        } else {
-            $updatedData['retail_group'] = $request->retail_group;
-        }
-        if (
-            $request->usertype !== 7 && $request->usertype !== 'retailstore' && $request->usertype !== 14
-            && $request->usertype !== 'store_accounting' && $request->it_type !== '2' || $request->usertype === 1 || $request->usertype === 2
-            || $request->usertype === 3 || $request->usertype === 4 || $request->usertype === 5 || $request->usertype === 6
-            || $request->usertype === 8 || $request->usertype === 9 || $request->usertype === 10 || $request->usertype === 11
-            || $request->usertype === 13
-        ) {
-            $updatedData['store_assigned'] = 0;
-        } else {
-            $updatedData['store_assigned'] = $store_Assigned;
-        }
-        // dd($request->it_type);
-
-        $user = User::findOrFail($request->user_id);
-        if (
-            $user->username == $request->username &&
-            $user->firstname == $request->firstname &&
-            $user->lastname == $request->lastname &&
-            $user->emp_id == $request->emp_id &&
-            $user->usertype == $request->usertype &&
-            $user->user_role == $request->user_role &&
-            $user->user_status == $request->user_status &&
-            $user->it_type == $request->it_type &&
-            $user->store_it == $request->store_it &&
-            $user->it_personnel == $request->it_personnel &&
-            $user->retail_group == $request->retail_group &&
-            $user->store_assigned == $request->store_assigned
-        ) {
-            return back()->with('error', 'WARNING');
-        }
-
-        $onSuccess = User::where('user_id', $request->user_id)->update($updatedData);
-
-
-        if ($onSuccess) {
-            return back()->with('success', 'SUCCESS');
-        }
-        return back()->with('error', 'OPPS');
-    }
-
-
-    public function users_save_user(Request $request)
-    {
-
-        $request->validate([
-            'username' => 'required|max:50',
-            'firstname' => 'required|max:50',
-            'lastname' => 'required|max:50',
-            'emp_id' => 'required|integer',
-            'employee_type' => 'required',
-            'user_role' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('it_type') !== 'store_it';
-                }),
-            ],
-            'it_type' => [
-                'sometimes',
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('employee_type') === 'it_personnel';
+                    return in_array($request->input('user_role'), [7, 8, 14]) || $request->input('it_type') === 2;
                 }),
             ],
             'retail_group' => [
-                'sometimes',
                 Rule::requiredIf(function () use ($request) {
-                    return $request->input('employee_type') === 'retailgroup';
+                    return $request->input('usertype') === 8;
                 }),
             ],
-            'store_name' => [
-                'sometimes',
+            'it_type' => [
                 Rule::requiredIf(function () use ($request) {
-                    return $request->input('employee_type') === 'retailstore'
-                        || $request->input('employee_type') === 'store_accounting'
-                        || $request->input('it_type') === 'store_it';
+                    return $request->input('it_type') === 12;
                 }),
             ]
         ]);
 
-        $storeAssigned = Store::where('store_name', $request->store_name)->first();
+        $password = Hash::make('GC2015');
 
-        if ($storeAssigned === null) {
-            $store_assigned = '0';
-        } else {
-            $store_assigned = $storeAssigned->store_code;
-        }
-
-        $accessPage = AccessPage::where('employee_type', $request->employee_type)->first();
-
-        if ($accessPage === null) {
-            $usertype = '0';
-        } else {
-            $usertype = $accessPage->access_no;
-        }
-        $newUser = User::where('username', $request->username)->first();
-        if ($newUser) {
-            return back()->with(
-                'error',
-                'OPPS'
-            );
-        }
-
-        $password = Hash::make($request->ss_password);
-
-        $isSuccessful = User::create([
+        $updateUser = User::where('user_id', $request->user_id)->update([
             'username' => $request->username,
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
-            'emp_id' => $request->emp_id,
-            'usertype' => $usertype,
+            'emp_id' => $request->employee_id,
+            'usertype' => $request->usertype,
             'password' => $password,
             'usergroup' => '',
             'user_status' => 'active',
             'user_role' => $request->user_role,
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => $store_assigned,
+            'store_assigned' => $request->store_assigned,
             'date_created' => now(),
             'user_addby' => $request->user()->user_id,
             'retail_group' => $request->retail_group,
             'it_type' => $request->it_type
-
         ]);
 
-        if ($isSuccessful) {
+        if ($updateUser) {
             return back()->with(
                 'success',
                 'SUCCESS'
@@ -398,7 +217,72 @@ class AdminController extends Controller
         }
         return back()->with(
             'error',
-            'FAILED TO ADD'
+            'FAILED'
+        );
+    }
+
+
+    public function users_save_user(Request $request)
+    {
+        // dd($request->all());
+        $request->validate([
+            'username' => 'required',
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'employee_id' => 'required',
+            'usertype' => 'required',
+            'user_role' => [
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->input('usertype'), [2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14]) || $request->input('it_type') === 1;
+                }),
+            ],
+            'store_assigned' => [
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->input('user_role'), [7, 8, 14]) || $request->input('it_type') === 2;
+                }),
+            ],
+            'retail_group' => [
+                Rule::requiredIf(function () use ($request) {
+                    return $request->input('usertype') === 8;
+                }),
+            ],
+            'it_type' => [
+                Rule::requiredIf(function () use ($request) {
+                    return $request->input('it_type') === 12;
+                }),
+            ]
+        ]);
+
+        $password = Hash::make('GC2015');
+
+        $insertUser = User::create([
+            'username' => $request->username,
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'emp_id' => $request->employee_id,
+            'usertype' => $request->usertype,
+            'password' => $password,
+            'usergroup' => '',
+            'user_status' => 'active',
+            'user_role' => $request->user_role,
+            'login' => 'no',
+            'promo_tag' => '0',
+            'store_assigned' => $request->store_assigned,
+            'date_created' => now(),
+            'user_addby' => $request->user()->user_id,
+            'retail_group' => $request->retail_group,
+            'it_type' => $request->it_type
+        ]);
+
+        if ($insertUser) {
+            return back()->with(
+                'success',
+                'Success'
+            );
+        }
+        return back()->with(
+            'error',
+            'Failed'
         );
     }
 
@@ -820,7 +704,7 @@ class AdminController extends Controller
         }
 
         $data = $dataQuery->orderByDesc('ccard_id')
-        ->paginate($selectEntries)
+            ->paginate($selectEntries)
             ->through(function ($item) {
                 $item['ccard_created_formatted'] = Carbon::parse($item['ccard_created'])->format('Y-m-d H:i:s');
                 return $item;
@@ -1068,13 +952,7 @@ class AdminController extends Controller
 
     public function tagHennan(Request $request)
     {
-
-        // $searchValue = $request['searchValue'];
         // dd($request->all());
-
-        // $searchData = $request->input('searchData');
-        // dd($searchData);
-
         $fullname = DB::table('special_gc_henanns')
             ->select('fullname', 'hennan_id')
             ->get();
@@ -1088,10 +966,9 @@ class AdminController extends Controller
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_id', 'DESC')
             ->paginate(10)
             ->withQueryString();
-
         return Inertia::render('Admin/Masterfile/TagHennan', [
             'data' => $query,
-            'fullname' => $fullname,
+            'fullname' => $fullname
         ]);
     }
 

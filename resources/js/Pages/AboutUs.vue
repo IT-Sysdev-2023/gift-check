@@ -2033,7 +2033,7 @@ const maricelModal = ref(false);
     width: 140px;
     border-radius: 50px;
     transition-duration: 0.3s;
-    background-color: #e26538;
+    background-color: #fff;
     align-items: center;
 }
 
@@ -2047,7 +2047,7 @@ const maricelModal = ref(false);
     position: absolute;
     bottom: -20px;
     content: "Back to Top";
-    color: white;
+    color: black;
     /* transition-duration: .3s; */
     font-size: 0px;
 }
