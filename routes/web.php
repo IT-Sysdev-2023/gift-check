@@ -116,7 +116,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('userType:admin')->prefix('admin')->group(function () {
         Route::name('admin.')->group(function () {
             Route::get('add-new-fund', [AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
-            Route::get('users_add_user', [AdminController::class, 'users_save_user'])->name('masterfile.user.saveUser');
+            Route::post('users_add_user', [AdminController::class, 'users_save_user'])->name('masterfile.user.saveUser');
             Route::post('update-password', [AdminController::class, 'updateStoreStaffPassword'])->name('masterfile.updateStoreStaffPassword');
             Route::post('update-store-setup', [AdminController::class, 'updateStoreStaffSetup'])->name('masterfile.updateStoreStaffSetup');
             Route::get('denomination-setup', [AdminController::class, 'denominationSetup'])->name('masterfile.denominationSetup');

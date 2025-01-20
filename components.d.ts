@@ -510,6 +510,7 @@ declare module 'vue' {
     UserGuide: typeof import('./resources/js/Pages/UserGuide.vue')['default']
     UserOutlined: typeof import('@ant-design/icons-vue')['UserOutlined']
     Users: typeof import('./resources/js/Pages/Admin/Masterfile/Users.vue')['default']
+    UserSetup: typeof import('./resources/js/Pages/Admin/Masterfile/UserSetup.vue')['default']
     ValidateBarcode: typeof import('./resources/js/Pages/Iad/Partials/ValidateBarcode.vue')['default']
     ValidateByRange: typeof import('./resources/js/Pages/Iad/Partials/ValidateByRange.vue')['default']
     Verification: typeof import('./resources/js/Pages/Retail/Verification.vue')['default']
