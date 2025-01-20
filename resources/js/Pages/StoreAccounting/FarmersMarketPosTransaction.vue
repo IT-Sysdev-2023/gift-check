@@ -1,40 +1,27 @@
 <template>
     <a-card>
-        <a-button
-            @click="
-                () =>
-                    $inertia.get(
-                        route('storeaccounting.farmersMarket', { id: 9 }),
-                    )
-            "
-        ><RollbackOutlined />Back</a-button>
-        <span
-            style="
+        <a-button @click="() =>
+                $inertia.get(
+                    route('storeaccounting.farmersMarket', { id: 9 }),
+                )
+            ">
+            <RollbackOutlined />Back
+        </a-button>
+        <span style="
                 font-weight: bold;
                 font-family: sans-serif;
                 font-size: 1rem;
                 margin-left: 50px;
-            "
-        >
+            ">
             GC Barcode - <span style="font-weight: 100;">#{{ barcodeNumber }}</span> - POS Transaction
         </span>
 
         <div style="font-weight: bold; margin-left: 70%; margin-top: 10px">
-            <a-input-search
-                allow-clear
-                v-model:value="alturasSearch"
-                style="width: 90%"
-                enter-button
-            />
+            <a-input-search allow-clear v-model:value="alturasSearch" style="width: 90%" enter-button />
         </div>
 
         <div style="margin-top: 10px">
-            <a-table
-                :data-source="data.data"
-                :columns="alturasPosTransaction"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :data-source="data.data" :columns="alturasPosTransaction" :pagination="false" size="small">
             </a-table>
             <pagination :datarecords="data" class="mt-5" />
         </div>

@@ -5,30 +5,17 @@
         </div>
         <div style="margin-left: 70%; margin-top: 10px">
             <span>
-                <a-input-search
-                    allow-clear
-                    v-model:value="searchTerm"
-                    placeholder="Input search here!"
-                    enter-button
-                    style="width: 90%"
-                />
+                <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here!" enter-button
+                    style="width: 90%" />
             </span>
         </div>
         <div style="margin-top: 10px">
-            <a-table
-                :data-source="data.data"
-                :columns="columns"
-                :pagination="false"
-                size="small"
-                style="border: 1px solid #f5f5f5"
-            >
+            <a-table :data-source="data.data" :columns="columns" :pagination="false" size="small"
+                style="border: 1px solid #f5f5f5">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
-                        <a-button
-                            title="view"
-                            @click="viewEODList(record)"
-                            style="color: white; background-color: #1e90ff"
-                        >
+                        <a-button title="view" @click="viewEODList(record)"
+                            style="color: white; background-color: #1e90ff">
                             <EyeOutlined />
                         </a-button>
                     </template>

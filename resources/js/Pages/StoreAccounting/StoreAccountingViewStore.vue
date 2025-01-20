@@ -1,39 +1,25 @@
 <template>
     <a-card>
-        <a-button @click="backToDashboard" style="font-weight: bold"
-            ><RollbackOutlined /> Back</a-button
-        >
-        <span
-            style="font-family: sans-serif; font-size: 1rem; margin-left: 50px"
-        >
+        <a-button @click="backToDashboard" style="font-weight: bold">
+            <RollbackOutlined /> Back
+        </a-button>
+        <span style="font-family: sans-serif; font-size: 1rem; margin-left: 50px">
             <span style="font-weight: bold">Barcode #</span>
             {{ selectecTransNumber }}
         </span>
 
         <div style="margin-top: 10px; margin-left: 70%; font-weight: bold">
-            <a-input-search
-                allow-clear
-                v-model:value="storeSearchBox"
-                placeholder="Input search here!"
-                enter-button
-                style="width: 90%"
-            />
+            <a-input-search allow-clear v-model:value="storeSearchBox" placeholder="Input search here!" enter-button
+                style="width: 90%" />
         </div>
 
         <div style="margin-top: 10px">
-            <a-table
-                :data-source="viewStoreSalesData.data"
-                :columns="viewStoreColumns"
-                size="small"
-                :pagination="false"
-            >
+            <a-table :data-source="viewStoreSalesData.data" :columns="viewStoreColumns" size="small"
+                :pagination="false">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'view'">
-                        <a-button
-                            @click="storeModalButton(record)"
-                            style="background-color: #1e90ff; color: white"
-                            class="me-2 me-sm-5"
-                        >
+                        <a-button @click="storeModalButton(record)" style="background-color: #1e90ff; color: white"
+                            class="me-2 me-sm-5">
                             <SearchOutlined />
                         </a-button>
                     </template>
@@ -43,12 +29,7 @@
         </div>
     </a-card>
 
-    <a-modal
-        v-model:open="storeModal"
-        style="width: 100%"
-        @ok="storeOkButton"
-        :footer="false"
-    >
+    <a-modal v-model:open="storeModal" style="width: 100%" @ok="storeOkButton" :footer="false">
         <a-card>
             <div style="font-family: sans-serif; font-size: 1rem">
                 <span style="font-weight: bold">GC Barcode #</span>
@@ -56,12 +37,8 @@
             </div>
 
             <div style="margin-top: 10px">
-                <a-table
-                    :data-source="storeModalData.data"
-                    :columns="storeModalColumns"
-                    size="small"
-                    :pagination="false"
-                >
+                <a-table :data-source="storeModalData.data" :columns="storeModalColumns" size="small"
+                    :pagination="false">
                 </a-table>
                 <pagination :datarecords="storeModalData" class="mt-5" />
             </div>
