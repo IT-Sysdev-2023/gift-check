@@ -59,11 +59,12 @@
                         <a-select v-model:value="form.hennan_id" style="margin-top: 0.5rem">
                             <a-select-option v-for="item in fullname" :key="item.hennan_id" :value="item.hennan_id">{{
                                 item.fullname
-                                }}</a-select-option>
+                            }}</a-select-option>
                         </a-select>
                     </a-form-item>
                 </div>
             </a-modal>
+            {{ search }}
         </a-card>
     </AuthenticatedLayout>
 </template>
@@ -79,6 +80,7 @@ import { Modal } from "ant-design-vue";
 defineProps({
     data: Object,
     fullname: Object,
+    search: Array
 });
 const loading = ref(false);
 const tagHennanSearch = ref("");
