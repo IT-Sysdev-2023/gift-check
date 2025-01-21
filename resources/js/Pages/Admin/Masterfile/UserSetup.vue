@@ -23,14 +23,14 @@
 
         <!-- TABLE -->
         <div style="margin-top: 1rem;">
-            <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
+            <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
                         <a-button @click="updateUser(record)" title="Update User"
                             style="background-color: green; color:white">
                             <EditOutlined />
                         </a-button>
-                        <a-button @click="resetUser(record)" title="Reset Password"
+                        <a-button @click="resetPassword(record)" title="Reset Password"
                             style="margin-left: 10px; background-color: #1b76f8; color:white">
                             <UndoOutlined />
                         </a-button>
@@ -86,10 +86,22 @@
                     </a-select>
                 </a-form-item>
 
+                <!-- IT TYPE  -->
+                <a-form-item v-if="showItType" for="it_type" :validate-status="form.errors.it_type ? 'error' : ''"
+                    :help="form.errors.it_type">
+                    <span>IT Type:</span>
+                    <a-select v-model:value="form.it_type">
+                        <a-select-option value=1>
+                            Corporate IT
+                        </a-select-option>
+                        <a-select-option value=2>
+                            Store It
+                        </a-select-option>
+                    </a-select>
+                </a-form-item>
+
                 <!-- USER ROLE  -->
-                <a-form-item
-                    v-if="[2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14].includes(form.usertype) || form.it_type === '1'"
-                    for="user_role" :validate-status="form.errors.user_role ? 'error' : ''"
+                <a-form-item v-if="showUserRole" for="user_role" :validate-status="form.errors.user_role ? 'error' : ''"
                     :help="form.errors.user_role">
                     <span>User Role:</span>
                     <a-select v-model:value="form.user_role">
@@ -100,7 +112,7 @@
                 </a-form-item>
 
                 <!-- STORE ASSIGNED  -->
-                <a-form-item v-if="[7, 8, 14].includes(form.usertype) || form.it_type === '2'" for="store_assigned"
+                <a-form-item v-if="showStoreAssigned" for="store_assigned"
                     :validate-status="form.errors.store_assigned ? 'error' : ''" :help="form.errors.store_assigned">
                     <span>Store Assigned:</span>
                     <a-select v-model:value="form.store_assigned">
@@ -111,7 +123,7 @@
                 </a-form-item>
 
                 <!-- RETAIL GROUP  -->
-                <a-form-item v-if="form.usertype === 8" for="retail_group"
+                <a-form-item v-if="showRetailGroup" for="retail_group"
                     :validate-status="form.errors.retail_group ? 'error' : ''" :help="form.errors.retail_group">
                     <span>User Group:</span>
                     <a-select v-model:value="form.retail_group">
@@ -124,19 +136,6 @@
                     </a-select>
                 </a-form-item>
 
-                <!-- IT TYPE  -->
-                <a-form-item v-if="form.usertype === 12" for="it_type"
-                    :validate-status="form.errors.it_type ? 'error' : ''" :help="form.errors.it_type">
-                    <span>IT Type:</span>
-                    <a-select v-model:value="form.it_type">
-                        <a-select-option value=1>
-                            Corporate IT
-                        </a-select-option>
-                        <a-select-option value=2>
-                            Store It
-                        </a-select-option>
-                    </a-select>
-                </a-form-item>
             </div>
         </a-modal>
 
@@ -190,12 +189,10 @@
                 </a-form-item>
 
                 <!-- USER ROLE  -->
-                <a-form-item
-                    v-if="[2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14].includes(updateForm.usertype) || updateForm.it_type === '1'"
-                    for="user_role" :validate-status="updateForm.errors?.user_role ? 'error' : ''"
+                <a-form-item for="user_role" :validate-status="updateForm.errors?.user_role ? 'error' : ''"
                     :help="updateForm.errors?.user_role">
                     <span>User Role:</span>
-                    <a-select v-model:value="updateForm.user_role">
+                    <a-select v-model:value="updateForm.user_role" allow-clear :disabled="disabledUserRole">
                         <a-select-option value=1>Dept. Manager</a-select-option>
                         <a-select-option value=2>Dept. User</a-select-option>
                         <a-select-option v-if="updateForm.usertype === 6" value=3>Releasing Personnel</a-select-option>
@@ -203,11 +200,10 @@
                 </a-form-item>
 
                 <!-- STORE ASSIGNED  -->
-                <a-form-item v-if="[7, 8, 14].includes(updateForm.usertype) || updateForm.it_type === '2'"
-                    for="store_assigned" :validate-status="updateForm.errors?.store_assigned ? 'error' : ''"
+                <a-form-item for="store_assigned" :validate-status="updateForm.errors?.store_assigned ? 'error' : ''"
                     :help="updateForm.errors?.store_assigned">
                     <span>Store Assigned:</span>
-                    <a-select v-model:value="updateForm.store_assigned">
+                    <a-select v-model:value="updateForm.store_assigned" allow-clear :disabled="disabledStoreAssigned">
                         <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
                             {{ item.store_name }}
                         </a-select-option>
@@ -215,11 +211,10 @@
                 </a-form-item>
 
                 <!-- RETAIL GROUP  -->
-                <a-form-item v-if="updateForm.usertype === 8" for="retail_group"
-                    :validate-status="updateForm.errors?.retail_group ? 'error' : ''"
+                <a-form-item for="retail_group" :validate-status="updateForm.errors?.retail_group ? 'error' : ''"
                     :help="updateForm.errors?.retail_group">
                     <span>User Group:</span>
-                    <a-select v-model:value="updateForm.retail_group">
+                    <a-select v-model:value="updateForm.retail_group" allow-clear :disabled="disabledRetailGroup">
                         <a-select-option value=1>
                             Group 1
                         </a-select-option>
@@ -230,10 +225,10 @@
                 </a-form-item>
 
                 <!-- IT TYPE  -->
-                <a-form-item v-if="updateForm.usertype === 12" for="it_type"
-                    :validate-status="updateForm.errors?.it_type ? 'error' : ''" :help="updateForm.errors?.it_type">
+                <a-form-item for="it_type" :validate-status="updateForm.errors?.it_type ? 'error' : ''"
+                    :help="updateForm.errors?.it_type">
                     <span>IT Type:</span>
-                    <a-select v-model:value="updateForm.it_type">
+                    <a-select v-model:value="updateForm.it_type" allow-clear :disabled="disabledItType">
                         <a-select-option value=1>
                             Corporate IT
                         </a-select-option>
@@ -245,8 +240,18 @@
             </div>
         </a-modal>
 
-        <a-modal v-model:open="resetPasswordModal">
-            <h1>Under Construction</h1>
+        <a-modal v-model:open="resetPasswordModal" @ok="resetPasswordData">
+            <div>
+                <span style="color: #1b76f8; font-family: sans-serif; font-size: 1rem; font-weight: bold;">
+                    <UndoOutlined />Reset Password
+                </span>
+            </div>
+            <div style="margin-top: 2rem;">
+                <span style="font-family: sans-serif; font-size: 1rem;">Reset <span
+                        style="color: red; text-decoration: underline;">{{ updatePassword.full_name }}</span> password
+                    to
+                    default?</span>
+            </div>
         </a-modal>
 
         <!-- {{ data }} -->
@@ -254,14 +259,47 @@
 </template>
 <script setup>
 import { router } from '@inertiajs/core';
-import { notification } from 'ant-design-vue';
-import { reactive, ref } from 'vue';
+import { notification, Modal } from 'ant-design-vue';
+import { reactive, ref, computed, createVNode } from 'vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
-defineProps({
+const props = defineProps({
     data: Object,
     access_page: Object,
     store: Object,
 })
+const showUserRole = computed(() => {
+    return form.usertype && (
+        [2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14].includes(Number(form.usertype)) || form.it_type === '1'
+    );
+});
+
+const disabledUserRole = computed(() => {
+    return ![]
+}
+);
+
+const showStoreAssigned = computed(() => {
+    return form.usertype && (
+        [7, 8, 14].includes(Number(form.usertype)) || form.it_type === '2'
+    );
+});
+
+const disabledStoreAssigned = computed(() => !showStoreAssigned.value);
+
+const showRetailGroup = computed(() => {
+    return Number(form.usertype) === 8;
+});
+
+const disabledRetailGroup = computed(() => !showRetailGroup.value);
+
+const showItType = computed(() => {
+    return Number(form.usertype) === 12;
+});
+
+const disabledItType = computed(() => !showItType.value);
+
+
 const searchUserValue = ref("");
 const resetPasswordModal = ref(false);
 const addUserModal = ref(false);
@@ -333,6 +371,10 @@ const updateForm = ref({
     user_id: ""
 })
 
+const updatePassword = ref({
+    password: "",
+})
+
 const backButton = () => {
     router.get(route("admin.dashboard"));
 }
@@ -343,11 +385,13 @@ const addUser = () => {
 
 const updateUser = (data) => {
     updateUserModal.value = true;
-    updateForm.value = { ...data }
+    updateForm.value = data;
 }
 
-const resetUser = () => {
-    resetPasswordModal.value = true
+const resetPassword = (data) => {
+    resetPasswordModal.value = true;
+    updatePassword.value = data;
+
 }
 
 const searchUser = () => {
@@ -359,6 +403,35 @@ const searchUser = () => {
 }
 
 const saveNewUser = async () => {
+    form.errors = {};
+    if (!form.username) {
+        form.errors.username = "Username field is required";
+    }
+    if (!form.firstname) {
+        form.errors.firstname = "Firstname field is required";
+    }
+    if (!form.lastname) {
+        form.errors.lastname = "Lastname field is required";
+    }
+    if (!form.employee_id) {
+        form.errors.employee_id = "Employee ID field is required";
+    }
+    if (!form.usertype) {
+        form.errors.usertype = "Usertype field is required";
+    }
+    if (!form.user_role) {
+        form.errors.user_role = "User Role field is required";
+    }
+    if (!form.store_assigned) {
+        form.errors.store_assigned = "Store Assigned field is required";
+    }
+    if (!form.retail_group) {
+        form.errors.retail_group = "Retail Group field is required";
+    }
+    if (!form.it_type) {
+        form.errors.it_type = "IT Type field is required";
+    }
+
     try {
         router.post(route('admin.masterfile.user.saveUser'), {
             username: form.username,
@@ -378,16 +451,6 @@ const saveNewUser = async () => {
                         description: 'Users added successfully'
                     });
                     addUserModal.value = false;
-                    form.username = '';
-                    form.firstname = '';
-                    form.lastname = '';
-                    form.employee_id = '';
-                    form.usertype = '';
-                    form.user_role = '';
-                    form.store_assigned = '';
-                    form.retail_group = '';
-                    form.it_type = '';
-
                 },
             }
         );
@@ -422,5 +485,41 @@ const saveUpdateUser = async () => {
     catch (error) {
         console.error("Failed to update User", error);
     }
+}
+
+const resetPasswordData = async () => {
+    resetPasswordModal.value = false;
+    Modal.confirm({
+        title: 'Confirmation?',
+        icon: createVNode(ExclamationCircleOutlined),
+        content: createVNode(
+            'div',
+            {
+                style: 'color:red;',
+            },
+            'Are you sure you want to reset password',
+        ),
+        onOk: () => {
+            try {
+                router.get(route('admin.masterfile.usersResetPassword'), {
+                    user_id: updatePassword.value.user_id
+                }, {
+                    onSuccess: () => {
+                        notification.success({
+                            message: 'Success',
+                            description: 'Reset password successfully'
+                        });
+                        updatePassword.value = false
+                    }
+                });
+            } catch (error) {
+                console.error("Failed to reset password", error)
+            }
+        },
+        onCancel() {
+            console.log('Cancel');
+        },
+        class: 'test',
+    });
 }
 </script>
