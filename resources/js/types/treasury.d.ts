@@ -75,14 +75,14 @@ export interface BudgetAdjustmentForm<T> {
     adjustmentType: string | null;
 }
 
-export interface CancelledSpecialMoreDetails{
-    info: StoreGcRequest,
-    total: string,
+export interface CancelledSpecialMoreDetails {
+    info: StoreGcRequest;
+    total: string;
     denomination: AxiosPagination<{
-        denomination: number,
-        sri_items_quantity: number,
-        total: number
-    }>
+        denomination: number;
+        sri_items_quantity: number;
+        total: number;
+    }>;
 }
 //Models
 export interface CustodianSrrItems {
@@ -229,4 +229,22 @@ export interface StoreGcRequest {
     store?: Store;
     user?: User;
     cancelledStoreGcRequest: CancelledStoreGcRequest;
+}
+export interface GcType {
+    gc_type_id: number;
+    gctype: string;
+    gc_status: number;
+    gc_forallocation: number;
+}
+export interface AllocationAdjustment {
+    aadj_id: number;
+    aadj_datetime: string;
+    aadj_type: string;
+    aadj_remark: string;
+    aadj_loc: number;
+    aadj_gctype: number;
+    aadj_by?: string;
+    store?: Store;
+    gcType?: GcType;
+    user?: User;
 }

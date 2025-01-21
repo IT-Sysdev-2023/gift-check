@@ -116,11 +116,8 @@
 </template>
 <script lang="ts" setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import type { UploadChangeParam } from "ant-design-vue";
-import { ref } from "vue";
 import dayjs, { Dayjs } from "dayjs";
-import { router, useForm, usePage } from "@inertiajs/vue3";
-import type { UploadFile } from "ant-design-vue";
+import { useForm, usePage } from "@inertiajs/vue3";
 import { PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
 interface FormStateGc {
@@ -152,8 +149,6 @@ const formState = useForm<FormStateGc>({
     qty: 0,
 });
 
-const stream = ref(null);
-const openIframe = ref(false);
 
 const { openLeftNotification } = onProgress();
 
@@ -175,9 +170,9 @@ const onSubmit = () => {
     });
 };
 
-const closeIframe = () => {
-    router.visit(route("treasury.dashboard"));
-};
+// const closeIframe = () => {
+//     router.visit(route("treasury.dashboard"));
+// };
 const getErrorStatus = (field: string) => {
     return formState.errors[field] ? "error" : "";
 };
