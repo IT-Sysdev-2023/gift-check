@@ -92,7 +92,6 @@ class AdminController extends Controller
 
         // dd($request->store);
         $Store = Store::get();
-        $StoreStaff = StoreStaff::get();
         $access_page = AccessPage::get();
 
         $usersQuery = User::select(
@@ -112,15 +111,13 @@ class AdminController extends Controller
             'access_page.employee_type',
             'users.user_role',
             'users.it_type',
-            'users.retail_group'
+            'users.retail_group',
+            'users.password'
         )
             ->join('access_page', 'users.usertype', '=', 'access_page.access_no')
             ->leftJoin('stores', 'users.store_assigned', '=', 'stores.store_id');
 
         $searchTerm = $request['searchData'];
-        // dd($searchTerm);
-
-
         if ($searchTerm) {
             $usersQuery->where(function ($query) use ($searchTerm) {
                 $query->where('users.username', 'like', '%' . $searchTerm . '%')
@@ -147,18 +144,12 @@ class AdminController extends Controller
 
         return Inertia::render('Admin/Masterfile/UserSetup', [
             'data' => $users,
-            'search' => $request->data,
             'access_page' => $access_page,
-            'storestaff' => $StoreStaff,
-            'noDataFound' => $noDataFound,
             'store' => $Store,
-            'value' => $request->value,
-            'filterstore' => $request->store
         ]);
     }
     public function updateUser(Request $request)
     {
-
         // dd($request->all());
         $request->validate([
             'username' => 'required',
@@ -187,8 +178,33 @@ class AdminController extends Controller
                 }),
             ]
         ]);
+        $userRole = $request->user_role;
+        $storeAssign = $request->store_assigne;
+        $retailGroup = $request->retail_group;
+        $itType = $request->it_type;
 
-        $password = Hash::make('GC2015');
+        if ($request->usertype === '1') {
+            $userRole === 0;
+            $storeAssign === 0;
+            $retailGroup === 0;
+            $itType === 0;
+        }
+        if (in_array($request->usertype, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14]) && $request->it_type === '1') {
+            $userRole = $request->user_role;
+            $storeAssign === 0;
+            $retailGroup === 0;
+            $itType = $request->it_type;
+        }
+        if ($request->usertype === '12' && $request->it_type === '2') {
+            $userRole === 0;
+            $storeAssign = $request->store_assigned;
+            $retailGroup === 0;
+            $itType = $request->it_type;
+        }
+
+        // dd($retail_group);
+
+        $password = Hash::make('password');
 
         $updateUser = User::where('user_id', $request->user_id)->update([
             'username' => $request->username,
@@ -197,28 +213,23 @@ class AdminController extends Controller
             'emp_id' => $request->employee_id,
             'usertype' => $request->usertype,
             'password' => $password,
-            'usergroup' => '',
+            'usergroup' => null,
             'user_status' => 'active',
-            'user_role' => $request->user_role,
+            'user_role' => $userRole,
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => $request->store_assigned,
+            'store_assigned' => $storeAssign,
             'date_created' => now(),
+            'date_updated' => now(),
             'user_addby' => $request->user()->user_id,
-            'retail_group' => $request->retail_group,
-            'it_type' => $request->it_type
+            'retail_group' => $retailGroup,
+            'it_type' => $itType
         ]);
 
         if ($updateUser) {
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
+            return back()->with('success', 'SUCCESS');
         }
-        return back()->with(
-            'error',
-            'FAILED'
-        );
+        return back()->with('error', 'FAILED');
     }
 
 
@@ -328,40 +339,25 @@ class AdminController extends Controller
 
     public function usersResetPassword(Request $request)
     {
-        // dd($request->password);
+        // dd($request->all());
 
         $defaultPassword = 'GC2015';
+        $newPassword = Hash::make($defaultPassword);
 
-        $user = User::where('user_id', $request->user_id)->first();
-        if (!$user) {
-            return back()->with(
-                'error',
-                'User not found'
-            );
-        }
-        if (Hash::needsRehash($user->password)) {
-            $user->password = Hash::make($user->password);
-            $user->save();
+        $resetPassword = User::where('user_id', $request['user_id'])->update([
+            'password' => $newPassword
+        ]);
+
+        if ($resetPassword) {
             return back()->with(
                 'success',
-                'Password was rehashed successfully'
+                'SUCCESS'
             );
         }
-
-        if (Hash::check($defaultPassword, $user->password)) {
-            return back()->with(
-                'error',
-                'Opps'
-            );
-        }
-
-        $newPassword = Hash::make($defaultPassword);
-        $onSuccess = $user->update(['password' => $newPassword]);
-        if ($onSuccess) {
-            return back()->with('success', 'Password reset successfully.');
-        } else {
-            return back()->with('error', 'Failed to reset the password.');
-        }
+        return back()->with(
+            'error',
+            'ERROR'
+        );
     }
     public function eodReports(Request $request)
     {
