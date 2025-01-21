@@ -218,13 +218,14 @@ import {
     SpecialExternalCustomer,
 } from "@/types/treasury";
 import { computed, ref, watch } from "vue";
+import { PaginationTypes } from "@/types";
 
 const { openLeftNotification } = onProgress();
 const { highlightText } = highlighten();
 
 const props = defineProps<{
     title: string;
-    data: { data: SpecialExternalCustomer[] };
+    data: PaginationTypes<SpecialExternalCustomer[]>;
     columns: ColumnTypes[];
     filters: FilterTypes;
 }>();

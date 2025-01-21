@@ -248,3 +248,10 @@ export interface AllocationAdjustment {
     gcType?: GcType;
     user?: User;
 }
+export interface InstitutEod {
+    ieod_by: number;
+    ieod_date: string;
+    ieod_id: number;
+    ieod_num: number;
+    user?: User;
+}

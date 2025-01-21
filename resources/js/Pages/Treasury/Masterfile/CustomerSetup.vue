@@ -169,10 +169,11 @@ import { router } from "@inertiajs/core";
 import { ref, computed, watch } from "vue";
 import { ColumnTypes, InstitutCustomer, FilterTypes } from "@/types/treasury";
 import { AxiosResponse } from "axios";
+import { PaginationTypes } from "@/types";
 
 const props = defineProps<{
     title: string;
-    data: { data: InstitutCustomer[] };
+    data: PaginationTypes<InstitutCustomer[]>;
     columns: ColumnTypes[];
     filters: FilterTypes;
 }>();

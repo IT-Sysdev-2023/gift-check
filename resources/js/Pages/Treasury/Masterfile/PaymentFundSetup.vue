@@ -114,13 +114,14 @@ import { onProgress } from "@/Mixin/UiUtilities";
 import { router } from "@inertiajs/core";
 import { computed, ref, watch } from "vue";
 import { ColumnTypes, FilterTypes, PaymentFundTypes } from "@/types/treasury";
+import { PaginationTypes } from "@/types";
 
 const { openLeftNotification } = onProgress();
 const { highlightText } = highlighten();
 
 const props = defineProps<{
     title: string;
-    data: { data: PaymentFundTypes[] };
+    data:  PaginationTypes<PaymentFundTypes[]>;
     columns: ColumnTypes[];
     filters: FilterTypes;
 }>();
