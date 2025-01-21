@@ -113,7 +113,7 @@ defineProps<{
 const activeScannedKey = ref("all");
 const recordDetails = ref();
 const open = ref(false);
-const id = ref("");
+const ref_id = ref("");
 
 const dashboardRoute = computed(() => {
     const webRoute = route().current();
@@ -136,11 +136,10 @@ const onChangePagination = async (link) => {
 };
 
 const viewDetails = async (id) => {
-    id.value = id;
+    ref_id.value = id;
     const { data } = await axios.get(
         route("treasury.adjustment.viewAllocation", id),
     );
-    // console.log(data);
     recordDetails.value = data;
     open.value = true;
 };
@@ -148,7 +147,7 @@ const viewDetails = async (id) => {
 const viewGcAllocationTab = async (value) => {
     const text = value == "all" ? "" : value;
     const { data } = await axios.get(
-        route("treasury.adjustment.viewAllocation", id.value),
+        route("treasury.adjustment.viewAllocation", ref_id.value),
         {
             params: {
                 search: text,
