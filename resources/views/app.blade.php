@@ -29,7 +29,6 @@
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        cursor: url('https://cdn-icons-png.flaticon.com/512/85/85064.png'), auto;
 
     }
 
