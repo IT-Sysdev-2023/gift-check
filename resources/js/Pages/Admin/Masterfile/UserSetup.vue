@@ -21,6 +21,23 @@
                 placeholder="Input search here..." style="margin-left: 70%; width: 25%;" />
         </div>
 
+        <!-- LOADING DIVISION  -->
+        <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 6rem">
+            <div class="spinnerContainer">
+                <div class="spinner"></div>
+                <div class="loader">
+                    <p>loading</p>
+                    <div class="words">
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- TABLE -->
         <div style="margin-top: 1rem;">
             <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
@@ -189,10 +206,10 @@
                 </a-form-item>
 
                 <!-- USER ROLE  -->
-                <a-form-item for="user_role" :validate-status="updateForm.errors?.user_role ? 'error' : ''"
-                    :help="updateForm.errors?.user_role">
+                <a-form-item v-if="disabledUserRole" for="user_role"
+                    :validate-status="updateForm.errors?.user_role ? 'error' : ''" :help="updateForm.errors?.user_role">
                     <span>User Role:</span>
-                    <a-select v-model:value="updateForm.user_role" allow-clear :disabled="disabledUserRole">
+                    <a-select v-model:value="updateForm.user_role" allow-clear>
                         <a-select-option value=1>Dept. Manager</a-select-option>
                         <a-select-option value=2>Dept. User</a-select-option>
                         <a-select-option v-if="updateForm.usertype === 6" value=3>Releasing Personnel</a-select-option>
@@ -200,10 +217,11 @@
                 </a-form-item>
 
                 <!-- STORE ASSIGNED  -->
-                <a-form-item for="store_assigned" :validate-status="updateForm.errors?.store_assigned ? 'error' : ''"
+                <a-form-item v-if="disabledStoreAssigned" for="store_assigned"
+                    :validate-status="updateForm.errors?.store_assigned ? 'error' : ''"
                     :help="updateForm.errors?.store_assigned">
                     <span>Store Assigned:</span>
-                    <a-select v-model:value="updateForm.store_assigned" allow-clear :disabled="disabledStoreAssigned">
+                    <a-select v-model:value="updateForm.store_assigned" allow-clear>
                         <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
                             {{ item.store_name }}
                         </a-select-option>
@@ -211,10 +229,11 @@
                 </a-form-item>
 
                 <!-- RETAIL GROUP  -->
-                <a-form-item for="retail_group" :validate-status="updateForm.errors?.retail_group ? 'error' : ''"
+                <a-form-item v-if="disabledRetailGroup" for="retail_group"
+                    :validate-status="updateForm.errors?.retail_group ? 'error' : ''"
                     :help="updateForm.errors?.retail_group">
                     <span>User Group:</span>
-                    <a-select v-model:value="updateForm.retail_group" allow-clear :disabled="disabledRetailGroup">
+                    <a-select v-model:value="updateForm.retail_group" allow-clear>
                         <a-select-option value=1>
                             Group 1
                         </a-select-option>
@@ -225,10 +244,10 @@
                 </a-form-item>
 
                 <!-- IT TYPE  -->
-                <a-form-item for="it_type" :validate-status="updateForm.errors?.it_type ? 'error' : ''"
-                    :help="updateForm.errors?.it_type">
+                <a-form-item v-if="disabledItType" for="it_type"
+                    :validate-status="updateForm.errors?.it_type ? 'error' : ''" :help="updateForm.errors?.it_type">
                     <span>IT Type:</span>
-                    <a-select v-model:value="updateForm.it_type" allow-clear :disabled="disabledItType">
+                    <a-select v-model:value="updateForm.it_type" allow-clear>
                         <a-select-option value=1>
                             Corporate IT
                         </a-select-option>
@@ -254,7 +273,7 @@
             </div>
         </a-modal>
 
-        <!-- {{ data }} -->
+        {{ data }}
     </AuthenticatedLayout>
 </template>
 <script setup>
@@ -275,7 +294,8 @@ const showUserRole = computed(() => {
 });
 
 const disabledUserRole = computed(() => {
-    return ![]
+    return [2, '2', 3, '3', 4, '4', 5, '5', 6, '6', 7, '7', 9, '9', 10, '10', 11, '11', 13, '13', 14, '14'].includes(Number(updateForm.value.usertype))
+        || [1, '1'].includes(Number(updateForm.value.it_type));
 }
 );
 
@@ -285,25 +305,32 @@ const showStoreAssigned = computed(() => {
     );
 });
 
-const disabledStoreAssigned = computed(() => !showStoreAssigned.value);
+const disabledStoreAssigned = computed(() => {
+    return [7, '7', 8, '8', 14, '14'].includes(Number(updateForm.value.usertype)) || [2, '2'].includes(Number(updateForm.value.it_type));
+});
 
 const showRetailGroup = computed(() => {
     return Number(form.usertype) === 8;
 });
 
-const disabledRetailGroup = computed(() => !showRetailGroup.value);
+const disabledRetailGroup = computed(() => {
+    return [8, '8'].includes(Number(updateForm.value.usertype));
+});
 
 const showItType = computed(() => {
     return Number(form.usertype) === 12;
 });
 
-const disabledItType = computed(() => !showItType.value);
+const disabledItType = computed(() => {
+    return [12, '12'].includes(Number(updateForm.value.usertype));
+});
 
 
 const searchUserValue = ref("");
 const resetPasswordModal = ref(false);
 const addUserModal = ref(false);
 const updateUserModal = ref(false);
+const loading = ref(false);
 
 const columns = ref([
     {
@@ -368,7 +395,7 @@ const updateForm = ref({
     store_assigned: "",
     retail_group: "",
     it_type: "",
-    user_id: ""
+    user_id: "",
 })
 
 const updatePassword = ref({
@@ -398,61 +425,51 @@ const searchUser = () => {
     router.get(route('admin.masterfile.users'), {
         searchData: searchUserValue.value
     }, {
+        onStart: () => {
+            loading.value = true;
+        },
+        onSuccess: () => {
+            loading.value = false;
+        },
+        onError: () => {
+            loading.value = false;
+        },
         preserveState: true
     });
 }
 
 const saveNewUser = async () => {
     form.errors = {};
-    if (!form.username) {
-        form.errors.username = "Username field is required";
+    const requiredFields = {
+        username: "Username field is required",
+        firstname: "Firstname field is required",
+        lastname: "Lastname field is required",
+        employee_id: "Employee Id field is required",
+        usertype: "Usertype field is required",
+        user_role: "User Role field is required",
+        store_assigned: "Store Assigned field is required",
+        retail_group: "Retail Group field is required",
+        it_type: "IT Type field is required"
     }
-    if (!form.firstname) {
-        form.errors.firstname = "Firstname field is required";
-    }
-    if (!form.lastname) {
-        form.errors.lastname = "Lastname field is required";
-    }
-    if (!form.employee_id) {
-        form.errors.employee_id = "Employee ID field is required";
-    }
-    if (!form.usertype) {
-        form.errors.usertype = "Usertype field is required";
-    }
-    if (!form.user_role) {
-        form.errors.user_role = "User Role field is required";
-    }
-    if (!form.store_assigned) {
-        form.errors.store_assigned = "Store Assigned field is required";
-    }
-    if (!form.retail_group) {
-        form.errors.retail_group = "Retail Group field is required";
-    }
-    if (!form.it_type) {
-        form.errors.it_type = "IT Type field is required";
-    }
+    Object.entries(requiredFields).forEach(([field, message]) => {
+        if (!form[field]) {
+            form.errors[field] = message
+        }
+    });
 
     try {
         router.post(route('admin.masterfile.user.saveUser'), {
-            username: form.username,
-            firstname: form.firstname,
-            lastname: form.lastname,
-            employee_id: form.employee_id,
-            usertype: form.usertype,
-            user_role: form.user_role,
-            store_assigned: form.store_assigned,
-            retail_group: form.retail_group,
-            it_type: form.it_type
-        },
-            {
-                onSuccess: () => {
-                    notification.success({
-                        message: 'Success',
-                        description: 'Users added successfully'
-                    });
-                    addUserModal.value = false;
-                },
+            ...form
+        }, {
+            onSuccess: () => {
+                notification.success({
+                    message: 'Success',
+                    description: 'New user added successfully',
+                });
+                addUserModal.value = false;
+
             }
+        }
         );
     } catch (error) {
         console.error("Failed Adding User", error);
@@ -462,7 +479,6 @@ const saveNewUser = async () => {
 const saveUpdateUser = async () => {
     try {
         router.post(route('admin.masterfile.updateUser'), {
-            user_id: updateForm.value.user_id,
             username: updateForm.value.username,
             firstname: updateForm.value.firstname,
             lastname: updateForm.value.lastname,
@@ -471,16 +487,18 @@ const saveUpdateUser = async () => {
             user_role: updateForm.value.user_role,
             store_assigned: updateForm.value.store_assigned,
             retail_group: updateForm.value.retail_group,
-            it_type: updateForm.value.it_type
+            it_type: updateForm.value.it_type,
+            user_id: updateForm.value.user_id
         }, {
             onSuccess: () => {
                 notification.success({
                     message: 'Success',
                     description: 'Users updated successfully'
                 });
-                updateUserModal.value = false
             }
         });
+
+        updateUserModal.value = false;
     }
     catch (error) {
         console.error("Failed to update User", error);
@@ -507,7 +525,7 @@ const resetPasswordData = async () => {
                     onSuccess: () => {
                         notification.success({
                             message: 'Success',
-                            description: 'Reset password successfully'
+                            description: 'Password reset successfully'
                         });
                         updatePassword.value = false
                     }
@@ -523,3 +541,110 @@ const resetPasswordData = async () => {
     });
 }
 </script>
+<style scoped>
+.spinnerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.spinner {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    border: 4px solid #0000;
+    border-radius: 50%;
+    border-right-color: #299fff;
+    animation: tri-spinner 1s infinite linear;
+}
+
+.spinner::before,
+.spinner::after {
+    content: "";
+    grid-area: 1/1;
+    margin: 2px;
+    border: inherit;
+    border-radius: 50%;
+    animation: tri-spinner 2s infinite;
+}
+
+.spinner::after {
+    margin: 8px;
+    animation-duration: 3s;
+}
+
+@keyframes tri-spinner {
+    100% {
+        transform: rotate(1turn);
+    }
+}
+
+.loader {
+    color: #4a4a4a;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 25px;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 40px;
+    padding: 10px 10px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    border-radius: 8px;
+}
+
+.words {
+    overflow: hidden;
+}
+
+.word {
+    display: block;
+    height: 100%;
+    padding-left: 6px;
+    color: #299fff;
+    animation: cycle-words 5s infinite;
+}
+
+@keyframes cycle-words {
+    10% {
+        -webkit-transform: translateY(-105%);
+        transform: translateY(-105%);
+    }
+
+    25% {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%);
+    }
+
+    35% {
+        -webkit-transform: translateY(-205%);
+        transform: translateY(-205%);
+    }
+
+    50% {
+        -webkit-transform: translateY(-200%);
+        transform: translateY(-200%);
+    }
+
+    60% {
+        -webkit-transform: translateY(-305%);
+        transform: translateY(-305%);
+    }
+
+    75% {
+        -webkit-transform: translateY(-300%);
+        transform: translateY(-300%);
+    }
+
+    85% {
+        -webkit-transform: translateY(-405%);
+        transform: translateY(-405%);
+    }
+
+    100% {
+        -webkit-transform: translateY(-400%);
+        transform: translateY(-400%);
+    }
+}
+</style>
