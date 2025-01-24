@@ -50,47 +50,50 @@
 
     <!-- Add New Denomination Modal  -->
     <a-modal v-model:open="addDenomination" @ok="handleOk">
-        <span style="color: #0286df; font-size: 17px">
-            <BarcodeOutlined style="margin-right: 8px" />
-            Add New Denomination
-        </span>
+        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+            <EditOutlined /> Add Denomination
+        </div>
+        <div style="margin-top: 2rem; font-weight: bold;">
 
-        <a-form-item for="denomination" :validate-status="form.errors.denomination ? 'error' : ''"
-            :help="form.errors.denomination" style="margin-top: 10px; font-weight: bold">Denomination:
-            <a-input allow-clear type="number" v-model:value="form.denomination" placeholder="Denomination" />
-        </a-form-item>
+            <a-form-item for="denomination" :validate-status="form.errors.denomination ? 'error' : ''"
+                :help="form.errors.denomination" style="margin-top: 10px; font-weight: bold">Denomination:
+                <a-input allow-clear type="number" v-model:value="form.denomination" placeholder="Denomination" />
+            </a-form-item>
 
-        <a-form-item for="barcodeNumStart" :validate-status="form.errors.barcodeNumStart ? 'error' : ''"
-            :help="form.errors.barcodeNumStart" style="margin-top: 10px; font-weight: bold">Barcode # Start:
-            <a-input allow-clear type="number" v-model:value="form.barcodeNumStart" placeholder="Barcode # start" />
-        </a-form-item>
+            <a-form-item for="barcodeNumStart" :validate-status="form.errors.barcodeNumStart ? 'error' : ''"
+                :help="form.errors.barcodeNumStart" style="margin-top: 10px; font-weight: bold">Barcode # Start:
+                <a-input allow-clear type="number" v-model:value="form.barcodeNumStart" placeholder="Barcode # start" />
+            </a-form-item>
+        </div>
     </a-modal>
 
     <!-- Update Denomination Modal  -->
     <a-modal v-model:open="updateDenominationModal" @ok="updateDenomination">
-        <span style="color: #0286df; font-size: 17px">
-            <BarcodeOutlined style="margin-right: 8px" />
-            Update Denomination
-        </span>
+        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+            <EditOutlined /> Update Denomination
+        </div>
+        <div style="margin-top: 2rem; font-weight: bold;">
 
-        <a-form-item for="denomination" :validate-status="updateDenom.errors?.denomination ? 'error' : ''"
-            :help="updateDenom.errors?.denomination" style="margin-top: 10px; font-weight: bold">Denomination:
-            <a-input allow-clear type="number" v-model:value="updateDenom.denomination" placeholder="Denomination" />
-        </a-form-item>
+            <a-form-item for="denomination" :validate-status="updateDenom.errors?.denomination ? 'error' : ''"
+                :help="updateDenom.errors?.denomination" style="margin-top: 10px; font-weight: bold">Denomination:
+                <a-input allow-clear type="number" v-model:value="updateDenom.denomination"
+                    placeholder="Denomination" />
+            </a-form-item>
 
-        <a-form-item for="denom_barcode_start" :validate-status="updateDenom.errors?.denom_barcode_start ? 'error' : ''
-            " style="margin-top: 10px; font-weight: bold" :help="updateDenom.errors?.denom_barcode_start">Barcode #
-            Start:
-            <a-input allow-clear type="number" v-model:value="updateDenom.denom_barcode_start"
-                placeholder="Barcode # start" />
-        </a-form-item>
+            <a-form-item for="denom_barcode_start" :validate-status="updateDenom.errors?.denom_barcode_start ? 'error' : ''
+                " style="margin-top: 10px; font-weight: bold" :help="updateDenom.errors?.denom_barcode_start">Barcode #
+                Start:
+                <a-input allow-clear type="number" v-model:value="updateDenom.denom_barcode_start"
+                    placeholder="Barcode # start" />
+            </a-form-item>
 
-        <a-form-item for="denom_fad_item_number" :validate-status="updateDenom.errors?.denom_fad_item_number ? 'error' : ''
-            " :help="updateDenom.errors?.denom_fad_item_number" style="margin-top: 10px; font-weight: bold">
-            FAD Item #:
-            <a-input allow-clear type="number" v-model:value="updateDenom.denom_fad_item_number"
-                placeholder="FAD Item #" />
-        </a-form-item>
+            <a-form-item for="denom_fad_item_number" :validate-status="updateDenom.errors?.denom_fad_item_number ? 'error' : ''
+                " :help="updateDenom.errors?.denom_fad_item_number" style="margin-top: 10px; font-weight: bold">
+                FAD Item #:
+                <a-input allow-clear type="number" v-model:value="updateDenom.denom_fad_item_number"
+                    placeholder="FAD Item #" />
+            </a-form-item>
+        </div>
     </a-modal>
     <!-- {{ data }} -->
 </template>
@@ -187,7 +190,7 @@ export default {
                         notification.warning({
                             message: props.flash.error,
                             description:
-                                "Denomination already exist, please input another denomination!",
+                                "Denomination already exist, please try another denomination!",
                         });
                     }
                 },
@@ -234,7 +237,7 @@ export default {
                             notification.warning({
                                 message: props.flash.error,
                                 description:
-                                    "No changes happen, update first before submitting!",
+                                    "No changes, please update first before submitting!",
                             });
                         }
                     },

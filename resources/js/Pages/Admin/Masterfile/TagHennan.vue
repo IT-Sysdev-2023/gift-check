@@ -49,19 +49,22 @@
                 <pagination :datarecords="data" class="mt-5" />
             </div>
             <a-modal v-model:open="updateModal" @ok="submitUpdatedTag">
-                <span style="color: #0286df; font-size: 17px">
+                <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
                     <EditOutlined /> Update Tag
-                </span>
-                <div style="margin-top: 1rem">
-                    <a-form-item for="tag" :validate-status="form.errors?.hennan_id ? 'error' : ''"
-                        :help="form.errors?.hennan_id">
-                        <span style="font-family: sans-serif; font-weight: bold">Tag :</span>
-                        <a-select v-model:value="form.hennan_id" style="margin-top: 0.5rem">
-                            <a-select-option v-for="item in fullname" :key="item.hennan_id" :value="item.hennan_id">{{
-                                item.fullname
-                            }}</a-select-option>
-                        </a-select>
-                    </a-form-item>
+                </div>
+                <div style="margin-top: 2rem; font-weight: bold;">
+                    <div style="margin-top: 1rem">
+                        <a-form-item for="tag" :validate-status="form.errors?.hennan_id ? 'error' : ''"
+                            :help="form.errors?.hennan_id">
+                            <span style="font-family: sans-serif; font-weight: bold">Tag :</span>
+                            <a-select v-model:value="form.hennan_id" style="margin-top: 0.5rem">
+                                <a-select-option v-for="item in fullname" :key="item.hennan_id"
+                                    :value="item.hennan_id">{{
+                                        item.fullname
+                                    }}</a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </div>
                 </div>
             </a-modal>
             {{ search }}

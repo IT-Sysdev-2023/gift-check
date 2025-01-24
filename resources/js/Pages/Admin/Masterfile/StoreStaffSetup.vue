@@ -57,128 +57,125 @@
     <!-- this is for update password part -->
 
     <a-modal v-model:open="modalforchangePassword" @ok="updatePassword">
-        <span style="color: #c7253e; font-size: 17px">
-            Confirmation
-            <QuestionOutlined />
-        </span>
-
-        <a-form-item for="password" style="margin-top: 15px; font-style: initial">
-            Reset
-            <span style="
-                    color: #c7253e;
-                    font-family: sans-serif;
-                    margin-left: 5px;
-                    margin-right: 5px;
-                    text-decoration: underline;
-                ">
-                {{ dataforChangePassword.ss_username }}
+        <div>
+            <span style="color: #1b76f8; font-family: sans-serif; font-size: 1rem; font-weight: bold;">
+                <UndoOutlined /> Reset Password
             </span>
-            password?
-        </a-form-item>
+        </div>
+        <div style="margin-top: 2rem;">
+            <span style="font-family: sans-serif; font-size: 1rem;">
+                Reset
+                <span style="color: red; text-decoration: underline;"> {{ dataforChangePassword.ss_username }} </span>
+                password to default?
+            </span>
+        </div>
     </a-modal>
 
     <!-- this is for update part -->
     <a-modal v-model:open="openmodalforupdate" @ok="updateStoreStaff">
-        <span style="color: #0286df; font-size: 17px; font-family: sans-serif">
-            <UserAddOutlined style="margin-right: 8px" />
-            Update User
-        </span>
+        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+            <EditOutlined /> Update User
+        </div>
 
-        <a-form-item for="ss_username" :validate-status="dataForUpdate.errors?.ss_username ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_username" style="margin-top: 10px; font-weight: bold">
-            Username:
-            <a-input allow-clear v-model:value="dataForUpdate.ss_username" placeholder="Username" />
-        </a-form-item>
+        <div style="margin-top: 2rem; font-weight: bold;">
+            <a-form-item for="ss_username" :validate-status="dataForUpdate.errors?.ss_username ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_username" style="margin-top: 10px; font-weight: bold">
+                Username:
+                <a-input allow-clear v-model:value="dataForUpdate.ss_username" placeholder="Username" />
+            </a-form-item>
 
-        <a-form-item for="ss_firstname" :validate-status="dataForUpdate.errors?.ss_firstname ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_firstname" style="margin-top: 10px; font-weight: bold">
-            firstname:
-            <a-input allow-clear v-model:value="dataForUpdate.ss_firstname" placeholder="Firstname" />
-        </a-form-item>
+            <a-form-item for="ss_firstname" :validate-status="dataForUpdate.errors?.ss_firstname ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_firstname" style="margin-top: 10px; font-weight: bold">
+                firstname:
+                <a-input allow-clear v-model:value="dataForUpdate.ss_firstname" placeholder="Firstname" />
+            </a-form-item>
 
-        <a-form-item for="ss_lastname" :validate-status="dataForUpdate.errors?.ss_lastname ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_lastname" style="margin-top: 10px; font-weight: bold">
-            Lastname:
-            <a-input allow-clear v-model:value="dataForUpdate.ss_lastname" placeholder="Lastname" />
-        </a-form-item>
+            <a-form-item for="ss_lastname" :validate-status="dataForUpdate.errors?.ss_lastname ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_lastname" style="margin-top: 10px; font-weight: bold">
+                Lastname:
+                <a-input allow-clear v-model:value="dataForUpdate.ss_lastname" placeholder="Lastname" />
+            </a-form-item>
 
-        <a-form-item for="ss_idnumber" :validate-status="dataForUpdate.errors?.ss_idnumber ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_idnumber" style="margin-top: 10px; font-weight: bold">
-            Employee ID:
-            <a-input allow-clear v-model:value="dataForUpdate.ss_idnumber" placeholder="Employee ID" />
-        </a-form-item>
+            <a-form-item for="ss_idnumber" :validate-status="dataForUpdate.errors?.ss_idnumber ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_idnumber" style="margin-top: 10px; font-weight: bold">
+                Employee ID:
+                <a-input allow-clear v-model:value="dataForUpdate.ss_idnumber" placeholder="Employee ID" />
+            </a-form-item>
 
-        <a-form-item for="ss_store" :validate-status="dataForUpdate.errors?.ss_store ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_store" style="margin-top: 10px; font-weight: bold">
-            Store Assigned:
-            <a-select v-model:value="dataForUpdate.ss_store" style="width: 472px" placeholder="Select Store">
-                <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
-                    {{ item.store_name }}</a-select-option>
-            </a-select>
-        </a-form-item>
-        <a-form-item for="ss_usertype" :validate-status="dataForUpdate.errors?.ss_usertype ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_usertype" style="margin-top: 10px; font-weight: bold">
-            User Type:
-            <a-select id="usertype" v-model:value="dataForUpdate.ss_usertype" style="width: 472px"
-                placeholder="Select User Type">
-                <a-select-option value="cashier">CASHIER</a-select-option>
-                <a-select-option value="manager">MANAGER</a-select-option>
-            </a-select>
-        </a-form-item>
+            <a-form-item for="ss_store" :validate-status="dataForUpdate.errors?.ss_store ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_store" style="margin-top: 10px; font-weight: bold">
+                Store Assigned:
+                <a-select v-model:value="dataForUpdate.ss_store" style="width: 472px" placeholder="Select Store">
+                    <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
+                        {{ item.store_name }}</a-select-option>
+                </a-select>
+            </a-form-item>
+            <a-form-item for="ss_usertype" :validate-status="dataForUpdate.errors?.ss_usertype ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_usertype" style="margin-top: 10px; font-weight: bold">
+                User Type:
+                <a-select id="usertype" v-model:value="dataForUpdate.ss_usertype" style="width: 472px"
+                    placeholder="Select User Type">
+                    <a-select-option value="cashier">CASHIER</a-select-option>
+                    <a-select-option value="manager">MANAGER</a-select-option>
+                </a-select>
+            </a-form-item>
+        </div>
     </a-modal>
 
     <!-- this is for adding user part -->
     <a-modal v-model:open="open" @ok="handleOk">
-        <span style="color: #0286df; font-size: 17px; font-family: sans-serif">
-            <UserAddOutlined style="margin-right: 8px" />
-            Add New User
-        </span>
+        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+            <UserAddOutlined /> Add User
+        </div>
+        <div style="margin-top: 2rem; font-weight: bold;">
 
-        <a-form-item for="username" :validate-status="form.errors.username ? 'error' : ''" :help="form.errors.username"
-            style="margin-top: 10px; font-weight: bold">
-            Username:
-            <a-input allow-clear v-model:value="form.username" placeholder="Username" />
-        </a-form-item>
+            <a-form-item for="username" :validate-status="form.errors.username ? 'error' : ''"
+                :help="form.errors.username" style="margin-top: 10px; font-weight: bold">
+                Username:
+                <a-input allow-clear v-model:value="form.username" placeholder="Username" />
+            </a-form-item>
 
-        <a-form-item for="firstname" :validate-status="form.errors.firstname ? 'error' : ''"
-            :help="form.errors.firstname" style="margin-top: 10px; font-weight: bold">
-            Firstname:
-            <a-input allow-clear v-model:value="form.firstname" placeholder="Firstname" />
-        </a-form-item>
+            <a-form-item for="firstname" :validate-status="form.errors.firstname ? 'error' : ''"
+                :help="form.errors.firstname" style="margin-top: 10px; font-weight: bold">
+                Firstname:
+                <a-input allow-clear v-model:value="form.firstname" placeholder="Firstname" />
+            </a-form-item>
 
-        <a-form-item for="lastname" :validate-status="form.errors.lastname ? 'error' : ''" :help="form.errors.lastname"
-            style="margin-top: 10px; font-weight: bold">
-            Lastname:
-            <a-input allow-clear v-model:value="form.lastname" placeholder="Lastname" />
-        </a-form-item>
+            <a-form-item for="lastname" :validate-status="form.errors.lastname ? 'error' : ''"
+                :help="form.errors.lastname" style="margin-top: 10px; font-weight: bold">
+                Lastname:
+                <a-input allow-clear v-model:value="form.lastname" placeholder="Lastname" />
+            </a-form-item>
 
-        <a-form-item for="employee_id" :validate-status="form.errors.employee_id ? 'error' : ''"
-            :help="form.errors.employee_id" style="margin-top: 10px; font-weight: bold">
-            Employee ID:
-            <a-input allow-clear v-model:value="form.employee_id" placeholder="Employee ID" />
-        </a-form-item>
-        <!-- {{ form.errors.idnumber }} -->
-        <a-form-item for="password" :validate-status="form.errors.password ? 'error' : ''" :help="form.errors.password"
-            style="margin-top: 10px; font-weight: bold">
-            Password:
-            <a-input type="password" allow-clear v-model:value="form.password" placeholder="Password" />
-        </a-form-item>
+            <a-form-item for="employee_id" :validate-status="form.errors.employee_id ? 'error' : ''"
+                :help="form.errors.employee_id" style="margin-top: 10px; font-weight: bold">
+                Employee ID:
+                <a-input allow-clear v-model:value="form.employee_id" placeholder="Employee ID" />
+            </a-form-item>
+            <!-- {{ form.errors.idnumber }} -->
+            <a-form-item for="password" :validate-status="form.errors.password ? 'error' : ''"
+                :help="form.errors.password" style="margin-top: 10px; font-weight: bold">
+                Password:
+                <a-input type="password" allow-clear v-model:value="form.password" placeholder="Password" />
+            </a-form-item>
 
-        <a-form-item for="store_name" :validate-status="form.errors.store_id ? 'error' : ''"
-            :help="form.errors.store_id" style="margin-top: 10px; font-weight: bold">Store Assigned:
-            <a-select v-model:value="form.store_id" style="width: 472px" placeholder="Select Store">
-                <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
-                    {{ item.store_name }}</a-select-option>
-            </a-select>
-        </a-form-item>
-        <a-form-item for="user_type" :validate-status="form.errors.usertype ? 'error' : ''" :help="form.errors.usertype"
-            style="margin-top: 10px; font-weight: bold">
-            User Type:
-            <a-select id="usertype" v-model:value="form.usertype" style="width: 472px" placeholder="Select User Type">
-                <a-select-option value="cashier">CASHIER</a-select-option>
-                <a-select-option value="manager">MANAGER</a-select-option>
-            </a-select>
-        </a-form-item>
+            <a-form-item for="store_name" :validate-status="form.errors.store_id ? 'error' : ''"
+                :help="form.errors.store_id" style="margin-top: 10px; font-weight: bold">Store Assigned:
+                <a-select v-model:value="form.store_id" style="width: 472px" placeholder="Select Store">
+                    <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
+                        {{ item.store_name }}</a-select-option>
+                </a-select>
+            </a-form-item>
+            <a-form-item for="user_type" :validate-status="form.errors.usertype ? 'error' : ''"
+                :help="form.errors.usertype" style="margin-top: 10px; font-weight: bold">
+                User Type:
+                <a-select id="usertype" v-model:value="form.usertype" style="width: 472px"
+                    placeholder="Select User Type">
+                    <a-select-option value="cashier">CASHIER</a-select-option>
+                    <a-select-option value="manager">MANAGER</a-select-option>
+                </a-select>
+            </a-form-item>
+        </div>
     </a-modal>
     <!-- {{ store }} -->
 </template>
@@ -188,8 +185,11 @@ import {
     UndoOutlined,
     PlusOutlined,
     FormOutlined,
+    ExclamationCircleOutlined,
 } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
+import { Modal } from "ant-design-vue";
+import { createVNode } from "vue";
 
 export default {
     layout: AuthenticatedLayout,
@@ -471,7 +471,7 @@ export default {
                         } else if (props.flash.error) {
                             notification.warning({
                                 message: props.flash.error,
-                                description: `${this.dataForUpdate.ss_username}'s data has no changes happen, update first before submitting`,
+                                description: `${this.dataForUpdate.ss_username}'s data has no changes, update first before submitting`,
                             });
                         }
                     },
@@ -485,46 +485,50 @@ export default {
             this.modalforchangePassword = true;
         },
         updatePassword() {
-            console.log(this.dataforChangePassword.ss_id);
-            this.$inertia.post(
-                route("admin.masterfile.updateStoreStaffPassword"),
-                {
-                    ...this.dataforChangePassword,
-                },
-                {
-                    onSuccess: ({ props }) => {
-                        if (props.flash.success) {
-                            notification.success({
-                                message: props.flash.success,
-                                description: `${this.dataforChangePassword.ss_username} password reset to default successfully!`,
-                            });
-                            this.modalforchangePassword = false;
-                        } else if (props.flash.error) {
-                            notification.warning({
-                                message: props.flash.error,
-                                description: `${this.dataforChangePassword.ss_username} password already reset to default!`,
-                            });
-                            this.modalforchangePassword = false;
-                        }
+            this.modalforchangePassword = false;
+            Modal.confirm({
+                title: 'Confirmation?',
+                icon: createVNode(ExclamationCircleOutlined),
+                content: createVNode(
+                    'div',
+                    {
+                        style: 'color:red;',
                     },
-                    onError: (e) => {
-                        this.dataforChangePassword.errors = e;
-                    },
+                    'Are you sure you want to reset password?',
+                ),
+                onOk: () => {
+                    this.$inertia.post(
+                        route("admin.masterfile.updateStoreStaffPassword"),
+                        {
+                            ...this.dataforChangePassword,
+                        },
+                        {
+                            onSuccess: ({ props }) => {
+                                if (props.flash.success) {
+                                    notification.success({
+                                        message: props.flash.success,
+                                        description: "Password reset successfully!",
+                                    });
+                                    this.modalforchangePassword = false;
+                                } else if (props.flash.error) {
+                                    notification.warning({
+                                        message: props.flash.error,
+                                        description: "Password already reset to default!",
+                                    });
+                                    this.modalforchangePassword = false;
+                                }
+                            },
+                            onError: (e) => {
+                                this.dataforChangePassword.errors = e;
+                            },
+                        },
+                    );
                 },
-            );
-        },
-        changeSelectEntries(value) {
-            console.log(value);
-            this.$inertia.get(
-                route("admin.masterfile.store.staff"),
-                {
-                    value: value,
+                onCancel() {
+                    console.log('Cancel');
                 },
-                {
-                    preserveState: true,
-                    preserveScroll: true,
-                },
-            );
+            });
+
         },
         backButton() {
             this.$inertia.get(route("admin.dashboard"));

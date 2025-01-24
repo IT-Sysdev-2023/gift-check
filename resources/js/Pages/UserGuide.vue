@@ -1209,14 +1209,17 @@
         </div>
 
         <h2 style="text-align: center; margin-top: 20px; color: #003140">
-            Copyright © 2025 gift-check.com All Rights Reserved. - Legal
+            Copyright © 2024 - {{ dayjs().year() }} gift-check.com All Rights Reserved. - Legal
         </h2>
     </a-card>
 </template>
 <script setup>
 import { EyeOutlined } from "@ant-design/icons-vue";
 import { onMounted, onUnmounted, ref } from "vue";
+import dayjs from "dayjs";
+
 const showScrollButton = ref(false);
+
 
 // SCROLL UP BUTTON
 const handleScroll = () => {

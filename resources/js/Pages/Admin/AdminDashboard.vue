@@ -2,7 +2,8 @@
     <div>
         <h2>Masterfile</h2>
     </div>
-    <div style="display: flex; margin-top: 2rem; justify-content: center; align-items: center">
+    <div
+        style="display: flex; margin-top: 2rem; justify-content: center; align-items: center; flex-direction: column; ">
         <a-form-item>
             <a-button @click="() => $inertia.get(route('admin.masterfile.users'))" class="buttons">
                 <UserOutlined /> Setup Users
@@ -35,6 +36,11 @@
 
             <a-button @click="() => $inertia.get(route('admin.masterfile.tagHennan'))" class="buttons">
                 <TagOutlined /> Tag Hennan
+            </a-button>
+
+            <a-button @click="() => $inertia.get(route('admin.masterfile.blockBarcode'))" class="buttons"
+                style="margin-top: 1rem;">
+                <StopOutlined /> Blocked Barcode
             </a-button>
         </a-form-item>
 
@@ -75,17 +81,19 @@ export default {
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
-.buttons{
+
+.buttons {
     background-color: #113961;
     height: 5rem;
-    color:white;
+    color: white;
     transition: transform 0.2s ease;
     cursor: pointer;
     margin: 0 5px;
 }
-.buttons:hover{
+
+.buttons:hover {
     background-color: #1b76f8;
-    color:white;
+    color: white;
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }

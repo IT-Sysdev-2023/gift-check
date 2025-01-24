@@ -41,16 +41,17 @@
     </a-card>
 
     <a-modal v-model:open="addCreditCard" @ok="handleOk">
-        <span style="color: #0286df; font-size: 17px">
-            <CreditCardOutlined style="margin-right: 8px" />
-            Add New Credit Card
-        </span>
+        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+            <EditOutlined /> Add Credit Card
+        </div>
+        <div style="margin-top: 2rem; font-weight: bold;">
 
-        <a-form-item for="ccard_name" :validate-status="form.errors.ccard_name ? 'error' : ''"
-            :help="form.errors.ccard_name" style="margin-top: 10px; font-weight: bold;">
-            Credit Name:
-            <a-input allow-clear v-model:value="form.ccard_name" placeholder="Credit Card Name" />
-        </a-form-item>
+            <a-form-item for="ccard_name" :validate-status="form.errors.ccard_name ? 'error' : ''"
+                :help="form.errors.ccard_name" style="margin-top: 10px; font-weight: bold;">
+                Credit Name:
+                <a-input allow-clear v-model:value="form.ccard_name" placeholder="Credit Card Name" />
+            </a-form-item>
+        </div>
     </a-modal>
     <!-- {{ data }} -->
 </template>

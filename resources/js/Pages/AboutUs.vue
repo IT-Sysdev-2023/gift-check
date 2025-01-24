@@ -1766,7 +1766,7 @@
                             margin-top: 20px;
                             color: #1e181b;
                         ">
-                        Copyright © 2025 gift-check.com All Rights Reserved. -
+                        Copyright © 2024 - {{ dayjs().year() }} gift-check.com All Rights Reserved. -
                         Legal
                     </h2>
                 </div>
@@ -1777,6 +1777,8 @@
 
 <script setup>
 import { onMounted, ref, onUnmounted } from "vue";
+import dayjs from "dayjs";
+
 
 const showScrollButton = ref(false);
 
