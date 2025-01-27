@@ -132,15 +132,11 @@ class AdminController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $noDataFound = false;
-        if ($searchTerm && $users->isEmpty()) {
-            $noDataFound = true;
-        }
-
         $users->transform(function ($item) {
             $item->status = $item->user_status == 'active';
             return $item;
         });
+        // dd($users);
 
         return Inertia::render('Admin/Masterfile/UserSetup', [
             'data' => $users,
@@ -178,31 +174,59 @@ class AdminController extends Controller
                 }),
             ]
         ]);
-        $userRole = $request->user_role;
-        $storeAssign = $request->store_assigne;
-        $retailGroup = $request->retail_group;
-        $itType = $request->it_type;
+        $userRole = 0;
+        $storeAssign = 0;
+        $retailGroup = 0;
+        $itType = 0;
 
-        if ($request->usertype === '1') {
+        if (in_array($request->usertype, [1, '1'])) {
             $userRole === 0;
             $storeAssign === 0;
             $retailGroup === 0;
             $itType === 0;
         }
-        if (in_array($request->usertype, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14]) && $request->it_type === '1') {
+        if (in_array($request->usertype, ['2', 2, '3', 3, '4', 4, '5', 5, '6', 6, '9', 9, '10', 10, '11', 11, '13', 13])) {
+            $userRole = $request->user_role;
+            $storeAssign === 0;
+            $retailGroup === 0;
+            $itType === 0;
+        }
+        if (in_array($request->usertype, [7, '7'])) {
+            $userRole = $request->user_role;
+            $storeAssign = $request->store_assigned;
+            $retailGroup === 0;
+            $itType === 0;
+        }
+        if (in_array($request->usertype, [8, '8'])) {
+            $userRole === 0;
+            $storeAssign = $request->store_assigned;
+            $retailGroup = $request->retail_group;
+            $itType === 0;
+        }
+        if (in_array($request->usertype, [12, '12'])) {
+            $userRole === 0;
+            $storeAssign === 0;
+            $retailGroup === 0;
+            $itType = $request->it_type;
+        }
+        if (in_array($request->it_type, [1, '1'])) {
             $userRole = $request->user_role;
             $storeAssign === 0;
             $retailGroup === 0;
             $itType = $request->it_type;
         }
-        if ($request->usertype === '12' && $request->it_type === '2') {
+        if (in_array($request->it_type, [2, '2'])) {
             $userRole === 0;
             $storeAssign = $request->store_assigned;
             $retailGroup === 0;
             $itType = $request->it_type;
         }
-
-        // dd($retail_group);
+        if (in_array($request->usertype, [14, '14'])) {
+            $userRole = $request->user_role;
+            $storeAssign = $request->store_assigned;
+            $retailGroup === 0;
+            $itType === 0;
+        }
 
         $password = Hash::make('password');
 
@@ -227,9 +251,15 @@ class AdminController extends Controller
         ]);
 
         if ($updateUser) {
-            return back()->with('success', 'SUCCESS');
+            return back()->with(
+                'success',
+                'SUCCESS'
+            );
         }
-        return back()->with('error', 'FAILED');
+        return back()->with(
+            'error',
+            'ERROR'
+        );
     }
 
 
@@ -285,15 +315,20 @@ class AdminController extends Controller
             'it_type' => $request->it_type
         ]);
 
+        // if ($insertUser) {
+        //     return response()->json(['status' => 'success', 'message' => 'Adding user successfully saved'], 200);
+        // }
+        // return response()->json(['status' => 'error', 'message' => 'Error adding new user'], 400);
+
         if ($insertUser) {
             return back()->with(
                 'success',
-                'Success'
+                'SUCCESS'
             );
         }
         return back()->with(
-            'error',
-            'Failed'
+            'success',
+            'SUCCESS'
         );
     }
 
@@ -339,10 +374,12 @@ class AdminController extends Controller
 
     public function usersResetPassword(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
 
         $defaultPassword = 'GC2015';
         $newPassword = Hash::make($defaultPassword);
+
+        // if ($request['user_id'] === )
 
         $resetPassword = User::where('user_id', $request['user_id'])->update([
             'password' => $newPassword
