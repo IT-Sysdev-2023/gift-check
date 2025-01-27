@@ -420,7 +420,7 @@ export default {
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: "This username already exist",
+                            description: `${this.form.username} username already exist`,
                         });
                     }
                 },
@@ -513,7 +513,7 @@ export default {
                                 } else if (props.flash.error) {
                                     notification.warning({
                                         message: props.flash.error,
-                                        description: "Password already reset to default!",
+                                        description: `${this.dataForUpdate.ss_username}'s password already reset to default!`,
                                     });
                                     this.modalforchangePassword = false;
                                 }

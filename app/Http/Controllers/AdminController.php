@@ -141,7 +141,8 @@ class AdminController extends Controller
         return Inertia::render('Admin/Masterfile/UserSetup', [
             'data' => $users,
             'access_page' => $access_page,
-            'store' => $Store
+            'store' => $Store,
+            'search' => $request['searchData']
         ]);
     }
     public function updateUser(Request $request)
@@ -297,7 +298,7 @@ class AdminController extends Controller
         if ($checkUsername) {
             return back()->with(
                 'error',
-                'Username already exist, please try other username'
+                "{$request->username} username already exist, please try other username"
             );
         }
 
@@ -344,7 +345,7 @@ class AdminController extends Controller
         if (Hash::check($defaultPassword, $userPassword->password)) {
             return back()->with(
                 'error',
-                'This password already reset to default'
+                "{$userPassword->username}'s password already reset to default"
             );
         }
 
@@ -1007,7 +1008,8 @@ class AdminController extends Controller
             ->withQueryString();
         return Inertia::render('Admin/Masterfile/TagHennan', [
             'data' => $query,
-            'fullname' => $fullname
+            'fullname' => $fullname,
+            'search' => $request['searchvalue']
         ]);
     }
 

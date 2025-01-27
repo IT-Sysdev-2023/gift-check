@@ -286,10 +286,11 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 const props = defineProps({
     data: Object,
     access_page: Object,
-    store: Object
+    store: Object,
+    search: Array
 })
 
-// UPDATE USER VALIDATION PART
+// UPDATE USER USERTYPE SHOW HIDE PART
 const showUserRole = computed(() => {
     return form.usertype && (
         [2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14].includes(Number(form.usertype)) || form.it_type === '1'
@@ -327,10 +328,10 @@ const showItType = computed(() => {
 const disabledItType = computed(() => {
     return [12, '12'].includes(Number(updateForm.value.usertype));
 });
-// END OF UPDATE USER VALIDATION PART
+// END OF UPDATE USER USERTYPE SHOW HIDE PART
 
 
-const searchUserValue = ref(""); //SEARCH VALUE
+const searchUserValue = ref(props.search); //SEARCH VALUE
 const resetPasswordModal = ref(false); //RESET PASSWORD MODAL
 const addUserModal = ref(false); //ADD USER MODAL
 const updateUserModal = ref(false); //UPDATE USER MODAL

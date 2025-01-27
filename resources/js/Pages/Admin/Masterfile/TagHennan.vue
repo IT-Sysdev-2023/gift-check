@@ -67,7 +67,7 @@
                     </div>
                 </div>
             </a-modal>
-            {{ search }}
+            <!-- {{ search }} -->
         </a-card>
     </AuthenticatedLayout>
 </template>
@@ -80,13 +80,13 @@ import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import { createVNode } from "vue";
 import { Modal } from "ant-design-vue";
 
-defineProps({
+const props = defineProps({
     data: Object,
     fullname: Object,
     search: Array
 });
 const loading = ref(false);
-const tagHennanSearch = ref("");
+const tagHennanSearch = ref(props.search);
 const form = ref([
     {
         fullname: "",

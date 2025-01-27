@@ -359,7 +359,7 @@
         </span>
         <div>
             <a>
-                <img src="https://user-images.githubusercontent.com/74038190/221352975-94759904-aa4c-4032-a8ab-b546efb9c478.gif"
+                <img src="https://user-images.githubusercontent.com/74038190/219923823-bf1ce878-c6b8-4faa-be07-93e6b1006521.gif"
                     style="width: 1100px; height: 500px" />
             </a>
         </div>
