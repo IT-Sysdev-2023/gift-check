@@ -1,7 +1,7 @@
 <template>
     <!-- HEADER SECTION PAGE  -->
     <header style="
-            background-color: #fff;
+            background-color: #fbf8ef;
             color: black;
             padding: 10px 20px;
             display: flex;
@@ -118,7 +118,7 @@
                         </span>
                         <span style="font-weight: bold; font-size: 30px">Team / Family</span>
                     </div>
-                    <img src="https://user-images.githubusercontent.com/74038190/212749447-bfb7e725-6987-49d9-ae85-2015e3e7cc41.gif"
+                    <img src="https://user-images.githubusercontent.com/74038190/219923823-bf1ce878-c6b8-4faa-be07-93e6b1006521.gif"
                         style="
                             display: flex;
                             justify-content: center;
@@ -1766,7 +1766,7 @@
                             margin-top: 20px;
                             color: #1e181b;
                         ">
-                        Copyright © 2025 gift-check.com All Rights Reserved. -
+                        Copyright © 2024 - {{ dayjs().year() }} gift-check.com All Rights Reserved. -
                         Legal
                     </h2>
                 </div>
@@ -1777,6 +1777,8 @@
 
 <script setup>
 import { onMounted, ref, onUnmounted } from "vue";
+import dayjs from "dayjs";
+
 
 const showScrollButton = ref(false);
 
@@ -2901,8 +2903,8 @@ ul {
     text-decoration: none;
     color: #003140;
     font-weight: bold;
-    background-color: #fff;
-    border: 3px solid #fff;
+    background-color: #fbf8ef;
+    /* border: 3px solid #fbf8ef; */
     font-family:
         Cambria,
         Cochin,

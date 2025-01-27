@@ -142,6 +142,7 @@ class AdminController extends Controller
             'data' => $users,
             'access_page' => $access_page,
             'store' => $Store,
+            'search' => $request['searchData']
         ]);
     }
     public function updateUser(Request $request)
@@ -155,7 +156,7 @@ class AdminController extends Controller
             'usertype' => 'required',
             'user_role' => [
                 Rule::requiredIf(function () use ($request) {
-                    return in_array($request->input('usertype'), [2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14]) || $request->input('it_type') === 1;
+                    return in_array($request->input('usertype'), [2, '2', 3, 4, 5, 6, 7, 9, 10, 11, 13, 14]) || $request->input('it_type') === 1;
                 }),
             ],
             'store_assigned' => [
@@ -174,61 +175,61 @@ class AdminController extends Controller
                 }),
             ]
         ]);
+
+        $checkUser = User::where('user_id', $request['user_id'])->first();
+        // dd($checkUser);
+        if ($checkUser) {
+            $CheckData =
+                $checkUser->username === $request['username'] &&
+                $checkUser->firstname === $request['firstname'] &&
+                $checkUser->lastname === $request['lastname'] &&
+                $checkUser->emp_id === $request['employee_id'] &&
+                $checkUser->usertype === $request['usertype'] &&
+                $checkUser->user_role === $request['user_role'] &&
+                $checkUser->store_assigned === $request['store_assigned'] &&
+                $checkUser->retail_group === $request['retail_group'] &&
+                $checkUser->it_type === $request['it_type'];
+
+            // dd($CheckData);
+            if ($CheckData) {
+                return back()->with(
+                    'error',
+                    " {$request->username}'s data has no changes, please update first before submitting"
+                );
+            }
+        }
+
         $userRole = 0;
         $storeAssign = 0;
-        $retailGroup = 0;
-        $itType = 0;
+        $retailGroup = null;
+        $itType = null;
 
-        if (in_array($request->usertype, [1, '1'])) {
-            $userRole === 0;
-            $storeAssign === 0;
-            $retailGroup === 0;
-            $itType === 0;
-        }
         if (in_array($request->usertype, ['2', 2, '3', 3, '4', 4, '5', 5, '6', 6, '9', 9, '10', 10, '11', 11, '13', 13])) {
             $userRole = $request->user_role;
-            $storeAssign === 0;
-            $retailGroup === 0;
-            $itType === 0;
         }
         if (in_array($request->usertype, [7, '7'])) {
             $userRole = $request->user_role;
             $storeAssign = $request->store_assigned;
-            $retailGroup === 0;
-            $itType === 0;
         }
         if (in_array($request->usertype, [8, '8'])) {
-            $userRole === 0;
             $storeAssign = $request->store_assigned;
             $retailGroup = $request->retail_group;
-            $itType === 0;
         }
         if (in_array($request->usertype, [12, '12'])) {
-            $userRole === 0;
-            $storeAssign === 0;
-            $retailGroup === 0;
             $itType = $request->it_type;
         }
         if (in_array($request->it_type, [1, '1'])) {
             $userRole = $request->user_role;
-            $storeAssign === 0;
-            $retailGroup === 0;
             $itType = $request->it_type;
         }
         if (in_array($request->it_type, [2, '2'])) {
-            $userRole === 0;
             $storeAssign = $request->store_assigned;
-            $retailGroup === 0;
             $itType = $request->it_type;
         }
         if (in_array($request->usertype, [14, '14'])) {
             $userRole = $request->user_role;
             $storeAssign = $request->store_assigned;
-            $retailGroup === 0;
-            $itType === 0;
         }
-
-        $password = Hash::make('password');
 
         $updateUser = User::where('user_id', $request->user_id)->update([
             'username' => $request->username,
@@ -236,7 +237,6 @@ class AdminController extends Controller
             'lastname' => $request->lastname,
             'emp_id' => $request->employee_id,
             'usertype' => $request->usertype,
-            'password' => $password,
             'usergroup' => null,
             'user_status' => 'active',
             'user_role' => $userRole,
@@ -253,7 +253,7 @@ class AdminController extends Controller
         if ($updateUser) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'User updated successfully'
             );
         }
         return back()->with(
@@ -294,7 +294,15 @@ class AdminController extends Controller
             ]
         ]);
 
-        $password = Hash::make('GC2015');
+        $checkUsername = User::where('username', $request->username)->exists();
+        if ($checkUsername) {
+            return back()->with(
+                'error',
+                "{$request->username} username already exist, please try other username"
+            );
+        }
+
+        $password = Hash::make('password');
 
         $insertUser = User::create([
             'username' => $request->username,
@@ -315,23 +323,47 @@ class AdminController extends Controller
             'it_type' => $request->it_type
         ]);
 
-        // if ($insertUser) {
-        //     return response()->json(['status' => 'success', 'message' => 'Adding user successfully saved'], 200);
-        // }
-        // return response()->json(['status' => 'error', 'message' => 'Error adding new user'], 400);
-
         if ($insertUser) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'User added successfully'
             );
         }
         return back()->with(
-            'success',
-            'SUCCESS'
+            'error',
+            'Failed to add user'
         );
     }
+    public function usersResetPassword(Request $request)
+    {
+        // dd($request->all());
+        $userPassword = User::where('user_id', $request['user_id'])->first();
 
+        $defaultPassword = 'GC2015';
+        $newPassword = Hash::make($defaultPassword);
+
+        if (Hash::check($defaultPassword, $userPassword->password)) {
+            return back()->with(
+                'error',
+                "{$userPassword->username}'s password already reset to default"
+            );
+        }
+
+        $resetPassword = User::where('user_id', $request['user_id'])->update([
+            'password' => $newPassword
+        ]);
+
+        if ($resetPassword) {
+            return back()->with(
+                'success',
+                'Password reset successfully'
+            );
+        }
+        return back()->with(
+            'error',
+            'ERROR'
+        );
+    }
     public function updateStatus(Request $request)
     {
         // dd($request->toArray());
@@ -370,31 +402,6 @@ class AdminController extends Controller
             'FAILED TO UPDATE'
 
         ]);
-    }
-
-    public function usersResetPassword(Request $request)
-    {
-        dd($request->all());
-
-        $defaultPassword = 'GC2015';
-        $newPassword = Hash::make($defaultPassword);
-
-        // if ($request['user_id'] === )
-
-        $resetPassword = User::where('user_id', $request['user_id'])->update([
-            'password' => $newPassword
-        ]);
-
-        if ($resetPassword) {
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
-        }
-        return back()->with(
-            'error',
-            'ERROR'
-        );
     }
     public function eodReports(Request $request)
     {
@@ -1001,7 +1008,8 @@ class AdminController extends Controller
             ->withQueryString();
         return Inertia::render('Admin/Masterfile/TagHennan', [
             'data' => $query,
-            'fullname' => $fullname
+            'fullname' => $fullname,
+            'search' => $request['searchvalue']
         ]);
     }
 
@@ -1039,6 +1047,92 @@ class AdminController extends Controller
             );
         }
     }
+
+    public function blockBarcode(Request $request)
+    {
+        // dd($request->all());
+
+        $data = DB::table('blocked_barcodes')
+            ->select('id', 'barcode', 'status', 'created_at', 'updated_at')
+            ->whereAny([
+                'barcode',
+                'status',
+                'created_at'
+            ], 'like', '%' . $request['searchBarcode'] . '%')
+            ->orderBy('blocked_barcodes.id', 'DESC')
+            ->paginate(10)
+            ->withQueryString();
+
+        return Inertia::render('Admin/Masterfile/BlockBarcode', [
+            'data' => $data,
+            'searchValue' => $request['searchBarcode']
+        ]);
+    }
+
+    public function addBlockedBarcode(Request $request)
+    {
+        $request->validate([
+            'barcode' => 'required'
+        ]);
+        // dd($request->all());
+        $checkBarcode = DB::table('blocked_barcodes')->where('barcode', $request['barcode'])->exists();
+
+        if ($checkBarcode) {
+            return back()->with(
+                'error',
+                'This barcode is already in the blockedlist, please try other barcode'
+            );
+        }
+        $date = now();
+        $onSuccess = DB::table('blocked_barcodes')->insert([
+            'barcode' => $request['barcode'],
+            'status' => 'blocked',
+            'created_at' => $date->format('Y-m-d h:i:s'),
+            'updated_at' => $date->format('Y-m-d h:i:s')
+
+        ]);
+        if ($onSuccess) {
+            return back()->with(
+                'success',
+                'Barcode blocked successfully'
+            );
+        }
+    }
+
+    public function unblockedBarcode(Request $request)
+    {
+        $unblockedBarcode = DB::table('blocked_barcodes')->where('id', $request['barcode_id'])->update([
+            'status' => 'free',
+        ]);
+
+        if ($unblockedBarcode) {
+            return back()->with(
+                'success',
+                'Barcode is unblocked, free and ready to use'
+            );
+        }
+    }
+
+    public function blockedAgain(Request $request)
+    {
+        // dd($request->all());
+        $unblockedBarcode = DB::table('blocked_barcodes')->where('id', $request['barcode_id'])->update([
+            'status' => 'blocked',
+        ]);
+
+        if ($unblockedBarcode) {
+            return back()->with(
+                'success',
+                'Barcode is blocked successfully',
+            );
+        } else {
+            return back()->with(
+                'success',
+                'Failed to blocked the barcode',
+            );
+        }
+    }
+
 
     public function updateRevolvingFund(Request $request)
     {
