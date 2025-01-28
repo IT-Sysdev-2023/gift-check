@@ -171,7 +171,7 @@ class AdminController extends Controller
             ],
             'it_type' => [
                 Rule::requiredIf(function () use ($request) {
-                    return $request->input('it_type') === 12;
+                    return $request->input('usertype') === 12;
                 }),
             ]
         ]);
@@ -289,7 +289,7 @@ class AdminController extends Controller
             ],
             'it_type' => [
                 Rule::requiredIf(function () use ($request) {
-                    return $request->input('it_type') === 12;
+                    return $request->input('usertype') === 12;
                 }),
             ]
         ]);

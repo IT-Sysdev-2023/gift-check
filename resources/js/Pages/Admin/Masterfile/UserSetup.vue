@@ -504,18 +504,22 @@ const saveNewUser = async () => {
 const saveUpdateUser = async () => {
     updateForm.value.errors = {};
     if (!updateForm.value.username) {
-        updateForm.value.errors.username = "This field is required"
+        updateForm.value.errors.username = "Username field is required"
         if (!updateForm.value.firstname) {
-            updateForm.value.errors.firstname = "This field is required"
+            updateForm.value.errors.firstname = "Firstname field is required"
         }
         if (!updateForm.value.lastname) {
-            updateForm.value.errors.lastname = "This field is required"
+            updateForm.value.errors.lastname = "Lastname field is required"
         }
         if (!updateForm.value.emp_id) {
-            updateForm.value.errors.emp_id = "This field is required"
+            updateForm.value.errors.emp_id = "Employee ID field is required"
         }
-        if (!updateForm.value.usertype) {
-            updateForm.value.errors.usertype = "This field is required"
+        if (updateForm.value.usertype === '12') {
+            updateForm.value.errors.usertype = "Usertype field is required"
+        }
+        if (!updateForm.value.it_type) {
+            console.log(updateForm.value.it_type);
+            updateForm.value.errors.it_type = "IT Type field is required"
         }
         return
     }

@@ -42,7 +42,7 @@
                         <template v-if="column.dataIndex === 'action'">
                             <a-button @click="updateStoreCustomer(record)" title="Update" class="me-2 me-sm-5"
                                 style="color: white; background-color: green">
-                                <FormOutlined />
+                                <EditOutlined />
                             </a-button>
                         </template>
                     </template>
@@ -63,7 +63,7 @@
                         <template v-if="column.dataIndex === 'action'">
                             <a-button @click="updateInstitutional(record)" title="Update" class="me-2 me-sm-5"
                                 style="color: white; background-color: green">
-                                <FormOutlined />
+                                <EditOutlined />
                             </a-button>
                         </template>
                     </template>
@@ -83,7 +83,7 @@
                         <template v-if="column.dataIndex === 'action'">
                             <a-button @click="updateSpecialCustomer(record)" title="Update" class="me-2 me-sm-5"
                                 style="color: white; background-color: green">
-                                <FormOutlined />
+                                <EditOutlined />
                             </a-button>
                         </template>
                     </template>
@@ -218,11 +218,9 @@
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { notification } from "ant-design-vue";
-import { FormOutlined } from "@ant-design/icons-vue";
 
 export default {
     layout: AuthenticatedLayout,
-    components: { FormOutlined },
     props: {
         data: Object,
         search: String,

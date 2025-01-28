@@ -310,7 +310,7 @@
 
         <!-- EXIT BUTTON  -->
         <div>
-            <button onclick="location.href='http://127.0.0.1/';" class="animated-button">
+            <button onclick="location.href='http://127.0.0.1:8082/';" class="animated-button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
                     <path
                         d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z">
@@ -1169,7 +1169,8 @@
                         <div class="tooltip">Facebook</div>
                     </li>
                     <li class="icon-content">
-                        <a href="https://www.github.com/" aria-label="GitHub" data-social="github">
+                        <a href="https://github.com/IT-Sysdev-2023/gift-check/" aria-label="GitHub"
+                            data-social="github">
                             <div class="filled"></div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-github" viewBox="0 0 16 16" xml:space="preserve">
