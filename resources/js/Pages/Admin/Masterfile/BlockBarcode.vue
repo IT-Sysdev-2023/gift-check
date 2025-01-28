@@ -105,7 +105,8 @@
             </a-modal>
             <!--SHOWING BY BARCODE PART -->
             <a-modal v-model:open="byBarcodeTable" :footer="false" style="width: 40%">
-                <a-table :columns="byBarcode" :data-source="tableData" :pagination="false" style="font-size: large;">
+                <a-table :columns="byBarcode" :data-source="tableData" :pagination="false" style="font-size: large;"
+                    size="small">
                 </a-table>
             </a-modal>
         </a-card>
@@ -199,9 +200,19 @@ const unblockedBarcode = (record) => {
         content: createVNode(
             "div",
             {
-                style: "color:red;",
+                style: "color:black;",
             },
-            "Are you sure you want to unblock this barcode?",
+            [
+                "Are you sure you want to",
+                createVNode(
+                    "span",
+                    {
+                        style: "color:red; ",
+                    },
+                    " UNBLOCKED",
+                ),
+                " this barcode"
+            ],
         ),
         onOk: () => {
             try {
@@ -214,21 +225,20 @@ const unblockedBarcode = (record) => {
                                 message: 'SUCCESS',
                                 description: page.props.flash.success
                             });
+
                         } else if (page.props.flash.error) {
                             notification.warning({
                                 message: 'Opps',
                                 description: page.props.flash.error
                             });
                         };
-                    }
+                    },
+                    preserveState: true
                 })
 
             } catch (error) {
                 console.error("Failed to add barcode", error);
             }
-        },
-        onCancel() {
-            console.log("Cancel");
         },
     })
 
@@ -239,9 +249,19 @@ const blockedBarcodes = (record) => {
         title: "Confirmation",
         icon: createVNode(ExclamationCircleOutlined),
         content: createVNode("div", {
-            style: "color:red;",
+            style: "color:black;",
         },
-            "Are you sure you want to block this barcode?",
+            [
+                "Are you sure you want to ",
+                createVNode(
+                    "span",
+                    {
+                        style: "color:red;",
+                    },
+                    " BLOCKED",
+                ),
+                " this barcode"
+            ],
         ),
         onOk: () => {
             try {
@@ -260,7 +280,8 @@ const blockedBarcodes = (record) => {
                                 description: page.props.flash.error
                             });
                         };
-                    }
+                    },
+                    preserveState: true
                 })
             } catch (error) {
                 console.error("Failed to blocked the barcode", error)

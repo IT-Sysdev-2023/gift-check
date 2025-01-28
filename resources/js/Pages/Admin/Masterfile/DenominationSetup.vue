@@ -39,7 +39,7 @@
                     <template v-if="column.dataIndex === 'action'">
                         <a-button @click="updateDenominationData(record)" title="Update" class="me-2 me-sm-5"
                             style="color: white; background-color: green">
-                            <FormOutlined />
+                            <EditOutlined />
                         </a-button>
                     </template>
                 </template>
@@ -99,14 +99,10 @@
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { FormOutlined } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 
 export default {
     layout: AuthenticatedLayout,
-    components: {
-        FormOutlined,
-    },
     props: {
         data: Object,
         search: String,

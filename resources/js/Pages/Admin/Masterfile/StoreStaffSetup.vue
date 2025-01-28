@@ -41,7 +41,7 @@
                     <template v-if="column.dataIndex === 'action'">
                         <a-button @click="updateStoreStaffSetup(record)" title="Update" class="me-2 me-sm-5"
                             style="color: white; background-color: green">
-                            <FormOutlined />
+                            <EditOutlined />
                         </a-button>
                         <a-button @click="changePassword(record)" title="Change Password"
                             style="color: white; background-color: #1b76f8">
@@ -184,7 +184,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {
     UndoOutlined,
     PlusOutlined,
-    FormOutlined,
     ExclamationCircleOutlined,
 } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
@@ -196,7 +195,6 @@ export default {
     components: {
         UndoOutlined,
         PlusOutlined,
-        FormOutlined,
     },
     props: {
         password: Object,

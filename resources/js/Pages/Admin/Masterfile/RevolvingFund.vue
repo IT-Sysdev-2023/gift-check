@@ -35,7 +35,7 @@
                     <template v-if="column.dataIndex === 'action'">
                         <a-button title="Update User" @click="updateFund(record)" class="me-2 me-sm-5"
                             style="color: white; background-color: green">
-                            <FormOutlined />
+                            <EditOutlined />
                         </a-button>
                     </template>
                 </template>
@@ -63,7 +63,7 @@
                     <a-select-option value="inactive">INACTIVE</a-select-option>
                 </a-select>
             </a-form-item>
-            </div>
+        </div>
     </a-modal>
     <!-- {{ data }} -->
 </template>
