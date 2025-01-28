@@ -55,9 +55,9 @@ class HandleInertiaRequests extends Middleware
                     'scanGc' => $request->session()->get('scanGc') ?? [],
                 ];
             },
-            'pendingPrRequest' => ProductionRequest::select('pe_id', 'pe_num')
+            'pendingPrRequest' => $request->user() ? ProductionRequest::select('pe_id', 'pe_num')
                 ->where([['pe_generate_code', '0'], ['pe_status', '1']])
-                ->get(),
+                ->get() : [],
             'barcodeReviewScan' => function () use ($request) {
                 return [
                     'allocation' => $request->session()->get('scanReviewGC') ?? [],
