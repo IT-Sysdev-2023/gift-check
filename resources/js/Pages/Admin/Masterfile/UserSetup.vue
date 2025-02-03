@@ -3,7 +3,7 @@
         <a-card>
             <!-- BACK BUTTON  -->
             <div>
-                <a-button @click="backButton">
+                <a-button @click="backButton" style="font-weight: bold;">
                     <RollbackOutlined /> Back
                 </a-button>
             </div>

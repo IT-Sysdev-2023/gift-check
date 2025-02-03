@@ -178,6 +178,7 @@ const showBarcodesTable = () => {
     blockedBarcodesTable.value = true;
 };
 
+// SHOW PER BARCODE BUTTON
 const showBarcode = (record) => {
     const filteredData = props.data.data.filter(
         (item) => item.id === record.id,

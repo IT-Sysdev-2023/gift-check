@@ -1,6 +1,7 @@
 <template>
     <AuthenticatedLayout>
         <a-card>
+            <!-- Back button  -->
             <div>
                 <a-button @click="backButton" style="font-weight: bold;">
                     <RollbackOutlined /> Back
@@ -16,10 +17,12 @@
                     Tag Hennan Setup
                 </span>
             </div>
+            <!-- Search input  -->
             <div>
                 <a-input-search allow-clear @change="searchFunction" v-model:value="tagHennanSearch" size="medium"
                     enter-button placeholder="Input search here..." style="width: 25%; margin-left: 70%" />
             </div>
+            <!-- Loading spinner effect  -->
             <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 3rem">
                 <div class="spinnerContainer">
                     <div class="spinner"></div>
@@ -35,6 +38,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Table  -->
             <div style="margin-top: 1rem">
                 <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
@@ -48,6 +52,7 @@
                 </a-table>
                 <pagination :datarecords="data" class="mt-5" />
             </div>
+            <!-- Update modal  -->
             <a-modal v-model:open="updateModal" @ok="submitUpdatedTag">
                 <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
                     <EditOutlined /> Update Tag
@@ -98,6 +103,7 @@ const form = ref([
 
 const updateModal = ref(false);
 
+// Search Function
 const searchFunction = () => {
     router.get(route('admin.masterfile.tagHennan'), {
         searchvalue: tagHennanSearch.value
@@ -134,17 +140,18 @@ const columns = ref([
         dataIndex: "action",
     },
 ]);
-
+// Back button function
 const backButton = () => {
     router.get(route("admin.dashboard"));
 };
 
+// Update button function
 const updateTagHennan = (data) => {
     updateModal.value = true;
     form.value = { ...data };
 };
 
-
+// Submit updated tag function
 const submitUpdatedTag = () => {
     updateModal.value = false;
     Modal.confirm({
@@ -177,6 +184,7 @@ const submitUpdatedTag = () => {
 </script>
 
 <style scoped>
+ /* loading spinner effect  */
 .spinnerContainer {
     display: flex;
     flex-direction: column;
