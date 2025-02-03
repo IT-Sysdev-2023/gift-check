@@ -27,7 +27,7 @@ While much of the project has been improved, there may still be areas that need 
 - Php 8.2 and later
 - Mariadb
 - Redis
-- Lakas ng luob
+- gutts
 
 :rocket:Setup
 - clone this repository
