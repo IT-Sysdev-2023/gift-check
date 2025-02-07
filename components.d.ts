@@ -262,6 +262,7 @@ declare module 'vue' {
     GcReport: typeof import('./resources/js/Pages/Treasury/Reports/GcReport.vue')['default']
     GcSalesReport: typeof import('./resources/js/Pages/Treasury/Dashboard/Eod/GcSalesReport.vue')['default']
     GcTracking: typeof import('./resources/js/Pages/Custodian/GcTracking.vue')['default']
+    GcTransfer: typeof import('./resources/js/Pages/Retail/GcTransfer.vue')['default']
     GeneratedReportFloat: typeof import('./resources/js/Components/GeneratedReportFloat.vue')['default']
     GeneratedReports: typeof import('./resources/js/Pages/Treasury/Reports/GeneratedReports.vue')['default']
     GiftCheck: typeof import('./resources/js/Pages/Treasury/Transactions/ProductionRequest/GiftCheck.vue')['default']
