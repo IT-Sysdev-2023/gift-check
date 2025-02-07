@@ -19,7 +19,6 @@ use App\Models\Gc;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
 class InstitutionGcSalesService extends FileHandler
 {
     private string $sessionName;

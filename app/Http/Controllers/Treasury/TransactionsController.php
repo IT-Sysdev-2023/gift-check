@@ -4,11 +4,8 @@ namespace App\Http\Controllers\Treasury;
 
 use App\Http\Controllers\Controller;
 use App\Helpers\NumberHelper;
-use App\Http\Resources\DenominationResource;
 use App\Models\BudgetRequest;
-use App\Models\Denomination;
 use App\Models\LedgerBudget;
-use App\Models\ProductionRequest;
 use App\Services\Treasury\Dashboard\BudgetRequestService;
 use App\Services\Treasury\RegularGcProcessService;
 use App\Services\Treasury\Transactions\TransactionProductionRequest;
@@ -42,5 +39,4 @@ class TransactionsController extends Controller
         return $this->budgetRequestService->budgetRequestSubmission($request);
     }
 
-    //Production Requests
 }

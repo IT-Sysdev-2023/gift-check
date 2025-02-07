@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Treasury\Transactions;
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Models\SpecialExternalGcrequest;
-use Illuminate\Http\Request;
 
 class SpecialGcPaymentController extends Controller
 {

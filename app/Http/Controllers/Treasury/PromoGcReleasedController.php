@@ -8,7 +8,6 @@ use App\Models\PromoGcReleaseToDetail;
 use App\Models\PromoGcReleaseToItem;
 use App\Services\Treasury\ColumnHelper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
 
 class PromoGcReleasedController extends Controller
 {
