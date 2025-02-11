@@ -730,8 +730,6 @@ class AdminController extends Controller
     public function creditCardSetup(Request $request)
     {
         $searchTerm = $request->input('data', '');
-        $selectEntries = $request->input('value', 10);
-
         $dataQuery = creditcard::query();
 
         if ($searchTerm) {
@@ -744,17 +742,16 @@ class AdminController extends Controller
         }
 
         $data = $dataQuery->orderByDesc('ccard_id')
-            ->paginate($selectEntries)
+            ->paginate(10)
             ->through(function ($item) {
                 $item['ccard_created_formatted'] = Carbon::parse($item['ccard_created'])->format('Y-m-d H:i:s');
                 return $item;
             })
             ->withQueryString();
 
-        return inertia('Admin/Masterfile/CreditCardSetup', [
+        return inertia('Admin/Masterfile/SetupCreditCard', [
             'data' => $data,
             'search' => $searchTerm,
-            'value' => $selectEntries,
         ]);
     }
 
@@ -776,12 +773,12 @@ class AdminController extends Controller
         if ($isSuccessful) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'Credit Card added successfully'
             );
         }
         return back()->with(
             'error',
-            'FAILED TO ADD'
+            'Failed to add credit card'
         );
     }
 
