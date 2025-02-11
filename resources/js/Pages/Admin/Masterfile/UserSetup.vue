@@ -189,7 +189,7 @@
                     <a-form-item for="employee_id" :validate-status="updateForm.errors?.emp_id ? 'error' : ''"
                         :help="updateForm.errors?.emp_id">
                         <span>Employee_Id:</span>
-                        <a-input v-model:value="updateForm.emp_id" type="text" placeholder="Employee_Id" />
+                        <a-input v-model:value="a.emp_id" type="text" placeholder="Employee_Id" />
                     </a-form-item>
 
                     <!-- USERTYPE  -->

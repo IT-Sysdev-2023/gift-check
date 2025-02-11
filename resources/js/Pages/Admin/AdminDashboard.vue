@@ -55,7 +55,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 export default {
     layout: AuthenticatedLayout,
     props: {
-        users: Object
+        users: ([
+            Object,
+            Number
+        ])
     }
 }
 
