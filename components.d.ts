@@ -430,6 +430,7 @@ declare module 'vue' {
     SetupBudgetRequest: typeof import('./resources/js/Pages/Finance/SetupBudgetRequest.vue')['default']
     SetupBudgetRequestForm: typeof import('./resources/js/Pages/Finance/Forms/SetupBudgetRequestForm.vue')['default']
     SetupCreditCard: typeof import('./resources/js/Pages/Admin/Masterfile/SetupCreditCard.vue')['default']
+    SetupDenomination: typeof import('./resources/js/Pages/Admin/Masterfile/SetupDenomination.vue')['default']
     SetupDetails: typeof import('./resources/js/Pages/Iad/Cards/SetupDetails.vue')['default']
     SetupPayment: typeof import('./resources/js/Pages/Accounting/Payment/SetupPayment.vue')['default']
     SetupPurchaseOrders: typeof import('./resources/js/Pages/Admin/SetupPurchaseOrders.vue')['default']
