@@ -51,9 +51,9 @@
     </a-card>
 
     <a-modal v-model:open="addStore" @ok="handleOk">
-        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
-            <EditOutlined /> Add Store
-        </div>
+        <header style="font-weight: bold; font-size: large; ">
+            <PlusOutlined /> Add Store
+        </header>
         <div style="margin-top: 2rem; font-weight: bold;">
 
             <a-form-item for="store_name" :validate-status="form.errors.store_name ? 'error' : ''"

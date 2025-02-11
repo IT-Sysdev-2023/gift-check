@@ -54,9 +54,9 @@
             </div>
             <!-- Update modal  -->
             <a-modal v-model:open="updateModal" @ok="submitUpdatedTag">
-                <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+                <header style="font-weight: bold; font-size: large;">
                     <EditOutlined /> Update Tag
-                </div>
+                </header>
                 <div style="margin-top: 2rem; font-weight: bold;">
                     <div style="margin-top: 1rem">
                         <a-form-item for="tag" :validate-status="form.errors?.hennan_id ? 'error' : ''"
@@ -184,7 +184,7 @@ const submitUpdatedTag = () => {
 </script>
 
 <style scoped>
- /* loading spinner effect  */
+/* loading spinner effect  */
 .spinnerContainer {
     display: flex;
     flex-direction: column;

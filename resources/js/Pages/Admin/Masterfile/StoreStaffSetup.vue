@@ -57,11 +57,9 @@
     <!-- this is for update password part -->
 
     <a-modal v-model:open="modalforchangePassword" @ok="updatePassword">
-        <div>
-            <span style="color: #1b76f8; font-family: sans-serif; font-size: 1rem; font-weight: bold;">
-                <UndoOutlined /> Reset Password
-            </span>
-        </div>
+        <header style="font-size: large; font-weight: bold;">
+            <UndoOutlined /> Reset Password
+        </header>
         <div style="margin-top: 2rem;">
             <span style="font-family: sans-serif; font-size: 1rem;">
                 Reset
@@ -73,9 +71,9 @@
 
     <!-- this is for update part -->
     <a-modal v-model:open="openmodalforupdate" @ok="updateStoreStaff">
-        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+        <header style="font-weight: bold; font-size: large;">
             <EditOutlined /> Update User
-        </div>
+        </header>
 
         <div style="margin-top: 2rem; font-weight: bold;">
             <a-form-item for="ss_username" :validate-status="dataForUpdate.errors?.ss_username ? 'error' : ''"
@@ -124,9 +122,9 @@
 
     <!-- this is for adding user part -->
     <a-modal v-model:open="open" @ok="handleOk">
-        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
-            <UserAddOutlined /> Add User
-        </div>
+        <header style="font-weight: bold; font-size: large;">
+            <PlusOutlined /> Add User
+        </header>
         <div style="margin-top: 2rem; font-weight: bold;">
 
             <a-form-item for="username" :validate-status="form.errors.username ? 'error' : ''"

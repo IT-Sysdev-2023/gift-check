@@ -45,9 +45,9 @@
     </a-card>
 
     <a-modal v-model:open="modalForUpdateFund" @ok="updatupdateRevolvingFundeFund">
-        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+        <header style="font-weight: bold; font-size: large;">
             <EditOutlined /> Update Revolving Fund
-        </div>
+        </header>
         <div style="margin-top: 2rem; font-weight: bold;">
 
             <a-form-item for="r_fund" :validate-status="form.errors?.r_fund ? 'error' : ''" :help="form.errors?.r_fund">
