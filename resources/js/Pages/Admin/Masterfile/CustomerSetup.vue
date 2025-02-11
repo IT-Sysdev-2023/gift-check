@@ -94,9 +94,9 @@
     </a-card>
 
     <a-modal v-model:open="modalForStoreCustomer" @ok="storeCustomerUpdate">
-        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+        <header style="font-weight: bold; font-size: large;">
             <EditOutlined /> Update Customer
-        </div>
+        </header>
         <div style="margin-top: 2rem; font-weight: bold;">
             <a-form-item for="firstname" :validate-status="dataForStoreCustomer.errors?.cus_fname ? 'error' : ''
                 " :help="dataForStoreCustomer.errors?.cus_fname" style="margin-top: 10px">
@@ -121,9 +121,9 @@
     </a-modal>
 
     <a-modal v-model:open="modalForInstitutionalCustomer" @ok="institutionalCustomerUpdate">
-        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+        <header style="font-weight: bold; font-size: large; ">
             <EditOutlined /> Update Institute Customer
-        </div>
+        </header>
         <div style="margin-top: 2rem; font-weight: bold;">
             <a-form-item for="institute_name" :validate-status="dataForInstituteCustomer.errors?.ins_name ? 'error' : ''
                 " :help="dataForInstituteCustomer.errors?.ins_name" style="margin-top: 10px">
@@ -162,9 +162,9 @@
     </a-modal>
 
     <a-modal v-model:open="modalForSpecialCustomer" @ok="specialCustomerUpdate">
-        <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+        <header style="font-weight: bold; font-size: large;">
             <EditOutlined /> Update Special Customer
-        </div>
+        </header>
         <div style="margin-top: 2rem; font-weight: bold;">
 
             <a-form-item for="sp_customer_company_name" :validate-status="dataForSpecialCustomer.errors?.spcus_companyname ? 'error' : ''

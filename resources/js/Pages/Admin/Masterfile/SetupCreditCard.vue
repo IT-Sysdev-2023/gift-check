@@ -35,7 +35,7 @@ const form = reactive({
 })
 const loading = ref(false);
 const searchData = ref(props.search);
-
+    // search function
 const inputSearchData = () => {
     router.get(route('admin.masterfile.creditCardSetup'), {
         data: searchData.value
@@ -52,6 +52,7 @@ const inputSearchData = () => {
         preserveState: true
     });
 }
+// adding function
 const openAddingCreditCard = ref(false);
 const addCreditCard = async () => {
     form.errors = {};
@@ -135,7 +136,7 @@ const addCreditCard = async () => {
         <!-- add modal  -->
         <a-modal v-model:open="openAddingCreditCard" @ok="addCreditCard">
             <header style="font-size: large; font-weight: bold;">
-                <CreditCardOutlined /> Add Credit Card
+                <PlusOutlined /> Add Credit Card
             </header>
             <a-form-item style="margin-top: 2rem; font-weight: bold;"
                 :validate-status="form.errors.ccard_name ? 'error' : ''" :help="form.errors.ccard_name">

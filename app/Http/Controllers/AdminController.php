@@ -600,18 +600,15 @@ class AdminController extends Controller
         if ($activeTab === 'store_customer') {
             $data = $data->whereNotNull('cus_id')
                 ->orderBy('cus_id', 'asc')
-                ->paginate(10)
-                ->withQueryString();
+                ->paginate(10);
         } elseif ($activeTab === 'institutional_customer') {
             $data =  $data->whereNotNull('institut_customer.ins_id')
                 ->orderBy('institut_customer.ins_id', 'ASC')
-                ->paginate(10)
-                ->withQueryString();
+                ->paginate(10);
         } elseif ($activeTab === 'special_customer') {
             $data = $data->whereNotNull('special_external_customer.spcus_id')
                 ->orderBy('special_external_customer.spcus_id', 'ASC')
-                ->paginate(10)
-                ->withQueryString();
+                ->paginate(10);
         }
 
         return inertia('Admin/Masterfile/CustomerSetup', [
@@ -784,8 +781,6 @@ class AdminController extends Controller
 
     public function denominationSetup(Request $request)
     {
-
-
         $data = Denomination::get();
         $searchTerm = $request->input('data', '');
         $data = DB::table('denomination')
@@ -810,12 +805,11 @@ class AdminController extends Controller
                 'denom_createdby'
             ], 'like', '%' . $searchTerm . '%')
             ->orderBy('denom_id', 'ASC')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
-        return inertia('Admin/Masterfile/DenominationSetup', [
+        return inertia('Admin/Masterfile/SetupDenomination', [
             'data' => $data,
-            'search' => $request->data,
+            'search' => $searchTerm,
             'value' => $request->value
         ]);
     }
@@ -826,7 +820,7 @@ class AdminController extends Controller
         // dd($request->toArray());
         $request->validate([
             'denomination' => 'required|integer',
-            'barcodeNumStart' => 'required|integer',
+            'denom_barcode_start' => 'required|integer',
         ]);
 
         $denom_code = Denomination::max('denom_code');
@@ -841,7 +835,7 @@ class AdminController extends Controller
         }
         $isSuccessful = Denomination::create([
             'denomination' => $request->denomination,
-            'denom_barcode_start' => $request->barcodeNumStart,
+            'denom_barcode_start' => $request->denom_barcode_start,
             'denom_dateupdated' => now(),
             'denom_code' => $newDenomCode,
             'denom_fad_item_number' => $newDenomFadItemNumber,
@@ -854,12 +848,12 @@ class AdminController extends Controller
         if ($isSuccessful) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'Denomination added successfully'
             );
         }
         return back()->with(
             'error',
-            'FAILED TO SAVE'
+            'Failed to add denomination'
         );
     }
 
@@ -881,7 +875,7 @@ class AdminController extends Controller
             $denomination->denom_barcode_start == $request->denom_barcode_start &&
             $denomination->denom_fad_item_number == $request->denom_fad_item_number
         ) {
-            return back()->with('error', 'OPPS');
+            return back()->with('error', 'No changes happen, update first before submitting');
         }
 
 
@@ -893,7 +887,7 @@ class AdminController extends Controller
         if ($isSuccessfull) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'Denomination updated successfully'
             );
         }
         return back()->with(
@@ -1001,8 +995,7 @@ class AdminController extends Controller
                 'fullname'
             ], 'like', '%' . $request['searchvalue'] . '%')
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_id', 'DESC')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
         return Inertia::render('Admin/Masterfile/TagHennan', [
             'data' => $query,
             'fullname' => $fullname,
@@ -1057,8 +1050,7 @@ class AdminController extends Controller
                 'created_at'
             ], 'like', '%' . $request['searchBarcode'] . '%')
             ->orderBy('blocked_barcodes.id', 'DESC')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
         return Inertia::render('Admin/Masterfile/BlockBarcode', [
             'data' => $data,

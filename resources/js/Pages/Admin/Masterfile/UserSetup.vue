@@ -60,9 +60,9 @@
 
             <!-- ADD USER MODAL  -->
             <a-modal v-model:open="addUserModal" @ok="saveNewUser">
-                <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
-                    <UserAddOutlined /> Add User
-                </div>
+                <header style="font-weight: bold; font-size: large;">
+                    <PlusOutlined /> Add User
+                </header>
                 <div style="margin-top: 2rem; font-weight: bold;">
 
                     <!-- USERNAME  -->
@@ -159,9 +159,9 @@
 
             <!-- UPDATE USER MODAL  -->
             <a-modal v-model:open="updateUserModal" @ok="saveUpdateUser">
-                <div style="font-family: sans-serif; font-weight: bold; font-size: 1rem; color: #1b76f8">
+                <header style="font-weight: bold; font-size: large;">
                     <EditOutlined /> Update User
-                </div>
+                </header>
                 <div style="margin-top: 2rem; font-weight: bold;">
 
                     <!-- USERNAME  -->
@@ -189,7 +189,7 @@
                     <a-form-item for="employee_id" :validate-status="updateForm.errors?.emp_id ? 'error' : ''"
                         :help="updateForm.errors?.emp_id">
                         <span>Employee_Id:</span>
-                        <a-input v-model:value="a.emp_id" type="text" placeholder="Employee_Id" />
+                        <a-input v-model:value="updateForm.emp_id" type="text" placeholder="Employee_Id" />
                     </a-form-item>
 
                     <!-- USERTYPE  -->
@@ -260,11 +260,9 @@
             </a-modal>
             <!-- UPDATE PASSWORD MODAL  -->
             <a-modal v-model:open="resetPasswordModal" @ok="resetPasswordData">
-                <div>
-                    <span style="color: #1b76f8; font-family: sans-serif; font-size: 1rem; font-weight: bold;">
-                        <UndoOutlined />Reset Password
-                    </span>
-                </div>
+                <header style="font-size: large; font-weight: bold;">
+                    <UndoOutlined /> Reset Password
+                </header>
                 <div style="margin-top: 2rem;">
                     <span style="font-family: sans-serif; font-size: 1rem;">Reset <span
                             style="color: red; text-decoration: underline;">{{ updatePassword.full_name }}</span>

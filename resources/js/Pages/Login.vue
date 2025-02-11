@@ -3,7 +3,7 @@
         class="h-screen bg-[#f3f4f6]"
         style="display: flex; justify-content: center; align-items: center"
     >
-        
+
             <a-row style="
                 height: 80%;
                 width: 80%;
@@ -95,10 +95,10 @@
                 </a-col>
             </a-row>
             <!-- <div class="bg-sky-200">
-                
+
             </div> -->
         </div>
-  
+
 </template>
 
 <script setup>
