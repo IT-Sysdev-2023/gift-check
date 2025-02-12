@@ -459,7 +459,7 @@ class AdminController extends Controller
             ->paginate($selectEntries)
             ->withQueryString();
 
-        return Inertia::render('Admin/Masterfile/StoreStaffSetup', [
+        return Inertia::render('Admin/Masterfile/SetupStoreStaff', [
             'data' => $data,
             'search' => $request->data,
             'store' => $store,
@@ -474,16 +474,16 @@ class AdminController extends Controller
     {
         // dd($request->all());
         $request->validate([
-            'username' => 'required|max:50',
-            'firstname' => 'required',
-            'lastname' => 'required',
-            'employee_id' => 'required|integer',
-            'password' => 'required',
-            'store_id' => 'required',
-            'usertype' => 'required',
+            'ss_username' => 'required|max:50',
+            'ss_firstname' => 'required',
+            'ss_lastname' => 'required',
+            'ss_idnumber' => 'required|integer',
+            'ss_password' => 'required',
+            'ss_store' => 'required',
+            'ss_usertype' => 'required',
         ]);
 
-        $storeStaff = StoreStaff::where('ss_username', $request->username)->first();
+        $storeStaff = StoreStaff::where('ss_username', $request->ss_username)->first();
         if ($storeStaff) {
             return back()->with(
                 'error',
@@ -494,14 +494,14 @@ class AdminController extends Controller
         $pass = Hash::make($request->ss_password);
 
         $isSuccessfull = StoreStaff::create([
-            'ss_username' => $request->username,
-            'ss_firstname' => $request->firstname,
-            'ss_lastname' => $request->lastname,
-            'ss_idnumber' => $request->employee_id,
+            'ss_username' => $request->ss_username,
+            'ss_firstname' => $request->ss_firstname,
+            'ss_lastname' => $request->ss_lastname,
+            'ss_idnumber' => $request->ss_idnumber,
             'ss_password' => $pass,
-            'ss_usertype' => $request->usertype,
+            'ss_usertype' => $request->ss_usertype,
             'ss_status' => 'active',
-            'ss_store' => $request->store_id,
+            'ss_store' => $request->ss_store,
             'ss_manager_key' => $pass,
             'ss_date_created' => now(),
             'ss_date_modified' => now(),
@@ -919,12 +919,12 @@ class AdminController extends Controller
         if ($isSuccessfull) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'User updated successfully'
             );
         }
         return back()->with(
             'error',
-            'OPPS'
+            'No changes, update first before submitting'
         );
     }
     public function updateStoreStaffPassword(Request $request)
@@ -936,7 +936,7 @@ class AdminController extends Controller
         if (Hash::check($defaultPassword, $users->ss_password)) {
             return back()->with(
                 'error',
-                'OPPS'
+                'This username password already reset to default'
             );
         }
         $newPassword = Hash::make($defaultPassword);
@@ -947,7 +947,7 @@ class AdminController extends Controller
         if ($onSuccess) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'Password reset successfully'
             );
         }
         return back()->with(

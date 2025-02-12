@@ -29,6 +29,7 @@ const columns = ref([
 ])
 
 const loading = ref(false);
+// Search function
 const searchData = ref(props.search);
 const searchInput = () => {
     router.get(route('admin.masterfile.denominationSetup'), {
@@ -150,24 +151,29 @@ const denominationSubmit = async () => {
 </script>
 <template>
     <AuthenticatedLayout>
+        <!-- back button  -->
         <div>
             <a-button :href="route('admin.dashboard')" style="font-weight: bold;">
                 <RollbackOutlined /> Back
             </a-button>
         </div>
+        <!-- add denomination button  -->
         <div>
             <a-button @click="() => addDenominationModal = true"
                 style="margin-left: 80%; color: white; background-color: #1b76f8;">
                 <PlusOutlined /> Add Denomination
             </a-button>
         </div>
+        <!-- label  -->
         <div>
             <p style="font-weight: bold; font-size: large;">Denomination Setup</p>
         </div>
+        <!-- search input  -->
         <div>
             <a-input-search v-model:value="searchData" @change="searchInput" enter-button
                 placeholder="input search here..." allow-clear style="width: 25%; margin-left: 70%;" />
         </div>
+        <!-- loading effect  -->
         <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 6rem">
             <div class="spinnerContainer">
                 <div class="spinner"></div>
@@ -183,6 +189,7 @@ const denominationSubmit = async () => {
                 </div>
             </div>
         </div>
+        <!-- table  -->
         <div>
             <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
@@ -195,6 +202,7 @@ const denominationSubmit = async () => {
             </a-table>
             <pagination :datarecords="props.data" class="mt-5" />
         </div>
+        <!-- update denomination modal  -->
         <div>
             <a-modal v-model:open="updateDenominationModal" @ok="addDenomination">
                 <header style="font-weight: bold; font-size: large;">
@@ -220,6 +228,7 @@ const denominationSubmit = async () => {
                 </a-form-item>
             </a-modal>
         </div>
+        <!-- add denomination modal  -->
         <div>
             <a-modal v-model:open="addDenominationModal" @ok="denominationSubmit">
                 <header style="font-weight: bold; font-size: large;">
