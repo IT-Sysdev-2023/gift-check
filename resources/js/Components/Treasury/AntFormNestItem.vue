@@ -16,7 +16,7 @@
                             `₱ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                     "
                     :min="0"
-                    style="width: 150px"
+                    style="width: auto"
                 />
             </a-form-item>
             <a-form-item
@@ -29,7 +29,7 @@
                 <span>Quantity:</span>
                 <a-input-number
                     v-model:value="item.qty"
-                    style="width: 120px"
+                    style="width: auto"
                     :min="0"
                 />
             </a-form-item>

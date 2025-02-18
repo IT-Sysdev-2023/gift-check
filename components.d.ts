@@ -215,6 +215,7 @@ declare module 'vue' {
     DownOutlined: typeof import('@ant-design/icons-vue')['DownOutlined']
     Dropdown: typeof import('./resources/js/Components/Dropdown.vue')['default']
     DropdownLink: typeof import('./resources/js/Components/DropdownLink.vue')['default']
+    DtiIndex: typeof import('./resources/js/Pages/Treasury/Dti/DtiIndex.vue')['default']
     DuplicatedBarcode: typeof import('./resources/js/Pages/StoreAccounting/DuplicatedBarcode.vue')['default']
     Edit: typeof import('./resources/js/Pages/Profile/Edit.vue')['default']
     EditOutlined: typeof import('@ant-design/icons-vue')['EditOutlined']

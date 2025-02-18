@@ -30,6 +30,7 @@ use App\Http\Controllers\Treasury\Dashboard\BudgetRequestController;
 use App\Http\Controllers\Treasury\Dashboard\GcProductionRequestController;
 use App\Http\Controllers\Treasury\Dashboard\SpecialGcRequestController;
 use App\Http\Controllers\Treasury\Dashboard\StoreGcController;
+use App\Http\Controllers\Treasury\DtiTransaction\DtiTransactionController;
 use App\Http\Controllers\Treasury\Transactions\GcAllocationController;
 use App\Http\Controllers\Treasury\Transactions\InstitutionGcRefundController;
 use App\Http\Controllers\Treasury\Transactions\InstitutionGcSalesController;
@@ -403,6 +404,11 @@ Route::middleware(['auth'])->group(function () {
 
                     Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
                     Route::post('gc-sales-report-eod', [EodController::class, 'toEndOfDay'])->name('setToEod');
+                });
+
+                Route::prefix('dti')->name('dti.')->group(function (){
+                    Route::get('index', [DtiTransactionController::class, 'index'])->name('index');
+                    Route::post('submit-dti', [DtiTransactionController::class, 'submitDtiForm'])->name('submit');
                 });
             });
             Route::prefix('masterfile')->name('masterfile.')->group(function () {
