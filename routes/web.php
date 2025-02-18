@@ -159,7 +159,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('submit-po-to-iad', [AdminController::class, 'submitPurchaseOrdersToIad'])->name('submit.po.to.iad')->middleware([HandlePrecognitiveRequests::class]);
         });
     });
-
+    Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('treasury.reports.download.gc');
     //? Marketing
     Route::middleware('userType:marketing,admin')->prefix('marketing')->group(function () {
         Route::name('marketing.')->group(function () {
@@ -435,7 +435,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('generate-eod-report', [ReportsController::class, 'generateEodReports'])->name('generate.eod');
 
                 Route::get('list-of-generated-reports', [ReportsController::class, 'listOfGeneratedReports'])->name('generatedReports');
-                Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('download.gc');
+              
             });
 
             Route::prefix('promo-gc-released')->name('promo.gc.')->group(function () {
