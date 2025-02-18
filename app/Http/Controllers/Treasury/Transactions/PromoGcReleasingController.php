@@ -2,21 +2,9 @@
 
 namespace App\Http\Controllers\Treasury\Transactions;
 
-use App\Helpers\ArrayHelper;
-use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PromoGcRequestResource;
-use App\Models\Assignatory;
-use App\Models\CustodianSrrItem;
-use App\Models\Denomination;
-use App\Models\Gc;
-use App\Models\GcLocation;
-use App\Models\PromoGcReleaseToDetail;
-use App\Models\PromoGcReleaseToItem;
-use App\Models\PromoGcRequest;
-use App\Models\PromoGcRequestItem;
 use App\Services\Treasury\Transactions\PromoGcReleasingService;
-use Illuminate\Support\Facades\DB;
 use App\Services\Treasury\ColumnHelper;
 use Illuminate\Http\Request;
 

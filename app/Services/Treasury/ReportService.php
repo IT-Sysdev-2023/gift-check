@@ -2,19 +2,12 @@
 
 namespace App\Services\Treasury;
 
-use App\Events\TreasuryReportEvent;
 use App\Jobs\EodReport;
 use App\Jobs\GcReport;
-use App\Models\StoreEod;
-use App\Services\Documents\FileHandler;
 use App\Services\Documents\ImportHandler;
 use App\Services\Treasury\Reports\ReportsHandler;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use App\Models\Store;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\LazyCollection;
-use Illuminate\Support\Str;
 use App\DashboardRoutesTrait;
 
 class ReportService extends ReportsHandler
@@ -57,7 +50,6 @@ class ReportService extends ReportsHandler
 			return response()->json(['error' => 'No Transaction For this Date']);
 		}
 		EodReport::dispatch($request->all());
-		// return $pdf->output();
 	}
 
 	public function generatedReports(Request $request)

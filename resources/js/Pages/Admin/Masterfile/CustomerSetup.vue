@@ -42,7 +42,7 @@
                         <template v-if="column.dataIndex === 'action'">
                             <a-button @click="updateStoreCustomer(record)" title="Update" class="me-2 me-sm-5"
                                 style="color: white; background-color: green">
-                                <FormOutlined />
+                                <EditOutlined />
                             </a-button>
                         </template>
                     </template>
@@ -63,7 +63,7 @@
                         <template v-if="column.dataIndex === 'action'">
                             <a-button @click="updateInstitutional(record)" title="Update" class="me-2 me-sm-5"
                                 style="color: white; background-color: green">
-                                <FormOutlined />
+                                <EditOutlined />
                             </a-button>
                         </template>
                     </template>
@@ -83,7 +83,7 @@
                         <template v-if="column.dataIndex === 'action'">
                             <a-button @click="updateSpecialCustomer(record)" title="Update" class="me-2 me-sm-5"
                                 style="color: white; background-color: green">
-                                <FormOutlined />
+                                <EditOutlined />
                             </a-button>
                         </template>
                     </template>
@@ -94,116 +94,123 @@
     </a-card>
 
     <a-modal v-model:open="modalForStoreCustomer" @ok="storeCustomerUpdate">
-        <span style="color: #0286df; font-size: 17px">
-            <AppstoreOutlined style="margin-right: 8px" />Update Store Customer
-        </span>
-        <a-form-item for="firstname" :validate-status="dataForStoreCustomer.errors?.cus_fname ? 'error' : ''
-            " :help="dataForStoreCustomer.errors?.cus_fname" style="margin-top: 10px">
-            Firstname:
-            <a-input allow-clear v-model:value="dataForStoreCustomer.cus_fname" placeholder="Firstname" />
-        </a-form-item>
-        <a-form-item for="lastname" :validate-status="dataForStoreCustomer.errors?.cus_lname ? 'error' : ''
-            " :help="dataForStoreCustomer.errors?.cus_lname">
-            Lastname:
-            <a-input allow-clear v-model:value="dataForStoreCustomer.cus_lname" placeholder="Lastname" />
-        </a-form-item>
-        <a-form-item for="store_register" :validate-status="dataForStoreCustomer.errors?.cus_store_register ? 'error' : ''
-            " :help="dataForStoreCustomer.errors?.cus_store_register">
-            Customer Store Register:
-            <a-select v-model:value="dataForStoreCustomer.cus_store_register" placeholder="Customer store register">
-                <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
-                    {{ item.store_name }}
-                </a-select-option>
-            </a-select>
-        </a-form-item>
+        <header style="font-weight: bold; font-size: large;">
+            <EditOutlined /> Update Customer
+        </header>
+        <div style="margin-top: 2rem; font-weight: bold;">
+            <a-form-item for="firstname" :validate-status="dataForStoreCustomer.errors?.cus_fname ? 'error' : ''
+                " :help="dataForStoreCustomer.errors?.cus_fname" style="margin-top: 10px">
+                Firstname:
+                <a-input allow-clear v-model:value="dataForStoreCustomer.cus_fname" placeholder="Firstname" />
+            </a-form-item>
+            <a-form-item for="lastname" :validate-status="dataForStoreCustomer.errors?.cus_lname ? 'error' : ''
+                " :help="dataForStoreCustomer.errors?.cus_lname">
+                Lastname:
+                <a-input allow-clear v-model:value="dataForStoreCustomer.cus_lname" placeholder="Lastname" />
+            </a-form-item>
+            <a-form-item for="store_register" :validate-status="dataForStoreCustomer.errors?.cus_store_register ? 'error' : ''
+                " :help="dataForStoreCustomer.errors?.cus_store_register">
+                Customer Store Register:
+                <a-select v-model:value="dataForStoreCustomer.cus_store_register" placeholder="Customer store register">
+                    <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
+                        {{ item.store_name }}
+                    </a-select-option>
+                </a-select>
+            </a-form-item>
+        </div>
     </a-modal>
 
     <a-modal v-model:open="modalForInstitutionalCustomer" @ok="institutionalCustomerUpdate">
-        <span style="color: #0286df; font-size: 17px">
-            <UngroupOutlined style="margin-right: 8px" /> Update Institute
-            Customer
-        </span>
-        <a-form-item for="institute_name" :validate-status="dataForInstituteCustomer.errors?.ins_name ? 'error' : ''
-            " :help="dataForInstituteCustomer.errors?.ins_name" style="margin-top: 10px">
-            Name:
-            <a-input allow-clear v-model:value="dataForInstituteCustomer.ins_name" placeholder="Name" />
-        </a-form-item>
+        <header style="font-weight: bold; font-size: large; ">
+            <EditOutlined /> Update Institute Customer
+        </header>
+        <div style="margin-top: 2rem; font-weight: bold;">
+            <a-form-item for="institute_name" :validate-status="dataForInstituteCustomer.errors?.ins_name ? 'error' : ''
+                " :help="dataForInstituteCustomer.errors?.ins_name" style="margin-top: 10px">
+                Name:
+                <a-input allow-clear v-model:value="dataForInstituteCustomer.ins_name" placeholder="Name" />
+            </a-form-item>
 
-        <a-form-item for="institute_customer_type" :validate-status="dataForInstituteCustomer.errors?.ins_custype ? 'error' : ''
-            " :help="dataForInstituteCustomer.errors?.ins_custype">
-            Institute Customer Type:
-            <a-select v-model:value="dataForInstituteCustomer.ins_custype" placeholder="Institute Customer Type">
-                <a-select-option value="internal">INTERNAL </a-select-option>
-                <a-select-option value="external">EXTERNAL </a-select-option>
-            </a-select>
-        </a-form-item>
+            <a-form-item for="institute_customer_type" :validate-status="dataForInstituteCustomer.errors?.ins_custype ? 'error' : ''
+                " :help="dataForInstituteCustomer.errors?.ins_custype">
+                Institute Customer Type:
+                <a-select v-model:value="dataForInstituteCustomer.ins_custype" placeholder="Institute Customer Type">
+                    <a-select-option value="internal">INTERNAL </a-select-option>
+                    <a-select-option value="external">EXTERNAL </a-select-option>
+                </a-select>
+            </a-form-item>
 
-        <a-form-item for="institute_gctype" :validate-status="dataForInstituteCustomer.errors?.ins_gctype ? 'error' : ''
-            " :help="dataForInstituteCustomer.errors?.ins_gctype"
-            v-if="dataForInstituteCustomer.ins_custype === 'internal'">
-            Institute GC Type:
-            <a-select v-model:value="dataForInstituteCustomer.ins_gctype" placeholder="Institute GC Type">
-                <a-select-option value="1">REGULAR</a-select-option>
-                <a-select-option value="4">PROMO</a-select-option>
-            </a-select>
-        </a-form-item>
+            <a-form-item for="institute_gctype" :validate-status="dataForInstituteCustomer.errors?.ins_gctype ? 'error' : ''
+                " :help="dataForInstituteCustomer.errors?.ins_gctype"
+                v-if="dataForInstituteCustomer.ins_custype === 'internal'">
+                Institute GC Type:
+                <a-select v-model:value="dataForInstituteCustomer.ins_gctype" placeholder="Institute GC Type">
+                    <a-select-option value="1">REGULAR</a-select-option>
+                    <a-select-option value="4">PROMO</a-select-option>
+                </a-select>
+            </a-form-item>
 
-        <a-form-item for="institute_status" :validate-status="dataForInstituteCustomer.errors?.ins_status ? 'error' : ''
-            " :help="dataForInstituteCustomer.errors?.ins_status">
-            Status:
-            <a-select v-model:value="dataForInstituteCustomer.ins_status" placeholder="Institute Status">
-                <a-select-option value="active">ACTIVE</a-select-option>
-                <a-select-option value="inactive">INACTIVE</a-select-option>
-            </a-select>
-        </a-form-item>
+            <a-form-item for="institute_status" :validate-status="dataForInstituteCustomer.errors?.ins_status ? 'error' : ''
+                " :help="dataForInstituteCustomer.errors?.ins_status">
+                Status:
+                <a-select v-model:value="dataForInstituteCustomer.ins_status" placeholder="Institute Status">
+                    <a-select-option value="active">ACTIVE</a-select-option>
+                    <a-select-option value="inactive">INACTIVE</a-select-option>
+                </a-select>
+            </a-form-item>
+        </div>
     </a-modal>
 
     <a-modal v-model:open="modalForSpecialCustomer" @ok="specialCustomerUpdate">
-        <span style="color: #0286df; font-size: 17px">
-            <CustomerServiceOutlined style="margin-right: 8px" /> Update Special
-            Customer
-        </span>
+        <header style="font-weight: bold; font-size: large;">
+            <EditOutlined /> Update Special Customer
+        </header>
+        <div style="margin-top: 2rem; font-weight: bold;">
 
-        <a-form-item for="sp_customer_company_name" :validate-status="dataForSpecialCustomer.errors?.spcus_companyname ? 'error' : ''
-            " :help="dataForSpecialCustomer.errors?.spcus_companyname" style="margin-top: 10px">
-            SP Company Name:
-            <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_companyname"
-                placeholder="SP Company Name" />
-        </a-form-item>
+            <a-form-item for="sp_customer_company_name" :validate-status="dataForSpecialCustomer.errors?.spcus_companyname ? 'error' : ''
+                " :help="dataForSpecialCustomer.errors?.spcus_companyname" style="margin-top: 10px">
+                SP Company Name:
+                <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_companyname"
+                    placeholder="SP Company Name" />
+            </a-form-item>
 
-        <a-form-item for="sp_customer_account_name" :validate-status="dataForSpecialCustomer.errors?.spcus_acctname ? 'error' : ''
-            " :help="dataForSpecialCustomer.errors?.spcus_acctname">
-            SP Account Name:
-            <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_acctname" placeholder="SP Company Name" />
-        </a-form-item>
+            <a-form-item for="sp_customer_account_name" :validate-status="dataForSpecialCustomer.errors?.spcus_acctname ? 'error' : ''
+                " :help="dataForSpecialCustomer.errors?.spcus_acctname">
+                SP Account Name:
+                <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_acctname"
+                    placeholder="SP Company Name" />
+            </a-form-item>
 
-        <a-form-item for="sp_customer_address" :validate-status="dataForSpecialCustomer.errors?.spcus_address ? 'error' : ''
-            " :help="dataForSpecialCustomer.errors?.spcus_address">
-            SP Customer Type:
-            <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_address"
-                placeholder="SP Customer Address" />
-        </a-form-item>
+            <a-form-item for="sp_customer_address" :validate-status="dataForSpecialCustomer.errors?.spcus_address ? 'error' : ''
+                " :help="dataForSpecialCustomer.errors?.spcus_address">
+                SP Customer Type:
+                <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_address"
+                    placeholder="SP Customer Address" />
+            </a-form-item>
 
-        <a-form-item for="sp_contact_person" :validate-status="dataForSpecialCustomer.errors?.spcus_cperson ? 'error' : ''
-            " :help="dataForSpecialCustomer.errors?.spcus_cperson">
-            SP Contact Person:
-            <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_cperson" placeholder="SP Contact Person" />
-        </a-form-item>
+            <a-form-item for="sp_contact_person" :validate-status="dataForSpecialCustomer.errors?.spcus_cperson ? 'error' : ''
+                " :help="dataForSpecialCustomer.errors?.spcus_cperson">
+                SP Contact Person:
+                <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_cperson"
+                    placeholder="SP Contact Person" />
+            </a-form-item>
 
-        <a-form-item for="sp_contact_number" :validate-status="dataForSpecialCustomer.errors?.spcus_cnumber ? 'error' : ''
-            " :help="dataForSpecialCustomer.errors?.spcus_cnumber">
-            SP Contact Number:
-            <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_cnumber" placeholder="SP Contact Number" />
-        </a-form-item>
+            <a-form-item for="sp_contact_number" :validate-status="dataForSpecialCustomer.errors?.spcus_cnumber ? 'error' : ''
+                " :help="dataForSpecialCustomer.errors?.spcus_cnumber">
+                SP Contact Number:
+                <a-input allow-clear v-model:value="dataForSpecialCustomer.spcus_cnumber"
+                    placeholder="SP Contact Number" />
+            </a-form-item>
 
-        <a-form-item for="sp_customer_type" :validate-status="dataForSpecialCustomer.errors?.spcus_type ? 'error' : ''
-            " :help="dataForSpecialCustomer.errors?.spcus_type">
-            SP Customer Type:
-            <a-select v-model:value="dataForSpecialCustomer.spcus_type" placeholder-="SP Customer Type">
-                <a-select-option value="1">INTERNAL</a-select-option>
-                <a-select-option value="2">EXTERNAL</a-select-option>
-            </a-select>
-        </a-form-item>
+            <a-form-item for="sp_customer_type" :validate-status="dataForSpecialCustomer.errors?.spcus_type ? 'error' : ''
+                " :help="dataForSpecialCustomer.errors?.spcus_type">
+                SP Customer Type:
+                <a-select v-model:value="dataForSpecialCustomer.spcus_type" placeholder-="SP Customer Type">
+                    <a-select-option value="1">INTERNAL</a-select-option>
+                    <a-select-option value="2">EXTERNAL</a-select-option>
+                </a-select>
+            </a-form-item>
+        </div>
     </a-modal>
 
     <!-- {{ data }} -->
@@ -211,11 +218,9 @@
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { notification } from "ant-design-vue";
-import { FormOutlined } from "@ant-design/icons-vue";
 
 export default {
     layout: AuthenticatedLayout,
-    components: { FormOutlined },
     props: {
         data: Object,
         search: String,
@@ -534,13 +539,13 @@ export default {
                         if (props.flash.success) {
                             notification.success({
                                 message: props.flash.success,
-                                description: `${this.dataForStoreCustomer.cus_fname} data updated successfully!`,
+                                description: "Data updated successfully",
                             });
                             this.modalForStoreCustomer = false;
                         } else if (props.flash.error) {
                             notification.warning({
                                 message: props.flash.error,
-                                description: `${this.dataForStoreCustomer.cus_fname} data has no changes happen, update first before submitting`,
+                                description: `${this.dataForStoreCustomer.cus_fname} data has no changes, please update first before submitting`,
                             });
                         }
                     },
@@ -572,13 +577,13 @@ export default {
                         if (props.flash.success) {
                             notification.success({
                                 message: props.flash.success,
-                                description: `${this.dataForInstituteCustomer.ins_name} data updated successfully!`,
+                                description: "Data updated successfully!",
                             });
                             this.modalForInstitutionalCustomer = false;
                         } else if (props.flash.error) {
                             notification.warning({
                                 message: props.flash.error,
-                                description: `${this.dataForInstituteCustomer.ins_name} data has no changes happen, update first before submitting!`,
+                                description: `${this.dataForInstituteCustomer.ins_name} data has no changes, please update first before submitting!`,
                             });
                         }
                     },
@@ -617,13 +622,13 @@ export default {
                         if (props.flash.success) {
                             notification.success({
                                 message: props.flash.success,
-                                description: `${this.dataForSpecialCustomer.spcus_companyname} data updated successfully!`,
+                                description: "Data updated successfully!",
                             });
                             this.modalForSpecialCustomer = false;
                         } else if (props.flash.error) {
                             notification.warning({
                                 message: props.flash.error,
-                                description: `${this.dataForSpecialCustomer.spcus_companyname} data has no changes happen, update first before submitting!`,
+                                description: `${this.dataForSpecialCustomer.spcus_companyname} data has no changes, please update first before submitting!`,
                             });
                         }
                     },

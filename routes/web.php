@@ -101,9 +101,8 @@ Route::middleware('auth')->group(function () {
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing,admin');
 
     Route::get('storeaccounting-dashboard', [StoreAccountingController::class, 'storeAccountingDashboard'])->name('storeaccounting.dashboard');
-});
 
-Route::middleware(['auth'])->group(function () {
+    //? View Barcode Status
     Route::prefix('admin')->group(function () {
         Route::get('view-barcode-status', [AdminController::class, 'index'])->name('view.barcode.status');
     });
@@ -142,8 +141,15 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('save-credit-card', [AdminController::class, 'saveCreditCard'])->name('saveCreditCard');
                 Route::get('revolving-fund', [AdminController::class, 'revolving_fund'])->name('revolvingFund');
 
-                Route::get('tag-hennan',[AdminController::class, 'tagHennan'])->name('tagHennan');
-                Route::get('update-tag-hennan',[AdminController::class, 'updateTagHennan'])->name('updateTagHennan');
+                // TAG HENNAN ROUTE
+                Route::get('tag-hennan', [AdminController::class, 'tagHennan'])->name('tagHennan');
+                Route::get('update-tag-hennan', [AdminController::class, 'updateTagHennan'])->name('updateTagHennan');
+
+                // BLOCKED BARCODE ROUTE
+                Route::get('block-barcode', [AdminController::class, 'blockBarcode'])->name('blockBarcode');
+                Route::get('add-blocked-barcode', [AdminController::class, 'addBlockedBarcode'])->name('addBlockedBarcode');
+                Route::get('unblocked-barcode', [AdminController::class, 'unblockedBarcode'])->name('unblockedBarcode');
+                Route::get('blocked-barcode-again', [AdminController::class, 'blockedAgain'])->name('blockedAgain');
 
 
                 route::get('save-denomination', [AdminController::class, 'saveDenomination'])->name('saveDenomination');
@@ -474,7 +480,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('list', [EodController::class, 'list'])->name('list');
             Route::get('eod-view-{id}', [EodController::class, 'eodView'])->name('store.view');
             Route::get('eod-txt-{id}', [EodController::class, 'eodViewDeodViewDetails'])->name('txt');
-
         });
     });
 
@@ -621,10 +626,10 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('sgc_item_setup', [RetailController::class, 'sgc_item_setup'])->name('sgc_item_setup');
             });
             Route::name('gc-transfer.')->group(function () {
-                Route::get('gc-transfer-list', [RetailController::class, 'gctransferList'])->name('list');
+                Route::get('gc-transfer-list', [RetailController::class, 'gctransferList'])->name('gc_transfer_list');
             });
             Route::name('supplier-gc-verification.')->group(function () {
-                Route::get('supplier-gc-verification', [RetailController::class,'suppliergcverification'])->name('suppliergcverification');
+                Route::get('supplier-gc-verification', [RetailController::class, 'suppliergcverification'])->name('suppliergcverification');
             });
         });
     });
@@ -865,7 +870,7 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-
+                
                             Route::name('reports.')->group(function () {
                                 Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
                             });

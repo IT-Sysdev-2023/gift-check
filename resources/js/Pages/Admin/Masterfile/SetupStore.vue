@@ -51,39 +51,41 @@
     </a-card>
 
     <a-modal v-model:open="addStore" @ok="handleOk">
-        <span style="color: #0286df; font-size: 17px; font-family: sans-serif">
-            <AppstoreAddOutlined style="margin-right: 8px" />
-            Add New Store
-        </span>
+        <header style="font-weight: bold; font-size: large; ">
+            <PlusOutlined /> Add Store
+        </header>
+        <div style="margin-top: 2rem; font-weight: bold;">
 
-        <a-form-item for="store_name" :validate-status="form.errors.store_name ? 'error' : ''"
-            :help="form.errors.store_name" style="margin-top: 10px; font-weight: bold">Store Name:
-            <a-input allow-clear v-model:value="form.store_name" placeholder="Store Name" />
-        </a-form-item>
+            <a-form-item for="store_name" :validate-status="form.errors.store_name ? 'error' : ''"
+                :help="form.errors.store_name" style="margin-top: 10px; font-weight: bold">Store Name:
+                <a-input allow-clear v-model:value="form.store_name" placeholder="Store Name" />
+            </a-form-item>
 
-        <a-form-item for="store_code" :validate-status="form.errors.store_code ? 'error' : ''"
-            :help="form.errors.store_code" style="margin-top: 10px; font-weight: bold">
-            Store Code:
-            <div>
-                <a-input-number id="inputNumber" v-model:value="form.store_code" placeholder="Store Code"
-                    style="width: 200px" />
-            </div>
-        </a-form-item>
+            <a-form-item for="store_code" :validate-status="form.errors.store_code ? 'error' : ''"
+                :help="form.errors.store_code" style="margin-top: 10px; font-weight: bold">
+                Store Code:
+                <div>
+                    <a-input-number id="inputNumber" v-model:value="form.store_code" placeholder="Store Code"
+                        style="width: 200px" />
+                </div>
+            </a-form-item>
 
-        <a-form-item for=" company_code" :validate-status="form.errors.company_code ? 'error' : ''"
-            :help="form.errors.company_code" style="margin-top: 10px; font-weight: bold">
-            Company Code:
-            <div>
-                <a-input-number id="inputNumber" v-model:value="form.company_code" placeholder="Company Code"
-                    style="width: 200px" />
-            </div>
-        </a-form-item>
+            <a-form-item for=" company_code" :validate-status="form.errors.company_code ? 'error' : ''"
+                :help="form.errors.company_code" style="margin-top: 10px; font-weight: bold">
+                Company Code:
+                <div>
+                    <a-input-number id="inputNumber" v-model:value="form.company_code" placeholder="Company Code"
+                        style="width: 200px" />
+                </div>
+            </a-form-item>
 
-        <a-form-item for=" default_password" :validate-status="form.errors.default_password ? 'error' : ''"
-            :help="form.errors.default_password" style="margin-top: 10px; font-weight: bold">
-            Default Password:
-            <a-input allow-clear type="password" v-model:value="form.default_password" placeholder="Default Password" />
-        </a-form-item>
+            <a-form-item for=" default_password" :validate-status="form.errors.default_password ? 'error' : ''"
+                :help="form.errors.default_password" style="margin-top: 10px; font-weight: bold">
+                Default Password:
+                <a-input allow-clear type="password" v-model:value="form.default_password"
+                    placeholder="Default Password" />
+            </a-form-item>
+        </div>
     </a-modal>
     <!-- {{ data }} -->
 </template>
@@ -206,19 +208,6 @@ export default {
                             });
                         }
                     },
-                },
-            );
-        },
-        changeSelectEntries(value) {
-            console.log(value);
-            this.$inertia.get(
-                route("admin.masterfile.setupStore"),
-                {
-                    value: value,
-                },
-                {
-                    preserveScroll: true,
-                    preserveState: true,
                 },
             );
         },

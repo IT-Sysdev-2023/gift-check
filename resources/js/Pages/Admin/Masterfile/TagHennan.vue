@@ -1,6 +1,7 @@
 <template>
     <AuthenticatedLayout>
         <a-card>
+            <!-- Back button  -->
             <div>
                 <a-button @click="backButton" style="font-weight: bold;">
                     <RollbackOutlined /> Back
@@ -16,10 +17,12 @@
                     Tag Hennan Setup
                 </span>
             </div>
+            <!-- Search input  -->
             <div>
                 <a-input-search allow-clear @change="searchFunction" v-model:value="tagHennanSearch" size="medium"
                     enter-button placeholder="Input search here..." style="width: 25%; margin-left: 70%" />
             </div>
+            <!-- Loading spinner effect  -->
             <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 3rem">
                 <div class="spinnerContainer">
                     <div class="spinner"></div>
@@ -35,6 +38,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Table  -->
             <div style="margin-top: 1rem">
                 <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
@@ -48,23 +52,27 @@
                 </a-table>
                 <pagination :datarecords="data" class="mt-5" />
             </div>
+            <!-- Update modal  -->
             <a-modal v-model:open="updateModal" @ok="submitUpdatedTag">
-                <span style="color: #0286df; font-size: 17px">
+                <header style="font-weight: bold; font-size: large;">
                     <EditOutlined /> Update Tag
-                </span>
-                <div style="margin-top: 1rem">
-                    <a-form-item for="tag" :validate-status="form.errors?.hennan_id ? 'error' : ''"
-                        :help="form.errors?.hennan_id">
-                        <span style="font-family: sans-serif; font-weight: bold">Tag :</span>
-                        <a-select v-model:value="form.hennan_id" style="margin-top: 0.5rem">
-                            <a-select-option v-for="item in fullname" :key="item.hennan_id" :value="item.hennan_id">{{
-                                item.fullname
-                            }}</a-select-option>
-                        </a-select>
-                    </a-form-item>
+                </header>
+                <div style="margin-top: 2rem; font-weight: bold;">
+                    <div style="margin-top: 1rem">
+                        <a-form-item for="tag" :validate-status="form.errors?.hennan_id ? 'error' : ''"
+                            :help="form.errors?.hennan_id">
+                            <span style="font-family: sans-serif; font-weight: bold">Tag :</span>
+                            <a-select v-model:value="form.hennan_id" style="margin-top: 0.5rem">
+                                <a-select-option v-for="item in fullname" :key="item.hennan_id"
+                                    :value="item.hennan_id">{{
+                                        item.fullname
+                                    }}</a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </div>
                 </div>
             </a-modal>
-            {{ search }}
+            <!-- {{ search }} -->
         </a-card>
     </AuthenticatedLayout>
 </template>
@@ -77,13 +85,13 @@ import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import { createVNode } from "vue";
 import { Modal } from "ant-design-vue";
 
-defineProps({
+const props = defineProps({
     data: Object,
     fullname: Object,
     search: Array
 });
 const loading = ref(false);
-const tagHennanSearch = ref("");
+const tagHennanSearch = ref(props.search);
 const form = ref([
     {
         fullname: "",
@@ -95,6 +103,7 @@ const form = ref([
 
 const updateModal = ref(false);
 
+// Search Function
 const searchFunction = () => {
     router.get(route('admin.masterfile.tagHennan'), {
         searchvalue: tagHennanSearch.value
@@ -131,17 +140,18 @@ const columns = ref([
         dataIndex: "action",
     },
 ]);
-
+// Back button function
 const backButton = () => {
     router.get(route("admin.dashboard"));
 };
 
+// Update button function
 const updateTagHennan = (data) => {
     updateModal.value = true;
     form.value = { ...data };
 };
 
-
+// Submit updated tag function
 const submitUpdatedTag = () => {
     updateModal.value = false;
     Modal.confirm({
@@ -174,6 +184,7 @@ const submitUpdatedTag = () => {
 </script>
 
 <style scoped>
+/* loading spinner effect  */
 .spinnerContainer {
     display: flex;
     flex-direction: column;

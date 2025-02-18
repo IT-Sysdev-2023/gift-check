@@ -310,7 +310,7 @@
 
         <!-- EXIT BUTTON  -->
         <div>
-            <button onclick="location.href='http://127.0.0.1/';" class="animated-button">
+            <button onclick="location.href='http://127.0.0.1:8082/';" class="animated-button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
                     <path
                         d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z">
@@ -359,7 +359,7 @@
         </span>
         <div>
             <a>
-                <img src="https://user-images.githubusercontent.com/74038190/221352975-94759904-aa4c-4032-a8ab-b546efb9c478.gif"
+                <img src="https://user-images.githubusercontent.com/74038190/219923823-bf1ce878-c6b8-4faa-be07-93e6b1006521.gif"
                     style="width: 1100px; height: 500px" />
             </a>
         </div>
@@ -1169,7 +1169,8 @@
                         <div class="tooltip">Facebook</div>
                     </li>
                     <li class="icon-content">
-                        <a href="https://www.github.com/" aria-label="GitHub" data-social="github">
+                        <a href="https://github.com/IT-Sysdev-2023/gift-check/" aria-label="GitHub"
+                            data-social="github">
                             <div class="filled"></div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-github" viewBox="0 0 16 16" xml:space="preserve">
@@ -1209,14 +1210,17 @@
         </div>
 
         <h2 style="text-align: center; margin-top: 20px; color: #003140">
-            Copyright © 2025 gift-check.com All Rights Reserved. - Legal
+            Copyright © 2024 - {{ dayjs().year() }} gift-check.com All Rights Reserved. - Legal
         </h2>
     </a-card>
 </template>
 <script setup>
 import { EyeOutlined } from "@ant-design/icons-vue";
 import { onMounted, onUnmounted, ref } from "vue";
+import dayjs from "dayjs";
+
 const showScrollButton = ref(false);
+
 
 // SCROLL UP BUTTON
 const handleScroll = () => {

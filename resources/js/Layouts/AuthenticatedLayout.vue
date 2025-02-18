@@ -312,7 +312,9 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                                     <span class="sr-only">GitHub account</span>
                                 </a>
                                 <a
-                                    href="#"
+                                    href="https://guthib.com"
+                                     target="_blank"
+                                    rel="noopener noreferrer"
                                     class="text-gray-400 hover:text-gray-900 dark:hover:text-white"
                                 >
                                     <svg

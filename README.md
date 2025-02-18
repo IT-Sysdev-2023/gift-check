@@ -27,7 +27,7 @@ While much of the project has been improved, there may still be areas that need 
 - Php 8.2 and later
 - Mariadb
 - Redis
-- Lakas ng luob
+- gutts
 
 :rocket:Setup
 - clone this repository
@@ -52,7 +52,7 @@ without sail
 
 ## SPECIAL THANKS
 
-We would like to extend our thanks to TAYLOR OTEN for making this project possible. Thank you for your hardwork<a><img style="width:20px" src="https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/128px/1fae1.png" alt="Build Status"></a>
+We would like to extend our thanks to **[TAYLOR OTEN](https://github.com/taylorotwell)** for making this project possible. Thank you for your hardwork<a><img style="width:20px" src="https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/128px/1fae1.png" alt="Build Status"></a>
 
 ### Premium Developers
 

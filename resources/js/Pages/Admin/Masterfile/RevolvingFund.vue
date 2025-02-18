@@ -35,7 +35,7 @@
                     <template v-if="column.dataIndex === 'action'">
                         <a-button title="Update User" @click="updateFund(record)" class="me-2 me-sm-5"
                             style="color: white; background-color: green">
-                            <FormOutlined />
+                            <EditOutlined />
                         </a-button>
                     </template>
                 </template>
@@ -45,24 +45,25 @@
     </a-card>
 
     <a-modal v-model:open="modalForUpdateFund" @ok="updatupdateRevolvingFundeFund">
-        <span style="color: #0286df; font-size: 17px">
-            <BarChartOutlined style="margin-right: 8px; color: #0286df" />
-            Update Fund
-        </span>
+        <header style="font-weight: bold; font-size: large;">
+            <EditOutlined /> Update Revolving Fund
+        </header>
+        <div style="margin-top: 2rem; font-weight: bold;">
 
-        <a-form-item for="r_fund" :validate-status="form.errors?.r_fund ? 'error' : ''" :help="form.errors?.r_fund">
-            Revolving Fund:
-            <a-input allow-clear v-model:value="form.r_fund" placeholder="Revolving Fund" />
-        </a-form-item>
+            <a-form-item for="r_fund" :validate-status="form.errors?.r_fund ? 'error' : ''" :help="form.errors?.r_fund">
+                Revolving Fund:
+                <a-input allow-clear v-model:value="form.r_fund" placeholder="Revolving Fund" />
+            </a-form-item>
 
-        <a-form-item for="store_status" :validate-status="form.errors?.store_status ? 'erros' : ''"
-            :help="form.errors?.store_status">
-            Store Status:
-            <a-select id="store_status" v-model:value="form.store_status" placeholder="Store Status">
-                <a-select-option value="active">ACTIVE</a-select-option>
-                <a-select-option value="inactive">INACTIVE</a-select-option>
-            </a-select>
-        </a-form-item>
+            <a-form-item for="store_status" :validate-status="form.errors?.store_status ? 'erros' : ''"
+                :help="form.errors?.store_status">
+                Store Status:
+                <a-select id="store_status" v-model:value="form.store_status" placeholder="Store Status">
+                    <a-select-option value="active">ACTIVE</a-select-option>
+                    <a-select-option value="inactive">INACTIVE</a-select-option>
+                </a-select>
+            </a-form-item>
+        </div>
     </a-modal>
     <!-- {{ data }} -->
 </template>
@@ -171,9 +172,9 @@ export default {
                         } else if (
                             props.flash.error(
                                 notification.warning({
-                                    message: props.flash.error,
+                                    message: 'Opps',
                                     description:
-                                        "No changes happen, update data first before submitting!",
+                                        "No changes, please update first before submitting!",
                                 }),
                             )
                         );

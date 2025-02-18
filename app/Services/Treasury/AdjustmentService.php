@@ -5,12 +5,9 @@ namespace App\Services\Treasury;
 use App\Http\Resources\AllocationAdjustmentResource;
 use App\Models\AllocationAdjustment;
 use App\Models\AllocationAdjustmentItem;
-use App\Models\Denomination;
 use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
-use App\Models\GcType;
 use App\Models\LedgerBudget;
-use App\Models\Store;
 use Illuminate\Support\Facades\DB;
 
 class AdjustmentService extends FileHandler

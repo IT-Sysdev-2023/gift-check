@@ -63,7 +63,7 @@ class BudgetRequestController extends Controller
     public function cancelledRequest(Request $request)
     {
         $record = $this->budgetRequestService->cancelledRequest($request);
-// dd($record);
+
         return inertia(
             'Treasury/Dashboard/TableApproved',
             [

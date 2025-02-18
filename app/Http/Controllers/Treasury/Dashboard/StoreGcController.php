@@ -6,21 +6,14 @@ use App\Helpers\ArrayHelper;
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovedGcRequestResource;
-use App\Http\Resources\GcResource;
 use App\Models\ApprovedGcrequest;
 use App\Models\Assignatory;
-use App\Models\GcRelease;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
-use Illuminate\Support\Number;
-use Illuminate\Support\Facades\DB;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\GcLocation;
-use App\Models\GcType;
-use App\Models\Store;
-use App\Rules\DenomQty;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Dashboard\StoreGcRequestService;
 use Illuminate\Http\JsonResponse;
@@ -87,13 +80,6 @@ class StoreGcController extends Controller
         $record = $this->storeGcRequestService->viewCancelledGc($id);
         return response()->json($record);
     }
-
-   
-
-    
-    
-
-    
 
     public function viewReleasingEntry(Request $request, $id)
     {
@@ -186,7 +172,6 @@ class StoreGcController extends Controller
 
     public function releasingEntrySubmission(Request $request)
     {
-        // dd($request->all());
         return $this->storeGcRequestService->releasingEntrySubmit($request);
     }
 

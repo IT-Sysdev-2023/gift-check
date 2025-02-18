@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Treasury;
 
 use App\Helpers\NumberHelper;
-use App\Http\Resources\GcResource;
 use App\Models\AllocationAdjustment;
 use App\Models\AllocationAdjustmentItem;
-use App\Models\BudgetAdjustment;
 use App\Models\Denomination;
 use App\Models\Gc;
 use App\Models\GcLocation;
@@ -15,10 +13,8 @@ use App\Models\LedgerBudget;
 use App\Models\Store;
 use App\Rules\DenomQty;
 use App\Services\Treasury\AdjustmentService;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class AdjustmentController extends Controller

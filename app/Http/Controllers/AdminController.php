@@ -132,20 +132,17 @@ class AdminController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $noDataFound = false;
-        if ($searchTerm && $users->isEmpty()) {
-            $noDataFound = true;
-        }
-
         $users->transform(function ($item) {
             $item->status = $item->user_status == 'active';
             return $item;
         });
+        // dd($users);
 
         return Inertia::render('Admin/Masterfile/UserSetup', [
             'data' => $users,
             'access_page' => $access_page,
             'store' => $Store,
+            'search' => $request['searchData']
         ]);
     }
     public function updateUser(Request $request)
@@ -159,7 +156,7 @@ class AdminController extends Controller
             'usertype' => 'required',
             'user_role' => [
                 Rule::requiredIf(function () use ($request) {
-                    return in_array($request->input('usertype'), [2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14]) || $request->input('it_type') === 1;
+                    return in_array($request->input('usertype'), [2, '2', 3, 4, 5, 6, 7, 9, 10, 11, 13, 14]) || $request->input('it_type') === 1;
                 }),
             ],
             'store_assigned' => [
@@ -174,37 +171,65 @@ class AdminController extends Controller
             ],
             'it_type' => [
                 Rule::requiredIf(function () use ($request) {
-                    return $request->input('it_type') === 12;
+                    return $request->input('usertype') === 12;
                 }),
             ]
         ]);
-        $userRole = $request->user_role;
-        $storeAssign = $request->store_assigne;
-        $retailGroup = $request->retail_group;
-        $itType = $request->it_type;
 
-        if ($request->usertype === '1') {
-            $userRole === 0;
-            $storeAssign === 0;
-            $retailGroup === 0;
-            $itType === 0;
+        $checkUser = User::where('user_id', $request['user_id'])->first();
+        // dd($checkUser);
+        if ($checkUser) {
+            $CheckData =
+                $checkUser->username === $request['username'] &&
+                $checkUser->firstname === $request['firstname'] &&
+                $checkUser->lastname === $request['lastname'] &&
+                $checkUser->emp_id === $request['employee_id'] &&
+                $checkUser->usertype === $request['usertype'] &&
+                $checkUser->user_role === $request['user_role'] &&
+                $checkUser->store_assigned === $request['store_assigned'] &&
+                $checkUser->retail_group === $request['retail_group'] &&
+                $checkUser->it_type === $request['it_type'];
+
+            // dd($CheckData);
+            if ($CheckData) {
+                return back()->with(
+                    'error',
+                    " {$request->username}'s data has no changes, please update first before submitting"
+                );
+            }
         }
-        if (in_array($request->usertype, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14]) && $request->it_type === '1') {
+
+        $userRole = 0;
+        $storeAssign = 0;
+        $retailGroup = null;
+        $itType = null;
+
+        if (in_array($request->usertype, ['2', 2, '3', 3, '4', 4, '5', 5, '6', 6, '9', 9, '10', 10, '11', 11, '13', 13])) {
             $userRole = $request->user_role;
-            $storeAssign === 0;
-            $retailGroup === 0;
-            $itType = $request->it_type;
         }
-        if ($request->usertype === '12' && $request->it_type === '2') {
-            $userRole === 0;
+        if (in_array($request->usertype, [7, '7'])) {
+            $userRole = $request->user_role;
             $storeAssign = $request->store_assigned;
-            $retailGroup === 0;
+        }
+        if (in_array($request->usertype, [8, '8'])) {
+            $storeAssign = $request->store_assigned;
+            $retailGroup = $request->retail_group;
+        }
+        if (in_array($request->usertype, [12, '12'])) {
             $itType = $request->it_type;
         }
-
-        // dd($retail_group);
-
-        $password = Hash::make('password');
+        if (in_array($request->it_type, [1, '1'])) {
+            $userRole = $request->user_role;
+            $itType = $request->it_type;
+        }
+        if (in_array($request->it_type, [2, '2'])) {
+            $storeAssign = $request->store_assigned;
+            $itType = $request->it_type;
+        }
+        if (in_array($request->usertype, [14, '14'])) {
+            $userRole = $request->user_role;
+            $storeAssign = $request->store_assigned;
+        }
 
         $updateUser = User::where('user_id', $request->user_id)->update([
             'username' => $request->username,
@@ -212,7 +237,6 @@ class AdminController extends Controller
             'lastname' => $request->lastname,
             'emp_id' => $request->employee_id,
             'usertype' => $request->usertype,
-            'password' => $password,
             'usergroup' => null,
             'user_status' => 'active',
             'user_role' => $userRole,
@@ -227,9 +251,15 @@ class AdminController extends Controller
         ]);
 
         if ($updateUser) {
-            return back()->with('success', 'SUCCESS');
+            return back()->with(
+                'success',
+                'User updated successfully'
+            );
         }
-        return back()->with('error', 'FAILED');
+        return back()->with(
+            'error',
+            'ERROR'
+        );
     }
 
 
@@ -259,12 +289,20 @@ class AdminController extends Controller
             ],
             'it_type' => [
                 Rule::requiredIf(function () use ($request) {
-                    return $request->input('it_type') === 12;
+                    return $request->input('usertype') === 12;
                 }),
             ]
         ]);
 
-        $password = Hash::make('GC2015');
+        $checkUsername = User::where('username', $request->username)->exists();
+        if ($checkUsername) {
+            return back()->with(
+                'error',
+                "{$request->username} username already exist, please try other username"
+            );
+        }
+
+        $password = Hash::make('password');
 
         $insertUser = User::create([
             'username' => $request->username,
@@ -288,15 +326,44 @@ class AdminController extends Controller
         if ($insertUser) {
             return back()->with(
                 'success',
-                'Success'
+                'User added successfully'
             );
         }
         return back()->with(
             'error',
-            'Failed'
+            'Failed to add user'
         );
     }
+    public function usersResetPassword(Request $request)
+    {
+        // dd($request->all());
+        $userPassword = User::where('user_id', $request['user_id'])->first();
 
+        $defaultPassword = 'GC2015';
+        $newPassword = Hash::make($defaultPassword);
+
+        if (Hash::check($defaultPassword, $userPassword->password)) {
+            return back()->with(
+                'error',
+                "{$userPassword->username}'s password already reset to default"
+            );
+        }
+
+        $resetPassword = User::where('user_id', $request['user_id'])->update([
+            'password' => $newPassword
+        ]);
+
+        if ($resetPassword) {
+            return back()->with(
+                'success',
+                'Password reset successfully'
+            );
+        }
+        return back()->with(
+            'error',
+            'ERROR'
+        );
+    }
     public function updateStatus(Request $request)
     {
         // dd($request->toArray());
@@ -335,29 +402,6 @@ class AdminController extends Controller
             'FAILED TO UPDATE'
 
         ]);
-    }
-
-    public function usersResetPassword(Request $request)
-    {
-        // dd($request->all());
-
-        $defaultPassword = 'GC2015';
-        $newPassword = Hash::make($defaultPassword);
-
-        $resetPassword = User::where('user_id', $request['user_id'])->update([
-            'password' => $newPassword
-        ]);
-
-        if ($resetPassword) {
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
-        }
-        return back()->with(
-            'error',
-            'ERROR'
-        );
     }
     public function eodReports(Request $request)
     {
@@ -415,7 +459,7 @@ class AdminController extends Controller
             ->paginate($selectEntries)
             ->withQueryString();
 
-        return Inertia::render('Admin/Masterfile/StoreStaffSetup', [
+        return Inertia::render('Admin/Masterfile/SetupStoreStaff', [
             'data' => $data,
             'search' => $request->data,
             'store' => $store,
@@ -430,16 +474,16 @@ class AdminController extends Controller
     {
         // dd($request->all());
         $request->validate([
-            'username' => 'required|max:50',
-            'firstname' => 'required',
-            'lastname' => 'required',
-            'employee_id' => 'required|integer',
-            'password' => 'required',
-            'store_id' => 'required',
-            'usertype' => 'required',
+            'ss_username' => 'required|max:50',
+            'ss_firstname' => 'required',
+            'ss_lastname' => 'required',
+            'ss_idnumber' => 'required|integer',
+            'ss_password' => 'required',
+            'ss_store' => 'required',
+            'ss_usertype' => 'required',
         ]);
 
-        $storeStaff = StoreStaff::where('ss_username', $request->username)->first();
+        $storeStaff = StoreStaff::where('ss_username', $request->ss_username)->first();
         if ($storeStaff) {
             return back()->with(
                 'error',
@@ -450,14 +494,14 @@ class AdminController extends Controller
         $pass = Hash::make($request->ss_password);
 
         $isSuccessfull = StoreStaff::create([
-            'ss_username' => $request->username,
-            'ss_firstname' => $request->firstname,
-            'ss_lastname' => $request->lastname,
-            'ss_idnumber' => $request->employee_id,
+            'ss_username' => $request->ss_username,
+            'ss_firstname' => $request->ss_firstname,
+            'ss_lastname' => $request->ss_lastname,
+            'ss_idnumber' => $request->ss_idnumber,
             'ss_password' => $pass,
-            'ss_usertype' => $request->usertype,
+            'ss_usertype' => $request->ss_usertype,
             'ss_status' => 'active',
-            'ss_store' => $request->store_id,
+            'ss_store' => $request->ss_store,
             'ss_manager_key' => $pass,
             'ss_date_created' => now(),
             'ss_date_modified' => now(),
@@ -556,18 +600,15 @@ class AdminController extends Controller
         if ($activeTab === 'store_customer') {
             $data = $data->whereNotNull('cus_id')
                 ->orderBy('cus_id', 'asc')
-                ->paginate(10)
-                ->withQueryString();
+                ->paginate(10);
         } elseif ($activeTab === 'institutional_customer') {
             $data =  $data->whereNotNull('institut_customer.ins_id')
                 ->orderBy('institut_customer.ins_id', 'ASC')
-                ->paginate(10)
-                ->withQueryString();
+                ->paginate(10);
         } elseif ($activeTab === 'special_customer') {
             $data = $data->whereNotNull('special_external_customer.spcus_id')
                 ->orderBy('special_external_customer.spcus_id', 'ASC')
-                ->paginate(10)
-                ->withQueryString();
+                ->paginate(10);
         }
 
         return inertia('Admin/Masterfile/CustomerSetup', [
@@ -686,8 +727,6 @@ class AdminController extends Controller
     public function creditCardSetup(Request $request)
     {
         $searchTerm = $request->input('data', '');
-        $selectEntries = $request->input('value', 10);
-
         $dataQuery = creditcard::query();
 
         if ($searchTerm) {
@@ -700,17 +739,16 @@ class AdminController extends Controller
         }
 
         $data = $dataQuery->orderByDesc('ccard_id')
-            ->paginate($selectEntries)
+            ->paginate(10)
             ->through(function ($item) {
                 $item['ccard_created_formatted'] = Carbon::parse($item['ccard_created'])->format('Y-m-d H:i:s');
                 return $item;
             })
             ->withQueryString();
 
-        return inertia('Admin/Masterfile/CreditCardSetup', [
+        return inertia('Admin/Masterfile/SetupCreditCard', [
             'data' => $data,
             'search' => $searchTerm,
-            'value' => $selectEntries,
         ]);
     }
 
@@ -732,19 +770,17 @@ class AdminController extends Controller
         if ($isSuccessful) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'Credit Card added successfully'
             );
         }
         return back()->with(
             'error',
-            'FAILED TO ADD'
+            'Failed to add credit card'
         );
     }
 
     public function denominationSetup(Request $request)
     {
-
-
         $data = Denomination::get();
         $searchTerm = $request->input('data', '');
         $data = DB::table('denomination')
@@ -769,12 +805,11 @@ class AdminController extends Controller
                 'denom_createdby'
             ], 'like', '%' . $searchTerm . '%')
             ->orderBy('denom_id', 'ASC')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
-        return inertia('Admin/Masterfile/DenominationSetup', [
+        return inertia('Admin/Masterfile/SetupDenomination', [
             'data' => $data,
-            'search' => $request->data,
+            'search' => $searchTerm,
             'value' => $request->value
         ]);
     }
@@ -785,7 +820,7 @@ class AdminController extends Controller
         // dd($request->toArray());
         $request->validate([
             'denomination' => 'required|integer',
-            'barcodeNumStart' => 'required|integer',
+            'denom_barcode_start' => 'required|integer',
         ]);
 
         $denom_code = Denomination::max('denom_code');
@@ -800,7 +835,7 @@ class AdminController extends Controller
         }
         $isSuccessful = Denomination::create([
             'denomination' => $request->denomination,
-            'denom_barcode_start' => $request->barcodeNumStart,
+            'denom_barcode_start' => $request->denom_barcode_start,
             'denom_dateupdated' => now(),
             'denom_code' => $newDenomCode,
             'denom_fad_item_number' => $newDenomFadItemNumber,
@@ -813,12 +848,12 @@ class AdminController extends Controller
         if ($isSuccessful) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'Denomination added successfully'
             );
         }
         return back()->with(
             'error',
-            'FAILED TO SAVE'
+            'Failed to add denomination'
         );
     }
 
@@ -840,7 +875,7 @@ class AdminController extends Controller
             $denomination->denom_barcode_start == $request->denom_barcode_start &&
             $denomination->denom_fad_item_number == $request->denom_fad_item_number
         ) {
-            return back()->with('error', 'OPPS');
+            return back()->with('error', 'No changes happen, update first before submitting');
         }
 
 
@@ -852,7 +887,7 @@ class AdminController extends Controller
         if ($isSuccessfull) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'Denomination updated successfully'
             );
         }
         return back()->with(
@@ -884,12 +919,12 @@ class AdminController extends Controller
         if ($isSuccessfull) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'User updated successfully'
             );
         }
         return back()->with(
             'error',
-            'OPPS'
+            'No changes, update first before submitting'
         );
     }
     public function updateStoreStaffPassword(Request $request)
@@ -901,7 +936,7 @@ class AdminController extends Controller
         if (Hash::check($defaultPassword, $users->ss_password)) {
             return back()->with(
                 'error',
-                'OPPS'
+                'This username password already reset to default'
             );
         }
         $newPassword = Hash::make($defaultPassword);
@@ -912,7 +947,7 @@ class AdminController extends Controller
         if ($onSuccess) {
             return back()->with(
                 'success',
-                'SUCCESS'
+                'Password reset successfully'
             );
         }
         return back()->with(
@@ -960,11 +995,11 @@ class AdminController extends Controller
                 'fullname'
             ], 'like', '%' . $request['searchvalue'] . '%')
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_id', 'DESC')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
         return Inertia::render('Admin/Masterfile/TagHennan', [
             'data' => $query,
-            'fullname' => $fullname
+            'fullname' => $fullname,
+            'search' => $request['searchvalue']
         ]);
     }
 
@@ -1002,6 +1037,91 @@ class AdminController extends Controller
             );
         }
     }
+
+    public function blockBarcode(Request $request)
+    {
+        // dd($request->all());
+
+        $data = DB::table('blocked_barcodes')
+            ->select('id', 'barcode', 'status', 'created_at', 'updated_at')
+            ->whereAny([
+                'barcode',
+                'status',
+                'created_at'
+            ], 'like', '%' . $request['searchBarcode'] . '%')
+            ->orderBy('blocked_barcodes.id', 'DESC')
+            ->paginate(10);
+
+        return Inertia::render('Admin/Masterfile/BlockBarcode', [
+            'data' => $data,
+            'searchValue' => $request['searchBarcode']
+        ]);
+    }
+
+    public function addBlockedBarcode(Request $request)
+    {
+        $request->validate([
+            'barcode' => 'required'
+        ]);
+        // dd($request->all());
+        $checkBarcode = DB::table('blocked_barcodes')->where('barcode', $request['barcode'])->exists();
+
+        if ($checkBarcode) {
+            return back()->with(
+                'error',
+                'This barcode is already in the blockedlist, please try other barcode'
+            );
+        }
+        $date = now();
+        $onSuccess = DB::table('blocked_barcodes')->insert([
+            'barcode' => $request['barcode'],
+            'status' => 'blocked',
+            'created_at' => $date->format('Y-m-d h:i:s'),
+            'updated_at' => $date->format('Y-m-d h:i:s')
+
+        ]);
+        if ($onSuccess) {
+            return back()->with(
+                'success',
+                'Barcode blocked successfully'
+            );
+        }
+    }
+
+    public function unblockedBarcode(Request $request)
+    {
+        $unblockedBarcode = DB::table('blocked_barcodes')->where('id', $request['barcode_id'])->update([
+            'status' => 'free',
+        ]);
+
+        if ($unblockedBarcode) {
+            return back()->with(
+                'success',
+                'Barcode is unblocked, free and ready to use'
+            );
+        }
+    }
+
+    public function blockedAgain(Request $request)
+    {
+        // dd($request->all());
+        $unblockedBarcode = DB::table('blocked_barcodes')->where('id', $request['barcode_id'])->update([
+            'status' => 'blocked',
+        ]);
+
+        if ($unblockedBarcode) {
+            return back()->with(
+                'success',
+                'Barcode is blocked successfully',
+            );
+        } else {
+            return back()->with(
+                'success',
+                'Failed to blocked the barcode',
+            );
+        }
+    }
+
 
     public function updateRevolvingFund(Request $request)
     {
