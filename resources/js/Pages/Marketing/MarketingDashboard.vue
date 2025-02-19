@@ -2,7 +2,7 @@
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
             <m-card
-                v-if="$page.props.auth.user.user_role === 0"
+                v-if="$page.props.auth.user.user_role == 0"
                 title="Promo GC Request"
                 :pending="countPromoGcRequest.pendingRequest"
                 :approved="countPromoGcRequest.approvedRequest"
@@ -18,7 +18,7 @@
                 :approved="gcProductionRequest.approvedRequest"
                 :cancelled="gcProductionRequest.cancelledRequest"
                 :pRoute="
-                    $page.props.auth.user.user_role === 0
+                    $page.props.auth.user.user_role == 0
                         ? 'marketing.pendingRequest.pending.request'
                         : 'marketing.pendingRequest.checker.pending.request'
                 "
@@ -28,7 +28,7 @@
         </a-col>
         <a-col :span="8">
             <m-card
-                v-if="$page.props.auth.user.user_role === 0"
+                v-if="$page.props.auth.user.user_role == 0"
                 title="Special External GC Request"
                 :pending="specialGcpending"
                 pextension="GC Holder Entry"
@@ -41,7 +41,7 @@
             />
         </a-col>
         <a-col :span="8">
-            <div class="mb-2" v-if="$page.props.auth.user.user_role === 0">
+            <div class="mb-2" v-if="$page.props.auth.user.user_role == 0">
                 <a-card title="Current Budget">
                     <h2>₱ {{ currentBudget }}</h2>
                 </a-card>
@@ -230,7 +230,7 @@
     </a-modal>
 
     <a-float-button
-        v-if="$page.props.auth.user.user_role === 0"
+        v-if="$page.props.auth.user.user_role == 0"
         title="List of Requisition Request"
         @click="requisitionListModal"
         :badge="{ count: Object.keys(ReqNum).length, overflowCount: 999 }"

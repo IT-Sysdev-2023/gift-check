@@ -6,9 +6,11 @@ use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\Store;
 use App\Services\Accounting\AccountingServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Inertia\Inertia;
 
 class AccountingController extends Controller
 {
@@ -93,10 +95,19 @@ class AccountingController extends Controller
 
             return $item;
         });
-        
+
         return inertia('Custodian/ApprovedGcRequest', [
             'columns' => ColumnHelper::$approved_gc_column,
             'record' => $data
+        ]);
+    }
+
+    public function billing_reports()
+    {
+        // dd();
+        $store = Store::all();
+        return Inertia::render('StoreAccounting/BillingReports', [
+            'store' => $store
         ]);
     }
 }

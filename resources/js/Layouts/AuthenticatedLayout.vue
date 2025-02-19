@@ -15,6 +15,7 @@ import RetailSidebar from "@/Components/RetailSidebar.vue";
 import { computed } from "vue";
 import { MenuProps } from "ant-design-vue";
 import dayjs from "dayjs";
+import MarketingSideBar from "@/Components/MarketingSideBar.vue";
 
 const page = usePage<PageWithSharedProps>().props;
 const {

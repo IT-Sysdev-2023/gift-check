@@ -110,6 +110,9 @@ const dashboardRoute = computed(() => {
     const res = webRoute?.split(".")[0];
     return res + ".dashboard";
 });
+const viewRecord =(record) =>{
+    console.log(1)
+}
 
 // const  viewRecord = async(record) => {
 //     this.modalData = record

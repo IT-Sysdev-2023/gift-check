@@ -151,15 +151,17 @@ export default {
             this.$inertia.post(route('marketing.pendingRequest.submit.request'), {
                 data: this.form,
                 barcode: this.barcodes
-            }, {
-                onSuccess: (response) => {
-                    notification[response.props.flash.type]({
-                        message: response.props.flash.msg,
-                        description: response.props.flash.description,
-                    });
-                    this.$inertia.get(route('marketing.dashboard'))
-                },
-            })
+            },
+                {
+                    onSuccess: (response) => {
+                        notification[response.props.flash.type]({
+                            message: response.props.flash.msg,
+                            description: response.props.flash.description,
+                        });
+                        this.$inertia.get(route('marketing.dashboard'))
+                    },
+                }
+            )
         },
         closeModal() {
             this.open = false;

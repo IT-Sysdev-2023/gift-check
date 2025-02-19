@@ -171,7 +171,7 @@ Route::middleware('auth')->group(function () {
             Route::post('submit-po-to-iad', [AdminController::class, 'submitPurchaseOrdersToIad'])->name('submit.po.to.iad')->middleware([HandlePrecognitiveRequests::class]);
         });
     });
-
+    Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('treasury.reports.download.gc');
     //? Marketing
     Route::middleware('userType:marketing,admin')->prefix('marketing')->group(function () {
         Route::name('marketing.')->group(function () {
@@ -412,7 +412,7 @@ Route::middleware('auth')->group(function () {
                     Route::post('gc-sales-report-eod', [EodController::class, 'toEndOfDay'])->name('setToEod');
                 });
 
-                Route::prefix('dti')->name('dti.')->group(function (){
+                Route::prefix('dti')->name('dti.')->group(function () {
                     Route::get('index', [DtiTransactionController::class, 'index'])->name('index');
                     Route::post('submit-dti', [DtiTransactionController::class, 'submitDtiForm'])->name('submit');
                     Route::get('dti-pending-request', [DtiTransactionController::class, 'dtiPendingRequest'])->name('dtiPendingRequest');
@@ -453,7 +453,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('generate-eod-report', [ReportsController::class, 'generateEodReports'])->name('generate.eod');
 
                 Route::get('list-of-generated-reports', [ReportsController::class, 'listOfGeneratedReports'])->name('generatedReports');
-                Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('download.gc');
+
             });
 
             Route::prefix('promo-gc-released')->name('promo.gc.')->group(function () {
@@ -696,6 +696,11 @@ Route::middleware('auth')->group(function () {
             Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
             Route::get('released-reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request.released');
             Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
+
+            Route::name('dti_special_gc')->group(function () {
+                Route::get('dti-pending-special-gc', [CustodianController::class, 'dti_special_gc_pending'])->name('dti_special_gc_pending');
+                Route::get('dti-special-gc-count', [CustodianController::class, 'dti_special_gc_count'])->name('dti_special_gc_count');
+            });
         });
     });
 
@@ -872,8 +877,14 @@ Route::middleware('auth')->group(function () {
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
 
+                            // billing reports
+                            Route::get('Billing-reports', [AccountingController::class, 'billing_reports'])->name('billing_reports');
+                            Route::post('billing-report-per-day', [ReportController::class, 'billingReportPerDay'])->name('billingReportPerDay');
+
+                                // generated reports
                             Route::name('reports.')->group(function () {
                                 Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
+                                Route::post('billing-generated-report-per-day', [ReportController::class, 'generateBillingPerDayReport'])->name('generateBillingPerDayReport');
                             });
                         }
                     );

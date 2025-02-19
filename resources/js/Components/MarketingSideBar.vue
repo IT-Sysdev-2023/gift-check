@@ -14,9 +14,9 @@ const currentActiveMenu = [route().current().split(".")[1]];
 </script>
 
 <template>
-    <div v-if="page.auth.user.user_role === 0">
+    <div v-if="page.auth.user.user_role == 0">
         <a-sub-menu
-            v-if="page.auth.user.usertype === '1'"
+            v-if="page.auth.user.usertype == '1'"
             key="marketing-side-bar"
         >
             <template #title>
