@@ -695,6 +695,10 @@ Route::middleware('auth')->group(function () {
             Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
             Route::get('released-reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request.released');
             Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
+
+            Route::name('dti_special_gc')->group(function () {
+                Route::get('dti-pending-special-gc', [CustodianController::class, 'dti_special_gc_pending'])->name('dti_special_gc_pending');
+            });
         });
     });
 
