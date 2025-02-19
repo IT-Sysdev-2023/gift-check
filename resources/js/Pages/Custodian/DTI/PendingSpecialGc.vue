@@ -1,9 +1,19 @@
 <template>
     <AuthenticatedLayout>
+        {{ pending.data }}
         <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" tab=" DTI Pending GC List (GC Holder Entry)">
                 <a-card title="DTI Special GC">
-                    <a-table :dataSource="dataSource" :columns="columns" />
+                    <a-table :pagination="false" size="small" :dataSource="pending.data" :columns="columns">
+                        <template #bodyCell="{ column, record }">
+                            <template v-if="column.dataIndex === 'view'">
+                                <a-button @click="viewRequest(record.id)" type="primary">View
+                                    <EyeOutlined />
+                                </a-button>
+                            </template>
+                        </template>
+                    </a-table>
+                    <Pagination class="mt-5" :datarecords="pending" />
                 </a-card>
             </a-tab-pane>
         </a-tabs>
@@ -12,41 +22,44 @@
 
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Pagination from '@/Components/Pagination.vue';
 import { ref } from 'vue';
+
+defineProps({
+    pending: Object,
+
+})
 
 const activeKey = ref('1')
 
-const dataSource = [
-    {
-        key: '1',
-        name: 'Mike',
-        age: 32,
-        address: '10 Downing Street',
-    },
-    {
-        key: '2',
-        name: 'John',
-        age: 42,
-        address: '10 Downing Street',
-    },
-]
+const viewRequest = (id) => {
+    console.log(id)
+}
+
+
 
 const columns = [
     {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
+        title: 'RFSEGC #',
+        dataIndex: 'id',
+        key: 'rfsegc',
     },
     {
-        title: 'Age',
-        dataIndex: 'age',
-        key: 'age',
+        title: 'Date Requested',
+        dataIndex: 'dateRequested',
+        key: 'datereq',
     },
     {
-        title: 'Address',
-        dataIndex: 'address',
-        key: 'address',
+        title: 'Total Denomination',
+        dataIndex: 'totalDenom',
+        key: 'totaldenom',
     },
+    {
+        dataIndex: 'view',
+        key: 'view',
+        align: 'end'
+    },
+
 ]
 
 

@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Models\DtiGcRequest;
 use App\Models\Gc;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Custodian\CustodianServices;
 use App\Services\Custodian\ReprintPdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 
 class CustodianController extends Controller
@@ -210,8 +212,24 @@ class CustodianController extends Controller
 
     public function dti_special_gc_pending()
     {
+        $pending = DtiGcRequest::where('dti_status', 'pending')
+            ->join('dti_gc_request_items', 'dti_gc_request_items.dti_trid', '=', 'dti_gc_requests.dti_num')
+            ->paginate()->withQueryString();
+        $pending->transform(function ($item) {
+            $item->totalDenom = $item->dti_denoms * $item->dti_qty;
+            $item->dateRequested = Date::parse($item->dti_datereq)->format('F d, Y');
+            return $item;
+        });
 
-        
-        return inertia('Custodian/DTI/PendingSpecialGc');
+        return inertia('Custodian/DTI/PendingSpecialGc', ['pending' => $pending]);
+    }
+
+    public function dti_special_gc_count()
+    {
+        $pending = DtiGcRequest::where('dti_status', 'pending')->count();
+
+        return response()->json([
+            'pending' => $pending
+        ]);
     }
 }

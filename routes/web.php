@@ -412,7 +412,7 @@ Route::middleware('auth')->group(function () {
                     Route::post('gc-sales-report-eod', [EodController::class, 'toEndOfDay'])->name('setToEod');
                 });
 
-                Route::prefix('dti')->name('dti.')->group(function (){
+                Route::prefix('dti')->name('dti.')->group(function () {
                     Route::get('index', [DtiTransactionController::class, 'index'])->name('index');
                     Route::post('submit-dti', [DtiTransactionController::class, 'submitDtiForm'])->name('submit');
                 });
@@ -698,6 +698,7 @@ Route::middleware('auth')->group(function () {
 
             Route::name('dti_special_gc')->group(function () {
                 Route::get('dti-pending-special-gc', [CustodianController::class, 'dti_special_gc_pending'])->name('dti_special_gc_pending');
+                Route::get('dti-special-gc-count', [CustodianController::class, 'dti_special_gc_count'])->name('dti_special_gc_count');
             });
         });
     });
