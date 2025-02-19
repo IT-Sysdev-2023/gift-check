@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Treasury\DtiTransaction;
 
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DtiGcRequest as RequestsDtiGcRequest;
 use App\Models\DtiGcRequest;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
@@ -43,9 +44,11 @@ class DtiTransactionController extends Controller
             ->get();
     }
 
-    public function submitDtiForm(Request $request)
+    public function submitDtiForm(RequestsDtiGcRequest $request)
     {
         // dd($request->all());
+        $request->validated();
+
         $dtiStore = $this->dtiServices->submissionForDti($request);
 
         $pdf = Pdf::loadView('pdf.dtirequest', ['data' => $dtiStore]);
