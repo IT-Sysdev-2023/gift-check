@@ -415,6 +415,7 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('dti')->name('dti.')->group(function (){
                     Route::get('index', [DtiTransactionController::class, 'index'])->name('index');
                     Route::post('submit-dti', [DtiTransactionController::class, 'submitDtiForm'])->name('submit');
+                    Route::get('dti-pending-request', [DtiTransactionController::class, 'dtiPendingRequest'])->name('dtiPendingRequest');
                 });
             });
             Route::prefix('masterfile')->name('masterfile.')->group(function () {
@@ -870,7 +871,7 @@ Route::middleware('auth')->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-                
+
                             Route::name('reports.')->group(function () {
                                 Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
                             });
