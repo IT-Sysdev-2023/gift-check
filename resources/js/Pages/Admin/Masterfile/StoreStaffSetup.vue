@@ -1,19 +1,13 @@
 <template>
     <a-card>
         <div>
-            <a-button
-                class="back-button"
-                @click="backButton"
-                style="border: 1px solid whitesmoke"
-                ><RollbackOutlined />Back</a-button
-            >
+            <a-button class="back-button" @click="backButton" style="font-weight: bold;">
+                <RollbackOutlined />Back
+            </a-button>
         </div>
 
         <div style="margin-left: 82.5%">
-            <a-button
-                style="background-color: #1b76f8; color: white"
-                @click="() => (open = true)"
-            >
+            <a-button style="background-color: #1b76f8; color: white" @click="() => (open = true)">
                 <PlusOutlined /> Add New User
             </a-button>
         </div>
@@ -23,37 +17,34 @@
         </div>
 
         <div style="margin-left: 70%">
-            <a-input-search
-                allow-clear
-                placeholder="Input search here!"
-                enter-button
-                v-model:value="searchTerm"
-                size="medium"
-                style="width: 80%"
-            />
+            <a-input-search allow-clear placeholder="Input search here!" enter-button v-model:value="searchTerm"
+                size="medium" style="width: 80%" />
+        </div>
+        <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 3rem">
+            <div class="spinnerContainer">
+                <div class="spinner"></div>
+                <div class="loader">
+                    <p>loading</p>
+                    <div class="words">
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                        <span class="word">please wait...</span>
+                    </div>
+                </div>
+            </div>
         </div>
         <div style="margin-top: 10px">
-            <a-table
-                :columns="columns"
-                :data-source="data.data"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :columns="columns" :data-source="data.data" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'action'">
-                        <a-button
-                            @click="updateStoreStaffSetup(record)"
-                            title="Update"
-                            class="me-2 me-sm-5"
-                            style="color: white; background-color: green"
-                        >
-                            <FormOutlined />
+                        <a-button @click="updateStoreStaffSetup(record)" title="Update" class="me-2 me-sm-5"
+                            style="color: white; background-color: green">
+                            <EditOutlined />
                         </a-button>
-                        <a-button
-                            @click="changePassword(record)"
-                            title="Change Password"
-                            style="color: white; background-color: #1b76f8"
-                        >
+                        <a-button @click="changePassword(record)" title="Change Password"
+                            style="color: white; background-color: #1b76f8">
                             <UndoOutlined />
                         </a-button>
                     </template>
@@ -66,267 +57,142 @@
     <!-- this is for update password part -->
 
     <a-modal v-model:open="modalforchangePassword" @ok="updatePassword">
-        <span style="color: #c7253e; font-size: 17px">
-            Confirmation
-            <QuestionOutlined />
-        </span>
-
-        <a-form-item
-            for="password"
-            style="margin-top: 15px; font-style: initial"
-        >
-            Reset
-            <span
-                style="
-                    color: #c7253e;
-                    font-family: sans-serif;
-                    margin-left: 5px;
-                    margin-right: 5px;
-                    text-decoration: underline;
-                "
-            >
-                {{ dataforChangePassword.ss_username }}
+        <header style="font-size: large; font-weight: bold;">
+            <UndoOutlined /> Reset Password
+        </header>
+        <div style="margin-top: 2rem;">
+            <span style="font-family: sans-serif; font-size: 1rem;">
+                Reset
+                <span style="color: red; text-decoration: underline;"> {{ dataforChangePassword.ss_username }} </span>
+                password to default?
             </span>
-            password?
-        </a-form-item>
+        </div>
     </a-modal>
 
     <!-- this is for update part -->
     <a-modal v-model:open="openmodalforupdate" @ok="updateStoreStaff">
-        <span style="color: #0286df; font-size: 17px; font-family: sans-serif">
-            <UserAddOutlined style="margin-right: 8px" />
-            Update User
-        </span>
+        <header style="font-weight: bold; font-size: large;">
+            <EditOutlined /> Update User
+        </header>
 
-        <a-form-item
-            for="ss_username"
-            :validate-status="dataForUpdate.errors?.ss_username ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_username"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            Username:
-            <a-input
-                allow-clear
-                v-model:value="dataForUpdate.ss_username"
-                placeholder="Username"
-            />
-        </a-form-item>
+        <div style="margin-top: 2rem; font-weight: bold;">
+            <a-form-item for="ss_username" :validate-status="dataForUpdate.errors?.ss_username ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_username" style="margin-top: 10px; font-weight: bold">
+                Username:
+                <a-input allow-clear v-model:value="dataForUpdate.ss_username" placeholder="Username" />
+            </a-form-item>
 
-        <a-form-item
-            for="ss_firstname"
-            :validate-status="dataForUpdate.errors?.ss_firstname ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_firstname"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            firstname:
-            <a-input
-                allow-clear
-                v-model:value="dataForUpdate.ss_firstname"
-                placeholder="Firstname"
-            />
-        </a-form-item>
+            <a-form-item for="ss_firstname" :validate-status="dataForUpdate.errors?.ss_firstname ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_firstname" style="margin-top: 10px; font-weight: bold">
+                firstname:
+                <a-input allow-clear v-model:value="dataForUpdate.ss_firstname" placeholder="Firstname" />
+            </a-form-item>
 
-        <a-form-item
-            for="ss_lastname"
-            :validate-status="dataForUpdate.errors?.ss_lastname ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_lastname"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            Lastname:
-            <a-input
-                allow-clear
-                v-model:value="dataForUpdate.ss_lastname"
-                placeholder="Lastname"
-            />
-        </a-form-item>
+            <a-form-item for="ss_lastname" :validate-status="dataForUpdate.errors?.ss_lastname ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_lastname" style="margin-top: 10px; font-weight: bold">
+                Lastname:
+                <a-input allow-clear v-model:value="dataForUpdate.ss_lastname" placeholder="Lastname" />
+            </a-form-item>
 
-        <a-form-item
-            for="ss_idnumber"
-            :validate-status="dataForUpdate.errors?.ss_idnumber ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_idnumber"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            Employee ID:
-            <a-input
-                allow-clear
-                v-model:value="dataForUpdate.ss_idnumber"
-                placeholder="Employee ID"
-            />
-        </a-form-item>
+            <a-form-item for="ss_idnumber" :validate-status="dataForUpdate.errors?.ss_idnumber ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_idnumber" style="margin-top: 10px; font-weight: bold">
+                Employee ID:
+                <a-input allow-clear v-model:value="dataForUpdate.ss_idnumber" placeholder="Employee ID" />
+            </a-form-item>
 
-        <a-form-item
-            for="ss_store"
-            :validate-status="dataForUpdate.errors?.ss_store ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_store"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            Store Assigned:
-            <a-select
-                v-model:value="dataForUpdate.ss_store"
-                style="width: 472px"
-                placeholder="Select Store"
-            >
-                <a-select-option
-                    v-for="item in store"
-                    :key="item.store_id"
-                    :value="item.store_id"
-                >
-                    {{ item.store_name }}</a-select-option
-                >
-            </a-select>
-        </a-form-item>
-        <a-form-item
-            for="ss_usertype"
-            :validate-status="dataForUpdate.errors?.ss_usertype ? 'error' : ''"
-            :help="dataForUpdate.errors?.ss_usertype"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            User Type:
-            <a-select
-                id="usertype"
-                v-model:value="dataForUpdate.ss_usertype"
-                style="width: 472px"
-                placeholder="Select User Type"
-            >
-                <a-select-option value="cashier">CASHIER</a-select-option>
-                <a-select-option value="manager">MANAGER</a-select-option>
-            </a-select>
-        </a-form-item>
+            <a-form-item for="ss_store" :validate-status="dataForUpdate.errors?.ss_store ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_store" style="margin-top: 10px; font-weight: bold">
+                Store Assigned:
+                <a-select v-model:value="dataForUpdate.ss_store" style="width: 472px" placeholder="Select Store">
+                    <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
+                        {{ item.store_name }}</a-select-option>
+                </a-select>
+            </a-form-item>
+            <a-form-item for="ss_usertype" :validate-status="dataForUpdate.errors?.ss_usertype ? 'error' : ''"
+                :help="dataForUpdate.errors?.ss_usertype" style="margin-top: 10px; font-weight: bold">
+                User Type:
+                <a-select id="usertype" v-model:value="dataForUpdate.ss_usertype" style="width: 472px"
+                    placeholder="Select User Type">
+                    <a-select-option value="cashier">CASHIER</a-select-option>
+                    <a-select-option value="manager">MANAGER</a-select-option>
+                </a-select>
+            </a-form-item>
+        </div>
     </a-modal>
 
     <!-- this is for adding user part -->
     <a-modal v-model:open="open" @ok="handleOk">
-        <span style="color: #0286df; font-size: 17px; font-family: sans-serif">
-            <UserAddOutlined style="margin-right: 8px" />
-            Add New User
-        </span>
+        <header style="font-weight: bold; font-size: large;">
+            <PlusOutlined /> Add User
+        </header>
+        <div style="margin-top: 2rem; font-weight: bold;">
 
-        <a-form-item
-            for="username"
-            :validate-status="form.errors.username ? 'error' : ''"
-            :help="form.errors.username"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            Username:
-            <a-input
-                allow-clear
-                v-model:value="form.username"
-                placeholder="Username"
-            />
-        </a-form-item>
+            <a-form-item for="username" :validate-status="form.errors.username ? 'error' : ''"
+                :help="form.errors.username" style="margin-top: 10px; font-weight: bold">
+                Username:
+                <a-input allow-clear v-model:value="form.username" placeholder="Username" />
+            </a-form-item>
 
-        <a-form-item
-            for="firstname"
-            :validate-status="form.errors.firstname ? 'error' : ''"
-            :help="form.errors.firstname"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            Firstname:
-            <a-input
-                allow-clear
-                v-model:value="form.firstname"
-                placeholder="Firstname"
-            />
-        </a-form-item>
+            <a-form-item for="firstname" :validate-status="form.errors.firstname ? 'error' : ''"
+                :help="form.errors.firstname" style="margin-top: 10px; font-weight: bold">
+                Firstname:
+                <a-input allow-clear v-model:value="form.firstname" placeholder="Firstname" />
+            </a-form-item>
 
-        <a-form-item
-            for="lastname"
-            :validate-status="form.errors.lastname ? 'error' : ''"
-            :help="form.errors.lastname"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            Lastname:
-            <a-input
-                allow-clear
-                v-model:value="form.lastname"
-                placeholder="Lastname"
-            />
-        </a-form-item>
+            <a-form-item for="lastname" :validate-status="form.errors.lastname ? 'error' : ''"
+                :help="form.errors.lastname" style="margin-top: 10px; font-weight: bold">
+                Lastname:
+                <a-input allow-clear v-model:value="form.lastname" placeholder="Lastname" />
+            </a-form-item>
 
-        <a-form-item
-            for="employee_id"
-            :validate-status="form.errors.employee_id ? 'error' : ''"
-            :help="form.errors.employee_id"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            Employee ID:
-            <a-input
-                allow-clear
-                v-model:value="form.employee_id"
-                placeholder="Employee ID"
-            />
-        </a-form-item>
-        <!-- {{ form.errors.idnumber }} -->
-        <a-form-item
-            for="password"
-            :validate-status="form.errors.password ? 'error' : ''"
-            :help="form.errors.password"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            Password:
-            <a-input
-                type="password"
-                allow-clear
-                v-model:value="form.password"
-                placeholder="Password"
-            />
-        </a-form-item>
+            <a-form-item for="employee_id" :validate-status="form.errors.employee_id ? 'error' : ''"
+                :help="form.errors.employee_id" style="margin-top: 10px; font-weight: bold">
+                Employee ID:
+                <a-input allow-clear v-model:value="form.employee_id" placeholder="Employee ID" />
+            </a-form-item>
+            <!-- {{ form.errors.idnumber }} -->
+            <a-form-item for="password" :validate-status="form.errors.password ? 'error' : ''"
+                :help="form.errors.password" style="margin-top: 10px; font-weight: bold">
+                Password:
+                <a-input type="password" allow-clear v-model:value="form.password" placeholder="Password" />
+            </a-form-item>
 
-        <a-form-item
-            for="store_name"
-            :validate-status="form.errors.store_id ? 'error' : ''"
-            :help="form.errors.store_id"
-            style="margin-top: 10px; font-weight: bold"
-            >Store Assigned:
-            <a-select
-                v-model:value="form.store_id"
-                style="width: 472px"
-                placeholder="Select Store"
-            >
-                <a-select-option
-                    v-for="item in store"
-                    :key="item.store_id"
-                    :value="item.store_id"
-                >
-                    {{ item.store_name }}</a-select-option
-                >
-            </a-select>
-        </a-form-item>
-        <a-form-item
-            for="user_type"
-            :validate-status="form.errors.usertype ? 'error' : ''"
-            :help="form.errors.usertype"
-            style="margin-top: 10px; font-weight: bold"
-        >
-            User Type:
-            <a-select
-                id="usertype"
-                v-model:value="form.usertype"
-                style="width: 472px"
-                placeholder="Select User Type"
-            >
-                <a-select-option value="cashier">CASHIER</a-select-option>
-                <a-select-option value="manager">MANAGER</a-select-option>
-            </a-select>
-        </a-form-item>
+            <a-form-item for="store_name" :validate-status="form.errors.store_id ? 'error' : ''"
+                :help="form.errors.store_id" style="margin-top: 10px; font-weight: bold">Store Assigned:
+                <a-select v-model:value="form.store_id" style="width: 472px" placeholder="Select Store">
+                    <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
+                        {{ item.store_name }}</a-select-option>
+                </a-select>
+            </a-form-item>
+            <a-form-item for="user_type" :validate-status="form.errors.usertype ? 'error' : ''"
+                :help="form.errors.usertype" style="margin-top: 10px; font-weight: bold">
+                User Type:
+                <a-select id="usertype" v-model:value="form.usertype" style="width: 472px"
+                    placeholder="Select User Type">
+                    <a-select-option value="cashier">CASHIER</a-select-option>
+                    <a-select-option value="manager">MANAGER</a-select-option>
+                </a-select>
+            </a-form-item>
+        </div>
     </a-modal>
-    <!-- {{ data.data }} -->
+    <!-- {{ store }} -->
 </template>
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {
     UndoOutlined,
     PlusOutlined,
-    FormOutlined,
+    ExclamationCircleOutlined,
 } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
+import { Modal } from "ant-design-vue";
+import { createVNode } from "vue";
 
 export default {
     layout: AuthenticatedLayout,
     components: {
         UndoOutlined,
         PlusOutlined,
-        FormOutlined,
     },
     props: {
         password: Object,
@@ -339,6 +205,7 @@ export default {
 
     data() {
         return {
+            loading: false,
             dataForSelectEntries: {
                 select_entries: this.value,
             },
@@ -506,10 +373,22 @@ export default {
                     data: newVal,
                 },
                 {
-                    preserveState: true,
+                    onStart: () => {
+                        this.loading = true;
+                    },
+
+                    onSuccess: () => {
+                        this.loading = false;
+                    },
+                    onError: () => {
+                        this.loading = false;
+                    },
+                    preserveState: true
+
                 },
             );
         },
+
     },
 
     methods: {
@@ -537,7 +416,7 @@ export default {
                     } else if (props.flash.error) {
                         notification.warning({
                             message: props.flash.error,
-                            description: "This username already exist",
+                            description: `${this.form.username} username already exist`,
                         });
                     }
                 },
@@ -588,7 +467,7 @@ export default {
                         } else if (props.flash.error) {
                             notification.warning({
                                 message: props.flash.error,
-                                description: `${this.dataForUpdate.ss_username}'s data has no changes happen, update first before submitting`,
+                                description: `${this.dataForUpdate.ss_username}'s data has no changes, update first before submitting`,
                             });
                         }
                     },
@@ -602,54 +481,58 @@ export default {
             this.modalforchangePassword = true;
         },
         updatePassword() {
-            console.log(this.dataforChangePassword.ss_id);
-            this.$inertia.post(
-                route("admin.masterfile.updateStoreStaffPassword"),
-                {
-                    ...this.dataforChangePassword,
-                },
-                {
-                    onSuccess: ({ props }) => {
-                        if (props.flash.success) {
-                            notification.success({
-                                message: props.flash.success,
-                                description: `${this.dataforChangePassword.ss_username} password reset to default successfully!`,
-                            });
-                            this.modalforchangePassword = false;
-                        } else if (props.flash.error) {
-                            notification.warning({
-                                message: props.flash.error,
-                                description: `${this.dataforChangePassword.ss_username} password already reset to default!`,
-                            });
-                            this.modalforchangePassword = false;
-                        }
+            this.modalforchangePassword = false;
+            Modal.confirm({
+                title: 'Confirmation?',
+                icon: createVNode(ExclamationCircleOutlined),
+                content: createVNode(
+                    'div',
+                    {
+                        style: 'color:red;',
                     },
-                    onError: (e) => {
-                        this.dataforChangePassword.errors = e;
-                    },
+                    'Are you sure you want to reset password?',
+                ),
+                onOk: () => {
+                    this.$inertia.post(
+                        route("admin.masterfile.updateStoreStaffPassword"),
+                        {
+                            ...this.dataforChangePassword,
+                        },
+                        {
+                            onSuccess: ({ props }) => {
+                                if (props.flash.success) {
+                                    notification.success({
+                                        message: props.flash.success,
+                                        description: "Password reset successfully!",
+                                    });
+                                    this.modalforchangePassword = false;
+                                } else if (props.flash.error) {
+                                    notification.warning({
+                                        message: props.flash.error,
+                                        description: `${this.dataForUpdate.ss_username}'s password already reset to default!`,
+                                    });
+                                    this.modalforchangePassword = false;
+                                }
+                            },
+                            onError: (e) => {
+                                this.dataforChangePassword.errors = e;
+                            },
+                        },
+                    );
                 },
-            );
-        },
-        changeSelectEntries(value) {
-            console.log(value);
-            this.$inertia.get(
-                route("admin.masterfile.store.staff"),
-                {
-                    value: value,
+                onCancel() {
+                    console.log('Cancel');
                 },
-                {
-                    preserveState: true,
-                    preserveScroll: true,
-                },
-            );
+            });
+
         },
         backButton() {
             this.$inertia.get(route("admin.dashboard"));
         },
     },
-};
+}
 </script>
-<style>
+<style scoped>
 .storeStaff-button {
     text-align: right;
 }
@@ -672,8 +555,117 @@ export default {
     min-width: 120px;
     margin-top: 1%;
 }
+
 .back-button {
     font-weight: bold;
     font-family: "Poppins", sans-serif;
+}
+
+/* loading css  */
+
+.spinnerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.spinner {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    border: 4px solid #0000;
+    border-radius: 50%;
+    border-right-color: #299fff;
+    animation: tri-spinner 1s infinite linear;
+}
+
+.spinner::before,
+.spinner::after {
+    content: "";
+    grid-area: 1/1;
+    margin: 2px;
+    border: inherit;
+    border-radius: 50%;
+    animation: tri-spinner 2s infinite;
+}
+
+.spinner::after {
+    margin: 8px;
+    animation-duration: 3s;
+}
+
+@keyframes tri-spinner {
+    100% {
+        transform: rotate(1turn);
+    }
+}
+
+.loader {
+    color: #4a4a4a;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 25px;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 40px;
+    padding: 10px 10px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    border-radius: 8px;
+}
+
+.words {
+    overflow: hidden;
+}
+
+.word {
+    display: block;
+    height: 100%;
+    padding-left: 6px;
+    color: #299fff;
+    animation: cycle-words 5s infinite;
+}
+
+@keyframes cycle-words {
+    10% {
+        -webkit-transform: translateY(-105%);
+        transform: translateY(-105%);
+    }
+
+    25% {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%);
+    }
+
+    35% {
+        -webkit-transform: translateY(-205%);
+        transform: translateY(-205%);
+    }
+
+    50% {
+        -webkit-transform: translateY(-200%);
+        transform: translateY(-200%);
+    }
+
+    60% {
+        -webkit-transform: translateY(-305%);
+        transform: translateY(-305%);
+    }
+
+    75% {
+        -webkit-transform: translateY(-300%);
+        transform: translateY(-300%);
+    }
+
+    85% {
+        -webkit-transform: translateY(-405%);
+        transform: translateY(-405%);
+    }
+
+    100% {
+        -webkit-transform: translateY(-400%);
+        transform: translateY(-400%);
+    }
 }
 </style>

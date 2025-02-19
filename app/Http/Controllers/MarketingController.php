@@ -1259,84 +1259,79 @@ class MarketingController extends Controller
         $status = $request->data['status'];
         $userRole = $request->user()->user_role;
 
-        if ($status == '1') {
-            if ($userRole === 1) {
-                $exists = ApprovedProductionRequest::where('ape_pro_request_id', $request->data['id'])->exists();
-
-                if ($exists) {
+        switch ($status) {
+            case 1:
+                switch ($userRole) {
+                    case 1:
+                        $exists = ApprovedProductionRequest::where('ape_pro_request_id', $prid)->exists();
+                        if ($exists) {
+                            return back()->with([
+                                'type' => 'warning',
+                                'msg' => 'Warning!',
+                                'description' => 'Production Pending Request Already Approved'
+                            ]);
+                        }
+                        if ($this->marketing->handleManagerApproval($request, $prid)) {
+                            return back()->with([
+                                'type' => 'success',
+                                'msg' => 'Success!',
+                                'description' => 'The production pending request has been successfully approved.'
+                            ]);
+                        }
+                        break;
+                    case 0:
+                        if (empty($request->data['InputRemarks'])) {
+                            return back()->with([
+                                'type' => 'error',
+                                'msg' => 'Oops!',
+                                'description' => 'Please fill all required fields'
+                            ]);
+                        }
+                        if (empty($request->data['approvedBy'])) {
+                            return back()->with([
+                                'type' => 'error',
+                                'msg' => 'Oops!',
+                                'description' => 'Please contact authorized personnel to approve this production request first.'
+                            ]);
+                        }
+                        if ($this->marketing->handleUserRole0Approval($request, $prid)) {
+                            $this->RegularGc->approveProductionRequest($request, $prid);
+                            $generated = $this->marketing->generateProductionRequestPDF($request);
+                            if ($generated) {
+                                return redirect()->back()->with([
+                                    'type' => 'success',
+                                    'stream' => base64_encode($generated->output())
+                                ]);
+                            }
+                            return back()->with([
+                                'type' => 'error',
+                                'msg' => 'Oops!',
+                                'description' => 'There is a problem generating the PDF.'
+                            ]);
+                        }
+                        break;
+                }
+                break;
+            case 2:
+                if (empty($request->data['cancelremarks'])) {
                     return back()->with([
-                        'type' => 'warning',
-                        'msg' => 'Warning!',
-                        'description' => 'Production Pending Request Already Approved'
+                        'type' => 'error',
+                        'msg' => 'Oops!',
+                        'description' => 'Kindly ensure that remarks are provided'
                     ]);
                 }
-                $approved = $this->marketing->handleManagerApproval($request, $prid);
-                if ($approved) {
-
+                if ($this->marketing->handleRequestCancellation($request, $prid)) {
                     return back()->with([
                         'type' => 'success',
-                        'msg' => 'Success!',
-                        'description' => 'The production pending request has been successfully approved.'
+                        'msg' => 'Nice!',
+                        'description' => 'Production request successfully cancelled'
                     ]);
                 }
-            } elseif ($userRole === 0) {
-                if ($request->data['InputRemarks'] == null) {
-                    return back()->with([
-                        'type' => 'error',
-                        'msg' => 'Opps!',
-                        'description' => 'Please fill all required fields'
-                    ]);
-                }
-                if ($request->data['approvedBy'] == null) {
-                    return back()->with([
-                        'type' => 'error',
-                        'msg' => 'Opps!',
-                        'description' => 'Please contact authorized personnel to approve this production request first.'
-                    ]);
-                }
-                $checked = $this->marketing->handleUserRole0Approval($request, $prid);
-                if ($checked) {
-
-                    $this->RegularGc->approveProductionRequest($request, $prid);
-
-                    $generated = $this->marketing->generateProductionRequestPDF($request);
-                    if ($generated) {
-                        return redirect()->back()->with([
-                            'type' => 'success',
-                            'stream' => base64_encode($generated->output())
-                        ]);
-                    } else {
-                        return back()->with([
-                            'type' => 'error',
-                            'msg' => 'Opps!',
-                            'description' => 'There is a problem generating the PDF.'
-                        ]);
-                    }
-
-                }
-            }
-        } elseif ($status == '2') {
-            if ($request->data['cancelremarks'] == null) {
-                return back()->with([
-                    'type' => 'error',
-                    'msg' => 'Opps!',
-                    'description' => 'Kindly ensure that  remarks are provided'
-                ]);
-            }
-            $cancelled = $this->marketing->handleRequestCancellation($request, $prid);
-            if ($cancelled) {
-                return back()->with([
-                    'type' => 'success',
-                    'msg' => 'Nice!',
-                    'description' => 'Production request successfully cancelled'
-                ]);
-            } else {
                 return back()->with([
                     'type' => 'warning',
                     'msg' => 'Warning!',
                     'description' => 'It appears that the pending request has already been canceled.'
                 ]);
-            }
         }
     }
 

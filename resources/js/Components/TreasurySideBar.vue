@@ -13,7 +13,7 @@ const handleClick = (e: any) => {
 
 const setActiveTab = computed(() => {
     const currentR = highlightRoute.value[0].split(".");
-    
+
     const keys = [
         "masterfile",
         "transactions",
@@ -174,6 +174,11 @@ const setActiveTab = computed(() => {
             <a-menu-item key="treasury.transactions.eod.gcSales">
                 <Link :href="route('treasury.transactions.eod.gcSales')">
                     GC Sales Report (EOD)</Link
+                ></a-menu-item
+            >
+            <a-menu-item key="treasury.transactions.dti.dtiIndex">
+                <Link :href="route('treasury.transactions.dti.index')">
+                    DTI GC Transaction</Link
                 ></a-menu-item
             >
         </a-sub-menu>

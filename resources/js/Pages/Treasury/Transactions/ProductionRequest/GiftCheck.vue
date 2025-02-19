@@ -55,7 +55,7 @@
                         </a-form-item>
                         <a-form-item label="Prepared By">
                             <a-input
-                                :value="page.props.auth.user.full_name"
+                                :value="page.auth.user.full_name"
                                 readonly
                             />
                         </a-form-item>
@@ -175,7 +175,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import type { UploadChangeParam } from "ant-design-vue";
 import dayjs from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import { FormStateGc } from "@/types/index";
@@ -208,9 +207,9 @@ const formState = useForm<FormStateGc>({
 });
 
 const { openLeftNotification } = onProgress();
-const handleChange = (file: UploadChangeParam) => {
-    formState.file = file.file;
-};
+// const handleChange = (file: UploadChangeParam) => {
+//     formState.file = file.file;
+// };
 
 const closeIframe = () => {
     router.visit(route("treasury.dashboard"));
@@ -249,7 +248,7 @@ const clearError = (field: string) => {
     formState.errors[field] = null;
 };
 
-const disabledDate = (current) => {
-    return current && current < new Date().setHours(0, 0, 0, 0);
-};
+// const disabledDate = (current) => {
+//     return current && current < new Date().setHours(0, 0, 0, 0);
+// };
 </script>

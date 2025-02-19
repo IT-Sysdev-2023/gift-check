@@ -5,29 +5,16 @@
         </div>
 
         <div style="font-weight: bold; margin-left: 70%; margin-top: 10px">
-            <a-input-search
-                allow-clear
-                v-model:value="alturasSearchBox"
-                style="width: 90%"
-                placeholder="Input search here!"
-                enter-button
-            />
+            <a-input-search allow-clear v-model:value="alturasSearchBox" style="width: 90%"
+                placeholder="Input search here!" enter-button />
         </div>
 
         <div style="margin-top: 10px">
-            <a-table
-                :data-source="data.data"
-                :columns="alturasMallColumns"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :data-source="data.data" :columns="alturasMallColumns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'view'">
-                        <a-button
-                            @click="viewAlturasMall(record)"
-                            class="me-2 me-sm-5"
-                            style="color: white; background-color: #1e90ff"
-                        >
+                        <a-button @click="viewAlturasMall(record)" class="me-2 me-sm-5"
+                            style="color: white; background-color: #1e90ff">
                             <EyeOutlined />
                         </a-button>
                     </template>

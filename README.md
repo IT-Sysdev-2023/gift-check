@@ -12,7 +12,7 @@
 :heavy_exclamation_mark:message for a new appointed programmer of this project
 <p align="center">
 Gif Check is a web application with expressive, elegant syntax. Whoever is assigned to this project should maintain the cleanliness and professionalism of the code for future generations. Gift check was once a disorganized application, but not anymore b*tch. A new heroes have arrived. </p>
-    <p align="center">The old version of the GC system ignored the law of a good programmer, therefore we rebuilt it to benefit the company and serve as a resource for aspiring programmers.
+    <p align="center">The old version of the GC system ignored the law of a good programmer, therefore we rebuilt it to optimize the current manual process of GC in the company and serve as a resource for aspiring programmers.
 This project embodies many essential concepts you need to learn about Laravel. We have purposefully restructured it to enhance code readability, adhere to the SOLID principle, reduce redundancy and optimize both queries and securities. 
 While much of the project has been improved, there may still be areas that need refinement. If you encounter anything inconvenient or inefficient, feel free to revise it—just ensure that the overall functionality remains unaffected. Code must adapt to the technological environment; failure to do so will ensure uncertain consequences, you feel me :satisfied:
 </p>
@@ -27,7 +27,7 @@ While much of the project has been improved, there may still be areas that need 
 - Php 8.2 and later
 - Mariadb
 - Redis
-- Lakas ng luob
+- gutts
 
 :rocket:Setup
 - clone this repository
@@ -52,7 +52,7 @@ without sail
 
 ## SPECIAL THANKS
 
-We would like to extend our thanks to TAYLOR OTEN for making this project possible. Thank you for your hardwork<a><img style="width:20px" src="https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/128px/1fae1.png" alt="Build Status"></a>
+We would like to extend our thanks to **[TAYLOR OTEN](https://github.com/taylorotwell)** for making this project possible. Thank you for your hardwork<a><img style="width:20px" src="https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/128px/1fae1.png" alt="Build Status"></a>
 
 ### Premium Developers
 

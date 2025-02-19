@@ -1,42 +1,27 @@
 <template>
     <a-card>
-        <a-button
-            @click="
-                () =>
-                    $inertia.get(
-                        route('storeaccounting.ubayDistribution', { id: 10 }),
-                    )
-            "
-        >
+        <a-button @click="() =>
+                $inertia.get(
+                    route('storeaccounting.ubayDistribution', { id: 10 }),
+                )
+            ">
             <RollbackOutlined />Back
         </a-button>
-        <span
-            style="
+        <span style="
                 font-weight: bold;
                 font-family: sans-serif;
                 font-size: 50px;
                 margin-left: 50px;
-            "
-        >
-            GC Barcode #{{ barcodeNumber }} POS Transaction
+            ">
+            GC Barcode - <span style="font-weight: 100;">#{{ barcodeNumber }}</span> - POS Transaction
         </span>
 
         <div>
-            <a-input
-                allow-clear
-                type="search"
-                placeholder="Input search here..."
-                v-model:value="alturasSearch"
-            />
+            <a-input allow-clear type="search" placeholder="Input search here..." v-model:value="alturasSearch" />
         </div>
 
         <div style="margin-top: 10px">
-            <a-table
-                :data-source="data.data"
-                :columns="alturasPosTransaction"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :data-source="data.data" :columns="alturasPosTransaction" :pagination="false" size="small">
             </a-table>
             <pagination :datarecords="data" class="mt-5" />
         </div>

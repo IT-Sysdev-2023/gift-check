@@ -11,120 +11,58 @@
                     </template>
                     <a-card style="width: 30%">
                         <div style="margin-top: 20px">
-                            <a-form-item
-                                :validate-status="
-                                    GCDataTypeMonthly.errors.dataTypeMonthly
-                                        ? 'error'
-                                        : ''
-                                "
-                                :help="GCDataTypeMonthly.errors.dataTypeMonthly"
-                            >
+                            <a-form-item :validate-status="GCDataTypeMonthly.errors.dataTypeMonthly
+                                    ? 'error'
+                                    : ''
+                                " :help="GCDataTypeMonthly.errors.dataTypeMonthly">
                                 <div>Data Type:</div>
 
-                                <a-select
-                                    placeholder="Select"
-                                    v-model:value="
-                                        GCDataTypeMonthly.dataTypeMonthly
-                                    "
-                                >
-                                    <a-select-option value=""
-                                        >---Select---</a-select-option
-                                    >
-                                    <a-select-option value="verifiedGC"
-                                        >Verified GC</a-select-option
-                                    >
+                                <a-select placeholder="Select" v-model:value="GCDataTypeMonthly.dataTypeMonthly
+                                    ">
+                                    <a-select-option value="">---Select---</a-select-option>
+                                    <a-select-option value="verifiedGC">Verified GC</a-select-option>
                                 </a-select>
                             </a-form-item>
 
-                            <a-form-item
-                                :validate-status="
-                                    GCDataTypeMonthly.errors.selectedStore
-                                        ? 'error'
-                                        : ''
-                                "
-                                :help="GCDataTypeMonthly.errors.selectedStore"
-                            >
+                            <a-form-item :validate-status="GCDataTypeMonthly.errors.selectedStore
+                                    ? 'error'
+                                    : ''
+                                " :help="GCDataTypeMonthly.errors.selectedStore">
                                 <div>Store:</div>
-                                <a-select
-                                    v-model:value="
-                                        GCDataTypeMonthly.selectedStore
-                                    "
-                                    placeholder="Select Store"
-                                    :options="stores"
-                                />
+                                <a-select v-model:value="GCDataTypeMonthly.selectedStore
+                                    " placeholder="Select Store" :options="stores" />
                             </a-form-item>
 
-                            <a-form-item
-                                :validate-status="
-                                    GCDataTypeMonthly.errors.month
-                                        ? 'error'
-                                        : ''
-                                "
-                                :help="GCDataTypeMonthly.errors.month"
-                            >
+                            <a-form-item :validate-status="GCDataTypeMonthly.errors.month
+                                    ? 'error'
+                                    : ''
+                                " :help="GCDataTypeMonthly.errors.month">
                                 <div>Month:</div>
-                                <a-select
-                                    placeholder="Select Month"
-                                    v-model:value="GCDataTypeMonthly.month"
-                                >
-                                    <a-select-option value="1"
-                                        >January</a-select-option
-                                    >
-                                    <a-select-option value="2"
-                                        >February</a-select-option
-                                    >
-                                    <a-select-option value="3"
-                                        >March</a-select-option
-                                    >
-                                    <a-select-option value="4"
-                                        >April</a-select-option
-                                    >
-                                    <a-select-option value="5"
-                                        >May</a-select-option
-                                    >
-                                    <a-select-option value="6"
-                                        >June</a-select-option
-                                    >
-                                    <a-select-option value="7"
-                                        >July</a-select-option
-                                    >
-                                    <a-select-option value="8"
-                                        >August</a-select-option
-                                    >
-                                    <a-select-option value="9"
-                                        >September</a-select-option
-                                    >
-                                    <a-select-option value="10"
-                                        >October</a-select-option
-                                    >
-                                    <a-select-option value="11"
-                                        >November</a-select-option
-                                    >
-                                    <a-select-option value="12"
-                                        >December</a-select-option
-                                    >
+                                <a-select placeholder="Select Month" v-model:value="GCDataTypeMonthly.month">
+                                    <a-select-option value="1">January</a-select-option>
+                                    <a-select-option value="2">February</a-select-option>
+                                    <a-select-option value="3">March</a-select-option>
+                                    <a-select-option value="4">April</a-select-option>
+                                    <a-select-option value="5">May</a-select-option>
+                                    <a-select-option value="6">June</a-select-option>
+                                    <a-select-option value="7">July</a-select-option>
+                                    <a-select-option value="8">August</a-select-option>
+                                    <a-select-option value="9">September</a-select-option>
+                                    <a-select-option value="10">October</a-select-option>
+                                    <a-select-option value="11">November</a-select-option>
+                                    <a-select-option value="12">December</a-select-option>
                                 </a-select>
                             </a-form-item>
 
-                            <a-form-item
-                                :validate-status="
-                                    GCDataTypeMonthly.errors.year ? 'error' : ''
-                                "
-                                :help="GCDataTypeMonthly.errors.year"
-                            >
+                            <a-form-item :validate-status="GCDataTypeMonthly.errors.year ? 'error' : ''
+                                " :help="GCDataTypeMonthly.errors.year">
                                 <div>Year:</div>
 
-                                <a-date-picker
-                                    v-model:value="GCDataTypeMonthly.year"
-                                    picker="year"
-                                    :disabled-date="disabledDate"
-                                />
+                                <a-date-picker v-model:value="GCDataTypeMonthly.year" picker="year"
+                                    :disabled-date="disabledDate" />
                             </a-form-item>
                         </div>
-                        <a-button
-                            @click="submitGCReportsMonthly"
-                            style="background-color: #1e90ff; color: white"
-                        >
+                        <a-button @click="submitGCReportsMonthly" style="background-color: #1e90ff; color: white">
                             <FilePdfOutlined /> Generate
                         </a-button>
                     </a-card>
@@ -139,67 +77,36 @@
                     </template>
                     <a-card>
                         <div style="margin-top: 20px">
-                            <a-form-item
-                                :validate-status="
-                                    GCDataTypeYearly.errors.GCDataType
-                                        ? 'error'
-                                        : ''
-                                "
-                                :help="GCDataTypeYearly.errors.GCDataType"
-                            >
+                            <a-form-item :validate-status="GCDataTypeYearly.errors.GCDataType
+                                    ? 'error'
+                                    : ''
+                                " :help="GCDataTypeYearly.errors.GCDataType">
                                 <div>Data Type:</div>
 
-                                <a-select
-                                    style="width: 30%"
-                                    placeholder="Select"
-                                    v-model:value="GCDataTypeYearly.GCDataType"
-                                >
-                                    <a-select-option value=""
-                                        >---Select---</a-select-option
-                                    >
-                                    <a-select-option value="verifiedgc"
-                                        >Verified GC</a-select-option
-                                    >
+                                <a-select style="width: 30%" placeholder="Select"
+                                    v-model:value="GCDataTypeYearly.GCDataType">
+                                    <a-select-option value="">---Select---</a-select-option>
+                                    <a-select-option value="verifiedgc">Verified GC</a-select-option>
                                 </a-select>
                             </a-form-item>
 
-                            <a-form-item
-                                :validate-status="
-                                    GCDataTypeYearly.errors.selectedStore
-                                        ? 'error'
-                                        : ''
-                                "
-                                :help="GCDataTypeYearly.errors.selectedStore"
-                            >
+                            <a-form-item :validate-status="GCDataTypeYearly.errors.selectedStore
+                                    ? 'error'
+                                    : ''
+                                " :help="GCDataTypeYearly.errors.selectedStore">
                                 <div>Store:</div>
-                                <a-select
-                                    v-model:value="
-                                        GCDataTypeYearly.selectedStore
-                                    "
-                                    style="width: 30%"
-                                    placeholder="Select Store"
-                                    :options="stores"
-                                />
+                                <a-select v-model:value="GCDataTypeYearly.selectedStore
+                                    " style="width: 30%" placeholder="Select Store" :options="stores" />
                             </a-form-item>
 
-                            <a-form-item
-                                :validate-status="
-                                    GCDataTypeYearly.errors.year ? 'error' : ''
-                                "
-                                :help="GCDataTypeYearly.errors.year"
-                            >
+                            <a-form-item :validate-status="GCDataTypeYearly.errors.year ? 'error' : ''
+                                " :help="GCDataTypeYearly.errors.year">
                                 <div>Year:</div>
-                                <a-date-picker
-                                    v-model:value="GCDataTypeYearly.year"
-                                    picker="year"
-                                    :disabled-date="disabledDate"
-                                />
+                                <a-date-picker v-model:value="GCDataTypeYearly.year" picker="year"
+                                    :disabled-date="disabledDate" />
                             </a-form-item>
                         </div>
-                        <a-button
-                            @click="submitGCReportsYearly"
-                            style="background-color: #1e90ff; color: white"
-                        >
+                        <a-button @click="submitGCReportsYearly" style="background-color: #1e90ff; color: white">
                             <SendOutlined /> Submit
                         </a-button>
                     </a-card>

@@ -4,9 +4,7 @@
             APPROVED GC REPORTS
         </span>
         <div>
-            <a-card
-                style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc"
-            >
+            <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc">
                 <a-tabs>
                     <a-tab-pane key="1">
                         <template #tab>
@@ -16,6 +14,21 @@
                             </span>
                         </template>
                         <a-card>
+                            <!-- <div v-if="isloading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 3rem">
+                                <div class="spinnerContainer">
+                                    <div class="spinner"></div>
+                                    <div class="loader">
+                                        <p style="color:green">Generating</p>
+                                        <div class="words">
+                                            <span class="word">please wait...</span>
+                                            <span class="word">please be patient...</span>
+                                            <span class="word">just a moment...</span>
+                                            <span class="word">still loading...</span>
+                                            <span class="word">please wait...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
                             <div v-if="isloading">
                                 <div>
                                     <div id="page">
@@ -24,34 +37,16 @@
                                             <div id="ring"></div>
                                             <div id="ring"></div>
                                             <div id="ring"></div>
-                                            <div
-                                                style="font-weight: bold"
-                                                id="h3"
-                                            >
+                                            <div style="font-weight: bold" id="h3">
                                                 Generating PDF please wait...
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div class="input-wrapper">
-                                <input
-                                    type="search"
-                                    placeholder="Input search here..."
-                                    name="text"
-                                    class="input"
-                                    v-model="pdfPerCustomerSearch"
-                                />
-                            </div> -->
-
                             <span style="font-weight: bold; margin-left: 60%">
-                                <a-input-search
-                                    allow-clear
-                                    v-model:value="pdfPerCustomerSearch"
-                                    enter-button
-                                    placeholder="Input search here!"
-                                    style="width: 35%"
-                                />
+                                <a-input-search allow-clear v-model:value="pdfPerCustomerSearch" enter-button
+                                    placeholder="Input search here!" style="width: 35%" />
                             </span>
 
                             <div style="margin-top: 10px; margin-left: 30px">
@@ -63,35 +58,23 @@
                                 </span>
                             </div>
                             <div>
-                                <span
-                                    style="font-weight: bold; margin-left: 30%"
-                                >
+                                <span style="font-weight: bold; margin-left: 30%">
                                     Table showing PDF per customer
                                 </span>
                             </div>
                             <div style="margin-top: 20px">
-                                <a-table
-                                    :columns="pdfPerCustomer"
-                                    :data-source="records.pdfPerCustomer.data"
-                                    :pagination="false"
-                                    size="small"
-                                >
+                                <a-table :columns="pdfPerCustomer" :data-source="records.pdfPerCustomer.data"
+                                    :pagination="false" size="small">
                                 </a-table>
                             </div>
-                            <pagination
-                                :datarecords="records.pdfPerCustomer"
-                                class="mt-5"
-                            />
+                            <pagination :datarecords="records.pdfPerCustomer" class="mt-5" />
                         </a-card>
                         <div style="margin-left: 80%">
                             <span style="font-weight: bold; margin-left: 3%">
-                                <a-button
-                                    @click="generatePdf"
-                                    style="
+                                <a-button @click="generatePdf" style="
                                         background-color: #b22222;
                                         color: white;
-                                    "
-                                >
+                                    ">
                                     <FilePdfOutlined />
                                     Generate PDF
                                 </a-button>
@@ -116,34 +99,16 @@
                                             <div id="ring"></div>
                                             <div id="ring"></div>
                                             <div id="ring"></div>
-                                            <div
-                                                style="font-weight: bold"
-                                                id="h3"
-                                            >
+                                            <div style="font-weight: bold" id="h3">
                                                 Generating PDF please wait...
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- <div class="input-wrapper">
-                                <input
-                                    type="search"
-                                    placeholder="Input search here..."
-                                    name="text"
-                                    class="input"
-                                    v-model="pdfPerBarcodeSearch"
-                                />
-                            </div> -->
                             <span style="font-weight: bold; margin-left: 60%">
-                                <a-input-search
-                                    allow-clear
-                                    v-model:value="pdfPerBarcodeSearch"
-                                    enter-button
-                                    placeholder="Input search here!"
-                                    style="width: 35%"
-                                />
+                                <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch" enter-button
+                                    placeholder="Input search here!" style="width: 35%" />
                             </span>
                             <div style="margin-top: 10px; margin-left: 30px">
                                 <span style="color: red; font-style: oblique">
@@ -154,36 +119,24 @@
                                 </span>
                             </div>
                             <div>
-                                <span
-                                    style="font-weight: bold; margin-left: 30%"
-                                >
+                                <span style="font-weight: bold; margin-left: 30%">
                                     Table showing PDF per barcode
                                 </span>
                             </div>
                             <div style="margin-top: 20px">
                                 <!-- {{ dataCustomer }}  -->
-                                <a-table
-                                    :columns="pdfPerBarcode"
-                                    :data-source="records.pdfPerBarcode.data"
-                                    :pagination="false"
-                                    size="small"
-                                >
+                                <a-table :columns="pdfPerBarcode" :data-source="records.pdfPerBarcode.data"
+                                    :pagination="false" size="small">
                                 </a-table>
                             </div>
-                            <pagination
-                                :datarecords="records.pdfPerBarcode"
-                                class="mt-5"
-                            />
+                            <pagination :datarecords="records.pdfPerBarcode" class="mt-5" />
                         </a-card>
                         <div style="margin-left: 80%">
                             <span style="font-weight: bold; margin-left: 3%">
-                                <a-button
-                                    @click="generatePdf"
-                                    style="
+                                <a-button @click="generatePdf" style="
                                         background-color: #b22222;
                                         color: white;
-                                    "
-                                >
+                                    ">
                                     <FilePdfOutlined />
                                     Generate PDF
                                 </a-button>
@@ -208,10 +161,7 @@
                                             <div id="ring"></div>
                                             <div id="ring"></div>
                                             <div id="ring"></div>
-                                            <div
-                                                style="font-weight: bold"
-                                                id="h3"
-                                            >
+                                            <div style="font-weight: bold" id="h3">
                                                 Generating EXCEL please wait...
                                             </div>
                                         </div>
@@ -230,15 +180,8 @@
                             </div> -->
 
                             <span style="font-weight: bold; margin-left: 60%">
-                                <a-input-search
-                                    allow-clear
-                                    v-model:value="
-                                        spgcApprovedSearchPerCustomer
-                                    "
-                                    enter-button
-                                    placeholder="Input search here!"
-                                    style="width: 35%"
-                                />
+                                <a-input-search allow-clear v-model:value="spgcApprovedSearchPerCustomer
+                                    " enter-button placeholder="Input search here!" style="width: 35%" />
                             </span>
                             <div style="margin-top: 10px; margin-left: 30px">
                                 <span style="color: red; font-style: oblique">
@@ -250,32 +193,20 @@
                             </div>
 
                             <div>
-                                <span
-                                    style="font-weight: bold; margin-left: 30%"
-                                >
+                                <span style="font-weight: bold; margin-left: 30%">
                                     Table showing EXCEL per customer
                                 </span>
                             </div>
                             <div style="margin-top: 20px">
                                 <!-- {{ dataCustomer }}  -->
-                                <a-table
-                                    :columns="perCustomerTable"
-                                    :data-source="records.dataCustomer.data"
-                                    :pagination="false"
-                                    size="small"
-                                >
+                                <a-table :columns="perCustomerTable" :data-source="records.dataCustomer.data"
+                                    :pagination="false" size="small">
                                 </a-table>
                             </div>
-                            <pagination
-                                :datarecords="records.dataCustomer"
-                                class="mt-5"
-                            />
+                            <pagination :datarecords="records.dataCustomer" class="mt-5" />
                         </a-card>
                         <span style="font-weight: bold; margin-left: 80%">
-                            <a-button
-                                @click="generateExcel"
-                                style="background-color: green; color: white"
-                            >
+                            <a-button @click="generateExcel" style="background-color: green; color: white">
                                 <FileExcelOutlined />
                                 Generate EXCEL
                             </a-button>
@@ -299,10 +230,7 @@
                                             <div id="ring"></div>
                                             <div id="ring"></div>
                                             <div id="ring"></div>
-                                            <div
-                                                style="font-weight: bold"
-                                                id="h3"
-                                            >
+                                            <div style="font-weight: bold" id="h3">
                                                 Generating EXCEL please wait...
                                             </div>
                                         </div>
@@ -320,13 +248,8 @@
                                 />
                             </div> -->
                             <span style="font-weight: bold; margin-left: 60%">
-                                <a-input-search
-                                    allow-clear
-                                    v-model:value="spgcApprovedSearch"
-                                    enter-button
-                                    placeholder="Input search here!"
-                                    style="width: 35%"
-                                />
+                                <a-input-search allow-clear v-model:value="spgcApprovedSearch" enter-button
+                                    placeholder="Input search here!" style="width: 35%" />
                             </span>
                             <div style="margin-top: 10px; margin-left: 30px">
                                 <span style="color: red; font-style: oblique">
@@ -338,31 +261,19 @@
                             </div>
 
                             <div>
-                                <span
-                                    style="font-weight: bold; margin-left: 30%"
-                                >
+                                <span style="font-weight: bold; margin-left: 30%">
                                     Table showing EXCEL per barcode
                                 </span>
                             </div>
                             <div style="margin-top: 20px">
-                                <a-table
-                                    :columns="perBarcodeTable"
-                                    :data-source="records.dataBarcode.data"
-                                    :pagination="false"
-                                    size="small"
-                                >
+                                <a-table :columns="perBarcodeTable" :data-source="records.dataBarcode.data"
+                                    :pagination="false" size="small">
                                 </a-table>
                             </div>
-                            <pagination
-                                :datarecords="records.dataBarcode"
-                                class="mt-5"
-                            />
+                            <pagination :datarecords="records.dataBarcode" class="mt-5" />
                         </a-card>
                         <span style="font-weight: bold; margin-left: 80%">
-                            <a-button
-                                @click="generateExcel"
-                                style="background-color: green; color: white"
-                            >
+                            <a-button @click="generateExcel" style="background-color: green; color: white">
                                 <FileExcelOutlined />
                                 Generate EXCEL
                             </a-button>
@@ -372,14 +283,12 @@
             </a-card>
         </div>
 
-        <a-card
-            style="
+        <a-card style="
                 width: 15%;
                 border: 1px solid #dcdcdc;
                 position: absolute;
                 top: 48px;
-            "
-        >
+            ">
             <div style="font-weight: bold; font-size: small">
                 <span>
                     <LikeOutlined />
@@ -389,47 +298,26 @@
 
             <div style="font-weight: bold; margin-top: 30px">Start Date:</div>
             <div>
-                <a-form-item
-                    for="spgcStartDate"
-                    :validate-status="
-                        spgcform.errors.spgcStartDate ? 'error' : ''
-                    "
-                    :help="spgcform.errors.spgcStartDate"
-                >
-                    <a-date-picker
-                        allow-clear
-                        v-model:value="spgcform.spgcStartDate"
-                        style="width: 100%"
-                    />
+                <a-form-item for="spgcStartDate" :validate-status="spgcform.errors.spgcStartDate ? 'error' : ''
+                    " :help="spgcform.errors.spgcStartDate">
+                    <a-date-picker allow-clear v-model:value="spgcform.spgcStartDate" style="width: 100%" />
                 </a-form-item>
             </div>
             <div style="font-weight: bold">End Date:</div>
             <div>
-                <a-form-item
-                    for="spgcEndDate"
-                    :validate-status="
-                        spgcform.errors.spgcEndDate ? 'error' : ''
-                    "
-                    :help="spgcform.errors.spgcEndDate"
-                >
-                    <a-date-picker
-                        allow-clear
-                        v-model:value="spgcform.spgcEndDate"
-                        style="width: 100%"
-                    />
+                <a-form-item for="spgcEndDate" :validate-status="spgcform.errors.spgcEndDate ? 'error' : ''
+                    " :help="spgcform.errors.spgcEndDate">
+                    <a-date-picker allow-clear v-model:value="spgcform.spgcEndDate" style="width: 100%" />
                 </a-form-item>
             </div>
 
             <div style="margin-top: 15px">
-                <a-button
-                    style="
+                <a-button style="
                         background-color: #1e90ff;
                         color: white;
                         width: 100%;
                         font-size: 1em;
-                    "
-                    @click="spgcSubmit"
-                >
+                    " @click="spgcSubmit">
                     <SendOutlined /> Submit
                 </a-button>
             </div>
@@ -469,7 +357,6 @@
 
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-// import dayjs from 'dayjs';
 import Pagination from "@/Components/Pagination.vue";
 import { message, Modal } from "ant-design-vue";
 import { notification } from "ant-design-vue";
@@ -886,6 +773,7 @@ export default {
 .input-wrapper input:focus {
     outline-color: whitesmoke;
 }
+
 #page {
     display: flex;
     justify-content: center;
@@ -968,6 +856,112 @@ export default {
 
     to {
         transform: rotateX(70deg) rotateZ(630deg);
+    }
+}
+/* loading css  */
+.spinnerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.spinner {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    border: 4px solid #0000;
+    border-radius: 50%;
+    border-right-color: #299fff;
+    animation: tri-spinner 1s infinite linear;
+}
+
+.spinner::before,
+.spinner::after {
+    content: "";
+    grid-area: 1/1;
+    margin: 2px;
+    border: inherit;
+    border-radius: 50%;
+    animation: tri-spinner 2s infinite;
+}
+
+.spinner::after {
+    margin: 8px;
+    animation-duration: 3s;
+}
+
+@keyframes tri-spinner {
+    100% {
+        transform: rotate(1turn);
+    }
+}
+
+.loader {
+    color: #4a4a4a;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 25px;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 40px;
+    padding: 10px 10px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    border-radius: 8px;
+}
+
+.words {
+    overflow: hidden;
+}
+
+.word {
+    display: block;
+    height: 100%;
+    padding-left: 6px;
+    color: #299fff;
+    animation: cycle-words 5s infinite;
+}
+
+@keyframes cycle-words {
+    10% {
+        -webkit-transform: translateY(-105%);
+        transform: translateY(-105%);
+    }
+
+    25% {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%);
+    }
+
+    35% {
+        -webkit-transform: translateY(-205%);
+        transform: translateY(-205%);
+    }
+
+    50% {
+        -webkit-transform: translateY(-200%);
+        transform: translateY(-200%);
+    }
+
+    60% {
+        -webkit-transform: translateY(-305%);
+        transform: translateY(-305%);
+    }
+
+    75% {
+        -webkit-transform: translateY(-300%);
+        transform: translateY(-300%);
+    }
+
+    85% {
+        -webkit-transform: translateY(-405%);
+        transform: translateY(-405%);
+    }
+
+    100% {
+        -webkit-transform: translateY(-400%);
+        transform: translateY(-400%);
     }
 }
 </style>

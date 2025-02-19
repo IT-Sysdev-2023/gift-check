@@ -7,13 +7,10 @@ use App\Http\Resources\CancelledProductionRequestResource;
 use App\Http\Resources\DenominationResource;
 use App\Http\Resources\ProductionRequestItemResource;
 use App\Http\Resources\ProductionRequestResource;
-
 use App\Models\CancelledProductionRequest;
-use App\Models\Denomination;
 use App\Models\LedgerBudget;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
-use App\Rules\DenomQty;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Dashboard\GcProductionRequestService;
 use Illuminate\Http\JsonResponse;
@@ -37,7 +34,6 @@ class GcProductionRequestController extends Controller
                 'data' => ProductionRequestResource::collection($record),
                 'columns' => ColumnHelper::$approvedProductionRequest,
             ]
-
         );
     }
 
@@ -51,7 +47,6 @@ class GcProductionRequestController extends Controller
         ])
             ->select('cpr_id', 'cpr_by', 'cpr_pro_id', 'cpr_at')
             ->orderByDesc('cpr_id')
-            // ->get();
             ->paginate()->withQueryString();
 
         return inertia('Treasury/Dashboard/GcProduction/CancelledProduction', [
@@ -91,7 +86,6 @@ class GcProductionRequestController extends Controller
                 'total' => $barcodes->total(),
                 'links' => $barcodes->linkCollection(),
             ]
-           
         ]);
     }
     public function viewApprovedProduction($id): JsonResponse

@@ -20,7 +20,6 @@
                         :wrapper-col="{ span: 20 }"
                         autocomplete="off"
                         @finish="onFinish"
-                        @finishFailed="onFinishFailed"
                     >
                         <a-form-item label="BR No." name="brno">
                             <a-input v-model:value="formState.brno" readonly />
@@ -230,15 +229,12 @@ const formState = useForm<FormState>({
     group: props.data.br_group,
     file: null,
 });
-// const disabledDate = (current: Dayjs) => {
-//     // Can not select days before today and today
-//     return current && current < dayjs().startOf("day");
-// };
+
 const handleChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };
-const { openNotification, onLoading } = onProgress();
-const onFinish = (values: any) => {
+const { openNotification } = onProgress();
+const onFinish = () => {
     formState
         .transform((data) => ({
             ...data,
@@ -254,10 +250,6 @@ const onFinish = (values: any) => {
                 router.get(route("treasury.dashboard"));
             },
         });
-};
-
-const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
 };
 
 const download = (file: string) => {

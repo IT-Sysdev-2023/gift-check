@@ -30,6 +30,7 @@ use App\Http\Controllers\Treasury\Dashboard\BudgetRequestController;
 use App\Http\Controllers\Treasury\Dashboard\GcProductionRequestController;
 use App\Http\Controllers\Treasury\Dashboard\SpecialGcRequestController;
 use App\Http\Controllers\Treasury\Dashboard\StoreGcController;
+use App\Http\Controllers\Treasury\DtiTransaction\DtiTransactionController;
 use App\Http\Controllers\Treasury\Transactions\GcAllocationController;
 use App\Http\Controllers\Treasury\Transactions\InstitutionGcRefundController;
 use App\Http\Controllers\Treasury\Transactions\InstitutionGcSalesController;
@@ -100,9 +101,8 @@ Route::middleware('auth')->group(function () {
     Route::get('marketing-dashboard', [MarketingController::class, 'index'])->name('marketing.dashboard')->middleware('userType:marketing,admin');
 
     Route::get('storeaccounting-dashboard', [StoreAccountingController::class, 'storeAccountingDashboard'])->name('storeaccounting.dashboard');
-});
 
-Route::middleware(['auth'])->group(function () {
+    //? View Barcode Status
     Route::prefix('admin')->group(function () {
         Route::get('view-barcode-status', [AdminController::class, 'index'])->name('view.barcode.status');
     });
@@ -116,7 +116,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('userType:admin')->prefix('admin')->group(function () {
         Route::name('admin.')->group(function () {
             Route::get('add-new-fund', [AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
-            Route::get('users_add_user', [AdminController::class, 'users_save_user'])->name('masterfile.user.saveUser');
+            Route::post('users_add_user', [AdminController::class, 'users_save_user'])->name('masterfile.user.saveUser');
             Route::post('update-password', [AdminController::class, 'updateStoreStaffPassword'])->name('masterfile.updateStoreStaffPassword');
             Route::post('update-store-setup', [AdminController::class, 'updateStoreStaffSetup'])->name('masterfile.updateStoreStaffSetup');
             Route::get('denomination-setup', [AdminController::class, 'denominationSetup'])->name('masterfile.denominationSetup');
@@ -140,6 +140,18 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('issue-receipt', [AdminController::class, 'issueReceipt'])->name('issueReceipt');
                 Route::get('save-credit-card', [AdminController::class, 'saveCreditCard'])->name('saveCreditCard');
                 Route::get('revolving-fund', [AdminController::class, 'revolving_fund'])->name('revolvingFund');
+
+                // TAG HENNAN ROUTE
+                Route::get('tag-hennan', [AdminController::class, 'tagHennan'])->name('tagHennan');
+                Route::get('update-tag-hennan', [AdminController::class, 'updateTagHennan'])->name('updateTagHennan');
+
+                // BLOCKED BARCODE ROUTE
+                Route::get('block-barcode', [AdminController::class, 'blockBarcode'])->name('blockBarcode');
+                Route::get('add-blocked-barcode', [AdminController::class, 'addBlockedBarcode'])->name('addBlockedBarcode');
+                Route::get('unblocked-barcode', [AdminController::class, 'unblockedBarcode'])->name('unblockedBarcode');
+                Route::get('blocked-barcode-again', [AdminController::class, 'blockedAgain'])->name('blockedAgain');
+
+
                 route::get('save-denomination', [AdminController::class, 'saveDenomination'])->name('saveDenomination');
                 route::post('update-denomination', [AdminController::class, 'UpdateDenomination'])->name('saveUpdateDenomination');
                 route::post('update-user', [AdminController::class, 'updateUser'])->name('updateUser');
@@ -399,6 +411,11 @@ Route::middleware(['auth'])->group(function () {
                     Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
                     Route::post('gc-sales-report-eod', [EodController::class, 'toEndOfDay'])->name('setToEod');
                 });
+
+                Route::prefix('dti')->name('dti.')->group(function () {
+                    Route::get('index', [DtiTransactionController::class, 'index'])->name('index');
+                    Route::post('submit-dti', [DtiTransactionController::class, 'submitDtiForm'])->name('submit');
+                });
             });
             Route::prefix('masterfile')->name('masterfile.')->group(function () {
                 Route::get('customer-setup', [MasterfileController::class, 'customerSetup'])->name('customersetup');
@@ -463,7 +480,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('list', [EodController::class, 'list'])->name('list');
             Route::get('eod-view-{id}', [EodController::class, 'eodView'])->name('store.view');
             Route::get('eod-txt-{id}', [EodController::class, 'eodViewDeodViewDetails'])->name('txt');
-
         });
     });
 
@@ -610,10 +626,10 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('sgc_item_setup', [RetailController::class, 'sgc_item_setup'])->name('sgc_item_setup');
             });
             Route::name('gc-transfer.')->group(function () {
-                Route::get('gc-transfer-list', [RetailController::class, 'gctransferList'])->name('list');
+                Route::get('gc-transfer-list', [RetailController::class, 'gctransferList'])->name('gc_transfer_list');
             });
             Route::name('supplier-gc-verification.')->group(function () {
-                Route::get('supplier-gc-verification', [RetailController::class,'suppliergcverification'])->name('suppliergcverification');
+                Route::get('supplier-gc-verification', [RetailController::class, 'suppliergcverification'])->name('suppliergcverification');
             });
         });
     });
@@ -679,6 +695,11 @@ Route::middleware(['auth'])->group(function () {
             Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
             Route::get('released-reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request.released');
             Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
+
+            Route::name('dti_special_gc')->group(function () {
+                Route::get('dti-pending-special-gc', [CustodianController::class, 'dti_special_gc_pending'])->name('dti_special_gc_pending');
+                Route::get('dti-special-gc-count', [CustodianController::class, 'dti_special_gc_count'])->name('dti_special_gc_count');
+            });
         });
     });
 
@@ -854,7 +875,7 @@ Route::middleware(['auth'])->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-
+                
                             Route::name('reports.')->group(function () {
                                 Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
                             });

@@ -1,5 +1,16 @@
 import type { UploadFile } from "ant-design-vue";
+import { AxiosPagination } from ".";
 
+export interface ColumnTypes {
+    title: string;
+    dataIndex?: string;
+    key?: string;
+}
+
+export interface FilterTypes {
+    search?: string;
+    date?: string[];
+}
 export interface ReportsGeneratedTypes {
     files: {
         file: string;
@@ -64,6 +75,15 @@ export interface BudgetAdjustmentForm<T> {
     adjustmentType: string | null;
 }
 
+export interface CancelledSpecialMoreDetails {
+    info: StoreGcRequest;
+    total: string;
+    denomination: AxiosPagination<{
+        denomination: number;
+        sri_items_quantity: number;
+        total: number;
+    }>;
+}
 //Models
 export interface CustodianSrrItems {
     cssitem_barcode: number;
@@ -132,5 +152,106 @@ export interface ProductionRequest {
     pe_requested_by: number;
     pe_requisition: null | string;
     pe_type: null | string;
+    user?: User;
+}
+
+export interface InstitutCustomer {
+    ins_name: string;
+    ins_custype: string | number;
+    ins_date_created: string;
+    user: User;
+    gcType: GcTypes;
+}
+
+export interface PaymentFundTypes {
+    pay_id: number;
+    pay_desc: string;
+    pay_status: string;
+    pay_dateadded: string;
+    user?: User;
+}
+
+export interface SpecialExternalCustomer {
+    spcus_id: number;
+    spcus_companyname: string;
+    spcus_acctname: string;
+    spcus_address: string;
+    spcus_cperson: string;
+    spcus_cnumber: string | number;
+    spcus_at: string;
+    user?: User;
+}
+
+export interface ApprovedBudgetRequest {
+    id: number;
+    approved_by: string;
+    approved_at: string;
+    file_doc_no: string;
+    checked_by: string;
+    budget_remark?: string;
+    user_prepared_by?: User;
+}
+
+export interface BudgetRequest {
+    br_id: number;
+    br_request: string;
+    br_requested_at: string;
+    br_requested_at_time: string;
+    br_no: string;
+    br_file_docno: string;
+    br_remarks?: string;
+    br_requested_needed?: string;
+    prepared_by?: User;
+    abr: ApprovedBudgetRequest;
+    cancelled_request?: any;
+    cancelled_by: User;
+}
+
+export interface Store {
+    store_id: number;
+    store_name: string;
+}
+
+export interface CancelledStoreGcRequest {
+    csgr_id: number;
+    csgr_gc_id: string | null;
+    csgr_by: number;
+    csgr_at: string;
+    user?: User;
+}
+export interface StoreGcRequest {
+    sgc_id: number;
+    sgc_num: string | number;
+    sgc_date_needed: string;
+    sgc_remarks: string;
+    sgc_date_request: string;
+    sgc_status: string;
+    store?: Store;
+    user?: User;
+    cancelledStoreGcRequest: CancelledStoreGcRequest;
+}
+export interface GcType {
+    gc_type_id: number;
+    gctype: string;
+    gc_status: number;
+    gc_forallocation: number;
+}
+export interface AllocationAdjustment {
+    aadj_id: number;
+    aadj_datetime: string;
+    aadj_type: string;
+    aadj_remark: string;
+    aadj_loc: number;
+    aadj_gctype: number;
+    aadj_by?: string;
+    store?: Store;
+    gcType?: GcType;
+    user?: User;
+}
+export interface InstitutEod {
+    ieod_by: number;
+    ieod_date: string;
+    ieod_id: number;
+    ieod_num: number;
     user?: User;
 }

@@ -244,7 +244,6 @@ const { highlightText } = highlighten();
                             :pagination="false"
                             size="small"
                             :columns="approvedRequestColumnsElse"
-                            v-if="record.productionRequest.pe_generate_code"
                         >
                         </a-table>
                         <a-form-item
@@ -431,7 +430,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
-import _ from "lodash";
 import axios from "axios";
 import { onLoading } from "@/Mixin/UiUtilities";
 import { notification } from "ant-design-vue";
@@ -518,7 +516,7 @@ export default {
             });
             axios
                 .get(url, { responseType: "blob" })
-                .then((response) => {
+                .then(() => {
                     location.href = url;
                 })
                 .catch((error) => {

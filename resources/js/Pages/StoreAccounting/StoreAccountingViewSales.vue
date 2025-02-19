@@ -1,38 +1,24 @@
 <template>
     <a-card>
-        <a-button @click="backToDashboard" style="font-weight: bold;"><RollbackOutlined /> Back</a-button>
-        <span
-            style="font-family: sans-serif; font-size: 1rem; margin-left: 50px"
-        >
+        <a-button @click="backToDashboard" style="font-weight: bold;">
+            <RollbackOutlined /> Back
+        </a-button>
+        <span style="font-family: sans-serif; font-size: 1rem; margin-left: 50px">
             <span style="font-weight: bold">Customer:</span>
             {{ salesCustomer }}
         </span>
 
         <div style="font-weight: bold; margin-left: 70%; margin-top: 10px">
-            <a-input-search
-                allow-clear
-                v-model:value="salesSearchBox"
-                placeholder="Input search here!"
-                enter-button
-                style="width: 90%"
-            />
+            <a-input-search allow-clear v-model:value="salesSearchBox" placeholder="Input search here!" enter-button
+                style="width: 90%" />
         </div>
 
         <div style="margin-top: 10px">
-            <a-table
-                :data-source="data.data"
-                :columns="viewSalesColumns"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :data-source="data.data" :columns="viewSalesColumns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'viewSales'">
-                        <a-button
-                            title="search"
-                            @click="viewTreasurySales(record)"
-                            class="me-2 me-sm-5"
-                            style="color: white; background-color: #1e90ff"
-                        >
+                        <a-button title="search" @click="viewTreasurySales(record)" class="me-2 me-sm-5"
+                            style="color: white; background-color: #1e90ff">
                             <SearchOutlined />
                         </a-button>
                     </template>
@@ -42,12 +28,7 @@
         </div>
     </a-card>
 
-    <a-modal
-        v-model:open="salesViewModal"
-        @ok="handleSalesView"
-        style="width: 100%"
-        :footer="false"
-    >
+    <a-modal v-model:open="salesViewModal" @ok="handleSalesView" style="width: 100%" :footer="false">
         <a-card>
             <div style="font-family: sans-serif; font-size: 1rem">
                 <span style="font-weight: bold"> Post Transaction:</span>
@@ -55,12 +36,8 @@
             </div>
 
             <div style="margin-top: 20px">
-                <a-table
-                    :data-source="POStransactionData.data"
-                    :columns="salesViewColumns"
-                    size="small"
-                    :pagination="false"
-                />
+                <a-table :data-source="POStransactionData.data" :columns="salesViewColumns" size="small"
+                    :pagination="false" />
                 <pagination :datarecords="POStransactionData" class="mt-5" />
             </div>
         </a-card>

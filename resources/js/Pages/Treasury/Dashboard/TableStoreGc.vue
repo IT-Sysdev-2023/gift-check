@@ -218,7 +218,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
-import _ from "lodash";
+import axios from "axios";
 
 export default {
     layout: AuthenticatedLayout,

@@ -11,18 +11,15 @@ use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
 use App\Models\LedgerBudget;
 use App\Models\LedgerSpgc;
-use App\Models\SpecialExternalBankPaymentInfo;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
 use App\Models\StoreGcrequest;
 use App\Models\StoreRequestItem;
-use App\Rules\DenomQty;
 use App\Services\Treasury\ColumnHelper;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -175,11 +172,11 @@ class SpecialGcRequestController extends Controller
 
                 if ($reqType == '1') {
                     $r = SpecialExternalGcrequestItem::where('specit_trid', $id)->first(['specit_denoms', 'specit_qty']);
-                    // dd($r);
+
                     $total = $r->specit_denoms * $r->specit_qty;
                 } else {
                     // $re = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)->get();
-                    // dd($re);
+
                     $q = SpecialExternalGcrequestEmpAssign::selectRaw("IFNULL(SUM(special_external_gcrequest_emp_assign.spexgcemp_denom),0.00) as totaldenom,
 					IFNULL(COUNT(special_external_gcrequest_emp_assign.spexgcemp_denom),0) as cnt")->where('spexgcemp_trid', $id)->first();
                     $total = $q->totaldenom;

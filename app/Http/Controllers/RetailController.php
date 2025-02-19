@@ -352,7 +352,6 @@ class RetailController extends Controller
 
     public function submitVerify(Request $request)
     {
-
         return $this->retail->submitVerify($request);
 
     }
@@ -869,7 +868,7 @@ class RetailController extends Controller
 
     public function gctransferList()
     {
-        $data = TransferRequest::select(
+        $transferList = TransferRequest::select(
             'transfer_request.tr_reqid',
             'transfer_request.t_reqnum',
             'transfer_request.t_reqdatereq',
@@ -882,14 +881,18 @@ class RetailController extends Controller
             ->where('transfer_request.t_reqstoreby', '=', '1')
             ->orderBy('transfer_request.tr_reqid', 'desc')
             ->get();
-        dd($data->toArray());
 
+
+        return inertia('Retail/GcTransfer', [
+            'data' => $transferList
+        ]);
     }
 
     public function suppliergcverification()
     {
         return inertia('Retail/SupplierGcVerification');
     }
+
 
 
 }

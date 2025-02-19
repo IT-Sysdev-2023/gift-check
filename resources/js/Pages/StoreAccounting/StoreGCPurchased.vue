@@ -13,36 +13,21 @@
                         <a-form-item>
                             <div>Data Type:</div>
 
-                            <a-select
-                                style="width: 30%"
-                                placeholder="Select"
-                                v-model:value="billMonthly.StoreDataType"
-                            >
-                                <a-select-option value=""
-                                    >---Select---</a-select-option
-                                >
-                                <a-select-option value="store-sales"
-                                    >Store Sales</a-select-option
-                                >
+                            <a-select style="width: 30%" placeholder="Select" v-model:value="billMonthly.StoreDataType">
+                                <a-select-option value="">---Select---</a-select-option>
+                                <a-select-option value="store-sales">Store Sales</a-select-option>
                             </a-select>
                         </a-form-item>
 
                         <a-form-item>
                             <div>Store:</div>
-                            <a-select
-                                v-model:value="billMonthly.selectedStore"
-                                style="width: 30%"
-                                placeholder="Select Store"
-                                :options="stores"
-                            />
+                            <a-select v-model:value="billMonthly.selectedStore" style="width: 30%"
+                                placeholder="Select Store" :options="stores" />
                         </a-form-item>
 
                         <a-form-item>
                             <div>Month & Year:</div>
-                            <a-date-picker
-                                v-model:value="billMonthly.month"
-                                picker="month"
-                            />
+                            <a-date-picker v-model:value="billMonthly.month" picker="month" />
                         </a-form-item>
 
                         <!-- <a-form-item
@@ -60,10 +45,7 @@
                         </a-form-item> -->
                     </div>
                     <div>
-                        <a-button
-                            @click="monthlySubmitButton"
-                            style="background-color: #1e90ff; color: white"
-                        >
+                        <a-button @click="monthlySubmitButton" style="background-color: #1e90ff; color: white">
                             <SendOutlined /> Submit
                         </a-button>
                     </div>
@@ -79,50 +61,29 @@
                 </template>
                 <a-card>
                     <div style="margin-top: 20px">
-                        <a-form-item
-                        >
+                        <a-form-item>
                             <div>Data Type:</div>
 
-                            <a-select
-                                style="width: 30%"
-                                placeholder="Select"
-                                v-model:value="billYearly.StoreDataType"
-                            >
-                                <a-select-option value=""
-                                    >---Select---</a-select-option
-                                >
-                                <a-select-option value="store-sales"
-                                    >Store Sales</a-select-option
-                                >
+                            <a-select style="width: 30%" placeholder="Select" v-model:value="billYearly.StoreDataType">
+                                <a-select-option value="">---Select---</a-select-option>
+                                <a-select-option value="store-sales">Store Sales</a-select-option>
                             </a-select>
                         </a-form-item>
 
-                        <a-form-item
-                        >
+                        <a-form-item>
                             <div>Store:</div>
-                            <a-select
-                                v-model:value="billYearly.selectedStore"
-                                style="width: 30%"
-                                placeholder="Select Store"
-                                :options="stores"
-                            />
+                            <a-select v-model:value="billYearly.selectedStore" style="width: 30%"
+                                placeholder="Select Store" :options="stores" />
                         </a-form-item>
 
-                        <a-form-item
-                        >
+                        <a-form-item>
                             <div>Year:</div>
-                            <a-date-picker
-                                v-model:value="billYearly.year"
-                                picker="year"
-                                :disabled-date="disabledDate"
-                            />
+                            <a-date-picker v-model:value="billYearly.year" picker="year"
+                                :disabled-date="disabledDate" />
                         </a-form-item>
                     </div>
                     <div>
-                        <a-button
-                            @click="yearlySubmitButton"
-                            style="background-color: #1e90ff; color: white"
-                        >
+                        <a-button @click="yearlySubmitButton" style="background-color: #1e90ff; color: white">
                             <SendOutlined /> Submit
                         </a-button>
                     </div>

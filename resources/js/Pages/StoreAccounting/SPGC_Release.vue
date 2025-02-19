@@ -40,13 +40,8 @@
                             />
                         </div> -->
                         <span style="font-weight: bold; margin-left: 60%">
-                            <a-input-search
-                                allow-clear
-                                v-model:value="pdfPerCustomerSearch"
-                                enter-button
-                                placeholder="Input search here!"
-                                style="width: 35%"
-                            />
+                            <a-input-search allow-clear v-model:value="pdfPerCustomerSearch" enter-button
+                                placeholder="Input search here!" style="width: 35%" />
                         </span>
                         <div style="margin-top: 10px; margin-left: 30px">
                             <span style="color: red; font-style: oblique">
@@ -63,24 +58,14 @@
                             </span>
                         </div>
                         <div style="margin-top: 20px">
-                            <a-table
-                                :columns="pdfPerCustomer"
-                                :data-source="data.pdfPerCustomer.data"
-                                :pagination="false"
-                                size="small"
-                            >
+                            <a-table :columns="pdfPerCustomer" :data-source="data.pdfPerCustomer.data"
+                                :pagination="false" size="small">
                             </a-table>
-                            <pagination
-                                :datarecords="data.pdfPerCustomer"
-                                class="mt-5"
-                            />
+                            <pagination :datarecords="data.pdfPerCustomer" class="mt-5" />
                         </div>
                     </a-card>
                     <span style="font-weight: bold; margin-left: 80%">
-                        <a-button
-                            @click="perCustumerPdf"
-                            style="background-color: #b22222; color: white"
-                        >
+                        <a-button @click="perCustumerPdf" style="background-color: #b22222; color: white">
                             <FilePdfOutlined />
                             Generate PDF
                         </a-button>
@@ -122,13 +107,8 @@
                             />
                         </div> -->
                         <span style="font-weight: bold; margin-left: 60%">
-                            <a-input-search
-                                allow-clear
-                                v-model:value="pdfPerBarcodeSearch"
-                                enter-button
-                                placeholder="Input search here!"
-                                style="width: 35%"
-                            />
+                            <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch" enter-button
+                                placeholder="Input search here!" style="width: 35%" />
                         </span>
                         <div style="margin-top: 10px; margin-left: 30px">
                             <span style="color: red; font-style: oblique">
@@ -144,24 +124,14 @@
                             </span>
                         </div>
                         <div style="margin-top: 20px">
-                            <a-table
-                                :columns="pdfPerBarcode"
-                                :data-source="data.pdfPerBarcode.data"
-                                :pagination="false"
-                                size="small"
-                            >
+                            <a-table :columns="pdfPerBarcode" :data-source="data.pdfPerBarcode.data" :pagination="false"
+                                size="small">
                             </a-table>
-                            <pagination
-                                :datarecords="data.pdfPerBarcode"
-                                class="mt-5"
-                            />
+                            <pagination :datarecords="data.pdfPerBarcode" class="mt-5" />
                         </div>
                     </a-card>
                     <span style="font-weight: bold; margin-left: 80%">
-                        <a-button
-                            @click="perCustumerPdf"
-                            style="background-color: #b22222; color: white"
-                        >
+                        <a-button @click="perCustumerPdf" style="background-color: #b22222; color: white">
                             <FilePdfOutlined />
                             Generate PDF
                         </a-button>
@@ -202,13 +172,8 @@
                             />
                         </div> -->
                         <span style="font-weight: bold; margin-left: 60%">
-                            <a-input-search
-                                allow-clear
-                                v-model:value="spgcApprovedSearch"
-                                placeholder="Input search here!"
-                                enter-button
-                                style="width: 35%"
-                            />
+                            <a-input-search allow-clear v-model:value="spgcApprovedSearch"
+                                placeholder="Input search here!" enter-button style="width: 35%" />
                         </span>
                         <div style="margin-top: 10px; margin-left: 30px">
                             <span style="color: red; font-style: oblique">
@@ -224,24 +189,14 @@
                             </span>
                         </div>
                         <div style="margin-top: 20px">
-                            <a-table
-                                :columns="perCustomerReleaseTable"
-                                :data-source="data.dataCustomer.data"
-                                :pagination="false"
-                                size="small"
-                            >
+                            <a-table :columns="perCustomerReleaseTable" :data-source="data.dataCustomer.data"
+                                :pagination="false" size="small">
                             </a-table>
-                            <pagination
-                                :datarecords="data.dataCustomer"
-                                class="mt-5"
-                            />
+                            <pagination :datarecords="data.dataCustomer" class="mt-5" />
                         </div>
                     </a-card>
                     <span style="font-weight: bold; margin-left: 80%">
-                        <a-button
-                            @click="perCustomerExcel"
-                            style="background-color: green; color: white"
-                        >
+                        <a-button @click="perCustomerExcel" style="background-color: green; color: white">
                             <FileExcelOutlined />
                             Generate EXCEL
                         </a-button>
@@ -284,13 +239,8 @@
                         </div> -->
 
                         <span style="font-weight: bold; margin-left: 60%">
-                            <a-input-search
-                                allow-clear
-                                v-model:value="spgcApprovedSearchPerBarcode"
-                                enter-button
-                                placeholder="Input search here!"
-                                style="width: 35%"
-                            />
+                            <a-input-search allow-clear v-model:value="spgcApprovedSearchPerBarcode" enter-button
+                                placeholder="Input search here!" style="width: 35%" />
                         </span>
                         <div style="margin-top: 10px; margin-left: 30px">
                             <span style="color: red; font-style: oblique">
@@ -306,24 +256,14 @@
                             </span>
                         </div>
                         <div style="margin-top: 20px">
-                            <a-table
-                                :columns="perBarcodeReleaseTable"
-                                :data-source="data.dataBarcode.data"
-                                :pagination="false"
-                                size="small"
-                            >
+                            <a-table :columns="perBarcodeReleaseTable" :data-source="data.dataBarcode.data"
+                                :pagination="false" size="small">
                             </a-table>
-                            <pagination
-                                :datarecords="data.dataBarcode"
-                                class="mt-5"
-                            />
+                            <pagination :datarecords="data.dataBarcode" class="mt-5" />
                         </div>
                     </a-card>
                     <span style="font-weight: bold; margin-left: 80%">
-                        <a-button
-                            @click="perCustomerExcel"
-                            style="background-color: green; color: white"
-                        >
+                        <a-button @click="perCustomerExcel" style="background-color: green; color: white">
                             <FileExcelOutlined />
                             Generate EXCEL
                         </a-button>
@@ -332,14 +272,12 @@
             </a-tabs>
         </a-card>
 
-        <a-card
-            style="
+        <a-card style="
                 width: 15%;
                 position: absolute;
                 top: 48px;
                 border: 1px solid #dcdcdc;
-            "
-        >
+            ">
             <div style="font-weight: bold; font-size: small">
                 <span>
                     <ExportOutlined />
@@ -348,42 +286,26 @@
             </div>
             <div style="font-weight: bold; margin-top: 30px">Start Date:</div>
             <div>
-                <a-form-item
-                    :validate-status="spgcData.errors.startDate ? 'error' : ''"
-                    :help="spgcData.errors.startDate"
-                >
-                    <a-date-picker
-                        allow-clear
-                        v-model:value="spgcData.startDate"
-                        style="width: 100%"
-                    >
+                <a-form-item :validate-status="spgcData.errors.startDate ? 'error' : ''"
+                    :help="spgcData.errors.startDate">
+                    <a-date-picker allow-clear v-model:value="spgcData.startDate" style="width: 100%">
                     </a-date-picker>
                 </a-form-item>
             </div>
             <div style="font-weight: bold">End Date:</div>
             <div>
-                <a-form-item
-                    :validate-status="spgcData.errors.endDate ? 'error' : ''"
-                    :help="spgcData.errors.endDate"
-                >
-                    <a-date-picker
-                        allow-clear
-                        v-model:value="spgcData.endDate"
-                        style="width: 100%"
-                    >
+                <a-form-item :validate-status="spgcData.errors.endDate ? 'error' : ''" :help="spgcData.errors.endDate">
+                    <a-date-picker allow-clear v-model:value="spgcData.endDate" style="width: 100%">
                     </a-date-picker>
                 </a-form-item>
             </div>
             <div style="margin-top: 15px">
-                <a-button
-                    style="
+                <a-button style="
                         background-color: #1e90ff;
                         color: white;
                         width: 100%;
                         font-size: 1em;
-                    "
-                    @click="submitReleaseButton"
-                >
+                    " @click="submitReleaseButton">
                     <SendOutlined /> Submit
                 </a-button>
             </div>
@@ -834,6 +756,7 @@ export default {
 .input-wrapper input:focus {
     outline-color: whitesmoke;
 }
+
 /* From Uiverse.io by Vazafirst */
 #page {
     display: flex;
@@ -919,5 +842,6 @@ export default {
         transform: rotateX(70deg) rotateZ(630deg);
     }
 }
+
 /* Improving visualization in light mode */
 </style>

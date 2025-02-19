@@ -1,76 +1,46 @@
 <template>
     <a-card>
         <span>
-            <a-button @click="backToDashboard" style="font-weight: bold"
-                ><RollbackOutlined /> Back</a-button
-            >
+            <a-button @click="backToDashboard" style="font-weight: bold">
+                <RollbackOutlined /> Back
+            </a-button>
         </span>
-        <span
-            style="font-family: sans-serif; font-size: 1rem; margin-left: 50px"
-        >
+        <span style="font-family: sans-serif; font-size: 1rem; margin-left: 50px">
             <span style="font-weight: bold">EOD Date:</span>
             {{ selectedEODDate }}
         </span>
 
         <div style="font-weight: bold; margin-left: 70%; margin-top: 10px">
-            <a-input-search
-                allow-clear
-                v-model:value="searchTerm"
-                placeholder="Input search here!"
-                enter-button
-                style="width: 90%"
-            />
+            <a-input-search allow-clear v-model:value="searchTerm" placeholder="Input search here!" enter-button
+                style="width: 90%" />
         </div>
 
         <div style="margin-top: 10px">
-            <a-table
-                :data-source="data.data"
-                :columns="searchColumns"
-                :pagination="false"
-                size="small"
-            >
+            <a-table :data-source="data.data" :columns="searchColumns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'search'">
-                        <a-button
-                            title="search"
-                            @click="searchEODView(record)"
-                            style="color: white; background-color: #1e90ff"
-                            class="me-2 me-sm-5"
-                        >
+                        <a-button title="search" @click="searchEODView(record)"
+                            style="color: white; background-color: #1e90ff" class="me-2 me-sm-5">
                             <SearchOutlined />
                         </a-button>
                     </template>
                 </template>
             </a-table>
-            <pagination
-                :datarecords="data"
-                :id="selectedEODDate"
-                class="mt-5"
-            />
+            <pagination :datarecords="data" :id="selectedEODDate" class="mt-5" />
         </div>
     </a-card>
 
-    <a-modal
-        v-model:open="modalForGCNavisionPOSTransactions"
-        style="width: 100%"
-        @ok="modalBackButton"
-        :footer="false"
-    >
+    <a-modal v-model:open="modalForGCNavisionPOSTransactions" style="width: 100%" @ok="modalBackButton" :footer="false">
         <a-card>
             <div style="font-family: sans-serif; font-size: 1rem">
                 <span style="font-weight: bold">
-                    GC Navision POS Transactions - Barcode #</span
-                >
+                    GC Navision POS Transactions - Barcode #</span>
                 {{ selectedBarcode }}
             </div>
 
             <div style="margin-top: 20px">
-                <a-table
-                    size="small"
-                    :data-source="modalData.data"
-                    :columns="GCNavisionPOSTransactions"
-                    :pagination="false"
-                />
+                <a-table size="small" :data-source="modalData.data" :columns="GCNavisionPOSTransactions"
+                    :pagination="false" />
                 <pagination :datarecords="modalData" class="mt-5" />
             </div>
         </a-card>
