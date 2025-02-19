@@ -874,10 +874,14 @@ Route::middleware('auth')->group(function () {
                             Route::get('check-variance', [StoreAccountingController::class, 'CheckVariance'])->name('CheckVariance');
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
-                            // about us
-                
+                            // billing reports
+                            Route::get('Billing-reports', [AccountingController::class, 'billing_reports'])->name('billing_reports');
+                            Route::post('billing-report-per-day', [ReportController::class, 'billingReportPerDay'])->name('billingReportPerDay');
+
+                                // generated reports
                             Route::name('reports.')->group(function () {
                                 Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
+                                Route::post('billing-generated-report-per-day', [ReportController::class, 'generateBillingPerDayReport'])->name('generateBillingPerDayReport');
                             });
                         }
                     );

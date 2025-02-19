@@ -114,12 +114,12 @@ class talibonExcel implements FromCollection, WithHeadings, WithStyles, WithTitl
             'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
             'store_verification.vs_date as verdate',
             'store_verification.vs_time as vertime',
-            DB::raw("(CASE 
+            DB::raw("(CASE
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END) as store")
         )
             ->whereIn('store_verification.vs_barcode', $this->barcodeData)
