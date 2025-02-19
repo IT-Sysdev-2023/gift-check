@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\File;
 
 class CustodianController extends Controller
 {
-    public function __construct(public CustodianServices $custodianservices, public DashboardClass $dashboardClass) {}
+    public function __construct(public CustodianServices $custodianservices, public DashboardClass $dashboardClass)
+    {
+    }
     public function index()
     {
         return inertia('Custodian/CustodianDashboard', [
@@ -68,7 +70,7 @@ class CustodianController extends Controller
     public function submitSpecialExternalGc(Request $request)
     {
         // dd($request->all());
-        return  $this->custodianservices->submitSpecialExternalGc($request);
+        return $this->custodianservices->submitSpecialExternalGc($request);
     }
     public function approvedGcRequest(Request $request)
     {
@@ -102,17 +104,17 @@ class CustodianController extends Controller
 
         if ($request->status == '1') {
             // dd();
-            $exist =  SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->where('spexgcemp_barcode', $request->barcode);
+            $exist = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->where('spexgcemp_barcode', $request->barcode);
         } else {
 
-            $exist =  SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)
+            $exist = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)
                 ->whereIn('spexgcemp_barcode', [$request->barcodeStart, $request->barcodeEnd]);
         }
 
         if ($exist->count() == 2 || $exist->exists()) {
 
             return inertia('Custodian/Result/GiftCheckGenerateResult', [
-                'record' =>  $this->custodianservices->getSpecialExternalGcRequest($request),
+                'record' => $this->custodianservices->getSpecialExternalGcRequest($request),
             ]);
         } else {
 
@@ -155,44 +157,61 @@ class CustodianController extends Controller
     {
         return $this->custodianservices->getBarcodeApprovedDetails($request, $id);
     }
-    public function getEveryBarcode(Request $request, $id){
-        return $this->custodianservices->getEveryBarcodeDetails($request,$id);
+    public function getEveryBarcode(Request $request, $id)
+    {
+        return $this->custodianservices->getEveryBarcodeDetails($request, $id);
     }
-    public function getRequisitionDetails($id){
+    public function getRequisitionDetails($id)
+    {
         return $this->custodianservices->getRequisitionDetailsData($id);
     }
 
-    public function productionCancelled(Request $request){
-        return  inertia('Custodian/Cancelled/ProductionCancelled', [
-            'records' =>  $this->custodianservices->getCancelledViewing($request),
+    public function productionCancelled(Request $request)
+    {
+        return inertia('Custodian/Cancelled/ProductionCancelled', [
+            'records' => $this->custodianservices->getCancelledViewing($request),
             'columns' => ColumnHelper::$cancelled_production_columns
         ]);
     }
-    public function productionCancelledDetails($id){
+    public function productionCancelledDetails($id)
+    {
         return $this->custodianservices->getProductionCancelledDetails($id);
     }
-    public function getAvailableGcAllocation(){
+    public function getAvailableGcAllocation()
+    {
         return $this->custodianservices->getAvailableGcRecords();
     }
-    public function getAvailableGc(){
+    public function getAvailableGc()
+    {
         return $this->custodianservices->getAvailableGcRecords();
     }
-    public function gcTracking(){
+    public function gcTracking()
+    {
         return inertia('Custodian/GcTracking');
     }
-    public function gcTrackingSubmition(Request $request){
+    public function gcTrackingSubmition(Request $request)
+    {
         return $this->custodianservices->gcTrackingSubmission($request);
     }
 
-    public function releasedIndex(Request $request){
+    public function releasedIndex(Request $request)
+    {
         return inertia('Custodian/Released', [
             'records' => $this->custodianservices->fetchReleased($request)
         ]);
     }
-    public function releasedDetails($id){
+    public function releasedDetails($id)
+    {
         return inertia('Custodian/ReleasedDetailComponent', [
             'records' => $this->custodianservices->fetchReleasedDetails($id),
             'id' => $id
         ]);
+    }
+
+    public function dti_special_gc_pending()
+    {
+
+        
+        return inertia('Custodian/DTI/PendingSpecialGc');
     }
 }

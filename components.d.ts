@@ -334,6 +334,7 @@ declare module 'vue' {
     PendingRequest: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/PendingRequest.vue')['default']
     PendingRequestDetail: typeof import('./resources/js/Pages/Retail/GcRequest/PendingRequestDetail.vue')['default']
     PendingRequestTreasury: typeof import('./resources/js/Pages/Treasury/Dashboard/PendingRequestTreasury.vue')['default']
+    PendingSpecialGc: typeof import('./resources/js/Pages/Custodian/DTI/PendingSpecialGc.vue')['default']
     PicLeftOutlined: typeof import('@ant-design/icons-vue')['PicLeftOutlined']
     PicRightOutlined: typeof import('@ant-design/icons-vue')['PicRightOutlined']
     PictureOutlined: typeof import('@ant-design/icons-vue')['PictureOutlined']
