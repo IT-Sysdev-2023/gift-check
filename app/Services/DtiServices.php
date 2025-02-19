@@ -16,16 +16,19 @@ class DtiServices extends FileHandler
 {
     public function __construct()
     {
-        //
+        parent::__construct();
+        $this->folderName = 'dtiExternalDocsRequest';
     }
     public function submissionForDti($request)
     {
         return DB::transaction(function () use ($request) {
+
             $latestId = self::getLatestId($request);
 
             $listofdenom = self::getDenomination($request, $latestId);
 
             $this->saveMultiFiles($request, $latestId, function ($id, $path) use ($request) {
+
                 DtiDocument::create([
                     'dti_trid' => $id,
                     'dti_type' => 'Special External GC Request Dti',
@@ -40,7 +43,8 @@ class DtiServices extends FileHandler
     private function dataForPdf(Request $request, $listOfDenom)
     {
         $gcMode = 'Special External Request Report Dti';
-        $company = SpecialExternalCustomer::select('spcus_companyname', 'spcus_acctname')->find($request->companyId);
+        $company = SpecialExternalCustomer::select('spcus_companyname', 'spcus_acctname')->find($request->customer);
+
 
         $amount = $listOfDenom->map(function ($item) {
             return $item['denomination'] * $item['qty'];
@@ -75,11 +79,11 @@ class DtiServices extends FileHandler
             'dti_num' => $request->trans,
             'dti_reqby' => $request->user()->user_id,
             'dti_datereq' => now(),
-            'dti_dateneed' => $request->dateNeeded,
+            'dti_dateneed' => $request->date,
             'dti_remarks' => $request->remarks,
             'dti_company' => $request->customer,
             'dti_payment' => $request->amount,
-            'dti_paymentype' => "Ar",
+            'dti_paymenttype' => "Ar",
             'dti_status' => 'pending',
             'dti_type' => 2,
             'dti_payment_stat' => 'paid',
@@ -87,6 +91,8 @@ class DtiServices extends FileHandler
             'dti_promo' => 'external',
             'dti_payment_arno' => $request->arNo
         ]);
+
+
         return $storing->dti_num;
     }
     private function getDenomination($request, $lid){

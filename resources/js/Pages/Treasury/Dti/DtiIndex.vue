@@ -12,7 +12,7 @@
                             <strong class="ml-2">Select Date:</strong>
                             <a-date-picker @change="handleChangeDatePicker" class="mb-2" style="width: 100%;" />
                             <strong class="ml-2">Ar No:</strong>
-                            <a-input placeholder="Enter Ar Number" class="mb-2" />
+                            <a-input v-model:value="formState.arNo" placeholder="Enter Ar Number" class="mb-2" />
                         </a-col>
                         <a-col :span="12">
                             <strong class="ml-2">Lookup Customer:</strong>
@@ -61,6 +61,7 @@ interface UseFormType {
     customer: string,
     amount: number,
     remarks: string,
+    arNo: number,
     file: UploadProps["fileList"];
 }
 
@@ -80,6 +81,7 @@ const formState = useForm<UseFormType>({
     customer: '',
     amount: 0,
     remarks: '',
+    arNo: 0,
     file: [],
 });
 

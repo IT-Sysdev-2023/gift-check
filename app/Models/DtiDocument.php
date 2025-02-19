@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class DtiDocument extends Model
 {
     //
+    protected $guarded = [];
 }

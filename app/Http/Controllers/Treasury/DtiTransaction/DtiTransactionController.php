@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Treasury\DtiTransaction;
 
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
+use App\Models\DtiGcRequest;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Services\DtiServices;
@@ -17,7 +18,14 @@ class DtiTransactionController extends Controller
     public function index()
     {
 
-        $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
+        $spgcEx = SpecialExternalGcrequest::max('spexgc_num');
+        $spgcExDti = DtiGcRequest::max('dti_num');
+
+        if($spgcEx > $spgcExDti){
+            $transactionNumber = $spgcEx;
+        }else{
+            $transactionNumber = $spgcExDti;
+        }
 
         return inertia('Treasury/Dti/DtiIndex', [
             'options' => self::options(),
@@ -37,6 +45,7 @@ class DtiTransactionController extends Controller
 
     public function submitDtiForm(Request $request)
     {
+        // dd($request->all());
         $dtiStore = $this->dtiServices->submissionForDti($request);
 
         $pdf = Pdf::loadView('pdf.dtirequest', ['data' => $dtiStore]);

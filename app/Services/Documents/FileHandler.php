@@ -67,6 +67,7 @@ class FileHandler
     protected function saveMultiFiles(Request $request, $id, callable $callback)
     {
 
+
         if ($request->hasFile('file')) {
             foreach ($request->file as $image) {
                 $name = $this->getOriginalFileName($request, $image);
@@ -100,7 +101,7 @@ class FileHandler
         if($includeSubdirectory){
             return collect($this->disk->allFiles($path));
         }
-        
+
         return collect($this->disk->files($path));
     }
     public function download(string $file, ?string $subfolder = null)
