@@ -1,27 +1,47 @@
 <template>
     <a-row class="mb-4" :gutter="[16, 16]">
         <a-col :span="8">
-            <budget-statistics :title="'Current Budget'" :count="count.budgetCounts.curBudget"/>
+            <budget-statistics :title="'Current Budget'" :count="count.budgetCounts.curBudget" />
         </a-col>
         <a-col :span="8">
-            <budget-statistics :title="'Special Gc (Promotional)'" :count="count.budgetCounts.spgc"/>
+            <budget-statistics :title="'Special Gc (Promotional)'" :count="count.budgetCounts.spgc" />
         </a-col>
         <a-col :span="8">
-            <budget-statistics :title="'DTI GC'" :count="count.budgetCounts.dti"/>
+            <budget-statistics :title="'DTI GC'" :count="count.budgetCounts.dti" />
         </a-col>
     </a-row>
     <a-row :gutter="[16, 16]">
         <a-col :span="8">
-             <PromoGcViewCard :count="count"></PromoGCViewCard>
+            <m-card class="uppercase" title="Promo gc request" :pending="count?.penPomoCount"
+                :approved="count.appPromoCount" pRoute="finance.pen.promo.request" aRoute="finance.app.promo.request" />
+            <!-- <PromoGcViewCard :count="count"></PromoGCViewCard> -->
         </a-col>
         <a-col :span="8">
-            <special-pending-request-finance :count="count.specialGcRequest" :pendingExGcRequest :columns
-                :pendingInGcRequest :currentbudget />
-            <!-- <PromoGCCard/> -->
+            <f-card class="uppercase" title="special gc request" pendingLabel="Internal Pending"
+                :pending="count.specialGcRequest.internal" pRoute="finance.pendingGc.pending"
+                aRoute="finance.approvedGc.approved" :approved="count.specialGcRequest.approve">
+                <a-badge :count="count.specialGcRequest.external" class="mb-2">
+                    <a-button class="mb-2" style="width: 340px" :overflow-count="Infinity" type="primary"
+                        :disabled="count.specialGcRequest.external == 0"
+                        @click="() => $inertia.get(route('finance.pendingGc.pending'), { type: 'external' })" danger>
+                        External Pending
+                    </a-button>
+                </a-badge>
+                <a-badge :count="count.specialGcRequest.internal" class="mb-2">
+                    <a-button class="mb-2" style="width: 340px" :overflow-count="Infinity" type="primary"
+                        :disabled="count.specialGcRequest.internal == 0"
+                        @click="() => $inertia.get(route('finance.pendingGc.pending'), { type: 'internal' })" danger>
+                        Internal Pending
+                    </a-button>
+                </a-badge>
+            </f-card>
         </a-col>
         <a-col :span="8">
             <!-- <PromoGCCard/> -->
-            <budget-request-approval :count="count" />
+            <m-card title="budget request" class="uppercase" :pending="count.budgetRequest.pending"
+                :approved="count.budgetRequest.approved" pRoute="finance.budget.pending"
+                aRoute="finance.budget.approved" />
+
         </a-col>
         <a-col :span="8">
             <!-- <PromoGCCard/> -->

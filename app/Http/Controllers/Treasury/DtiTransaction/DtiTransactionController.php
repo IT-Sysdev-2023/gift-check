@@ -9,11 +9,13 @@ use App\Models\DtiGcRequest;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Services\DtiServices;
+use App\Traits\DtiGcTraits;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class DtiTransactionController extends Controller
 {
+    use DtiGcTraits;
     //
     public function __construct(public DtiServices $dtiServices) {}
     public function index()
@@ -58,5 +60,12 @@ class DtiTransactionController extends Controller
         $stream = base64_encode($pdf->output());
 
         return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
+    }
+
+    public function dtiPendingRequest() {
+
+        return inertia('Treasury/Dti/DtiPendingRequest', [
+            'records' => $this->getDtiPendingGcRequest(),
+        ]);
     }
 }
