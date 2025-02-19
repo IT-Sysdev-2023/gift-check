@@ -1,19 +1,21 @@
 <?php
 
 namespace App\Services\StoreAccounting;
-use App\Jobs\StoreAccounting\SpgcRedeemReport;
-use App\Jobs\StoreAccounting\StoreGcPurchasedReport;
-use App\Jobs\StoreAccounting\VerifiedGcReport;
+use Carbon\Carbon;
 use App\Models\Store;
+use Illuminate\Http\Request;
 use App\Models\StoreLocalServer;
 use App\Models\StoreVerification;
-use App\Services\Documents\ExportHandler;
+use App\DatabaseConnectionService;
 use Illuminate\Support\Facades\Date;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Services\Documents\ImportHandler;
-use Illuminate\Http\Request;
 use Illuminate\Database\Query\Builder;
-
+use App\Services\Documents\ExportHandler;
+use App\Services\Documents\ImportHandler;
+use App\Jobs\StoreAccounting\SpgcRedeemReport;
+use App\Jobs\StoreAccounting\VerifiedGcReport;
+use App\Jobs\StoreAccounting\StoreGcPurchasedReport;
+use App\Services\Treasury\Reports\ReportHelper;
 
 class ReportService
 {
@@ -129,4 +131,62 @@ class ReportService
             'files' => $getFiles
         ]);
     }
+
+    public function billingReportPerDay(Request $request)
+    {
+        $validated = $request->validate([
+            'dataType' => 'required|string',
+            'storeSelected' => 'required',
+            'dateSelected' => 'required|date'
+        ]);
+
+        $dataType = $validated['dataType'];
+        $store = $validated['storeSelected'];
+        $date = $validated['dateSelected'];
+
+        if ($dataType === 'store-sales') {
+
+            $isExists = Store::where([['has_local', 1], ['store_id', $store]])->exists();
+
+            if ($isExists) { //Remote server
+
+                $records = ReportsHelper::checkBillingReportPerDayRemote($store, $date, self::REMOTE_SERVER_DB);
+
+                if (!$records->isEmpty()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Records found on this date selected from remote server',
+                        'data' => $records
+                    ]);
+                }
+                return response()->json([
+                    'error' => true,
+                    'message' => 'No records found on this date selected from remote server'
+                ]);
+            }
+            // proceed to local server $isExists is false
+            else {
+                $records = ReportsHelper::checkBillingReportPerDayLocal($store, $date, self::LOCAL_DB);
+                if (!$records->isEmpty()) {
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Records found on this date selected from local server',
+                        'data' => $records
+                    ]);
+                }
+                return response()->json([
+                    'error' => true,
+                    'message' => 'No records found on this date selected from local server'
+                ]);
+            }
+        }
+        return response()->json([
+            'error' => true,
+            'message' => 'No records found on both server'
+        ]);
+    }
 }
+
+
+

@@ -67,4 +67,70 @@ class ReportsHelper
             ->orderBy('vs_id')
             ->exists();
     }
+
+    public static function checkBillingReportPerDayRemote($store, $date, $isLocal)
+    {
+        $server = DatabaseConnectionService::getLocalConnection($isLocal, $store);
+
+        return $server->table('store_eod_textfile_transactions')
+            ->join('store_verification', 'store_verification.vs_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
+            ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->join('users', 'users.user_id', '=', 'store_verification.vs_by')
+            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->whereDate('vs_date', $date)
+            ->where('vs_store', $store)
+            ->select(
+                'store_eod_textfile_transactions.*',
+                'store_name',
+                'store_verification.*',
+                'customers.cus_fname',
+                'customers.cus_lname',
+                'customers.cus_mname',
+                'customers.cus_fname as vs_fullname',
+                DB::raw('CONCAT(customers.cus_fname, " ", customers.cus_lname, " ",customers.cus_mname) as vs_fullname'),
+                DB::raw('DATE_FORMAT(CONCAT(vs_date, " ", vs_time), "%Y-%m-%d %H:%i:%s" )as full_date'),
+                DB::raw('CASE WHEN vs_gctype = 1 THEN "Regular"
+                WHEN vs_gctype = 3 THEN "Special External"
+                WHEN vs_gctype = 4 THEN "Promotional GC"
+                WHEN vs_gctype = 6 THEN "Beam & Go"
+                ELSE vs_gctype END as vs_gctype'),
+                DB::raw('"Verified" as valid_type'),
+                DB::raw('CONCAT(users.firstname, " ", users.lastname) as staff_name')
+
+            )
+            ->get();
+    }
+
+    public static function checkBillingReportPerDayLocal($store, $date, $isLocal)
+    {
+        $server = DatabaseConnectionService::getLocalConnection($isLocal, $store);
+        return $server->table('store_eod_textfile_transactions')
+            ->join('transaction_sales', 'transaction_sales.sales_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')
+            ->join('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_sales.sales_transaction_id')
+            ->join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
+            ->join('store_verification', 'store_verification.vs_barcode', '=', 'transaction_sales.sales_barcode')
+            ->join('users', 'users.user_id', '=', 'store_verification.vs_by')
+            ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->whereDate('vs_date', $date)
+            ->where('trans_store', $store)
+            ->whereRaw('stores.store_initial <> SUBSTRING(store_eod_textfile_transactions.seodtt_bu, 1, 5)')
+            ->select(
+                'store_eod_textfile_transactions.*',
+                'store_name',
+                'store_verification.*',
+                'customers.cus_fname',
+                'customers.cus_lname',
+                'customers.cus_mname',
+                DB::raw('CONCAT(customers.cus_fname, " ", customers.cus_lname, " ", customers.cus_mname) as vs_fullname'),
+                DB::raw('DATE_FORMAT(CONCAT(vs_date, " ", vs_time), "%Y-%m-%d %H:%i:%s" )as full_date'),
+                DB::raw('CASE WHEN vs_gctype = 1 THEN "Regular"
+                WHEN vs_gctype = 3 THEN "Special External"
+                WHEN vs_gctype = 4 THEN "Promotional GC"
+                WHEN vs_gctype = 6 THEN "Beam & Go"
+                ELSE vs_gctype END as vs_gctype'),
+                DB::raw('"Verified" as valid_type'),
+                DB::raw('CONCAT(users.firstname, " ", users.lastname) as staff_name')
+            )
+            ->get();
+    }
 }

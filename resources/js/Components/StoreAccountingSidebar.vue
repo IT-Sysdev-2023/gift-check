@@ -3,12 +3,11 @@
         <DashboardOutlined />
         <span>
             <Link :href="route('storeaccounting.dashboard')">
-                {{
-                    page.auth.user.usertype == "13"
-                        ? "Dashboard"
-                        : "Store Accounting Dashboard"
-                }}</Link
-            >
+            {{
+                page.auth.user.usertype == "13"
+                    ? "Dashboard"
+                    : "Store Accounting Dashboard"
+            }}</Link>
         </span>
     </a-menu-item>
     <a-sub-menu key="sales">
@@ -19,20 +18,12 @@
             </span>
         </template>
 
-        <a-menu-item
-            @click="() => router.get(route('storeaccounting.sales'))"
-            key="treasurySales"
-            class="menu-item"
-        >
+        <a-menu-item @click="() => router.get(route('storeaccounting.sales'))" key="treasurySales" class="menu-item">
             <MoneyCollectOutlined />
             <span>Treasury Sales</span>
         </a-menu-item>
 
-        <a-menu-item
-            @click="() => router.get(route('storeaccounting.store'))"
-            key="storeSales"
-            class="menu-item"
-        >
+        <a-menu-item @click="() => router.get(route('storeaccounting.store'))" key="storeSales" class="menu-item">
             <AppstoreAddOutlined />
             <span>Store Sales</span>
         </a-menu-item>
@@ -46,14 +37,9 @@
             </span>
         </template>
 
-        <a-menu-item
-            v-for="store in stores"
-            :key="store.routeName"
-            @click="
-                () => router.get(route(store.routeName, { id: store.id }))
-            "
-            class="menu-item"
-        >
+        <a-menu-item v-for="store in stores" :key="store.routeName" @click="
+            () => router.get(route(store.routeName, { id: store.id }))
+        " class="menu-item">
             <ShoppingOutlined />
             <span>
                 {{ store.name }}
@@ -68,42 +54,28 @@
                 <span>Export Data</span>
             </span>
         </template>
-        <a-menu-item
-            class="menu-item"
-            @click="
-                () => router.get(route('storeaccounting.verifiedGCReport'))
-            "
-            key="verifiedGCReport"
-        >
+        <a-menu-item class="menu-item" @click="
+            () => router.get(route('storeaccounting.verifiedGCReport'))
+        " key="verifiedGCReport">
             <DatabaseOutlined />
             <span style="font-size: small"> Verified GC Report </span>
         </a-menu-item>
-        <a-menu-item
-            class="menu-item"
-            @click="
-                () =>
-                    router.get(
-                        route('storeaccounting.storeGCPurchasedReport'),
-                    )
-            "
-            key="storeGCPurchased"
-        >
+        <a-menu-item class="menu-item" @click="
+            () =>
+                router.get(
+                    route('storeaccounting.storeGCPurchasedReport'),
+                )
+        " key="storeGCPurchased">
             <DatabaseOutlined />
             <span style="font-size: x-small"> Store GC Purchased Report </span>
         </a-menu-item>
-        <a-menu-item
-            class="menu-item"
-            @click="() => router.get(route('storeaccounting.redeemReport'))"
-            key="redeemReport"
-        >
+        <a-menu-item class="menu-item" @click="() => router.get(route('storeaccounting.redeemReport'))"
+            key="redeemReport">
             <DatabaseOutlined />
             <span style="font-size: small"> SPGC Redeem Report </span>
         </a-menu-item>
-        <a-menu-item
-            class="menu-item"
-            @click="() => router.get(route('storeaccounting.verifiedStore'))"
-            key="verifiedStore"
-        >
+        <a-menu-item class="menu-item" @click="() => router.get(route('storeaccounting.verifiedStore'))"
+            key="verifiedStore">
             <DatabaseOutlined />
             <span style="font-size: small"> Verified Store Purchased </span>
         </a-menu-item>
@@ -116,37 +88,24 @@
                 <span>Reports </span>
             </span>
         </template>
-        <a-menu-item
-            class="menu-item"
-            @click="() => router.get(route('storeaccounting.SPGCApproved'))"
-            key="SPGCApproved"
-        >
+        <a-menu-item class="menu-item" @click="() => router.get(route('storeaccounting.SPGCApproved'))"
+            key="SPGCApproved">
             <LikeOutlined />
             <span> SPGC Approved </span>
         </a-menu-item>
-        <a-menu-item
-            class="menu-item"
-            @click="() => router.get(route('storeaccounting.SPGCRelease'))"
-            key="SPGCRelease"
-        >
+        <a-menu-item class="menu-item" @click="() => router.get(route('storeaccounting.SPGCRelease'))"
+            key="SPGCRelease">
             <ExportOutlined />
             <span> SPGC Release </span>
         </a-menu-item>
-        <a-menu-item
-            class="menu-item"
-            @click="
-                () => router.get(route('storeaccounting.DuplicatedBarcodes'))
-            "
-            key="DuplicatedBarcodes"
-        >
+        <a-menu-item class="menu-item" @click="
+            () => router.get(route('storeaccounting.DuplicatedBarcodes'))
+        " key="DuplicatedBarcodes">
             <TagsOutlined />
             <span> Duplicate Barcodes </span>
         </a-menu-item>
-        <a-menu-item
-            class="menu-item"
-            @click="() => router.get(route('storeaccounting.CheckVariance'))"
-            key="CheckVariance"
-        >
+        <a-menu-item class="menu-item" @click="() => router.get(route('storeaccounting.CheckVariance'))"
+            key="CheckVariance">
             <DatabaseOutlined />
             <span> Check Variance </span>
         </a-menu-item>
@@ -155,8 +114,15 @@
         <DashboardOutlined />
         <span>
             <Link :href="route('storeaccounting.reports.generatedReports')">
-                Generated Reports</Link
-            >
+            Generated Reports</Link>
+        </span>
+    </a-menu-item>
+    <a-menu-item>
+        <MoneyCollectOutlined />
+        <span>
+            <Link :href="route('storeaccounting.billing_reports')">
+            Billing
+            </Link>
         </span>
     </a-menu-item>
 </template>
