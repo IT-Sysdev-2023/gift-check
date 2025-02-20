@@ -2,6 +2,7 @@
     <AuthenticatedLayout>
         <a-card>
             <a-input-search allow-clear enter-button placeholder="Input search here..." v-model:value="gcReceivedSearch" style="width:25%; margin-left: 75%;"/>
+
             <a-table :data-source="record.data" :columns="columns" :pagination="false" size="small" bordered style="margin-top: 10px;">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
@@ -10,7 +11,7 @@
                                 <EyeFilled />
                             </template>
                         </a-button>
-                        <a-button>
+                        <a-button @click="reprint(record.recnumber)">
                             <template #icon>
                                 <PrinterFilled />
                             </template>
@@ -78,4 +79,9 @@ watch(gcReceivedSearch, debounce(async (search) => {
         })
 }, 300) )
 
+const reprint = (id) => {
+    router.get(route('iad.reprint.from.marketing'), {
+        id
+    })
+}
 </script>
