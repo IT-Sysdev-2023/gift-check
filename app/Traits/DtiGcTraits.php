@@ -24,11 +24,13 @@ trait DtiGcTraits
             $subtotal = 0;
 
             $dtiItems->each(function ($item) use ($subtotal) {
-                
-                $subtotal = $item->dti_denoms * $item->dti_qty;
 
+                $subtotal = $item->dti_denoms * $item->dti_qty;
+                dd($subtotal);
                 return $subtotal;
             });
+
+            dd($subtotal);
 
 
             $item->total += $subtotal;
