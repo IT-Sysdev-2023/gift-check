@@ -31,7 +31,7 @@ class DtiTransactionController extends Controller
         }
 
         return inertia('Treasury/Dti/DtiIndex', [
-            'options' => self::options(),
+            'dti' => self::options(),
             'transNo' => $transactionNumber ? NumberHelper::leadingZero($transactionNumber + 1, "%03d") : '0001',
         ]);
     }
@@ -41,17 +41,17 @@ class DtiTransactionController extends Controller
 
         return SpecialExternalCustomer::has('user')
             ->select('spcus_id as value', 'spcus_by', 'spcus_companyname as label', 'spcus_acctname as account_name')
-            ->where('spcus_type', 2)
-            ->orderByDesc('spcus_id')
-            ->get();
+            ->where('spcus_id', 342)
+            ->first();
     }
 
     public function submitDtiForm(RequestsDtiGcRequest $request)
     {
+        $dti = self::options();
         // dd($request->all());
         $request->validated();
 
-        $dtiStore = $this->dtiServices->submissionForDti($request);
+        $dtiStore = $this->dtiServices->submissionForDti($request, $dti);
 
         $pdf = Pdf::loadView('pdf.dtirequest', ['data' => $dtiStore]);
 

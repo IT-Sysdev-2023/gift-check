@@ -4,13 +4,14 @@ namespace App\Traits;
 
 use App\Models\DtiGcRequest;
 use App\Models\DtiGcRequestItem;
+use Illuminate\Support\Facades\Date;
 
 trait DtiGcTraits
 {
     //
     public function getDtiPendingGcRequest()
     {
-        $data = DtiGcRequest::select('dti_num', 'dti_datereq', 'dti_dateneed', 'firstname', 'lastname',)
+        $data = DtiGcRequest::select('dti_num', 'dti_datereq', 'dti_dateneed', 'firstname', 'lastname', 'spcus_companyname',)
             ->join('users', 'user_id', 'dti_reqby')
             ->join('special_external_customer', 'spcus_id', 'dti_company')
             ->where('dti_status', 'pending')
@@ -21,21 +22,20 @@ trait DtiGcTraits
         $data->transform(function ($item) {
             $dtiItems = DtiGcRequestItem::where('dti_trid', $item->dti_num)->get();
 
-            $subtotal = 0;
+            $dtiItems->each(function ($item) {
 
-            $dtiItems->each(function ($item) use ($subtotal) {
+                $item->subtotal = $item->dti_denoms * $item->dti_qty;
 
-                $subtotal = $item->dti_denoms * $item->dti_qty;
-                dd($subtotal);
-                return $subtotal;
+                return $item;
             });
 
-            dd($subtotal);
+            $item->total += $dtiItems->sum('subtotal');
+            $item->dateNeed = Date::parse($item->dti_dateneed)->toFormattedDateString();
+            $item->dateReq = Date::parse($item->dti_datereq)->toFormattedDateString();
 
-
-            $item->total += $subtotal;
             return $item;
         });
-        dd($data->toArray());
+
+        return $data;
     }
 }

@@ -238,10 +238,9 @@ class CustodianController extends Controller
 
     public function dti_gc_holder_entry(Request $request)
     {
-        $data = DtiGcRequest::where('dti_gc_requests.id', $request->id)
+        $data = DtiGcRequest::with('dtiDocuments')->where('dti_gc_requests.id', $request->id)
             ->companyName()
             ->denomination()
-            ->DtiDocumments()
             ->where('dti_status', 'pending')
             ->first();
         $data->dateRequested = Date::parse($data->dti_datereq)->format('F d, Y');
