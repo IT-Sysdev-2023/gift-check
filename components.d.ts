@@ -375,7 +375,6 @@ declare module 'vue' {
     QrcodeOutlined: typeof import('@ant-design/icons-vue')['QrcodeOutlined']
     QuestionCircleOutlined: typeof import('@ant-design/icons-vue')['QuestionCircleOutlined']
     ReceivedGc: typeof import('./resources/js/Pages/Custodian/ReceivedGc.vue')['default']
-    ReceivedGcDetailsDrawer: typeof import('./resources/js/Pages/Iad/Drawer/ReceivedGcDetailsDrawer.vue')['default']
     ReceivedGcDetailsModal: typeof import('./resources/js/Pages/Iad/Modals/ReceivedGcDetailsModal.vue')['default']
     ReceivedGcIndex: typeof import('./resources/js/Pages/Iad/ReceivedGcIndex.vue')['default']
     ReconciliationOutlined: typeof import('@ant-design/icons-vue')['ReconciliationOutlined']
