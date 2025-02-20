@@ -36,16 +36,39 @@ use Carbon\Carbon;
 
 class AdminController extends Controller
 {
-    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction) {}
+    public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction)
+    {
+    }
 
     public function index()
     {
         $users = User::count();
+        $currentYear = date('Y');
+        $currentMonth = date('m');
+
+        $query = DB::table('stores')
+            ->leftJoin('transaction_stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
+            ->leftJoin('transaction_sales', 'transaction_sales.sales_transaction_id', '=', 'transaction_stores.trans_sid')
+            ->leftJoin('gc', 'gc.barcode_no', '=', 'transaction_sales.sales_barcode')
+            ->leftJoin('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
+            ->select(
+                'stores.store_name',
+                DB::raw("IFNULL(COUNT(transaction_sales.sales_barcode), 0) as gc_count")
+            )
+            ->where(function ($query) use ($currentYear, $currentMonth) {
+                $query->whereYear('transaction_stores.trans_datetime', $currentYear)
+                    ->whereMonth('transaction_stores.trans_datetime', $currentMonth);
+            })
+            ->orWhereNull('transaction_stores.trans_sid')
+            ->groupBy('stores.store_name')
+            ->get();
+
         return inertia('Admin/AdminDashboard', [
-            'users' => $users
+            'users' => $users,
+            'data' => $query,
         ]);
     }
-    //
+
     public function statusScanner(Request $request)
     {
         $data = $this->adminservices->statusScanned($request);
@@ -65,7 +88,9 @@ class AdminController extends Controller
     {
         return Inertia::render('Admin/ScanGcStatuses');
     }
-    public function barcodeStatus() {}
+    public function barcodeStatus()
+    {
+    }
 
 
 
@@ -602,7 +627,7 @@ class AdminController extends Controller
                 ->orderBy('cus_id', 'asc')
                 ->paginate(10);
         } elseif ($activeTab === 'institutional_customer') {
-            $data =  $data->whereNotNull('institut_customer.ins_id')
+            $data = $data->whereNotNull('institut_customer.ins_id')
                 ->orderBy('institut_customer.ins_id', 'ASC')
                 ->paginate(10);
         } elseif ($activeTab === 'special_customer') {

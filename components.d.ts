@@ -288,6 +288,7 @@ declare module 'vue' {
     LedgerIndex: typeof import('./resources/js/Pages/RetailGroup/LedgerIndex.vue')['default']
     Ledgerx: typeof import('./resources/js/Pages/Ledgerx.vue')['default']
     LikeOutlined: typeof import('@ant-design/icons-vue')['LikeOutlined']
+    LineChart: typeof import('./resources/js/Layouts/LineChart.vue')['default']
     LineChartOutlined: typeof import('@ant-design/icons-vue')['LineChartOutlined']
     Link: typeof import('@inertiajs/vue3')['Link']
     ListOfEod: typeof import('./resources/js/Pages/Eod/ListOfEod.vue')['default']

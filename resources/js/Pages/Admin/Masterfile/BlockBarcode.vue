@@ -28,7 +28,7 @@
                         :help="form.errors.barcode">
                         <span style="font-size: large; font-weight: bold">Barcode to Block:</span>
                         <a-input type="number" v-model:value="form.barcode"
-                            placeholder="Input barcodes here to block..." style="
+                            placeholder="Scan barcodes here to block..." style="
                                 font-size: x-large;
                                 width: 25rem;
                                 height: 5rem;

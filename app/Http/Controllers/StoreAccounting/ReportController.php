@@ -57,6 +57,7 @@ class ReportController extends Controller
     }
     public function generateBillingPerDayReport(Request $request)
     {
+        // dd($request->all());
         return Excel::download(new BillingExcelReportPerDay($request->toArray()), 'Billing per day report.xlsx');
     }
 }
