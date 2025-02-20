@@ -700,6 +700,7 @@ Route::middleware('auth')->group(function () {
             Route::name('dti_special_gc')->group(function () {
                 Route::get('dti-pending-special-gc', [CustodianController::class, 'dti_special_gc_pending'])->name('dti_special_gc_pending');
                 Route::get('dti-special-gc-count', [CustodianController::class, 'dti_special_gc_count'])->name('dti_special_gc_count');
+                Route::get('dti-gc-holder-entry', [CustodianController::class, 'dti_gc_holder_entry'])->name('dti_gc_holder_entry');
             });
         });
     });

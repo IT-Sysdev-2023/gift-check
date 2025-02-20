@@ -2,10 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class DtiGcRequest extends Model
 {
     //
     protected $guarded = [];
+    protected $table = 'dti_gc_requests';
+
+
+    public function scopeCompanyName(Builder $builder)
+    {
+        return $builder->join('special_external_customer', 'dti_gc_requests.dti_company', '=', 'special_external_customer.spcus_id');
+    }
+
+    public function scopeDenomination(Builder $builder)
+    {
+        return $builder->join('dti_gc_request_items', 'dti_gc_request_items.dti_trid', 'dti_gc_requests.dti_num');
+    }
+
+    public function scopeDtiDocumments(Builder $builder)
+    {
+        return $builder->join('dti_documents', 'dti_documents.dti_trid', 'dti_gc_requests.dti_num');
+    }
 }
