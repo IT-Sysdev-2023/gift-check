@@ -7,10 +7,10 @@
 </template>
 <script setup lang="ts">
 interface Record {
-    
+    record: any
 }
 const props = defineProps<{
-
+    record: Record
 }>()
 const columns = [
     {
