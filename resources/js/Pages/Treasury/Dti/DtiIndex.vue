@@ -1,8 +1,9 @@
 <template>
     <AuthenticatedLayout>
-        <a-descriptions title="Debt-to-Income ratio" size="small" bordered>
+        <a-descriptions title="Debt-to-Income ratio" size="small" layout="vertical" bordered>
             <a-descriptions-item label="Transaction No">{{ transNo }}</a-descriptions-item>
             <a-descriptions-item label="Payment Date">{{ dayjs().format('MMM, DD, YYYY') }}</a-descriptions-item>
+            <a-descriptions-item label="Customer">{{ dti.label }}</a-descriptions-item>
         </a-descriptions>
         <a-row :gutter="[16, 16]" class="mt-5">
             <a-col :span="12">
@@ -21,12 +22,12 @@
                             </p>
                         </a-col>
                         <a-col :span="12">
-                            <strong class="ml-2">Lookup Customer:</strong>
+                            <!-- <strong class="ml-2">Lookup Customer:</strong>
                             <ant-select class="mb-2" placeholder="Select Customer" style="width: 100%;"
                                 :options="props.options" @handle-change="handleCustomerChange" />
                             <p class="text-red-500" v-if="formState.errors.customer">
                                 {{ formState.errors.customer }}
-                            </p>
+                            </p> -->
                             <strong class="ml-2 mt-2">Amount:</strong>
                             <a-input placeholder="Enter Amount" v-model:value="formState.amount" />
                             <p class="text-red-500" v-if="formState.errors.amount">
@@ -85,11 +86,11 @@ interface UseFormType {
 
 const props = defineProps<{
     transNo: number,
-    options: {
+    dti: {
         value: string | number;
         label: string;
         account_name: string;
-    }[];
+    };
 }>()
 
 const formState = useForm<UseFormType>({

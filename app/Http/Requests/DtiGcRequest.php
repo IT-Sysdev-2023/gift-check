@@ -24,7 +24,6 @@ class DtiGcRequest extends FormRequest
         return [
             'denomination' => ['required'],
             'date' => ['required'],
-            'customer' => ['required'],
             'amount' => ['required'],
             'remarks' => ['required'],
             'arNo' => ['required'],
