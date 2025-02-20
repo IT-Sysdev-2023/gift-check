@@ -22,6 +22,7 @@ use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Store;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
+use App\Models\Supplier;
 use App\Models\TempValidation;
 use App\Models\TransactionRevalidation;
 use App\Models\User;
@@ -32,6 +33,7 @@ use Illuminate\Support\Facades\DB;
 use App\Traits\Iad\AuditTraits;
 use App\Traits\OpenOfficeTraits\StorePurchasedTraits;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -754,5 +756,15 @@ class IadServices extends FileHandler
     public function generateSpecialReviewedReportsExcel($request)
     {
         return Excel::download(new SpecialReviewedGcMultipleExports($request->all()), 'special.xlsx');
+    }
+    public function reprintRequestFromMarketing($request)
+    {
+        // $queryPdf = Storage::disk('local')->get('e-requisitionform/0053.pdf');
+        // $files = Storage::disk('public')->allFiles('e-requisitionform');
+        $files = Storage::files('public');
+
+        // $queryPdf = Storage::files('e-requisitionform');
+
+        dd($files);
     }
 }

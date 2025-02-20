@@ -758,6 +758,9 @@ Route::middleware('auth')->group(function () {
                 Route::get('generate-purchased', [IadController::class, 'generatePurchasedReports'])->name('purchased');
             });
         });
+        Route::name('reprint.')->group(function () {
+            Route::get('reprint', [IadController::class, 'reprintRequest'])->name('from.marketing');
+        });
     });
 
     Route::post('upload', [IadController::class, 'upload'])->name('upload');

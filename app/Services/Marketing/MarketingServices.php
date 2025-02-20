@@ -223,7 +223,6 @@ class MarketingServices extends FileHandler
 
     public function generatepdfrequisition($request)
     {
-
         $supplier = Supplier::where('gcs_id', $request->data['selectedSupplierId'])->first();
         function reorderName($name)
         {
