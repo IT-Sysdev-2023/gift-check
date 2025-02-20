@@ -181,7 +181,7 @@ class CustodianServices
     {
         $key = $request->activeKey == '2' ? '*' : '0';
 
-        $data =  SpecialExternalGcrequest::selectFilterEntry()
+        $data = SpecialExternalGcrequest::selectFilterEntry()
             ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalGcrequestItemsHasMany:specit_trid,specit_denoms,specit_qty')
             ->where('spexgc_status', 'pending')
             ->where('spexgc_addemp', 'pending')
@@ -194,8 +194,6 @@ class CustodianServices
 
     public function specialExternalGcSetup($request)
     {
-        // dd();
-
         $data = SpecialExternalGcrequest::selectFilterSetup()
             ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', 'specialExternalGcrequestItemsHasMany:specit_trid,specit_denoms,specit_qty')
             ->where('spexgc_id', $request->id)
@@ -216,7 +214,7 @@ class CustodianServices
 
             $item->numberinwords = Number::spell($item->spexgc_payment) . ' pesos';
 
-            $item->total =  $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
+            $item->total = $item->specialExternalGcrequestItemsHasMany->sum('subtotal');
 
             return $item;
         });
@@ -300,7 +298,7 @@ class CustodianServices
     public function setupApprovalSelected($request)
     {
 
-        $docs =  Document::where('doc_trid', $request->id)
+        $docs = Document::where('doc_trid', $request->id)
             ->where('doc_type', 'Special External GC Request')
             ->first();
 
@@ -358,7 +356,7 @@ class CustodianServices
         )->where('spexgcemp_trid', $request->id)->get();
 
         $data->transform(function ($item) {
-            $item->completename = $item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' ' .  $item->spexgcemp_lname . ' ' . $item->spexgcemp_extname;
+            $item->completename = $item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' ' . $item->spexgcemp_lname . ' ' . $item->spexgcemp_extname;
             return $item;
         });
 
@@ -373,8 +371,8 @@ class CustodianServices
         );
 
         $data = match ($request->status) {
-            '1' =>  $data->where('spexgcemp_barcode', $request->barcode)->get(),
-            '2' =>  $data->whereBetween('spexgcemp_barcode', [$request->barcodeStart, $request->barcodeEnd])->get(),
+            '1' => $data->where('spexgcemp_barcode', $request->barcode)->get(),
+            '2' => $data->whereBetween('spexgcemp_barcode', [$request->barcodeStart, $request->barcodeEnd])->get(),
         };
 
 
@@ -432,7 +430,7 @@ class CustodianServices
         dd($exp);
     }
 
-    private  function explode($data)
+    private function explode($data)
     {
         $lines = explode("\n", $data);
 
@@ -487,7 +485,7 @@ class CustodianServices
         $data->transform(function ($item) {
             $item->pe_date_request_tran = Date::parse($item->pe_date_request)->toFormattedDateString();
             $item->ape_approved_at_tran = Date::parse($item->ape_approved_at)->toFormattedDateString();
-            $item->reqby = Str::ucfirst($item->firstname) . ' ' .  Str::ucfirst($item->lastname);
+            $item->reqby = Str::ucfirst($item->firstname) . ' ' . Str::ucfirst($item->lastname);
 
             return $item;
         });
@@ -560,7 +558,7 @@ class CustodianServices
     public function getEveryBarcodeDetails($request, $id)
     {
 
-        $data =  Gc::select('denomination.denomination', 'barcode_no', 'gc.denom_id')
+        $data = Gc::select('denomination.denomination', 'barcode_no', 'gc.denom_id')
             ->join('denomination', 'denomination.denom_id', '=', 'gc.denom_id')
             ->where('gc_validated', $request->status === null ? '' : $request->status)
             ->where('gc.denom_id', $request->key)
@@ -801,7 +799,7 @@ class CustodianServices
                 'datereq' => Date::parse($item->spexgc_datereq)->toFormattedDateString(),
                 'dateneed' => Date::parse($item->spexgc_dateneed)->toFormattedDateString(),
                 'reqby' => $item->user->full_name,
-                'revby' => Str::ucfirst($item->firstname)  . ' ' . Str::ucfirst($item->lastname),
+                'revby' => Str::ucfirst($item->firstname) . ' ' . Str::ucfirst($item->lastname),
                 'acctname' => $item->specialExternalCustomer->spcus_acctname,
                 'reqappdate' => Date::parse($item->reqap_date)->toFormattedDateString(),
             ];

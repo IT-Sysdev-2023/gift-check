@@ -1,6 +1,13 @@
 <template>
     <AuthenticatedLayout>
-        {{ pending.data }}
+        <a-breadcrumb>
+            <a-breadcrumb-item>
+                <Link href="/">Home</Link>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>
+                <p class="text-black">DTI Pending GC List (GC HolderEntry)</p>
+            </a-breadcrumb-item>
+        </a-breadcrumb>
         <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" tab=" DTI Pending GC List (GC Holder Entry)">
                 <a-card title="DTI Special GC">
@@ -24,16 +31,21 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import { ref } from 'vue';
+import { router } from '@inertiajs/core';
+import { Link } from '@inertiajs/vue3';
 
 defineProps({
     pending: Object,
 
 })
 
+
 const activeKey = ref('1')
 
 const viewRequest = (id) => {
-    console.log(id)
+    router.get(route('custodian.dti_special_gcdti_gc_holder_entry'), {
+        id: id
+    })
 }
 
 

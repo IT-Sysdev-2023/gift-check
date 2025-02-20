@@ -415,6 +415,7 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('dti')->name('dti.')->group(function () {
                     Route::get('index', [DtiTransactionController::class, 'index'])->name('index');
                     Route::post('submit-dti', [DtiTransactionController::class, 'submitDtiForm'])->name('submit');
+                    Route::get('dti-pending-request', [DtiTransactionController::class, 'dtiPendingRequest'])->name('dtiPendingRequest');
                 });
             });
             Route::prefix('masterfile')->name('masterfile.')->group(function () {
@@ -452,7 +453,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('generate-eod-report', [ReportsController::class, 'generateEodReports'])->name('generate.eod');
 
                 Route::get('list-of-generated-reports', [ReportsController::class, 'listOfGeneratedReports'])->name('generatedReports');
-              
+
             });
 
             Route::prefix('promo-gc-released')->name('promo.gc.')->group(function () {
@@ -699,6 +700,7 @@ Route::middleware('auth')->group(function () {
             Route::name('dti_special_gc')->group(function () {
                 Route::get('dti-pending-special-gc', [CustodianController::class, 'dti_special_gc_pending'])->name('dti_special_gc_pending');
                 Route::get('dti-special-gc-count', [CustodianController::class, 'dti_special_gc_count'])->name('dti_special_gc_count');
+                Route::get('dti-gc-holder-entry', [CustodianController::class, 'dti_gc_holder_entry'])->name('dti_gc_holder_entry');
             });
         });
     });
@@ -756,6 +758,9 @@ Route::middleware('auth')->group(function () {
             Route::name('generate.')->group(function () {
                 Route::get('generate-purchased', [IadController::class, 'generatePurchasedReports'])->name('purchased');
             });
+        });
+        Route::name('reprint.')->group(function () {
+            Route::get('reprint', [IadController::class, 'reprintRequest'])->name('from.marketing');
         });
     });
 
@@ -874,6 +879,8 @@ Route::middleware('auth')->group(function () {
                             Route::get('check-variance', [StoreAccountingController::class, 'CheckVariance'])->name('CheckVariance');
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
+                            // about us
+
                             // billing reports
                             Route::get('Billing-reports', [AccountingController::class, 'billing_reports'])->name('billing_reports');
                             Route::post('billing-report-per-day', [ReportController::class, 'billingReportPerDay'])->name('billingReportPerDay');

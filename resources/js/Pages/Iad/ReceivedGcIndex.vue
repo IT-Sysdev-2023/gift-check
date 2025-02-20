@@ -2,6 +2,7 @@
     <AuthenticatedLayout>
         <a-card>
             <a-input-search allow-clear enter-button placeholder="Input search here..." v-model:value="gcReceivedSearch" style="width:25%; margin-left: 75%;"/>
+
             <a-table :data-source="record.data" :columns="columns" :pagination="false" size="small" bordered style="margin-top: 10px;">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
@@ -10,7 +11,7 @@
                                 <EyeFilled />
                             </template>
                         </a-button>
-                        <a-button>
+                        <a-button @click="reprint(record.recnumber)">
                             <template #icon>
                                 <PrinterFilled />
                             </template>
@@ -22,7 +23,7 @@
             <!-- <a-button @click="retreivedData">
                 kupal
             </a-button> -->
-            <received-gc-details-drawer v-model:open="openDrawer" :data="data"/>
+            <received-gc-details-modal v-model:open="openModal" :data="data"/>
             <!-- <a-modal v-model:open="open" @ok="okay">
                 <span style="color:red">
                 {{ searchMessage }}
@@ -45,19 +46,14 @@ defineProps({
 });
 
 const data = ref({});
-const openDrawer = ref(false);
+const openModal = ref(false);
 const gcReceivedSearch = ref('');
 const searchMessage = ref ('');
-// const open = ref (false);
-
-// const okay = () =>{
-//     open.value = false
-// }
 
 const retreivedData = async (id) => {
     await axios.get(route('iad.details.view', id)).then((res) => {
         data.value = res;
-        openDrawer.value = true;
+        openModal.value = true;
     })
 }
 
@@ -83,4 +79,9 @@ watch(gcReceivedSearch, debounce(async (search) => {
         })
 }, 300) )
 
+const reprint = (id) => {
+    router.get(route('iad.reprint.from.marketing'), {
+        id
+    })
+}
 </script>

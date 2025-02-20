@@ -205,10 +205,6 @@ class SpecialGcRequestController extends Controller
                         'spgcledger_debit' => $total,
                     ]);
                 }
-
-
-
-
                 return redirect()->back()->with('success', 'Successfully Submitted');
             });
         } catch (e) {

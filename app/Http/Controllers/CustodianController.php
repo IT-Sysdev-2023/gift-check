@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Helpers\NumberHelper;
 use App\Models\DtiGcRequest;
 use App\Models\Gc;
 use App\Models\SpecialExternalGcrequestEmpAssign;
@@ -12,6 +13,7 @@ use App\Services\Custodian\ReprintPdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Number;
 
 class CustodianController extends Controller
 {
@@ -230,6 +232,24 @@ class CustodianController extends Controller
 
         return response()->json([
             'pending' => $pending
+        ]);
+    }
+
+
+    public function dti_gc_holder_entry(Request $request)
+    {
+        $data = DtiGcRequest::with('dtiDocuments')->where('dti_gc_requests.id', $request->id)
+            ->companyName()
+            ->denomination()
+            ->where('dti_status', 'pending')
+            ->first();
+        $data->dateRequested = Date::parse($data->dti_datereq)->format('F d, Y');
+        $data->validity = Date::parse($data->dti_dateneed)->format('F d, Y');
+        $data->amountInWords = Number::spell($data->dti_payment);
+        $data->total = number_format($data->dti_denoms * $data->dti_qty, 2);
+
+        return inertia('Custodian/DTI/HolderEntry', [
+            'data' => $data
         ]);
     }
 }

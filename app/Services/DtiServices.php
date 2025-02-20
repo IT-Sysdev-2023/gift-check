@@ -19,11 +19,11 @@ class DtiServices extends FileHandler
         parent::__construct();
         $this->folderName = 'dtiExternalDocsRequest';
     }
-    public function submissionForDti($request)
+    public function submissionForDti($request, $dti)
     {
-        return DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request, $dti) {
 
-            $latestId = self::getLatestId($request);
+            $latestId = self::getLatestId($request, $dti);
 
             $listofdenom = self::getDenomination($request, $latestId);
 
@@ -36,14 +36,14 @@ class DtiServices extends FileHandler
                 ]);
             });
 
-            return $this->dataForPdf($request, $listofdenom);
+            return $this->dataForPdf($request, $listofdenom, $dti->value);
         });
     }
 
-    private function dataForPdf(Request $request, $listOfDenom)
+    private function dataForPdf(Request $request, $listOfDenom, $dtiId)
     {
         $gcMode = 'Special External Request Report Dti';
-        $company = SpecialExternalCustomer::select('spcus_companyname', 'spcus_acctname')->find($request->customer);
+        $company = SpecialExternalCustomer::select('spcus_companyname', 'spcus_acctname')->find($dtiId);
 
 
         $amount = $listOfDenom->map(function ($item) {
@@ -73,7 +73,7 @@ class DtiServices extends FileHandler
         ];
     }
 
-    private function getLatestId($request)
+    private function getLatestId($request, $dti)
     {
         $storing = DtiGcRequest::create([
             'dti_num' => $request->trans,
@@ -81,7 +81,7 @@ class DtiServices extends FileHandler
             'dti_datereq' => now(),
             'dti_dateneed' => $request->date,
             'dti_remarks' => $request->remarks,
-            'dti_company' => $request->customer,
+            'dti_company' => $dti->value,
             'dti_payment' => $request->amount,
             'dti_paymenttype' => "Ar",
             'dti_status' => 'pending',
