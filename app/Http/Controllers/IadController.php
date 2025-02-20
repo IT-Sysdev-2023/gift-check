@@ -105,7 +105,7 @@ class IadController extends Controller
 
     public function reviewDetails($id)
     {
-        // dd();
+
         return inertia('Iad/ReviewDetails', [
             'record' => $this->iadServices->getReviewedDetails($id),
             'document' => $this->iadServices->getDocuments($id),
@@ -116,7 +116,6 @@ class IadController extends Controller
 
     public  function receivedGc(Request $request)
     {
-        // dd(1);
         return inertia('Iad/ReceivedGcIndex', [
             'record' => $this->iadServices->getReceivedGc($request),
             'columns' => ColumnHelper::$received_gc_index_columns,

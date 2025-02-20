@@ -22,7 +22,7 @@
             <!-- <a-button @click="retreivedData">
                 kupal
             </a-button> -->
-            <received-gc-details-drawer v-model:open="openDrawer" :data="data"/>
+            <received-gc-details-modal v-model:open="openModal" :data="data"/>
             <!-- <a-modal v-model:open="open" @ok="okay">
                 <span style="color:red">
                 {{ searchMessage }}
@@ -45,19 +45,14 @@ defineProps({
 });
 
 const data = ref({});
-const openDrawer = ref(false);
+const openModal = ref(false);
 const gcReceivedSearch = ref('');
 const searchMessage = ref ('');
-// const open = ref (false);
-
-// const okay = () =>{
-//     open.value = false
-// }
 
 const retreivedData = async (id) => {
     await axios.get(route('iad.details.view', id)).then((res) => {
         data.value = res;
-        openDrawer.value = true;
+        openModal.value = true;
     })
 }
 
