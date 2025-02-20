@@ -1,36 +1,21 @@
 <template>
+
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
-                <GcReceiving
-                    :countPending="count.approvedgc"
-                    :recrev="count.reviewedCount"
-                    title="SPECIAL EXTERNAL GC REQUEST"
-                    containerTitle1="Approved Gc"
-                    containerTitle2="Reviewed GC"
-                    containerDesc1="For receving gift cheque"
-                    containerDesc2="Received Gift Check"
-                    @container1-event="approvedGcForReview"
-                    @container2-event="gcReviewed"
-                />
+                <i-card class="uppercase" title="special external gc request" :approved="count.approvedgc"
+                    :recrev="count.reviewedCount" aRoute="iad.special.external.approvedGc"
+                    rRoute="iad.reviewed.gc.special.review" />
             </a-col>
             <a-col :span="8">
-                <GcReceiving
-                    :countPending="count.countReceiving"
-                    :recrev="count.receivedcount"
-                    title="INTERNAL GC"
-                    containerTitle1="GC Receiving"
-                    containerTitle2="GC Received"
-                    containerDesc1="For receving gift cheque"
-                    containerDesc2="Received Gift Check"
-                    @container1-event="gcReceiving"
-                    @container2-event="gcReceived"
-                />
+                <i-card class="uppercase" revrecLabel="Gc Received" rRoute="iad.view.received" aRoute="iad.receiving"
+                    approvedLabel="Gc Receiving" title="internal gc" :approved="count.approvedgc"
+                    :recrev="count.reviewedCount" />
             </a-col>
             <a-col :span="8">
-               <for-approval-pending :budget="budgetrequest"/>
+                <for-approval-pending :budget="budgetrequest" />
             </a-col>
         </a-row>
 
@@ -38,23 +23,9 @@
 </template>
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { router } from "@inertiajs/vue3";
 
 defineProps<{
     count: any;
     budgetrequest: any
 }>();
-const approvedGcForReview = () => {
-    router.get(route("iad.special.external.approvedGc"));
-};
-const gcReceiving = () => {
-    router.get(route("iad.receiving"));
-};
-
-const gcReviewed = () => {
-    router.get(route("iad.reviewed.gc.special.review"));
-};
-const gcReceived = () => {
-    router.get(route("iad.view.received"));
-};
 </script>

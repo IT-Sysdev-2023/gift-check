@@ -4,15 +4,18 @@ namespace App\Http\Controllers\Treasury\DtiTransaction;
 
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DtiGcRequest as RequestsDtiGcRequest;
 use App\Models\DtiGcRequest;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Services\DtiServices;
+use App\Traits\DtiGcTraits;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class DtiTransactionController extends Controller
 {
+    use DtiGcTraits;
     //
     public function __construct(public DtiServices $dtiServices) {}
     public function index()
@@ -28,7 +31,7 @@ class DtiTransactionController extends Controller
         }
 
         return inertia('Treasury/Dti/DtiIndex', [
-            'options' => self::options(),
+            'dti' => self::options(),
             'transNo' => $transactionNumber ? NumberHelper::leadingZero($transactionNumber + 1, "%03d") : '0001',
         ]);
     }
@@ -38,15 +41,17 @@ class DtiTransactionController extends Controller
 
         return SpecialExternalCustomer::has('user')
             ->select('spcus_id as value', 'spcus_by', 'spcus_companyname as label', 'spcus_acctname as account_name')
-            ->where('spcus_type', 2)
-            ->orderByDesc('spcus_id')
-            ->get();
+            ->where('spcus_id', 342)
+            ->first();
     }
 
-    public function submitDtiForm(Request $request)
+    public function submitDtiForm(RequestsDtiGcRequest $request)
     {
+        $dti = self::options();
         // dd($request->all());
-        $dtiStore = $this->dtiServices->submissionForDti($request);
+        $request->validated();
+
+        $dtiStore = $this->dtiServices->submissionForDti($request, $dti);
 
         $pdf = Pdf::loadView('pdf.dtirequest', ['data' => $dtiStore]);
 
@@ -55,5 +60,12 @@ class DtiTransactionController extends Controller
         $stream = base64_encode($pdf->output());
 
         return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
+    }
+
+    public function dtiPendingRequest() {
+
+        return inertia('Treasury/Dti/DtiPendingRequest', [
+            'records' => $this->getDtiPendingGcRequest(),
+        ]);
     }
 }

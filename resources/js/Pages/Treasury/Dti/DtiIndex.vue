@@ -1,8 +1,9 @@
 <template>
     <AuthenticatedLayout>
-        <a-descriptions title="Debt-to-Income ratio" size="small" bordered>
+        <a-descriptions title="Debt-to-Income ratio" size="small" layout="vertical" bordered>
             <a-descriptions-item label="Transaction No">{{ transNo }}</a-descriptions-item>
             <a-descriptions-item label="Payment Date">{{ dayjs().format('MMM, DD, YYYY') }}</a-descriptions-item>
+            <a-descriptions-item label="Customer">{{ dti.label }}</a-descriptions-item>
         </a-descriptions>
         <a-row :gutter="[16, 16]" class="mt-5">
             <a-col :span="12">
@@ -11,21 +12,36 @@
                         <a-col :span="12">
                             <strong class="ml-2">Select Date:</strong>
                             <a-date-picker @change="handleChangeDatePicker" class="mb-2" style="width: 100%;" />
+                            <p class="text-red-500" v-if="formState.errors.date">
+                                {{ formState.errors.date }}
+                            </p>
                             <strong class="ml-2">Ar No:</strong>
                             <a-input v-model:value="formState.arNo" placeholder="Enter Ar Number" class="mb-2" />
+                            <p class="text-red-500" v-if="formState.errors.arNo">
+                                {{ formState.errors.arNo }}
+                            </p>
                         </a-col>
                         <a-col :span="12">
-                            <strong class="ml-2">Lookup Customer:</strong>
+                            <!-- <strong class="ml-2">Lookup Customer:</strong>
                             <ant-select class="mb-2" placeholder="Select Customer" style="width: 100%;"
                                 :options="props.options" @handle-change="handleCustomerChange" />
+                            <p class="text-red-500" v-if="formState.errors.customer">
+                                {{ formState.errors.customer }}
+                            </p> -->
                             <strong class="ml-2 mt-2">Amount:</strong>
-                            <a-input v-model:value="formState.amount"/>
-
+                            <a-input placeholder="Enter Amount" v-model:value="formState.amount" />
+                            <p class="text-red-500" v-if="formState.errors.amount">
+                                {{ formState.errors.amount }}
+                            </p>
                         </a-col>
                         <p class="text-center w-full">Upload Image</p>
                         <div class="flex justify-center w-full">
                             <ant-upload-multi-image @handle-change="handleImageChange" />
+
                         </div>
+                        <p class="text-red-500 text-center w-full" v-if="formState.errors.date">
+                            {{ formState.errors.date }}
+                        </p>
 
                     </a-row>
                 </a-card>
@@ -33,6 +49,9 @@
             <a-col :span="12">
                 <strong class="ml-2">Remarks:</strong>
                 <a-textarea :rows="4" placeholder="Remarks" v-model:value="formState.remarks" class="mb-2" />
+                <p class="text-red-500" v-if="formState.errors.remarks">
+                    {{ formState.errors.remarks }}
+                </p>
                 <ant-form-nest-item :form="formState" />
                 <div class="flex justify-end">
                     <a-button class="mt-4" type="primary" block @click="submitForm">
@@ -59,19 +78,19 @@ interface UseFormType {
     denomination: any,
     date: string,
     customer: string,
-    amount: number,
+    amount: string,
     remarks: string,
-    arNo: number,
+    arNo: string,
     file: UploadProps["fileList"];
 }
 
 const props = defineProps<{
     transNo: number,
-    options: {
+    dti: {
         value: string | number;
         label: string;
         account_name: string;
-    }[];
+    };
 }>()
 
 const formState = useForm<UseFormType>({
@@ -79,9 +98,9 @@ const formState = useForm<UseFormType>({
     denomination: [],
     date: '',
     customer: '',
-    amount: 0,
+    amount: '',
     remarks: '',
-    arNo: 0,
+    arNo: '',
     file: [],
 });
 
@@ -111,7 +130,7 @@ const submitForm = () => {
         denomination: data.denomination.filter(
             (item) => item.denomination !== 0 && item.qty !== 0,
         ),
-        file: data.file .map((item) => item.originFileObj),
+        file: data.file.map((item) => item.originFileObj),
         total: data.denomination.reduce((acc, item) => {
             return acc + item.denomination * item.qty;
         }, 0),
