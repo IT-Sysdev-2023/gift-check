@@ -1,18 +1,23 @@
 <template>
-    <a-drawer size="small" title="GC Received Gc" placement="left" :width="900" :body-style="{ paddingBottom: '80px' }"
-        @close="onClose">
+    <a-modal style="top: 10px; width: 70%;" size="small" title="GC Received Gc" placement="left" :width="900"
+        :body-style="{ paddingBottom: '80px' }" @close="onClose">
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
                 <a-card>
-                    {{ data.data.record.denom }}
                     <a-descriptions size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Denomination">Cloud Database</a-descriptions-item>
+                        <a-descriptions-item style="width: 50%;" label="Denomination">Quantity</a-descriptions-item>
                     </a-descriptions>
-                    <a-descriptions size="small" layout="horizontal" bordered>
+                    <a-descriptions v-for="(item, key) in data.data.record.denom" size="small" layout="horizontal"
+                        class="mb-1 mt-1" bordered>
+                        <a-descriptions-item style="width: 50%;" :label="key">{{ item }}</a-descriptions-item>
+                    </a-descriptions>
+
+                    <a-descriptions size="small" layout="horizontal" label="" bordered>
                         <!-- <a-descriptions-item style="width: 50%;" label="Quantity">{{ record }}</a-descriptions-item> -->
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Total">{{ data.data.record.total }}</a-descriptions-item>
+                        <a-descriptions-item style="width: 50%;" label="Total">{{ data.data.record.total
+                            }}</a-descriptions-item>
                     </a-descriptions>
                 </a-card>
             </a-col>
@@ -23,7 +28,7 @@
                 </a-card>
             </a-col>
         </a-row>
-    </a-drawer>
+    </a-modal>
 </template>
 <script setup>
 import { ref } from 'vue';

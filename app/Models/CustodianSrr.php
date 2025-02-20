@@ -1,4 +1,4 @@
-we<?php
+<?php
 
 namespace App\Models;
 
