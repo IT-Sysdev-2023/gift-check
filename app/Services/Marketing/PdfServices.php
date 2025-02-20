@@ -4,7 +4,7 @@ namespace App\Services\Marketing;
 
 class PdfServices
 {
-    public function getHtml($checkby, $approveByFirstname ,$approveByLastname 
+    public function getHtml($checkby, $approveByFirstname ,$approveByLastname
     ,$dateRequest, $supplier,  $productionReqItems, $requestNo,  $dateNeed)
     {
         $html =
@@ -79,7 +79,7 @@ class PdfServices
 
             .signatures {
                 width: 100%;
-                
+
             }
 
             .signature {

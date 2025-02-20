@@ -206,5 +206,8 @@ class IadController extends Controller
     public function generateSpecialReports(Request $request){
         return $this->iadServices->generateSpecialReviewedReportsExcel($request);
     }
+    public function reprintRequest(Request $request){
+        return $this->iadServices->reprintRequestFromMarketing($request);
+    }
 
 }
