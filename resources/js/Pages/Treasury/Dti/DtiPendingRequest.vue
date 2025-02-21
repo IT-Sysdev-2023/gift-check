@@ -7,8 +7,8 @@
                         <span class="uppercase">{{ record.firstname }}</span>, <span class="uppercase">{{ record.lastname }}</span>
                     </template>
                     <template v-if="column.key === 'action'">
-                        <a-button type="dashed" @click="update(record.dti_num)">
-                            Update
+                        <a-button size="small" type="dashed" @click="edit(record.dti_num)">
+                            Edit
                         </a-button>
                     </template>
                 </template>
@@ -17,6 +17,8 @@
     </AuthenticatedLayout>
 </template>
 <script setup lang="ts">
+import { router } from '@inertiajs/core';
+
 interface Record {
     records: {
         dti_num: number,
@@ -69,7 +71,7 @@ const columns = [
     },
 ];
 
-const update = (id: number) => {
-
+const edit = (id: number) => {
+router.get(route('treasury.transactions.dti.dti-edit-request', id))
 }
 </script>
