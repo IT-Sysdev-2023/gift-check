@@ -22,8 +22,12 @@
                         <a-input readonly :value="data.validity" />
                     </a-form-item>
                     <a-form-item label="Document(s) Uploaded">
-                        <a-image class="mb-2" :key="index" v-for="(item, index) in props.data.dti_documents"
+                        <a-image class="mb-2 h-[100px]" :key="index" v-for="(item, index) in props.data.dti_documents"
                             :src="`/storage/${item.dti_fullpath}`" />
+                    </a-form-item>
+                    <a-form-item label="Upload Document" has-feedback :validate-status="form.errors.file ? 'error' : ''"
+                        :help="form.errors.file">
+                        <ant-upload-image @handleChange="handleImage" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="8">
@@ -69,7 +73,8 @@
                             </div>
                         </a-col>
                         <a-col :span="6">
-                            <a-form-item label="# Holder">
+                            <a-form-item label="# Holder" has-feedback
+                                :validate-status="form.errors.holders ? 'error' : ''" :help="form.errors.holders">
                                 <a-input readonly :value="gcHolder.length ? gcHolder.length : 0" />
                             </a-form-item>
                         </a-col>
@@ -85,7 +90,7 @@
                     </a-form-item>
                     <div>
                         <div class="flex justify-end">
-                            <a-button type="primary">Submit </a-button>
+                            <a-button @click="handleSubmit" type="primary">Submit </a-button>
                         </div>
                     </div>
                 </a-col>
@@ -131,14 +136,13 @@
             </a-row>
         </a-modal>
     </AuthenticatedLayout>
-
 </template>
 
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Link, router, useForm } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
 import { notification } from 'ant-design-vue';
 const open = ref(false);
 const gcHolder = ref([]);
@@ -155,6 +159,24 @@ const holderData = ref({
 const props = defineProps({
     data: Object
 })
+
+const form = useForm({
+    file: null,
+    holders: computed(() => gcHolder.value),
+});
+
+
+
+const handleSubmit = () => {
+    form.post(route('custodian.dti_special_gcsubmit_dti_special_gc'), {
+        onSuccess: () => {
+            router.push('dti-pending-special-gc')
+        }
+    })
+}
+
+
+
 const handleAssign = () => {
     if (!holderData.value.lastname || !holderData.value.firstname || !holderData.value.mname || !holderData.value.address || !holderData.value.voucher || !holderData.value.bu) {
         notification['error']({
@@ -196,7 +218,10 @@ const clear = () => {
     };
 }
 
-
+const handleImage = (file) => {
+    console.log(file)
+    form.file = file;
+}
 
 const openModal = () => {
     open.value = true;

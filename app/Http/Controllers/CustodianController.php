@@ -252,4 +252,17 @@ class CustodianController extends Controller
             'data' => $data
         ]);
     }
+
+    public function submit_dti_special_gc(Request $request)
+    {
+        $request->validate([
+            'file' => 'required',
+            'holders' => 'required',
+        ]);
+
+        
+
+
+        dd($request->all());
+    }
 }
