@@ -128,6 +128,9 @@ const columns = ref([
 
 ])
 
+const loadingEffect = ref(false);
+const progressPercent = ref(0);
+
 // Generate Excel
 const generateExcel = async () => {
     Modal.confirm({
@@ -135,18 +138,33 @@ const generateExcel = async () => {
         icon: createVNode(ExclamationCircleOutlined),
         content: createVNode(
             'div',
-            {
-                style: 'color:red;',
-            },
+            { style: 'color:red;' },
             'Are you sure to generate report ?',
         ),
         async onOk() {
             try {
+                loadingEffect.value = true;
+                progressPercent.value = 0;
+
+                const progressInterval = setInterval(() => {
+                    if (progressPercent.value < 99) {
+                        progressPercent.value += 1;
+                    } else {
+                        clearInterval(progressInterval);
+                    }
+                }, 10000);
+
+                const formatted = dayjs(form.dateSelected).format('YYYY-MM-DD');
                 const response = await axios.post(route('storeaccounting.reports.generateBillingPerDayReport'), {
+                    date: formatted,
                     data: data.value
                 }, {
                     responseType: 'blob'
-                })
+                });
+
+                clearInterval(progressInterval);
+                progressPercent.value = 100;
+
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
@@ -163,6 +181,11 @@ const generateExcel = async () => {
                 notification.error({
                     description: 'Failed to generate report'
                 });
+            } finally {
+                setTimeout(() => {
+                    loadingEffect.value = false;
+                    progressPercent.value = 0;
+                }, 2000);
             }
         },
         onCancel() {
@@ -170,7 +193,9 @@ const generateExcel = async () => {
         },
         class: 'test',
     });
-}
+};
+
+
 </script>
 
 <template>
@@ -218,6 +243,15 @@ const generateExcel = async () => {
             </div>
         </section>
 
+        <!-- Loading effect  -->
+        <section>
+            <div v-if="loadingEffect" class="loading-container">
+                <a-progress type="circle" :stroke-color="{ '0%': '#108ee9', '100%': '#87d068' }"
+                    :percent="progressPercent" status="active" />
+                <p>Generating Report...</p>
+            </div>
+        </section>
+
         <!-- Table Section -->
         <section class="mt-8 text-center text-gray-600">
             <div>
@@ -240,3 +274,20 @@ const generateExcel = async () => {
         <!-- {{ data }} -->
     </AuthenticatedLayout>
 </template>
+<style scoped>
+.loading-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+</style>
