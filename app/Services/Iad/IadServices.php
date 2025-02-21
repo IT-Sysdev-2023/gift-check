@@ -32,10 +32,12 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Iad\AuditTraits;
 use App\Traits\OpenOfficeTraits\StorePurchasedTraits;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Response;
 
 class IadServices extends FileHandler
 {
@@ -757,14 +759,11 @@ class IadServices extends FileHandler
     {
         return Excel::download(new SpecialReviewedGcMultipleExports($request->all()), 'special.xlsx');
     }
-    public function reprintRequestFromMarketing($request)
+    public function reprintRequestFromMarketing($id)
     {
-        // $queryPdf = Storage::disk('local')->get('e-requisitionform/0053.pdf');
-        // $files = Storage::disk('public')->allFiles('e-requisitionform');
-        $files = Storage::files('public');
 
-        // $queryPdf = Storage::files('e-requisitionform');
-
-        dd($files);
+        $folder = "e-requisitionform/";
+        $pdfName = '0'.$id;
+        return $this->retrieveFile($folder, $pdfName.'.pdf');
     }
 }

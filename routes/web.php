@@ -46,6 +46,7 @@ use App\Models\InstitutPayment;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -563,6 +564,8 @@ Route::middleware('auth')->group(function () {
         return response()->download($filePath);
     })->name('download');
 
+
+
     //? Retail
     Route::middleware('userType:retail,admin')->prefix('retail')->group(function () {
         Route::name('retail.')->group(function () {
@@ -760,7 +763,7 @@ Route::middleware('auth')->group(function () {
             });
         });
         Route::name('reprint.')->group(function () {
-            Route::get('reprint', [IadController::class, 'reprintRequest'])->name('from.marketing');
+            Route::get('reprint-{id}', [IadController::class, 'reprintRequest'])->name('from.marketing');
         });
     });
 
