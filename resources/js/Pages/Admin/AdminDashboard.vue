@@ -50,7 +50,7 @@
                 <div class="text-center text-medium text-black" v-for="item in props.data" :key="item.store_name">
                     {{ item.store_name }}<br>
                     <p class="text-gray-500 mt-5">Sales</p>
-                    <p class="text-blue-700 text-2xl">
+                    <p class="text-[#0047AB] text-2xl">
                         {{ item.gc_count }}
                     </p>
                 </div>
@@ -65,6 +65,7 @@
             </div>
         </section>
 
+        <!-- {{ regularGcData }} -->
         <!-- {{ data }} -->
     </AuthenticatedLayout>
 </template>
@@ -72,12 +73,14 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import LineChart from '@/Layouts/LineChart.vue';
-import {computed } from 'vue';
+import { computed } from 'vue';
 
 
 const props = defineProps({
     users: Number,
     data: Object,
+    specialGcData: Object,
+    regularGcData: Object
 });
 
 const months = [
@@ -85,6 +88,33 @@ const months = [
     'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
+// for special gc total sales counting per month
+const specialGcData = computed(() => {
+    let data = new Array(12).fill(0);
+
+    if (props.specialGcData && Array.isArray(props.specialGcData)) {
+        props.specialGcData.forEach(entry => {
+            if (entry.month >= 1 && entry.month <= 12) {
+                data[entry.month - 1] = entry.total_count;
+            }
+        });
+    }
+    return data;
+})
+    //  regular gc data to sales counting per month
+const regularGcData = computed(() => {
+    let data = new Array(12).fill(0);
+
+    if (props.regularGcData && Array.isArray(props.regularGcData)) {
+        props.regularGcData.forEach(entry => {
+            if (entry.month >= 1 && entry.month <= 12) {
+                data[entry.month - 1] = entry.total_transactions;
+            }
+        });
+    }
+    return data;
+
+});
 const chartData = computed(() => {
     return {
         labels: months,
@@ -94,18 +124,15 @@ const chartData = computed(() => {
                 backgroundColor: '#0047AB',
                 borderColor: '#0047AB',
                 fill: false,
-                data: [
-                   2, 45
-                ]
-            }, {
+                data: regularGcData.value
+            },
+            {
                 label: 'Show Special GC',
-                backgroundColor: 'green',
-                borderColor: 'green',
+                backgroundColor: '#29af19',
+                borderColor: '#29af19',
                 fill: false,
-                data:
-                    [
-                        3, 20
-                    ]
+                data: specialGcData.value
+
             }
         ]
     };

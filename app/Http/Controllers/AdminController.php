@@ -46,6 +46,7 @@ class AdminController extends Controller
         $currentYear = date('Y');
         $currentMonth = date('m');
 
+        // This query is for the total sales per store
         $query = DB::table('stores')
             ->leftJoin('transaction_stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
             ->leftJoin('transaction_sales', 'transaction_sales.sales_transaction_id', '=', 'transaction_stores.trans_sid')
@@ -63,9 +64,66 @@ class AdminController extends Controller
             ->groupBy('stores.store_name')
             ->get();
 
+        // This query is for special gc Per month
+        $specialGcQuery = DB::table('special_external_gcrequest')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->leftJoin('approved_request', 'approved_request.reqap_trid', '=', 'special_external_gcrequest.spexgc_id')
+            ->where('special_external_gcrequest.spexgc_status', 'approved')
+            ->whereYear('approved_request.reqap_date', $currentYear)
+            ->select(
+                DB::raw("MONTH(approved_request.reqap_date) as month"),
+                DB::raw("COUNT(*) as total_count")
+            )
+            ->groupBy(DB::raw("MONTH(approved_request.reqap_date)"))
+            ->orderBy(DB::raw("MONTH(approved_request.reqap_date)"))
+            ->get();
+
+        // This query is for regular gc per month
+        $institutionQuery = DB::table('institut_transactions')
+            ->join('institut_customer', 'institut_customer.ins_id', '=', 'institut_transactions.institutr_cusid')
+            ->select(
+                DB::raw("MONTH(institut_transactions.institutr_date) as month"),
+                DB::raw("COUNT(*) as total_count")
+            )
+            ->whereYear('institut_transactions.institutr_date', $currentYear)
+            ->groupBy(DB::raw("MONTH(institut_transactions.institutr_date)"));
+
+        $storesQuery = DB::table('approved_gcrequest')
+            ->join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
+            ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
+            ->select(
+                DB::raw("MONTH(approved_gcrequest.agcr_approved_at) as month"),
+                DB::raw("COUNT(*) as total_count")
+            )
+            ->whereYear('approved_gcrequest.agcr_approved_at', $currentYear)
+            ->groupBy(DB::raw("MONTH(approved_gcrequest.agcr_approved_at)"))
+            ->unionAll($institutionQuery);
+
+        $specialQuery = DB::table('special_external_gcrequest')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+            ->select(
+                DB::raw("MONTH(special_external_gcrequest.spexgc_datereq) as month"),
+                DB::raw("COUNT(*) as total_count")
+            )
+            ->whereYear('special_external_gcrequest.spexgc_datereq', $currentYear)
+            ->groupBy(DB::raw("MONTH(special_external_gcrequest.spexgc_datereq)"))
+            ->unionAll($storesQuery);
+
+        $finalQuery = DB::table(DB::raw("({$specialQuery->toSql()}) as merged"))
+            ->mergeBindings($specialQuery)
+            ->select(
+                'month',
+                DB::raw("SUM(total_count) as total_transactions")
+            )
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
         return inertia('Admin/AdminDashboard', [
             'users' => $users,
             'data' => $query,
+            'specialGcData' => $specialGcQuery,
+            'regularGcData' => $finalQuery
         ]);
     }
 
