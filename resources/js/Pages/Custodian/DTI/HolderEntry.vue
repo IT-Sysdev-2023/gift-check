@@ -22,7 +22,8 @@
                         <a-input readonly :value="data.validity" />
                     </a-form-item>
                     <a-form-item label="Document(s) Uploaded">
-                        <a-image :src="`storage/${data.dti_fullpath}`" />
+                        <a-image class="mb-2" :key="index" v-for="(item, index) in props.data.dti_documents"
+                            :src="`/storage/${item.dti_fullpath}`" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="8">
@@ -154,7 +155,6 @@ const holderData = ref({
 const props = defineProps({
     data: Object
 })
-
 const handleAssign = () => {
     if (!holderData.value.lastname || !holderData.value.firstname || !holderData.value.mname || !holderData.value.address || !holderData.value.voucher || !holderData.value.bu) {
         notification['error']({

@@ -22,8 +22,9 @@ class DtiGcRequest extends Model
         return $builder->join('dti_gc_request_items', 'dti_gc_request_items.dti_trid', 'dti_gc_requests.dti_num');
     }
 
-    public function scopeDtiDocumments(Builder $builder)
+    public function dtiDocuments()
     {
-        return $builder->join('dti_documents', 'dti_documents.dti_trid', 'dti_gc_requests.dti_num');
+        return $this->hasMany(DtiDocument::class, 'dti_trid', 'dti_num');
     }
+
 }
