@@ -417,6 +417,8 @@ Route::middleware('auth')->group(function () {
                     Route::get('index', [DtiTransactionController::class, 'index'])->name('index');
                     Route::post('submit-dti', [DtiTransactionController::class, 'submitDtiForm'])->name('submit');
                     Route::get('dti-pending-request', [DtiTransactionController::class, 'dtiPendingRequest'])->name('dtiPendingRequest');
+                    Route::get('dti-edit-request-{id}', [DtiTransactionController::class, 'dtiEditRequest'])->name('dti-edit-request');
+                    Route::post('dti-update-request', [DtiTransactionController::class, 'dtiUpdateRequest'])->name('update-gc-request');
                 });
             });
             Route::prefix('masterfile')->name('masterfile.')->group(function () {
@@ -884,7 +886,7 @@ Route::middleware('auth')->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-                
+
                             // billing reports
                             Route::get('Billing-reports', [AccountingController::class, 'billing_reports'])->name('billing_reports');
                             Route::post('billing-report-per-day', [ReportController::class, 'billingReportPerDay'])->name('billingReportPerDay');

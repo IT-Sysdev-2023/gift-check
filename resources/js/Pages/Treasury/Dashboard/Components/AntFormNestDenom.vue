@@ -11,11 +11,11 @@
             style="display: flex; margin-bottom: 18px"
         >
             <a-form-item label="Denomination" :name="['form', index, 'denom']">
-                <ant-input-number v-model:amount="user.denomination" />
+                <ant-input-number style="width: 100%;" v-model:amount="user.denomination" />
             </a-form-item>
             <a-form-item label="Quantity" :name="['form', index, 'qty']">
                 <!-- {{ form?.denom[user.denomination].length }} -->
-                <a-input-number v-model:value="user.qty" placeholder="Qty" />
+                <a-input-number style="width: 100%;" v-model:value="user.qty" placeholder="Qty" />
             </a-form-item>
             <!-- <a-form-item label="Assigned">
                 <a-input
@@ -31,7 +31,7 @@
                     flex-grow: 1;
                     display: flex;
                     margin-top: 40px;
-                    justify-content: flex-end;
+                    /* justify-content: flex-end; */
                 "
             >
                 <!-- <UserSwitchOutlined @click="assignEmployee(user)" /> -->
@@ -39,7 +39,7 @@
             </div>
         </a-space>
         <span class="text-red-500">{{ form.errors.denomination }}</span>
-        
+
         <a-form-item class="mt-12">
             <a-button type="dashed" block @click="addUser">
                 <PlusOutlined />
