@@ -701,6 +701,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('dti-pending-special-gc', [CustodianController::class, 'dti_special_gc_pending'])->name('dti_special_gc_pending');
                 Route::get('dti-special-gc-count', [CustodianController::class, 'dti_special_gc_count'])->name('dti_special_gc_count');
                 Route::get('dti-gc-holder-entry', [CustodianController::class, 'dti_gc_holder_entry'])->name('dti_gc_holder_entry');
+                Route::post('submit-dti-special-gc', [CustodianController::class, 'submit_dti_special_gc'])->name('submit_dti_special_gc');
             });
         });
     });
@@ -880,12 +881,12 @@ Route::middleware('auth')->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-
+                
                             // billing reports
                             Route::get('Billing-reports', [AccountingController::class, 'billing_reports'])->name('billing_reports');
                             Route::post('billing-report-per-day', [ReportController::class, 'billingReportPerDay'])->name('billingReportPerDay');
 
-                                // generated reports
+                            // generated reports
                             Route::name('reports.')->group(function () {
                                 Route::get('list-of-generated-reports', [ReportController::class, 'listOfGeneratedReports'])->name('generatedReports');
                                 Route::post('billing-generated-report-per-day', [ReportController::class, 'generateBillingPerDayReport'])->name('generateBillingPerDayReport');
