@@ -269,6 +269,7 @@ declare module 'vue' {
     GuestLayout: typeof import('./resources/js/Layouts/GuestLayout.vue')['default']
     Head: typeof import('@inertiajs/vue3')['Head']
     HighlightOutlined: typeof import('@ant-design/icons-vue')['HighlightOutlined']
+    HolderEntry: typeof import('./resources/js/Pages/Custodian/DTI/HolderEntry.vue')['default']
     HomeOutlined: typeof import('@ant-design/icons-vue')['HomeOutlined']
     IadDashboard: typeof import('./resources/js/Pages/Iad/IadDashboard.vue')['default']
     IadSideBar: typeof import('./resources/js/Components/IadSideBar.vue')['default']
