@@ -24,7 +24,7 @@ export type PageProps<
         };
         scannedBarcodeResponse: any[];
     };
-    flash?: {
+flash?: {
         success: string;
         error: string;
         stream: string;
