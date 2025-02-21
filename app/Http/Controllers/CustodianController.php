@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Helpers\NumberHelper;
+use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
 use App\Models\Gc;
 use App\Models\SpecialExternalGcrequestEmpAssign;
@@ -12,7 +13,9 @@ use App\Services\Custodian\CustodianServices;
 use App\Services\Custodian\ReprintPdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
 
 class CustodianController extends Controller
@@ -216,7 +219,8 @@ class CustodianController extends Controller
     {
         $pending = DtiGcRequest::where('dti_status', 'pending')
             ->join('dti_gc_request_items', 'dti_gc_request_items.dti_trid', '=', 'dti_gc_requests.dti_num')
-            ->paginate()->withQueryString();
+            ->paginate()
+            ->withQueryString();
         $pending->transform(function ($item) {
             $item->totalDenom = $item->dti_denoms * $item->dti_qty;
             $item->dateRequested = Date::parse($item->dti_datereq)->format('F d, Y');
@@ -238,11 +242,18 @@ class CustodianController extends Controller
 
     public function dti_gc_holder_entry(Request $request)
     {
-        $data = DtiGcRequest::with('dtiDocuments')->where('dti_gc_requests.id', $request->id)
+
+
+        $data = DtiGcRequest::with('dtiDocuments')
+            ->where('dti_gc_requests.id', $request->id)
             ->companyName()
             ->denomination()
             ->where('dti_status', 'pending')
             ->first();
+
+        if (!$data) {
+            return redirect()->route('custodian.dti_special_gcdti_special_gc_pending');
+        }
         $data->dateRequested = Date::parse($data->dti_datereq)->format('F d, Y');
         $data->validity = Date::parse($data->dti_dateneed)->format('F d, Y');
         $data->amountInWords = Number::spell($data->dti_payment);
@@ -256,13 +267,32 @@ class CustodianController extends Controller
     public function submit_dti_special_gc(Request $request)
     {
         $request->validate([
-            'file' => 'required',
             'holders' => 'required',
         ]);
 
-        
+        DB::transaction(function () use ($request) {
+            foreach ($request['holders'] as $key => $value) {
+                DtiBarcodes::create([
+                    'dti_trid' => $request['existingData']['dti_num'],
+                    'dti_denom' => $request['existingData']['dti_denoms'],
+                    'fname' => $value['fname'],
+                    'lname' => $value['lname'],
+                    'mname' => $value['mname'],
+                    'extname' => $value['ext'],
+                    'voucher' => $value['voucher'],
+                    'bunit' => $value['bu'],
+                    'address' => $value['address'],
+                ]);
+            }
 
+            DtiGcRequest::where('dti_num', $request['existingData']['dti_num'])
+                ->where('dti_status', 'pending')
+                ->update([
+                    'dti_status' => 'approved',
+                    'dti_approvedby' => $request->user()->user_id,
+                    'dti_approveddate' => now(),
+                ]);
+        });
 
-        dd($request->all());
     }
 }

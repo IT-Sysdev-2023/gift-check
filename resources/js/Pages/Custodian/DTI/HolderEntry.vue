@@ -25,10 +25,6 @@
                         <a-image class="mb-2 h-[100px]" :key="index" v-for="(item, index) in props.data.dti_documents"
                             :src="`/storage/${item.dti_fullpath}`" />
                     </a-form-item>
-                    <a-form-item label="Upload Document" has-feedback :validate-status="form.errors.file ? 'error' : ''"
-                        :help="form.errors.file">
-                        <ant-upload-image @handleChange="handleImage" />
-                    </a-form-item>
                 </a-col>
                 <a-col :span="8">
                     <a-form-item label="Company Name">
@@ -100,10 +96,10 @@
             <a-row :gutter="[16, 16]">
                 <a-col :span="8">
                     <a-form-item label="Last Name">
-                        <a-input placeholder="This field is required" v-model:value="holderData.lastname" />
+                        <a-input placeholder="This field is required" v-model:value="holderData.lname" />
                     </a-form-item>
                     <a-form-item label="First Name">
-                        <a-input placeholder="This field is required" v-model:value="holderData.firstname" />
+                        <a-input placeholder="This field is required" v-model:value="holderData.fname" />
                     </a-form-item>
                     <a-form-item label="Middle Name">
                         <a-input placeholder="This field is required" v-model:value="holderData.mname" />
@@ -144,41 +140,43 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import { notification } from 'ant-design-vue';
+const props = defineProps({
+    data: Object
+})
 const open = ref(false);
 const gcHolder = ref([]);
 
+
 const holderData = ref({
-    lastname: '',
-    firstname: '',
+    lname: '',
+    fname: '',
     mname: '',
     ext: '',
     address: '',
     voucher: '',
     bu: '',
 })
-const props = defineProps({
-    data: Object
-})
+
 
 const form = useForm({
-    file: null,
     holders: computed(() => gcHolder.value),
+    existingData: computed(() => props.data)
 });
 
 
 
 const handleSubmit = () => {
     form.post(route('custodian.dti_special_gcsubmit_dti_special_gc'), {
-        onSuccess: () => {
-            router.push('dti-pending-special-gc')
-        }
+        onSuccess: (r) => {
+            console.log(r);
+        },
     })
 }
 
 
 
 const handleAssign = () => {
-    if (!holderData.value.lastname || !holderData.value.firstname || !holderData.value.mname || !holderData.value.address || !holderData.value.voucher || !holderData.value.bu) {
+    if (!holderData.value.lname || !holderData.value.fname || !holderData.value.mname || !holderData.value.address || !holderData.value.voucher || !holderData.value.bu) {
         notification['error']({
             message: 'Notification Title',
             description:
@@ -196,8 +194,8 @@ const handleAssign = () => {
     }
     gcHolder.value.push({ ...holderData.value });
     holderData.value = {
-        lastname: '',
-        firstname: '',
+        lname: '',
+        fname: '',
         mname: '',
         ext: '',
         address: '',
@@ -208,8 +206,8 @@ const handleAssign = () => {
 
 const clear = () => {
     holderData.value = {
-        lastname: '',
-        firstname: '',
+        lname: '',
+        fname: '',
         mname: '',
         ext: '',
         address: '',
@@ -218,10 +216,6 @@ const clear = () => {
     };
 }
 
-const handleImage = (file) => {
-    console.log(file)
-    form.file = file;
-}
 
 const openModal = () => {
     open.value = true;
@@ -230,12 +224,12 @@ const openModal = () => {
 const columns = [
     {
         title: 'Last name',
-        dataIndex: 'lastname',
+        dataIndex: 'lname',
         key: 'lastname',
     },
     {
         title: 'First Name',
-        dataIndex: 'firstname',
+        dataIndex: 'fname',
         key: 'firstname',
     },
     {

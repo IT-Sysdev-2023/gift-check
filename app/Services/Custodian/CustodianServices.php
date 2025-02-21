@@ -22,17 +22,21 @@ use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\User;
 use Illuminate\Support\Facades\Date;
 use App\Services\Custodian\CustodianDbServices;
+use App\Services\Documents\FileHandler;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Milon\Barcode\DNS1D;
 use Illuminate\Support\Str;
 
-class CustodianServices
+class CustodianServices extends FileHandler
 {
     protected $formatter;
 
     public function __construct(public CustodianDbServices $custodianDbServices)
     {
+        parent::__construct();
+        $this->folderName = 'custodian';
+
         $this->formatter = [
             '0',
             'GC E-REQUISITION NO',
@@ -827,5 +831,15 @@ class CustodianServices
             'released' => $releasedReq,
             'barcodes' => $barcodes,
         ];
+    }
+
+
+    public function uploadImageFile($request)
+    {
+
+        $filename = $this->getOriginalFileName($request, $request->file);
+
+
+        return $this->saveFile($request, $filename);
     }
 }
