@@ -9,6 +9,7 @@ use App\Http\Resources\SpecialExternalGcRequestResource;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
+use App\Models\DtiGcRequest;
 use App\Models\LedgerBudget;
 use App\Models\LedgerSpgc;
 use App\Models\SpecialExternalCustomer;
@@ -75,7 +76,14 @@ class SpecialGcRequestController extends Controller
     //Special Gc Payment
     public function specialGcPayment()
     {
-        $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
+        $spgcRequest = SpecialExternalGcrequest::max('spexgc_num');
+        $dtiRequest = DtiGcRequest::max('dti_num');
+
+        if($spgcRequest > $dtiRequest){
+            $transactionNumber = $spgcRequest;
+        }else{
+            $transactionNumber = $dtiRequest;
+        }
 
         $transNo = $transactionNumber ?
             NumberHelper::leadingZero($transactionNumber + 1, "%03d")
