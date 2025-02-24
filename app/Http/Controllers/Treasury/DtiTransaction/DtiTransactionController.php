@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Treasury\DtiTransaction;
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DtiGcRequest as RequestsDtiGcRequest;
+use App\Models\DtiDocument;
 use App\Models\DtiGcRequest;
 use App\Models\DtiGcRequestItem;
 use App\Models\SpecialExternalCustomer;
@@ -77,6 +78,8 @@ class DtiTransactionController extends Controller
 
         $denom = DtiGcRequestItem::where('dti_trid', $record->dti_num)->get();
 
+        $documents = DtiDocument::where('dti_trid', $record->dti_num)->get();
+
         $denom->transform(function ($item) {
             return (object) [
                 'qty' => $item->dti_qty,
@@ -90,9 +93,10 @@ class DtiTransactionController extends Controller
             'dti' => self::options(),
             'total' => $denom->sum('subtotal'),
             'denom' => $denom,
+            'docs' => $documents,
         ]);
     }
     public function dtiUpdateRequest(Request $request){
-        dd($request->all());
+        return $this->dtiServices->submitUpdateDtiRequest($request);
     }
 }

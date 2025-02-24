@@ -5,7 +5,7 @@
                 <a-card title="Update Dti Request Form">
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Dti Gc Request #">{{ props.record.dti_num
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date Requested">{{
@@ -20,7 +20,7 @@
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Uploaded Document">
-                            <a-button block type="dashed">
+                            <a-button block type="dashed" @click="openDocumentButton">
                                 <template #icon>
                                     <FolderOpenOutlined />
                                 </template>
@@ -34,6 +34,10 @@
                                 <div class="max-h-52 overflow-y-auto"> <!-- Adjust height as needed -->
                                     <ant-upload-multi-image @handle-change="handleUploadChange" />
                                 </div>
+
+                            </div>
+                            <div class="text-center text-red-500">
+                                {{ formState.errors.file }}
                             </div>
                         </a-descriptions-item>
                     </a-descriptions>
@@ -83,29 +87,50 @@
                 </a-button>
             </a-col>
         </a-row>
+        <a-modal v-model:open="openDocument" style="width: 45%;" title="Preview Image">
+            <a-row :gutter="[16, 16]">
+                <a-col :span="12" v-for="image in props.docs" :key="image.id">
+                    <div
+                        style="box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset; padding: 10px; border-radius: 1rem;">
+                        <a-image style="height: 300px; width: 100%;  border-radius: 1rem;"
+                            :src="'/storage/' + image.dti_fullpath" />
+                    </div>
+                </a-col>
+            </a-row>
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { SelectProps, UploadProps } from "ant-design-vue";
+import { notification, SelectProps, UploadProps } from "ant-design-vue";
 import dayjs from 'dayjs';
+import { ref } from 'vue';
 
 interface Record {
+    id: number,
     dti_num: number,
     dti_datereq: string,
     dti_dateneed: string,
     dti_remarks: string,
     dti_payment: number,
     dti_payment_arno: number,
+    dti_company: number,
 }
 
 interface UseFormType {
+    id: number,
     denomination: any,
     validity: any,
     payment: any,
     remarks: string,
     arNo: any,
+    dtiNum: number,
+    companyId: number,
     file: UploadProps["fileList"];
+}
+interface Document {
+    id: any,
+    dti_fullpath: string
 }
 
 interface Dti {
@@ -117,19 +142,30 @@ const props = defineProps<{
     dti: Dti,
     total: number,
     denom: any
+    docs: Document
 }>();
 
 const formState = useForm<UseFormType>({
+    id: props.record.id,
+    dtiNum: props.record.dti_num,
     denomination: props.denom,
     validity: dayjs(props.record.dti_dateneed),
     arNo: props.record.dti_payment_arno,
     payment: props.record.dti_payment,
     remarks: props.record.dti_remarks,
+    companyId: props.record.dti_company,
     file: [],
 });
+const openDocument = ref<boolean>(false);
+
+const openDocumentButton = () => {
+    openDocument.value = true;
+}
 
 const handleUploadChange = (file: any) => {
+    formState.errors.file = '';
     formState.file = file.fileList;
+
 }
 const handleChangeDate = (obj: any, str: string) => {
     formState.validity = str;
@@ -140,7 +176,20 @@ const submit = () => {
         ...data,
         file: data.file.map((item) => item.originFileObj),
         validity: dayjs(data.validity).format("YYYY-MM-DD"),
-    })).post(route('treasury.transactions.dti.update-gc-request'));
+    })).post(route('treasury.transactions.dti.update-gc-request'), {
+        onSuccess: (e: any) => {
+            console.log(e.props.flash.type);
+            if (e.props.flash.type == 'success') {
+                notification[e.props.flash.type]({
+                    message: e.props.flash.title,
+                });
+            }else{
+                notification[e.props.flash.type]({
+                    message: e.props.flash.title,
+                });
+            }
+        }
+    });
 }
 
 </script>

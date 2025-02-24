@@ -125,9 +125,11 @@ class SpecialGcPaymentService extends FileHandler
                 }
 
                 SpecialExternalGcrequestItem::where('specit_trid', $request->reqid)->delete();
+
                 $filter = collect($request->denomination)->reject(function ($item) {
                     return $item['denomination'] === 0 || $item['qty'] === 0;
                 });
+                
                 $filter->each(function ($val) use ($request) {
                     SpecialExternalGcrequestItem::create([
                         'specit_denoms' => $val['denomination'],
