@@ -708,6 +708,10 @@ Route::middleware('auth')->group(function () {
                 Route::get('dti-gc-holder-entry', [CustodianController::class, 'dti_gc_holder_entry'])->name('dti_gc_holder_entry');
                 Route::post('submit-dti-special-gc', [CustodianController::class, 'submit_dti_special_gc'])->name('submit_dti_special_gc');
             });
+
+            Route::prefix('dti')->name('dti.')->group(function () {
+                Route::get('dti-approved-gc-request', [CustodianController::class, 'dtiApprovedGcRequest'])->name('approved.index');
+            });
         });
     });
 

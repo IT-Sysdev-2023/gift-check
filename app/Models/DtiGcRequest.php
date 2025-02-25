@@ -29,4 +29,8 @@ class DtiGcRequest extends Model
     public function user(){
         return $this->belongsTo(User::class, 'user_id', 'dti_reqby');
     }
+
+    public function customer(){
+        return $this->belongsTo(SpecialExternalCustomer::class, 'dti_company', 'spcus_id');
+    }
 }

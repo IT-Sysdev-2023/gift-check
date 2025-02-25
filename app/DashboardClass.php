@@ -101,6 +101,7 @@ class DashboardClass extends DashboardService
         $ledgerSpgc = LedgerSpgc::get();
 
 
+
         $debitTotal = $curBudget->sum('bdebit_amt');
 
         $creditTotal = $curBudget->sum('bcredit_amt');

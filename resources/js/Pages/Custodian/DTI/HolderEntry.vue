@@ -33,18 +33,10 @@
                     <a-form-item label="Account Name">
                         <a-input readonly :value="data.spcus_acctname" />
                     </a-form-item>
-                    <a-form-item label="AR #">
-                        <a-input readonly :value="data.dti_payment_arno" />
-                    </a-form-item>
                     <a-form-item label="Payment Type">
-                        <a-input readonly :value="data.dti_paymenttype" />
+                        <a-input readonly class="uppercase" :value="data.dti_paymenttype" />
                     </a-form-item>
-                    <a-form-item label="Amount Paid">
-                        <a-input readonly :value="data.dti_payment" />
-                    </a-form-item>
-                    <a-form-item label="Amount in words">
-                        <a-input readonly :value="`${data.amountInWords} Pesos`" />
-                    </a-form-item>
+
                 </a-col>
                 <a-col :span="8">
                     <a-form-item label="Remarks">
