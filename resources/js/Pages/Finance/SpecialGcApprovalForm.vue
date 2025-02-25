@@ -219,6 +219,8 @@
             <a-table :dataSource="gcHolder" :columns="columns" />
         </a-tab-pane>
     </a-tabs>
+
+    {{ data }}
 </template>
 
 <script>

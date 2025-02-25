@@ -27,4 +27,8 @@ class DtiGcRequest extends Model
         return $this->hasMany(DtiDocument::class, 'dti_trid', 'dti_num');
     }
 
+    public function specialDtiGcrequestItemsHasMany(){
+        return $this->hasMany(DtiGcRequest::class, 'dti_num', 'id');
+    }
+
 }

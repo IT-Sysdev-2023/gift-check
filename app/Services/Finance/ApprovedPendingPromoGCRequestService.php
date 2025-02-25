@@ -34,6 +34,13 @@ class ApprovedPendingPromoGCRequestService extends FileHandler
         ]);
     }
 
+    public function DtiApprovedGCRequest($request){
+        // dd('hello');
+        return inertia('Finance/ApprovedDTIGCRequest');
+
+    }
+
+
     public static function getPromoRequest($request)
     {
         $data = PromoGcRequest::with(['userReqby:user_id,firstname,lastname'])
@@ -86,7 +93,7 @@ class ApprovedPendingPromoGCRequestService extends FileHandler
 
     public static function getDenomination($id)
     {
-        $data =  PromoGcRequestItem::select('pgcreqi_qty', 'pgcreqi_denom')
+        $data = PromoGcRequestItem::select('pgcreqi_qty', 'pgcreqi_denom')
             ->where('pgcreqi_trid', $id)
             ->with('denomination:denom_id,denomination')
             ->get();
@@ -98,7 +105,7 @@ class ApprovedPendingPromoGCRequestService extends FileHandler
             $item->denomformat = NumberHelper::formatterFloat($item->denomination->denomination);
             return $item;
         });
-        return (object)[
+        return (object) [
             'data' => $data,
             'total' => NumberHelper::currency($data->sum('subt')),
         ];

@@ -15,11 +15,15 @@
             <m-card class="uppercase" title="Promo gc request" :pending="count?.penPomoCount"
                 :approved="count.appPromoCount" pRoute="finance.pen.promo.request" aRoute="finance.app.promo.request" />
             <!-- <PromoGcViewCard :count="count"></PromoGCViewCard> -->
+
+            <m-card class="uppercase" title="DTI SPECIAL GC REQUEST" :pending="count.budgetCounts.dti" pRoute="finance.pendingGc.dti.request.pending"
+                :approved="2" aRoute="finance.request.approve" />
         </a-col>
         <a-col :span="8">
             <f-card class="uppercase" title="special gc request" pendingLabel="Internal Pending"
                 :pending="count.specialGcRequest.internal" pRoute="finance.pendingGc.pending"
                 aRoute="finance.approvedGc.approved" :approved="count.specialGcRequest.approve">
+
                 <a-badge :count="count.specialGcRequest.external" class="mb-2">
                     <a-button class="mb-2" style="width: 340px" :overflow-count="Infinity" type="primary"
                         :disabled="count.specialGcRequest.external == 0"
@@ -48,6 +52,7 @@
             <!-- <budget-adjustments :count="count" /> -->
         </a-col>
     </a-row>
+    {{ count }}
 </template>
 <script>
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";

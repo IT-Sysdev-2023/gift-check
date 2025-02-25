@@ -526,10 +526,17 @@ Route::middleware('auth')->group(function () {
             Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.excel');
             Route::get('generate-spgc-ledger', [FinanceController::class, 'generateSpgcPromotionalExcel'])->name('spgc.ledger.start');
             Route::post('approve-request', [FinanceController::class, 'approveRequest'])->name('approve.request');
+            // dti approved
+            Route::get('approved-dti-list', [FinanceController::class, 'dtiApprovedGCRequest'])->name('request.approve');
+
             Route::name('pendingGc.')->group(function () {
+                Route::get('dti-pendding-list', [FinanceController::class, 'ditPendingRequest'])->name('ditPendingRequest');
                 Route::get('pending-list', [FinanceController::class, 'specialGcPending'])->name('pending');
                 Route::get('pending-approval-form', [FinanceController::class, 'SpecialGcApprovalForm'])->name('approval.form');
                 Route::post('pending-approval-form-submit', [FinanceController::class, 'SpecialGcApprovalSubmit'])->name('approval.submit');
+                // dit pending request
+                Route::get('pending-dti-list', [FinanceController::class, 'dtiPendingRequestList'])->name('dti.request.pending');
+                Route::post('dti-approval', [FinanceController::class, 'DtiApprovedForm'])->name('dti.approval');
             });
             Route::name('approvedGc.')->group(function () {
                 Route::get('approved-special-gc', [FinanceController::class, 'approvedGc'])->name('approved');
@@ -884,7 +891,7 @@ Route::middleware('auth')->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-                
+
                             // billing reports
                             Route::get('Billing-reports', [AccountingController::class, 'billing_reports'])->name('billing_reports');
                             Route::post('billing-report-per-day', [ReportController::class, 'billingReportPerDay'])->name('billingReportPerDay');
