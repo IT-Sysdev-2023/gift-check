@@ -11,6 +11,7 @@ use App\Models\Gc;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Custodian\CustodianServices;
 use App\Services\Custodian\ReprintPdf;
+use App\Services\CustodianDtiServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -20,9 +21,7 @@ use Illuminate\Support\Number;
 
 class CustodianController extends Controller
 {
-    public function __construct(public CustodianServices $custodianservices, public DashboardClass $dashboardClass)
-    {
-    }
+    public function __construct(public CustodianServices $custodianservices, public DashboardClass $dashboardClass, public CustodianDtiServices $custodianDtiServices) {}
     public function index()
     {
         return inertia('Custodian/CustodianDashboard', [
@@ -76,12 +75,10 @@ class CustodianController extends Controller
     }
     public function submitSpecialExternalGc(Request $request)
     {
-        // dd($request->all());
         return $this->custodianservices->submitSpecialExternalGc($request);
     }
     public function approvedGcRequest(Request $request)
     {
-        // dd($request->all());
         return inertia('Custodian/ApprovedGcRequest', [
             'columns' => ColumnHelper::$approved_gc_column,
             'record' => $this->custodianservices->approvedGcList($request)
@@ -217,10 +214,14 @@ class CustodianController extends Controller
 
     public function dti_special_gc_pending()
     {
-        $pending = DtiGcRequest::where('dti_status', 'pending')
+        $pending = DtiGcRequest::where([
+            ['dti_status', 'pending'],
+            ['dti_addemp', 'pending'],
+        ])
             ->join('dti_gc_request_items', 'dti_gc_request_items.dti_trid', '=', 'dti_gc_requests.dti_num')
             ->paginate()
             ->withQueryString();
+
         $pending->transform(function ($item) {
             $item->totalDenom = $item->dti_denoms * $item->dti_qty;
             $item->dateRequested = Date::parse($item->dti_datereq)->format('F d, Y');
@@ -232,7 +233,11 @@ class CustodianController extends Controller
 
     public function dti_special_gc_count()
     {
-        $pending = DtiGcRequest::where('dti_status', 'pending')->count();
+        // dd();
+        $pending = DtiGcRequest::where([
+            ['dti_status', 'pending'],
+            ['dti_addemp', 'pending'],
+        ])->count();
 
         return response()->json([
             'pending' => $pending
@@ -242,21 +247,20 @@ class CustodianController extends Controller
 
     public function dti_gc_holder_entry(Request $request)
     {
-
-
         $data = DtiGcRequest::with('dtiDocuments')
-            ->where('dti_gc_requests.id', $request->id)
+            ->where('dti_gc_requests.dti_num', $request->id)
             ->companyName()
             ->denomination()
             ->where('dti_status', 'pending')
+            ->where('dti_addemp', 'pending')
             ->first();
 
         if (!$data) {
             return redirect()->route('custodian.dti_special_gcdti_special_gc_pending');
         }
+
         $data->dateRequested = Date::parse($data->dti_datereq)->format('F d, Y');
         $data->validity = Date::parse($data->dti_dateneed)->format('F d, Y');
-        $data->amountInWords = Number::spell($data->dti_payment);
         $data->total = number_format($data->dti_denoms * $data->dti_qty, 2);
 
         return inertia('Custodian/DTI/HolderEntry', [
@@ -287,12 +291,18 @@ class CustodianController extends Controller
 
             DtiGcRequest::where('dti_num', $request['existingData']['dti_num'])
                 ->where('dti_status', 'pending')
+                ->where('dti_addemp', 'pending')
                 ->update([
-                    'dti_status' => 'approved',
-                    'dti_approvedby' => $request->user()->user_id,
-                    'dti_approveddate' => now(),
+                    'dti_empaddby' =>  $request->user()->user_id,
+                    'dti_addempdate' => now(),
+                    'dti_addemp' => 'done',
                 ]);
         });
+    }
+    public function dtiApprovedGcRequest(){
 
+        $records = $this->custodianDtiServices->getDtiApprovedRequest();
+
+        return inertia('Custodian/DTI/Approved/DtiApprovedGcRequest');
     }
 }

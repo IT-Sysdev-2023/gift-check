@@ -417,6 +417,8 @@ Route::middleware('auth')->group(function () {
                     Route::get('index', [DtiTransactionController::class, 'index'])->name('index');
                     Route::post('submit-dti', [DtiTransactionController::class, 'submitDtiForm'])->name('submit');
                     Route::get('dti-pending-request', [DtiTransactionController::class, 'dtiPendingRequest'])->name('dtiPendingRequest');
+                    Route::get('dti-edit-request-{id}', [DtiTransactionController::class, 'dtiEditRequest'])->name('dti-edit-request');
+                    Route::post('dti-update-request', [DtiTransactionController::class, 'dtiUpdateRequest'])->name('update-gc-request');
                 });
             });
             Route::prefix('masterfile')->name('masterfile.')->group(function () {
@@ -712,6 +714,10 @@ Route::middleware('auth')->group(function () {
                 Route::get('dti-special-gc-count', [CustodianController::class, 'dti_special_gc_count'])->name('dti_special_gc_count');
                 Route::get('dti-gc-holder-entry', [CustodianController::class, 'dti_gc_holder_entry'])->name('dti_gc_holder_entry');
                 Route::post('submit-dti-special-gc', [CustodianController::class, 'submit_dti_special_gc'])->name('submit_dti_special_gc');
+            });
+
+            Route::prefix('dti')->name('dti.')->group(function () {
+                Route::get('dti-approved-gc-request', [CustodianController::class, 'dtiApprovedGcRequest'])->name('approved.index');
             });
         });
     });

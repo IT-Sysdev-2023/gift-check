@@ -428,6 +428,7 @@ class MarketingController extends Controller
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->where('instituttritems_trid', '=', $request->id)
             ->get();
+            
         $query->transform(function ($item) use ($request) {
             $item->gcType = $request->data['insp_paymentcustomer'];
             return $item;

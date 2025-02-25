@@ -8,42 +8,19 @@
         <a-row :gutter="[16, 16]" class="mt-5">
             <a-col :span="12">
                 <a-card>
-                    <a-row :gutter="[16, 16]">
-                        <a-col :span="12">
-                            <strong class="ml-2">Select Date:</strong>
-                            <a-date-picker @change="handleChangeDatePicker" class="mb-2" style="width: 100%;" />
-                            <p class="text-red-500" v-if="formState.errors.date">
-                                {{ formState.errors.date }}
-                            </p>
-                            <strong class="ml-2">Ar No:</strong>
-                            <a-input v-model:value="formState.arNo" placeholder="Enter Ar Number" class="mb-2" />
-                            <p class="text-red-500" v-if="formState.errors.arNo">
-                                {{ formState.errors.arNo }}
-                            </p>
-                        </a-col>
-                        <a-col :span="12">
-                            <!-- <strong class="ml-2">Lookup Customer:</strong>
-                            <ant-select class="mb-2" placeholder="Select Customer" style="width: 100%;"
-                                :options="props.options" @handle-change="handleCustomerChange" />
-                            <p class="text-red-500" v-if="formState.errors.customer">
-                                {{ formState.errors.customer }}
-                            </p> -->
-                            <strong class="ml-2 mt-2">Amount:</strong>
-                            <a-input placeholder="Enter Amount" v-model:value="formState.amount" />
-                            <p class="text-red-500" v-if="formState.errors.amount">
-                                {{ formState.errors.amount }}
-                            </p>
-                        </a-col>
-                        <p class="text-center w-full">Upload Image</p>
-                        <div class="flex justify-center w-full">
-                            <ant-upload-multi-image @handle-change="handleImageChange" />
+                    <strong class="ml-2">Date Needed:</strong>
+                    <a-date-picker @change="handleChangeDatePicker" class="mb-2" style="width: 100%;" />
+                    <p class="text-red-500" v-if="formState.errors.date">
+                        {{ formState.errors.date }}
+                    </p>
+                    <p class="text-center w-full mt-10">Upload Image</p>
+                    <div class="flex justify-center w-full">
+                        <ant-upload-multi-image @handle-change="handleImageChange" />
+                    </div>
+                    <p class="text-red-500 text-center w-full" v-if="formState.errors.date">
+                        {{ formState.errors.file }}
+                    </p>
 
-                        </div>
-                        <p class="text-red-500 text-center w-full" v-if="formState.errors.date">
-                            {{ formState.errors.date }}
-                        </p>
-
-                    </a-row>
                 </a-card>
             </a-col>
             <a-col :span="12">

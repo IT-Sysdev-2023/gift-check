@@ -27,7 +27,8 @@
                 <a-col :span="8">
 
                     <MCard title="DTI Special GC Transactions" :pending="pending"
-                        pRoute="custodian.dti_special_gcdti_special_gc_pending" />
+                        pRoute="custodian.dti_special_gcdti_special_gc_pending"
+                        aRoute="custodian.dti.approved.index" />
                 </a-col>
             </a-row>
         </div>
