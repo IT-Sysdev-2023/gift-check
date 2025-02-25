@@ -328,6 +328,7 @@ declare module 'vue' {
     PdfResult: typeof import('./resources/js/Pages/Admin/Results/PdfResult.vue')['default']
     Pending: typeof import('./resources/js/Pages/Marketing/specialgc/Pending.vue')['default']
     PendingBudgetRequest: typeof import('./resources/js/Pages/Finance/PendingBudgetRequest.vue')['default']
+    PendingDTiGCrequest: typeof import('./resources/js/Pages/Finance/PendingDTiGCrequest.vue')['default']
     PendingDTIGCRequest: typeof import('./resources/js/Pages/Finance/PendingDTIGCRequest.vue')['default']
     PendingGc: typeof import('./resources/js/Pages/RetailGroup/PendingGc.vue')['default']
     PendingGcDescription: typeof import('./resources/js/Pages/RetailGroup/Description/PendingGcDescription.vue')['default']
