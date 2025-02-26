@@ -3,6 +3,7 @@
 namespace App\Services\Accounting;
 
 use App\Models\ApprovedRequest;
+use App\Models\DtiGcRequest;
 use App\Models\InstitutPayment;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
@@ -93,7 +94,6 @@ class AccountingServices
 
     public function submitPayementForm($request)
     {
-
 
         $request->validate([
             'payment' => 'required',
@@ -187,4 +187,74 @@ class AccountingServices
 
         return $data;
     }
+
+
+    public function getDtiList()
+    {
+        $data =  DtiGcRequest::select(
+            'dti_num',
+            'dti_datereq',
+            'dti_dateneed',
+            'firstname',
+            'lastname',
+            'spcus_acctname',
+            'dti_payment_stat',
+            'dti_balance',
+        )
+            ->join('special_external_customer', 'spcus_id', '=', 'dti_company')
+            ->join('dti_approved_requests', 'dti_trid', '=', 'dti_gc_requests.dti_num')
+            ->join('users as reqby', 'user_id', '=', 'dti_reqby')
+            ->where([
+                ['dti_released', 'released'],
+                ['dti_approvedtype', 'special external gc released'],
+                ['dti_payment_stat', '!=', 'FINAL'],
+            ])->orderByDesc('dti_gc_requests.id')
+            ->get();
+
+        $data->each(function ($item) {
+            $item->name = Str::ucfirst($item->firstname) . ', ' . Str::ucfirst($item->lastname);
+            return $item;
+        });
+
+        return $data;
+    }
+
+    public function getSingleListDti($id)
+    {
+
+        $data = DtiGcRequest::select(
+            'dti_num',
+            'title',
+            'dti_datereq',
+            'dti_dateneed',
+            'dti_approveddate',
+            'dti_balance',
+            'dti_approved_requests.dti_remarks as apremarks',
+            'dti_gc_requests.dti_remarks as remarks',
+            'dti_checkby',
+            'dti_gc_requests.dti_approvedby',
+            'reqby.firstname as refirstname',
+            'reqby.lastname as relastname',
+            'prepby.firstname as prefirstname',
+            'prepby.lastname as prelastname',
+        )->join('special_external_customer', 'spcus_id', '=', 'dti_company')
+            ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
+            ->join('users as reqby', 'reqby.user_id', '=', 'dti_reqby')
+            ->join('users as prepby', 'prepby.user_id', '=', 'dti_preparedby')
+            ->join('access_page', 'prepby.usertype', '=', 'access_no')
+            ->where([
+                ['dti_num', $id],
+                ['dti_status', 'approved'],
+                ['dti_approvedtype', 'Special External GC Approved'],
+                ['dti_reviewed', 'reviewed'],
+            ])
+            ->first();
+
+        $data->each(function ($item) {
+            return $item;
+        });
+
+        return $data;
+    }
+
 }

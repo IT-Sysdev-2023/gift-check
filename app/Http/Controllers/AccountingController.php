@@ -110,4 +110,16 @@ class AccountingController extends Controller
             'store' => $store
         ]);
     }
+
+    public function paymantGcDti(){
+        return inertia('Accounting/Payment/PaymentDtiIndex', [
+            'records' => $this->accountingservices->getDtiList(),
+        ]);
+    }
+
+    public function paymantGcDtiSetup($id){
+        return inertia('Accounting/Payment/PaymentDtiSetup',[
+            'record' => $this->accountingservices->getSingleListDti($id)
+        ]);
+    }
 }

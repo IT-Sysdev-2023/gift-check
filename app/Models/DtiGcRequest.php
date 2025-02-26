@@ -27,7 +27,7 @@ class DtiGcRequest extends Model
         return $this->hasMany(DtiDocument::class, 'dti_trid', 'dti_num');
     }
     public function user(){
-        return $this->belongsTo(User::class, 'user_id', 'dti_reqby');
+        return $this->belongsTo(User::class, 'dti_reqby', 'user_id');
     }
 
     public function customer(){

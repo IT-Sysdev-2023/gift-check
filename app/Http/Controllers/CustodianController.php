@@ -303,6 +303,16 @@ class CustodianController extends Controller
 
         $records = $this->custodianDtiServices->getDtiApprovedRequest();
 
-        return inertia('Custodian/DTI/Approved/DtiApprovedGcRequest');
+        return inertia('Custodian/DTI/Approved/DtiApprovedGcRequest', [
+            'records' => $records,
+        ]);
+    }
+    public function dtiSetupGcRequest($id){
+
+        $data = $this->custodianDtiServices->getDataRequest($id);
+
+        return inertia('Custodian/DTI/Setup/DtiSetupGcRequest',[
+            'records' => $data->records,
+        ]);
     }
 }

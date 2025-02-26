@@ -228,7 +228,7 @@ class RetailServices
 
                     return back()->with([
                         'msg' => 'Opps Barcode is Invalid in this Location',
-                        'title' => 'Wrong Denomination',
+                        'title' => 'Wrong Location!',
                         'status' => 'error',
                     ]);
                 }

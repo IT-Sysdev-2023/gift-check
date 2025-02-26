@@ -82,14 +82,12 @@ class DtiServices extends FileHandler
             'dti_dateneed' => $request->date,
             'dti_remarks' => $request->remarks,
             'dti_company' => $dti->value,
-            'dti_payment' => $request->amount,
             'dti_paymenttype' => "Ar",
             'dti_status' => 'pending',
             'dti_type' => 2,
             'dti_payment_stat' => 'paid',
             'dti_addemp' => 'pending',
             'dti_promo' => 'external',
-            'dti_payment_arno' => $request->arNo
         ]);
 
 
