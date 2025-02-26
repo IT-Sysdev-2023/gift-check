@@ -498,6 +498,8 @@ Route::middleware('auth')->group(function () {
             });
             Route::name('payment.')->group(function () {
                 Route::get('payment-gc', [AccountingController::class, 'paymantGc'])->name('payment.gc');
+                Route::get('payment-gc-dti', [AccountingController::class, 'paymantGcDti'])->name('payment.gc.dti');
+                Route::get('payment-gc-dti-setup-{id}', [AccountingController::class, 'paymantGcDtiSetup'])->name('payment.gc.dti.setup');
                 Route::get('setup-payment-{id}', [AccountingController::class, 'setupPayment'])->name('setup');
                 Route::get('setup-table-{id}', [AccountingController::class, 'tableFetch'])->name('fetch');
                 Route::post('submit-form', [AccountingController::class, 'submitPayment'])->name('submit');
@@ -718,6 +720,13 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('dti')->name('dti.')->group(function () {
                 Route::get('dti-approved-gc-request', [CustodianController::class, 'dtiApprovedGcRequest'])->name('approved.index');
+                Route::get('dti-setup-gcrequest-{id}', [CustodianController::class, 'dtiSetupGcRequest'])->name('setup.gc-request');
+            });
+
+            Route::prefix('management')->group(function () {
+                Route::name('managers.')->group(function () {
+                    Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('key');
+                });
             });
         });
     });
@@ -809,6 +818,9 @@ Route::middleware('auth')->group(function () {
     Route::get('file-search', [ProcessFiles::class, 'barcodeSearch']);
 
     Route::get('generate-barcode', [CustodianController::class, 'generateBarcode'])->name('generaate');
+
+
+
 
     //? Store Accounting
     Route::middleware('userType:storeaccounting,admin')->prefix('store-accounting')

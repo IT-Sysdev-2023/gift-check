@@ -68,7 +68,6 @@ class AccountingDbServices
 
         $ledgerNumber = $this->getLedgerNumber();
 
-
         LedgerBudget::create([
             'bledger_no' =>  $ledgerNumber,
             'bledger_trid' => $request->id,
