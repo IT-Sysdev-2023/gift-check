@@ -30,14 +30,12 @@ class DtiGcRequest extends Model
         return $this->belongsTo(User::class, 'dti_reqby', 'user_id');
     }
 
-<<<<<<< HEAD
     public function specialDtiGcrequestItemsHasMany(){
         return $this->hasMany(DtiGcRequest::class, 'dti_num', 'id');
     }
 
-=======
     public function customer(){
         return $this->belongsTo(SpecialExternalCustomer::class, 'dti_company', 'spcus_id');
     }
->>>>>>> b56888ee756dbabbfe4c574881da9383d8deb71c
+
 }
