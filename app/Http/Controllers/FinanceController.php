@@ -164,24 +164,34 @@ class FinanceController extends Controller
     {
         // $search = $request->search;
         // dd($search);
-        $DtiApprovedQuery = DtiGcRequest::
-            join('users as preparedby', 'preparedby.user_id', '=', 'dti_gc_requests.dti_reqby')
-            ->join('users as checker', 'checker.user_id', '=', 'dti_gc_requests.dti_empaddby')
+        $DtiApprovedQuery = DtiGcRequest::with('specialDtiGcrequestItemsHasMany')
+            ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
-            ->join('dti_approved_requests', 'dti_trid', '=', 'dti_gc_requests.dti_num')
-            ->join('ledger_budget', 'ledger_budget.bledger_trid', '=', 'dti_gc_requests.dti_num')
-            ->join('access_page', 'access_page.access_no', '=', 'preparedby.usertype')
             ->where('dti_gc_requests.dti_status', 'approved')
-            ->where('dti_addemp', 'done')
-            ->whereAny([
-                'dti_num',
-                'dti_datereq',
-                'dti_customer',
-                'dti_approveddate',
-                'dti_gc_requests.dti_approvedby',
-            ], 'like', '%' . $request->search . '%')
-            ->paginate(10)
-            ->withQueryString();
+            // ->where('dti_gc_requests.dti_addemp', 'pending')
+            ->get();
+
+        $DtiApprovedQuery->transform(function ($item) {
+            $item->specialDtiGcrequestItemsHasMany->each(function ($subitem) {
+                $subitem->subtotal = (float) $subitem->specit_denoms * (float) $subitem->specit_qty;
+                return $subitem;
+            });
+
+            $item->total = $item->specialDtiGcrequestItemsHasMany->sum('subtotal');
+
+            $item->fullname = ucwords($item->firstname . ' ' . $item->lastname);
+            $item->dateRequeted = Date::parse($item->dti_datereq)->format('Y-F-d');
+            $item->dateNeed = Date::parse($item->dti_dateneed)->format('Y-F-d');
+
+            $dtiTotalDenom = DtiGcRequestItem::where('dti_trid', $item->dti_num)->get();
+            $dtiTotalDenom->transform(function ($item) {
+                $item->subtotal = $item->dti_denoms * $item->dti_qty;
+                return $item;
+            });
+            $item->totalDenomination = $dtiTotalDenom->sum('subtotal');
+            return $item;
+        });
+
 
         // dd($DtiApprovedQuery);
 
@@ -199,7 +209,6 @@ class FinanceController extends Controller
             ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
             ->where('dti_gc_requests.dti_status', 'pending')
-            ->where('dti_gc_requests.dti_addemp', 'pending')
             ->get();
         // dd($externalPending);
 
@@ -320,10 +329,10 @@ class FinanceController extends Controller
         $gcType = $request->gcType;
         // dd($gcType);
 
-        $gcHolder = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)
+        $gcHolder = DtiBarcodes::where('dti_trid', $id)
             ->select(
-                'spexgcemp_denom',
-                DB::raw("CONCAT(spexgcemp_fname, ' ',spexgcemp_lname) as fullname")
+                'dti_denom',
+                DB::raw("CONCAT(fname, ' ',lname) as fullname")
             )
             ->paginate(10)
             ->withQueryString();
@@ -331,7 +340,7 @@ class FinanceController extends Controller
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Complete Name', 'Denomination'],
-            ['fullname', 'spexgcemp_denom']
+            ['fullname', 'dti_denom']
         );
 
         if ($gcType === 'external') {
@@ -353,7 +362,7 @@ class FinanceController extends Controller
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
             ->join('access_page', 'access_page.access_no', '=', 'preparedby.usertype')
             ->where('dti_gc_requests.dti_status', 'pending')
-            ->where('dti_gc_requests.id', $id)
+            ->where('dti_gc_requests.dti_num', $id)
             ->select(
                 'dti_gc_requests.*',
                 'preparedby.firstname as preparedby_firstname',
@@ -590,6 +599,7 @@ class FinanceController extends Controller
                         'dti_status' => 'cancelled',
                         'dti_cancelled_remarks' => $request->cancelledRemarks,
                         'dti_cancelled_by' => $request->user()->user_id,
+                        'dti_company' => $request->data[0]['dti_company'],
                         'dti_cancelled_date' => now()
                     ]);
                 // dd(vars: $request->user()->user_id);
@@ -813,22 +823,12 @@ class FinanceController extends Controller
 
     public function selectedDtiRequest(Request $request)
     {
-        // dd($request->all());
-        // $query = DtiGcRequest::join('users as req', 'req.user_id', '=', 'dti_gc_requests.dti_reqby')
-        //     ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
-        //     ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
-        //     ->join('users as prep', 'prep.user_id', '=', 'dti_approved_requests.dti_preparedby')
-        //     ->where('dti_gc_requests.dti_status', 'approved')
-        //     ->where('dti_gc_requests.dti_num', $request->id)
-        //     ->where('dti_approved_requests.dti_approvedtype', 'Special External GC Approved')
-        //     ->get();
-        // dd($query);
-
-
-        $barcode = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->get();
+        $barcode = DtiBarcodes::where('dti_trid', $request->id)->get();
 
         $barcode->transform(function ($item) {
-            $item->fullname = ucwords($item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' ' . $item->spexgcemp_lname);
+
+            $item->fullname = ucwords($item->fname . ' ' . $item->mname . ' ' . $item->lname);
+            $item->barcode = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $item->dti_trid);
             return $item;
         });
         // dd($barcode);
@@ -967,18 +967,43 @@ class FinanceController extends Controller
 
     public function dtiCancelledRequest(Request $request)
     {
-        $query = DtiGcRequest::where('dti_status', 'cancelled')
+        // dd($request->all());
+        $id = $request->id;
+        // dd($id);
+        $query = DtiGcRequest::with('specialDtiGcrequestItemsHasMany')
+            ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
+            ->where('dti_gc_requests.dti_status', 'cancelled')
+            // ->where('dti_gc_requests.dti_addemp', 'pending')
             ->get();
+        // dd($externalPending);
+
+        $query->transform(function ($item) {
+            $item->specialDtiGcrequestItemsHasMany->each(function ($subitem) {
+                $subitem->subtotal = (float) $subitem->specit_denoms * (float) $subitem->specit_qty;
+                return $subitem;
+            });
+
+            $item->total = $item->specialDtiGcrequestItemsHasMany->sum('subtotal');
+
+            $item->fullname = ucwords($item->firstname . ' ' . $item->lastname);
+            $item->dateRequeted = Date::parse($item->dti_datereq)->format('Y-F-d');
+            $item->dateNeed = Date::parse($item->dti_dateneed)->format('Y-F-d');
+
+            $dtiTotalDenom = DtiGcRequestItem::where('dti_trid', $item->dti_num)->get();
+            $dtiTotalDenom->transform(function ($item) {
+                $item->subtotal = $item->dti_denoms * $item->dti_qty;
+                return $item;
+            });
+            $item->totalDenomination = $dtiTotalDenom->sum('subtotal');
+            return $item;
+        });
 
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['RFSEGC #', 'DATE REQUESTED', 'DATE VALIDITY', 'CUSTOMER', 'DATE CANCELLED', 'CANCELLED BY', 'VIEW'],
-            ['dti_num', 'dti_datereq', 'dti_datereq', 'dti_customer', 'dti_cancelled_date', 'dti_approvedby', 'View']
+            ['dti_num', 'date_requested', 'date_requested', 'dti_customer', 'dti_cancelled_date', 'dti_cancelled_by', 'View']
         );
-        $query->transform(function ($item) {
-            $item->dti_datereq = Date::parse($item->dti_datereq)->format('F d Y');
-            return $item;
-        });
 
         return Inertia::render('Finance/CancelledDtiRequest', [
             'data' => $query,
