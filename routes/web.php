@@ -545,6 +545,12 @@ Route::middleware('auth')->group(function () {
             Route::name('approvedGc.')->group(function () {
                 Route::get('approved-special-gc', [FinanceController::class, 'approvedGc'])->name('approved');
                 Route::get('selected-special-gc', [FinanceController::class, 'selectedapprovedGc'])->name('selected.approved');
+                Route::get('selected-dti-gc', [FinanceController::class, 'selectedDtiRequest'])->name('selected.dti.request');
+
+            });
+
+            Route::name('cancelledGc.')->group(function () {
+                route::get('cancelled-Dti-list', [FinanceController::class, 'dtiCancelledRequest'])->name('dti_cancelled');
             });
 
             Route::name('budget.')->group(function () {

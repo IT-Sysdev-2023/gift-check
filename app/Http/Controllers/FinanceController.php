@@ -11,6 +11,8 @@ use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
 use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
+use App\Models\DtiApprovedRequest;
+use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
 use App\Models\DtiGcRequestItem;
 use App\Models\LedgerBudget;
@@ -30,6 +32,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 use function PHPUnit\Framework\isNull;
@@ -159,12 +162,39 @@ class FinanceController extends Controller
 
     public function dtiApprovedGCRequest(Request $request)
     {
-        return (new ApprovedPendingPromoGCRequestService())->DtiApprovedGCRequest($request);
+        // $search = $request->search;
+        // dd($search);
+        $DtiApprovedQuery = DtiGcRequest::
+            join('users as preparedby', 'preparedby.user_id', '=', 'dti_gc_requests.dti_reqby')
+            ->join('users as checker', 'checker.user_id', '=', 'dti_gc_requests.dti_empaddby')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
+            ->join('dti_approved_requests', 'dti_trid', '=', 'dti_gc_requests.dti_num')
+            ->join('ledger_budget', 'ledger_budget.bledger_trid', '=', 'dti_gc_requests.dti_num')
+            ->join('access_page', 'access_page.access_no', '=', 'preparedby.usertype')
+            ->where('dti_gc_requests.dti_status', 'approved')
+            ->where('dti_addemp', 'done')
+            ->whereAny([
+                'dti_num',
+                'dti_datereq',
+                'dti_customer',
+                'dti_approveddate',
+                'dti_gc_requests.dti_approvedby',
+            ], 'like', '%' . $request->search . '%')
+            ->paginate(10)
+            ->withQueryString();
+
+        // dd($DtiApprovedQuery);
+
+        return inertia('Finance/ApprovedDTIGCRequest', [
+            'data' => $DtiApprovedQuery,
+            'search' => $request->search,
+        ]);
     }
 
 
     public function dtiPendingRequestList(Request $request)
     {
+        // dd($request->all());
         $externalPending = DtiGcRequest::with('specialDtiGcrequestItemsHasMany')
             ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
@@ -184,15 +214,21 @@ class FinanceController extends Controller
             $item->fullname = ucwords($item->firstname . ' ' . $item->lastname);
             $item->dateRequeted = Date::parse($item->dti_datereq)->format('Y-F-d');
             $item->dateNeed = Date::parse($item->dti_dateneed)->format('Y-F-d');
+
+            $dtiTotalDenom = DtiGcRequestItem::where('dti_trid', $item->dti_num)->get();
+            $dtiTotalDenom->transform(function ($item) {
+                $item->subtotal = $item->dti_denoms * $item->dti_qty;
+                return $item;
+            });
+            $item->totalDenomination = $dtiTotalDenom->sum('subtotal');
             return $item;
         });
-
-        // dd($externalPending);
+        // dd ($externalPending);
 
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['RFSEGC #', 'Date Requested', 'Date Needed', 'Total Denomination', 'Customer', 'Requested by', 'View'],
-            ['dti_num', 'dateRequeted', 'dateNeed', 'dti_payment', 'spcus_acctname', 'fullname', 'View']
+            ['dti_num', 'dateRequeted', 'dateNeed', 'totalDenomination', 'spcus_acctname', 'fullname', 'View']
         );
 
         return Inertia::render('Finance/PendingDTIGCRequest', [
@@ -205,7 +241,6 @@ class FinanceController extends Controller
 
     public function specialGcPending(Request $request)
     {
-        // dd();
         //guide
         $gcType = $request->type;
         // dd($gcType);
@@ -280,17 +315,18 @@ class FinanceController extends Controller
     public function ditPendingRequest(Request $request)
     {
         // dd($request->all());
-        $DtiId = $request->id;
+        $id = (int) request('id');
         // dd($id);
         $gcType = $request->gcType;
         // dd($gcType);
 
-        $gcHolder = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $DtiId)->get();
-        // dd($gcHolder);
-        $gcHolder = $gcHolder->transform(function ($item) {
-            $item->fullname = ucwords($item->spexgcemp_fname . ' ' . $item->spexgcemp_lname);
-            return $item;
-        });
+        $gcHolder = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)
+            ->select(
+                'spexgcemp_denom',
+                DB::raw("CONCAT(spexgcemp_fname, ' ',spexgcemp_lname) as fullname")
+            )
+            ->paginate(10)
+            ->withQueryString();
         // dd($gcHolder);
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
@@ -299,6 +335,7 @@ class FinanceController extends Controller
         );
 
         if ($gcType === 'external') {
+            // dd();
             $currentBudget = LedgerBudget::where('bcus_guide', '!=', 'dti')
                 ->selectRaw('SUM(bdebit_amt) as total_debit, SUM(bcredit_amt) as total_credit')
                 ->first();
@@ -308,12 +345,15 @@ class FinanceController extends Controller
                 ->first();
             $budget = $currentBudget->total_debit - $currentBudget->total_credit;
         }
-        $query = DtiGcRequest::join('users as preparedby', 'preparedby.user_id', '=', 'dti_gc_requests.dti_reqby')
+        // $dti = DtiGcRequest::get();
+        // dd($dti);
+        $query = DtiGcRequest::
+            join('users as preparedby', 'preparedby.user_id', '=', 'dti_gc_requests.dti_reqby')
             ->join('users as checker', 'checker.user_id', '=', 'dti_gc_requests.dti_empaddby')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
             ->join('access_page', 'access_page.access_no', '=', 'preparedby.usertype')
             ->where('dti_gc_requests.dti_status', 'pending')
-            // ->where('dti_gc_requests.id', $DtiId)
+            ->where('dti_gc_requests.id', $id)
             ->select(
                 'dti_gc_requests.*',
                 'preparedby.firstname as preparedby_firstname',
@@ -351,9 +391,6 @@ class FinanceController extends Controller
             $item->total = $dtiItems->sum('subtotal');
             return $item;
         });
-
-        // dd($query);
-        // dd($query);
 
         return Inertia::render('Finance/SpecialDtiGcRequest', [
             'columns' => $columns,
@@ -442,8 +479,8 @@ class FinanceController extends Controller
         ]);
     }
 
+    // THIS IS FOR THE APPROVED SUBMIT BUTTON
     public function DtiApprovedForm(Request $request)
-    //for the submit dti approved
     {
         // dd($request->all());
         $id = $request->data[0]['dti_num'];
@@ -453,7 +490,7 @@ class FinanceController extends Controller
         $currentbudget = LedgerBudget::whereNull('bledger_category')->get();
         $debit = $currentbudget->sum('debit_amt');
         $credit = $currentbudget->sum('bcredit_amt');
-        $customer = DtiGcRequest::select('dti_company')->where('dti_num', $id)->get();
+        // $customer = DtiGcRequest::select('dti_company')->where('dti_num', $id)->get();
         $ledgerBudgetNum = LedgerBudget::select('bledger_no')->orderByDesc('bledger_id')->first();
         $nextLedgerBudgetNum = (int) $ledgerBudgetNum->bledger_no + 1;
         $pending = DtiGcRequest::where('dti_num', $id)->where('dti_status', 'pending')->exists();
@@ -462,13 +499,11 @@ class FinanceController extends Controller
             ->orderByDesc('spexgcemp_barcode')
             ->first()
             ->spexgcemp_barcode + 1;
-        // dd($customer);
 
         if ($pending) {
-            $customer = ($customer[0]->dti_company == 342 || $customer[0]->dti_company == 341) ? 'dti' : '';
 
             if ($request->status == '1') {
-                if ($totalDenom > ($debit - $credit)) {
+                if ($totalDenom > ($credit - $debit)) {
                     return back()->with([
                         'error' => true,
                         'message' => 'Opps!',
@@ -481,64 +516,56 @@ class FinanceController extends Controller
                         'description' => 'Please fill all the field required',
                     ]);
                 } else {
-                    DB::transaction(function () use ($specGet, $reqType, $id, $request, $nextLedgerBudgetNum, $customer, $totalDenom) {
-                        DtiGcRequest::where('id', $id)
+                    // dd();
+                    DB::transaction(function () use ($specGet, $reqType, $id, $request, $nextLedgerBudgetNum, $totalDenom) {
+
+                        DtiGcRequest::where('dti_num', $id)
                             ->where('dti_status', 'pending')
                             ->update([
-                                'dti_status' => 'approved'
+                                'dti_status' => 'approved',
+                                'dti_addemp' => 'done',
+                                'dti_approveddate' => now(),
+                                'dti_approvedby' => $request->approvedBy,
+                                'dti_customer' => $request->customer
                             ]);
-
-                        ApprovedRequest::create([
-                            'reqap_trid' => $id,
-                            'reqap_approvedtype' => 'Special External GC Approved',
-                            'reqap_remarks' => $request->approvedRemarks,
-                            'reqap_checkedby' => $request->checkedBy,
-                            'reqap_approvedby' => $request->approvedBy,
-                            'reqap_preparedby' => $request->user()->user_id,
-                            'reqap_date' => now(),
-                            'reqap_doc' => !is_null($request->fileList) ? $this->financeService->uploadFileHandler($request) : ''
+                        DtiApprovedRequest::create([
+                            'dti_trid' => $id,
+                            'dti_approvedtype' => 'Special External GC Approved',
+                            'dti_remarks' => $request->approvedRemarks,
+                            'dti_checkby' => $request->checkedBy,
+                            'dti_approvedby' => $request->approvedBy,
+                            'dti_preparedby' => $request->user()->user_id,
+                            'dti_date' => now(),
+                            'dti_doc' => !is_null($request->file) ? $this->financeService->uploadFileHandler($request) : ''
                         ]);
                         LedgerBudget::create([
                             'bledger_no' => $nextLedgerBudgetNum,
                             'bledger_trid' => $id,
                             'bledger_datetime' => now(),
                             'bledger_type' => 'RFGCSEGC',
-                            'bcus_guide' => $customer,
+                            'bcus_guide' => 'dti-new',
                             'bcredit_amt' => $totalDenom,
                             'bledger_category' => 'special'
                         ]);
-                        if ($request->type === 'internal') {
-                            LedgerSpgc::create([
-                                'spgcledger_no' => $nextLedgerBudgetNum,
-                                'spgcledger_trid' => $id,
-                                'spgcledger_datetime' => now(),
-                                'spgcledger_type' => 'RFGCSEGC',
-                                'spgcledger_credit' => $totalDenom,
-                                'spgcledger_typeid' => '0',
-                                'spgcledger_group' => '0',
-                                'spgcledger_debit' => '0',
-                                'spgctag' => '0',
-                            ]);
-                        }
                         if ($reqType->dti_type == '2') {
-                            $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
+                            $data = DtiBarcodes::where('dti_trid', $id);
                             foreach ($data->get() as $item) {
                                 $item->update([
-                                    'spexgcemp_barcode' => $specGet++,
+                                    'dti_barcode' => $specGet++,
                                 ]);
                             }
                         } elseif ($reqType->dti_type == '1') {
-                            $denoms = SpecialExternalGcrequestItem::select('specit_denoms', 'specit_qty')
-                                ->where('specit_trid', $id)
-                                ->orderBy('specit_id');
+                            $denoms = DtiGcRequestItem::select('dti_denoms', 'dti_qty')
+                                ->where('dti_trid', $id)
+                                ->orderBy('id');
 
-                            $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
+                            $data = DtiBarcodes::where('dti_trid', $id);
 
                             foreach ($denoms as $item) {
-                                SpecialExternalGcrequestEmpAssign::create([
-                                    'spexgcemp_trid' => $id,
-                                    'spexgcemp_denom' => $item->specit_denoms,
-                                    'spexgcemp_barcode' => $specGet++
+                                DtiBarcodes::create([
+                                    'dti_trid' => $id,
+                                    'dti_denom' => $item->specit_denoms,
+                                    'dti_barcode' => $specGet++
                                 ]);
                             }
                         } else {
@@ -549,33 +576,34 @@ class FinanceController extends Controller
                             ]);
                         }
                     });
-                    return back()->with([
+                    return Redirect::route('finance.pendingGc.dti.request.pending')->with([
                         'success' => true,
                         'message' => 'Success!',
-                        'description' => 'Request approved successfuly',
+                        'description' => 'The request was successfully approved',
                     ]);
                 }
-
             } else {
-                DtiGcRequest::where('id', $id)
+                // dd($id);
+                DtiGcRequest::where('dti_num', $id)
                     ->where('dti_status', 'pending')
                     ->update([
                         'dti_status' => 'cancelled',
                         'dti_cancelled_remarks' => $request->cancelledRemarks,
-                        'dti_cancelled_by' => $request->cancelledBy,
+                        'dti_cancelled_by' => $request->user()->user_id,
                         'dti_cancelled_date' => now()
                     ]);
-                return back()->with([
+                // dd(vars: $request->user()->user_id);
+                return Redirect::route('finance.pendingGc.dti.request.pending')->with([
                     'success' => true,
                     'message' => 'Opps!',
-                    'description' => 'The request was successfully canceled.'
+                    'description' => 'The request was successfully cancelled.'
                 ]);
             }
         }
     }
     public function SpecialGcApprovalSubmit(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $id = $request->formData['id'];
         $totalDenom = $request->data[0]['total'];
         $reqType = SpecialExternalGcrequest::select('spexgc_type')->where('spexgc_id', $id)->first();
@@ -725,7 +753,7 @@ class FinanceController extends Controller
             ->orderByDesc('spexgc_id')
             ->paginate(10)
             ->withQueryString();
-
+        // dd($data);
         $data->transform(function ($item) {
             $item->dateValid = Date::parse($item->spexgc_dateneed)->format('F d Y');
             $item->dateReq = Date::parse($item->spexgc_datereq)->format('F d Y');
@@ -783,8 +811,36 @@ class FinanceController extends Controller
         return $this->financeService->getApprovedBudgetDetails($id);
     }
 
+    public function selectedDtiRequest(Request $request)
+    {
+        // dd($request->all());
+        // $query = DtiGcRequest::join('users as req', 'req.user_id', '=', 'dti_gc_requests.dti_reqby')
+        //     ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
+        //     ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
+        //     ->join('users as prep', 'prep.user_id', '=', 'dti_approved_requests.dti_preparedby')
+        //     ->where('dti_gc_requests.dti_status', 'approved')
+        //     ->where('dti_gc_requests.dti_num', $request->id)
+        //     ->where('dti_approved_requests.dti_approvedtype', 'Special External GC Approved')
+        //     ->get();
+        // dd($query);
+
+
+        $barcode = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->get();
+
+        $barcode->transform(function ($item) {
+            $item->fullname = ucwords($item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' ' . $item->spexgcemp_lname);
+            return $item;
+        });
+        // dd($barcode);
+
+        return response()->json([
+            'barcodes' => $barcode,
+        ]);
+    }
+
     public function selectedapprovedGc(Request $request)
     {
+        // dd($request->all());
         $query = SpecialExternalGcrequest::select([
             'special_external_gcrequest.spexgc_id',
             'special_external_gcrequest.spexgc_num',
@@ -819,6 +875,7 @@ class FinanceController extends Controller
             $item->preparedBy = ucwords($item->prepby);
             return $item;
         });
+        // dd($query);
 
         $barcode = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $request->id)->get();
 
@@ -907,4 +964,26 @@ class FinanceController extends Controller
     {
         return $this->financeService->bugdetAdSubmission(collect($request));
     }
+
+    public function dtiCancelledRequest(Request $request)
+    {
+        $query = DtiGcRequest::where('dti_status', 'cancelled')
+            ->get();
+
+        $columns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['RFSEGC #', 'DATE REQUESTED', 'DATE VALIDITY', 'CUSTOMER', 'DATE CANCELLED', 'CANCELLED BY', 'VIEW'],
+            ['dti_num', 'dti_datereq', 'dti_datereq', 'dti_customer', 'dti_cancelled_date', 'dti_approvedby', 'View']
+        );
+        $query->transform(function ($item) {
+            $item->dti_datereq = Date::parse($item->dti_datereq)->format('F d Y');
+            return $item;
+        });
+
+        return Inertia::render('Finance/CancelledDtiRequest', [
+            'data' => $query,
+            'columns' => $columns
+        ]);
+    }
+
 }

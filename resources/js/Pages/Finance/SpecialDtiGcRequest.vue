@@ -38,19 +38,21 @@ const submitButton = () => {
         return;
     }
 
-    const invalidImage = fileList.value.some(file => {
-        const fileType = file.type
-        return fileType !== 'image/jpeg' && fileType !== 'image/png' && fileType !== 'image/jpg';
-    });
-    if (invalidImage) {
-        notification.error({
-            description: 'Only JPG, JPEG, and PNG files are allowed.',
-        });
-        return;
+
+    if (file.value) {
+        const fileType = file.value.type;
+        if (fileType !== 'image/jpeg' && fileType !== 'image/jpg' && fileType !== 'image/png') {
+            notification.error({
+                description: 'Only JPG, JPEG, and PNG files are allowed.',
+            });
+            return;
+        }
     }
 
     router.post(route('finance.pendingGc.dti.approval'), {
-        ...form.value
+        ...form.value,
+        file: file.value
+
     }, {
         onSuccess: (page) => {
             if (page.props.flash.success) {
@@ -58,7 +60,7 @@ const submitButton = () => {
                     message: page.props.flash.message || 'Success',
                     description: page.props.flash.description || '',
                 });
-                
+
             }
         }, onError: (page) => {
             if (page.props.flash.error) {
@@ -75,10 +77,10 @@ const dateRequestedFormat = (value) => {
     return dayjs(value).format('YYYY-MMMM-DD');
 }
 
-const fileList = ref([]);
+const file = ref(null);
 
 const handleChange = (info) => {
-    fileList.value = info.fileList;
+    file.value = info.file.originFileObj;
 }
 
 const form = ref({
@@ -86,7 +88,7 @@ const form = ref({
     type: props.type,
     currentBudget: props.currentBudget,
     gcHolder: props.gcHolder,
-    fileList: fileList,
+    file: file,
     status: '1',
     dateApproved: dayjs(),
     dateCancelled: dayjs(),
@@ -154,7 +156,7 @@ const form = ref({
                                         </a-input>
                                     </a-form-item>
                                     <a-form-item label="Upload Document">
-                                        <a-upload-dragger v-model:fileList="fileList" name="file" :multiple="true"
+                                        <a-upload-dragger name="file" :multiple="false" file="file"
                                             action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                                             @change="handleChange">
                                             <p class="ant-upload-drag-icon">
@@ -245,15 +247,14 @@ const form = ref({
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="GC Holder Details" force-render>
                     <a-card>
-                        <div>
-                            <a-table :columns="props.columns" :data-source="props.gcHolder">
+                            <a-table :columns="props.columns" :data-source="props.gcHolder.data" :pagination="false" :size="small">
 
                             </a-table>
-                        </div>
+                            <pagination :datarecords="props.gcHolder" class="mt-5"/>
                     </a-card>
                 </a-tab-pane>
             </a-tabs>
         </div>
-        {{ data }}
+        <!-- {{ data }} -->
     </AuthenticatedLayout>
 </template>

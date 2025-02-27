@@ -167,6 +167,7 @@ declare module 'vue' {
     BudgetRequest: typeof import('./resources/js/Pages/Treasury/Transactions/BudgetRequest.vue')['default']
     BudgetRequestApproval: typeof import('./resources/js/Pages/Finance/Cards/BudgetRequestApproval.vue')['default']
     BudgetStatistics: typeof import('./resources/js/Pages/Finance/Components/BudgetStatistics.vue')['default']
+    CancelledDtiRequest: typeof import('./resources/js/Pages/Finance/CancelledDtiRequest.vue')['default']
     CancelledPR: typeof import('./resources/js/Pages/Marketing/gcproductionrequest/CancelledPR.vue')['default']
     CancelledProduction: typeof import('./resources/js/Pages/Treasury/Dashboard/GcProduction/CancelledProduction.vue')['default']
     CancelledRequest: typeof import('./resources/js/Pages/Marketing/PromoGCRequest/CancelledRequest.vue')['default']

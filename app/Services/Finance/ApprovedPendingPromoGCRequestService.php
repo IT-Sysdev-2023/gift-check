@@ -34,12 +34,6 @@ class ApprovedPendingPromoGCRequestService extends FileHandler
         ]);
     }
 
-    public function DtiApprovedGCRequest($request){
-        // dd('hello');
-        return inertia('Finance/ApprovedDTIGCRequest');
-
-    }
-
 
     public static function getPromoRequest($request)
     {
