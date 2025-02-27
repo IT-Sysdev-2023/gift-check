@@ -214,19 +214,27 @@ class CustodianController extends Controller
 
     public function dti_special_gc_pending()
     {
-        $pending = DtiGcRequest::where([
+        $pending = DtiGcRequest::with('specialDtiGcrequestItemsHasMany')->where([
             ['dti_status', 'pending'],
             ['dti_addemp', 'pending'],
         ])
-            ->join('dti_gc_request_items', 'dti_gc_request_items.dti_trid', '=', 'dti_gc_requests.dti_num')
             ->paginate()
             ->withQueryString();
 
+
         $pending->transform(function ($item) {
-            $item->totalDenom = $item->dti_denoms * $item->dti_qty;
+            $collect = collect($item->specialDtiGcrequestItemsHasMany);
+
+            $collect->each(function ($item) {
+                $item->subtotal = $item->dti_denoms * $item->dti_qty;
+                return $item;
+            });
+            $item->totalDenom = $collect->sum('subtotal');
+            // $item->totalDenom = ;
             $item->dateRequested = Date::parse($item->dti_datereq)->format('F d, Y');
             return $item;
         });
+
 
         return inertia('Custodian/DTI/PendingSpecialGc', ['pending' => $pending]);
     }
@@ -247,10 +255,9 @@ class CustodianController extends Controller
 
     public function dti_gc_holder_entry(Request $request)
     {
-        $data = DtiGcRequest::with('dtiDocuments')
+        $data = DtiGcRequest::with('dtiDocuments', 'specialDtiGcrequestItemsHasMany')
             ->where('dti_gc_requests.dti_num', $request->id)
             ->companyName()
-            ->denomination()
             ->where('dti_status', 'pending')
             ->where('dti_addemp', 'pending')
             ->first();
@@ -258,10 +265,18 @@ class CustodianController extends Controller
         if (!$data) {
             return redirect()->route('custodian.dti_special_gcdti_special_gc_pending');
         }
+        $count = 1;
+        $data->specialDtiGcrequestItemsHasMany->each(function ($subitem) use (&$count) {
+            $subitem->tempId = $count++;
+            $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
+            return $subitem;
+        });
 
         $data->dateRequested = Date::parse($data->dti_datereq)->format('F d, Y');
         $data->validity = Date::parse($data->dti_dateneed)->format('F d, Y');
         $data->total = number_format($data->dti_denoms * $data->dti_qty, 2);
+
+        // dd($data->toArray());
 
         return inertia('Custodian/DTI/HolderEntry', [
             'data' => $data
@@ -278,7 +293,7 @@ class CustodianController extends Controller
             foreach ($request['holders'] as $key => $value) {
                 DtiBarcodes::create([
                     'dti_trid' => $request['existingData']['dti_num'],
-                    'dti_denom' => $request['existingData']['dti_denoms'],
+                    'dti_denom' => $value['denom'],
                     'fname' => $value['fname'],
                     'lname' => $value['lname'],
                     'mname' => $value['mname'],

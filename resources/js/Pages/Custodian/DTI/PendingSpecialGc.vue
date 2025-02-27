@@ -14,7 +14,7 @@
                     <a-table :pagination="false" size="small" :dataSource="pending.data" :columns="columns">
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.dataIndex === 'view'">
-                                <a-button @click="viewRequest(record.dti_trid)" type="primary">View
+                                <a-button @click="viewRequest(record.dti_num)" type="primary">View
                                     <EyeOutlined />
                                 </a-button>
                             </template>

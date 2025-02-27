@@ -22,8 +22,14 @@
                         <a-input readonly :value="data.validity" />
                     </a-form-item>
                     <a-form-item label="Document(s) Uploaded">
-                        <a-image class="mb-2 h-[100px]" :key="index" v-for="(item, index) in props.data.dti_documents"
-                            :src="`/storage/${item.dti_fullpath}`" />
+                        <a-card size="small">
+                            <a-row :gutter="[16, 16]">
+                                <a-col :span="12" :key="index" v-for="(item, index) in props.data.dti_documents">
+                                    <a-image style="height: 120px; width: 100%;" class="shadow-lg rounded-lg"
+                                        :src="`/storage/${item.dti_fullpath}`" />
+                                </a-col>
+                            </a-row></a-card>
+
                     </a-form-item>
                 </a-col>
                 <a-col :span="8">
@@ -42,31 +48,34 @@
                     <a-form-item label="Remarks">
                         <a-textarea readonly :value="data.dti_remarks" />
                     </a-form-item>
-                    <a-row :gutter="[16, 16]">
-                        <a-col :span="8">
-                            <a-form-item label="Demomination">
-                                <a-input readonly :value="data.dti_denoms" />
-                            </a-form-item>
-                        </a-col>
-                        <a-col :span="6">
-                            <a-form-item label="Qty">
-                                <a-input readonly :value="data.dti_qty" />
-                            </a-form-item>
-                        </a-col>
-                        <a-col :span="4">
-                            <div class=" h-16 flex items-end">
-                                <a-button @click="openModal" type="primary">
-                                    <UserAddOutlined />
-                                </a-button>
-                            </div>
-                        </a-col>
-                        <a-col :span="6">
-                            <a-form-item label="# Holder" has-feedback
-                                :validate-status="form.errors.holders ? 'error' : ''" :help="form.errors.holders">
-                                <a-input readonly :value="gcHolder.length ? gcHolder.length : 0" />
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
+                    <div v-for="(item, key) in data.special_dti_gcrequest_items_has_many" :key="key">
+                        <!-- {{ item }} -->
+                        <a-row :gutter="[16, 16]">
+                            <a-col :span="8">
+                                <a-form-item label="Demomination">
+                                    <a-input readonly :value="item.dti_denoms" />
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="6">
+                                <a-form-item label="Qty">
+                                    <a-input readonly :value="item.dti_qty" />
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="4">
+                                <div class=" h-16 flex items-end">
+                                    <a-button @click="openModal(item)" type="primary">
+                                        <UserAddOutlined />
+                                    </a-button>
+                                </div>
+                            </a-col>
+                            <a-col :span="6">
+                                <a-form-item label="# Holder" has-feedback
+                                    :validate-status="form.errors.holders ? 'error' : ''" :help="form.errors.holders">
+                                    <a-input readonly :value="checkExistence(item.tempId)" />
+                                </a-form-item>
+                            </a-col>
+                        </a-row>
+                    </div>
                     <a-form-item>
                         <div class="h-14 flex items-center">
                             <p class=" text-3xl">Total: {{ `₱ ${data.total}` }}</p>
@@ -117,12 +126,16 @@
                     <p>Denomination: {{ data.dti_denoms }} </p>
                     <div class="h-[500px] overflow-y-auto">
                         <a-card>
-                            <a-table :pagination="false" size="small" :dataSource="gcHolder" :columns="columns" />
+                            <a-table :pagination="false" size="small"
+                                :dataSource="gcHolder.filter((data) => data.trid == holderSetup.tempId)"
+                                :columns="columns" />
                         </a-card>
                     </div>
                 </a-col>
             </a-row>
+
         </a-modal>
+        {{ gcHolder }}
     </AuthenticatedLayout>
 </template>
 
@@ -165,35 +178,42 @@ const handleSubmit = () => {
     })
 }
 
+const idHolder = ref(1);
 
-
+const checkExistence = (temp) => {
+    console.log(temp);
+    return gcHolder.value?.filter((data) => data.trid == temp).length ?? 0;
+};
 const handleAssign = () => {
-    if (!holderData.value.lname || !holderData.value.fname || !holderData.value.mname || !holderData.value.address || !holderData.value.voucher || !holderData.value.bu) {
-        notification['error']({
-            message: 'Notification Title',
-            description:
-                'Please fill in all required fields.'
+    if (holderSetup.value.dti_qty > gcHolder.value.filter((data) => data.trid == holderSetup.value.tempId).length) {
+        gcHolder.value.push({
+            id: idHolder.value++,
+            trid: holderSetup.value.tempId,
+            fname: holderData.value.fname,
+            lname: holderData.value.lname,
+            mname: holderData.value.mname,
+            ext: holderData.value.ext,
+            address: holderData.value.address,
+            voucher: holderData.value.voucher,
+            bu: holderData.value.bu,
+            denom: holderSetup.value.dti_denoms,
+            reqid: holderSetup.value.dti_trid
         });
-        return;
-    }
-    if (gcHolder.value.length >= props.data.dti_qty) {
+
+        notification['success']({
+            message: 'Success',
+            description:
+                'Successfully Assigning Customer Employee!',
+            placement: 'topLeft'
+        });
+    } else {
         notification['warning']({
-            message: 'Notification Title',
+            message: 'Maximum Reach',
             description:
-                'Holder Entry Has Reached the Max Quantity'
+                'Maximum limit reach assigning holder',
         });
-        return;
     }
-    gcHolder.value.push({ ...holderData.value });
-    holderData.value = {
-        lname: '',
-        fname: '',
-        mname: '',
-        ext: '',
-        address: '',
-        voucher: '',
-        bu: '',
-    };
+
 }
 
 const clear = () => {
@@ -208,8 +228,10 @@ const clear = () => {
     };
 }
 
+const holderSetup = ref({});
 
-const openModal = () => {
+const openModal = (data) => {
+    holderSetup.value = data;
     open.value = true;
 }
 
