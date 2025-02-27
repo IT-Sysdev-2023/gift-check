@@ -502,6 +502,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('payment-gc-dti-setup-{id}', [AccountingController::class, 'paymantGcDtiSetup'])->name('payment.gc.dti.setup');
                 Route::get('setup-payment-{id}', [AccountingController::class, 'setupPayment'])->name('setup');
                 Route::get('setup-table-{id}', [AccountingController::class, 'tableFetch'])->name('fetch');
+                Route::get('setup-dti-{id}', [AccountingController::class, 'tableFetchDtiTable'])->name('fetch.dti');
                 Route::post('submit-form', [AccountingController::class, 'submitPayment'])->name('submit');
                 Route::get('payment-viewing', [AccountingController::class, 'paymentViewing'])->name('viewing');
                 Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
