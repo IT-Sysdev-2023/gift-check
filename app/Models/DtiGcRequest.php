@@ -26,7 +26,6 @@ class DtiGcRequest extends Model
     {
         return $this->hasMany(DtiDocument::class, 'dti_trid', 'dti_num');
     }
-<<<<<<< HEAD
     public function user(){
         return $this->belongsTo(User::class, 'dti_reqby', 'user_id');
     }
@@ -39,20 +38,18 @@ class DtiGcRequest extends Model
         return $this->belongsTo(SpecialExternalCustomer::class, 'dti_company', 'spcus_id');
     }
 
-=======
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'dti_reqby');
-    }
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id', 'dti_reqby');
+    // }
 
-    public function specialDtiGcrequestItemsHasMany()
-    {
-        return $this->hasMany(DtiGcRequest::class, 'dti_num', 'id');
-    }
+    // public function specialDtiGcrequestItemsHasMany()
+    // {
+    //     return $this->hasMany(DtiGcRequest::class, 'dti_num', 'id');
+    // }
 
-    public function customer()
-    {
-        return $this->belongsTo(SpecialExternalCustomer::class, 'dti_company', 'spcus_id');
-    }
->>>>>>> gamale
+    // public function customer()
+    // {
+    //     return $this->belongsTo(SpecialExternalCustomer::class, 'dti_company', 'spcus_id');
+    // }
 }
