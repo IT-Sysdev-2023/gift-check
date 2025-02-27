@@ -118,7 +118,7 @@ class FileHandler
     public function getOriginalFileName(Request $request, $image)
     {
         $filename = $this->createFileName($request);
-
+        // dd($request->all());
         $originalName = $image->getClientOriginalName();
         $nameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
 

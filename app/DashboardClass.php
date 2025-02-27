@@ -2,10 +2,12 @@
 
 namespace App;
 
+// use App\Http\Requests\DtiGcRequest;
 use App\Models\ApprovedGcrequest;
 use App\Models\BudgetRequest;
 use App\Models\CustodianSrr;
 use App\Models\Denomination;
+use App\Models\DtiApprovedRequest;
 use App\Models\Gc;
 use App\Models\InstitutEod;
 use App\Models\InstitutTransaction;
@@ -20,6 +22,8 @@ use App\Models\SpecialExternalGcrequest;
 use App\Services\Treasury\Dashboard\DashboardService;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Http\Request;
+use App\Models\DtiGcRequest;
+
 
 class DashboardClass extends DashboardService
 {
@@ -27,7 +31,9 @@ class DashboardClass extends DashboardService
      * Create a new class instance.
      */
 
-    public function __construct() {}
+    public function __construct()
+    {
+    }
     public function treasuryDashboard(Request $request)
     {
         return [
@@ -84,15 +90,18 @@ class DashboardClass extends DashboardService
     }
     public function financeDashboard()
     {
+        // dd();
         $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')
             ->where('spexgc_promo', '0')
             ->where('spexgc_addemp', 'done')
             ->count();
+        // dd($pendingExternal);
 
         $pendingInternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')
             ->where('spexgc_promo', '*')
             ->where('spexgc_addemp', 'done')
             ->count();
+        // dd($pendingInternal);
 
         $curBudget = LedgerBudget::where('bcus_guide', '!=', 'dti')->get();
 
@@ -131,6 +140,19 @@ class DashboardClass extends DashboardService
                 'curBudget' => $debitTotal - $creditTotal,
                 'dti' => $dtiDebitTotal - $dtiCreditTotal,
                 'spgc' => $spgcDebitTotal - $spgcreditTotal,
+            ],
+
+            'dtiCounts' => [
+                'pending' => DtiGcRequest::where('dti_status', 'pending')->count(),
+
+                'approved' => DtiGcRequest::join('dti_approved_requests', 'dti_gc_requests.dti_num', '=', 'dti_approved_requests.dti_trid')
+                    ->join('ledger_budget', 'ledger_budget.bledger_trid', '=', 'dti_gc_requests.dti_num')
+                    ->where('dti_gc_requests.dti_status', 'approved')
+                    ->where('dti_gc_requests.dti_addemp', 'done')
+                    ->count(),
+
+
+                'cancelled' => DtiGcRequest::where('dti_status', 'cancelled')->count(),
             ],
 
             'appPromoCount' => PromoGcRequest::with('userReqby')

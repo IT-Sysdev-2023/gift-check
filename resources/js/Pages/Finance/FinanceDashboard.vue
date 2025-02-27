@@ -16,8 +16,12 @@
                 :approved="count.appPromoCount" pRoute="finance.pen.promo.request" aRoute="finance.app.promo.request" />
             <!-- <PromoGcViewCard :count="count"></PromoGCViewCard> -->
 
-            <m-card class="uppercase" title="DTI SPECIAL GC REQUEST" :pending="count.budgetCounts.dti" pRoute="finance.pendingGc.dti.request.pending"
-                :approved="2" aRoute="finance.request.approve" />
+            <!-- Dti Special GC Request  -->
+            <m-card class="uppercase" title="DTI SPECIAL GC REQUEST" :pending="count.dtiCounts.pending"
+                pRoute="finance.pendingGc.dti.request.pending" :approved="count.dtiCounts.approved"
+                aRoute="finance.request.approve" :cancelled="count.dtiCounts.cancelled"
+                cRoute="finance.cancelledGc.dti_cancelled" />
+
         </a-col>
         <a-col :span="8">
             <f-card class="uppercase" title="special gc request" pendingLabel="Internal Pending"
@@ -52,7 +56,7 @@
             <!-- <budget-adjustments :count="count" /> -->
         </a-col>
     </a-row>
-    {{ count }}
+    <!-- {{ count }} -->
 </template>
 <script>
 import Authenticatedlayout from "@/Layouts/AuthenticatedLayout.vue";

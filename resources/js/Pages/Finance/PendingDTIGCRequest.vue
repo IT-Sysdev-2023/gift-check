@@ -13,7 +13,7 @@ const props = defineProps({
         <a-card>
             <div class="flex items-center">
                 <p class="text-lg">Pending DTI Special GC Request</p>
-                <Link class="ml-auto text-black" :href="route('finance.dashboard')">
+                <Link class="ml-auto text-black text-blue-700" :href="route('finance.dashboard')">
                 <RollbackOutlined /> Back to Dashboard
                 </Link>
             </div>

@@ -1,54 +1,233 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { router } from '@inertiajs/core';
+import axios from 'axios';
+import { defineProps } from 'vue';
 import { ref } from 'vue';
+
+const activeKey = ref('1');
+
+const props = defineProps({
+    data: Object,
+    search: String,
+})
+
+const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+    });
+};
 
 const columns = ref([
     {
         title: 'RFSEGC #',
-        dataIndex: ''
+        dataIndex: 'dti_num'
     },
     {
         title: 'Date Requested',
-        dataIndex: ''
+        dataIndex: 'dti_datereq',
+        customRender: ({ text }) => formatDate(text)
     },
     {
-        title: 'Date Needed',
-        dataIndex: ''
-    },
-    {
-        title: 'Total Denomination',
-        dataIndex: ''
+        title: 'Date Validity',
+        dataIndex: 'dti_datereq',
+        customRender: ({ text }) => formatDate(text)
     },
     {
         title: 'Customer',
-        dataIndex: ''
+        dataIndex: 'dti_customer'
     },
     {
-        title: 'Request By',
-        dataIndex: ''
+        title: 'Date Approved',
+        dataIndex: 'dti_approveddate',
+        customRender: ({ text }) => formatDate(text)
+    },
+    {
+        title: 'Approved By',
+        dataIndex: 'dti_approvedby'
     },
     {
         title: 'View',
         dataIndex: 'action'
     },
 ])
+const form = ref({
+    dti_datereq: '',
+    dti_remarks: '',
+    dti_paymenttype: '',
+    bcredit_amt: '',
+    dti_approveddate: '',
+    dti_checkby: '',
+    dti_approvedby: '',
+    dti_doc: null
+})
+
+const openModal = ref(false);
+const barcode = ref([]);
+
+const viewApprovedDti = async (data) => {
+    form.value = {
+        dti_datereq: data.dti_datereq ? formatDate(data.dti_datereq) : '',
+        dti_remarks: data.dti_remarks || '',
+        dti_paymenttype: data.dti_paymenttype || '',
+        bcredit_amt: data.bcredit_amt || '',
+        dti_approveddate: data.dti_approveddate ? formatDate(data.dti_approveddate) : '',
+        dti_checkby: data.dti_checkby || '',
+        dti_approvedby: data.dti_approvedby || '',
+        dti_doc: data.dti_doc || ''
+    }
+
+    await axios.get(route('finance.approvedGc.selected.dti.request'), {
+        params: {
+            id: data.dti_num,
+        }
+    })
+        .then((response) => {
+            openModal.value = true;
+            // this.jsonData = response.data.jsonData;
+            barcode.value = response.data.barcodes;
+        });
+}
+
+const approvedSearch = ref(props.search);
+const searchValue = () => {
+    router.get(route('finance.request.approve'), {
+        search: approvedSearch.value,
+    }, {
+        preserveState: true,
+    });
+}
+
+const barcodeColumns = ref([
+    {
+        title: 'Barcode',
+        dataIndex: 'spexgcemp_barcode',
+    },
+    {
+        title: 'Denomination',
+        dataIndex: 'spexgcemp_denom'
+    },
+    {
+        title: 'Fullname',
+        dataIndex: 'fullname'
+    }
+])
 </script>
 <template>
     <AuthenticatedLayout>
-        <header>
-            <div class="flex items-center">
-                <p class="text-lg">Approved DTI Special GC Request</p>
-                <Link :href="route('finance.dashboard')" class="ml-auto text-black">
-                <RollbackOutlined /> Back to Dashboard
-                </Link>
-            </div>
-        </header>
-        <main class="mt-10">
-            <section>
-                <a-table :columns="columns">
+        <a-card>
+            <a-card>
+                <div class="flex items-center">
+                    <p class="text-lg">Approved DTI Special GC Request</p>
+                    <Link :href="route('finance.dashboard')" class="ml-auto text-black text-blue-700">
+                    <RollbackOutlined /> Back to Dashboard
+                    </Link>
+                </div>
+            </a-card>
+            <main class="mt-5">
+                <div class="flex justify-end">
+                    <a-input-search class="lg:w-[350px]" enter-button allow-clear placeholder="Input search here..."
+                        v-model:value="approvedSearch" @change="searchValue" />
+                </div>
+                <section>
+                    <a-table :data-source="props.data.data" :columns="columns" size="small" :pagination="false"
+                        class="mt-5">
+                        <template #bodyCell="{ record, column }">
+                            <template v-if="column.dataIndex === 'action'">
+                                <a-button type="primary" @click="viewApprovedDti(record)">
+                                    <PicLeftOutlined /> View
+                                </a-button>
+                            </template>
+                        </template>
+                    </a-table>
+                    <pagination :datarecords="props.data" class="mt-5" />
+                </section>
+            </main>
+        </a-card>
+        <a-modal v-model:open="openModal" width="100%" :footer="false">
+            <div class="card-container">
+                <a-tabs v-model:activeKey="activeKey" type="card">
+                    <a-tab-pane key="1" tab="DTI Special Gc Request">
+                        <div class="flex direction-columns gap-5">
+                            <a-card>
+                                <a-form-item label="Date Requested">
+                                    <a-input readonly v-model:value="form.dti_datereq">
+                                    </a-input>
+                                </a-form-item>
+                                <a-form-item label="Document">
+                                    <img :src="form.dti_doc" alt="Document Image"
+                                        style="max-width: 100px; height: auto;">
+                                </a-form-item>
+                            </a-card>
+                            <a-card>
+                                <a-form-item label="Date Validity">
+                                    <a-input readonly v-model:value="form.dti_datereq">
 
-                </a-table>
-            </section>
-        </main>
+                                    </a-input>
+                                </a-form-item>
+                                <a-form-item label="Remarks">
+                                    <a-input readonly v-model:value="form.dti_remarks">
+
+                                    </a-input>
+                                </a-form-item>
+                                <a-form-item label="AR #">
+                                    <a-input readonly v-model:value="form.dti_remarks">
+
+                                    </a-input>
+                                </a-form-item>
+                                <a-form-item label="Payment Type">
+                                    <a-input readonly v-model:value="form.dti_paymenttype">
+
+                                    </a-input>
+                                </a-form-item>
+                                <a-form-item label="Amount">
+                                    <a-input readonly v-model:value="form.bcredit_amt">
+
+                                    </a-input>
+                                </a-form-item>
+                            </a-card>
+                            <a-card>
+                                <a-form-item label="Date Approved">
+                                    <a-input readonly v-model:value="form.dti_approveddate">
+
+                                    </a-input>
+                                </a-form-item>
+                                <a-form-item label="Checked By">
+                                    <a-input readonly v-model:value="form.dti_checkby">
+
+                                    </a-input>
+                                </a-form-item>
+                                <a-form-item label="Prepared By">
+                                    <a-input readonly v-model:value="form.dti_approvedby">
+
+                                    </a-input>
+                                </a-form-item>
+                            </a-card>
+                            <a-card>
+                                <a-form-item label="Remarks">
+                                    <a-input readonly v-model:value="form.dti_remarks">
+
+                                    </a-input>
+                                </a-form-item>
+                                <a-form-item label="Approved By">
+                                    <a-input readonly v-model:value="form.dti_approvedby">
+
+                                    </a-input>
+                                </a-form-item>
+                            </a-card>
+                        </div>
+                    </a-tab-pane>
+                    <a-tab-pane key="2" tab="Barcodes">
+                        <a-table :columns="barcodeColumns" :data-source="barcode" size="small">
+
+                        </a-table>
+                    </a-tab-pane>
+                </a-tabs>
+            </div>
+        </a-modal>
+        {{ barcode }}
     </AuthenticatedLayout>
 </template>
