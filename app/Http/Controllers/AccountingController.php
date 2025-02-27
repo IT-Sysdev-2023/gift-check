@@ -42,6 +42,12 @@ class AccountingController extends Controller
     {
         return $this->accountingservices->getDataList($id);
     }
+
+    public function tableFetchDtiTable($id)
+    {
+        return $this->accountingservices->getDataListDti($id);
+    }
+
     public function submitPayment(Request $request)
     {
         return $this->accountingservices->submitPayementForm($request);

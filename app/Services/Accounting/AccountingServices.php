@@ -3,6 +3,7 @@
 namespace App\Services\Accounting;
 
 use App\Models\ApprovedRequest;
+use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
 use App\Models\InstitutPayment;
 use App\Models\SpecialExternalGcrequest;
@@ -250,11 +251,39 @@ class AccountingServices
             ])
             ->first();
 
-        $data->each(function ($item) {
-            return $item;
-        });
+        if($data){
+            $data->prefullname = Str::ucfirst($data->prefirstname) . ', ' . Str::ucfirst($data->prelastname);
+            $data->refullname = Str::ucfirst($data->refirstname) . ', ' . Str::ucfirst($data->relastname);
+            $data->dti_datereq = Date::parse($data->dti_datereq)->toFormattedDateString();
+            $data->dti_dateneed = Date::parse($data->dti_dateneed)->toFormattedDateString();
+            $data->dti_approveddate = Date::parse($data->dti_approveddate)->toFormattedDateString();
+            $data->timerequested = Date::parse($data->dti_approveddate)->format('H:i');
 
+        }
         return $data;
     }
+
+
+    public function getDataListDti($id)
+    {
+        $data = DtiBarcodes::select(
+            'dti_denom',
+            'fname',
+            'lname',
+            'mname',
+            'extname',
+            'dti_barcode',
+        )->where([
+            ['dti_trid', $id],
+            ['dti_status', '']
+        ]);
+
+        return response()->json([
+            'record' => $data->get(),
+            'total' => $data->count(),
+            'denomcount' => $data->sum('dti_denom'),
+        ]);
+    }
+
 
 }
