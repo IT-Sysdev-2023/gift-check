@@ -57,12 +57,13 @@ const columns = ref([
 const form = ref({
     dti_datereq: '',
     dti_remarks: '',
+    approved_remarks: '',
     dti_paymenttype: '',
     bcredit_amt: '',
     dti_approveddate: '',
     dti_checkby: '',
     dti_approvedby: '',
-    dti_doc: null
+    dti_doc: null,
 })
 
 const openModal = ref(false);
@@ -71,7 +72,8 @@ const barcode = ref([]);
 const viewApprovedDti = async (data) => {
     form.value = {
         dti_datereq: data.dti_datereq ? formatDate(data.dti_datereq) : '',
-        dti_remarks: data.dti_remarks || '',
+        first_remarks: data.dti_remarks || '',
+        approved_remarks: data.approved_remarks || '',
         dti_paymenttype: data.dti_paymenttype || '',
         bcredit_amt: data.bcredit_amt || '',
         dti_approveddate: data.dti_approveddate ? formatDate(data.dti_approveddate) : '',
@@ -104,11 +106,11 @@ const searchValue = () => {
 const barcodeColumns = ref([
     {
         title: 'Barcode',
-        dataIndex: 'spexgcemp_barcode',
+        dataIndex: 'dti_barcode',
     },
     {
         title: 'Denomination',
-        dataIndex: 'spexgcemp_denom'
+        dataIndex: 'dti_denom'
     },
     {
         title: 'Fullname',
@@ -133,7 +135,7 @@ const barcodeColumns = ref([
                         v-model:value="approvedSearch" @change="searchValue" />
                 </div>
                 <section>
-                    <a-table :data-source="props.data.data" :columns="columns" size="small" :pagination="false"
+                    <a-table :data-source="props.data" :columns="columns" size="small"
                         class="mt-5">
                         <template #bodyCell="{ record, column }">
                             <template v-if="column.dataIndex === 'action'">
@@ -143,7 +145,6 @@ const barcodeColumns = ref([
                             </template>
                         </template>
                     </a-table>
-                    <pagination :datarecords="props.data" class="mt-5" />
                 </section>
             </main>
         </a-card>
@@ -169,12 +170,7 @@ const barcodeColumns = ref([
                                     </a-input>
                                 </a-form-item>
                                 <a-form-item label="Remarks">
-                                    <a-input readonly v-model:value="form.dti_remarks">
-
-                                    </a-input>
-                                </a-form-item>
-                                <a-form-item label="AR #">
-                                    <a-input readonly v-model:value="form.dti_remarks">
+                                    <a-input readonly v-model:value="form.first_remarks">
 
                                     </a-input>
                                 </a-form-item>
@@ -208,7 +204,7 @@ const barcodeColumns = ref([
                             </a-card>
                             <a-card>
                                 <a-form-item label="Remarks">
-                                    <a-input readonly v-model:value="form.dti_remarks">
+                                    <a-input readonly v-model:value="form.approved_remarks">
 
                                     </a-input>
                                 </a-form-item>
@@ -228,6 +224,6 @@ const barcodeColumns = ref([
                 </a-tabs>
             </div>
         </a-modal>
-        {{ barcode }}
+        {{ data }}
     </AuthenticatedLayout>
 </template>
