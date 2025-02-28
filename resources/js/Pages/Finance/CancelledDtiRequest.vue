@@ -1,7 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Link } from '@inertiajs/vue3';
-import axios from 'axios';
 import { ref } from 'vue';
 
 const activeKey = ref('1');
@@ -36,28 +35,9 @@ const selectedRecord = async (data) => {
         dti_cancelled_remarks: data.dti_cancelled_remarks || '',
         dti_cancelled_by: data.fullname || ''
     }
-    await axios.get(route('finance.cancelledGc.dti_cancelled'), {
-        params: {
-            id: data.dti_num
-        }
-    })
     openCancelModal.value = true;
 }
 
-const column = ref([
-    {
-        title: 'Barcode',
-        dataIndex: ''
-    },
-    {
-        title: 'Denomination',
-        dataIndex: ''
-    },
-    {
-        title: 'Fullname',
-        dataIndex: ''
-    }
-])
 </script>
 <template>
     <AuthenticatedLayout>
@@ -71,7 +51,7 @@ const column = ref([
                 </div>
             </a-card>
             <div class="mt-5">
-                <a-table :columns="props.columns" :data-source="data">
+                <a-table :columns="props.columns" :data-source="data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'View'">
                             <a-button type="primary" @click="selectedRecord(record)">
@@ -80,6 +60,7 @@ const column = ref([
                         </template>
                     </template>
                 </a-table>
+                <pagination :datarecords="data" class="mt-5" />
             </div>
         </a-card>
         <a-modal v-model:open="openCancelModal" width="70%" :footer="false">
@@ -105,7 +86,7 @@ const column = ref([
                                 <a-input v-model:value="form.dti_cancelled_date" readonly></a-input>
                             </a-form-item>
                             <a-form-item label="Checked By">
-                                <a-input v-model:value="form.checkBy" readonly></a-input>
+                                <a-input v-model:value="form.fullname" readonly></a-input>
                             </a-form-item>
                             <a-form-item label="Prepared By">
                                 <a-input v-model:value="form.fullname" readonly></a-input>
@@ -113,7 +94,7 @@ const column = ref([
                         </a-card>
                         <a-card>
                             <a-form-item label="Remarks">
-                                <a-input v-model:value="form.dti_cancelled_remarks" readonly></a-input>
+                                <a-textarea v-model:value="form.dti_cancelled_remarks" readonly></a-textarea>
                             </a-form-item>
                             <a-form-item label="Cancelled By">
                                 <a-input v-model:value="form.fullname" readonly></a-input>
@@ -121,14 +102,9 @@ const column = ref([
                         </a-card>
                     </div>
                 </a-tab-pane>
-                <a-tab-pane tab="Barcode" key="2">
-                    <a-table :columns="column">
-
-                    </a-table>
-                </a-tab-pane>
             </a-tabs>
         </a-modal>
-        {{ data }}
+        <!-- {{ data }} -->
 
     </AuthenticatedLayout>
 </template>

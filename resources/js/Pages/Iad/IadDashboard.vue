@@ -17,6 +17,11 @@
             <a-col :span="8">
                 <for-approval-pending :budget="budgetrequest" />
             </a-col>
+            <a-col :span="8">
+                <i-card class="uppercase" revrecLabel="Gc Received" rRoute="iad.view.received"
+                    aRoute="iad.special.external.viewDtiGc"  title="special dti gc request"
+                    :approved="1" :recrev="2" />
+            </a-col>
         </a-row>
 
     </AuthenticatedLayout>

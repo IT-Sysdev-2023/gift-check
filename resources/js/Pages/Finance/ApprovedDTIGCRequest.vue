@@ -135,7 +135,8 @@ const barcodeColumns = ref([
                         v-model:value="approvedSearch" @change="searchValue" />
                 </div>
                 <section>
-                    <a-table :data-source="props.data" :columns="columns" size="small" class="mt-5">
+                    <a-table :data-source="props.data.data" :columns="columns" size="small" class="mt-5"
+                        :pagination="false">
                         <template #bodyCell="{ record, column }">
                             <template v-if="column.dataIndex === 'action'">
                                 <a-button type="primary" @click="viewApprovedDti(record)">
@@ -144,6 +145,7 @@ const barcodeColumns = ref([
                             </template>
                         </template>
                     </a-table>
+                    <pagination :datarecords="props.data" class="mt-5" />
                 </section>
             </main>
         </a-card>
@@ -223,6 +225,6 @@ const barcodeColumns = ref([
                 </a-tabs>
             </div>
         </a-modal>
-        {{ data }}
+        <!-- {{ data }} -->
     </AuthenticatedLayout>
 </template>

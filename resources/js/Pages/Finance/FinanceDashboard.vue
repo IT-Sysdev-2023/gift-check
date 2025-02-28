@@ -1,5 +1,6 @@
 <template>
     <a-row class="mb-4" :gutter="[16, 16]">
+
         <a-col :span="8">
             <budget-statistics :title="'Current Budget'" :count="count.budgetCounts.curBudget" />
         </a-col>
@@ -7,7 +8,10 @@
             <budget-statistics :title="'Special Gc (Promotional)'" :count="count.budgetCounts.spgc" />
         </a-col>
         <a-col :span="8">
-            <budget-statistics :title="'DTI GC'" :count="count.budgetCounts.dti" />
+            <budget-statistics :title="'DTI GC Deprecated'" :count="count.budgetCounts.dti" />
+        </a-col>
+        <a-col :span="8">
+            <budget-statistics :title="'DTI New'" :count="count.budgetCounts.dti_new" />
         </a-col>
     </a-row>
     <a-row :gutter="[16, 16]">
