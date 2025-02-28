@@ -38,6 +38,13 @@ const submitButton = () => {
         return;
     }
 
+    if (form.value.file == null && form.value.status === "1") {
+        notification.error({
+            description: 'Upload Document is required',
+        });
+        return;
+    }
+
 
     if (file.value) {
         const fileType = file.value.type;
@@ -247,10 +254,11 @@ const form = ref({
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="GC Holder Details" force-render>
                     <a-card>
-                            <a-table :columns="props.columns" :data-source="props.gcHolder.data" :pagination="false" :size="small">
+                        <a-table :columns="props.columns" :data-source="props.gcHolder.data" :pagination="false"
+                            :size="small">
 
-                            </a-table>
-                            <pagination :datarecords="props.gcHolder" class="mt-5"/>
+                        </a-table>
+                        <pagination :datarecords="props.gcHolder" class="mt-5" />
                     </a-card>
                 </a-tab-pane>
             </a-tabs>

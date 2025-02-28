@@ -23,7 +23,7 @@ const props = defineProps({
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.dataIndex === 'View'">
                                 <a-button type="primary"
-                                    @click="() => $inertia.get(route('finance.pendingGc.ditPendingRequest'), { id: record.id, gcType: record.dti_promo })">
+                                    @click="() => $inertia.get(route('finance.pendingGc.ditPendingRequest'), { id: record.dti_num, gcType: record.dti_promo })">
                                     <PicLeftOutlined /> View
                                 </a-button>
                             </template>

@@ -145,16 +145,16 @@ class DashboardClass extends DashboardService
             'dtiCounts' => [
                 'pending' => DtiGcRequest::where('dti_status', 'pending')->count(),
 
-                'approved' => DtiGcRequest::join('dti_approved_requests', 'dti_gc_requests.dti_num', '=', 'dti_approved_requests.dti_trid')
-                    ->join('ledger_budget', 'ledger_budget.bledger_trid', '=', 'dti_gc_requests.dti_num')
-                    ->where('dti_gc_requests.dti_status', 'approved')
-                    ->where('dti_gc_requests.dti_addemp', 'done')
+                'approved' => DtiGcRequest::where('dti_gc_requests.dti_status', 'approved')
+                    ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
+                    ->leftJoin('dti_barcodes', 'dti_barcodes.dti_trid', '=', 'dti_gc_requests.dti_num')
                     ->count(),
 
-
-                'cancelled' => DtiGcRequest::where('dti_status', 'cancelled')->count(),
+                'cancelled' => DtiGcRequest::with('specialDtiGcrequestItemsHasMany')
+                    ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_cancelled_by')
+                    ->where('dti_gc_requests.dti_status', 'cancelled')
+                    ->count(),
             ],
-
             'appPromoCount' => PromoGcRequest::with('userReqby')
                 ->whereFilterForApproved()
                 ->selectPromoRequest()

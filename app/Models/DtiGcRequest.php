@@ -26,15 +26,18 @@ class DtiGcRequest extends Model
     {
         return $this->hasMany(DtiDocument::class, 'dti_trid', 'dti_num');
     }
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class, 'dti_reqby', 'user_id');
     }
 
-    public function specialDtiGcrequestItemsHasMany(){
+    public function specialDtiGcrequestItemsHasMany()
+    {
         return $this->hasMany(DtiGcRequestItem::class, 'dti_trid', 'dti_num');
     }
 
-    public function customer(){
+    public function customer()
+    {
         return $this->belongsTo(SpecialExternalCustomer::class, 'dti_company', 'spcus_id');
     }
 
