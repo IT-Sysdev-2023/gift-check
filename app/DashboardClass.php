@@ -109,6 +109,8 @@ class DashboardClass extends DashboardService
 
         $ledgerSpgc = LedgerSpgc::get();
 
+        $dtiNewBudget = LedgerBudget::where('bcus_guide', 'dti-new')->get();
+
 
 
         $debitTotal = $curBudget->sum('bdebit_amt');
@@ -122,6 +124,8 @@ class DashboardClass extends DashboardService
 
         $spgcreditTotal = $ledgerSpgc->sum('spgcledger_credit');
 
+        $dtiDebitNewTotal = $dtiNewBudget->sum('bdebit_amt');
+        $dtiCreditNewTotal = $dtiNewBudget->sum('bcredit_amt');
         return [
             'specialGcRequest' => [
                 'pending' => $pendingExternal + $pendingInternal,
@@ -140,14 +144,18 @@ class DashboardClass extends DashboardService
                 'curBudget' => $debitTotal - $creditTotal,
                 'dti' => $dtiDebitTotal - $dtiCreditTotal,
                 'spgc' => $spgcDebitTotal - $spgcreditTotal,
+                'dti_new' => $dtiDebitNewTotal - $dtiCreditNewTotal,
             ],
 
             'dtiCounts' => [
                 'pending' => DtiGcRequest::where('dti_status', 'pending')->count(),
 
-                'approved' => DtiGcRequest::where('dti_gc_requests.dti_status', 'approved')
+                'approved' => DtiGcRequest::with('specialDtiGcrequestItemsHasMany')
+                    ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
+                    ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
                     ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
-                    ->leftJoin('dti_barcodes', 'dti_barcodes.dti_trid', '=', 'dti_gc_requests.dti_num')
+                    ->where('dti_gc_requests.dti_status', 'approved')
+                    ->where('dti_approved_requests.dti_approvedtype', 'Special External GC Approved')
                     ->count(),
 
                 'cancelled' => DtiGcRequest::with('specialDtiGcrequestItemsHasMany')

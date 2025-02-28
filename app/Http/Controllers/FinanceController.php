@@ -168,8 +168,8 @@ class FinanceController extends Controller
             ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
             ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
-            ->leftJoin('dti_barcodes', 'dti_barcodes.dti_trid', '=', 'dti_gc_requests.dti_num')
             ->where('dti_gc_requests.dti_status', 'approved')
+            ->where('dti_approved_requests.dti_approvedtype', 'Special External GC Approved')
             ->select(
                 'dti_approved_requests.dti_remarks as approved_remarks',
                 'dti_gc_requests.dti_num',
@@ -182,7 +182,8 @@ class FinanceController extends Controller
                 'dti_approved_requests.dti_checkby',
                 'dti_gc_requests.dti_paymenttype',
             )
-            ->get();
+            ->orderbyDesc('dti_gc_requests.dti_num')
+            ->paginate(10);
 
         $DtiApprovedQuery->transform(function ($item) {
             $item->specialDtiGcrequestItemsHasMany->each(function ($subitem) {
@@ -595,7 +596,7 @@ class FinanceController extends Controller
 
                             $data = DtiBarcodes::where('dti_trid', $id);
 
-                            foreach ($denoms as $item) {
+                            foreach ($denoms->get() as $item) {
                                 DtiBarcodes::create([
                                     'dti_trid' => $id,
                                     'dti_denom' => $item->specit_denoms,
@@ -617,21 +618,18 @@ class FinanceController extends Controller
                     ]);
                 }
             } else {
-                // dd($id);
+                // dd($barcode++);
+                // dd($request->all());
                 DtiGcRequest::where('dti_num', $id)
                     ->where('dti_status', 'pending')
                     ->update([
                         'dti_status' => 'cancelled',
                         'dti_cancelled_remarks' => $request->cancelledRemarks,
                         'dti_cancelled_by' => $request->user()->user_id,
-                        'dti_company' => $request->data[0]['dti_company'],
-                        'dti_cancelled_date' => now()
+                        'dti_customer' => $request->data[0]['spcus_companyname'],
+                        'dti_cancelled_date' => now(),
                     ]);
-                // dd($barcode);
-                DtiBarcodes::create([
-                    'dti_barcode' => $barcode++
-                ]);
-                // dd(vars: $request->user()->user_id);
+
                 return Redirect::route('finance.pendingGc.dti.request.pending')->with([
                     'success' => true,
                     'message' => 'Opps!',
@@ -866,6 +864,7 @@ class FinanceController extends Controller
 
     public function selectedDtiRequest(Request $request)
     {
+        // dd($request ->all());
         $barcode = DtiBarcodes::where('dti_trid', $request->id)->get();
 
         $barcode->transform(function ($item) {
@@ -1014,7 +1013,8 @@ class FinanceController extends Controller
         $DtiApprovedQuery = DtiGcRequest::with('specialDtiGcrequestItemsHasMany')
             ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_cancelled_by')
             ->where('dti_gc_requests.dti_status', 'cancelled')
-            ->get();
+            ->orderByDesc('dti_gc_requests.dti_num')
+            ->paginate(10);
 
         $DtiApprovedQuery->transform(function ($item) {
             $item->specialDtiGcrequestItemsHasMany->each(function ($subitem) {
@@ -1042,11 +1042,13 @@ class FinanceController extends Controller
             ['RFSEGC #', 'DATE REQUESTED', 'DATE VALIDITY', 'CUSTOMER', 'DATE CANCELLED', 'CANCELLED BY', 'VIEW'],
             ['dti_num', 'dateRequested', 'dateRequested', 'dti_customer', 'dti_cancelled_date', 'fullname', 'View']
         );
+        // dd($DtiApprovedQuery);
 
         return Inertia::render('Finance/CancelledDtiRequest', [
             'data' => $DtiApprovedQuery,
             'columns' => $columns
         ]);
     }
+
 
 }
