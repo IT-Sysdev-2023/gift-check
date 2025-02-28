@@ -16,27 +16,25 @@ const openCancelModal = ref(false);
 const form = ref({
     dateRequested: '',
     dti_paymenttype: '',
-    bcredit_amt: '',
+    totalDenomination: '',
     dti_cancelled_date: '',
-    dti_checkby: '',
-    prepared_by: '',
+    checkBy: '',
+    fullname: '',
     dti_cancelled_remarks: '',
-    dti_cancelled_by: ''
 });
 
-// ['dti_num', 'date_requested', 'date_requested', 'dti_customer', 'dti_cancelled_date', 'dti_cancelled_by', 'View']
 
 const selectedRecord = async (data) => {
 
     form.value = {
-        dateRequested: data.date_requested || '',
+        dateRequested: data.dateRequested || '',
         dti_paymenttype: data.dti_paymenttype || '',
-        bcredit_amt: data.bcredit_amt || '',
+        totalDenomination: data.totalDenomination || '',
         dti_cancelled_date: data.dti_cancelled_date || '',
-        dti_checkby: data.dti_checkby || '',
-        prepared_by: data.prepared_by || '',
+        checkBy: data.checkBy || '',
+        fullname: data.fullname || '',
         dti_cancelled_remarks: data.dti_cancelled_remarks || '',
-        dti_cancelled_by: data.dti_cancelled_by || ''
+        dti_cancelled_by: data.fullname || ''
     }
     await axios.get(route('finance.cancelledGc.dti_cancelled'), {
         params: {
@@ -45,6 +43,21 @@ const selectedRecord = async (data) => {
     })
     openCancelModal.value = true;
 }
+
+const column = ref([
+    {
+        title: 'Barcode',
+        dataIndex: ''
+    },
+    {
+        title: 'Denomination',
+        dataIndex: ''
+    },
+    {
+        title: 'Fullname',
+        dataIndex: ''
+    }
+])
 </script>
 <template>
     <AuthenticatedLayout>
@@ -72,7 +85,7 @@ const selectedRecord = async (data) => {
         <a-modal v-model:open="openCancelModal" width="70%" :footer="false">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane tab="Cancelled DTI Request" key="1">
-                    <div class="flex direction-columns gap-5">
+                    <div class="flex direction-columns gap-10">
                         <a-card>
                             <a-form-item label="Date Requested">
                                 <a-input v-model:value="form.dateRequested" readonly></a-input>
@@ -84,7 +97,7 @@ const selectedRecord = async (data) => {
                                 <a-input v-model:value="form.dti_paymenttype" readonly></a-input>
                             </a-form-item>
                             <a-form-item label="Amount">
-                                <a-input v-model:value="form.bcredit_amt" readonly></a-input>
+                                <a-input v-model:value="form.totalDenomination" readonly></a-input>
                             </a-form-item>
                         </a-card>
                         <a-card>
@@ -92,10 +105,10 @@ const selectedRecord = async (data) => {
                                 <a-input v-model:value="form.dti_cancelled_date" readonly></a-input>
                             </a-form-item>
                             <a-form-item label="Checked By">
-                                <a-input v-model:value="form.dti_checkby" readonly></a-input>
+                                <a-input v-model:value="form.checkBy" readonly></a-input>
                             </a-form-item>
                             <a-form-item label="Prepared By">
-                                <a-input v-model:value="form.prepared_by" readonly></a-input>
+                                <a-input v-model:value="form.fullname" readonly></a-input>
                             </a-form-item>
                         </a-card>
                         <a-card>
@@ -103,15 +116,15 @@ const selectedRecord = async (data) => {
                                 <a-input v-model:value="form.dti_cancelled_remarks" readonly></a-input>
                             </a-form-item>
                             <a-form-item label="Cancelled By">
-                                <a-input v-model:value="form.dti_cancelled_by" readonly></a-input>
+                                <a-input v-model:value="form.fullname" readonly></a-input>
                             </a-form-item>
                         </a-card>
                     </div>
                 </a-tab-pane>
                 <a-tab-pane tab="Barcode" key="2">
-                    <p>KUPAL KABA BOSS ? KASI ANG LAKI MONG TANGA
+                    <a-table :columns="column">
 
-                    </p>
+                    </a-table>
                 </a-tab-pane>
             </a-tabs>
         </a-modal>

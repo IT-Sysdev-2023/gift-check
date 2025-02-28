@@ -55,15 +55,15 @@ const columns = ref([
     },
 ])
 const form = ref({
+    totalDenomination: '',
     dti_datereq: '',
     dti_remarks: '',
     approved_remarks: '',
     dti_paymenttype: '',
-    bcredit_amt: '',
     dti_approveddate: '',
     dti_checkby: '',
     dti_approvedby: '',
-    dti_doc: null,
+    dti_doc: '',
 })
 
 const openModal = ref(false);
@@ -75,11 +75,11 @@ const viewApprovedDti = async (data) => {
         first_remarks: data.dti_remarks || '',
         approved_remarks: data.approved_remarks || '',
         dti_paymenttype: data.dti_paymenttype || '',
-        bcredit_amt: data.bcredit_amt || '',
         dti_approveddate: data.dti_approveddate ? formatDate(data.dti_approveddate) : '',
         dti_checkby: data.dti_checkby || '',
         dti_approvedby: data.dti_approvedby || '',
-        dti_doc: data.dti_doc || ''
+        dti_doc: data.dti_doc || '',
+        totalDenomination: data.totalDenomination || ''
     }
 
     await axios.get(route('finance.approvedGc.selected.dti.request'), {
@@ -135,8 +135,7 @@ const barcodeColumns = ref([
                         v-model:value="approvedSearch" @change="searchValue" />
                 </div>
                 <section>
-                    <a-table :data-source="props.data" :columns="columns" size="small"
-                        class="mt-5">
+                    <a-table :data-source="props.data" :columns="columns" size="small" class="mt-5">
                         <template #bodyCell="{ record, column }">
                             <template v-if="column.dataIndex === 'action'">
                                 <a-button type="primary" @click="viewApprovedDti(record)">
@@ -180,7 +179,7 @@ const barcodeColumns = ref([
                                     </a-input>
                                 </a-form-item>
                                 <a-form-item label="Amount">
-                                    <a-input readonly v-model:value="form.bcredit_amt">
+                                    <a-input readonly v-model:value="form.totalDenomination">
 
                                     </a-input>
                                 </a-form-item>
