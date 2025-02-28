@@ -4,6 +4,7 @@ namespace App\Services\Admin;
 
 use App\Helpers\NumberHelper;
 use App\Models\Denomination;
+use App\Models\DtiBarcodes;
 use App\Models\Gc;
 use App\Models\InstitutTransactionsItem;
 use App\Models\PromoGcReleaseToItem;
@@ -51,6 +52,7 @@ class AdminServices
     {
         $regular = new Gc();
         $special = new SpecialExternalGcrequestEmpAssign();
+        $specialDti = new DtiBarcodes();
         $promo = new PromoGcReleaseToItem();
         $inst = new InstitutTransactionsItem();
         $barcodeNotFound = false;
@@ -69,7 +71,11 @@ class AdminServices
             $transType = 'Reqular Gift Check';
             $steps = self::regularGc($regular, $request);
             $success = true;
-        } elseif ($special->where('spexgcemp_barcode', $request->barcode)->where('spexgcemp_barcode', '!=', '0')->exists()) {
+        } elseif (
+            $special->where('spexgcemp_barcode', $request->barcode)
+            ->where('spexgcemp_barcode', '!=', '0')
+            ->exists()
+        ) {
             $transType = 'Special Gift Check';
             $steps = self::specialStatus($special, $request);
             $success = true;
@@ -81,7 +87,13 @@ class AdminServices
             $transType = 'Institutional Gift Check';
             $steps = self::institutionStatus($inst, $request);
             $success = true;
-        } elseif (empty($request->barcode)) {
+        }elseif($specialDti->where('dti_barcode', $request->barcode)
+        ->where('dti_barcode', '!=', '0')
+        ->exists()){
+            $transType = 'Special Gift Check';
+            $steps = self::specialStatusDti($specialDti, $request);
+            $success = true;
+        }elseif (empty($request->barcode)) {
             $empty = true;
         } else {
             $barcodeNotFound = true;
@@ -197,7 +209,7 @@ class AdminServices
             ]);
         }
         $q2 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'gc.barcode_no')
-        ->where('vs_barcode', $request->barcode);
+            ->where('vs_barcode', $request->barcode);
 
         $vs_date = $q2->first()->vs_date ?? null;
         $rev_date = $q2->first()->vs_reverifydate ?? null;
@@ -331,10 +343,88 @@ class AdminServices
 
         return $steps;
     }
+    public static function specialStatusDti($special, $request)
+    {
+        //Treasury & Marketing
+        $steps = collect([
+            [
+                'title' => 'Treasury',
+                'status' => 'finish',
+                'description' => 'Request Submitted'
+            ],
+            [
+                'title' => 'FAD',
+                'status' => 'finish',
+                'description' => 'Request Approved'
+            ],
+            [
+                'title' => 'Finance',
+                'status' => 'finish',
+                'description' => 'Generated Barcode Success'
+            ]
+        ]);
+
+        if ($special->where('dti_barcode', $request->barcode)->where('dti_review', '*')->exists()) {
+            $steps->push((object) [
+                'title' => 'IAD',
+                'description' => 'Scanned by IAD'
+            ]);
+        } else {
+            $steps->push((object) [
+                'status' => 'error',
+                'title' => 'IAD',
+                'description' => 'Not Scanned by IAD'
+            ]);
+        }
+        $data = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'dti_barcodes.dti_barcode')->where('vs_barcode', $request->barcode);
+
+        // dd($data->first()->vs_date);
+        if ($special->whereHas('reverified', fn($query) => $query->where('vs_barcode', $request->barcode))->exists()) {
+            $steps->push((object) [
+                'title' => 'Verification',
+                'description' => 'Verified By CFS ' . ' at ' . Date::parse($data->first()->vs_date)->toFormattedDateString(),
+            ]);
+        } else {
+            $steps->push((object) [
+                'status' => 'error',
+                'title' => 'Verification',
+                'description' => 'Not yet Verified By CFS',
+
+            ]);
+        }
+
+        $rev_date = $data->first()->vs_reverifydate ?? null;
+
+        if ($data->where('vs_barcode', $request->barcode)->whereNotNull('vs_reverifydate')->exists()) {
+            $steps->push((object) [
+                'title' => 'Reverification',
+                'description' => 'Reverified By CFS at ' . Date::parse($rev_date)->toFormattedDateString(),
+            ]);
+        } else {
+        }
+        $data2 = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'dti_barcodes.dti_barcode')->where('vs_barcode', $request->barcode);;
+
+        if ($data2->where('vs_barcode', $request->barcode)->where('vs_tf_used', '*')->exists()) {
+
+            $steps->push((object) [
+                'status' => 'finish',
+                'title' => 'Redeemption',
+                'description' => 'Redeemed by Customer at ' . $data2->first()->vs_payto,
+            ]);
+        } else {
+            $steps->push((object) [
+                'status' => 'error',
+                'title' => 'Redeemption',
+                'description' => 'Not yet Redeem',
+            ]);
+        }
+
+
+        return $steps;
+    }
     public static function promoStatus($promo, $request)
     {
-        // dd(1);
-
+        
         $steps = collect([
             [
                 'title' => 'Treasury',
