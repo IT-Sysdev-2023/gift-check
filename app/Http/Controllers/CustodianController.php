@@ -119,6 +119,7 @@ class CustodianController extends Controller
 
             return inertia('Custodian/Result/GiftCheckGenerateResult', [
                 'record' => $this->custodianservices->getSpecialExternalGcRequest($request),
+                'url' => 'custodian.approved.request'
             ]);
         } else {
 
@@ -328,6 +329,43 @@ class CustodianController extends Controller
 
         return inertia('Custodian/DTI/Setup/DtiSetupGcRequest',[
             'records' => $data->records,
+            'barcodes' => $data->barcodes,
         ]);
     }
+
+    public function barcodeOrRangeDti(Request $request)
+    {
+        if ($request->status == '2') {
+            $request->validate(rules: [
+                'barcode' => 'required',
+            ]);
+        } else {
+            $request->validate(rules: [
+                'barcodestart' => 'required|lt:barcodeend',
+                'barcodeend' => 'gt:barcodestart',
+            ]);
+        }
+
+        if ($request->status == '2') {
+            $exist = DtiBarcodes::where('dti_trid', $request->id)->where('dti_barcode', $request->barcode);
+        } else {
+
+            $exist = DtiBarcodes::where('dti_trid', $request->id)
+                ->whereIn('dti_barcode', [$request->barcodestart, $request->barcodeend]);
+        }
+
+        if ($exist->count() == 2 || $exist->exists()) {
+            return inertia('Custodian/Result/GiftCheckGenerateResult', [
+                'record' => $this->custodianservices->getSpecialExternalGcRequestDti($request),
+                'url' => 'custodian.dti.approved.index'
+            ]);
+        } else {
+            return back()->with([
+                'status' => 'error',
+                'msg' => 'Ops Barcode Not Found',
+                'title' => 'Error',
+            ]);
+        }
+    }
+
 }

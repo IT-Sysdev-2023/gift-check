@@ -8,7 +8,7 @@
                 </template>
                 Print Gift Check
             </a-button>
-            <a-button  @click="() => $inertia.get(route('custodian.approved.request'))">
+            <a-button  @click="() => $inertia.get(route(url))">
                 <template #icon>
                     <FastForwardOutlined />
                 </template>
@@ -52,7 +52,8 @@ import dayjs from 'dayjs';
 
 export default {
     props: {
-        record: Object
+        record: Object,
+        url: String
     },
     data(){
         return {

@@ -1,5 +1,6 @@
 <template>
     <a-modal style="width: 30%;" title="Managers Key" :footer="null" :afterClose="close">
+        <a-alert v-if="response" :message="response.title + ' - ' + response.msg" :type="response.status" show-icon />
         <a-form class="mt-5" :model="formState">
             <a-form-item autocomplete="off">
                 <a-input v-model:value="formState.username" autocomplete="none" placeholder="Username">
@@ -27,6 +28,8 @@
 <script lang="ts" setup>
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { useForm } from 'laravel-precognition-vue';
+import { ref } from 'vue';
+import { notification } from 'ant-design-vue';
 
 interface FormState extends Record<string, unknown> {
     username: string;
@@ -34,11 +37,12 @@ interface FormState extends Record<string, unknown> {
 }
 
 const props = defineProps<{
-    routeUrl: string
+    routeUrl: string,
+    keyValue: number,
 }>();
 
 const emit = defineEmits<{
-    (e: "closemodal", value: number | string): void;
+    (e: "closemodal", value: number | string, keyvalue: number): void;
 }>();
 
 const formState = useForm<FormState>('post', route(props.routeUrl) ?? '', {
@@ -46,14 +50,32 @@ const formState = useForm<FormState>('post', route(props.routeUrl) ?? '', {
     password: '',
 } as FormState);
 
+interface Response {
+    msg: string,
+    status: string,
+    title: string,
+}
+const response = ref<Response | null>(null);
 
 const close = () => {
+    response.value = null;
     formState.reset();
 }
 const submit = () => {
     formState.submit().then((res: any) => {
+        response.value = res.data;
         if (res.data.status == 'success') {
-            emit('closemodal', res.data);
+            response.value = null;
+            notification['success']({
+                message: res.data.title,
+                description: res.data.msg,
+            });
+            emit('closemodal', res.data, props.keyValue);
+        } else {
+            notification[res.data.status]({
+                message: res.data.title,
+                description: res.data.msg,
+            });
         }
     });
 }

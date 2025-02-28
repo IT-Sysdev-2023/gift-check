@@ -696,6 +696,7 @@ Route::middleware('auth')->group(function () {
 
             Route::name('check.')->group(function () {
                 Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
+                Route::get('by-barcode-range-dti', [CustodianController::class, 'barcodeOrRangeDti'])->name('print.barcode.dti');
             });
             Route::name('production.')->group(function () {
                 Route::get('production', [CustodianController::class, 'productionIndex'])->name('index');

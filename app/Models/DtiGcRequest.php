@@ -38,6 +38,12 @@ class DtiGcRequest extends Model
         return $this->belongsTo(SpecialExternalCustomer::class, 'dti_company', 'spcus_id');
     }
 
+    public function specialExternalCustomer()
+    {
+        return $this->belongsTo(SpecialExternalCustomer::class, 'dti_company', 'spcus_id');
+    }
+
+
     // public function user()
     // {
     //     return $this->belongsTo(User::class, 'user_id', 'dti_reqby');

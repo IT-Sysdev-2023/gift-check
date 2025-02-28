@@ -135,7 +135,6 @@
             </a-row>
 
         </a-modal>
-        {{ gcHolder }}
     </AuthenticatedLayout>
 </template>
 

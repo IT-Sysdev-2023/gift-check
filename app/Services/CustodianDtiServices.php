@@ -78,8 +78,33 @@ class CustodianDtiServices
                 $dti->prepby = Str::ucfirst($user->firstname) . ', ' . Str::ucfirst($user->lastname);
             }
 
+
+
         return (object) [
-            'records' => $dti
+            'records' => $dti,
+            'barcodes' => $this->getBarcodesDti($id),
         ];
+    }
+
+    private function getBarcodesDti($id){
+        $data = DtiBarcodes::select(
+            'dti_trid',
+            'dti_denom',
+            'fname',
+            'lname',
+            'mname',
+            'extname',
+            'voucher',
+            'address',
+            'department',
+            'dti_barcode'
+        )->where('dti_trid', $id)->paginate(10);
+
+        $data->transform(function ($item) {
+            $item->completename = Str::ucfirst($item->fname) . ', ' . Str::ucfirst($item->mname) . ', ' . Str::ucfirst($item->lname) . ' ' . Str::ucfirst($item->extname);
+            return $item;
+        });
+
+        return $data;
     }
 }
