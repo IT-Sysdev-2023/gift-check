@@ -89,10 +89,10 @@
                                             <a-textarea v-model:value="formState.remarks"  />
                                         </a-form-item>
                                         <a-form-item label="Total Gc Scanned" name="totalGc">
-                                            <a-input-number readonly style="width: 100%;" :value="page.props.flash.countSession" />
+                                            <a-input-number readonly style="width: 100%;" :value="page.props?.flash.countSession" />
                                         </a-form-item>
                                         <a-form-item label="Total Denomination" name="denomination">
-                                            <a-input-number style="width: 100%;"  readonly :value="page.props.flash.denominationSession" />
+                                            <a-input-number style="width: 100%;"  readonly :value="page.props?.flash.denominationSession" />
                                         </a-form-item>
 
                                         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">

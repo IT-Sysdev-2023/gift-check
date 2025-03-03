@@ -32,6 +32,12 @@ class SpecialExternalGcRequestController extends Controller
         ]);
     }
 
+    public function viewDtiGc () {
+        return inertia('Iad/Dashboard/DtiApproved',[
+            'columns' => ColumnHelper::$approvedDtiGcForReviewed
+        ]);
+    }
+
     public function viewApprovedGcRecord(Request $request,SpecialExternalGcrequest $id)
     {
 
