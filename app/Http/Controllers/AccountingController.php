@@ -52,6 +52,10 @@ class AccountingController extends Controller
     {
         return $this->accountingservices->submitPayementForm($request);
     }
+    public function submitPaymentDti(Request $request)
+    {
+        return $this->accountingservices->submitPayementFormDti($request);
+    }
     public function paymentViewing()
     {
         return inertia('Accounting/Payment/PaymentViewing', [
