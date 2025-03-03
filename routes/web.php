@@ -506,6 +506,8 @@ Route::middleware('auth')->group(function () {
                 Route::post('submit-form', [AccountingController::class, 'submitPayment'])->name('submit');
                 Route::get('payment-viewing', [AccountingController::class, 'paymentViewing'])->name('viewing');
                 Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
+
+                Route::post('submit-payment', [AccountingController::class, 'submitPaymentDti'])->name('submit.dti');
             });
 
             Route::prefix('reports')->name('reports.')->group(function () {

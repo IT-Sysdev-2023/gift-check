@@ -5,7 +5,8 @@
                 <div>
                     <a-form layout="inline">
                         <a-form-item label="Count">
-                            <a-input :value="form.checked.length" style="width: 150px;" class="text-center" placeholder="Username">
+                            <a-input :value="form.checked.length" style="width: 150px;" class="text-center"
+                                placeholder="Username">
                             </a-input>
                         </a-form-item>
                     </a-form>
@@ -20,7 +21,7 @@
             <a-table :loading="isFetching" bordered size="small" :data-source="selected?.record" :columns="columns">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'checkbox'">
-                        <a-switch size="small" v-model:checked="record.checked" @change="toggleRow(record)">
+                        <a-switch v-model:checked="record.checked" @change="toggleRow(record)">
                             <template #checkedChildren><check-outlined /></template>
                             <template #unCheckedChildren><close-outlined /></template>
                         </a-switch>
@@ -33,43 +34,43 @@
                 <a-card>
                     <a-descriptions size="small" title="Details" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="RFSEGC#">{{ props.record.dti_num
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Department">{{ props.record.title
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date Request">{{ props.record.dti_datereq
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Time Requested">{{ props.record.timerequested
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date Needed">{{ props.record.dti_dateneed
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date Approved">{{ props.record.dti_approveddate
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Payment Amount">{{ props.record.dti_balance
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Total Denomination">{{ selected?.denomcount
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Requested Remarks">{{ props.record.remarks
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Approved Remarks">{{ props.record.apremarks
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                 </a-card>
                 <a-divider>
@@ -78,19 +79,19 @@
                 <a-card>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Requested By">{{ props.record.refullname
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Checked By">{{ props.record.dti_checkby
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Approved By">{{ props.record.dti_approvedby
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Prepared By">{{ props.record.prefullname
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                 </a-card>
 
@@ -101,7 +102,7 @@
                         <a-col :span="12">
                             <a-descriptions size="small" layout="vertical" bordered>
                                 <a-descriptions-item style="width: 50%;" label="Total Gift Check">{{ selected?.total
-                                }}</a-descriptions-item>
+                                    }}</a-descriptions-item>
                             </a-descriptions>
                             <a-descriptions size="small" layout="vertical" bordered>
                                 <a-descriptions-item style="width: 50%;" label="Payment Date">{{
@@ -120,18 +121,18 @@
                             </a-descriptions>
                             <a-descriptions size="small" layout="vertical" bordered>
                                 <a-descriptions-item style="width: 50%;" label="Checked By">
-                                    <a-input placeholder="Enter Checked By" />
+                                    <a-input placeholder="Enter Checked By" v-model:value="form.checkedby" />
                                 </a-descriptions-item>
                             </a-descriptions>
                             <div class="text-start mt-3">
                                 <a-typography-text keyboard>Payment Status</a-typography-text>
-                                <a-select placeholder="Select Payment Type" v-model:value.lazy="form.paymentstats" class="w-full"
-                                    :options="paymentStatus"></a-select>
+                                <a-select placeholder="Select Payment Type" v-model:value="form.paymentstats"
+                                    class="w-full" :options="paymentStatus"></a-select>
                             </div>
                         </a-col>
                         <div class="mt-2 text-start w-[97%] m-auto">
                             <a-typography-text keyboard>Remarks</a-typography-text>
-                            <a-textarea placeholder="Enter remarks here.." :row="2" />
+                            <a-textarea v-model:value="form.remarks" placeholder="Enter remarks here.." :row="2" />
                         </div>
                         <div class="mt-2 text-start w-[97%] m-auto">
                             <a-typography-text keyboard>Payment Type</a-typography-text>
@@ -143,20 +144,25 @@
                         <a-card size="small" title="Add Check Details" class="mt-2">
                             <a-row :gutter="[16, 16]">
                                 <a-col :span="12">
-                                    <a-typography-text keyboard>Bank Name</a-typography-text>
+                                    <a-typography-text v-model:value="form.check.bankname"  keyboard>Bank Name</a-typography-text>
                                     <a-input class="mb-3" placeholder="Enter here..." />
                                     <a-typography-text keyboard>Account Number</a-typography-text>
-                                    <a-input placeholder="Enter here..." />
+                                    <a-input placeholder="Enter here..."  v-model:value="form.check.accountno" />
                                 </a-col>
                                 <a-col :span="12">
                                     <a-typography-text keyboard>Check Number</a-typography-text>
-                                    <a-input class="mb-3" placeholder="Enter here..." />
+                                    <a-input class="mb-3" v-model:value="form.check.checkno" placeholder="Enter here..." />
                                     <a-typography-text keyboard>Check Amount</a-typography-text>
-                                    <a-input placeholder="Enter here..." />
+                                    <a-input-number style="width: 100%;" @change="handleChange" :formatter="(value) =>
+                                    `₱ ${value}`.replace(
+                                        /\B(?=(\d{3})+(?!\d))/g,
+                                        ','
+                                    )
+                                    " v-model:value="form.check.checkamount" placeholder="Enter here..." />
                                 </a-col>
                                 <div class="w-[98%] m-auto">
-                                    <a-typography-text keyboard>Amount In Words</a-typography-text>
-                                    <a-input placeholder="Enter here..." />
+                                    <a-typography-text  keyboard>Amount In Words</a-typography-text>
+                                    <a-input :value="form.numToWords" readonly placeholder="Enter here..." />
                                 </div>
                             </a-row>
                         </a-card>
@@ -180,10 +186,15 @@
                     <div v-else-if="pmValue.jv">
                         <a-card size="small" title="Customer Details" class="mt-2">
                             <a-typography-text keyboard>Customer Name</a-typography-text>
-                            <a-input class="uppercase" placeholder="Enter here..." :value="'Ramiro Hospital'" />
+                            <a-input v-model:value="form.custname"  class="uppercase" placeholder="Enter here..." />
                         </a-card>
                     </div>
                 </a-card>
+                <div>
+                    <a-button block class="mt-5 p-1 pb-7" type="primary" @click="submit">
+                        Submit Payment
+                    </a-button>
+                </div>
             </a-col>
         </a-row>
     </AuthenticatedLayout>
@@ -288,11 +299,11 @@ const paymentOption = ref<SelectProps['options']>([
 ]);
 const paymentStatus = ref<SelectProps['options']>([
     {
-        value: '1',
+        value: 'partial',
         label: 'Partial',
     },
     {
-        value: '2',
+        value: 'whole',
         label: 'Whole',
     },
 ]);
@@ -310,6 +321,7 @@ const pmValue = ref<PmValue>({
 });
 
 const handlePaymentTypChange = (value: string) => {
+    form.paymentType = value;
     const keys: Record<string, keyof PmValue> = { '1': 'cash', '2': 'check', '3': 'jv' };
 
     Object.keys(pmValue.value).forEach((key) => {
@@ -320,16 +332,26 @@ const handlePaymentTypChange = (value: string) => {
 const error = ref();
 
 const form = useForm({
+    id: props.record.dti_num,
+    balance: props.record.dti_balance,
     numToWords: '' as string,
+    remarks: '' as string,
     amount: '',
     checked: [] as string[],
     recby: '' as string,
-    paymentstats: '' as string,
+    paymentstats: null as string | null,
+    checkedby: '' as string,
+    paymentType: '' as string,
+    check: {
+        bankname: '' as string,
+        accountno: null as number,
+        checkno: null as number,
+        checkamount: null as number,
+    },
+    custname: 'Ramiro Hospital' as string
 });
 
 const handleChange = (value: number) => {
-    // console.log(value);
-    // error.value.amount = '';
     form.numToWords = value === null ? '' : toWords(value) + ' pesos';
 }
 const isFetching = ref<boolean>(false);
@@ -383,6 +405,10 @@ const toggleRow = (record) => {
     allSelected.value = selected.value.record.every(row => row.checked);
     form.checked = checkedRecord.value;
 };
+
+const submit = () => {
+    form.post(route('accounting.payment.submit.dti'));
+}
 
 
 onMounted(() => {
