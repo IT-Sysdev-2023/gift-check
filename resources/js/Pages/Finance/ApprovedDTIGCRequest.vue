@@ -69,7 +69,9 @@ const form = ref({
 const openModal = ref(false);
 const barcode = ref([]);
 
-const viewApprovedDti = async (data) => {
+const
+
+    viewApprovedDti = async (data) => {
     form.value = {
         dti_datereq: data.dti_datereq ? formatDate(data.dti_datereq) : '',
         first_remarks: data.dti_remarks || '',

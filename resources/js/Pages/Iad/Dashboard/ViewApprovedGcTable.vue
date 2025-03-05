@@ -134,6 +134,7 @@
                 </a-form-item>
             </a-form>
         </a-modal>
+        <!-- {{ data }} -->
     </AuthenticatedLayout>
 </template>
 
