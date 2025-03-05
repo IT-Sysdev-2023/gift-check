@@ -25,6 +25,7 @@ class SpecialExternalGcRequestController extends Controller
     public function approvedGc(Request $request)
     {
         $data = $this->specialExternalGcService->approvedGc($request);
+        // dd($data);
         return inertia('Iad/Dashboard/ApprovedGcTable', [
             'data' => SpecialExternalGcRequestResource::collection($data),
             'columns' => ColumnHelper::$approvedGcForReviewed,
@@ -32,17 +33,30 @@ class SpecialExternalGcRequestController extends Controller
         ]);
     }
 
-    public function viewDtiGc () {
-        return inertia('Iad/Dashboard/DtiApproved',[
-            'columns' => ColumnHelper::$approvedDtiGcForReviewed
+    public function approvedDtiGc(Request $request)
+    {
+        $data = $this->specialExternalGcService->approvedDtiGc($request);
+        // dd($data);
+        return inertia('Iad/Dashboard/DtiApprovedView', [
+            'data' => $data
         ]);
     }
 
-    public function viewApprovedGcRecord(Request $request,SpecialExternalGcrequest $id)
+    public function viewDtiGc(Request $request)
+    {
+        $data = $this->specialExternalGcService->viewDtiGcData($request);
+        // dd($data);
+        return inertia('Iad/Dashboard/DtiApproved', [
+            'columns' => ColumnHelper::$approvedDtiGcForReviewed,
+            'data' => $data
+        ]);
+    }
+
+    public function viewApprovedGcRecord(Request $request, SpecialExternalGcrequest $id)
     {
 
-        $gcHolder = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid',$id->spexgc_id)->get();
-        $col=ColumnHelper::$gcHolder;
+        $gcHolder = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id->spexgc_id)->get();
+        $col = ColumnHelper::$gcHolder;
 
         $record = $this->specialExternalGcService->viewApprovedGcRecord($request, $id);
 
@@ -50,7 +64,7 @@ class SpecialExternalGcRequestController extends Controller
             'data' => new SpecialExternalGcRequestResource($record),
             'title' => 'Special External Gc',
             'gcHolder' => $gcHolder,
-            'gcholderCol' =>$col
+            'gcholderCol' => $col
         ]);
 
     }
@@ -59,6 +73,14 @@ class SpecialExternalGcRequestController extends Controller
     {
         return $this->specialExternalGcService->barcodeScan($request, $id);
         //ajax.php search = gcreviewscangc
+    }
+
+    public function scanBarcode(Request $request){
+        return $this->specialExternalGcService->dtiScanBarcode($request);
+    }
+
+    public function dtiReview(Request $request){
+        return $this->specialExternalGcService->dti_review($request);
     }
 
     public function gcReview(Request $request, $id)

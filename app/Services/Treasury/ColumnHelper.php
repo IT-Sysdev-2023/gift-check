@@ -321,32 +321,30 @@ class ColumnHelper
     public static $approvedDtiGcForReviewed = [
         [
             'title' => 'RFSEGC #',
-            'dataIndex' => 'spexgc_num',
+            'dataIndex' => 'dti_num',
 
         ],
         [
             'title' => 'Date Requested',
-            'dataIndex' => 'spexgc_datereq',
+            'dataIndex' => 'dti_datereq',
         ],
         [
             'title' => 'Date Validity',
-            'dataIndex' => 'spexgc_dateneed',
+            'dataIndex' => 'dti_dateneed',
 
         ],
         [
             'title' => 'Total Denomination',
-            'dataIndex' => 'totalGcRequestItems',
+            'dataIndex' => 'sub_total',
 
         ],
         [
             'title' => 'Customer',
-            'dataIndex' => ['specialExternalCustomer', 'spcus_acctname'],
-            'key' => 'customer'
-
+            'dataIndex' => 'dti_customer',
         ],
         [
             'title' => 'Requested By',
-            'dataIndex' => 'user',
+            'dataIndex' => 'reqby_name',
 
         ],
         [
