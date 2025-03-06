@@ -128,11 +128,11 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                     <TreasurySideBar v-if="treasury || curr === 'treasury'" />
                     <FinanceSideBar v-if="finance || curr === 'finance'" />
                     <CustodianSideBar
-                        v-if="custodian || curr === 'custodian'"
+                        v-if="page.auth.user.usertype !== '9' && (custodian || curr === 'custodian')  "
                     />
                     <RetailSidebar v-if="retail || curr == 'retail'" />
                     <AccountingSideBar
-                        v-if="accounting || curr == 'accounting'"
+                        v-if="accounting || (curr === 'accounting' && curr !== 'custodian')"
                     />
 
                     <MarketingSideBar v-if="marketing || curr == 'marketing'" />

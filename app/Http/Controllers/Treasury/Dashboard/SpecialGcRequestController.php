@@ -251,7 +251,7 @@ class SpecialGcRequestController extends Controller
         });
 
         if ($dbtransaction) {
-            return redirect()->back()->with('success', 'Successfully Submitted');
+            return redirect()->route('treasury.special.gc.gcReleasingDti')->with('success', 'Successfully Submitted');
         } else {
             return redirect()->back()->with('error', 'Something went wrong');
         }
@@ -436,6 +436,7 @@ class SpecialGcRequestController extends Controller
         return SpecialExternalCustomer::has('user')
             ->select('spcus_id as value', 'spcus_by', 'spcus_companyname as label', 'spcus_acctname as account_name')
             ->where('spcus_type', 2)
+            ->where('spcus_id', '!=', '342')
             ->orderByDesc('spcus_id')
             ->get();
     }

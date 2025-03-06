@@ -16,40 +16,26 @@
                 <!-- <p class="message">List of Transactions needs to be eod</p> -->
             </div>
             <div class="actions">
-
-                <button block type="button" class="history" @click="() => $inertia.get(route('accounting.pending.index'))">
-                    <span>
-                        <LogoutOutlined /> Pending Request
-                    </span>
-                    &nbsp;
-                    <a-badge :count="count?.pending" show-zero>
-                    </a-badge>
-                </button>
-                <button type="button" class="track" @click="() => $inertia.visit(route('custodian.approved.request'))">
+                <button type="button" class="track" @click="() => $inertia.visit(route('custodian.dti.approved.index'))">
                     <span>
                         <LogoutOutlined />
                         Approved Request
                     </span>
                 </button>
-
-                <button type="button" class="track" @click="() => $inertia.get(route('accounting.payment.payment.gc'))">
+                <button type="button" class="track"
+                    @click="() => $inertia.get(route('accounting.payment.payment.gc.dti'))">
                     <span>
                         <LogoutOutlined />
-                        Payment Gc
+                        Payment Dti Gc
                     </span>
                 </button>
-                <button type="button" class="track" @click="() => $inertia.get(route('accounting.payment.viewing'))">
+                <button type="button" class="track"
+                    @click="() => $inertia.get(route('accounting.payment.dti.viewing'))">
                     <span>
                         <LogoutOutlined />
-                        Payment Viewing
+                        Payment Dti Viewing
                     </span>
                 </button>
-                <!-- <button type="button" class="track" @click="() => $inertia.get(route('eod.verified.gc'))">
-                    <span>
-                        <LogoutOutlined />
-                        Cancelled Request
-                    </span>
-                </button> -->
             </div>
         </div>
     </div>

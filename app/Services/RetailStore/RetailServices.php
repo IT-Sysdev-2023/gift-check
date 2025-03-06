@@ -55,10 +55,11 @@ class RetailServices
             ->leftJoin('users', 'users.user_id', '=', 'approved_gcrequest.agcr_approvedby')
             ->orderByDesc('agcr_request_relnum')
             ->paginate(10)->withQueryString();
+            // dd( $data);
 
         $data->transform(function ($item) {
             $item->spgc_date_request = Date::parse($item->storeGcRequest->sgc_date_request)->toFormattedDateString();
-            $item->agcr_date = $item->agcr_approved_at->toFormattedDateString();
+            $item->agcr_date = Date::parse($item->agcr_approved_at)->toFormattedDateString();
             $item->storename = $item->storeGcRequest->store->store_name;
             $item->fullname = $item->user->full_name;
             return $item;

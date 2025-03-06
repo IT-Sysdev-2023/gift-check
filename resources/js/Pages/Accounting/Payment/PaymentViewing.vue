@@ -4,7 +4,7 @@
             <a-table bordered :data-source="record.data" :columns="column" size="small" :pagination="false">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'view'">
-                        <a-button type="primary" ghost @click="view(record.insp_paymentnum)">
+                        <a-button type="dashed" @click="view(record.insp_paymentnum)">
                             <template #icon>
                                 <FileSearchOutlined />
                             </template>
@@ -16,29 +16,30 @@
             <pagination :datarecords="record" class="mt-5" />
         </a-card>
 
-        <a-drawer :width="800" title="Payment Details" :placement="'left'" :open="open" @close="onClose">
+        <a-modal :footer="false" :width="900" title="Payment Details" :placement="'left'" v-model:open="open">
             <template #extra>
-                <a-button style="margin-right: 8px" @click="onClose"><ShrinkOutlined /> Close</a-button>
+                <a-button style="margin-right: 8px" @click="onClose">
+                    <ShrinkOutlined /> Close
+                </a-button>
             </template>
-            <a-card>
-                <a-table :data-source="details" size="small" bordered :columns="[
-                    {
-                        title: 'Name',
-                        dataIndex: 'name',
-                    },
-                    {
-                        title: 'Barcode',
-                        dataIndex: 'spexgcemp_barcode',
-                        width: '25%',
-                    },
-                    {
-                        title: 'Denomination',
-                        dataIndex: 'spexgcemp_denom',
-                        width: '25%',
-                    },
-                ]" />
-            </a-card>
-        </a-drawer>
+
+            <a-table :data-source="details" size="small" bordered :columns="[
+                {
+                    title: 'Name',
+                    dataIndex: 'name',
+                },
+                {
+                    title: 'Barcode',
+                    dataIndex: 'spexgcemp_barcode',
+                    width: '25%',
+                },
+                {
+                    title: 'Denomination',
+                    dataIndex: 'spexgcemp_denom',
+                    width: '25%',
+                },
+            ]" />
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 <script setup>
@@ -69,8 +70,5 @@ const view = async (id) => {
     }
 };
 
-const onClose = () => {
-    open.value = false;
-}
 
 </script>

@@ -6,6 +6,7 @@ use App\Models\ApprovedRequest;
 use App\Models\DtiApprovedRequest;
 use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
+use App\Models\DtiInstitutPayment;
 use App\Models\InstitutPayment;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
@@ -104,7 +105,8 @@ class AccountingServices
 
     public function getDonePayment()
     {
-        $data = InstitutPayment::selectFilterInst()->join('special_external_gcrequest', 'spexgc_id', '=', 'insp_trid')
+        $data = InstitutPayment::selectFilterInst()
+            ->join('special_external_gcrequest', 'spexgc_id', '=', 'insp_trid')
             ->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
             ->where('spexgc_payment_stat', '!=', 'pending')
             ->orderByDesc('insp_paymentnum')
@@ -113,6 +115,24 @@ class AccountingServices
 
         $data->transform(function ($item) {
             $item->institut_date = Date::parse($item->institut_date)->toFormattedDateString();
+            return $item;
+        });
+
+        return $data;
+    }
+
+    public function getDonePaymentDti()
+    {
+        $data = DtiInstitutPayment::selectFilterInst()
+            ->join('dti_gc_requests', 'dti_num', '=', 'dti_insp_trid')
+            ->join('special_external_customer', 'spcus_id', '=', 'dti_company')
+            ->where('dti_payment_stat', '!=', 'pending')
+            ->orderByDesc('dti_insp_paymentnum')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->dti_institut_date = Date::parse($item->dti_institut_date)->toFormattedDateString();
             return $item;
         });
 
@@ -331,7 +351,6 @@ class AccountingServices
             });
 
             return redirect()->route('accounting.payment.payment.gc.dti');
-            
         } else {
             return back()->with([
                 'status' => 'error',

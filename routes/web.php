@@ -509,7 +509,9 @@ Route::middleware('auth')->group(function () {
                 Route::get('setup-dti-{id}', [AccountingController::class, 'tableFetchDtiTable'])->name('fetch.dti');
                 Route::post('submit-form', [AccountingController::class, 'submitPayment'])->name('submit');
                 Route::get('payment-viewing', [AccountingController::class, 'paymentViewing'])->name('viewing');
+                Route::get('payment-viewing-dti-payment', [AccountingController::class, 'paymentViewingDti'])->name('dti.viewing');
                 Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
+                Route::get('payments-details-dti-{id}', [AccountingController::class, 'paymentDetailsDti'])->name('details.dti');
 
                 Route::post('submit-payment', [AccountingController::class, 'submitPaymentDti'])->name('submit.dti');
             });
@@ -678,7 +680,7 @@ Route::middleware('auth')->group(function () {
     });
 
     //? Custodian
-    Route::middleware('userType:custodian,admin')->prefix('custodian')->group(function () {
+    Route::middleware('userType:custodian,admin,accounting')->prefix('custodian')->group(function () {
 
         Route::name('custodian.')->group(function () {
 

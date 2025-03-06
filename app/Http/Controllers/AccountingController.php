@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
+use App\Models\DtiBarcodes;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Store;
@@ -11,7 +12,7 @@ use App\Services\Accounting\AccountingServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Inertia\Inertia;
-
+use Illuminate\Support\Str;
 class AccountingController extends Controller
 {
     public function __construct(public AccountingServices $accountingservices, public DashboardClass $dashboard)
@@ -63,6 +64,13 @@ class AccountingController extends Controller
             'column' => ColumnHelper::$payment_viewing_column,
         ]);
     }
+    public function paymentViewingDti()
+    {
+        return inertia('Accounting/Payment/PaymentViewingDti', [
+            'record' => $this->accountingservices->getDonePaymentDti(),
+            'column' => ColumnHelper::$payment_viewing_column_dti,
+        ]);
+    }
     public function paymentDetails($id)
     {
         $data = SpecialExternalGcrequestEmpAssign::select(
@@ -76,7 +84,27 @@ class AccountingController extends Controller
             ->get();
 
         $data->transform(function ($item) {
-            $item->name = $item->spexgcemp_fname . ' ' . $item->spexgcemp_mname . ' , ' . $item->spexgcemp_lname;
+            $item->name = Str::ucfirst($item->spexgcemp_fname) . ' ' . Str::ucfirst($item->spexgcemp_mname) . ' , ' . Str::ucfirst($item->spexgcemp_lname);
+            return $item;
+        });
+
+        return $data;
+
+    }
+    public function paymentDetailsDti($id)
+    {
+        $data = DtiBarcodes::select(
+            'dti_denom',
+            'fname',
+            'lname',
+            'mname',
+            'dti_barcode',
+        )->where('payment_id', $id)
+            ->orderByDesc('dti_barcode')
+            ->get();
+
+        $data->transform(function ($item) {
+            $item->name = Str::ucfirst($item->fname) . ' ' . Str::ucfirst($item->mname) . ' , ' . Str::ucfirst($item->lname);
             return $item;
         });
 
@@ -86,6 +114,7 @@ class AccountingController extends Controller
 
     public function approvedGcRequest(Request $request)
     {
+        // dd();
         $data = SpecialExternalGcrequest::with('specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname')
             ->selectFilterApproved()
             ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')

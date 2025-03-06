@@ -7,6 +7,7 @@ use App\Models\ApprovedRequest;
 use App\Models\DtiApprovedRequest;
 use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
+use App\Models\DtiInstitutPayment;
 use App\Models\InstitutPayment;
 use App\Models\LedgerBudget;
 use App\Models\SpecialExternalGcrequest;
@@ -98,7 +99,7 @@ class AccountingDbServices
 
     public function updateSpecialEnternalGcRequest($request)
     {
-    
+
 
         SpecialExternalGcrequest::where('spexgc_id', $request->id)->update([
             'spexgc_amount' => $request->amount,
@@ -111,8 +112,14 @@ class AccountingDbServices
 
     public function insertInstitutionalPayment($request)
     {
+        $instpayment = 0;
 
-        $instpayment = $this->instituteLedgerNumber() + 1;
+        if ($this->instituteLedgerNumberDti() > $this->instituteLedgerNumber()) {
+            $instpayment = $this->instituteLedgerNumberDti() + 1;
+        } else {
+            $instpayment = $this->instituteLedgerNumber() + 1;
+        }
+
 
         if ($request->payment === '0') {
 
@@ -164,6 +171,16 @@ class AccountingDbServices
         if (InstitutPayment::orderByDesc('insp_id')->max('insp_paymentnum') > 0) {
 
             return InstitutPayment::orderByDesc('insp_id')->max('insp_paymentnum');
+        }
+
+        return 1;
+    }
+    private function instituteLedgerNumberDti()
+    {
+
+        if (DtiInstitutPayment::orderByDesc('dti_insp_id')->max('dti_insp_paymentnum') > 0) {
+
+            return DtiInstitutPayment::orderByDesc('dti_insp_id')->max('dti_insp_paymentnum');
         }
 
         return 1;
@@ -234,64 +251,72 @@ class AccountingDbServices
         return $this;
     }
 
-    public function insertInstitutionalDtiPayment($request){
+    public function insertInstitutionalDtiPayment($request)
+    {
 
-        $instpayment = $this->instituteLedgerNumber() + 1;
+        $instpayment = 0;
+
+        if ($this->instituteLedgerNumberDti() > $this->instituteLedgerNumber()) {
+            $instpayment = $this->instituteLedgerNumberDti() + 1;
+        } else {
+            $instpayment = $this->instituteLedgerNumber() + 1;
+        }
 
         if ($request->paymentType === '1') {
 
-            InstitutPayment::create([
-                'insp_paymentnum' => $instpayment,
-                'insp_trid' => $request->id,
-                'insp_paymentcustomer' => 'special external',
-                'institut_amountrec' => $request->amount,
-                'institut_eodid' => '0',
-                'institut_date' => today()->format('Y-m-d'),
-                'institut_jvcustomer' => 'Cash',
+            DtiInstitutPayment::create([
+                'dti_insp_paymentnum' => $instpayment,
+                'dti_insp_trid' => $request->id,
+                'dti_insp_paymentcustomer' => 'special external',
+                'dti_institut_amountrec' => $request->amount,
+                'dti_institut_eodid' => '0',
+                'dti_institut_date' => today()->format('Y-m-d'),
+                'dti_institut_jvcustomer' => 'Cash',
             ]);
         }
 
         if ($request->paymentType === '2') {
 
-            InstitutPayment::create([
-                'insp_paymentnum' => $instpayment,
-                'insp_trid' => $request->id,
-                'insp_paymentcustomer' => 'special external',
-                'institut_bankname' => $request->bankname,
-                'institut_bankaccountnum' => $request->accountno,
-                'institut_checknumber' => $request->checkno,
-                'institut_amountrec' => $request->checkamount,
-                'institut_eodid' => '0',
-                'institut_date' => today()->format('Y-m-d'),
-                'institut_jvcustomer' => 'Check',
+            DtiInstitutPayment::create([
+                'dti_insp_paymentnum' => $instpayment,
+                'dti_insp_trid' => $request->id,
+                'dti_insp_paymentcustomer' => 'special external',
+                'dti_institut_bankname' => $request->bankname,
+                'dti_institut_bankaccountnum' => $request->accountno,
+                'dti_institut_checknumber' => $request->checkno,
+                'dti_institut_amountrec' => $request->checkamount,
+                'dti_institut_eodid' => '0',
+                'dti_institut_date' => today()->format('Y-m-d'),
+                'dti_institut_jvcustomer' => 'Check',
             ]);
         }
 
         if ($request->paymentType === '3') {
 
-            InstitutPayment::create([
-                'insp_paymentnum' => $instpayment,
-                'insp_trid' => $request->id,
-                'insp_paymentcustomer' => 'special external',
-                'institut_amountrec' => '0.00',
-                'institut_eodid' => '0',
-                'institut_date' => today()->format('Y-m-d'),
-                'institut_jvcustomer' => $request->customer,
+            DtiInstitutPayment::create([
+                'dti_insp_paymentnum' => $instpayment,
+                'dti_insp_trid' => $request->id,
+                'dti_insp_paymentcustomer' => 'special external',
+                'dti_institut_amountrec' => '0.00',
+                'dti_institut_eodid' => '0',
+                'dti_institut_date' => today()->format('Y-m-d'),
+                'dti_institut_jvcustomer' => $request->customer,
             ]);
         }
 
         return $this;
     }
-    public function updateDtiBarcodes($request){
+    public function updateDtiBarcodes($request)
+    {
 
-        $instpayment = $this->instituteLedgerNumber();
+        $instpayment = $this->instituteLedgerNumberDti();
 
         collect($request->checked)->each(function ($item) use ($request,  $instpayment) {
 
             DtiBarcodes::where('dti_barcode', $item['dti_barcode'])
                 ->where('dti_trid', $request->id)->update([
                     'dti_status' => '1',
-                    'dti_payment_id' => $instpayment,
+                    'payment_id' => $instpayment,
                 ]);
         });
 
