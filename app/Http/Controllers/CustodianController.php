@@ -314,6 +314,8 @@ class CustodianController extends Controller
                     'dti_addemp' => 'done',
                 ]);
         });
+
+        return redirect()->route('custodian.dti_special_gcdti_special_gc_pending');
     }
     public function dtiApprovedGcRequest(){
 
