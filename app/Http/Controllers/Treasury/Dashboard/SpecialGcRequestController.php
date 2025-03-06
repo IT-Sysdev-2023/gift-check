@@ -9,6 +9,8 @@ use App\Http\Resources\SpecialExternalGcRequestResource;
 use App\Http\Resources\StoreGcRequestResource;
 use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
+use App\Models\DtiApprovedRequest;
+use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
 use App\Models\LedgerBudget;
 use App\Models\LedgerSpgc;
@@ -23,14 +25,12 @@ use App\Services\Treasury\Transactions\SpecialGcPaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 class SpecialGcRequestController extends Controller
 {
 
-    public function __construct(public SpecialGcPaymentService $specialGcPaymentService)
-    {
-
-    }
+    public function __construct(public SpecialGcPaymentService $specialGcPaymentService) {}
     public function pendingSpecialGc(Request $request)
     {
         $externalData = $this->specialGcPaymentService->pending();
@@ -70,7 +70,6 @@ class SpecialGcRequestController extends Controller
     public function updateSpecialGc(Request $request)
     {
         return $this->specialGcPaymentService->updateSpecial($request);
-
     }
 
     //Special Gc Payment
@@ -79,9 +78,9 @@ class SpecialGcRequestController extends Controller
         $spgcRequest = SpecialExternalGcrequest::max('spexgc_num');
         $dtiRequest = DtiGcRequest::max('dti_num');
 
-        if($spgcRequest > $dtiRequest){
+        if ($spgcRequest > $dtiRequest) {
             $transactionNumber = $spgcRequest;
-        }else{
+        } else {
             $transactionNumber = $dtiRequest;
         }
 
@@ -123,12 +122,20 @@ class SpecialGcRequestController extends Controller
             'tab' => $promo
         ]);
     }
+    public function releasingGcDti()
+    {
+        return inertia('Treasury/Dashboard/SpecialGc/ReviewedReleasingDti', [
+            'title' => 'Reviewed GC For Releasing Dti',
+            'records' => $this->specialGcPaymentService->releasingGcDti(),
+        ]);
+    }
 
     public function viewReleasing(Request $request, SpecialExternalGcrequest $id)
     {
         $rec = $id->load([
             'user' => function ($q) {
-                $q->select('user_id', 'firstname', 'lastname', 'usertype')->with('accessPage:access_no,title');
+                $q->select('user_id', 'firstname', 'lastname', 'usertype')
+                    ->with('accessPage:access_no,title');
             },
             'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
             'specialExternalGcrequestItems',
@@ -148,6 +155,14 @@ class SpecialGcRequestController extends Controller
             'records' => new SpecialExternalGcRequestResource($rec)
         ]);
     }
+    public function viewReleasingDtiSetup(Request $request, $id)
+    {
+        return inertia('Treasury/Dashboard/SpecialGc/Components/GcReleasingDtiView', [
+            'title' => 'Special Gc Releasing',
+            'record' => $this->specialGcPaymentService->releasingDtiReviewed($id),
+            'cbyoptions' => Assignatory::assignatories($request)
+        ]);
+    }
 
     public function relasingGcSubmission(Request $request, $id)
     {
@@ -164,7 +179,8 @@ class SpecialGcRequestController extends Controller
                     'spexgc_receviedby' => $request->receivedBy
                 ]);
 
-                $relid = ApprovedRequest::where('reqap_approvedtype', 'special external releasing')->max('reqap_trnum');
+                $relid = ApprovedRequest::where('reqap_approvedtype', 'special external releasing')
+                    ->max('reqap_trnum');
 
                 ApprovedRequest::create([
                     'reqap_trid' => $id,
@@ -218,11 +234,32 @@ class SpecialGcRequestController extends Controller
         } catch (e) {
             return redirect()->back()->with('error', 'Something went wrong');
         }
+    }
 
+    public function releasingSubmissionDti(Request $request, $id)
+    {
+        $request->validate([
+            "checkby" => 'required',
+            "remarks" => 'required',
+            "receivedby" => "required"
+        ]);
+
+        $dbtransaction = DB::transaction(function () use ($id, $request) {
+            $this->specialGcPaymentService->dtiGcRequestUpdate($request, $id)
+                ->dtiApprovedRequestCreate($request, $id)
+                ->ledgerBudgetCreate($id);
+        });
+
+        if ($dbtransaction) {
+            return redirect()->back()->with('success', 'Successfully Submitted');
+        } else {
+            return redirect()->back()->with('error', 'Something went wrong');
+        }
     }
 
     public function viewDenomination($id)
     {
+        // dd();
         $record = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)
             ->select(['spexgcemp_denom', 'spexgcemp_fname', 'spexgcemp_lname', 'spexgcemp_mname', 'spexgcemp_extname'])
             ->orderBy('spexgcemp_denom')
@@ -238,13 +275,31 @@ class SpecialGcRequestController extends Controller
         ]);
     }
 
+    public function getDtiDenomination($id)
+    {
+        $data = DtiBarcodes::where('dti_trid', $id)
+            ->select(['dti_denom', 'fname', 'lname', 'mname', 'extname'])
+            ->orderBy('dti_denom')
+            ->get();
+
+        $data->each(function ($item) {
+            $item->dti_denom = NumberHelper::currency($item->dti_denom);
+            $item->fname = Str::ucfirst($item->fname);
+            $item->lname = Str::ucfirst($item->lname);
+            $item->mname = Str::ucfirst($item->mname);
+            return $item;
+        });
+        return response()->json([
+            'records' => $data,
+        ]);
+    }
+
     public function releasedGc(Request $request)
     {
         $promo = $request->has('promo') ? $request->promo : '*';
-        $record = SpecialExternalGcrequest::
-            select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed')
+        $record = SpecialExternalGcrequest::select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed')
             ->where('spexgc_promo', $promo)
-            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', )
+            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',)
             ->withWhereHas('approvedRequest', function ($q) {
                 $q->with('user:user_id,firstname,lastname')->select('reqap_preparedby', 'reqap_trid', 'reqap_date')->where('reqap_approvedtype', 'special external releasing');
             })->where('spexgc_released', 'released')
@@ -384,5 +439,4 @@ class SpecialGcRequestController extends Controller
             ->orderByDesc('spcus_id')
             ->get();
     }
-
 }

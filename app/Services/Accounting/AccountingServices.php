@@ -19,20 +19,17 @@ class AccountingServices
     public function __construct(public AccountingDbServices $dbservices) {}
     public function getPaymentList()
     {
-        $data = SpecialExternalGcrequest::selectExternalRequestAll()
+        $data = SpecialExternalGcrequest::withWhereHas('approvedRequest', function ($q) {
+            $q->where('reqap_approvedtype', 'special external releasing');
+        })
+            ->selectExternalRequestAll()
             ->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
-            ->join('approved_request', 'reqap_trid', '=', 'spexgc_id')
             ->join('users as reqby', 'user_id', '=', 'spexgc_reqby')
             ->where('spexgc_released', 'released')
-            ->orWhere('spexgc_reviewed', 'reviewed')
-            ->where('reqap_approvedtype', 'special external releasing')
-            ->orWhere('reqap_approvedtype', 'special external gc review')
-            ->where('spexgc_payment_stat', '!=', 'FINAL')
-            ->orWhere('spexgc_payment_stat', '!=', 'WHOLE')
+            ->whereNotIn('spexgc_payment_stat', ['whole', 'final'])
             ->orderByDesc('spexgc_num')
             ->paginate(10)
             ->withQueryString();
-
 
         $data->transform(function ($item) {
 
@@ -125,7 +122,9 @@ class AccountingServices
 
     public function getDtiList()
     {
-        $data =  DtiGcRequest::select(
+        $data =  DtiGcRequest::withWhereHas('approvedRequest', function ($q) {
+            $q->where('dti_approvedtype', 'special external releasing');
+        })->select(
             'dti_num',
             'dti_datereq',
             'dti_dateneed',
@@ -136,13 +135,10 @@ class AccountingServices
             'dti_balance',
         )
             ->join('special_external_customer', 'spcus_id', '=', 'dti_company')
-            ->join('dti_approved_requests', 'dti_trid', '=', 'dti_gc_requests.dti_num')
             ->join('users as reqby', 'user_id', '=', 'dti_reqby')
-            ->where([
-                ['dti_released', 'released'],
-                ['dti_approvedtype', 'special external gc released'],
-                ['dti_payment_stat', '!=', 'FINAL'],
-            ])->orderByDesc('dti_gc_requests.id')
+            ->where('dti_released', 'released')
+            ->whereNotIn('dti_payment_stat', ['final', 'whole'])
+            ->orderByDesc('dti_gc_requests.id')
             ->get();
 
         $data->each(function ($item) {
@@ -291,16 +287,17 @@ class AccountingServices
             'paymentType' => 'required',
             'checkedby' => 'required',
             'recby' => 'required',
-            // 'status' => 'required',
             'remarks' => 'required',
+            'checked' => 'required',
         ]);
 
-        if ($request->paymentType === '1') {
+        if ($request->paymentType == '1') {
+
             $request->validate([
                 'amount' => 'required',
             ]);
         }
-        if ($request->paymentType === '2') {
+        if ($request->paymentType == '2') {
             $request->validate([
                 'checkamount' => 'required',
                 'checkno' => 'required',
@@ -327,13 +324,15 @@ class AccountingServices
 
             DB::transaction(function () use ($request, $relid) {
                 $this->dbservices->insertIntoDtiApprovedRequest($request, $relid)
-                ->insertIntoLedgerBudgetDtiNew($request)
-                ->updateDtiGcRequest($request)
-                ->insertInstitutionalDtiPayment($request)
-                ->updateDtiBarcodes($request);
+                    ->insertIntoLedgerBudgetDtiNew($request)
+                    ->updateDtiGcRequest($request)
+                    ->insertInstitutionalDtiPayment($request)
+                    ->updateDtiBarcodes($request);
             });
 
-        }else{
+            return redirect()->route('accounting.payment.payment.gc.dti');
+            
+        } else {
             return back()->with([
                 'status' => 'error',
                 'msg' => 'Opss something went Wrong!!',
@@ -357,5 +356,4 @@ class AccountingServices
 
         return 1;
     }
-
 }

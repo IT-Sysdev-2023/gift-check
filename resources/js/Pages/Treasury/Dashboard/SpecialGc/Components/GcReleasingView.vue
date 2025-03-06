@@ -208,7 +208,7 @@ const formState = useForm({
 const { openLeftNotification } = onProgress();
 const onFinish = () => {
     formState.post(route("treasury.special.gc.releasingSubmission", props.id), {preserveScroll: true, onSuccess: ({props}) => {
-       
+
         openLeftNotification(props.flash);
         router.visit(route('treasury.special.gc.gcReleasing'));
     }});

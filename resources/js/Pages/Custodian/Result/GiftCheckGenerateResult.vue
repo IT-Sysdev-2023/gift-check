@@ -8,24 +8,27 @@
                 </template>
                 Print Gift Check
             </a-button>
-            <a-button  @click="() => $inertia.get(route(url))">
+            <a-button @click="() => $inertia.get(route(url))">
                 <template #icon>
                     <FastForwardOutlined />
                 </template>
-               Back to Setup
+                Back to Setup
             </a-button>
         </template>
         <div id="printableArea">
             <div v-for="item in record">
                 <div class="gift-check">
                     <span class="agcSpan">
-                       {{ item.custname }}
+                        {{ item.custname }}
                     </span>
                     <span class="agcSpanHolder">
                         {{ item.holder }}
                     </span>
-                    <span class="denomSpan">
+                    <span class="denomSpan" v-if="item?.spexgcemp_denom">
                         {{ item.spexgcemp_denom }}
+                    </span>
+                    <span class="denomSpan" v-if="item?.dti_denom">
+                        {{ item.dti_denom }}
                     </span>
                     <span class="todaySpan">
                         {{ today }}
@@ -36,8 +39,11 @@
                     <img class="img" src="../../../../../public/images/gcimages/bdo_gc2.jpg" alt="">
                     <div class="barcode">
                         <img :src="'data:image/png;base64,' + item.barcode" />
-                        <span class="barcodeSpan">
+                        <span class="barcodeSpan" v-if="item.spexgcemp_barcode">
                             {{ item.spexgcemp_barcode }}
+                        </span>
+                        <span class="barcodeSpan" v-if="item.dti_barcode">
+                            {{ item.dti_barcode }}
                         </span>
                     </div>
                 </div>
@@ -55,9 +61,9 @@ export default {
         record: Object,
         url: String
     },
-    data(){
+    data() {
         return {
-            today: dayjs().format('DD/MM/YYYY')
+            today: dayjs().format('MMM, DD YYYY')
         }
     },
     methods: {
@@ -86,7 +92,8 @@ export default {
     margin-bottom: 25px;
     border: 1px solid #000;
 }
-.barcodeSpan{
+
+.barcodeSpan {
     font-size: 10px;
     letter-spacing: 1px;
     top: -25%;
@@ -95,17 +102,18 @@ export default {
 
 }
 
-.todaySpan{
+.todaySpan {
     font-size: 12px;
     letter-spacing: 0.5px;
-    font-weight: lighter;
+    font-weight: 600;
     top: 16%;
-    right: 16.6%;
+    right: 14%;
     position: absolute;
 }
-.agcSpan{
+
+.agcSpan {
     text-align: center;
-    width:360px;
+    width: 360px;
     font-size: 12px;
     letter-spacing: 0.5px;
     font-weight: bold;
@@ -113,9 +121,10 @@ export default {
     right: 27.6%;
     position: absolute;
 }
-.agcSpanHolder{
+
+.agcSpanHolder {
     text-align: center;
-    width:390px;
+    width: 390px;
     font-size: 12px;
     letter-spacing: 0.5px;
     font-weight: bold;
@@ -123,7 +132,8 @@ export default {
     right: 33.6%;
     position: absolute;
 }
-.denomSpan{
+
+.denomSpan {
     font-size: 12px;
     letter-spacing: 0.5px;
     font-weight: bold;
@@ -131,7 +141,8 @@ export default {
     right: 60.5%;
     position: absolute;
 }
-.numword{
+
+.numword {
     font-size: 12px;
     letter-spacing: -0.5px;
     font-weight: bold;
