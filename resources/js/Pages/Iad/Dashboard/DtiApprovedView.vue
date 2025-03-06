@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { ref } from 'vue';
 import { notification } from 'ant-design-vue';
 import axios from 'axios';
+import { router } from '@inertiajs/vue3';
 
 const activeKey = ref('1');
 const props = defineProps({
@@ -42,26 +43,39 @@ const form = ref({
     barcode: '',
     errors: {},
     total_gcScan: '',
-    final_total_denomination: ''
+    final_total_denomination: '',
+    totalBarcode: props.data[0].totalBarcode
 
 });
 
 const openScanModal = ref(false);
 
+
 const SubmitBtn = async () => {
     form.value.errors = {};
     try {
+        if (Number(form.value.total_gcScan) < Number(form.value.totalBarcode)) {
+            notification.error({
+                message: 'Error',
+                description: 'Please scan all barcodes first before submitting'
+            });
+            return;
+        }
+
         const response = await axios.post(route('iad.special.dti.dti.review'), {
-            id: props.data[0].dti_num,
+
+            id: props.data[0]?.dti_num,
             remarks: form.value.final_remarks,
             finalDenomination: form.value.final_total_denomination,
             totalGcScan: form.value.total_gcScan
         })
+
         if (response.data.success) {
             notification.success({
                 message: response.data.message,
                 description: response.data.description
             });
+                router.visit(response.data.redirect);
         }
         else if (response.data.error) {
             notification.error({
@@ -225,6 +239,7 @@ const reprintGc = () => {
                             <a-button @click="SubmitBtn" type="primary" class="w-full">
                                 <SendOutlined /> Submit
                             </a-button>
+
                         </a-card>
                     </div>
                 </a-tab-pane>
@@ -234,6 +249,7 @@ const reprintGc = () => {
                 </a-tab-pane>
             </a-tabs>
             <!-- {{ data }} -->
+            <!-- {{ form.totalBarcode }} -->
         </a-card>
     </AuthenticatedLayout>
 </template>

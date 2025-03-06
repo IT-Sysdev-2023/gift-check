@@ -220,7 +220,7 @@
         </a-tab-pane>
     </a-tabs>
 
-    {{ data }}
+    <!-- {{ data }} -->
 </template>
 
 <script>

@@ -38,6 +38,6 @@ const searchData = () => {
             </a-table>
             <pagination :datarecords="props.data" class="mt-5" />
         </a-card>
-        {{ data }}
+        <!-- {{ data }} -->
     </AuthenticatedLayout>
 </template>
