@@ -47,7 +47,7 @@ import { router, useForm } from "@inertiajs/vue3";
 import { SelectProps, UploadProps } from "ant-design-vue";
 import dayjs from "dayjs";
 import { ref } from "vue";
-
+import { notification } from 'ant-design-vue';
 
 
 interface UseFormType {
@@ -116,8 +116,21 @@ const submitForm = () => {
             if (props.flash.success) {
                 stream.value = `data:application/pdf;base64,${props.flash.stream}`;
                 openIframe.value = true;
+
+                notification['success']({
+                    message: 'Success',
+                    description:
+                        'Created Successfully',
+                });
             }
         },
+        onError: () => {
+            notification['error']({
+                message: 'Error',
+                description:
+                    'Check if the informations is correct!',
+            });
+        }
     });
 }
 </script>

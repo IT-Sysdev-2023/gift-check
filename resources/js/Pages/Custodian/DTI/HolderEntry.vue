@@ -172,8 +172,19 @@ const form = useForm({
 const handleSubmit = () => {
     form.post(route('custodian.dti_special_gcsubmit_dti_special_gc'), {
         onSuccess: (r) => {
-            console.log(r);
+            notification['success']({
+                message: 'Success',
+                description:
+                    'Successfully Approved!',
+            });
         },
+        onError: () => {
+            notification['error']({
+                message: 'Error',
+                description:
+                    'Some Fields are missing or Error when Submitting',
+            });
+        }
     })
 }
 
