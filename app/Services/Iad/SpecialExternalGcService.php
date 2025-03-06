@@ -16,6 +16,7 @@ use App\Services\Iad\IadDashboardService;
 use App\Services\Treasury\ColumnHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Number;
 use Rmunate\Utilities\SpellNumber;
 
@@ -111,7 +112,9 @@ class SpecialExternalGcService extends FileHandler
                     DB::raw("CONCAT(fname, ' ', COALESCE(mname, ''), ' ', lname, ' ', COALESCE(extname, '')) as completename")
                 )
                 ->get();
-
+            // dd($dtiBarcodeQuery->count());
+            $totalBarcode = $dtiBarcodeQuery->count();
+            $item->totalBarcode = $totalBarcode;
             $item->dti_barcodes = $dtiBarcodeQuery->isNotEmpty()
                 ? $dtiBarcodeQuery->map(function ($data) {
                     return [
@@ -384,13 +387,20 @@ class SpecialExternalGcService extends FileHandler
                     ]);
                 }
             });
-        } else {
+        } else if (!$request->session()->has('scanReviewDTI')) {
             return response()->json([
                 'error' => true,
                 'message' => 'Oops',
                 'description' => 'Please scan gc first'
             ]);
         }
+        return response()->json([
+            'success' => true,
+            'message' => 'Success',
+            'description' => 'Dti request reviewed successfully',
+            'redirect' => route('iad.special.dti.viewDtiGc')
+        ]);
+
     }
     //this is the submit button function
     public function review(Request $request, $id)

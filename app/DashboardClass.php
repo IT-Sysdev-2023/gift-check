@@ -93,7 +93,7 @@ class DashboardClass extends DashboardService
         // dd();
         $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')
             ->where('spexgc_promo', '0')
-            ->where('spexgc_addemp', 'done')
+            ->where('spexgc_addemp', operator: 'done')
             ->count();
         // dd($pendingExternal);
 
@@ -148,7 +148,9 @@ class DashboardClass extends DashboardService
             ],
 
             'dtiCounts' => [
-                'pending' => DtiGcRequest::where('dti_status', 'pending')->count(),
+                'pending' => DtiGcRequest::where('dti_status', 'pending')
+                    ->where('dti_addemp', 'done')
+                    ->count(),
 
                 'approved' => DtiGcRequest::with('specialDtiGcrequestItemsHasMany')
                     ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
@@ -200,7 +202,15 @@ class DashboardClass extends DashboardService
 
             'approvedgc' => SpecialExternalGcrequest::where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])->count(),
 
-            'receivedcount' => CustodianSrr::count()
+            'receivedcount' => CustodianSrr::count(),
+            'dtiApprovedCount' => DtiGcRequest::join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.id')
+                ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
+                ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
+                ->where('dti_gc_requests.dti_status', 'approved')
+                ->where('dti_gc_requests.dti_addemp', 'done')
+                ->where('dti_approved_requests.dti_approvedtype', '!=', 'special external gc review')
+                ->where('dti_reviewed', null)
+                ->count(),
         ];
     }
     public function custodianDashboard()

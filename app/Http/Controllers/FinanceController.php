@@ -224,6 +224,7 @@ class FinanceController extends Controller
             ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
             ->where('dti_gc_requests.dti_status', 'pending')
+            ->where('dti_gc_requests.dti_addemp', 'done')
             ->get();
         // dd($externalPending);
 
@@ -415,6 +416,7 @@ class FinanceController extends Controller
             $item->total = $dtiItems->sum('subtotal');
             return $item;
         });
+        // dd($query);
 
         return Inertia::render('Finance/SpecialDtiGcRequest', [
             'columns' => $columns,
