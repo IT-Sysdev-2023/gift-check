@@ -223,8 +223,6 @@ class SpecialExternalGcrequest extends Model
             'spcus_id',
             'spexgc_balance',
             'spexgc_payment_stat',
-            'reqap_date',
-            'reqap_approvedtype',
             'spexgc_reviewed',
             'spexgc_released',
             'spexgc_payment_stat',

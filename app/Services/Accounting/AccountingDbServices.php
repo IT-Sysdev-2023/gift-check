@@ -90,6 +90,7 @@ class AccountingDbServices
             'bledger_group' => '0',
             'bcredit_amt' => '0.00',
             'btag' => '0',
+            'bledger_category' => 'special'
         ]);
 
         return $this;
@@ -97,6 +98,7 @@ class AccountingDbServices
 
     public function updateSpecialEnternalGcRequest($request)
     {
+    
 
         SpecialExternalGcrequest::where('spexgc_id', $request->id)->update([
             'spexgc_amount' => $request->amount,
@@ -215,6 +217,7 @@ class AccountingDbServices
             'bcredit_amt' => '0.00',
             'btag' => '0',
             'bcus_guide' => 'dti-new',
+            'bledger_category' => 'special'
         ]);
 
         return $this;

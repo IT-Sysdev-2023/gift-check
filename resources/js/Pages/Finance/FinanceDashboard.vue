@@ -7,11 +7,11 @@
         <a-col :span="8">
             <budget-statistics :title="'Special Gc (Promotional)'" :count="count.budgetCounts.spgc" />
         </a-col>
-        <a-col :span="8">
+        <!-- <a-col :span="8">
             <budget-statistics :title="'DTI GC Deprecated'" :count="count.budgetCounts.dti" />
-        </a-col>
+        </a-col> -->
         <a-col :span="8">
-            <budget-statistics :title="'DTI New'" :count="count.budgetCounts.dti_new" />
+            <budget-statistics title="Special Gc Dti (Promotional)" :count="count.budgetCounts.dti_new" />
         </a-col>
     </a-row>
     <a-row :gutter="[16, 16]">

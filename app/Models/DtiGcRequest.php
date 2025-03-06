@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DtiGcRequest extends Model
 {
@@ -44,6 +45,19 @@ class DtiGcRequest extends Model
     public function specialExternalCustomer()
     {
         return $this->belongsTo(SpecialExternalCustomer::class, 'dti_company', 'spcus_id');
+    }
+    public function approvedRequestRevied()
+    {
+        return $this->belongsTo(DtiApprovedRequest::class, 'dti_num', 'dti_trid')->where('dti_approvedtype', 'special external gc review');
+    }
+
+    public function approvedRequest()
+    {
+        return $this->belongsTo(DtiApprovedRequest::class,  'dti_num', 'dti_trid');
+    }
+    public function specialDtiBarcodesHasMany(): HasMany
+    {
+        return $this->hasMany(DtiBarcodes::class,  'dti_trid', 'dti_num');
     }
 
 

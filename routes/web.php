@@ -322,10 +322,14 @@ Route::middleware('auth')->group(function () {
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
 
+                Route::get('reviewing-gc-setup-{id}', [SpecialGcRequestController::class, 'viewReleasingDtiSetup'])->name('vReleasingSetup');
                 Route::get('reviewing-gc', [SpecialGcRequestController::class, 'releasingGc'])->name('gcReleasing');
+                Route::get('reviewing-gc-dti', [SpecialGcRequestController::class, 'releasingGcDti'])->name('gcReleasingDti');
                 Route::get('reviewing-gc-{id}', [SpecialGcRequestController::class, 'viewReleasing'])->name('viewReleasing');
                 Route::get('view-denominations-{id}', [SpecialGcRequestController::class, 'viewDenomination'])->name('viewDenomination');
                 Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class, 'relasingGcSubmission'])->name('releasingSubmission');
+                Route::post('submit-gc-dti-{id}', [SpecialGcRequestController::class, 'releasingSubmissionDti'])->name('releasingSubmissionDti');
+                Route::get('dti-denomination-view-{id}', [SpecialGcRequestController::class, 'getDtiDenomination'])->name('viewDtiDenomination');
 
                 Route::get('released-gc', [SpecialGcRequestController::class, 'releasedGc'])->name('specialReleasedGc');
                 // Route::get('reviewed-gc-for-releasing', [SpecialGcRequestController::class,'reviewedGcReleasing'])->name('reviewedGcReleasing');

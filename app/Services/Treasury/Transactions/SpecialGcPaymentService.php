@@ -3,7 +3,13 @@
 namespace App\Services\Treasury\Transactions;
 
 use App\Helpers\NumberHelper;
+use App\Models\ApprovedRequest;
 use App\Models\Document;
+use App\Models\DtiApprovedRequest;
+use App\Models\DtiBarcodes;
+use App\Models\DtiGcRequest;
+use App\Models\DtiLedgerSpgc;
+use App\Models\LedgerBudget;
 use App\Models\SpecialExternalCustomer;
 use App\Services\Documents\FileHandler;
 use Illuminate\Http\Request;
@@ -68,7 +74,6 @@ class SpecialGcPaymentService extends FileHandler
 
             return $this->dataForPdf($request, $listOfDenom);
         });
-
     }
 
     public function updateSpecial(Request $request)
@@ -129,7 +134,7 @@ class SpecialGcPaymentService extends FileHandler
                 $filter = collect($request->denomination)->reject(function ($item) {
                     return $item['denomination'] === 0 || $item['qty'] === 0;
                 });
-                
+
                 $filter->each(function ($val) use ($request) {
                     SpecialExternalGcrequestItem::create([
                         'specit_denoms' => $val['denomination'],
@@ -154,8 +159,6 @@ class SpecialGcPaymentService extends FileHandler
                         'doc_fullpath' => $path
                     ]);
                 });
-
-
             });
             return redirect()->back()->with('success', 'Successfully Updated!');
         } else {
@@ -174,6 +177,84 @@ class SpecialGcPaymentService extends FileHandler
             ->orderByDesc('spexgc_id')
             ->paginate()
             ->withQueryString();
+    }
+    public function releasingGcDti()
+    {
+        $data = DtiGcRequest::with([
+            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
+            'user:user_id,firstname,lastname',
+            'specialDtiBarcodesHasMany',
+            'approvedRequestRevied.user',
+
+        ])
+            ->withWhereHas('approvedRequest', function ($q) {
+                $q->select('dti_trid', 'dti_approvedby')->where('dti_approvedtype', 'Special External GC Approved');
+            })
+            ->select('dti_reqby', 'dti_company', 'dti_num', 'dti_num', 'dti_dateneed', 'id', 'dti_datereq')
+            ->where([
+                ['dti_status', 'approved'],
+                ['dti_reviewed', 'reviewed'],
+                ['dti_released', null],
+                ['dti_promo', 'external']
+            ])
+            ->orderByDesc('id')
+            ->paginate()
+            ->withQueryString();
+
+
+        $data->each(function ($item) {
+            $q = collect($item->specialDtiBarcodesHasMany);
+
+            $item->totalDenom = $q->sum('dti_denom');
+            $item->customer = $item->specialExternalCustomer->spcus_acctname;
+            $item->recby = $item->user->full_name;
+            $item->approvedby = $item->approvedRequest?->dti_approvedby;
+            $item->reviewedby = $item->approvedRequestRevied?->user->full_name;
+            return $item;
+        });
+
+        return $data;
+    }
+
+    public function releasingDtiReviewed($id)
+    {
+        $data = DtiGcRequest::with([
+            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
+            'user:user_id,firstname,lastname',
+            'specialDtiBarcodesHasMany',
+            'approvedRequestRevied.user',
+            'user.accessPage',
+            'approvedRequest.user:user_id,firstname,lastname',
+
+        ])
+            ->withWhereHas('approvedRequest', function ($q) {
+                $q->where('dti_approvedtype', 'Special External GC Approved');
+            })
+            ->where([
+                ['dti_status', 'approved'],
+                ['dti_reviewed', 'reviewed'],
+                ['dti_released', null],
+                ['dti_promo', 'external'],
+                ['dti_num', $id],
+            ])
+            ->orderByDesc('id')
+            ->first();
+
+        if ($data) {
+            $q = collect($data->specialDtiBarcodesHasMany);
+            $data->totalDenom = NumberHelper::currency($q->sum('dti_denom'));
+            $data->countBcode = $q->count();
+            $data->customer = $data->specialExternalCustomer?->spcus_acctname;
+            $data->recby = $data->user->full_name;
+            $data->approvedby = $data->approvedRequest?->dti_approvedby;
+            $data->reviewedby = $data->approvedRequestRevied?->user->full_name;
+            $data->title = $data->user?->accessPage?->title;
+            $data->apremarks = $data->approvedRequest->dti_remarks;
+            $data->appdocs = $data->approvedRequest->dti_doc;
+            $data->cby = $data->approvedRequest->user->full_name;
+        }
+
+        return $data;
     }
 
 
@@ -290,5 +371,54 @@ class SpecialGcPaymentService extends FileHandler
             'paymentType.amount' => 'The selected payment amount is required.'
 
         ]);
+    }
+
+    // for dti releasing submit form
+
+    public function dtiGcRequestUpdate($request, $id)
+    {
+        DtiGcRequest::where([["dti_num", $id], ['dti_released', null]])->update([
+            'dti_released' => 'released',
+            'dti_receivedby' => $request->receivedby
+        ]);
+
+        return $this;
+    }
+    public function dtiApprovedRequestCreate($request, $id)
+    {
+        $relid = DtiApprovedRequest::where('dti_approvedtype', 'special external releasing')->max('dti_trnum');
+
+        DtiApprovedRequest::create([
+            'dti_trid' => $id,
+            'dti_approvedtype' => 'special external releasing',
+            'dti_remarks' => $request->remarks,
+            'dti_preparedby' => $request->user()->user_id,
+            'dti_date' => now(),
+            'dti_trnum' => $relid,
+            'dti_checkby' => $request->checkedby
+        ]);
+
+        return $this;
+    }
+    public function ledgerBudgetCreate($id)
+    {
+        $q = DtiBarcodes::selectRaw("IFNULL(SUM(dti_barcodes.dti_denom),0.00) as totaldenom,
+        IFNULL(COUNT(dti_barcodes.dti_denom),0) as cnt")->where('dti_trid', $id)->first();
+
+        $l = LedgerBudget::max('bledger_id');
+
+        $lnum = $l ? $l + 1 : 1;
+
+        $total = $q->totaldenom;
+
+        DtiLedgerSpgc::create([
+            'dti_ledger_no' => $lnum,
+            'dti_ledger_trid' => $id,
+            'dti_ledger_datetime' => now(),
+            'dti_ledger_type' => 'RFGCSEGCREL',
+            'dti_ledger_debit' => $total,
+        ]);
+
+        return $this;
     }
 }

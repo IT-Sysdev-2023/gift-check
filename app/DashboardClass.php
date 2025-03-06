@@ -23,7 +23,7 @@ use App\Services\Treasury\Dashboard\DashboardService;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Http\Request;
 use App\Models\DtiGcRequest;
-
+use App\Models\DtiLedgerSpgc;
 
 class DashboardClass extends DashboardService
 {
@@ -109,8 +109,7 @@ class DashboardClass extends DashboardService
 
         $ledgerSpgc = LedgerSpgc::get();
 
-        $dtiNewBudget = LedgerBudget::where('bcus_guide', 'dti-new')->get();
-
+        $dti = DtiLedgerSpgc::get();
 
 
         $debitTotal = $curBudget->sum('bdebit_amt');
@@ -124,8 +123,8 @@ class DashboardClass extends DashboardService
 
         $spgcreditTotal = $ledgerSpgc->sum('spgcledger_credit');
 
-        $dtiDebitNewTotal = $dtiNewBudget->sum('bdebit_amt');
-        $dtiCreditNewTotal = $dtiNewBudget->sum('bcredit_amt');
+        $dtiDebitNewTotal = $dti->sum('dti_ledger_debit');
+        $dtiCreditNewTotal = $dti->sum('dti_ledger_credit');
         return [
             'specialGcRequest' => [
                 'pending' => $pendingExternal + $pendingInternal,

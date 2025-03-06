@@ -15,6 +15,7 @@ use App\Models\DtiApprovedRequest;
 use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
 use App\Models\DtiGcRequestItem;
+use App\Models\DtiLedgerSpgc;
 use App\Models\LedgerBudget;
 use App\Models\LedgerSpgc;
 use App\Models\SpecialExternalGcrequest;
@@ -582,6 +583,19 @@ class FinanceController extends Controller
                             'bcredit_amt' => $totalDenom,
                             'bledger_category' => 'special'
                         ]);
+
+                        DtiLedgerSpgc::create([
+                            'dti_ledger_no' => $nextLedgerBudgetNum,
+                            'dti_ledger_trid' => $id,
+                            'dti_ledger_datetime' => now(),
+                            'dti_ledger_type' => 'RFGCSEGC',
+                            'dti_ledger_credit' => $totalDenom,
+                            'dti_ledger_typeid' => '0',
+                            'dti_ledger_group' => '0',
+                            'dti_ledger_debit' => '0',
+                            'dti_tag' => '0',
+                        ]);
+
                         if ($reqType->dti_type == '2') {
                             $data = DtiBarcodes::where('dti_trid', $id);
                             foreach ($data->get() as $item) {
