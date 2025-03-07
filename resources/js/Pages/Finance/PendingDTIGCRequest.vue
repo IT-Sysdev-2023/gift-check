@@ -9,7 +9,7 @@ const props = defineProps({
 
 </script>
 <template>
-    <AuthenticatedLayout>
+    <AuthenticatedLayout> 
         <a-card>
             <div class="flex items-center">
                 <p class="text-lg">Pending DTI Special GC Request</p>

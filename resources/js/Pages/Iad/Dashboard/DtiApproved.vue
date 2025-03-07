@@ -5,13 +5,14 @@ import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     columns: Array,
-    data: Object
+    data: Object,
+    searchValue: String
 });
 
-const search = ref('');
+const search = ref(props.searchValue);
 
 const searchData = () => {
-    router.get(route('iad.special.external.viewDtiGc'), {
+    router.get(route('iad.special.dti.viewDtiGc'), {
         search: search.value
     }, {
         preserveState: true

@@ -18,8 +18,9 @@
                 <for-approval-pending :budget="budgetrequest" />
             </a-col>
             <a-col :span="8">
-                <i-card class="uppercase" revrecLabel="Gc Received" rRoute="iad.view.received"
-                    aRoute="iad.special.dti.viewDtiGc" title="special dti gc request" :approved="count.dtiApprovedCount" :recrev="2" />
+                <i-card class="uppercase" revrecLabel="Gc Received" rRoute="iad.special.dti.dtiGcReviewed"
+                    aRoute="iad.special.dti.viewDtiGc" title="special dti gc request" :approved="count.dtiApprovedCount"
+                    :recrev="count.dtiReceivedCount" />
             </a-col>
         </a-row>
 

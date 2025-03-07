@@ -210,6 +210,11 @@ class DashboardClass extends DashboardService
                 ->where('dti_approved_requests.dti_approvedtype', '!=', 'special external gc review')
                 ->where('dti_reviewed', null)
                 ->count(),
+
+            'dtiReceivedCount' => DtiApprovedRequest::join('dti_gc_requests', 'dti_gc_requests.dti_num', '=', 'dti_approved_requests.dti_trid')
+                ->join('users', 'users.user_id', '=', 'dti_approved_requests.dti_preparedby')
+                ->where('dti_approved_requests.dti_approvedtype', 'special external gc review')
+                ->count(),
         ];
     }
     public function custodianDashboard()

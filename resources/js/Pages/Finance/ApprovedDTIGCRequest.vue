@@ -91,7 +91,6 @@ const
     })
         .then((response) => {
             openModal.value = true;
-            // this.jsonData = response.data.jsonData;
             barcode.value = response.data.barcodes;
         });
 }

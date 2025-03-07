@@ -13,13 +13,6 @@ const { highlightText } = highlighten();
         <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
     </a-breadcrumb>
     <a-card>
-
-        <div class="flex justify-between mb-5">
-            <div>
-                <a-range-picker v-model:value="form.date" />
-            </div>
-
-        </div>
         <a-input-search enter-button allow-clear placeholder="Input search here..." v-model:value="approvedGcSearch"
             style="width:25%; margin-left:75%;" />
         <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false"

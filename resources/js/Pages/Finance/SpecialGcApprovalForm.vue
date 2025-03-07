@@ -216,7 +216,7 @@
             <template #tab>
                 <span> GC Holder Details </span>
             </template>
-            <a-table :dataSource="gcHolder" :columns="columns" />
+            <a-table :dataSource="gcHolder" :columns="columns" size="small" />
         </a-tab-pane>
     </a-tabs>
 

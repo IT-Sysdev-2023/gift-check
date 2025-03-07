@@ -553,7 +553,6 @@ Route::middleware('auth')->group(function () {
                 Route::get('approved-special-gc', [FinanceController::class, 'approvedGc'])->name('approved');
                 Route::get('selected-special-gc', [FinanceController::class, 'selectedapprovedGc'])->name('selected.approved');
                 Route::get('selected-dti-gc', [FinanceController::class, 'selectedDtiRequest'])->name('selected.dti.request');
-
             });
 
             Route::name('cancelledGc.')->group(function () {
@@ -769,6 +768,10 @@ Route::middleware('auth')->group(function () {
             Route::get('view-approved-dti', [SpecialExternalGcRequestController::class, 'approvedDtiGc'])->name('approvedDtiGc');
             Route::post('dti-gc-review', [SpecialExternalGcRequestController::class, 'dtiReview'])->name('dti.review');
             Route::post('dti-gc-scan-barcode',[SpecialExternalGcRequestController::class, 'scanBarcode'])->name('dti_scan_barcode');
+            // dti Gc recieved
+            Route::get('dti-gc-received', [SpecialExternalGcRequestController::class, 'dtiGcReviewed'])->name('dtiGcReviewed');
+            Route::get('dti-gc-received-details', [SpecialExternalGcRequestController::class, 'dtiReviewedDetails'])->name('dtiReviewedDetails');
+
         });
 
         Route::prefix('reviewed-gc')->name('reviewed.gc.')->group(function () {

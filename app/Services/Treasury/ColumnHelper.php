@@ -318,6 +318,46 @@ class ColumnHelper
         ],
     ];
 
+    public static $DtiGcReceived = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'dti_trid',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'dti_datereq',
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'dti_customer',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => 'dti_approveddate',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'dti_approvedby',
+        ],
+        [
+            'title' => 'Date Reviewed',
+            'dataIndex' => 'dti_date',
+
+        ],
+        [
+            'title' => 'Reviewed By',
+            'dataIndex' => 'checkBy',
+
+        ],
+        [
+            'title' => 'View',
+            'dataIndex' => 'view'
+        ]
+    ];
+
     public static $approvedDtiGcForReviewed = [
         [
             'title' => 'RFSEGC #',
