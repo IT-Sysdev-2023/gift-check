@@ -195,11 +195,32 @@ class DashboardClass extends DashboardService
     {
         return [
             'countReceiving' => RequisitionForm::where('used', null)->count(),
-
-            'reviewedCount' => SpecialExternalGcrequest::join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+            'reviewedCountSpecial' => SpecialExternalGcrequest::select(
+                'spexgc_id',
+                'spexgc_num',
+                'spexgc_datereq',
+                'reqap_approvedby',
+                'reqap_date',
+                'spcus_acctname',
+                'spcus_companyname',
+                'reqap_trid',
+            )->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
                 ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
                 ->where('spexgc_reviewed', 'reviewed')
-                ->where('reqap_approvedtype', 'Special External GC Approved')->count(),
+                ->where('reqap_approvedtype', 'Special External GC Approved')
+                ->count(),
+            'reviewedCount' => CustodianSrr::select(
+                'csrr_id',
+                'csrr_receivetype',
+                'csrr_datetime',
+                'csrr_prepared_by',
+                'csrr_requisition'
+            )->with(
+                    'user:user_id,firstname,lastname',
+                    'requisition:requis_id,requis_supplierid,requis_erno',
+                    'requisition.supplier:gcs_id,gcs_companyname'
+                )
+                ->count(),
 
             'approvedgc' => SpecialExternalGcrequest::where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])->count(),
 
