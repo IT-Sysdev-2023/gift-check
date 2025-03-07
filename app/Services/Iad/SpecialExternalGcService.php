@@ -6,11 +6,13 @@ use App\Http\Resources\SpecialExternalGcRequestResource;
 use App\Models\ApprovedRequest;
 use App\Models\DtiApprovedRequest;
 use App\Models\DtiBarcodes;
+use App\Models\DtiDocument;
 use App\Models\DtiGcRequest;
 use App\Models\DtiGcRequestItem;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\SpecialExternalGcrequestItem;
+use App\Models\User;
 use App\Services\Documents\FileHandler;
 use App\Services\Iad\IadDashboardService;
 use App\Services\Treasury\ColumnHelper;
@@ -111,8 +113,7 @@ class SpecialExternalGcService extends FileHandler
                     'dti_barcodes.dti_denom',
                     DB::raw("CONCAT(fname, ' ', COALESCE(mname, ''), ' ', lname, ' ', COALESCE(extname, '')) as completename")
                 )
-                ->get();
-            // dd($dtiBarcodeQuery->count());
+                ->paginate(10);
             $totalBarcode = $dtiBarcodeQuery->count();
             $item->totalBarcode = $totalBarcode;
             $item->dti_barcodes = $dtiBarcodeQuery->isNotEmpty()
@@ -134,10 +135,7 @@ class SpecialExternalGcService extends FileHandler
                         'completename' => ''
                     ]
                 ];
-
             return $item;
-
-
         });
         return $query;
     }
@@ -187,10 +185,13 @@ class SpecialExternalGcService extends FileHandler
     public function viewApprovedGcRecord(Request $request, SpecialExternalGcrequest $id)
     {
         $retrievedSession = collect($request->session()->get('scanReviewGC', []))->filter(fn($item) => $item['trid'] == $id->spexgc_id);
+        //    dd($retrievedSession->count());
+        $countSession = $retrievedSession->count();
+        $denominationSession = $retrievedSession->sum('denom');
 
-        session(['countSession' => $retrievedSession->count()]);
-        session(['denominationSession' => $retrievedSession->sum('denom')]);
-        session(['scanGc' => $retrievedSession]);
+        session()->flash('countSession', $countSession);
+        session()->flash('denominationSession', $denominationSession);
+        session()->flash('scanGc', $retrievedSession);
 
         return $id->load(
             'user:user_id,firstname,lastname,usertype',
@@ -398,7 +399,7 @@ class SpecialExternalGcService extends FileHandler
             'success' => true,
             'message' => 'Success',
             'description' => 'Dti request reviewed successfully',
-            'redirect' => route('iad.special.dti.viewDtiGc')
+            'redirect' => route('iad.dashboard')
         ]);
 
     }
@@ -474,5 +475,37 @@ class SpecialExternalGcService extends FileHandler
             }
             return null;
         }
+    }
+
+    public function dtiGcReviewedList(Request $request)
+    {
+        $data = DtiApprovedRequest::join('dti_gc_requests', 'dti_gc_requests.dti_num', '=', 'dti_approved_requests.dti_trid')
+            ->join('users', 'users.user_id', '=', 'dti_approved_requests.dti_preparedby')
+            ->where('dti_approved_requests.dti_approvedtype', 'special external gc review')
+            ->orderByDesc('dti_approved_requests.dti_trid')
+            ->paginate(10);
+
+        $data->transform(function ($item) {
+            $item->totalDenom = DtiGcRequestItem::where('dti_trid', $item->dti_trid)
+                ->select(DB::raw('SUM(dti_denoms * dti_qty) as totalAmount'))
+                ->value('totalAmount');
+            $item->checkBy = User::where('user_id', $item->dti_checkby)
+                ->select(DB::raw('CONCAT(firstname," ",lastname) as checkBy'))
+                ->value('checkBy');
+            $item->reqBy = User::where('user_id', $item->dti_reqby)
+                ->select(DB::raw('CONCAT(firstname," ",lastname) as reqBy'))
+                ->value('reqBy');
+            $item->remarks = DtiApprovedRequest::where('dti_trid', $item->dti_trid)
+                ->where('dti_approvedtype', 'special external gc review')
+                ->select('dti_remarks as review_remarks')
+                ->value('review_remarks');
+            $item->dti_documents = DtiDocument::where('dti_trid', $item->dti_trid)
+                ->select('dti_fullpath')
+                ->value('dti_fullpath');
+            $item->dti_barcodes = DtiBarcodes::where('dti_trid', $item->dti_trid)
+                ->paginate(10);
+            return $item;
+        });
+        return $data;
     }
 }

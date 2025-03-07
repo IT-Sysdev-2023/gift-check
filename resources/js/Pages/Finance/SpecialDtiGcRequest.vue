@@ -98,7 +98,7 @@ const form = ref({
     file: file,
     status: '1',
     dateApproved: dayjs(),
-    dateCancelled: dayjs(),
+    dateCancelled: dayjs().format('YYYY-MM-DD'),
     cancelledRemarks: '',
     approvedRemarks: '',
     checkedBy: props.data[0].checkby ?? '',

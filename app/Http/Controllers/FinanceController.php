@@ -348,11 +348,12 @@ class FinanceController extends Controller
 
         $gcHolder = DtiBarcodes::where('dti_trid', $id)
             ->select(
-                'dti_denom',
-                DB::raw("CONCAT(fname, ' ',lname) as fullname")
+                DB::raw("COALESCE(dti_denom, '') as dti_denom"),
+                DB::raw("CONCAT(COALESCE(fname, ''), ' ', COALESCE(mname, ''), ' ', COALESCE(lname, ''), ' ', COALESCE(extname, '')) as fullname")
             )
             ->paginate(10)
             ->withQueryString();
+
         // dd($gcHolder);
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
@@ -770,7 +771,7 @@ class FinanceController extends Controller
                             ]);
                         }
                     });
-                    return back()->with([
+                    return Redirect::route('finance.pendingGc.pending')->with([
                         'type' => 'success',
                         'msg' => 'Nice!',
                         'description' => 'Request approved successfuly.'
@@ -790,10 +791,10 @@ class FinanceController extends Controller
                     'spexgcemp_barcode' => $barcode++
                 ]);
 
-                return back()->with([
+                return Redirect::route('finance.pendingGc.pending')->with([
                     'type' => 'success',
                     'msg' => 'Cancelled!',
-                    'description' => 'The request was successfully canceled.'
+                    'description' => 'The request was successfully canceled.',
                 ]);
             }
         }
