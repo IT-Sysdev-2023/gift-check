@@ -223,6 +223,7 @@ declare module 'vue' {
     DtiApprovedGcRequest: typeof import('./resources/js/Pages/Custodian/DTI/Approved/DtiApprovedGcRequest.vue')['default']
     DtiApprovedView: typeof import('./resources/js/Pages/Iad/Dashboard/DtiApprovedView.vue')['default']
     DtiEditPendingRequest: typeof import('./resources/js/Pages/Treasury/Dti/DtiEditPendingRequest.vue')['default']
+    DtiGcReviewed: typeof import('./resources/js/Pages/Iad/Dashboard/DtiGcReviewed.vue')['default']
     DtiIndex: typeof import('./resources/js/Pages/Treasury/Dti/DtiIndex.vue')['default']
     DtiPendingRequest: typeof import('./resources/js/Pages/Treasury/Dti/DtiPendingRequest.vue')['default']
     DtiSetupGcRequest: typeof import('./resources/js/Pages/Custodian/DTI/Setup/DtiSetupGcRequest.vue')['default']
