@@ -123,9 +123,10 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                             />
                         </div>
                     </div>
+
                     <store-accounting-sidebar v-if="storeaccounting" />
                     <AdminSidebar v-if="page.auth.user.usertype !== '9' && (admin && curr === 'admin')" />
-                    <TreasurySideBar v-if="treasury || curr === 'treasury'" />
+                    <TreasurySideBar v-if="page.auth.user.usertype !== '9'  && (treasury || curr === 'treasury')" />
                     <FinanceSideBar v-if="finance || curr === 'finance'" />
                     <CustodianSideBar
                         v-if="page.auth.user.usertype !== '9' && (custodian || curr === 'custodian')  "

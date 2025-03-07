@@ -15,7 +15,8 @@
                     :recrev="count.reviewedCount" />
             </a-col>
             <a-col :span="8">
-                <for-approval-pending :budget="budgetrequest" />
+
+
             </a-col>
             <a-col :span="8">
                 <i-card class="uppercase" revrecLabel="Gc Received" rRoute="iad.special.dti.dtiGcReviewed"
@@ -23,14 +24,38 @@
                     :recrev="count.dtiReceivedCount" />
             </a-col>
         </a-row>
+        <template #title>
+            <div>Approve Budget Request</div>
+        </template>
+        <a-float-button :disabled="apreq == 0" @click="handleClick" :badge="{ count: apreq, color: 'blue' }">
+            <template #tooltip>
+                Approve Budget Request?
+            </template>
+        </a-float-button>
 
+        <a-modal :width="600"  v-model:open="modal" :footer="null">
+            <for-approval-pending :budget="budgetrequest" @close="closeModal"/>
+        </a-modal>
     </AuthenticatedLayout>
 </template>
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { computed, ref } from "vue";
 
-defineProps<{
+const props = defineProps<{
     count: any;
     budgetrequest: any
 }>();
+const modal = ref<boolean>(false);
+
+const handleClick = () => {
+    modal.value = true;
+};
+const apreq = computed(() => {
+    return props.budgetrequest === null ? 0 : 1;
+});
+
+const closeModal = () => {
+    modal.value = false;
+}
 </script>

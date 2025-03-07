@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Http\Request;
 use App\Models\DtiGcRequest;
 use App\Models\DtiLedgerSpgc;
+use App\Models\User;
 
 class DashboardClass extends DashboardService
 {
@@ -182,6 +183,7 @@ class DashboardClass extends DashboardService
             ->first();
         if ($data) {
             $data->datereq = Date::parse($data->br_requested_at)->toFormattedDateString();
+            $data->reqby = User::select('firstname','lastname')->where('user_id', $data->br_requested_by)->value('full_name');
         }
         return $data;
     }
