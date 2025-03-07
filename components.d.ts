@@ -224,6 +224,7 @@ declare module 'vue' {
     DtiPendingRequest: typeof import('./resources/js/Pages/Treasury/Dti/DtiPendingRequest.vue')['default']
     DtiSetupGcRequest: typeof import('./resources/js/Pages/Custodian/DTI/Setup/DtiSetupGcRequest.vue')['default']
     DuplicatedBarcode: typeof import('./resources/js/Pages/StoreAccounting/DuplicatedBarcode.vue')['default']
+    ECard: typeof import('./resources/js/Pages/Eod/Cards/ECard.vue')['default']
     Edit: typeof import('./resources/js/Pages/Profile/Edit.vue')['default']
     EditOutlined: typeof import('@ant-design/icons-vue')['EditOutlined']
     Envelope: typeof import('./resources/js/Pages/Treasury/Transactions/ProductionRequest/Envelope.vue')['default']
