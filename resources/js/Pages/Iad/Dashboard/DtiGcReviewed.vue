@@ -64,7 +64,7 @@ const column = ref([
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'view'">
                         <a-button type="primary" @click="ViewDetails(record)">
-                            <EyeOutlined />
+                            <FileSearchOutlined />
                         </a-button>
                     </template>
                 </template>
@@ -75,7 +75,7 @@ const column = ref([
             <a-card>
                 <a-tabs v-model:activeKey="activeKey" type="card">
                     <a-tab-pane key="1"><template #tab>
-                            <EyeOutlined /> Reviewed Details
+                            <FileSearchOutlined /> Reviewed Details
                         </template>
                         <div class="flex direction-columns gap-5">
                             <a-card class="w-full">
@@ -86,10 +86,10 @@ const column = ref([
                                     </a-descriptions-item>
                                     <a-descriptions-item label="Date Needed">{{
                                         dayjs(form.dti_dateneed).format('YYYY-MMMM-DD')
-                                    }}</a-descriptions-item>
+                                        }}</a-descriptions-item>
                                     <a-descriptions-item label="Requested By">{{ form.reqBy }}</a-descriptions-item>
                                     <a-descriptions-item label="Payment Type">{{ form.dti_paymenttype
-                                    }}</a-descriptions-item>
+                                        }}</a-descriptions-item>
                                     <a-descriptions-item label="Amount">{{ form.totalDenom }}</a-descriptions-item>
                                     <a-descriptions-item label="Remarks">{{ form.dti_remarks }}</a-descriptions-item>
                                     <a-descriptions-item label="Documents">
@@ -108,7 +108,7 @@ const column = ref([
                                     <a-descriptions-item label="Checked By">{{ form.checkBy }}</a-descriptions-item>
                                     <a-descriptions-item label="Prepared By">{{ form.checkBy }}</a-descriptions-item>
                                     <a-descriptions-item label="Approved By"> {{ form.dti_approvedby
-                                    }}</a-descriptions-item>
+                                        }}</a-descriptions-item>
                                     <a-descriptions-item label="Approved Date">{{
                                         dayjs(form.dti_date).format('YYYY-MMMM-DD')
                                         }}</a-descriptions-item>
@@ -127,11 +127,13 @@ const column = ref([
                             </a-card>
                         </div>
                     </a-tab-pane>
-                    <a-tab-pane key="2"><template #tab>
+                    <a-tab-pane key="2">
+                        <template #tab>
                             <BarcodeOutlined /> Barcodes
                         </template>
                         <a-card>
-                            <a-table :columns="column" :data-source="form.dti_barcodes.data" :pagination="false" size="small"></a-table>
+                            <a-table :columns="column" :data-source="form.dti_barcodes.data" :pagination="false"
+                                size="small"></a-table>
                             <pagination :datarecords="form.dti_barcodes" class="mt-5" />
                         </a-card>
                     </a-tab-pane>

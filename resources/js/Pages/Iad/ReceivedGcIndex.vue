@@ -8,12 +8,12 @@
                 style="margin-top: 10px;">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
-                        <a-button class="mr-1" @click="retreivedData(record.csrr_id)">
+                        <a-button type="primary" class="mr-1" @click="retreivedData(record.csrr_id)">
                             <template #icon>
                                 <EyeFilled />
                             </template>
                         </a-button>
-                        <a-button @click="reprint(record.recnumber)">
+                        <a-button type="primary" @click="reprint(record.recnumber)">
                             <template #icon>
                                 <PrinterFilled />
                             </template>
