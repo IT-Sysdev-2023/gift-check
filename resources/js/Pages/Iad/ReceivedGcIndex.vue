@@ -50,7 +50,7 @@ defineProps({
 const data = ref({});
 const openModal = ref(false);
 const gcReceivedSearch = ref('');
-const searchMessage = ref('');
+// const searchMessage = ref('');
 
 const retreivedData = async (id) => {
     await axios.get(route('iad.details.view', id)).then((res) => {

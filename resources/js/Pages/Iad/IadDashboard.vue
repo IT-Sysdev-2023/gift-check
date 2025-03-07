@@ -6,7 +6,7 @@
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <i-card class="uppercase" title="special external gc request" :approved="count.approvedgc"
-                    :recrev="count.reviewedCount" aRoute="iad.special.external.approvedGc"
+                    :recrev="count.reviewedCountSpecial" aRoute="iad.special.external.approvedGc"
                     rRoute="iad.reviewed.gc.special.review" />
             </a-col>
             <a-col :span="8">
