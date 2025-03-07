@@ -1,10 +1,15 @@
 <template>
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
-            <a-col :span="8">
-                <promo-gc-request-card :counts="count" />
+            <a-col :span="9">
+                <m-card
+                pRoute="retailgroup.pending"
+                aRoute="retailgroup.approved"
+                :pending="count.pending"
+                :approved="count.approved"
+                />
             </a-col>
-            <a-col :span="8">
+            <a-col :span="15">
                 <a-card>
                     <a-statistic  :value="count.promo" :precision="2"
                         :value-style="{ color: '#3f8600' }" style="margin-right: 50px">

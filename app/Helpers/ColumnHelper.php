@@ -293,6 +293,45 @@ class ColumnHelper
             'align' => 'center',
         ],
     ];
+
+    public static $payment_viewing_column_dti = [
+        [
+            'title' => 'Payment No.',
+            'dataIndex' => 'dti_insp_paymentnum',
+
+        ],
+        [
+            'title' => 'Spgc #',
+            'dataIndex' => 'dti_insp_trid',
+
+        ],
+        [
+            'title' => 'Payment Date',
+            'dataIndex' => 'dti_institut_date',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'spcus_companyname',
+
+        ],
+        [
+            'title' => 'Amount Paid',
+            'dataIndex' => 'dti_institut_amountrec',
+
+        ],
+        [
+            'title' => 'Status',
+            'dataIndex' => 'dti_payment_stat',
+            'align' => 'center',
+
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'view',
+            'align' => 'center',
+        ],
+    ];
     public static $payment_gc_columns = [
         [
             'title' => 'RFSEGC#',

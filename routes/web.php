@@ -114,7 +114,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //? Admin
-    Route::middleware('userType:admin')->prefix('admin')->group(function () {
+    Route::middleware('userType:admin,accounting')->prefix('admin')->group(function () {
         Route::name('admin.')->group(function () {
             Route::get('add-new-fund', [AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
             Route::post('users_add_user', [AdminController::class, 'users_save_user'])->name('masterfile.user.saveUser');
@@ -509,7 +509,9 @@ Route::middleware('auth')->group(function () {
                 Route::get('setup-dti-{id}', [AccountingController::class, 'tableFetchDtiTable'])->name('fetch.dti');
                 Route::post('submit-form', [AccountingController::class, 'submitPayment'])->name('submit');
                 Route::get('payment-viewing', [AccountingController::class, 'paymentViewing'])->name('viewing');
+                Route::get('payment-viewing-dti-payment', [AccountingController::class, 'paymentViewingDti'])->name('dti.viewing');
                 Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
+                Route::get('payments-details-dti-{id}', [AccountingController::class, 'paymentDetailsDti'])->name('details.dti');
 
                 Route::post('submit-payment', [AccountingController::class, 'submitPaymentDti'])->name('submit.dti');
             });
@@ -591,7 +593,7 @@ Route::middleware('auth')->group(function () {
 
 
     //? Retail
-    Route::middleware('userType:retail,admin')->prefix('retail')->group(function () {
+    Route::middleware('userType:retail,admin,accounting')->prefix('retail')->group(function () {
         Route::name('retail.')->group(function () {
             Route::get('retailstore-gc-request', [RetailController::class, 'gcRequest'])->name('gc.request');
             Route::post('retailstore-gc-request-submit', [RetailController::class, 'gcRequestsubmit'])->name('gc.request.submit');
@@ -618,6 +620,7 @@ Route::middleware('auth')->group(function () {
                 Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
             });
             Route::get('AvailableGc', [RetailController::class, 'availableGcList'])->name('availableGcList');
+
             Route::get('soldGc', [RetailController::class, 'soldGc'])->name('soldGc');
 
 
@@ -678,7 +681,7 @@ Route::middleware('auth')->group(function () {
     });
 
     //? Custodian
-    Route::middleware('userType:custodian,admin')->prefix('custodian')->group(function () {
+    Route::middleware('userType:custodian,admin,accounting')->prefix('custodian')->group(function () {
 
         Route::name('custodian.')->group(function () {
 

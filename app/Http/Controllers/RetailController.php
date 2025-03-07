@@ -407,7 +407,7 @@ class RetailController extends Controller
             ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
             ->where('store_received_gc.strec_sold', '*')
             ->where('store_received_gc.strec_return', '')
-            ->where('store_received_gc.strec_storeid', $request->user()->store_assigned)
+            ->whereIn('store_received_gc.strec_storeid', [$request->user()->store_assigned, '1'])
             ->where('transaction_sales.sales_item_status', '0')
             ->orderBy('transaction_stores.trans_datetime', 'DESC')
             ->paginate(10)
