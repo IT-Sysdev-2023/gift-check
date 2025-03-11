@@ -24,8 +24,8 @@ class GcProductionRequestController extends Controller
     }
     public function approvedProductionRequest(Request $request)
     {
+        // dd();
         $record = $this->gcProductionRequestService->approvedRequest($request);
-
         return inertia(
             'Treasury/Dashboard/TableGcProduction',
             [
@@ -78,7 +78,7 @@ class GcProductionRequestController extends Controller
             ->paginate()->withQueryString();
 
         return response()->json([
-            'productionRequest' => $pr, 
+            'productionRequest' => $pr,
             'barcodes' => [
                 'data' => ProductionRequestItemResource::collection($barcodes->items()),
                 'from' => $barcodes->firstItem(),

@@ -343,6 +343,7 @@ class SpecialGcRequestController extends Controller
 
     public function approvedRequest(Request $request)
     {
+        // dd();
         $promo = $request->has('promo') ? $request->promo : '*';
         $record = SpecialExternalGcrequest::with([
             'approvedRequest' => function ($q) {

@@ -19,7 +19,9 @@ class DtiTransactionController extends Controller
 {
     use DtiGcTraits;
     //
-    public function __construct(public DtiServices $dtiServices) {}
+    public function __construct(public DtiServices $dtiServices)
+    {
+    }
     public function index()
     {
 
@@ -66,9 +68,24 @@ class DtiTransactionController extends Controller
 
     public function dtiPendingRequest()
     {
-
         return inertia('Treasury/Dti/DtiPendingRequest', [
             'records' => $this->getDtiPendingGcRequest(),
+        ]);
+    }
+
+    public function dtiApprovedRequest(Request $request)
+    {
+        return inertia('Treasury/Dti/DtiApprovedRequestView', [
+            'data' => $this->dtiApprovedRequestView($request),
+            'searchValue' => $request->search,
+        ]);
+    }
+
+    public function dtiApprovedView(Request $request)
+    {
+        // dd($this->dtiApprovedViewList($request));
+        return inertia('Treasury/Dti/DtiApprovedView', [
+            'data' => $this->dtiApprovedViewList($request),
         ]);
     }
 
@@ -96,7 +113,8 @@ class DtiTransactionController extends Controller
             'docs' => $documents,
         ]);
     }
-    public function dtiUpdateRequest(Request $request){
+    public function dtiUpdateRequest(Request $request)
+    {
         return $this->dtiServices->submitUpdateDtiRequest($request);
     }
 }
