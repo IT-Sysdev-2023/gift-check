@@ -237,6 +237,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc'])->name('udc');
                 Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville'])->name('screenville');
                 Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech'])->name('asctech');
+                Route::get('view', [MarketingController::class, 'view'])->name('view');
             });
             Route::name('promostatus.')->group(function () {
                 Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
@@ -772,7 +773,7 @@ Route::middleware('auth')->group(function () {
             Route::get('view-dti-gc', [SpecialExternalGcRequestController::class, 'viewDtiGc'])->name('viewDtiGc');
             Route::get('view-approved-dti', [SpecialExternalGcRequestController::class, 'approvedDtiGc'])->name('approvedDtiGc');
             Route::post('dti-gc-review', [SpecialExternalGcRequestController::class, 'dtiReview'])->name('dti.review');
-            Route::post('dti-gc-scan-barcode',[SpecialExternalGcRequestController::class, 'scanBarcode'])->name('dti_scan_barcode');
+            Route::post('dti-gc-scan-barcode', [SpecialExternalGcRequestController::class, 'scanBarcode'])->name('dti_scan_barcode');
             // dti Gc recieved
             Route::get('dti-gc-received', [SpecialExternalGcRequestController::class, 'dtiGcReviewed'])->name('dtiGcReviewed');
             Route::get('dti-gc-received-details', [SpecialExternalGcRequestController::class, 'dtiReviewedDetails'])->name('dtiReviewedDetails');
@@ -936,7 +937,7 @@ Route::middleware('auth')->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-
+                
                             // billing reports
                             Route::get('Billing-reports', [AccountingController::class, 'billing_reports'])->name('billing_reports');
                             Route::post('billing-report-per-day', [ReportController::class, 'billingReportPerDay'])->name('billingReportPerDay');

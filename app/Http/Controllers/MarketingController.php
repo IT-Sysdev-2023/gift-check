@@ -2123,4 +2123,13 @@ class MarketingController extends Controller
                 ->withQueryString()
         ]);
     }
+
+    public function view(Request $request)
+    {
+        $data = $this->marketing->view($request);
+        return inertia('Marketing/ViewTransaction/View', [
+            'data' => $data,
+            'returnRoute' => $request['store_url']
+        ]);
+    }
 }

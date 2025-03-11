@@ -12,6 +12,7 @@ use App\Models\PromoGcRequestItem;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
+use App\Models\StoreEodTextfileTransaction;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Models\UserDetails;
@@ -764,6 +765,15 @@ class MarketingServices extends FileHandler
             'releaseDetails' => $releaseDetails,
             'gc' => $gc
         ];
+    }
+
+    public function view($request)
+    {
+
+        $data = StoreEodTextfileTransaction::where('seodtt_barcode', $request['barcode'])
+            ->first();
+
+        return $data;
     }
 
 
