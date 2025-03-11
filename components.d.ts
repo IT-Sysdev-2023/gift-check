@@ -221,6 +221,7 @@ declare module 'vue' {
     DropdownLink: typeof import('./resources/js/Components/DropdownLink.vue')['default']
     DtiApproved: typeof import('./resources/js/Pages/Iad/Dashboard/DtiApproved.vue')['default']
     DtiApprovedGcRequest: typeof import('./resources/js/Pages/Custodian/DTI/Approved/DtiApprovedGcRequest.vue')['default']
+    DtiApprovedRequestView: typeof import('./resources/js/Pages/Treasury/Dti/DtiApprovedRequestView.vue')['default']
     DtiApprovedView: typeof import('./resources/js/Pages/Iad/Dashboard/DtiApprovedView.vue')['default']
     DtiEditPendingRequest: typeof import('./resources/js/Pages/Treasury/Dti/DtiEditPendingRequest.vue')['default']
     DtiGcReviewed: typeof import('./resources/js/Pages/Iad/Dashboard/DtiGcReviewed.vue')['default']

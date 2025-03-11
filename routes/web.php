@@ -423,6 +423,8 @@ Route::middleware('auth')->group(function () {
                     Route::get('dti-pending-request', [DtiTransactionController::class, 'dtiPendingRequest'])->name('dtiPendingRequest');
                     Route::get('dti-edit-request-{id}', [DtiTransactionController::class, 'dtiEditRequest'])->name('dti-edit-request');
                     Route::post('dti-update-request', [DtiTransactionController::class, 'dtiUpdateRequest'])->name('update-gc-request');
+                    Route::get('dti-gc-approved-list', [DtiTransactionController::class, 'dtiApprovedRequest'])->name('dtiApprovedRequest');
+                    Route::get('dti-approved-view', [DtiTransactionController::class, 'dtiApprovedView'])->name('dtiApprovedView');
                 });
             });
             Route::prefix('masterfile')->name('masterfile.')->group(function () {

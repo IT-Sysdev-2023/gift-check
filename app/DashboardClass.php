@@ -50,7 +50,7 @@ class DashboardClass extends DashboardService
             'gcProductionRequest' => $this->gcProductionRequest(),
             'adjustment' => $this->adjustments(),
             'specialGcRequest' => $this->specialGcRequest(), //Duplicated above use Spatie Permission instead
-
+            'approvedDti' => DtiGcRequest::where([['dti_status', 'approved'], ['dti_addemp', 'done']])->count(),
             'eod' => InstitutEod::count(),
             'productionRequest' => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
         ];
@@ -183,7 +183,7 @@ class DashboardClass extends DashboardService
             ->first();
         if ($data) {
             $data->datereq = Date::parse($data->br_requested_at)->toFormattedDateString();
-            $data->reqby = User::select('firstname','lastname')->where('user_id', $data->br_requested_by)->value('full_name');
+            $data->reqby = User::select('firstname', 'lastname')->where('user_id', $data->br_requested_by)->value('full_name');
         }
         return $data;
     }
