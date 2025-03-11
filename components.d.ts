@@ -557,6 +557,7 @@ declare module 'vue' {
     VerifiedSoldUsedGc: typeof import('./resources/js/Pages/Iad/VerifiedSoldUsedGc.vue')['default']
     VerifiedStore: typeof import('./resources/js/Pages/StoreAccounting/VerifiedStore.vue')['default']
     VerifyEmail: typeof import('./resources/js/Pages/Auth/VerifyEmail.vue')['default']
+    View: typeof import('./resources/js/Pages/Marketing/ViewTransaction/View.vue')['default']
     ViewAllocatedGcModal: typeof import('./resources/js/Components/Treasury/ViewAllocatedGcModal.vue')['default']
     ViewApprovedGcTable: typeof import('./resources/js/Pages/Iad/Dashboard/ViewApprovedGcTable.vue')['default']
     WarningOutlined: typeof import('@ant-design/icons-vue')['WarningOutlined']

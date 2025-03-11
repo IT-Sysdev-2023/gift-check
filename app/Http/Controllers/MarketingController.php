@@ -428,7 +428,7 @@ class MarketingController extends Controller
             ->leftJoin('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->where('instituttritems_trid', '=', $request->id)
             ->get();
-            
+
         $query->transform(function ($item) use ($request) {
             $item->gcType = $request->data['insp_paymentcustomer'];
             return $item;
@@ -2120,6 +2120,15 @@ class MarketingController extends Controller
                 ], 'like', $request->data . '%')
                 ->paginate()
                 ->withQueryString()
+        ]);
+    }
+
+    public function view(Request $request)
+    {
+        $data = $this->marketing->view($request);
+        return inertia('Marketing/ViewTransaction/View', [
+            'data' => $data,
+            'returnRoute' => $request['store_url']
         ]);
     }
 }
