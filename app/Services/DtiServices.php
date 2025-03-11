@@ -82,20 +82,19 @@ class DtiServices extends FileHandler
             'dti_dateneed' => $request->date,
             'dti_remarks' => $request->remarks,
             'dti_company' => $dti->value,
-            'dti_payment' => $request->amount,
             'dti_paymenttype' => "Ar",
             'dti_status' => 'pending',
             'dti_type' => 2,
             'dti_payment_stat' => 'paid',
             'dti_addemp' => 'pending',
             'dti_promo' => 'external',
-            'dti_payment_arno' => $request->arNo
         ]);
 
 
         return $storing->dti_num;
     }
-    private function getDenomination($request, $lid){
+    private function getDenomination($request, $lid)
+    {
 
         $collect = collect($request->denomination);
 
@@ -109,6 +108,70 @@ class DtiServices extends FileHandler
         });
 
         return $collect;
+    }
 
+    public function submitUpdateDtiRequest($request)
+    {
+        $request->validate([
+            'file' => 'required'
+        ]);
+
+        if (SpecialExternalCustomer::where('spcus_id', $request->companyId)->exists()) {
+            DB::transaction(function () use ($request) {
+                DtiGcRequest::where([
+                    ['id', $request->id],
+                    ['dti_status', 'pending'],
+                ])->update([
+                    'dti_dateneed' => $request->validity,
+                    'dti_remarks' => $request->remarks,
+                    'dti_payment_arno' => $request->arNo,
+                    'dti_payment' => $request->payment,
+                    'dti_updatedby' => $request->user()->user_id,
+                    'updated_at' => now(),
+                ]);
+
+                DtiGcRequestItem::where('dti_trid', $request->dtiNum)->delete();
+
+
+                $filter = collect($request->denomination)->reject(function ($item) {
+                    return $item['denomination'] === 0 || $item['qty'] === 0;
+                });
+
+                $filter->each(function ($val) use ($request) {
+                    DtiGcRequestItem::create([
+                        'dti_denoms' => $val['denomination'],
+                        'dti_qty' => $val['qty'],
+                        'dti_trid' => $request->dtiNum,
+                    ]);
+                });
+
+                if ($request->has('file')) {
+
+                    $documents = DtiDocument::where([['dti_type', 'Special External GC Request Dti'], ['dti_trid', $request->dtiNum]]);
+
+                    if ($documents->exists()) {
+                        $documents->delete();
+                    }
+                }
+
+                $this->saveMultiFiles($request, $request->dtiNum, function ($id, $path) {
+
+                    DtiDocument::create([
+                        'dti_trid' => $id,
+                        'dti_type' => 'Special External GC Request Dti',
+                        'dti_fullpath' => $path
+                    ]);
+                });
+            });
+            return redirect()->back()->with([
+                'title' => 'Successfully Updated!',
+                'type' => 'success',
+            ]);
+        } else {
+            return redirect()->back()->with([
+                'title' => 'Company Does not Exists!',
+                'type' => 'error'
+            ]);
+        };
     }
 }

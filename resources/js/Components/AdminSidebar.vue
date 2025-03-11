@@ -13,7 +13,7 @@
         <template #title>
             <span>
                 <SwapOutlined />
-                <span>Transaction</span>
+            <span>Transaction</span>
             </span>
         </template>
         <a-menu-item key="requestGC">Request GC</a-menu-item>

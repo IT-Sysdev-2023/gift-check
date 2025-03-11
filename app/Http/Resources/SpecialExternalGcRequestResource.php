@@ -77,7 +77,7 @@ class SpecialExternalGcRequestResource extends JsonResource
                     'total' => NumberHelper::currency($denom),
                     'qty' => $item->sum('specit_qty')
                 ];
-                
+
             });
         }else{
             return $this->whenLoaded('specialExternalGcrequestEmpAssign', function ($q) {

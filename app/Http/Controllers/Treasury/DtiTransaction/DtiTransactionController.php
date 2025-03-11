@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Treasury\DtiTransaction;
 use App\Helpers\NumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DtiGcRequest as RequestsDtiGcRequest;
+use App\Models\DtiDocument;
 use App\Models\DtiGcRequest;
+use App\Models\DtiGcRequestItem;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Services\DtiServices;
@@ -24,9 +26,9 @@ class DtiTransactionController extends Controller
         $spgcEx = SpecialExternalGcrequest::max('spexgc_num');
         $spgcExDti = DtiGcRequest::max('dti_num');
 
-        if($spgcEx > $spgcExDti){
+        if ($spgcEx > $spgcExDti) {
             $transactionNumber = $spgcEx;
-        }else{
+        } else {
             $transactionNumber = $spgcExDti;
         }
 
@@ -62,10 +64,39 @@ class DtiTransactionController extends Controller
         return redirect()->back()->with(['stream' => $stream, 'success' => 'GC External Payment submission success']);
     }
 
-    public function dtiPendingRequest() {
+    public function dtiPendingRequest()
+    {
 
         return inertia('Treasury/Dti/DtiPendingRequest', [
             'records' => $this->getDtiPendingGcRequest(),
         ]);
+    }
+
+    public function dtiEditRequest($id)
+    {
+        $record = DtiGcRequest::where('dti_num', $id)->first();
+
+        $denom = DtiGcRequestItem::where('dti_trid', $record->dti_num)->get();
+
+        $documents = DtiDocument::where('dti_trid', $record->dti_num)->get();
+
+        $denom->transform(function ($item) {
+            return (object) [
+                'qty' => $item->dti_qty,
+                'denomination' => $item->dti_denoms,
+                'subtotal' => $item->dti_denoms * $item->dti_qty,
+            ];
+        });
+
+        return inertia('Treasury/Dti/DtiEditPendingRequest', [
+            'record' => $record,
+            'dti' => self::options(),
+            'total' => $denom->sum('subtotal'),
+            'denom' => $denom,
+            'docs' => $documents,
+        ]);
+    }
+    public function dtiUpdateRequest(Request $request){
+        return $this->dtiServices->submitUpdateDtiRequest($request);
     }
 }

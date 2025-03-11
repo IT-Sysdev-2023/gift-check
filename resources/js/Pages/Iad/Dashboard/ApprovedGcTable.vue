@@ -13,15 +13,10 @@ const { highlightText } = highlighten();
         <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
     </a-breadcrumb>
     <a-card>
-
-        <div class="flex justify-between mb-5">
-            <div>
-                <a-range-picker v-model:value="form.date" />
-            </div>
-
-        </div>
-        <a-input-search enter-button allow-clear placeholder="Input search here..." v-model:value="approvedGcSearch" style="width:25%; margin-left:75%;"/>
-        <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false" style="margin-top:10px">
+        <a-input-search enter-button allow-clear placeholder="Input search here..." v-model:value="approvedGcSearch"
+            style="width:25%; margin-left:75%;" />
+        <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false"
+            style="margin-top:10px">
             <template #title>
                 <a-typography-title :level="4">{{ title }}</a-typography-title>
             </template>
@@ -104,7 +99,7 @@ export default {
             );
 
         },
-        okay(){
+        okay() {
             this.messageModal = false;
         }
     },
@@ -126,11 +121,11 @@ export default {
                 );
             }, 150),
         },
-        approvedGcSearch(search){
-             const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
+        approvedGcSearch(search) {
+            const searchValidation = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}]/u;
 
-            if(searchValidation.test(search)){
-                const openNotificationWithIcon = (type) =>{
+            if (searchValidation.test(search)) {
+                const openNotificationWithIcon = (type) => {
                     notification[type]({
                         message: 'Invalid input',
                         description: 'Search contains invalid symbol or emojis',
@@ -141,9 +136,9 @@ export default {
                 return;
             }
             console.log(search);
-            this.$inertia.get(route('iad.special.external.approvedGc'),{
-                search:search
-            },{
+            this.$inertia.get(route('iad.special.external.approvedGc'), {
+                search: search
+            }, {
                 preserveState: true
             })
         }

@@ -13,6 +13,7 @@ use App\Models\CustodianSrr;
 use App\Models\CustodianSrrItem;
 use App\Models\Denomination;
 use App\Models\Document;
+use App\Models\DtiBarcodes;
 use App\Models\Gc;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
@@ -223,7 +224,6 @@ class CustodianServices extends FileHandler
             return $item;
         });
 
-        // dd($data->toArray());
 
         return $data;
     }
@@ -395,6 +395,38 @@ class CustodianServices extends FileHandler
             $item->numWords = Number::spell($item->spexgcemp_denom) . ' pesos only';
             $item->holder = $holdername;
             $item->custname = $item->specialExternalGcRequest->specialExternalCustomer->spcus_acctname;
+            return $item;
+        });
+
+        return $data;
+    }
+
+    public function getSpecialExternalGcRequestDti($request)
+    {
+        $data = DtiBarcodes::with(
+            'dtigcrequest:dti_num,dti_company',
+            'dtigcrequest.specialExternalCustomer:spcus_id,spcus_acctname'
+        );
+
+        $data = match ($request->status) {
+            '2' => $data->where('dti_barcode', $request->barcode)->get(),
+            '1' => $data->whereBetween('dti_barcode', [$request->barcodestart, $request->barcodeend])->get(),
+        };
+
+        $data->transform(function ($item) {
+            $holdername = Str::ucfirst($item->fname) . ', ' .
+                Str::ucfirst($item->lname) . ' ' .
+                Str::ucfirst($item->mname) . '' .
+                Str::ucfirst($item->extname);
+
+            $barcode = new DNS1D();
+
+            $html = $barcode->getBarcodePNG($item->dti_barcode, 'C128');
+
+            $item->barcode = $html;
+            $item->numWords = Number::spell($item->dti_denom) . ' pesos only';
+            $item->holder = $holdername;
+            $item->custname = $item->dtigcrequest->specialExternalCustomer->spcus_acctname;
             return $item;
         });
 

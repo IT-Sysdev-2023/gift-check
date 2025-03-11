@@ -1,5 +1,6 @@
 <template>
     <AuthenticatedLayout>
+
         <Head :title="title" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
@@ -15,7 +16,7 @@
                 <a-tab-pane key="1" tab="Special External Gc Details">
                     <a-descriptions bordered size="small" layout="vertical">
                         <a-descriptions-item label="RFSEGC #" :labelStyle="{ fontWeight: 'bold' }">{{ records.spexgc_num
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Department" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.userAccessPageTitle
                         }}</a-descriptions-item>
@@ -42,7 +43,7 @@
                         <a-descriptions-item label="Request Remarks" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.spexgc_remarks }}</a-descriptions-item>
                         <a-descriptions-item label="Requested by" :labelStyle="{ fontWeight: 'bold' }">{{ records.user
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Date Approved" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.approvedRequest.reqap_date
                         }}</a-descriptions-item>
@@ -72,10 +73,10 @@
                     <a-card class="mt-10">
                         <a-row :gutter="[16, 16]">
                             <a-col :span="8">
-                                <a-button block @click="scanGc">
+                                <a-button type="primary" block @click="scanGc">
                                     <FastForwardOutlined /> Scan GC
                                 </a-button>
-                                <a-button block @click="reprint" class="mt-2">
+                                <a-button type="primary" block @click="reprint" class="mt-2">
                                     <PrinterOutlined /> Reprint Gc
                                 </a-button>
                             </a-col>
@@ -86,13 +87,14 @@
                                         <a-form-item label="Remarks" name="remarks"
                                             :validate-status="formState.errors.remarks ? 'error' : ''"
                                             :help="formState.errors.remarks">
-                                            <a-textarea v-model:value="formState.remarks"  />
+                                            <a-textarea v-model:value="formState.remarks" />
                                         </a-form-item>
                                         <a-form-item label="Total Gc Scanned" name="totalGc">
-                                            <a-input-number readonly style="width: 100%;" :value="page.props.flash.countSession" />
+                                            <a-input-number readonly style="width: 100%;" :value="totalCount">
+                                            </a-input-number>
                                         </a-form-item>
                                         <a-form-item label="Total Denomination" name="denomination">
-                                            <a-input-number style="width: 100%;"  readonly :value="page.props.flash.denominationSession" />
+                                            <a-input-number style="width: 100%;" readonly :value="totalDenom" />
                                         </a-form-item>
 
                                         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
@@ -104,11 +106,6 @@
                                 </a-card>
                             </a-col>
                         </a-row>
-                        <!-- <a-table :columns="columns" bordered class="mt-10" :data-source="$page.props.flash.scanGc"
-                            :pagination="false">
-
-                        </a-table> -->
-
                     </a-card>
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="GC Holder" force-render>
@@ -120,16 +117,17 @@
         <a-modal v-model:open="openScanGc" title="Scan GC" :footer="null">
             <a-form :model="barcodeForm" name="basic" autocomplete="off" @finish="onFinishBarcode">
                 <p class="mt-5 ml-1">Scan Barcode:</p>
-                <a-form-item  name="barcode"  :rules="[
+                <a-form-item name="barcode" :rules="[
                     {
                         required: true,
                         message: 'Please input the Barcode!',
                     },
                 ]" :validate-status="barcodeForm.errors.barcode ? 'error' : ''" :help="barcodeForm.errors.barcode">
-                    <a-input-number size="large" v-model:value="barcodeForm.barcode" @change="() => barcodeForm.errors.barcode = '' " style="width: 100%" />
+                    <a-input-number size="large" v-model:value="barcodeForm.barcode"
+                        @change="() => barcodeForm.errors.barcode = ''" style="width: 100%" />
                 </a-form-item>
 
-                <a-form-item >
+                <a-form-item>
                     <a-button block type="primary" html-type="submit">Scan Barcode</a-button>
                 </a-form-item>
             </a-form>
@@ -148,8 +146,9 @@ import { PageWithSharedProps } from "@/types";
 
 const page = usePage<PageWithSharedProps>().props;
 const props = defineProps<{
-    gcHolder: Object,
-    gcholderCol: Object,
+    gcHolder: object,
+    gcholderCol: object,
+    totalBarcode: number,
     title: string;
     data: {
         data: {
@@ -198,33 +197,6 @@ const formState = useForm<formState>({
     remarks: "",
     reviewedBy: "",
 });
-
-const columns = [
-    {
-        title: 'Lastname',
-        dataIndex: 'lastname',
-    },
-    {
-        title: 'Firstname',
-        dataIndex: 'firstname',
-    },
-    {
-        title: 'Middlename',
-        dataIndex: 'middlename',
-    },
-    {
-        title: 'Ext.',
-        dataIndex: 'extname',
-    },
-    {
-        title: 'Denomination',
-        dataIndex: 'denom',
-    },
-    {
-        title: 'Barcode',
-        dataIndex: 'barcode',
-    },
-];
 
 
 const reprint = () => {
@@ -288,7 +260,15 @@ const reprintGc = () => {
     //     });
 };
 const { openLeftNotification } = onProgress();
+const totalBarcode = ref(props.totalBarcode)
 const onFinish = () => {
+    if (totalCount.value !== totalBarcode.value) {
+        notification.warning({
+            message: "Oops",
+            description: "Please scan all barcodes first before submitting",
+        });
+        return;
+    }
     formState.post(route("iad.special.external.gcreview", records.spexgc_id), {
         onSuccess: ({ props }) => {
             openLeftNotification(props.flash);
@@ -298,11 +278,17 @@ const onFinish = () => {
         },
     });
 };
-
+const totalCount = ref();
+const totalDenom = ref();
 const onFinishBarcode = () => {
     barcodeForm.post(route("iad.special.external.barcode", records.spexgc_id), {
         onSuccess: ({ props }) => {
             openLeftNotification(props.flash);
+            if (props.flash.success) {
+                totalCount.value = props.flash.countSession ?? '';
+                totalDenom.value = props.flash.denominationSession ?? '';
+                openScanGc.value = false;
+            }
         },
         preserveState: true,
     });

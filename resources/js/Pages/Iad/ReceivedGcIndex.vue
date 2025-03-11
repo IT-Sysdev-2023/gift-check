@@ -8,12 +8,12 @@
                 style="margin-top: 10px;">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
-                        <a-button class="mr-1" @click="retreivedData(record.csrr_id)">
+                        <a-button type="primary" class="mr-1" @click="retreivedData(record.csrr_id)">
                             <template #icon>
                                 <EyeFilled />
                             </template>
                         </a-button>
-                        <a-button @click="reprint(record.recnumber)">
+                        <a-button type="primary" @click="reprint(record.recnumber)">
                             <template #icon>
                                 <PrinterFilled />
                             </template>
@@ -50,7 +50,7 @@ defineProps({
 const data = ref({});
 const openModal = ref(false);
 const gcReceivedSearch = ref('');
-const searchMessage = ref('');
+// const searchMessage = ref('');
 
 const retreivedData = async (id) => {
     await axios.get(route('iad.details.view', id)).then((res) => {

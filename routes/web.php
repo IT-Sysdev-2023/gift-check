@@ -114,7 +114,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //? Admin
-    Route::middleware('userType:admin')->prefix('admin')->group(function () {
+    Route::middleware('userType:admin,accounting')->prefix('admin')->group(function () {
         Route::name('admin.')->group(function () {
             Route::get('add-new-fund', [AdminController::class, 'addNewFund'])->name('revolvingFund.saveNewFund');
             Route::post('users_add_user', [AdminController::class, 'users_save_user'])->name('masterfile.user.saveUser');
@@ -275,7 +275,7 @@ Route::middleware('auth')->group(function () {
 
 
     //? Treasury
-    Route::middleware('userType:treasury,admin,custodian')->group(function () {
+    Route::middleware('userType:treasury,admin,custodian,accounting')->group(function () {
         Route::prefix('treasury')->name('treasury.')->group(function () {
             Route::prefix('budget-request')->name('budget.request.')->group(function () { //can be accessed using route treasury.budget.request
                 Route::get('approved', [BudgetRequestController::class, 'approvedRequest'])->name('approved');
@@ -322,10 +322,14 @@ Route::middleware('auth')->group(function () {
                 // Route::post('add-assign-employee', [SpecialGcRequestController::class, 'addAssignEmployee'])->name('add.assign.employee');
                 Route::post('update-special-gc', [SpecialGcRequestController::class, 'updateSpecialGc'])->name('update.special');
 
+                Route::get('reviewing-gc-setup-{id}', [SpecialGcRequestController::class, 'viewReleasingDtiSetup'])->name('vReleasingSetup');
                 Route::get('reviewing-gc', [SpecialGcRequestController::class, 'releasingGc'])->name('gcReleasing');
+                Route::get('reviewing-gc-dti', [SpecialGcRequestController::class, 'releasingGcDti'])->name('gcReleasingDti');
                 Route::get('reviewing-gc-{id}', [SpecialGcRequestController::class, 'viewReleasing'])->name('viewReleasing');
                 Route::get('view-denominations-{id}', [SpecialGcRequestController::class, 'viewDenomination'])->name('viewDenomination');
                 Route::post('submit-gc-internal-{id}', [SpecialGcRequestController::class, 'relasingGcSubmission'])->name('releasingSubmission');
+                Route::post('submit-gc-dti-{id}', [SpecialGcRequestController::class, 'releasingSubmissionDti'])->name('releasingSubmissionDti');
+                Route::get('dti-denomination-view-{id}', [SpecialGcRequestController::class, 'getDtiDenomination'])->name('viewDtiDenomination');
 
                 Route::get('released-gc', [SpecialGcRequestController::class, 'releasedGc'])->name('specialReleasedGc');
                 // Route::get('reviewed-gc-for-releasing', [SpecialGcRequestController::class,'reviewedGcReleasing'])->name('reviewedGcReleasing');
@@ -417,6 +421,8 @@ Route::middleware('auth')->group(function () {
                     Route::get('index', [DtiTransactionController::class, 'index'])->name('index');
                     Route::post('submit-dti', [DtiTransactionController::class, 'submitDtiForm'])->name('submit');
                     Route::get('dti-pending-request', [DtiTransactionController::class, 'dtiPendingRequest'])->name('dtiPendingRequest');
+                    Route::get('dti-edit-request-{id}', [DtiTransactionController::class, 'dtiEditRequest'])->name('dti-edit-request');
+                    Route::post('dti-update-request', [DtiTransactionController::class, 'dtiUpdateRequest'])->name('update-gc-request');
                 });
             });
             Route::prefix('masterfile')->name('masterfile.')->group(function () {
@@ -496,11 +502,18 @@ Route::middleware('auth')->group(function () {
             });
             Route::name('payment.')->group(function () {
                 Route::get('payment-gc', [AccountingController::class, 'paymantGc'])->name('payment.gc');
+                Route::get('payment-gc-dti', [AccountingController::class, 'paymantGcDti'])->name('payment.gc.dti');
+                Route::get('payment-gc-dti-setup-{id}', [AccountingController::class, 'paymantGcDtiSetup'])->name('payment.gc.dti.setup');
                 Route::get('setup-payment-{id}', [AccountingController::class, 'setupPayment'])->name('setup');
                 Route::get('setup-table-{id}', [AccountingController::class, 'tableFetch'])->name('fetch');
+                Route::get('setup-dti-{id}', [AccountingController::class, 'tableFetchDtiTable'])->name('fetch.dti');
                 Route::post('submit-form', [AccountingController::class, 'submitPayment'])->name('submit');
                 Route::get('payment-viewing', [AccountingController::class, 'paymentViewing'])->name('viewing');
+                Route::get('payment-viewing-dti-payment', [AccountingController::class, 'paymentViewingDti'])->name('dti.viewing');
                 Route::get('payment-details-{id}', [AccountingController::class, 'paymentDetails'])->name('details');
+                Route::get('payments-details-dti-{id}', [AccountingController::class, 'paymentDetailsDti'])->name('details.dti');
+
+                Route::post('submit-payment', [AccountingController::class, 'submitPaymentDti'])->name('submit.dti');
             });
 
             Route::prefix('reports')->name('reports.')->group(function () {
@@ -526,14 +539,26 @@ Route::middleware('auth')->group(function () {
             Route::get('generate-released-spgc-reports', [FinanceController::class, 'releasedSpgcPdfExcelFunction'])->name('released.spgc.pdf.excel');
             Route::get('generate-spgc-ledger', [FinanceController::class, 'generateSpgcPromotionalExcel'])->name('spgc.ledger.start');
             Route::post('approve-request', [FinanceController::class, 'approveRequest'])->name('approve.request');
+            // dti approved
+            Route::get('approved-dti-list', [FinanceController::class, 'dtiApprovedGCRequest'])->name('request.approve');
+
             Route::name('pendingGc.')->group(function () {
+                Route::get('dti-pendding-list', [FinanceController::class, 'ditPendingRequest'])->name('ditPendingRequest');
                 Route::get('pending-list', [FinanceController::class, 'specialGcPending'])->name('pending');
                 Route::get('pending-approval-form', [FinanceController::class, 'SpecialGcApprovalForm'])->name('approval.form');
                 Route::post('pending-approval-form-submit', [FinanceController::class, 'SpecialGcApprovalSubmit'])->name('approval.submit');
+                // dit pending request
+                Route::get('pending-dti-list', [FinanceController::class, 'dtiPendingRequestList'])->name('dti.request.pending');
+                Route::post('dti-approval', [FinanceController::class, 'DtiApprovedForm'])->name('dti.approval');
             });
             Route::name('approvedGc.')->group(function () {
                 Route::get('approved-special-gc', [FinanceController::class, 'approvedGc'])->name('approved');
                 Route::get('selected-special-gc', [FinanceController::class, 'selectedapprovedGc'])->name('selected.approved');
+                Route::get('selected-dti-gc', [FinanceController::class, 'selectedDtiRequest'])->name('selected.dti.request');
+            });
+
+            Route::name('cancelledGc.')->group(function () {
+                route::get('cancelled-Dti-list', [FinanceController::class, 'dtiCancelledRequest'])->name('dti_cancelled');
             });
 
             Route::name('budget.')->group(function () {
@@ -567,7 +592,7 @@ Route::middleware('auth')->group(function () {
 
 
     //? Retail
-    Route::middleware('userType:retail,admin')->prefix('retail')->group(function () {
+    Route::middleware('userType:retail,admin,accounting')->prefix('retail')->group(function () {
         Route::name('retail.')->group(function () {
             Route::get('retailstore-gc-request', [RetailController::class, 'gcRequest'])->name('gc.request');
             Route::post('retailstore-gc-request-submit', [RetailController::class, 'gcRequestsubmit'])->name('gc.request.submit');
@@ -594,6 +619,7 @@ Route::middleware('auth')->group(function () {
                 Route::post('submit-verification', [RetailController::class, 'submitVerify'])->name('submit');
             });
             Route::get('AvailableGc', [RetailController::class, 'availableGcList'])->name('availableGcList');
+
             Route::get('soldGc', [RetailController::class, 'soldGc'])->name('soldGc');
 
 
@@ -654,7 +680,7 @@ Route::middleware('auth')->group(function () {
     });
 
     //? Custodian
-    Route::middleware('userType:custodian,admin')->prefix('custodian')->group(function () {
+    Route::middleware('userType:custodian,admin,accounting')->prefix('custodian')->group(function () {
 
         Route::name('custodian.')->group(function () {
 
@@ -678,6 +704,7 @@ Route::middleware('auth')->group(function () {
 
             Route::name('check.')->group(function () {
                 Route::get('by-barcode-range', [CustodianController::class, 'barcodeOrRange'])->name('print.barcode');
+                Route::get('by-barcode-range-dti', [CustodianController::class, 'barcodeOrRangeDti'])->name('print.barcode.dti');
             });
             Route::name('production.')->group(function () {
                 Route::get('production', [CustodianController::class, 'productionIndex'])->name('index');
@@ -706,6 +733,17 @@ Route::middleware('auth')->group(function () {
                 Route::get('dti-gc-holder-entry', [CustodianController::class, 'dti_gc_holder_entry'])->name('dti_gc_holder_entry');
                 Route::post('submit-dti-special-gc', [CustodianController::class, 'submit_dti_special_gc'])->name('submit_dti_special_gc');
             });
+
+            Route::prefix('dti')->name('dti.')->group(function () {
+                Route::get('dti-approved-gc-request', [CustodianController::class, 'dtiApprovedGcRequest'])->name('approved.index');
+                Route::get('dti-setup-gcrequest-{id}', [CustodianController::class, 'dtiSetupGcRequest'])->name('setup.gc-request');
+            });
+
+            Route::prefix('management')->group(function () {
+                Route::name('managers.')->group(function () {
+                    Route::post('managers-key', [ManagerController::class, 'managersKey'])->name('key');
+                });
+            });
         });
     });
 
@@ -723,11 +761,20 @@ Route::middleware('auth')->group(function () {
         Route::prefix('special-external-gc-request')->name('special.external.')->group(function () {
             Route::get('view-approved-gc', [SpecialExternalGcRequestController::class, 'approvedGc'])->name('approvedGc');
             Route::get('view-approved-gc-{id}', [SpecialExternalGcRequestController::class, 'viewApprovedGcRecord'])->name('viewApprovedGc');
-
             Route::post('barcode-submission-{id}', [SpecialExternalGcRequestController::class, 'barcodeSubmission'])->name('barcode');
             Route::post('gc-review-{id}', [SpecialExternalGcRequestController::class, 'gcReview'])->name('gcreview');
-
             Route::get('gc-reprint-{id}', [SpecialExternalGcRequestController::class, 'reprint'])->name('reprint');
+        });
+
+        Route::prefix('special-dti-gc-request')->name('special.dti.')->group(function () {
+            Route::get('view-dti-gc', [SpecialExternalGcRequestController::class, 'viewDtiGc'])->name('viewDtiGc');
+            Route::get('view-approved-dti', [SpecialExternalGcRequestController::class, 'approvedDtiGc'])->name('approvedDtiGc');
+            Route::post('dti-gc-review', [SpecialExternalGcRequestController::class, 'dtiReview'])->name('dti.review');
+            Route::post('dti-gc-scan-barcode',[SpecialExternalGcRequestController::class, 'scanBarcode'])->name('dti_scan_barcode');
+            // dti Gc recieved
+            Route::get('dti-gc-received', [SpecialExternalGcRequestController::class, 'dtiGcReviewed'])->name('dtiGcReviewed');
+            Route::get('dti-gc-received-details', [SpecialExternalGcRequestController::class, 'dtiReviewedDetails'])->name('dtiReviewedDetails');
+
         });
 
         Route::prefix('reviewed-gc')->name('reviewed.gc.')->group(function () {
@@ -796,6 +843,9 @@ Route::middleware('auth')->group(function () {
     Route::get('file-search', [ProcessFiles::class, 'barcodeSearch']);
 
     Route::get('generate-barcode', [CustodianController::class, 'generateBarcode'])->name('generaate');
+
+
+
 
     //? Store Accounting
     Route::middleware('userType:storeaccounting,admin')->prefix('store-accounting')
@@ -884,7 +934,7 @@ Route::middleware('auth')->group(function () {
                             Route::get('check-variance-select', [StoreAccountingController::class, 'CheckVarianceSubmit'])->name('CheckVarianceSubmit');
                             Route::get('variance-excel', [StoreAccountingController::class, 'varianceExcelExport'])->name('varianceExcelExport');
                             // about us
-                
+
                             // billing reports
                             Route::get('Billing-reports', [AccountingController::class, 'billing_reports'])->name('billing_reports');
                             Route::post('billing-report-per-day', [ReportController::class, 'billingReportPerDay'])->name('billingReportPerDay');

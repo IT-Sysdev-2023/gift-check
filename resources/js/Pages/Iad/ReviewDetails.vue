@@ -4,23 +4,23 @@
             <a-tab-pane key="1">
                 <template #tab>
                     <span>
-                        <apple-outlined />
+                        <FileSearchOutlined />
                         Reviewed Details
                     </span>
                 </template>
                 <a-card>
-                    <reviewed-details-card :record="record" :doc="document" :approved="approved"/>
+                    <reviewed-details-card :record="record" :doc="document" :approved="approved" />
                 </a-card>
             </a-tab-pane>
             <a-tab-pane key="2">
                 <template #tab>
                     <span>
-                        <android-outlined />
+                        <BarcodeOutlined />
                         Barcodes
                     </span>
                 </template>
                 <a-card>
-                    <reviewed-barcodes :barcodes="barcodes"/>
+                    <reviewed-barcodes :barcodes="barcodes" />
                 </a-card>
             </a-tab-pane>
         </a-tabs>

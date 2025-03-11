@@ -2,10 +2,12 @@
 
 namespace App;
 
+// use App\Http\Requests\DtiGcRequest;
 use App\Models\ApprovedGcrequest;
 use App\Models\BudgetRequest;
 use App\Models\CustodianSrr;
 use App\Models\Denomination;
+use App\Models\DtiApprovedRequest;
 use App\Models\Gc;
 use App\Models\InstitutEod;
 use App\Models\InstitutTransaction;
@@ -20,6 +22,9 @@ use App\Models\SpecialExternalGcrequest;
 use App\Services\Treasury\Dashboard\DashboardService;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Http\Request;
+use App\Models\DtiGcRequest;
+use App\Models\DtiLedgerSpgc;
+use App\Models\User;
 
 class DashboardClass extends DashboardService
 {
@@ -27,7 +32,9 @@ class DashboardClass extends DashboardService
      * Create a new class instance.
      */
 
-    public function __construct() {}
+    public function __construct()
+    {
+    }
     public function treasuryDashboard(Request $request)
     {
         return [
@@ -84,21 +91,26 @@ class DashboardClass extends DashboardService
     }
     public function financeDashboard()
     {
+        // dd();
         $pendingExternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')
             ->where('spexgc_promo', '0')
-            ->where('spexgc_addemp', 'done')
+            ->where('spexgc_addemp', operator: 'done')
             ->count();
+        // dd($pendingExternal);
 
         $pendingInternal = SpecialExternalGcrequest::where('spexgc_status', 'pending')
             ->where('spexgc_promo', '*')
             ->where('spexgc_addemp', 'done')
             ->count();
+        // dd($pendingInternal);
 
         $curBudget = LedgerBudget::where('bcus_guide', '!=', 'dti')->get();
 
         $dtiBudget = LedgerBudget::where('bcus_guide', 'dti')->get();
 
         $ledgerSpgc = LedgerSpgc::get();
+
+        $dti = DtiLedgerSpgc::get();
 
 
         $debitTotal = $curBudget->sum('bdebit_amt');
@@ -112,6 +124,8 @@ class DashboardClass extends DashboardService
 
         $spgcreditTotal = $ledgerSpgc->sum('spgcledger_credit');
 
+        $dtiDebitNewTotal = $dti->sum('dti_ledger_debit');
+        $dtiCreditNewTotal = $dti->sum('dti_ledger_credit');
         return [
             'specialGcRequest' => [
                 'pending' => $pendingExternal + $pendingInternal,
@@ -130,8 +144,27 @@ class DashboardClass extends DashboardService
                 'curBudget' => $debitTotal - $creditTotal,
                 'dti' => $dtiDebitTotal - $dtiCreditTotal,
                 'spgc' => $spgcDebitTotal - $spgcreditTotal,
+                'dti_new' => $dtiDebitNewTotal - $dtiCreditNewTotal,
             ],
 
+            'dtiCounts' => [
+                'pending' => DtiGcRequest::where('dti_status', 'pending')
+                    ->where('dti_addemp', 'done')
+                    ->count(),
+
+                'approved' => DtiGcRequest::with('specialDtiGcrequestItemsHasMany')
+                    ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
+                    ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
+                    ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
+                    ->where('dti_gc_requests.dti_status', 'approved')
+                    ->where('dti_approved_requests.dti_approvedtype', 'Special External GC Approved')
+                    ->count(),
+
+                'cancelled' => DtiGcRequest::with('specialDtiGcrequestItemsHasMany')
+                    ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_cancelled_by')
+                    ->where('dti_gc_requests.dti_status', 'cancelled')
+                    ->count(),
+            ],
             'appPromoCount' => PromoGcRequest::with('userReqby')
                 ->whereFilterForApproved()
                 ->selectPromoRequest()
@@ -150,6 +183,7 @@ class DashboardClass extends DashboardService
             ->first();
         if ($data) {
             $data->datereq = Date::parse($data->br_requested_at)->toFormattedDateString();
+            $data->reqby = User::select('firstname','lastname')->where('user_id', $data->br_requested_by)->value('full_name');
         }
         return $data;
     }
@@ -161,15 +195,49 @@ class DashboardClass extends DashboardService
     {
         return [
             'countReceiving' => RequisitionForm::where('used', null)->count(),
-
-            'reviewedCount' => SpecialExternalGcrequest::join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
+            'reviewedCountSpecial' => SpecialExternalGcrequest::select(
+                'spexgc_id',
+                'spexgc_num',
+                'spexgc_datereq',
+                'reqap_approvedby',
+                'reqap_date',
+                'spcus_acctname',
+                'spcus_companyname',
+                'reqap_trid',
+            )->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
                 ->leftJoin('approved_request', 'reqap_trid', '=', 'spexgc_id')
                 ->where('spexgc_reviewed', 'reviewed')
-                ->where('reqap_approvedtype', 'Special External GC Approved')->count(),
+                ->where('reqap_approvedtype', 'Special External GC Approved')
+                ->count(),
+            'reviewedCount' => CustodianSrr::select(
+                'csrr_id',
+                'csrr_receivetype',
+                'csrr_datetime',
+                'csrr_prepared_by',
+                'csrr_requisition'
+            )->with(
+                    'user:user_id,firstname,lastname',
+                    'requisition:requis_id,requis_supplierid,requis_erno',
+                    'requisition.supplier:gcs_id,gcs_companyname'
+                )
+                ->count(),
 
             'approvedgc' => SpecialExternalGcrequest::where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])->count(),
 
-            'receivedcount' => CustodianSrr::count()
+            'receivedcount' => CustodianSrr::count(),
+            'dtiApprovedCount' => DtiGcRequest::join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.id')
+                ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
+                ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
+                ->where('dti_gc_requests.dti_status', 'approved')
+                ->where('dti_gc_requests.dti_addemp', 'done')
+                ->where('dti_approved_requests.dti_approvedtype', '!=', 'special external gc review')
+                ->where('dti_reviewed', null)
+                ->count(),
+
+            'dtiReceivedCount' => DtiApprovedRequest::join('dti_gc_requests', 'dti_gc_requests.dti_num', '=', 'dti_approved_requests.dti_trid')
+                ->join('users', 'users.user_id', '=', 'dti_approved_requests.dti_preparedby')
+                ->where('dti_approved_requests.dti_approvedtype', 'special external gc review')
+                ->count(),
         ];
     }
     public function custodianDashboard()

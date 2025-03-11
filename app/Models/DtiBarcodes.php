@@ -10,4 +10,12 @@ class DtiBarcodes extends Model
     protected $guarded = [];
     public $timestamps = false;
 
+    public function dtigcrequest(){
+        return $this->belongsTo(DtiGcRequest::class, 'dti_trid', 'dti_num');
+    }
+    public function reverified()
+    {
+        return $this->belongsTo(StoreVerification::class, 'dti_barcode', 'vs_barcode');
+    }
+
 }

@@ -123,16 +123,17 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                             />
                         </div>
                     </div>
+
                     <store-accounting-sidebar v-if="storeaccounting" />
-                    <AdminSidebar v-if="admin && curr === 'admin'" />
-                    <TreasurySideBar v-if="treasury || curr === 'treasury'" />
+                    <AdminSidebar v-if="page.auth.user.usertype !== '9' && (admin && curr === 'admin')" />
+                    <TreasurySideBar v-if="page.auth.user.usertype !== '9'  && (treasury || curr === 'treasury')" />
                     <FinanceSideBar v-if="finance || curr === 'finance'" />
                     <CustodianSideBar
-                        v-if="custodian || curr === 'custodian'"
+                        v-if="page.auth.user.usertype !== '9' && (custodian || curr === 'custodian')  "
                     />
-                    <RetailSidebar v-if="retail || curr == 'retail'" />
+                    <RetailSidebar v-if="page.auth.user.usertype !== '9' && (retail || curr == 'retail')" />
                     <AccountingSideBar
-                        v-if="accounting || curr == 'accounting'"
+                        v-if="accounting || (curr === 'accounting' && curr !== 'custodian')"
                     />
 
                     <MarketingSideBar v-if="marketing || curr == 'marketing'" />

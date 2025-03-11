@@ -138,6 +138,7 @@ export default {
     },
     methods: {
         submit() {
+
             if (this.selected.specit_qty > this.assignTemp.filter((data) => data.trid == this.selected.tempId).length) {
                 this.assignTemp.push({
                     id: this.id++,

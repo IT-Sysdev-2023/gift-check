@@ -318,6 +318,82 @@ class ColumnHelper
         ],
     ];
 
+    public static $DtiGcReceived = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'dti_trid',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'dti_datereq',
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'dti_customer',
+
+        ],
+        [
+            'title' => 'Date Approved',
+            'dataIndex' => 'dti_approveddate',
+
+        ],
+        [
+            'title' => 'Approved By',
+            'dataIndex' => 'dti_approvedby',
+        ],
+        [
+            'title' => 'Date Reviewed',
+            'dataIndex' => 'dti_date',
+
+        ],
+        [
+            'title' => 'Reviewed By',
+            'dataIndex' => 'checkBy',
+
+        ],
+        [
+            'title' => 'View',
+            'dataIndex' => 'view'
+        ]
+    ];
+
+    public static $approvedDtiGcForReviewed = [
+        [
+            'title' => 'RFSEGC #',
+            'dataIndex' => 'dti_num',
+
+        ],
+        [
+            'title' => 'Date Requested',
+            'dataIndex' => 'dti_datereq',
+        ],
+        [
+            'title' => 'Date Validity',
+            'dataIndex' => 'dti_dateneed',
+
+        ],
+        [
+            'title' => 'Total Denomination',
+            'dataIndex' => 'sub_total',
+
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'dti_customer',
+        ],
+        [
+            'title' => 'Requested By',
+            'dataIndex' => 'reqby_name',
+
+        ],
+        [
+            'title' => 'Action',
+            'dataIndex' => 'action',
+
+        ],
+    ];
+
     public static $gcHolder = [
 
         [

@@ -1,70 +1,31 @@
 <template>
-    <!-- <a-card v-if="budget" style="border: 1px solid #73EC8B;">
-        <div class="flex justify-between">
-            <div class="ml-2 mr-2 mt-1">
-                <span >
-                    Requested Budget:
-                </span> &nbsp; <span class="font-bold">₱{{ budget?.br_request.toLocaleString() }}</span>
-            </div>
-            <div class="animate-pulse">
-                <a-button @click="openDrawer(budget.br_id)">
-                    <template #icon>
-                        <LikeOutlined />
-                    </template>
-Approve
-</a-button>
-</div>
-</div>
-</a-card> -->
     <div class="task">
-        <div class="tags">
-            <span class="tag">Budget Request Approval</span>
-
+        <div class="tags text-center">
+            <a-tag>
+                Budget Request Approval
+            </a-tag>
         </div>
-        <p>
-        <div class="ml-2 mb-7 mr-2 mt-7 p-2">
-            <span>
-                Requested Budget:
-            </span> &nbsp; <span class="font-bold">₱{{ budget?.br_request.toLocaleString() }}</span>
-        </div>
-        </p>
-        <div>
-            <div>
-                <a-button type="primary" ghost block @click="openDrawer(budget.br_id)">
-                    <template #icon>
-                        <LikeOutlined />
-                    </template>
-                    Approve Request
-                </a-button>
-
-            </div>
-
-        </div>
-
     </div>
-
     <a-modal v-model:open="open" title="Basic Modal" style="width: 60%;">
         <iframe :src="stream" frameborder="2" style="width: 100%; height: 400px;"></iframe>
     </a-modal>
 
-    <a-modal :footer="null" :width="500" title="Approve Budget Request" v-model:open="drawer" @close="onClose">
-        <a-descriptions layout="horizontal" size="small" bordered>
-            <a-descriptions-item style="width: 50%;" label="Budget Requested"> ₱ {{ data.br_request.toLocaleString()
-                }}</a-descriptions-item>
-        </a-descriptions>
-        <a-descriptions layout="horizontal" size="small" bordered>
-            <a-descriptions-item style="width: 50%;" label="Requested At">{{ data.requested }}</a-descriptions-item>
-        </a-descriptions>
-        <a-descriptions layout="horizontal" size="small" bordered>
-            <a-descriptions-item style="width: 50%;" label="Remarks">{{ data.br_remarks }}</a-descriptions-item>
-        </a-descriptions>
-        <a-descriptions layout="horizontal" size="small" bordered>
-            <a-descriptions-item style="width: 50%;" label="Requested By">{{ data.reqby }}</a-descriptions-item>
-        </a-descriptions>
-        <a-button class="mt-4" block @click="approve(budget.br_id)">
-            <LikeOutlined />Approve Budget Request
-        </a-button>
-    </a-modal>
+    <a-descriptions layout="horizontal" size="small" bordered>
+        <a-descriptions-item style="width: 50%;" label="Budget Requested"> ₱ {{ budget.br_request
+        }}</a-descriptions-item>
+    </a-descriptions>
+    <a-descriptions layout="horizontal" size="small" bordered>
+        <a-descriptions-item style="width: 50%;" label="Requested At">{{ budget.datereq }}</a-descriptions-item>
+    </a-descriptions>
+    <a-descriptions layout="horizontal" size="small" bordered>
+        <a-descriptions-item style="width: 50%;" label="Remarks">{{ budget.br_remarks }}</a-descriptions-item>
+    </a-descriptions>
+    <a-descriptions layout="horizontal" size="small" bordered>
+        <a-descriptions-item style="width: 50%;" label="Requested By">{{ budget.reqby }}</a-descriptions-item>
+    </a-descriptions>
+    <a-button class="mt-4" block @click="approve(budget.br_id)">
+        <LikeOutlined />Approve Budget Request
+    </a-button>
 
 </template>
 
@@ -74,13 +35,13 @@ import { ref } from 'vue';
 import { notification } from 'ant-design-vue';
 import axios from 'axios';
 
+const emit = defineEmits(['close']);
+
 const props = defineProps({
     budget: Object
 });
 const stream = ref();
 const open = ref(false);
-const data = ref({});
-const drawer = ref(false);
 
 const approve = (id) => {
     router.put(route('iad.approve', id), {
@@ -92,36 +53,23 @@ const approve = (id) => {
             });
             stream.value = `data:application/pdf;base64,${res.props.flash.stream}`;
             open.value = true;
-            drawer.value = false;
+            emit('close');
         },
         preserveState: true,
+
     })
 }
 
-const openDrawer = (id) => {
-    axios.get(route('iad.details', id)).then(res => {
-        data.value = res.data.record;
-        drawer.value = true;
-    })
-}
-
-const onClose = () => {
-    drawer.value = false;
-}
 
 </script>
 <style scoped>
 /* From Uiverse.io by Yaya12085 */
 .task {
     position: relative;
-    color: #2e2e2f;
     cursor: move;
-    background-color: #46ca0909;
     padding: 1rem;
     border-radius: 8px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
     margin-bottom: 1rem;
-    border: 1px solid rgba(129, 255, 55, 0.356);
     max-width: 350px;
 }
 
@@ -133,14 +81,6 @@ const onClose = () => {
 .task p {
     font-size: 15px;
     margin: 1.2rem 0;
-}
-
-.tag {
-    border-radius: 100px;
-    padding: 4px 13px;
-    font-size: 12px;
-    color: #ffffff;
-    background-color: #1389eb;
 }
 
 .tags {

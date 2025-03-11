@@ -7,6 +7,7 @@ use App\Models\ApprovedGcrequest;
 use App\Models\AppSetting;
 use App\Models\Customer;
 use App\Models\Denomination;
+use App\Models\DtiBarcodes;
 use App\Models\Gc;
 use App\Models\GcRelease;
 use App\Models\InstitutTransactionsItem;
@@ -31,9 +32,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class RetailServices
 {
-    public function __construct(public RetailDbServices $dbservices)
-    {
-    }
+    public function __construct(public RetailDbServices $dbservices) {}
     public function getDataApproved()
     {
         $data = ApprovedGcrequest::select(
@@ -56,10 +55,11 @@ class RetailServices
             ->leftJoin('users', 'users.user_id', '=', 'approved_gcrequest.agcr_approvedby')
             ->orderByDesc('agcr_request_relnum')
             ->paginate(10)->withQueryString();
+            // dd( $data);
 
         $data->transform(function ($item) {
             $item->spgc_date_request = Date::parse($item->storeGcRequest->sgc_date_request)->toFormattedDateString();
-            $item->agcr_date = $item->agcr_approved_at->toFormattedDateString();
+            $item->agcr_date = Date::parse($item->agcr_approved_at)->toFormattedDateString();
             $item->storename = $item->storeGcRequest->store->store_name;
             $item->fullname = $item->user->full_name;
             return $item;
@@ -228,7 +228,7 @@ class RetailServices
 
                     return back()->with([
                         'msg' => 'Opps Barcode is Invalid in this Location',
-                        'title' => 'Wrong Denomination',
+                        'title' => 'Wrong Location!',
                         'status' => 'error',
                     ]);
                 }
@@ -314,7 +314,7 @@ class RetailServices
             }
             if (
                 StoreReceivedGc::where('strec_barcode', $request->barcode)
-                    ->where('strec_sold', '*')->where('strec_return', '')->exists()
+                ->where('strec_sold', '*')->where('strec_return', '')->exists()
             ) {
                 $found = true;
                 $gctype = 1;
@@ -354,15 +354,33 @@ class RetailServices
                 $found = true;
                 $gctype = 3;
             } else {
-
                 return back()->with([
                     'status' => 'error',
                     'title' => 'Opss Error',
-                    'msg' => 'GC is blocked and not allowed to used.',
+                    'msg' => 'Barcode Not found.',
                 ]);
             }
-        }
-        ;
+        } elseif (DtiBarcodes::where('dti_barcode', $request->barcode)->exists()) {
+
+            $special = self::specialDtiCount($request);
+            // dd($special);
+
+            if ($special > 0) {
+
+                $tfilext = '.' . self::appSetting('txtfile_extension_external');
+
+                $denom = self::specialDtiDenomination($request);
+
+                $found = true;
+                $gctype = 3;
+            } else {
+                return back()->with([
+                    'status' => 'error',
+                    'title' => 'Opss Error',
+                    'msg' => 'Barcode Not found.',
+                ]);
+            }
+        };
 
         if (!$found) {
 
@@ -571,7 +589,6 @@ class RetailServices
                         if ($success) {
                             $this->dbservices->createtextfileSecondaryPath($request, $data);
                         }
-
                     }
 
                     if ($isRevalidateGC) {
@@ -593,7 +610,7 @@ class RetailServices
                 }
             }
         } else {
-            return 'repring';
+            return 'reprint';
         }
     }
 
@@ -603,6 +620,15 @@ class RetailServices
             ->where('spexgcemp_barcode', $request->barcode)
             ->where('reqap_approvedtype', 'special external gc review')
             ->where('spexgc_status', '!=', 'inactive')
+            ->count();
+    }
+
+    private static function specialDtiCount($request)
+    {
+        return DtiBarcodes::join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_barcodes.dti_trid')
+            ->where('dti_barcode', $request->barcode)
+            ->where('dti_approvedtype', 'special external gc review')
+            ->where('dti_status', '!=', 'inactive')
             ->count();
     }
 
@@ -621,6 +647,12 @@ class RetailServices
         return SpecialExternalGcrequestEmpAssign::select('spexgcemp_denom')
             ->where('spexgcemp_barcode', $request->barcode)
             ->value('spexgcemp_denom');
+    }
+    private static function specialDtiDenomination($request)
+    {
+        return DtiBarcodes::select('dti_denom')
+            ->where('dti_barcode', $request->barcode)
+            ->value('dti_denom');
     }
     private static function equalCustomer($request)
     {
@@ -809,16 +841,15 @@ class RetailServices
 
 
         return $data;
-
     }
 
 
-    public function generate_verified_gc_pdf($request,$data,$d1,$d2)
+    public function generate_verified_gc_pdf($request, $data, $d1, $d2)
     {
         $pdf = Pdf::loadView('pdf/verifiedgcreport', [
             'data' => $data,
             'd1' => Date::parse($d1)->format('F d, Y'),
-            'd2' =>Date::parse($d2)->format('F d, Y'),
+            'd2' => Date::parse($d2)->format('F d, Y'),
             'generatedby' => $request->user()->fullname,
             'dateGenerated' => now()->format('F d, Y')
         ])->setPaper('letter');

@@ -56,8 +56,8 @@
                                 <m-card class="uppercase" title="DTI SPECIAL GC REQUEST" :pRoute="dtiSpecialGcPending">
                                     <inner-m-card label="Released Gc" :routeTo="specialReleasedGc" :count="data?.specialGcRequest?.released
                                         " />
-                                    <inner-m-card label=" Reviewed GC For Releasing(Internal/External)"
-                                        :routeTo="gcReleasing" :count="data?.specialGcRequest
+                                    <inner-m-card label=" Reviewed GC For Releasing(DTI)"
+                                        :routeTo="gcReleasingDti" :count="data?.specialGcRequest
                                                 ?.internalReviewed
                                             " />
                                 </m-card>
@@ -142,6 +142,7 @@ const cancelledProductionRequest = computed(() =>
 //Special GC Request
 const specialGcPending = computed(() => routeTo("special.gc", "pending"));
 const gcReleasing = computed(() => routeTo("special.gc", "gcReleasing"));
+const gcReleasingDti = computed(() => routeTo("special.gc", "gcReleasingDti"));
 const specialReleasedGc = computed(() =>
     routeTo("special.gc", "specialReleasedGc"),
 );
