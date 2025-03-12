@@ -657,7 +657,7 @@ class FinanceController extends Controller
     }
     public function SpecialGcApprovalSubmit(Request $request)
     {
-        // dd($request->all());
+
         $id = $request->formData['id'];
         $totalDenom = $request->data[0]['total'];
         $reqType = SpecialExternalGcrequest::select('spexgc_type')->where('spexgc_id', $id)->first();
@@ -728,6 +728,20 @@ class FinanceController extends Controller
                             'bledger_category' => 'special'
                         ]);
                         if ($request['type'] === 'internal') {
+                            LedgerSpgc::create([
+                                'spgcledger_no' => $nextLedgerBudgetNum,
+                                'spgcledger_trid' => $id,
+                                'spgcledger_datetime' => now(),
+                                'spgcledger_type' => 'RFGCSEGC',
+                                'spgcledger_credit' => $totalDenom,
+                                'spgcledger_typeid' => '0',
+                                'spgcledger_group' => '0',
+                                'spgcledger_debit' => '0',
+                                'spgctag' => '0',
+                            ]);
+                        }
+
+                        if ($request->data[0]['spexgc_paymentype'] == 4) {
                             LedgerSpgc::create([
                                 'spgcledger_no' => $nextLedgerBudgetNum,
                                 'spgcledger_trid' => $id,

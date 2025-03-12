@@ -30,7 +30,9 @@ use Illuminate\Support\Str;
 class SpecialGcRequestController extends Controller
 {
 
-    public function __construct(public SpecialGcPaymentService $specialGcPaymentService) {}
+    public function __construct(public SpecialGcPaymentService $specialGcPaymentService)
+    {
+    }
     public function pendingSpecialGc(Request $request)
     {
         $externalData = $this->specialGcPaymentService->pending();
@@ -229,6 +231,18 @@ class SpecialGcRequestController extends Controller
                         'spgcledger_debit' => $total,
                     ]);
                 }
+
+                if ($request['paymentType'] == 4) {
+                    LedgerSpgc::create([
+                        'spgcledger_no' => $lnum,
+                        'spgcledger_trid' => $id,
+                        'spgcledger_datetime' => now(),
+                        'spgcledger_type' => 'RFGCSEGCREL',
+                        'spgcledger_debit' => $total,
+                    ]);
+                }
+
+
                 return redirect()->back()->with('success', 'Successfully Submitted');
             });
         } catch (e) {
@@ -299,7 +313,7 @@ class SpecialGcRequestController extends Controller
         $promo = $request->has('promo') ? $request->promo : '*';
         $record = SpecialExternalGcrequest::select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed')
             ->where('spexgc_promo', $promo)
-            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',)
+            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', )
             ->withWhereHas('approvedRequest', function ($q) {
                 $q->with('user:user_id,firstname,lastname')->select('reqap_preparedby', 'reqap_trid', 'reqap_date')->where('reqap_approvedtype', 'special external releasing');
             })->where('spexgc_released', 'released')

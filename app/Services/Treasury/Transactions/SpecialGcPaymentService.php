@@ -344,7 +344,6 @@ class SpecialGcPaymentService extends FileHandler
 
     private function validateField(Request $request)
     {
-
         $request->validate([
             'companyId' => 'required|exists:special_external_customer,spcus_id',
             'denomination' => ['required', 'array', new DenomQty()],
@@ -360,7 +359,7 @@ class SpecialGcPaymentService extends FileHandler
             'paymentType.type' => 'required',
             'paymentType.amount' => [
                 function ($attribute, $value, $fail) use ($request) {
-                    if ((is_null($value) || $value == 0 || ($value < $request->input('total')))) {
+                    if ((is_null($value))) {
                         $fail('The ' . $attribute . ' is required and cannot be 0 if type is not 2.');
                     }
                 },
