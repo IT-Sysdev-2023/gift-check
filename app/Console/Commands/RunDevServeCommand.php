@@ -14,6 +14,7 @@ class RunDevServeCommand extends Command
     public function handle()
     {
         $this->info("Starting Laravel Server...");
+        // $this->runInBackground([$this->getPhpBinary(), 'artisan', 'serve','--host=172.16.42.143', '--port=8020']);
         $this->runInBackground([$this->getPhpBinary(), 'artisan', 'serve']);
 
         $this->info("Starting Development Server...");

@@ -495,7 +495,7 @@ Route::middleware('auth')->group(function () {
     });
 
     //? Accounting
-    Route::middleware('userType:accounting,admin')->group(function () {
+    Route::middleware('userType:accounting,admin,storeaccounting')->group(function () {
         Route::prefix('accounting')->name('accounting.')->group(function () {
             Route::name('pending.')->group(function () {
                 Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('index');

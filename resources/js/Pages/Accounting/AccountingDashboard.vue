@@ -15,19 +15,6 @@
                 </m-card>
             </a-col>
             <a-col :span="8">
-                <f-card title="Special Gc Request Dti" aRoute="custodian.dti.approved.index">
-                    <a-button block type="primary" class="mb-2"
-                        @click="router.get(route('accounting.payment.payment.gc.dti'))">
-                        Payment Gc Dti
-                    </a-button>
-                    <a-button block type="primary" class="mb-2"
-                        @click="router.get(route('accounting.payment.dti.viewing'))">
-                        Payment Viewing Dti
-                    </a-button>
-                </f-card>
-            </a-col>
-            <a-col :span="8">
-
                 <a-card title="Institution GC Released" class="mb-5 uppercase">
                     <inner-m-card label="Transactions" routeTo="treasury.transactions.institution.gc.sales.transaction" :count="data?.institutionGcSales" />
                 </a-card>

@@ -46,6 +46,26 @@
             </span>
         </a-menu-item>
     </a-sub-menu>
+    <a-sub-menu key="storeAccounting.transaction">
+        <template #title>
+            <span>
+                <AppstoreOutlined />
+                <span>Dti Payment Spgc</span>
+            </span>
+        </template>
+        <a-menu-item class="menu-item" @click="
+            () => router.get(route('accounting.payment.payment.gc.dti'))
+        " key="releasing.dti">
+            <DatabaseOutlined />
+            <span style="font-size: small">Dti SGC Payment</span>
+        </a-menu-item>
+        <a-menu-item class="menu-item" @click="
+            () => router.get(route('accounting.payment.dti.viewing'))
+        " key="releasing.dti.viewing">
+            <DatabaseOutlined />
+            <span style="font-size: small">Dti Payment Viewing</span>
+        </a-menu-item>
+    </a-sub-menu>
 
     <a-sub-menu key="storeAccounting.exportData">
         <template #title>
@@ -54,12 +74,6 @@
                 <span>Export Data</span>
             </span>
         </template>
-        <a-menu-item class="menu-item" @click="
-            () => router.get(route('storeaccounting.verifiedGCReport'))
-        " key="verifiedGCReport">
-            <DatabaseOutlined />
-            <span style="font-size: small"> Verified GC Report </span>
-        </a-menu-item>
         <a-menu-item class="menu-item" @click="
             () =>
                 router.get(

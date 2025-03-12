@@ -78,7 +78,7 @@
                     </div>
                     <a-form-item>
                         <div class="h-14 flex items-center">
-                            <p class=" text-3xl">Total: {{ `₱ ${data.total}` }}</p>
+                            <p class=" text-3xl">Total: {{ data.total }}</p>
                         </div>
                     </a-form-item>
                     <a-form-item label="Entry By">

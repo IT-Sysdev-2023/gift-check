@@ -128,6 +128,7 @@ export interface TreasuryDashboardTypes {
             specialBudget: number;
         };
         institutionGcSales: number;
+        revcount: number;
     };
 }
 

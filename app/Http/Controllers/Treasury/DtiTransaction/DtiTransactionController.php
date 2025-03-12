@@ -51,8 +51,9 @@ class DtiTransactionController extends Controller
 
     public function submitDtiForm(RequestsDtiGcRequest $request)
     {
+
         $dti = self::options();
-        // dd($request->all());
+        
         $request->validated();
 
         $dtiStore = $this->dtiServices->submissionForDti($request, $dti);

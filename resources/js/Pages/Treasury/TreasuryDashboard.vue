@@ -59,9 +59,8 @@
 
                                     <inner-m-card label="Released Gc" :routeTo="specialReleasedGc" :count="data?.specialGcRequest?.released
                                         " />
-                                    <inner-m-card label=" Reviewed GC For Releasing(DTI)" :routeTo="gcReleasingDti"
-                                        :count="data?.specialGcRequest
-                                            ?.internalReviewed
+                                    <inner-m-card label=" Reviewed GC For Releasing(DTI)"
+                                        :routeTo="gcReleasingDti" :count="data?.revcount
                                             " />
                                 </m-card>
                             </a-col>

@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <a-descriptions class="text-center" size="small" title="Dti Releasing Form" layout="vertical" bordered>
+        <a-descriptions size="small" title="Dti Releasing Form" layout="vertical" bordered>
             <a-descriptions-item label="RFSEGC#">{{ record.dti_num }}</a-descriptions-item>
             <a-descriptions-item label="Department">{{ record.title }}</a-descriptions-item>
             <a-descriptions-item label="Date and Time Requested">{{ record.dti_datereq }}</a-descriptions-item>
@@ -14,9 +14,9 @@
             <a-descriptions-item label="Requested By">{{ record.recby }}</a-descriptions-item>
             <a-descriptions-item label="Date Approved">{{ record.dti_approveddate }}</a-descriptions-item>
             <a-descriptions-item label="Approved Document">
-                <i-image :src="'/storage/' + record.appdocs">
+                <a-image style="height: 150px; width: 150px; border-radius: 1rem;" :src="'/storage/' + record.appdocs">
 
-                </i-image>
+                </a-image>
             </a-descriptions-item>
             <a-descriptions-item label="Approved Remarks">{{ record.apremarks }}</a-descriptions-item>
             <a-descriptions-item label="Approved By">{{ record.approvedby }}</a-descriptions-item>
@@ -146,6 +146,7 @@ const submit = () => {
                 description:
                     'Successfully Release Reviewed Gc',
             });
+            window.location.href = route('treasury.special.gc.gcReleasingDti');
         },
         onError: (err) => {
             notification['success']({
