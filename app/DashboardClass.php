@@ -32,9 +32,7 @@ class DashboardClass extends DashboardService
      * Create a new class instance.
      */
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
     public function treasuryDashboard(Request $request)
     {
         return [
@@ -50,8 +48,9 @@ class DashboardClass extends DashboardService
             'gcProductionRequest' => $this->gcProductionRequest(),
             'adjustment' => $this->adjustments(),
             'specialGcRequest' => $this->specialGcRequest(), //Duplicated above use Spatie Permission instead
-
+            // 'dti_req' => $this->
             'eod' => InstitutEod::count(),
+            'revcount' => $this->reviewedGcForReleasingCount(),
             'productionRequest' => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
         ];
     }
@@ -66,6 +65,25 @@ class DashboardClass extends DashboardService
                 })
                 ->count(),
         ];
+    }
+    public function reviewedGcForReleasingCount()
+    {
+        return DtiGcRequest::with([
+            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
+            'user:user_id,firstname,lastname',
+            'specialDtiBarcodesHasMany',
+            'approvedRequestRevied.user',
+
+        ])
+            ->withWhereHas('approvedRequest', function ($q) {
+                $q->select('dti_trid', 'dti_approvedby')->where('dti_approvedtype', 'Special External GC Approved');
+            })
+            ->where([
+                ['dti_status', 'approved'],
+                ['dti_reviewed', 'reviewed'],
+                ['dti_released', null],
+                ['dti_promo', 'external']
+            ])->count();
     }
     public function retailGroupDashboard()
     {
@@ -183,7 +201,7 @@ class DashboardClass extends DashboardService
             ->first();
         if ($data) {
             $data->datereq = Date::parse($data->br_requested_at)->toFormattedDateString();
-            $data->reqby = User::select('firstname','lastname')->where('user_id', $data->br_requested_by)->value('full_name');
+            $data->reqby = User::select('firstname', 'lastname')->where('user_id', $data->br_requested_by)->value('full_name');
         }
         return $data;
     }
@@ -216,10 +234,10 @@ class DashboardClass extends DashboardService
                 'csrr_prepared_by',
                 'csrr_requisition'
             )->with(
-                    'user:user_id,firstname,lastname',
-                    'requisition:requis_id,requis_supplierid,requis_erno',
-                    'requisition.supplier:gcs_id,gcs_companyname'
-                )
+                'user:user_id,firstname,lastname',
+                'requisition:requis_id,requis_supplierid,requis_erno',
+                'requisition.supplier:gcs_id,gcs_companyname'
+            )
                 ->count(),
 
             'approvedgc' => SpecialExternalGcrequest::where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])->count(),

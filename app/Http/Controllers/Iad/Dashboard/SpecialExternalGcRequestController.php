@@ -36,7 +36,7 @@ class SpecialExternalGcRequestController extends Controller
     public function approvedDtiGc(Request $request)
     {
         $data = $this->specialExternalGcService->approvedDtiGc($request);
-        // dd($data);
+        
         return inertia('Iad/Dashboard/DtiApprovedView', [
             'data' => $data
         ]);

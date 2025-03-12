@@ -160,9 +160,9 @@
                         <a-card size="small" title="Add Check Details" class="mt-2">
                             <a-row :gutter="[16, 16]">
                                 <a-col :span="12">
-                                    <a-typography-text v-model:value="form.bankname" keyboard>Bank
+                                    <a-typography-text  keyboard>Bank
                                         Name</a-typography-text>
-                                    <a-input class="mb-3" placeholder="Enter here..." />
+                                    <a-input class="mb-3" v-model:value="form.bankname" placeholder="Enter here..." />
                                     <p class="text-start ml-1 text-red-500" v-if="form.errors.bankname">
                                         * This field is Required
                                     </p>

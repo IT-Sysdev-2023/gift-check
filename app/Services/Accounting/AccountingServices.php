@@ -2,10 +2,12 @@
 
 namespace App\Services\Accounting;
 
+use App\Helpers\NumberHelper;
 use App\Models\ApprovedRequest;
 use App\Models\DtiApprovedRequest;
 use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
+use App\Models\DtiGcRequestItem;
 use App\Models\DtiInstitutPayment;
 use App\Models\InstitutPayment;
 use App\Models\SpecialExternalGcrequest;
@@ -157,12 +159,22 @@ class AccountingServices
             ->join('special_external_customer', 'spcus_id', '=', 'dti_company')
             ->join('users as reqby', 'user_id', '=', 'dti_reqby')
             ->where('dti_released', 'released')
-            ->whereNotIn('dti_payment_stat', ['final', 'whole'])
+            // ->whereNotIn('dti_payment_stat', ['final', 'whole'])
             ->orderByDesc('dti_gc_requests.id')
             ->get();
 
+        // dd($data->toArray());
+
         $data->each(function ($item) {
             $item->name = Str::ucfirst($item->firstname) . ', ' . Str::ucfirst($item->lastname);
+            $q = DtiGcRequestItem::select('dti_denoms', 'dti_qty')->where('dti_trid', $item->dti_num)->get();
+            $q->each(function ($item) {
+                $item->subtotal = $item->dti_denoms * $item->dti_qty;
+                return $item;
+            });
+            
+            $item->total = NumberHelper::currency($q->sum('subtotal'));
+
             return $item;
         });
 

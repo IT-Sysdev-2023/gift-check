@@ -17,6 +17,7 @@ class DtiInstitutPayment extends Model
             'dti_insp_paymentcustomer',
             'dti_institut_amountrec',
             'dti_institut_date',
+            'dti_status_pay',
             'dti_num',
             'dti_payment_stat',
             'spcus_companyname',

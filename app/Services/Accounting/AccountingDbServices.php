@@ -253,6 +253,7 @@ class AccountingDbServices
 
     public function insertInstitutionalDtiPayment($request)
     {
+        // dd($)
 
         $instpayment = 0;
 
@@ -267,6 +268,7 @@ class AccountingDbServices
             DtiInstitutPayment::create([
                 'dti_insp_paymentnum' => $instpayment,
                 'dti_insp_trid' => $request->id,
+                'dti_status_pay' => $request->paymentstats,
                 'dti_insp_paymentcustomer' => 'special external',
                 'dti_institut_amountrec' => $request->amount,
                 'dti_institut_eodid' => '0',
@@ -280,6 +282,7 @@ class AccountingDbServices
             DtiInstitutPayment::create([
                 'dti_insp_paymentnum' => $instpayment,
                 'dti_insp_trid' => $request->id,
+                'dti_status_pay' => $request->paymentstats,
                 'dti_insp_paymentcustomer' => 'special external',
                 'dti_institut_bankname' => $request->bankname,
                 'dti_institut_bankaccountnum' => $request->accountno,
@@ -296,11 +299,12 @@ class AccountingDbServices
             DtiInstitutPayment::create([
                 'dti_insp_paymentnum' => $instpayment,
                 'dti_insp_trid' => $request->id,
+                'dti_status_pay' => $request->paymentstats,
                 'dti_insp_paymentcustomer' => 'special external',
                 'dti_institut_amountrec' => '0.00',
                 'dti_institut_eodid' => '0',
                 'dti_institut_date' => today()->format('Y-m-d'),
-                'dti_institut_jvcustomer' => $request->customer,
+                'dti_institut_jvcustomer' => $request->custname,
             ]);
         }
 

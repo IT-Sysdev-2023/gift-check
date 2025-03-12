@@ -133,7 +133,7 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                     />
                     <RetailSidebar v-if="page.auth.user.usertype !== '9' && (retail || curr == 'retail')" />
                     <AccountingSideBar
-                        v-if="accounting || (curr === 'accounting' && curr !== 'custodian')"
+                        v-if="page.auth.user.usertype !== '13' && accounting || (curr === 'accounting' && curr !== 'custodian')"
                     />
 
                     <MarketingSideBar v-if="marketing || curr == 'marketing'" />

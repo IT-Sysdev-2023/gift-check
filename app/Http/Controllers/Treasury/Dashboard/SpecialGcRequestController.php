@@ -251,7 +251,8 @@ class SpecialGcRequestController extends Controller
         });
 
         if ($dbtransaction) {
-            return redirect()->route('treasury.special.gc.gcReleasingDti')->with('success', 'Successfully Submitted');
+            return redirect()->route('treasury.special.gc.gcReleasingDti')
+            ->with('success', 'Successfully Submitted');
         } else {
             return redirect()->back()->with('error', 'Something went wrong');
         }

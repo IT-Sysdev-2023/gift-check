@@ -179,7 +179,7 @@ const reprintGc = () => {
                         <a-descriptions-item label="Request Remarks" v-model:value="form.request_remarks">{{
                             form.request_remarks }}</a-descriptions-item>
                         <a-descriptions-item label="Documents" v-model:value="form.dti_doc">
-                            <img :src="form.dti_doc" class="w-40 h-auto rounded shadow-md" />
+                            <img :src="'/storage/' + form.dti_doc" class="w-40 h-auto rounded shadow-md" />
                         </a-descriptions-item>
                         <a-descriptions-item label="Approved By" v-model:value="form.dti_approvedby">{{
                             form.dti_approvedby }}</a-descriptions-item>
@@ -195,7 +195,7 @@ const reprintGc = () => {
                             form.dti_approved_remarks
                         }}</a-descriptions-item>
                         <a-descriptions-item label="Documents" v-model:value="form.dti_doc_second">
-                            <img :src="form.dti_doc_second" class="w-40 h-auto rounded shadow-md" />
+                            <img :src="'/storage/' + form.dti_doc_second" class="w-40 h-auto rounded shadow-md" />
                         </a-descriptions-item>
                         <a-descriptions-item label="Date Requested" v-model:value="form.dti_datereq">{{ form.dti_datereq
                         }}</a-descriptions-item>

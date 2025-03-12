@@ -77,7 +77,7 @@ class SpecialExternalGcService extends FileHandler
 
     public function approvedDtiGc(Request $request)
     {
-        $query = DtiGcRequest::join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.id')
+        $query = DtiGcRequest::join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
             ->join('dti_gc_request_items', 'dti_gc_request_items.dti_trid', '=', 'dti_gc_requests.dti_num')
             ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
             ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
@@ -87,7 +87,7 @@ class SpecialExternalGcService extends FileHandler
             ->select(
                 'dti_gc_requests.dti_remarks',
                 'dti_gc_requests.dti_num',
-                'dti_gc_Requests.id',
+                'dti_gc_requests.id',
                 'dti_gc_requests.dti_dateneed',
                 'dti_approved_requests.dti_remarks as dti_approved_remarks',
                 'dti_approved_requests.dti_doc',

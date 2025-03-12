@@ -219,7 +219,7 @@ class CustodianController extends Controller
             ['dti_status', 'pending'],
             ['dti_addemp', 'pending'],
         ])
-            ->paginate()
+            ->paginate(10)
             ->withQueryString();
 
 
@@ -242,7 +242,6 @@ class CustodianController extends Controller
 
     public function dti_special_gc_count()
     {
-        // dd();
         $pending = DtiGcRequest::where([
             ['dti_status', 'pending'],
             ['dti_addemp', 'pending'],
@@ -269,15 +268,14 @@ class CustodianController extends Controller
         $count = 1;
         $data->specialDtiGcrequestItemsHasMany->each(function ($subitem) use (&$count) {
             $subitem->tempId = $count++;
-            $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
+            $subitem->subtotal = $subitem->dti_denoms * $subitem->dti_qty;
             return $subitem;
         });
 
         $data->dateRequested = Date::parse($data->dti_datereq)->format('F d, Y');
         $data->validity = Date::parse($data->dti_dateneed)->format('F d, Y');
-        $data->total = number_format($data->dti_denoms * $data->dti_qty, 2);
+        $data->total = NumberHelper::currency($data->specialDtiGcrequestItemsHasMany->sum('subtotal'));
 
-        // dd($data->toArray());
 
         return inertia('Custodian/DTI/HolderEntry', [
             'data' => $data
