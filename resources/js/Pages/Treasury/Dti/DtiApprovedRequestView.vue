@@ -9,11 +9,9 @@ const props = defineProps<{
         data: {
             dti_num: number,
             dti_datereq: string,
-
         }
     },
     searchValue: string
-
 }>();
 
 

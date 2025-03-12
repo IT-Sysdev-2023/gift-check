@@ -109,6 +109,23 @@ class AdminController extends Controller
             ->groupBy(DB::raw("MONTH(special_external_gcrequest.spexgc_datereq)"))
             ->unionAll($storesQuery);
 
+            //use this code if the error is mysql version error
+        // $specialGcData = collect($specialGcQuery);
+        // $storesData = collect(DB::select($storesQuery->toSql(), $storesQuery->getBindings()));
+        // $institutionData = collect(DB::select($institutionQuery->toSql(), $institutionQuery->getBindings()));
+
+        // // Manually merge the collections
+        // $mergedData = $specialGcData->merge($storesData)->merge($institutionData);
+
+        // // Perform final aggregation in Laravel instead of MySQL
+        // $finalQuery = $mergedData->groupBy('month')->map(function ($group) {
+        //     return [
+        //         'month' => $group->first()->month,
+        //         'total_transactions' => $group->sum('total_count'),
+        //     ];
+        // })->values();
+
+        //change this one above code given
         $finalQuery = DB::table(DB::raw("({$specialQuery->toSql()}) as merged"))
             ->mergeBindings($specialQuery)
             ->select(

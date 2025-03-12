@@ -3,6 +3,7 @@ namespace App\Services\Iad;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SpecialExternalGcRequestResource;
+use App\Models\AccessPage;
 use App\Models\ApprovedRequest;
 use App\Models\DtiApprovedRequest;
 use App\Models\DtiBarcodes;
@@ -77,7 +78,7 @@ class SpecialExternalGcService extends FileHandler
 
     public function approvedDtiGc(Request $request)
     {
-        $query = DtiGcRequest::join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.id')
+        $query = DtiGcRequest::join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
             ->join('dti_gc_request_items', 'dti_gc_request_items.dti_trid', '=', 'dti_gc_requests.dti_num')
             ->join('users', 'users.user_id', '=', 'dti_gc_requests.dti_reqby')
             ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
@@ -87,7 +88,7 @@ class SpecialExternalGcService extends FileHandler
             ->select(
                 'dti_gc_requests.dti_remarks',
                 'dti_gc_requests.dti_num',
-                'dti_gc_Requests.id',
+                'dti_gc_requests.id',
                 'dti_gc_requests.dti_dateneed',
                 'dti_approved_requests.dti_remarks as dti_approved_remarks',
                 'dti_approved_requests.dti_doc',
@@ -100,6 +101,7 @@ class SpecialExternalGcService extends FileHandler
                 'dti_approved_requests.dti_checkby',
                 'dti_gc_requests.dti_approveddate',
                 'dti_documents.dti_fullpath',
+                'users.usertype',
                 DB::raw("CONCAT(users.firstname, ' ', users.lastname) as reqby"),
                 DB::raw("dti_gc_request_items.dti_qty * dti_gc_request_items.dti_denoms as total")
             )
@@ -135,9 +137,14 @@ class SpecialExternalGcService extends FileHandler
                         'completename' => ''
                     ]
                 ];
+
+            $item->department = AccessPage::where('access_page.access_no', $item->usertype)->first();
+            $item->dti_department = $item->department->title;
             return $item;
         });
+        // dd($query);
         return $query;
+
     }
     public function approvedGc(Request $request)
     {
