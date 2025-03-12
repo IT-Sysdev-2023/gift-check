@@ -3,6 +3,7 @@ namespace App\Services\Iad;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SpecialExternalGcRequestResource;
+use App\Models\AccessPage;
 use App\Models\ApprovedRequest;
 use App\Models\DtiApprovedRequest;
 use App\Models\DtiBarcodes;
@@ -100,6 +101,7 @@ class SpecialExternalGcService extends FileHandler
                 'dti_approved_requests.dti_checkby',
                 'dti_gc_requests.dti_approveddate',
                 'dti_documents.dti_fullpath',
+                'users.usertype',
                 DB::raw("CONCAT(users.firstname, ' ', users.lastname) as reqby"),
                 DB::raw("dti_gc_request_items.dti_qty * dti_gc_request_items.dti_denoms as total")
             )
@@ -135,9 +137,14 @@ class SpecialExternalGcService extends FileHandler
                         'completename' => ''
                     ]
                 ];
+
+            $item->department = AccessPage::where('access_page.access_no', $item->usertype)->first();
+            $item->dti_department = $item->department->title;
             return $item;
         });
+        // dd($query);
         return $query;
+
     }
     public function approvedGc(Request $request)
     {

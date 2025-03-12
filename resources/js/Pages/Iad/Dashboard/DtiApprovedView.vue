@@ -23,7 +23,7 @@ const form = ref({
     request_remarks: props.data[0].dti_remarks,
     dti_doc: props.data[0].dti_doc,
     dti_approvedby: props.data[0].dti_approvedby,
-    dti_department: props.data[0].dti_customer,
+    dti_department: props.data[0].dti_department,
     dti_customer: props.data[0].dti_customer,
     dti_paymenttype: props.data[0].dti_paymenttype,
     reqby: props.data[0].reqby,
@@ -260,5 +260,6 @@ const reprintGc = () => {
                 </a-tab-pane>
             </a-tabs>
         </a-card>
+        {{ props.data }}
     </AuthenticatedLayout>
 </template>

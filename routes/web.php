@@ -43,6 +43,7 @@ use App\Http\Controllers\UserDetailsController;
 use App\Models\Assignatory;
 use App\Models\InstitutEod;
 use App\Models\InstitutPayment;
+use App\Models\User;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +56,10 @@ Route::get('/', function () {
     return Inertia::render(
         'Login'
     );
+})->middleware('guest');
+
+Route::get('/demo', function () {
+    dd(User::all());
 })->middleware('guest');
 
 

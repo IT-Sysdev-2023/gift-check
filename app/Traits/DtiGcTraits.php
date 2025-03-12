@@ -61,6 +61,7 @@ trait DtiGcTraits
 
     public function dtiApprovedViewList(Request $request)
     {
+        // dd($request->id);
         $data = DtiApprovedRequest::where(
             [
                 ['dti_approved_requests.dti_approvedtype', 'Special External GC Approved'],
@@ -98,12 +99,14 @@ trait DtiGcTraits
 
             $item->document = DtiDocument::where('dti_trid', $item->dti_trid)->first();
             $item->approved_doc = $item->document->dti_fullpath;
-
-            $item->barcode = DtiBarcodes::where('dti_trid', $item->dti_trid)->get();
             return $item;
         });
-        // dd($data);
-        return $data;
+
+        $barcode = DtiBarcodes::where('dti_trid', $request->id)->paginate(10);
+        return [
+            'data' => $data,
+            'barcode' => $barcode
+        ];
     }
 }
 
