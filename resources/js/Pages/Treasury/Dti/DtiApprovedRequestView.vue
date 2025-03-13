@@ -11,7 +11,8 @@ const props = defineProps<{
             dti_datereq: string,
         }
     },
-    searchValue: string
+    searchValue: string,
+    title: string
 }>();
 
 
@@ -62,10 +63,11 @@ const search = () => {
 
 <template>
     <AuthenticatedLayout>
+
+        <Head :title="title" />
         <a-breadcrumb>
             <a-breadcrumb-item><a :href="route('treasury.dashboard')">Home</a></a-breadcrumb-item>
-            <a-breadcrumb-item><a :href="route('treasury.transactions.dti.dtiApprovedRequest')">DTI List
-                    View</a></a-breadcrumb-item>
+            <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
         <a-card class="mt-5">
             <div class="flex justify-end">

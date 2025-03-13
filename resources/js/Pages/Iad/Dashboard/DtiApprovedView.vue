@@ -158,21 +158,22 @@ const reprintGc = () => {
     <AuthenticatedLayout>
 
         <Head :title="title" />
-        <a-breadcrumb style="margin: 15px 0">
+        <a-breadcrumb>
             <a-breadcrumb-item>
                 <Link :href="route('iad.dashboard')">Home</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>
-                <Link :href="route('iad.special.dti.viewDtiGc')">DTI Approved List</Link>
+                <Link :href="route('iad.special.dti.viewDtiGc')">
+                Dti Gc Request List</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
-        <a-card>
+        <a-card class="mt-5">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="Special DTI GC Details">
                     <a-descriptions :labelStyle="{ fontWeight: 'bold' }" layout="vertical" bordered size="small">
                         <a-descriptions-item label="RFSEGC #" v-model:value="form.dti_num">{{ form.dti_num
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                         <a-descriptions-item label="Date Validity" v-model:value="form.date_validity">{{
                             form.date_validity }}</a-descriptions-item>
                         <a-descriptions-item label="AR #" v-model:value="form.id">{{ form.id }}</a-descriptions-item>
@@ -186,28 +187,28 @@ const reprintGc = () => {
                         <a-descriptions-item label="Department" v-model:value="form.dti_department">{{
                             form.dti_department }}</a-descriptions-item>
                         <a-descriptions-item label="Customer" v-model:value="form.dti_customer">{{ form.dti_customer
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                         <a-descriptions-item label="Payment Type" v-model:value="form.dti_paymenttype">{{
                             form.dti_paymenttype }}</a-descriptions-item>
                         <a-descriptions-item label="Requested By" v-model:value="form.reqby">{{ form.reqby
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                         <a-descriptions-item label="Approved Remarks" v-model:value="form.dti_approved_remarks">{{
                             form.dti_approved_remarks
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                         <a-descriptions-item label="Documents" v-model:value="form.dti_doc_second">
                             <img :src="'/storage/' + form.dti_doc_second" class="w-40 h-auto rounded shadow-md" />
                         </a-descriptions-item>
                         <a-descriptions-item label="Date Requested" v-model:value="form.dti_datereq">{{ form.dti_datereq
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                         <a-descriptions-item label="Total Denomination" v-model:value="form.total_denomination">{{
                             form.total_denomination
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                         <a-descriptions-item label="Payment Amount" v-model:value="form.total_payment">{{
                             form.total_payment }}</a-descriptions-item>
                         <a-descriptions-item label="Date Approved" v-model:value="form.dti_approveddate">{{
                             form.dti_approveddate }}</a-descriptions-item>
                         <a-descriptions-item label="Checked By" v-model:value="form.dti_checkby">{{ form.dti_checkby
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                         <a-descriptions-item label="Prepared By" v-model:value="form.dti_preparedBy">{{
                             form.dti_preparedBy }}</a-descriptions-item>
                     </a-descriptions>
@@ -260,6 +261,6 @@ const reprintGc = () => {
                 </a-tab-pane>
             </a-tabs>
         </a-card>
-        {{ props.data }}
+        <!-- {{ props.data }} -->
     </AuthenticatedLayout>
 </template>

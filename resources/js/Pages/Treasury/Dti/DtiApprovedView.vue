@@ -13,7 +13,8 @@ const props = defineProps<{
         barcode: {
             data: Barcode[];
         }
-    }
+    },
+    title: string
 }>();
 
 interface Barcode {
@@ -72,12 +73,13 @@ const form = computed(() => {
 
 <template>
     <AuthenticatedLayout>
+
+        <Head :title="title" />
         <a-breadcrumb>
             <a-breadcrumb-item><a :href="route('treasury.dashboard')">Home</a></a-breadcrumb-item>
-            <a-breadcrumb-item><a :href="route('treasury.transactions.dti.dtiApprovedRequest')">DTI List
+            <a-breadcrumb-item><a :href="route('treasury.transactions.dti.dtiApprovedRequest')">Dti List
                     View</a></a-breadcrumb-item>
-            <a-breadcrumb-item><a :href="route('treasury.transactions.dti.dtiApprovedView')">DTI Approved
-                    View</a></a-breadcrumb-item>
+            <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
 
         <a-card class="mt-5">
@@ -116,8 +118,8 @@ const form = computed(() => {
                     </a-tab-pane>
 
                     <a-tab-pane key="2" tab="Barcodes">
-                        <a-table :columns="columns" :data-source="props.data.barcode.data" :pagination="false"/>
-                        <pagination :datarecords="props.data.barcode" class="mt-5"/>
+                        <a-table :columns="columns" :data-source="props.data.barcode.data" :pagination="false" />
+                        <pagination :datarecords="props.data.barcode" class="mt-5" />
                     </a-tab-pane>
 
                 </a-tabs>

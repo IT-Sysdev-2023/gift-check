@@ -15,7 +15,8 @@ const props = defineProps({
     data: Object,
     type: String,
     currentBudget: Number,
-    gcHolder: Object
+    gcHolder: Object,
+    title: String
 })
 
 
@@ -119,7 +120,17 @@ const form = ref({
 </script>
 <template>
     <AuthenticatedLayout>
-        <div>
+
+        <Head :title="title" />
+        <a-breadcrumb>
+            <a-breadcrumb-item>
+                <a :href="route('finance.dashboard')">Home</a>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item><a :href="route('finance.pendingGc.dti.request.pending')">Pending DTI GC
+                    List</a></a-breadcrumb-item>
+            <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
+        </a-breadcrumb>
+        <div class="mt-5">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="Special DTI GC Request Approved Form">
                     <a-card>

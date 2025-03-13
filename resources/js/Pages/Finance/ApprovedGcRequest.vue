@@ -88,7 +88,7 @@
             </a-tab-pane>
         </a-tabs>
     </a-modal>
-{{ data }}
+<!-- {{ data }} -->
 </template>
 
 <script>

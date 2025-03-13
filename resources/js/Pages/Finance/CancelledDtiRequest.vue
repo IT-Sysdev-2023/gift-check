@@ -7,7 +7,8 @@ const activeKey = ref('1');
 
 const props = defineProps({
     columns: Object,
-    data: Object
+    data: Object,
+    title: String
 })
 
 const openCancelModal = ref(false);
@@ -41,16 +42,14 @@ const selectedRecord = async (data) => {
 </script>
 <template>
     <AuthenticatedLayout>
-        <a-card>
-            <a-card>
-                <div class="flex items-center">
-                    <p class="text-lg">Cancelled DTI Request</p>
-                    <Link :href="route('finance.dashboard')" class="ml-auto text-black text-blue-700">
-                    <RollbackOutlined /> Back to Dashboard
-                    </Link>
-                </div>
-            </a-card>
-            <div class="mt-5">
+
+        <Head :title="title" />
+        <a-breadcrumb>
+            <a-breadcrumb-item><a :href="route('finance.dashboard')">Home</a></a-breadcrumb-item>
+            <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
+        </a-breadcrumb>
+        <a-card class="mt-5">
+            <div>
                 <a-table :columns="props.columns" :data-source="data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'View'">

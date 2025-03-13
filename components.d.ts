@@ -225,6 +225,8 @@ declare module 'vue' {
     DtiGcReviewed: typeof import('./resources/js/Pages/Iad/Dashboard/DtiGcReviewed.vue')['default']
     DtiIndex: typeof import('./resources/js/Pages/Treasury/Dti/DtiIndex.vue')['default']
     DtiPendingRequest: typeof import('./resources/js/Pages/Treasury/Dti/DtiPendingRequest.vue')['default']
+    DtiReleasedGc: typeof import('./resources/js/Pages/Treasury/Dti/DtiReleasedGc.vue')['default']
+    DtiReleasedView: typeof import('./resources/js/Pages/Treasury/Dti/DtiReleasedView.vue')['default']
     DtiSetupGcRequest: typeof import('./resources/js/Pages/Custodian/DTI/Setup/DtiSetupGcRequest.vue')['default']
     DuplicatedBarcode: typeof import('./resources/js/Pages/StoreAccounting/DuplicatedBarcode.vue')['default']
     ECard: typeof import('./resources/js/Pages/Eod/Cards/ECard.vue')['default']

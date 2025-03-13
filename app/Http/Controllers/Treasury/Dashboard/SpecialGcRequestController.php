@@ -340,6 +340,7 @@ class SpecialGcRequestController extends Controller
         $reviewed = ApprovedRequest::with('user:user_id,firstname,lastname')
             ->select('reqap_remarks', 'reqap_date', 'reqap_preparedby')
             ->where([['reqap_trid', $id], ['reqap_approvedtype', 'special external gc review']])->first();
+            
 
         $released = ApprovedRequest::with('user:user_id,firstname,lastname')
             ->select('reqap_remarks', 'reqap_date', 'reqap_preparedby')

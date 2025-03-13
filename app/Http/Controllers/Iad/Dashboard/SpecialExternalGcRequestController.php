@@ -36,9 +36,10 @@ class SpecialExternalGcRequestController extends Controller
     public function approvedDtiGc(Request $request)
     {
         $data = $this->specialExternalGcService->approvedDtiGc($request);
-        
+
         return inertia('Iad/Dashboard/DtiApprovedView', [
-            'data' => $data
+            'data' => $data,
+            'title' => 'Dti Gc Request View'
         ]);
     }
 
@@ -49,7 +50,8 @@ class SpecialExternalGcRequestController extends Controller
         return inertia('Iad/Dashboard/DtiApproved', [
             'columns' => ColumnHelper::$approvedDtiGcForReviewed,
             'data' => $data,
-            'searchValue' => $request->search
+            'searchValue' => $request->search,
+            'title' => 'Dti Gc Request List'
         ]);
     }
 
@@ -60,6 +62,7 @@ class SpecialExternalGcRequestController extends Controller
         return inertia('Iad/Dashboard/DtiGcReviewed', [
             'data' => $data,
             'columns' => ColumnHelper::$DtiGcReceived,
+            'title' => 'Dti Gc Received List'
         ]);
     }
 

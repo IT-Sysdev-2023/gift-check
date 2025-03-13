@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Date;
 
 trait DtiGcTraits
 {
+
     //
     public function getDtiPendingGcRequest()
     {
@@ -27,7 +28,7 @@ trait DtiGcTraits
         $data->transform(function ($item) {
             $dtiItems = DtiGcRequestItem::where('dti_trid', $item->dti_num)->get();
 
-            $dtiItems->each(function ($item) {
+            $dtiItems->each(function (DtiGcRequestItem $item) {
 
                 $item->subtotal = $item->dti_denoms * $item->dti_qty;
 
@@ -108,5 +109,81 @@ trait DtiGcTraits
             'barcode' => $barcode
         ];
     }
+
+    public function dtiReleasedGcView(Request $request)
+    {
+        $data = DtiApprovedRequest::where('dti_approved_requests.dti_approvedtype', 'special external releasing')
+            ->join('dti_gc_requests', 'dti_gc_requests.dti_num', '=', 'dti_approved_requests.dti_trid')
+            ->whereAny([
+                'dti_trid',
+                'dti_datereq',
+                'dti_dateneed',
+                'dti_reqby',
+                'dti_customer',
+                'dti_date',
+            ], 'like', '%' . $request->search . '%')
+            ->paginate(10);
+
+        $data->transform(function ($item) {
+            $item->requestedBy = User::where('users.user_id', $item->dti_reqby)->first();
+            $item->dti_reqby = ucwords($item->requestedBy->firstname . ' ' . $item->requestedBy->lastname);
+
+            $item->releaseBy = User::where('users.user_id', $item->dti_preparedby)->first();
+            $item->released_by = ucwords($item->releaseBy->firstname . ' ' . $item->releaseBy->lastname);
+            return $item;
+        });
+        return $data;
+    }
+
+    public function dtiReleasedViewList(Request $request)
+    {
+        $data = DtiApprovedRequest::where('dti_approved_requests.dti_approvedtype', 'special external releasing')
+            ->join('dti_gc_requests', 'dti_gc_requests.dti_num', '=', 'dti_approved_requests.dti_trid')
+            ->get();
+
+        $data->transform(function ($item) {
+            $item->requestedBy = User::where('users.user_id', $item->dti_reqby)->first();
+            $item->dti_reqby = ucwords($item->requestedBy->firstname . ' ' . $item->requestedBy->lastname);
+
+            $item->requestedBy = User::where('users.user_id', $item->dti_preparedby)->first();
+            $item->dti_preparedby = ucwords($item->requestedBy->firstname . ' ' . $item->requestedBy->lastname);
+            return $item;
+        });
+        // Review
+        $review = DtiApprovedRequest::where('dti_approved_requests.dti_approvedtype', 'special external gc review')
+            ->get();
+
+        $review->transform(function ($item) {
+            $item->reviewBy = User::where('users.user_id', $item->dti_preparedby)->first();
+            $item->dti_preparedby = ucwords($item->reviewBy->firstname . ' ' . $item->reviewBy->lastname);
+            return $item;
+        });
+        // Approved
+        $approved = DtiApprovedRequest::where('dti_approved_requests.dti_approvedtype', 'Special External GC Approved')
+            ->get();
+        $approved->transform(function ($item) {
+            $item->preparedBy = User::where('users.user_id', $item->dti_preparedby)->first();
+            $item->dti_preparedby = ucwords($item->preparedBy->firstname . ' ' . $item->preparedBy->lastname);
+            return $item;
+        });
+
+        $requested = DtiGcRequest::where('dti_num', $request->id)->first()
+            ->get();
+        $requested->transform(function ($item) {
+            $item->requestedBy = User::where('users.user_id', $item->dti_reqby)->first();
+            $item->dti_reqby = ucwords($item->requestedBy->firstname . ' ' . $item->requestedBy->lastname);
+            return $item;
+        });
+
+        $barcode = DtiBarcodes::where('dti_trid', $request->id)->paginate(10);
+        return [
+            'data' => $data,
+            'review' => $review,
+            'approved' => $approved,
+            'reqDetails' => $requested,
+            'barcode' => $barcode
+        ];
+    }
+
 }
 

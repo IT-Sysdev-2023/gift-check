@@ -53,7 +53,7 @@ class DtiTransactionController extends Controller
     {
 
         $dti = self::options();
-        
+
         $request->validated();
 
         $dtiStore = $this->dtiServices->submissionForDti($request, $dti);
@@ -71,6 +71,7 @@ class DtiTransactionController extends Controller
     {
         return inertia('Treasury/Dti/DtiPendingRequest', [
             'records' => $this->getDtiPendingGcRequest(),
+            'title' => 'Dti Pending Request'
         ]);
     }
 
@@ -79,14 +80,32 @@ class DtiTransactionController extends Controller
         return inertia('Treasury/Dti/DtiApprovedRequestView', [
             'data' => $this->dtiApprovedRequestView($request),
             'searchValue' => $request->search,
+            'title' => 'Dti List View'
         ]);
     }
-
+        // dti approved part
     public function dtiApprovedView(Request $request)
     {
         // dd($this->dtiApprovedViewList($request));
         return inertia('Treasury/Dti/DtiApprovedView', [
             'data' => $this->dtiApprovedViewList($request),
+            'title' => 'Dti Approved View'
+        ]);
+    }
+        //dti released part
+    public function dtiReleasedGc(Request $request)
+    {
+        return inertia('Treasury/Dti/DtiReleasedGc',[
+            'data' => $this->dtiReleasedGcView($request),
+            'search' => $request->search,
+            'title' => 'Dti Released GC'
+        ]);
+    }
+
+    public function dtiReleasedView(Request $request){
+        return inertia('Treasury/Dti/DtiReleasedView', [
+            'data' => $this->dtiReleasedViewList($request),
+            'title' => 'Dti Released View'
         ]);
     }
 
@@ -112,6 +131,7 @@ class DtiTransactionController extends Controller
             'total' => $denom->sum('subtotal'),
             'denom' => $denom,
             'docs' => $documents,
+            'title' => 'Dti Edit Request View'
         ]);
     }
     public function dtiUpdateRequest(Request $request)
