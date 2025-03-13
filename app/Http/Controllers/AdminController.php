@@ -109,7 +109,7 @@ class AdminController extends Controller
             ->groupBy(DB::raw("MONTH(special_external_gcrequest.spexgc_datereq)"))
             ->unionAll($storesQuery);
 
-            //use this code if the error is mysql version error
+        //use this code if the error is mysql version error
         // $specialGcData = collect($specialGcQuery);
         // $storesData = collect(DB::select($storesQuery->toSql(), $storesQuery->getBindings()));
         // $institutionData = collect(DB::select($institutionQuery->toSql(), $institutionQuery->getBindings()));
@@ -135,7 +135,6 @@ class AdminController extends Controller
             ->groupBy('month')
             ->orderBy('month')
             ->get();
-
         return inertia('Admin/AdminDashboard', [
             'users' => $users,
             'data' => $query,

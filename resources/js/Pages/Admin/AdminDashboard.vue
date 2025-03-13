@@ -66,7 +66,8 @@
         </section>
 
         <!-- {{ regularGcData }} -->
-        <!-- {{ data }} -->
+        {{ data }}
+
     </AuthenticatedLayout>
 </template>
 
