@@ -79,7 +79,7 @@ const searchFunction = () => {
             <a-table :columns="columns" :data-source="props.data.data" size="small" class="mt-5" :pagination="false">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex == 'action'">
-                        <a-button type="primary" @click="() => $inertia.get(route('treasury.transactions.dti.dtiReleasedView'), {
+                        <a-button type="primary" @click="() => router.get(route('treasury.transactions.dti.dtiReleasedView'), {
                             id: record.dti_trid
                         })">
                             <PicLeftOutlined />
