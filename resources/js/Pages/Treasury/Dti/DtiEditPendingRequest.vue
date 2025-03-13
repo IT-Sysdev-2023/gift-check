@@ -55,7 +55,7 @@
                         </a-col>
                         <a-col :span="12">
                             <a-statistic class="text-center" title="Updated By"
-                                :value="$page.props.auth.user.full_name" />
+                                :value="page.auth.user.full_name" />
                         </a-col>
                     </a-row>
                 </a-card>
@@ -101,11 +101,12 @@
     </AuthenticatedLayout>
 </template>
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { notification, SelectProps, UploadProps } from "ant-design-vue";
 import dayjs from 'dayjs';
 import { ref } from 'vue';
 
+const page = usePage().props;
 interface Record {
     id: number,
     dti_num: number,

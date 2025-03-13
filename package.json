@@ -6,38 +6,14 @@
         "build": "node build-drawing.js && vue-tsc && vite build"
     },
     "devDependencies": {
-<<<<<<< HEAD
-        "@eslint/js": "^9.20.0",
-        "@inertiajs/vue3": "^1.3.0",
-        "@vitejs/plugin-vue": "^5.2.1",
-        "autoprefixer": "^10.4.20",
-        "axios": "^1.7.9",
-        "eslint": "^9.20.1",
-        "eslint-plugin-vue": "^9.32.0",
-=======
-        "@eslint/js": "^9.21.0",
-        "@inertiajs/vue3": "^1.3.0",
-        "@vitejs/plugin-vue": "^5.2.1",
-        "autoprefixer": "^10.4.20",
-        "axios": "^1.8.1",
-        "eslint": "^9.21.0",
-        "eslint-plugin-vue": "^9.33.0",
->>>>>>> 3c870e06a940426217f2ec1daa3d698306967412
+
+
         "globals": "^15.15.0",
         "laravel-echo": "^1.19.0",
         "laravel-vite-plugin": "^1.2.0",
         "postcss": "^8.5.3",
-<<<<<<< HEAD
-        "prettier": "^3.5.1",
-        "pusher-js": "8.4.0-rc2",
-        "typescript": "5.6.2",
-        "typescript-eslint": "^8.24.1",
-=======
-        "prettier": "^3.5.3",
-        "pusher-js": "8.4.0-rc2",
-        "typescript": "5.6.2",
-        "typescript-eslint": "^8.26.0",
->>>>>>> 3c870e06a940426217f2ec1daa3d698306967412
+
+
         "unplugin-vue-components": "^0.27.5",
         "vite": "^5.4.14",
         "vue": "^3.5.13",
