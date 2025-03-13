@@ -36,7 +36,6 @@ class GcProductionRequestService extends FileHandler
 
     public function approvedRequest(Request $request)
     {
-
         return ProductionRequest::with([
             'user:user_id,firstname,lastname',
             'approvedProductionRequest:ape_id,ape_pro_request_id,ape_approved_at,ape_approved_by'
@@ -156,7 +155,7 @@ class GcProductionRequestService extends FileHandler
             'remarks' => 'required',
             'denom' => ['required', 'array', new DenomQty()],
         ]);
-     
+
         DB::transaction(function () use ($request) {
 
             $file = $this->createFileName($request);
@@ -206,7 +205,7 @@ class GcProductionRequestService extends FileHandler
             } else {
                 return redirect()->back()->with('error', 'Production request already approved/cancelled.');
             }
-            
+
             return redirect()->back()->with('success', 'Success mate!.');
 
         });

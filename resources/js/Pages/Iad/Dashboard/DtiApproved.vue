@@ -6,7 +6,8 @@ import { router } from '@inertiajs/vue3';
 const props = defineProps({
     columns: Array,
     data: Object,
-    searchValue: String
+    searchValue: String,
+    title: String
 });
 
 const search = ref(props.searchValue);
@@ -21,7 +22,13 @@ const searchData = () => {
 </script>
 <template>
     <AuthenticatedLayout>
-        <a-card>
+
+        <Head :title="title" />
+        <a-breadcrumb>
+            <a-breadcrumb-item><a :href="route('iad.dashboard')">Home</a></a-breadcrumb-item>
+            <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
+        </a-breadcrumb>
+        <a-card class="mt-5">
             <div class="flex justify-end mb-5">
                 <a-input-search v-model:value="search" @change="searchData" enter-button allow-clear
                     placeholder="Input search here..." class="w-1/4" />

@@ -2,11 +2,18 @@
     <AuthenticatedLayout>
         <a-card>
             <a-table size="small" bordered :data-source="records" :columns="columns">
-                <template #bodyCell="{column, record}">
-                    <template  v-if="column.key == 'action'">
-                        <a-button @click="setuppayment(record.dti_num)">
-                            Setup Payment Dti
-                        </a-button>
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.key == 'action'">
+                        <div v-if="record.dti_payment_stat === 'whole'">
+                            <a-tag color="success">
+                                Close/Paid
+                            </a-tag>
+                        </div>
+                        <div v-else>
+                            <a-button @click="setuppayment(record.dti_num)">
+                                Setup Payment Dti
+                            </a-button>
+                        </div>
                     </template>
                 </template>
             </a-table>
@@ -58,8 +65,8 @@ const columns = [
     },
     {
         title: 'Amount',
-        dataIndex: 'dti_balance',
-        key: 'dti_balance',
+        dataIndex: 'total',
+        key: 'total',
     },
     {
         title: 'Status',

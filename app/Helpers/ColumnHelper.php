@@ -322,7 +322,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Status',
-            'dataIndex' => 'dti_payment_stat',
+            'dataIndex' => 'dti_status_pay',
             'align' => 'center',
 
         ],

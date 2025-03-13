@@ -1,6 +1,16 @@
 <template>
     <AuthenticatedLayout>
-        <a-row :gutter="[16, 16]">
+        <Head :title="title"/>
+        <a-breadcrumb>
+            <a-breadcrumb-item>
+                <a :href="route('treasury.dashboard')">Home</a>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>
+                <a :href="route('treasury.transactions.dti.dtiPendingRequest')">Dti Pending Request</a>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
+        </a-breadcrumb>
+        <a-row :gutter="[16, 16]" class="mt-5">
             <a-col :span="13">
                 <a-card title="Update Dti Request Form">
                     <a-descriptions size="small" layout="horizontal" bordered>
@@ -36,6 +46,7 @@
                                 </div>
 
                             </div>
+
                             <div class="text-center text-red-500">
                                 {{ formState.errors.file }}
                             </div>
@@ -106,7 +117,7 @@ import { notification, SelectProps, UploadProps } from "ant-design-vue";
 import dayjs from 'dayjs';
 import { ref } from 'vue';
 
-const page = usePage().props;
+const page = usePage().props
 interface Record {
     id: number,
     dti_num: number,
@@ -143,7 +154,8 @@ const props = defineProps<{
     dti: Dti,
     total: number,
     denom: any
-    docs: Document
+    docs: Document,
+    title: string
 }>();
 
 const formState = useForm<UseFormType>({

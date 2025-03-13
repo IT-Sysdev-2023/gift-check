@@ -43,6 +43,7 @@ use App\Http\Controllers\UserDetailsController;
 use App\Models\Assignatory;
 use App\Models\InstitutEod;
 use App\Models\InstitutPayment;
+use App\Models\User;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +56,10 @@ Route::get('/', function () {
     return Inertia::render(
         'Login'
     );
+})->middleware('guest');
+
+Route::get('/demo', function () {
+    dd(User::all());
 })->middleware('guest');
 
 
@@ -237,6 +242,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('verified-gc-udc', [MarketingController::class, 'verifiedGc_udc'])->name('udc');
                 Route::get('verified-gc-screenville', [MarketingController::class, 'verifiedGc_screenville'])->name('screenville');
                 Route::get('verified-gc-asctech', [MarketingController::class, 'verifiedGc_AscTech'])->name('asctech');
+                Route::get('view', [MarketingController::class, 'view'])->name('view');
             });
             Route::name('promostatus.')->group(function () {
                 Route::get('promo-status', [MarketingController::class, 'promoStatus'])->name('promo.status');
@@ -416,13 +422,17 @@ Route::middleware('auth')->group(function () {
                     Route::get('gc-sales-report', [EodController::class, 'gcSalesReport'])->name('gcSales');
                     Route::post('gc-sales-report-eod', [EodController::class, 'toEndOfDay'])->name('setToEod');
                 });
-
+                // DTI PART
                 Route::prefix('dti')->name('dti.')->group(function () {
                     Route::get('index', [DtiTransactionController::class, 'index'])->name('index');
                     Route::post('submit-dti', [DtiTransactionController::class, 'submitDtiForm'])->name('submit');
                     Route::get('dti-pending-request', [DtiTransactionController::class, 'dtiPendingRequest'])->name('dtiPendingRequest');
                     Route::get('dti-edit-request-{id}', [DtiTransactionController::class, 'dtiEditRequest'])->name('dti-edit-request');
                     Route::post('dti-update-request', [DtiTransactionController::class, 'dtiUpdateRequest'])->name('update-gc-request');
+                    Route::get('dti-gc-approved-list', [DtiTransactionController::class, 'dtiApprovedRequest'])->name('dtiApprovedRequest');
+                    Route::get('dti-approved-view', [DtiTransactionController::class, 'dtiApprovedView'])->name('dtiApprovedView');
+                    Route::get('dti-released-gc', [DtiTransactionController::class, 'dtiReleasedGc'])->name('dtiReleasedGc');
+                    Route::get('dti-released-view', [DtiTransactionController::class, 'dtiReleasedView'])->name('dtiReleasedView');
                 });
             });
             Route::prefix('masterfile')->name('masterfile.')->group(function () {
@@ -492,7 +502,7 @@ Route::middleware('auth')->group(function () {
     });
 
     //? Accounting
-    Route::middleware('userType:accounting,admin')->group(function () {
+    Route::middleware('userType:accounting,admin,storeaccounting')->group(function () {
         Route::prefix('accounting')->name('accounting.')->group(function () {
             Route::name('pending.')->group(function () {
                 Route::get('pending-special-gc', [SpecialGcRequestController::class, 'pendingSpecialGc'])->name('index');
@@ -770,7 +780,7 @@ Route::middleware('auth')->group(function () {
             Route::get('view-dti-gc', [SpecialExternalGcRequestController::class, 'viewDtiGc'])->name('viewDtiGc');
             Route::get('view-approved-dti', [SpecialExternalGcRequestController::class, 'approvedDtiGc'])->name('approvedDtiGc');
             Route::post('dti-gc-review', [SpecialExternalGcRequestController::class, 'dtiReview'])->name('dti.review');
-            Route::post('dti-gc-scan-barcode',[SpecialExternalGcRequestController::class, 'scanBarcode'])->name('dti_scan_barcode');
+            Route::post('dti-gc-scan-barcode', [SpecialExternalGcRequestController::class, 'scanBarcode'])->name('dti_scan_barcode');
             // dti Gc recieved
             Route::get('dti-gc-received', [SpecialExternalGcRequestController::class, 'dtiGcReviewed'])->name('dtiGcReviewed');
             Route::get('dti-gc-received-details', [SpecialExternalGcRequestController::class, 'dtiReviewedDetails'])->name('dtiReviewedDetails');

@@ -10,6 +10,7 @@ const activeKey = ref('1');
 const props = defineProps({
     data: Object,
     search: String,
+    title: String
 })
 
 const formatDate = (dateString) => {
@@ -72,28 +73,28 @@ const barcode = ref([]);
 const
 
     viewApprovedDti = async (data) => {
-    form.value = {
-        dti_datereq: data.dti_datereq ? formatDate(data.dti_datereq) : '',
-        first_remarks: data.dti_remarks || '',
-        approved_remarks: data.approved_remarks || '',
-        dti_paymenttype: data.dti_paymenttype || '',
-        dti_approveddate: data.dti_approveddate ? formatDate(data.dti_approveddate) : '',
-        dti_checkby: data.dti_checkby || '',
-        dti_approvedby: data.dti_approvedby || '',
-        dti_doc: data.dti_doc || '',
-        totalDenomination: data.totalDenomination || ''
-    }
-
-    await axios.get(route('finance.approvedGc.selected.dti.request'), {
-        params: {
-            id: data.dti_num,
+        form.value = {
+            dti_datereq: data.dti_datereq ? formatDate(data.dti_datereq) : '',
+            first_remarks: data.dti_remarks || '',
+            approved_remarks: data.approved_remarks || '',
+            dti_paymenttype: data.dti_paymenttype || '',
+            dti_approveddate: data.dti_approveddate ? formatDate(data.dti_approveddate) : '',
+            dti_checkby: data.dti_checkby || '',
+            dti_approvedby: data.dti_approvedby || '',
+            dti_doc: data.dti_doc || '',
+            totalDenomination: data.totalDenomination || ''
         }
-    })
-        .then((response) => {
-            openModal.value = true;
-            barcode.value = response.data.barcodes;
-        });
-}
+
+        await axios.get(route('finance.approvedGc.selected.dti.request'), {
+            params: {
+                id: data.dti_num,
+            }
+        })
+            .then((response) => {
+                openModal.value = true;
+                barcode.value = response.data.barcodes;
+            });
+    }
 
 const approvedSearch = ref(props.search);
 const searchValue = () => {
@@ -121,34 +122,30 @@ const barcodeColumns = ref([
 </script>
 <template>
     <AuthenticatedLayout>
-        <a-card>
-            <a-card>
-                <div class="flex items-center">
-                    <p class="text-lg">Approved DTI Special GC Request</p>
-                    <Link :href="route('finance.dashboard')" class="ml-auto text-black text-blue-700">
-                    <RollbackOutlined /> Back to Dashboard
-                    </Link>
-                </div>
-            </a-card>
-            <main class="mt-5">
-                <div class="flex justify-end">
-                    <a-input-search class="lg:w-[350px]" enter-button allow-clear placeholder="Input search here..."
-                        v-model:value="approvedSearch" @change="searchValue" />
-                </div>
-                <section>
-                    <a-table :data-source="props.data.data" :columns="columns" size="small" class="mt-5"
-                        :pagination="false">
-                        <template #bodyCell="{ record, column }">
-                            <template v-if="column.dataIndex === 'action'">
-                                <a-button type="primary" @click="viewApprovedDti(record)">
-                                    <PicLeftOutlined /> View
-                                </a-button>
-                            </template>
+
+        <Head :title="title" />
+        <a-breadcrumb>
+            <a-breadcrumb-item><a :href="route('finance.dashboard')">Home</a></a-breadcrumb-item>
+            <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
+        </a-breadcrumb>
+        <a-card class="mt-5">
+            <div class="flex justify-end">
+                <a-input-search class="w-1/4" enter-button allow-clear placeholder="Input search here..."
+                    v-model:value="approvedSearch" @change="searchValue" />
+            </div>
+            <section>
+                <a-table :data-source="props.data.data" :columns="columns" size="small" class="mt-5"
+                    :pagination="false">
+                    <template #bodyCell="{ record, column }">
+                        <template v-if="column.dataIndex === 'action'">
+                            <a-button type="primary" @click="viewApprovedDti(record)">
+                                <PicLeftOutlined /> View
+                            </a-button>
                         </template>
-                    </a-table>
-                    <pagination :datarecords="props.data" class="mt-5" />
-                </section>
-            </main>
+                    </template>
+                </a-table>
+                <pagination :datarecords="props.data" class="mt-5" />
+            </section>
         </a-card>
         <a-modal v-model:open="openModal" width="100%" :footer="false">
             <div class="card-container">

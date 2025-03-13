@@ -49,9 +49,18 @@ class DashboardClass extends DashboardService
             'institutionGcSales' => InstitutTransaction::count(),
             'gcProductionRequest' => $this->gcProductionRequest(),
             'adjustment' => $this->adjustments(),
+            'approvedDti' => DtiGcRequest::where([['dti_status', 'approved'], ['dti_addemp', 'done']])->count(),
+            'releasedDti' => DtiApprovedRequest::where('dti_approved_requests.dti_approvedtype', 'special external releasing')->count(),
+            'pendingDtiCount' => DtiGcRequest::select('dti_num', 'dti_datereq', 'dti_dateneed', 'firstname', 'lastname', 'spcus_companyname', )
+                ->join('users', 'user_id', 'dti_reqby')
+                ->join('special_external_customer', 'spcus_id', 'dti_company')
+                ->where('dti_status', 'pending')
+                ->where('dti_addemp', 'pending')
+                ->count(),
             'specialGcRequest' => $this->specialGcRequest(), //Duplicated above use Spatie Permission instead
-
+            // 'dti_req' => $this->
             'eod' => InstitutEod::count(),
+            'revcount' => $this->reviewedGcForReleasingCount(),
             'productionRequest' => ProductionRequest::where([['pe_generate_code', 0], ['pe_status', 1]])->get()
         ];
     }
@@ -66,6 +75,25 @@ class DashboardClass extends DashboardService
                 })
                 ->count(),
         ];
+    }
+    public function reviewedGcForReleasingCount()
+    {
+        return DtiGcRequest::with([
+            'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
+            'user:user_id,firstname,lastname',
+            'specialDtiBarcodesHasMany',
+            'approvedRequestRevied.user',
+
+        ])
+            ->withWhereHas('approvedRequest', function ($q) {
+                $q->select('dti_trid', 'dti_approvedby')->where('dti_approvedtype', 'Special External GC Approved');
+            })
+            ->where([
+                ['dti_status', 'approved'],
+                ['dti_reviewed', 'reviewed'],
+                ['dti_released', null],
+                ['dti_promo', 'external']
+            ])->count();
     }
     public function retailGroupDashboard()
     {
@@ -183,7 +211,7 @@ class DashboardClass extends DashboardService
             ->first();
         if ($data) {
             $data->datereq = Date::parse($data->br_requested_at)->toFormattedDateString();
-            $data->reqby = User::select('firstname','lastname')->where('user_id', $data->br_requested_by)->value('full_name');
+            $data->reqby = User::select('firstname', 'lastname')->where('user_id', $data->br_requested_by)->value('full_name');
         }
         return $data;
     }
@@ -259,6 +287,7 @@ class DashboardClass extends DashboardService
                 ->where('spexgc_released', 'released')
                 ->where('reqap_approvedtype', 'special external releasing')
                 ->count(),
+            'countDtiApproved' => $this->countPendingDti(),
 
         ];
     }
@@ -276,6 +305,14 @@ class DashboardClass extends DashboardService
         });
 
         return $data;
+    }
+
+    public function countPendingDti()
+    {
+        return  DtiGcRequest::with('customer:spcus_id,spcus_acctname,spcus_companyname')
+            ->leftJoin('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
+            ->where('dti_status', 'approved')
+            ->where('dti_approvedtype', 'Special External GC Approved')->count();
     }
     public function accountingDashboard()
     {

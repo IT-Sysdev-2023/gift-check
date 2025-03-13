@@ -171,6 +171,12 @@ class FinanceController extends Controller
             ->join('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
             ->where('dti_gc_requests.dti_status', 'approved')
             ->where('dti_approved_requests.dti_approvedtype', 'Special External GC Approved')
+            ->whereAny([
+                'dti_num',
+                'dti_datereq',
+                'dti_customer',
+                'dti_approveddate',
+            ], 'like', '%' . $request->search . '%')
             ->select(
                 'dti_approved_requests.dti_remarks as approved_remarks',
                 'dti_gc_requests.dti_num',
@@ -214,6 +220,7 @@ class FinanceController extends Controller
         return inertia('Finance/ApprovedDTIGCRequest', [
             'data' => $DtiApprovedQuery,
             'search' => $request->search,
+            'title' => 'Approved DTI GC Requests',
         ]);
     }
 
@@ -260,6 +267,7 @@ class FinanceController extends Controller
         return Inertia::render('Finance/PendingDTIGCRequest', [
             'externalDti' => $externalPending,
             'columnsDti' => ColumnHelper::getColumns($columns),
+            'title' => 'Pending DTI GC List',
         ]);
 
     }
@@ -340,11 +348,8 @@ class FinanceController extends Controller
 
     public function ditPendingRequest(Request $request)
     {
-        // dd($request->all());
         $id = (int) request('id');
-        // dd($id);
         $gcType = $request->gcType;
-        // dd($gcType);
 
         $gcHolder = DtiBarcodes::where('dti_trid', $id)
             ->select(
@@ -354,7 +359,6 @@ class FinanceController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // dd($gcHolder);
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['Complete Name', 'Denomination'],
@@ -362,7 +366,6 @@ class FinanceController extends Controller
         );
 
         if ($gcType === 'external') {
-            // dd();
             $currentBudget = LedgerBudget::where('bcus_guide', '!=', 'dti')
                 ->selectRaw('SUM(bdebit_amt) as total_debit, SUM(bcredit_amt) as total_credit')
                 ->first();
@@ -372,8 +375,6 @@ class FinanceController extends Controller
                 ->first();
             $budget = $currentBudget->total_debit - $currentBudget->total_credit;
         }
-        // $dti = DtiGcRequest::get();
-        // dd($dti);
         $query = DtiGcRequest::
             join('users as preparedby', 'preparedby.user_id', '=', 'dti_gc_requests.dti_reqby')
             ->join('users as checker', 'checker.user_id', '=', 'dti_gc_requests.dti_empaddby')
@@ -391,9 +392,6 @@ class FinanceController extends Controller
                 'access_page.*',
             )
             ->get();
-
-        // dd($query);
-
 
         $query->transform(function ($item) {
             $item->specialDtiGcrequestItemsHasMany->each(function ($subitem) {
@@ -426,6 +424,7 @@ class FinanceController extends Controller
             'type' => $gcType,
             'currentBudget' => $budget,
             'gcHolder' => $gcHolder,
+            'title' => 'DIT Pending View'
         ]);
     }
 
@@ -657,7 +656,7 @@ class FinanceController extends Controller
     }
     public function SpecialGcApprovalSubmit(Request $request)
     {
-        // dd($request->all());
+
         $id = $request->formData['id'];
         $totalDenom = $request->data[0]['total'];
         $reqType = SpecialExternalGcrequest::select('spexgc_type')->where('spexgc_id', $id)->first();
@@ -741,6 +740,20 @@ class FinanceController extends Controller
                             ]);
                         }
 
+                        if ($request->data[0]['spexgc_paymentype'] == 4) {
+                            LedgerSpgc::create([
+                                'spgcledger_no' => $nextLedgerBudgetNum,
+                                'spgcledger_trid' => $id,
+                                'spgcledger_datetime' => now(),
+                                'spgcledger_type' => 'RFGCSEGC',
+                                'spgcledger_credit' => $totalDenom,
+                                'spgcledger_typeid' => '0',
+                                'spgcledger_group' => '0',
+                                'spgcledger_debit' => '0',
+                                'spgctag' => '0',
+                            ]);
+                        }
+
 
                         if ($reqType->spexgc_type == '2') {
                             $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
@@ -802,7 +815,6 @@ class FinanceController extends Controller
 
     public function approvedGc(Request $request)
     {
-
         $search = $request->search;
         $data = SpecialExternalGcrequest::where('special_external_gcrequest.spexgc_status', 'approved')
             ->where('approved_request.reqap_approvedtype', 'Special External GC Approved')
@@ -833,8 +845,6 @@ class FinanceController extends Controller
             ['RFSEGC #', 'DATE REQUESTED', 'DATE VALIDITY', 'CUSTOMER', 'DATE APPROVED', 'APPROVED BY'],
             ['spexgc_num', 'dateReq', 'dateValid', 'spcus_acctname', 'reqap_date', 'reqap_approvedby', 'View']
         );
-
-
 
         return Inertia::render('Finance/ApprovedGcRequest', [
             'data' => $data,
@@ -1063,7 +1073,8 @@ class FinanceController extends Controller
 
         return Inertia::render('Finance/CancelledDtiRequest', [
             'data' => $DtiApprovedQuery,
-            'columns' => $columns
+            'columns' => $columns,
+            'title' => 'Dti Cancelled Requests',
         ]);
     }
 

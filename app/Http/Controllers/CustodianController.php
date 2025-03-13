@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Helpers\NumberHelper;
+use App\Models\BusinessUnit;
+use App\Models\BussinessUnit;
 use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
 use App\Models\Gc;
@@ -71,6 +73,7 @@ class CustodianController extends Controller
     {
         return inertia('Custodian/SpecialGcRequestSetup', [
             'record' => $this->custodianservices->specialExternalGcSetup($request),
+            'bunit' => BusinessUnit::all()
         ]);
     }
     public function submitSpecialExternalGc(Request $request)
@@ -215,24 +218,24 @@ class CustodianController extends Controller
 
     public function dti_special_gc_pending()
     {
-        $pending = DtiGcRequest::with('specialDtiGcrequestItemsHasMany')->where([
-            ['dti_status', 'pending'],
-            ['dti_addemp', 'pending'],
-        ])
-            ->paginate()
-            ->withQueryString();
+        $pending = DtiGcRequest::with('user:user_id,firstname,lastname', 'specialDtiGcrequestItemsHasMany')
+            ->where([
+                ['dti_status', 'pending'],
+                ['dti_addemp', 'pending'],
+            ])
+            ->paginate(10);;
 
+        collect($pending->items())->each(function ($item) {
 
-        $pending->transform(function ($item) {
-            $collect = collect($item->specialDtiGcrequestItemsHasMany);
+            $collect = collect($item['specialDtiGcrequestItemsHasMany']);
 
             $collect->each(function ($item) {
                 $item->subtotal = $item->dti_denoms * $item->dti_qty;
                 return $item;
             });
             $item->totalDenom = $collect->sum('subtotal');
-            // $item->totalDenom = ;
             $item->dateRequested = Date::parse($item->dti_datereq)->format('F d, Y');
+            $item->reqby = $item->user->full_name;
             return $item;
         });
 
@@ -242,7 +245,6 @@ class CustodianController extends Controller
 
     public function dti_special_gc_count()
     {
-        // dd();
         $pending = DtiGcRequest::where([
             ['dti_status', 'pending'],
             ['dti_addemp', 'pending'],
@@ -269,18 +271,18 @@ class CustodianController extends Controller
         $count = 1;
         $data->specialDtiGcrequestItemsHasMany->each(function ($subitem) use (&$count) {
             $subitem->tempId = $count++;
-            $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
+            $subitem->subtotal = $subitem->dti_denoms * $subitem->dti_qty;
             return $subitem;
         });
 
         $data->dateRequested = Date::parse($data->dti_datereq)->format('F d, Y');
         $data->validity = Date::parse($data->dti_dateneed)->format('F d, Y');
-        $data->total = number_format($data->dti_denoms * $data->dti_qty, 2);
+        $data->total = NumberHelper::currency($data->specialDtiGcrequestItemsHasMany->sum('subtotal'));
 
-        // dd($data->toArray());
 
         return inertia('Custodian/DTI/HolderEntry', [
-            'data' => $data
+            'data' => $data,
+            'bunit' => BusinessUnit::all(),
         ]);
     }
 
@@ -317,7 +319,8 @@ class CustodianController extends Controller
 
         return redirect()->route('custodian.dti_special_gcdti_special_gc_pending');
     }
-    public function dtiApprovedGcRequest(){
+    public function dtiApprovedGcRequest()
+    {
 
         $records = $this->custodianDtiServices->getDtiApprovedRequest();
 
@@ -325,11 +328,12 @@ class CustodianController extends Controller
             'records' => $records,
         ]);
     }
-    public function dtiSetupGcRequest($id){
+    public function dtiSetupGcRequest($id)
+    {
 
         $data = $this->custodianDtiServices->getDataRequest($id);
 
-        return inertia('Custodian/DTI/Setup/DtiSetupGcRequest',[
+        return inertia('Custodian/DTI/Setup/DtiSetupGcRequest', [
             'records' => $data->records,
             'barcodes' => $data->barcodes,
         ]);
@@ -370,5 +374,4 @@ class CustodianController extends Controller
             ]);
         }
     }
-
 }

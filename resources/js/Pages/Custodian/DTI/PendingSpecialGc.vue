@@ -8,9 +8,9 @@
                 <p class="text-black">DTI Pending GC List (GC HolderEntry)</p>
             </a-breadcrumb-item>
         </a-breadcrumb>
-        <a-tabs v-model:activeKey="activeKey">
+        <a-tabs type="card" v-model:activeKey="activeKey" class="mt-5">
             <a-tab-pane key="1" tab=" DTI Pending GC List (GC Holder Entry)">
-                <a-card title="DTI Special GC">
+                <a-card size="small" title="DTI Special GC">
                     <a-table :pagination="false" size="small" :dataSource="pending.data" :columns="columns">
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.dataIndex === 'view'">
@@ -67,6 +67,15 @@ const columns = [
         title: 'Total Denomination',
         dataIndex: 'totalDenom',
         key: 'totaldenom',
+    },
+    {
+        title: 'Payment Type',
+        dataIndex: 'dti_paymenttype',
+        key: 'totaldenom',
+    },
+    {
+        title: 'Request By',
+        dataIndex: 'reqby',
     },
     {
         dataIndex: 'view',

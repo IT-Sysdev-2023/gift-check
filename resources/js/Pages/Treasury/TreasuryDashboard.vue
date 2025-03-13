@@ -50,19 +50,23 @@
                                         " />
                                     <inner-m-card label=" Reviewed GC For Releasing(Internal/External)"
                                         :routeTo="gcReleasing" :count="data?.specialGcRequest
-                                                ?.internalReviewed
+                                            ?.internalReviewed
                                             " />
                                 </m-card>
-                                <m-card class="uppercase" title="DTI SPECIAL GC REQUEST" :pRoute="dtiSpecialGcPending">
-                                    <inner-m-card label="Released Gc" :routeTo="specialReleasedGc" :count="data?.specialGcRequest?.released
+                                <!-- Dti Special Gc -->
+                                <m-card class="uppercase" title="DTI SPECIAL GC REQUEST" :pRoute="dtiSpecialGcPending"
+                                    :pending="data?.pendingDtiCount" :aRoute="dtiApprovedRoute"
+                                    :approved="data?.approvedDti">
+
+                                    <inner-m-card label="Released Gc" :routeTo="dtiReleasedGc" :count="data?.releasedDti
                                         " />
-                                    <inner-m-card label=" Reviewed GC For Releasing(DTI)"
-                                        :routeTo="gcReleasingDti" :count="data?.specialGcRequest
-                                                ?.internalReviewed
+                                    <inner-m-card label=" Reviewed GC For Releasing(DTI)" :routeTo="gcReleasingDti"
+                                        :count="data?.revcount
                                             " />
                                 </m-card>
                             </a-col>
                             <a-col :span="8">
+                                <!-- <m-card></m-card> -->
                                 <m-card class="uppercase" title="Store Gc Request" approvedLabel="Released Gc"
                                     :pending="data?.storeGcRequest?.pending" :approved="data?.storeGcRequest?.released"
                                     :cancelled="data?.storeGcRequest?.cancelled" :pRoute="storeGcPending"
@@ -79,7 +83,7 @@
                                 <m-card class="uppercase" title="Gc Production Request" :pending="data?.gcProductionRequest?.pending
                                     " :approved="data?.gcProductionRequest?.approved
                                         " :cancelled="data?.gcProductionRequest?.cancelled
-                                        " :pRoute="pendingProductionRequest" :aRoute="approvedProductionRequest"
+                                            " :pRoute="pendingProductionRequest" :aRoute="approvedProductionRequest"
                                     :cRoute="cancelledProductionRequest" />
                                 <a-card title="Promo GC Released" class="mb-5 uppercase">
                                     <inner-m-card label="Released GC" :routeTo="promoGcReleased"
@@ -172,7 +176,9 @@ const institutionGc = computed(() =>
 );
 const eodList = computed(() => routeTo("transactions.eod", "eodList"));
 
-
 //dti
 const dtiSpecialGcPending = computed(() => routeTo("transactions.dti", "dtiPendingRequest"));
+const dtiApprovedRoute = computed(() => routeTo("transactions.dti", "dtiApprovedRequest"));
+const dtiReleasedGc = computed(() => routeTo("transactions.dti", "dtiReleasedGc"));
+
 </script>

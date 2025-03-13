@@ -85,7 +85,7 @@ class DtiServices extends FileHandler
             'dti_paymenttype' => "Ar",
             'dti_status' => 'pending',
             'dti_type' => 2,
-            'dti_payment_stat' => 'paid',
+            'dti_payment_stat' => 'pending',
             'dti_addemp' => 'pending',
             'dti_promo' => 'external',
         ]);

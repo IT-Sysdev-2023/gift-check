@@ -1,19 +1,13 @@
 <template>
     <a-card>
         <a-space v-for="(item, index) in form.denomination" :key="item.id">
-            <a-form-item :name="['denomination', index, 'denomination']" :rules="{
-                required: true,
-                message: 'Missing Denomination',
-            }">
+            <a-form-item :name="['denomination', index, 'denomination']">
                 <span>Denomination:</span>
-                <a-input-number v-model:value="item.denomination" :formatter="(value) =>
-                        `₱ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                <a-input-number required v-model:value="item.denomination" :formatter="(value) =>
+                    `₱ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                     " :min="0" style="width: auto" />
             </a-form-item>
-            <a-form-item :name="['denomination', index, 'qty']" :rules="{
-                required: true,
-                message: 'Missing Quantity',
-            }">
+            <a-form-item :name="['denomination', index, 'qty']" required>
                 <span>Quantity:</span>
                 <a-input-number v-model:value="item.qty" style="width: auto" :min="0" />
             </a-form-item>
@@ -27,10 +21,10 @@
         </a-form-item>
         <span v-if="form.errors.denomination" class="text-red-500">{{
             form.errors.denomination
-            }}</span>
+        }}</span>
         <a-form-item label="Total:" name="denomTotal">
-            <a-input-number class="p-2 text-2xl" size="large" :value="totalDenomination" :formatter="(value) =>
-                    `₱ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            <a-input-number :value="totalDenomination" :formatter="(value) =>
+                `₱ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                 " :min="0" style="width: 100%" readonly />
         </a-form-item>
     </a-card>

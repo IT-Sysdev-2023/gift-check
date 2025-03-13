@@ -5,38 +5,47 @@
             <a-descriptions-item label="Payment Date">{{ dayjs().format('MMM, DD, YYYY') }}</a-descriptions-item>
             <a-descriptions-item label="Customer">{{ dti.label }}</a-descriptions-item>
         </a-descriptions>
-        <a-row :gutter="[16, 16]" class="mt-5">
-            <a-col :span="12">
-                <a-card>
-                    <strong class="ml-2">Date Needed:</strong>
-                    <a-date-picker @change="handleChangeDatePicker" class="mb-2" style="width: 100%;" />
-                    <p class="text-red-500" v-if="formState.errors.date">
-                        {{ formState.errors.date }}
-                    </p>
-                    <p class="text-center w-full mt-10">Upload Image</p>
+        <a-form ref="formRef" :model="formState" @finish="submitForm">
+            <a-row :gutter="[16, 16]" class="mt-5">
+                <a-col :span="12">
+                    <p class="text-center w-full mt-5 mb-5">Upload Image</p>
                     <div class="flex justify-center w-full">
                         <ant-upload-multi-image @handle-change="handleImageChange" />
                     </div>
-                    <p class="text-red-500 text-center w-full" v-if="formState.errors.date">
+                    <p class="text-red-500 text-center w-full" v-if="formState.errors.file">
                         {{ formState.errors.file }}
                     </p>
+                </a-col>
+                <a-col :span="12">
+                    <a-card>
+                        <div class="mt-2">
 
-                </a-card>
-            </a-col>
-            <a-col :span="12">
-                <strong class="ml-2">Remarks:</strong>
-                <a-textarea :rows="4" placeholder="Remarks" v-model:value="formState.remarks" class="mb-2" />
-                <p class="text-red-500" v-if="formState.errors.remarks">
-                    {{ formState.errors.remarks }}
-                </p>
-                <ant-form-nest-item :form="formState" />
-                <div class="flex justify-end">
-                    <a-button class="mt-4" type="primary" block @click="submitForm">
-                        Submit Form
-                    </a-button>
-                </div>
-            </a-col>
-        </a-row>
+                            <a-typography-text class="mt-5" keyboard>Select Date</a-typography-text>
+                            <a-date-picker size="large" @change="handleChangeDatePicker" :disabled-date="disabledDate"
+                                style="width: 100%;" />
+                            <p class="text-red-500" v-if="formState.errors.date">
+                                {{ formState.errors.date }}
+                            </p>
+                        </div>
+                        <div class="mt-2">
+                            <a-typography-text class="mt-5" keyboard>Remarks</a-typography-text>
+                            <a-textarea :rows="4" placeholder="Remarks" v-model:value="formState.remarks"
+                                class="mb-2" />
+                            <p class="text-red-500" v-if="formState.errors.remarks">
+                                {{ formState.errors.remarks }}
+                            </p>
+                        </div>
+
+                        <ant-form-nest-item :form="formState" />
+                        <div class="flex justify-end">
+                            <a-button size="large" class="mt-4" type="primary" block html-type="submit">
+                                Submit Form
+                            </a-button>
+                        </div>
+                    </a-card>
+                </a-col>
+            </a-row>
+        </a-form>
         <a-modal v-model:open="openIframe" style="width: 70%; top: 50px" :footer="null" :afterClose="routeToHome">
             <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
         </a-modal>
@@ -52,12 +61,9 @@ import { notification } from 'ant-design-vue';
 
 interface UseFormType {
     trans: number,
-    denomination: any,
+    denomination: any[],
     date: string,
-    customer: string,
-    amount: string,
     remarks: string,
-    arNo: string,
     file: UploadProps["fileList"];
 }
 
@@ -74,19 +80,13 @@ const formState = useForm<UseFormType>({
     trans: props.transNo,
     denomination: [],
     date: '',
-    customer: '',
-    amount: '',
     remarks: '',
-    arNo: '',
     file: [],
 });
 
 const stream = ref(null);
 const openIframe = ref<boolean>(false);
 
-const handleCustomerChange = (str: string) => {
-    formState.customer = str;
-}
 
 const handleImageChange = (file: any) => {
     formState.file = file.fileList;
@@ -133,4 +133,11 @@ const submitForm = () => {
         }
     });
 }
+
+//disabled the past date, past date can not be use
+
+
+const disabledDate = (current) => {
+    return current && current.isBefore(dayjs(), "day");
+};
 </script>
