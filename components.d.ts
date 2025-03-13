@@ -126,7 +126,7 @@ declare module 'vue' {
     ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
     ASpace: typeof import('ant-design-vue/es')['Space']
     ASpin: typeof import('ant-design-vue/es')['Spin']
-    AssignCustomerEmployeeGc: typeof import('./resources/js/Pages/Custodian/Drawer/AssignCustomerEmployeeGc.vue')['default']
+    AssignCustomerEmployeeGc: typeof import('./resources/js/Pages/Custodian/Modals/AssignCustomerEmployeeGc.vue')['default']
     AStatistic: typeof import('ant-design-vue/es')['Statistic']
     ASteps: typeof import('ant-design-vue/es')['Steps']
     ASubMenu: typeof import('ant-design-vue/es')['SubMenu']

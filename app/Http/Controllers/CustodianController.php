@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\DashboardClass;
 use App\Helpers\ColumnHelper;
 use App\Helpers\NumberHelper;
+use App\Models\BusinessUnit;
+use App\Models\BussinessUnit;
 use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
 use App\Models\Gc;
@@ -71,6 +73,7 @@ class CustodianController extends Controller
     {
         return inertia('Custodian/SpecialGcRequestSetup', [
             'record' => $this->custodianservices->specialExternalGcSetup($request),
+            'bunit' => BusinessUnit::all()
         ]);
     }
     public function submitSpecialExternalGc(Request $request)
@@ -278,7 +281,8 @@ class CustodianController extends Controller
 
 
         return inertia('Custodian/DTI/HolderEntry', [
-            'data' => $data
+            'data' => $data,
+            'bunit' => BusinessUnit::all(),
         ]);
     }
 
