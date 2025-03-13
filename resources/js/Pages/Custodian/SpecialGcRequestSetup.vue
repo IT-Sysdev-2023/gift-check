@@ -67,7 +67,7 @@
             </a-card>
         </a-col>
     </a-row>
-    <assign-customer-employee-gc v-model:open="assignDrawer" :selected="selected" @assign-temp="getAssinTemp" />
+    <assign-customer-employee-gc :bunit="bunit" v-model:open="assignModal" :selected="selected" @assign-temp="getAssinTemp" />
 
 </template>
 <script>
@@ -78,17 +78,18 @@ export default {
     layout: AuthenticatedLayout,
     props: {
         record: Object,
+        bunit: Object
     },
     data() {
         return {
-            assignDrawer: false,
+            assignModal: false,
             selected: {},
             assignTemp: []
         }
     },
     methods: {
         openDrawerAssign(data) {
-            this.assignDrawer = true;
+            this.assignModal = true;
             this.selected = data;
         },
         getAssinTemp(data) {

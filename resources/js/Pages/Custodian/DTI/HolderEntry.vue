@@ -9,9 +9,9 @@
             </a-breadcrumb-item>
             <a-breadcrumb-item>DTI GC Holder Entry</a-breadcrumb-item>
         </a-breadcrumb>
-        <a-card title="DTI GC Holder Entry">
-            <a-row :gutter="[16, 16]">
-                <a-col :span="8">
+        <a-row :gutter="[16, 16]" class="mt-6">
+            <a-col :span="10">
+                <a-card title="DTI GC REQUEST DETAILS">
                     <a-form-item label="GC Request #">
                         <a-input readonly :value="data.dti_num" />
                     </a-form-item>
@@ -20,6 +20,16 @@
                     </a-form-item>
                     <a-form-item label="Date Validity">
                         <a-input readonly :value="data.validity" />
+                    </a-form-item>
+
+                    <a-form-item label="Company Name">
+                        <a-input readonly :value="data.spcus_companyname" />
+                    </a-form-item>
+                    <a-form-item label="Account Name">
+                        <a-input readonly :value="data.spcus_acctname" />
+                    </a-form-item>
+                    <a-form-item label="Payment Type">
+                        <a-input readonly class="uppercase" :value="data.dti_paymenttype" />
                     </a-form-item>
                     <a-form-item label="Document(s) Uploaded">
                         <a-card size="small">
@@ -31,51 +41,46 @@
                             </a-row></a-card>
 
                     </a-form-item>
-                </a-col>
-                <a-col :span="8">
-                    <a-form-item label="Company Name">
-                        <a-input readonly :value="data.spcus_companyname" />
-                    </a-form-item>
-                    <a-form-item label="Account Name">
-                        <a-input readonly :value="data.spcus_acctname" />
-                    </a-form-item>
-                    <a-form-item label="Payment Type">
-                        <a-input readonly class="uppercase" :value="data.dti_paymenttype" />
-                    </a-form-item>
+                </a-card>
 
-                </a-col>
-                <a-col :span="8">
+            </a-col>
+
+            <a-col :span="14">
+                <a-card title="FORM ACTION">
                     <a-form-item label="Remarks">
                         <a-textarea readonly :value="data.dti_remarks" />
                     </a-form-item>
-                    <div v-for="(item, key) in data.special_dti_gcrequest_items_has_many" :key="key">
-                        <!-- {{ item }} -->
-                        <a-row :gutter="[16, 16]">
-                            <a-col :span="8">
-                                <a-form-item label="Demomination">
-                                    <a-input readonly :value="item.dti_denoms" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="6">
-                                <a-form-item label="Qty">
-                                    <a-input readonly :value="item.dti_qty" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="4">
-                                <div class=" h-16 flex items-end">
-                                    <a-button @click="openModal(item)" type="primary">
-                                        <UserAddOutlined />
-                                    </a-button>
-                                </div>
-                            </a-col>
-                            <a-col :span="6">
-                                <a-form-item label="# Holder" has-feedback
-                                    :validate-status="form.errors.holders ? 'error' : ''" :help="form.errors.holders">
-                                    <a-input readonly :value="checkExistence(item.tempId)" />
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                    </div>
+                    <a-card title="ALL DENOMINATION DETAILS" size="small">
+                        <div v-for="(item, key) in data.special_dti_gcrequest_items_has_many" :key="key">
+                            <!-- {{ item }} -->
+                            <a-row :gutter="[16, 16]">
+                                <a-col :span="8">
+                                    <a-form-item label="Demomination">
+                                        <a-input readonly :value="item.dti_denoms" />
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="6">
+                                    <a-form-item label="Qty">
+                                        <a-input readonly :value="item.dti_qty" />
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="4">
+                                    <div class=" h-16 flex items-end">
+                                        <a-button @click="openModal(item)" type="primary">
+                                            <UserAddOutlined />
+                                        </a-button>
+                                    </div>
+                                </a-col>
+                                <a-col :span="6">
+                                    <a-form-item label="# Holder" has-feedback
+                                        :validate-status="form.errors.holders ? 'error' : ''"
+                                        :help="form.errors.holders">
+                                        <a-input readonly :value="checkExistence(item.tempId)" />
+                                    </a-form-item>
+                                </a-col>
+                            </a-row>
+                        </div>
+                    </a-card>
                     <a-form-item>
                         <div class="h-14 flex items-center">
                             <p class=" text-3xl">Total: {{ data.total }}</p>
@@ -90,51 +95,63 @@
                             <a-button @click="handleSubmit" type="primary">Submit </a-button>
                         </div>
                     </div>
-                </a-col>
-            </a-row>
-        </a-card>
-        <a-modal :footer="false" v-model:open="open" width="300" title="Assign Customer Employee" @ok="handleOk">
-            <a-row :gutter="[16, 16]">
-                <a-col :span="8">
-                    <a-card>
-                        <a-form-item label="Last Name">
-                            <a-input placeholder="This field is required" v-model:value="holderData.lname" />
+                </a-card>
+            </a-col>
+        </a-row>
+        <a-modal :footer="false" style="top: 30px;" v-model:open="open" :width="1100" title="Assign Customer Employee"
+            @ok="handleOk">
+
+            <a-card>
+                <a-row :gutter="[16, 16]">
+                    <a-col :span="12">
+                        <a-form-item>
+                            <a-typography-text keyboard>Last Name</a-typography-text>
+                            <a-input required placeholder="This field is required" v-model:value="holderData.lname" />
                         </a-form-item>
-                        <a-form-item label="First Name">
+                        <a-form-item>
+                            <a-typography-text keyboard>First Name</a-typography-text>
                             <a-input placeholder="This field is required" v-model:value="holderData.fname" />
                         </a-form-item>
-                        <a-form-item label="Middle Name">
+                        <a-form-item>
+                            <a-typography-text keyboard>Middle Name</a-typography-text>
                             <a-input placeholder="Enter Here.." v-model:value="holderData.mname" />
                         </a-form-item>
-                        <a-form-item label="Name Ext.">
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item>
+                            <a-typography-text keyboard>Suffix</a-typography-text>
                             <a-input placeholder="This field is required" v-model:value="holderData.ext" />
                         </a-form-item>
-                        <a-form-item label="Address">
+                        <a-form-item>
+                            <a-typography-text keyboard>Address</a-typography-text>
                             <a-input placeholder="This field is required" v-model:value="holderData.address" />
                         </a-form-item>
-                        <a-form-item label="Voucher">
+                        <a-form-item>
+                            <a-typography-text keyboard>Voucher</a-typography-text>
                             <a-input placeholder="This field is required" v-model:value="holderData.voucher" />
                         </a-form-item>
-                        <a-form-item label="Business Unit">
-                            <a-input placeholder="This field is required" v-model:value="holderData.bu" />
-                        </a-form-item>
-                        <div class="flex justify-end gap-3">
-                            <a-button @click="handleAssign" type="primary">Assign</a-button>
-                            <a-button @click="clear" type="primary" danger>Clear</a-button>
-                        </div>
-                    </a-card>
-                </a-col>
-                <a-col :span="16">
-                    <div class="h-[500px] overflow-y-auto">
-                        <a-card>
-                            <a-table bordered :pagination="false" size="small"
-                                :dataSource="gcHolder.filter((data) => data.trid == holderSetup.tempId)"
-                                :columns="columns" />
-                        </a-card>
-                    </div>
-                </a-col>
-            </a-row>
+                    </a-col>
+                </a-row>
+                <a-form-item>
+                    <a-typography-text keyboard>Business Unit</a-typography-text>
+                    <a-select placeholder="This field is required" ref="select" v-model:value="holderData.bu"
+                        style="width: 100%">
+                        <a-select-option v-for="(bu, key) in bunit" :key="key" :value="bu.name">{{ bu.name
+                        }}</a-select-option>
 
+                    </a-select>
+                </a-form-item>
+            </a-card>
+            <div class="overflow-y-auto">
+                <a-card class="mt-3">
+                    <a-table bordered :pagination="false" size="small"
+                        :dataSource="gcHolder.filter((data) => data.trid == holderSetup.tempId)" :columns="columns" />
+                </a-card>
+            </div>
+            <div class="flex justify-between gap-3 mb-8">
+                <a-button block @click="clear" type="primary" danger>Clear</a-button>
+                <a-button block @click="handleAssign" :disabled="!isFormComplete" type="primary">Assign</a-button>
+            </div>
         </a-modal>
     </AuthenticatedLayout>
 </template>
@@ -146,7 +163,8 @@ import { Link, router, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import { notification } from 'ant-design-vue';
 const props = defineProps({
-    data: Object
+    data: Object,
+    bunit: Object,
 })
 const open = ref(false);
 const gcHolder = ref([]);
@@ -159,8 +177,15 @@ const holderData = ref({
     ext: '',
     address: '',
     voucher: '',
-    bu: '',
+    bu: null,
 })
+
+
+const requiredFields = ['lname', 'fname', 'address', 'bu'];
+
+const isFormComplete = computed(() => {
+    return requiredFields.every(field => holderData.value[field].trim() !== '');
+});
 
 
 const form = useForm({
