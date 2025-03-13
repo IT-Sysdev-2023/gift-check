@@ -278,6 +278,7 @@ class DashboardClass extends DashboardService
                 ->where('spexgc_released', 'released')
                 ->where('reqap_approvedtype', 'special external releasing')
                 ->count(),
+            'countDtiApproved' => $this->countPendingDti(),
 
         ];
     }
@@ -295,6 +296,14 @@ class DashboardClass extends DashboardService
         });
 
         return $data;
+    }
+
+    public function countPendingDti()
+    {
+        return  DtiGcRequest::with('customer:spcus_id,spcus_acctname,spcus_companyname')
+            ->leftJoin('dti_approved_requests', 'dti_approved_requests.dti_trid', '=', 'dti_gc_requests.dti_num')
+            ->where('dti_status', 'approved')
+            ->where('dti_approvedtype', 'Special External GC Approved')->count();
     }
     public function accountingDashboard()
     {

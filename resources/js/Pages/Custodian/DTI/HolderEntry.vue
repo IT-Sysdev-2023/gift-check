@@ -96,37 +96,38 @@
         <a-modal :footer="false" v-model:open="open" width="300" title="Assign Customer Employee" @ok="handleOk">
             <a-row :gutter="[16, 16]">
                 <a-col :span="8">
-                    <a-form-item label="Last Name">
-                        <a-input placeholder="This field is required" v-model:value="holderData.lname" />
-                    </a-form-item>
-                    <a-form-item label="First Name">
-                        <a-input placeholder="This field is required" v-model:value="holderData.fname" />
-                    </a-form-item>
-                    <a-form-item label="Middle Name">
-                        <a-input placeholder="This field is required" v-model:value="holderData.mname" />
-                    </a-form-item>
-                    <a-form-item label="Name Ext.">
-                        <a-input v-model:value="holderData.ext" />
-                    </a-form-item>
-                    <a-form-item label="Address">
-                        <a-input placeholder="This field is required" v-model:value="holderData.address" />
-                    </a-form-item>
-                    <a-form-item label="Voucher">
-                        <a-input placeholder="This field is required" v-model:value="holderData.voucher" />
-                    </a-form-item>
-                    <a-form-item label="Business Unit">
-                        <a-input placeholder="This field is required" v-model:value="holderData.bu" />
-                    </a-form-item>
-                    <div class="flex justify-end gap-3">
-                        <a-button @click="handleAssign" type="primary">Assign</a-button>
-                        <a-button @click="clear" type="primary" danger>Clear</a-button>
-                    </div>
+                    <a-card>
+                        <a-form-item label="Last Name">
+                            <a-input placeholder="This field is required" v-model:value="holderData.lname" />
+                        </a-form-item>
+                        <a-form-item label="First Name">
+                            <a-input placeholder="This field is required" v-model:value="holderData.fname" />
+                        </a-form-item>
+                        <a-form-item label="Middle Name">
+                            <a-input placeholder="Enter Here.." v-model:value="holderData.mname" />
+                        </a-form-item>
+                        <a-form-item label="Name Ext.">
+                            <a-input placeholder="This field is required" v-model:value="holderData.ext" />
+                        </a-form-item>
+                        <a-form-item label="Address">
+                            <a-input placeholder="This field is required" v-model:value="holderData.address" />
+                        </a-form-item>
+                        <a-form-item label="Voucher">
+                            <a-input placeholder="This field is required" v-model:value="holderData.voucher" />
+                        </a-form-item>
+                        <a-form-item label="Business Unit">
+                            <a-input placeholder="This field is required" v-model:value="holderData.bu" />
+                        </a-form-item>
+                        <div class="flex justify-end gap-3">
+                            <a-button @click="handleAssign" type="primary">Assign</a-button>
+                            <a-button @click="clear" type="primary" danger>Clear</a-button>
+                        </div>
+                    </a-card>
                 </a-col>
                 <a-col :span="16">
-                    <p>Denomination: {{ data.dti_denoms }} </p>
                     <div class="h-[500px] overflow-y-auto">
                         <a-card>
-                            <a-table :pagination="false" size="small"
+                            <a-table bordered :pagination="false" size="small"
                                 :dataSource="gcHolder.filter((data) => data.trid == holderSetup.tempId)"
                                 :columns="columns" />
                         </a-card>

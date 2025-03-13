@@ -28,7 +28,7 @@
 
                     <MCard title="DTI Special GC Transactions" :pending="pending"
                         pRoute="custodian.dti_special_gcdti_special_gc_pending"
-                        aRoute="custodian.dti.approved.index" />
+                        aRoute="custodian.dti.approved.index" :approved="count.countDtiApproved"/>
                 </a-col>
             </a-row>
         </div>

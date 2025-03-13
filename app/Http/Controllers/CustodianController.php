@@ -215,24 +215,24 @@ class CustodianController extends Controller
 
     public function dti_special_gc_pending()
     {
-        $pending = DtiGcRequest::with('specialDtiGcrequestItemsHasMany')->where([
-            ['dti_status', 'pending'],
-            ['dti_addemp', 'pending'],
-        ])
-            ->paginate(10)
-            ->withQueryString();
+        $pending = DtiGcRequest::with('user:user_id,firstname,lastname', 'specialDtiGcrequestItemsHasMany')
+            ->where([
+                ['dti_status', 'pending'],
+                ['dti_addemp', 'pending'],
+            ])
+            ->paginate(10);;
 
+        collect($pending->items())->each(function ($item) {
 
-        $pending->transform(function ($item) {
-            $collect = collect($item->specialDtiGcrequestItemsHasMany);
+            $collect = collect($item['specialDtiGcrequestItemsHasMany']);
 
             $collect->each(function ($item) {
                 $item->subtotal = $item->dti_denoms * $item->dti_qty;
                 return $item;
             });
             $item->totalDenom = $collect->sum('subtotal');
-            // $item->totalDenom = ;
             $item->dateRequested = Date::parse($item->dti_datereq)->format('F d, Y');
+            $item->reqby = $item->user->full_name;
             return $item;
         });
 
@@ -315,7 +315,8 @@ class CustodianController extends Controller
 
         return redirect()->route('custodian.dti_special_gcdti_special_gc_pending');
     }
-    public function dtiApprovedGcRequest(){
+    public function dtiApprovedGcRequest()
+    {
 
         $records = $this->custodianDtiServices->getDtiApprovedRequest();
 
@@ -323,11 +324,12 @@ class CustodianController extends Controller
             'records' => $records,
         ]);
     }
-    public function dtiSetupGcRequest($id){
+    public function dtiSetupGcRequest($id)
+    {
 
         $data = $this->custodianDtiServices->getDataRequest($id);
 
-        return inertia('Custodian/DTI/Setup/DtiSetupGcRequest',[
+        return inertia('Custodian/DTI/Setup/DtiSetupGcRequest', [
             'records' => $data->records,
             'barcodes' => $data->barcodes,
         ]);
@@ -368,5 +370,4 @@ class CustodianController extends Controller
             ]);
         }
     }
-
 }

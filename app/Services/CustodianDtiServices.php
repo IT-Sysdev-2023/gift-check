@@ -15,7 +15,6 @@ class CustodianDtiServices
     {
         //
     }
-
     public function getDtiApprovedRequest()
     {
         $dti = DtiGcRequest::with('customer:spcus_id,spcus_acctname,spcus_companyname')

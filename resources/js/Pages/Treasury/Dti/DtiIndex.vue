@@ -8,35 +8,41 @@
         <a-form ref="formRef" :model="formState" @finish="submitForm">
             <a-row :gutter="[16, 16]" class="mt-5">
                 <a-col :span="12">
-                    <a-card>
-                        <strong class="ml-2">Date Needed:</strong>
-                        <a-date-picker @change="handleChangeDatePicker" class="mb-2" style="width: 100%;" />
-                        <p class="text-red-500" v-if="formState.errors.date">
-                            {{ formState.errors.date }}
-                        </p>
-                        <p class="text-center w-full mt-10">Upload Image</p>
-                        <div class="flex justify-center w-full">
-                            <ant-upload-multi-image @handle-change="handleImageChange" />
-                        </div>
-                        <p class="text-red-500 text-center w-full" v-if="formState.errors.file">
-                            {{ formState.errors.file }}
-                        </p>
-
-                    </a-card>
+                    <p class="text-center w-full mt-5 mb-5">Upload Image</p>
+                    <div class="flex justify-center w-full">
+                        <ant-upload-multi-image @handle-change="handleImageChange" />
+                    </div>
+                    <p class="text-red-500 text-center w-full" v-if="formState.errors.file">
+                        {{ formState.errors.file }}
+                    </p>
                 </a-col>
                 <a-col :span="12">
-                    <strong class="ml-2">Remarks:</strong>
-                    <a-textarea :rows="4" placeholder="Remarks" v-model:value="formState.remarks" class="mb-2" />
-                    <p class="text-red-500" v-if="formState.errors.remarks">
-                        {{ formState.errors.remarks }}
-                    </p>
+                    <a-card>
+                        <div class="mt-2">
 
-                    <ant-form-nest-item :form="formState" />
-                    <div class="flex justify-end">
-                        <a-button class="mt-4" type="primary" block html-type="submit">
-                            Submit Form
-                        </a-button>
-                    </div>
+                            <a-typography-text class="mt-5" keyboard>Select Date</a-typography-text>
+                            <a-date-picker size="large" @change="handleChangeDatePicker" :disabled-date="disabledDate"
+                                style="width: 100%;" />
+                            <p class="text-red-500" v-if="formState.errors.date">
+                                {{ formState.errors.date }}
+                            </p>
+                        </div>
+                        <div class="mt-2">
+                            <a-typography-text class="mt-5" keyboard>Remarks</a-typography-text>
+                            <a-textarea :rows="4" placeholder="Remarks" v-model:value="formState.remarks"
+                                class="mb-2" />
+                            <p class="text-red-500" v-if="formState.errors.remarks">
+                                {{ formState.errors.remarks }}
+                            </p>
+                        </div>
+
+                        <ant-form-nest-item :form="formState" />
+                        <div class="flex justify-end">
+                            <a-button size="large" class="mt-4" type="primary" block html-type="submit">
+                                Submit Form
+                            </a-button>
+                        </div>
+                    </a-card>
                 </a-col>
             </a-row>
         </a-form>
@@ -127,4 +133,11 @@ const submitForm = () => {
         }
     });
 }
+
+//disabled the past date, past date can not be use
+
+
+const disabledDate = (current) => {
+    return current && current.isBefore(dayjs(), "day");
+};
 </script>
