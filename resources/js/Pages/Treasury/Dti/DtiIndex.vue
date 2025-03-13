@@ -1,24 +1,33 @@
 <template>
     <AuthenticatedLayout>
         <a-card>
-            <a-descriptions title="Department of Trade and Industry Special GC" size="small" layout="vertical" bordered :labelStyle="{ fontWeight: 'bold' }">
-                <a-descriptions-item label="Transaction No">{{ transNo }}</a-descriptions-item>
-                <a-descriptions-item label="Payment Date">{{ dayjs().format('MMMM, DD, YYYY') }}</a-descriptions-item>
-                <a-descriptions-item label="Customer">{{ dti.label }}</a-descriptions-item>
+            <a-descriptions title="Department of Trade and Industry Special GC" size="small" bordered
+                :column="{ xs: 1, sm: 1, md: 1, lg: 1 }" :labelStyle="{ fontWeight: 'bold', width: '200px' }">
+
+                <a-descriptions-item label="Transaction No">
+                    <span>{{ transNo }}</span>
+                </a-descriptions-item>
+
+                <a-descriptions-item label="Payment Date">
+                    <span>{{ dayjs().format('MMMM D, YYYY') }}</span>
+                </a-descriptions-item>
+
+                <a-descriptions-item label="Customer">
+                    <span>{{ dti.label }}</span>
+                </a-descriptions-item>
             </a-descriptions>
+
             <a-form ref="formRef" :model="formState" @finish="submitForm">
-                <div>
-                    <a-col :span="12">
-                        <p class="text-center w-full mt-5 mb-5">Upload Image</p>
-                        <div class="flex justify-center w-full">
-                            <ant-upload-multi-image @handle-change="handleImageChange" />
-                        </div>
-                        <p class="text-red-500 text-center w-full" v-if="formState.errors.file">
-                            {{ formState.errors.file }}
-                        </p>
-                    </a-col>
+                <div class="mt-5">
                     <a-col>
                         <a-card class="w-1/2">
+                            <p>Upload Image</p>
+                            <div class="flex w-full mt-2">
+                                <ant-upload-multi-image @handle-change="handleImageChange" />
+                            </div>
+                            <p class="text-red-500 text-center w-full" v-if="formState.errors.file">
+                                {{ formState.errors.file }}
+                            </p>
                             <div class="mt-2">
 
                                 <a-typography-text class="mt-5" keyboard>Select Date</a-typography-text>
