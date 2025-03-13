@@ -5,7 +5,8 @@ import dayjs from 'dayjs';
 const activeKey = ref('1');
 const props = defineProps({
     data: Object,
-    columns: Array
+    columns: Array,
+    title: String
 })
 const openModal = ref(false);
 
@@ -59,7 +60,17 @@ const column = ref([
 </script>
 <template>
     <AuthenticatedLayout>
-        <a-card>
+
+        <Head :title="title" />
+        <a-breadcrumb>
+            <a-breadcrumb-item>
+                <a :href="route('iad.dashboard')">Home</a>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>
+                {{ title }}
+            </a-breadcrumb-item>
+        </a-breadcrumb>
+        <a-card class="mt-5">
             <a-table :data-source="props.data.data" :columns="props.columns" :pagination="false" size="small">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'view'">

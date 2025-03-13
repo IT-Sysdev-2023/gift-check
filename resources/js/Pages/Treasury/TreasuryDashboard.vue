@@ -55,12 +55,13 @@
                                 </m-card>
                                 <!-- Dti Special Gc -->
                                 <m-card class="uppercase" title="DTI SPECIAL GC REQUEST" :pRoute="dtiSpecialGcPending"
-                                    :aRoute="dtiApprovedRoute" :approved="data.approvedDti">
+                                    :pending="data?.pendingDtiCount" :aRoute="dtiApprovedRoute"
+                                    :approved="data?.approvedDti">
 
-                                    <inner-m-card label="Released Gc" :routeTo="specialReleasedGc" :count="data?.specialGcRequest?.released
+                                    <inner-m-card label="Released Gc" :routeTo="dtiReleasedGc" :count="data?.releasedDti
                                         " />
-                                    <inner-m-card label=" Reviewed GC For Releasing(DTI)"
-                                        :routeTo="gcReleasingDti" :count="data?.revcount
+                                    <inner-m-card label=" Reviewed GC For Releasing(DTI)" :routeTo="gcReleasingDti"
+                                        :count="data?.revcount
                                             " />
                                 </m-card>
                             </a-col>
@@ -178,5 +179,6 @@ const eodList = computed(() => routeTo("transactions.eod", "eodList"));
 //dti
 const dtiSpecialGcPending = computed(() => routeTo("transactions.dti", "dtiPendingRequest"));
 const dtiApprovedRoute = computed(() => routeTo("transactions.dti", "dtiApprovedRequest"));
+const dtiReleasedGc = computed(() => routeTo("transactions.dti", "dtiReleasedGc"));
 
 </script>

@@ -129,6 +129,9 @@ export interface TreasuryDashboardTypes {
         };
         institutionGcSales: number;
         revcount: number;
+        releasedDti: number;
+        approvedDti: number;
+        pendingDtiCount: number;
     };
 }
 
