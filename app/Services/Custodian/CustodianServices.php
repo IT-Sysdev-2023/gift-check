@@ -389,7 +389,7 @@ class CustodianServices extends FileHandler
 
             $barcode = new DNS1D();
 
-            $html = $barcode->getBarcodePNG($item->spexgcemp_barcode, 'C128');
+            $html = $barcode->getBarcodePNG((string)$item->spexgcemp_barcode, 'C128');
 
             $item->barcode = $html;
             $item->numWords = Number::spell($item->spexgcemp_denom) . ' pesos only';
@@ -421,7 +421,7 @@ class CustodianServices extends FileHandler
 
             $barcode = new DNS1D();
 
-            $html = $barcode->getBarcodePNG($item->dti_barcode, 'C128');
+            $html = $barcode->getBarcodePNG((string)$item->dti_barcode, 'C128');
 
             $item->barcode = $html;
             $item->numWords = Number::spell($item->dti_denom) . ' pesos only';

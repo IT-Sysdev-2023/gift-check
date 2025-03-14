@@ -365,8 +365,8 @@ class RetailController extends Controller
                 'notfound' => $data->barcodeNotFound,
                 'empty' => $data->empty,
             ]);
-        }else{
-            dd('Oppss eror');
+        } else {
+            return inertia('ErrorInServer');
         }
 
         // $data = $this->statusScanner->statusScanned($request);
