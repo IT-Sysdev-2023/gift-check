@@ -78,7 +78,7 @@ const search = () => {
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex == 'action'">
                         <a-button type="primary" @click="() => {
-                            $inertia.get(route('treasury.transactions.dti.dtiApprovedView'), { id: record.dti_num })
+                            router.get(route('treasury.transactions.dti.dtiApprovedView'), { id: record.dti_num })
                         }">
                             <PicLeftOutlined />
                         </a-button>

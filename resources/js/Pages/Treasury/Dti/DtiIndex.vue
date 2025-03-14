@@ -1,54 +1,65 @@
 <template>
     <AuthenticatedLayout>
-        <a-descriptions title="Debt-to-Income ratio" size="small" layout="vertical" bordered>
-            <a-descriptions-item label="Transaction No">{{ transNo }}</a-descriptions-item>
-            <a-descriptions-item label="Payment Date">{{ dayjs().format('MMM, DD, YYYY') }}</a-descriptions-item>
-            <a-descriptions-item label="Customer">{{ dti.label }}</a-descriptions-item>
-        </a-descriptions>
-        <a-form ref="formRef" :model="formState" @finish="submitForm">
-            <a-row :gutter="[16, 16]" class="mt-5">
-                <a-col :span="12">
-                    <p class="text-center w-full mt-5 mb-5">Upload Image</p>
-                    <div class="flex justify-center w-full">
-                        <ant-upload-multi-image @handle-change="handleImageChange" />
-                    </div>
-                    <p class="text-red-500 text-center w-full" v-if="formState.errors.file">
-                        {{ formState.errors.file }}
-                    </p>
-                </a-col>
-                <a-col :span="12">
-                    <a-card>
-                        <div class="mt-2">
+        <a-card>
+            <a-descriptions title="Department of Trade and Industry Special GC" size="small" bordered
+                :column="{ xs: 1, sm: 1, md: 1, lg: 1 }" :labelStyle="{ fontWeight: 'bold', width: '200px' }">
 
-                            <a-typography-text class="mt-5" keyboard>Select Date</a-typography-text>
-                            <a-date-picker size="large" @change="handleChangeDatePicker" :disabled-date="disabledDate"
-                                style="width: 100%;" />
-                            <p class="text-red-500" v-if="formState.errors.date">
-                                {{ formState.errors.date }}
-                            </p>
-                        </div>
-                        <div class="mt-2">
-                            <a-typography-text class="mt-5" keyboard>Remarks</a-typography-text>
-                            <a-textarea :rows="4" placeholder="Remarks" v-model:value="formState.remarks"
-                                class="mb-2" />
-                            <p class="text-red-500" v-if="formState.errors.remarks">
-                                {{ formState.errors.remarks }}
-                            </p>
-                        </div>
+                <a-descriptions-item label="Transaction No">
+                    <span>{{ transNo }}</span>
+                </a-descriptions-item>
 
-                        <ant-form-nest-item :form="formState" />
-                        <div class="flex justify-end">
-                            <a-button size="large" class="mt-4" type="primary" block html-type="submit">
-                                Submit Form
-                            </a-button>
-                        </div>
-                    </a-card>
-                </a-col>
-            </a-row>
-        </a-form>
-        <a-modal v-model:open="openIframe" style="width: 70%; top: 50px" :footer="null" :afterClose="routeToHome">
-            <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
-        </a-modal>
+                <a-descriptions-item label="Payment Date">
+                    <span>{{ dayjs().format('MMMM D, YYYY') }}</span>
+                </a-descriptions-item>
+
+                <a-descriptions-item label="Customer">
+                    <span>{{ dti.label }}</span>
+                </a-descriptions-item>
+            </a-descriptions>
+
+            <a-form ref="formRef" :model="formState" @finish="submitForm">
+                <div class="mt-5">
+                    <a-col>
+                        <a-card class="w-1/2">
+                            <p>Upload Image</p>
+                            <div class="flex w-full mt-2">
+                                <ant-upload-multi-image @handle-change="handleImageChange" />
+                            </div>
+                            <p class="text-red-500 text-center w-full" v-if="formState.errors.file">
+                                {{ formState.errors.file }}
+                            </p>
+                            <div class="mt-2">
+
+                                <a-typography-text class="mt-5" keyboard>Select Date</a-typography-text>
+                                <a-date-picker size="large" @change="handleChangeDatePicker"
+                                    :disabled-date="disabledDate" style="width: 100%;" />
+                                <p class="text-red-500" v-if="formState.errors.date">
+                                    {{ formState.errors.date }}
+                                </p>
+                            </div>
+                            <div class="mt-2">
+                                <a-typography-text class="mt-5" keyboard>Remarks</a-typography-text>
+                                <a-textarea :rows="4" placeholder="Remarks" v-model:value="formState.remarks"
+                                    class="mb-2" />
+                                <p class="text-red-500" v-if="formState.errors.remarks">
+                                    {{ formState.errors.remarks }}
+                                </p>
+                            </div>
+
+                            <ant-form-nest-item :form="formState" />
+                            <div class="flex justify-end">
+                                <a-button size="large" class="mt-4" type="primary" block html-type="submit">
+                                    Submit Form
+                                </a-button>
+                            </div>
+                        </a-card>
+                    </a-col>
+                </div>
+            </a-form>
+            <a-modal v-model:open="openIframe" style="width: 70%; top: 50px" :footer="null" :afterClose="routeToHome">
+                <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
+            </a-modal>
+        </a-card>
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
