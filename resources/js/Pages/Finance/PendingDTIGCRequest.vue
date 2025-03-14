@@ -7,7 +7,6 @@ const props = defineProps({
     title: String
 })
 
-
 </script>
 <template>
     <AuthenticatedLayout>

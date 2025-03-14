@@ -18,6 +18,7 @@ class DatabaseConnectionService
     public function setHost(){
 
     }
+
     public static function getConnection($host, $database, $username, $password)
     {
         config(['database.connections.server_connection' => [

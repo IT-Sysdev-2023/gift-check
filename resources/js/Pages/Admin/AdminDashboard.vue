@@ -45,28 +45,28 @@
             </a-form-item>
 
         </div>
-        <section class="flex justify-center ">
-            <div class="flex direction-column gap-14">
-                <div class="text-center text-medium text-black" v-for="item in props.data" :key="item.store_name">
+        <a-card>
+            <div class="flex justify-center gap-5">
+                <div class="text-center font-bold" v-for="item in props.data" :key="item.store_name">
                     {{ item.store_name }}<br>
-                    <p class="text-gray-500 mt-5">Sales</p>
+                    <p class="text-gray-500 mt-5 flex justify-center">Sales</p>
                     <p class="text-[#0047AB] text-2xl">
                         {{ item.gc_count }}
                     </p>
                 </div>
             </div>
-        </section>
+            <!--Graph section-->
+            <section class="mt-10">
+                <p class="text-lg text-center text-gray-700">Sales</p>
+                <div class="chart-container">
+                    <LineChart :chartData="chartData" :chartOptions="chartOptions" />
+                </div>
+            </section>
 
-        <!--Graph section-->
-        <section class="mt-10">
-            <p class="text-lg text-center text-gray-700">Sales</p>
-            <div class="chart-container">
-                <LineChart :chartData="chartData" :chartOptions="chartOptions" />
-            </div>
-        </section>
+        </a-card>
 
         <!-- {{ regularGcData }} -->
-        {{ data }}
+        <!-- {{ data }} -->
 
     </AuthenticatedLayout>
 </template>
@@ -102,7 +102,7 @@ const specialGcData = computed(() => {
     }
     return data;
 })
-    //  regular gc data to sales counting per month
+//  regular gc data to sales counting per month
 const regularGcData = computed(() => {
     let data = new Array(12).fill(0);
 

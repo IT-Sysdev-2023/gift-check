@@ -150,13 +150,14 @@ class ReportService
 
             if ($isExists) { //Remote server
 
-                $records = ReportsHelper::checkBillingReportPerDayRemote($store, $date, self::REMOTE_SERVER_DB);
 
+                $records = ReportsHelper::checkBillingReportPerDayRemote($store, $date, self::REMOTE_SERVER_DB);
                 if (!$records->isEmpty()) {
                     return response()->json([
                         'success' => true,
                         'message' => 'Records found on this date selected from remote server',
-                        'data' => $records
+                        'data' => $records,
+                        'count' => $records->count()
                     ]);
                 }
                 return response()->json([
@@ -164,15 +165,17 @@ class ReportService
                     'message' => 'No records found on this date selected from remote server'
                 ]);
             }
-            // proceed to local server $isExists is false
+            // proceed to local server if $isExists is false
             else {
                 $records = ReportsHelper::checkBillingReportPerDayLocal($store, $date, self::LOCAL_DB);
+
                 if (!$records->isEmpty()) {
 
                     return response()->json([
                         'success' => true,
                         'message' => 'Records found on this date selected from local server',
-                        'data' => $records
+                        'data' => $records,
+                        'count' => $records->count()
                     ]);
                 }
                 return response()->json([

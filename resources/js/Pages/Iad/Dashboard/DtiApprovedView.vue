@@ -17,35 +17,35 @@ const dateFormat = (date) => {
 
 };
 const form = ref({
-    dti_num: props.data[0].dti_num,
-    date_validity: dateFormat(props.data[0].dti_dateneed),
-    id: props.data[0].id,
-    request_remarks: props.data[0].dti_remarks,
-    dti_doc: props.data[0].dti_doc,
-    dti_approvedby: props.data[0].dti_approvedby,
-    dti_department: props.data[0].dti_department,
-    dti_customer: props.data[0].dti_customer,
-    dti_paymenttype: props.data[0].dti_paymenttype,
-    reqby: props.data[0].reqby,
-    dti_approved_remarks: props.data[0].dti_approved_remarks,
-    dti_doc_second: props.data[0].dti_fullpath,
-    dti_datereq: props.data[0].dti_datereq,
-    total_denomination: props.data[0].total,
-    total_payment: props.data[0].total,
-    dti_approveddate: props.data[0].dti_approveddate,
-    dti_checkby: props.data[0].dti_checkby,
-    dti_preparedBy: props.data[0].dti_approvedby,
-    dti_barcode: props.data[0].dti_barcodes[0].dti_barcode ?? '',
-    completename: props.data[0].dti_barcodes[0].completename ?? '',
-    dti_denom: props.data[0].dti_barcodes[0].dti_denom ?? '',
-    voucher: props.data[0].dti_barcodes[0]?.voucher ?? '',
-    address: props.data[0].dti_barcodes[0].address ?? '',
+    dti_num: props.data?.[0]?.dti_num ?? '',
+    date_validity: dateFormat(props.data?.[0]?.dti_dateneed ?? ''),
+    id: props.data?.[0]?.id ?? '',
+    request_remarks: props.data?.[0]?.dti_remarks ?? '',
+    dti_doc: props.data?.[0]?.dti_doc ?? '',
+    dti_approvedby: props.data?.[0]?.dti_approvedby ?? '',
+    dti_department: props.data?.[0]?.dti_department ?? '',
+    dti_customer: props.data?.[0]?.dti_customer ?? '',
+    dti_paymenttype: props.data?.[0]?.dti_paymenttype ?? '',
+    reqby: props.data?.[0]?.reqby ?? '',
+    dti_approved_remarks: props.data?.[0]?.dti_approved_remarks ?? '',
+    dti_doc_second: props.data?.[0]?.dti_fullpath ?? '',
+    dti_datereq: props.data?.[0]?.dti_datereq ?? '',
+    total_denomination: props.data?.[0]?.total ?? '',
+    total_payment: props.data?.[0]?.total ?? '',
+    dti_approveddate: props.data?.[0]?.dti_approveddate ?? '',
+    dti_checkby: props.data?.[0]?.dti_checkby ?? '',
+    dti_preparedBy: props.data?.[0]?.dti_approvedby ?? '',
+    dti_barcode: props.data?.[0]?.dti_barcodes?.[0]?.dti_barcode ?? '',
+    completename: props.data?.[0]?.dti_barcodes?.[0]?.completename ?? '',
+    dti_denom: props.data?.[0]?.dti_barcodes?.[0]?.dti_denom ?? '',
+    voucher: props.data?.[0]?.dti_barcodes?.[0]?.voucher ?? '',
+    address: props.data?.[0]?.dti_barcodes?.[0]?.address ?? '',
     final_remarks: '',
     barcode: '',
     errors: {},
     total_gcScan: '',
     final_total_denomination: '',
-    totalBarcode: props.data[0].totalBarcode
+    totalBarcode: props.data?.[0]?.totalBarcode ?? ''
 
 });
 
@@ -173,7 +173,7 @@ const reprintGc = () => {
                 <a-tab-pane key="1" tab="Special DTI GC Details">
                     <a-descriptions :labelStyle="{ fontWeight: 'bold' }" layout="vertical" bordered size="small">
                         <a-descriptions-item label="RFSEGC #" v-model:value="form.dti_num">{{ form.dti_num
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Date Validity" v-model:value="form.date_validity">{{
                             form.date_validity }}</a-descriptions-item>
                         <a-descriptions-item label="AR #" v-model:value="form.id">{{ form.id }}</a-descriptions-item>
@@ -187,28 +187,28 @@ const reprintGc = () => {
                         <a-descriptions-item label="Department" v-model:value="form.dti_department">{{
                             form.dti_department }}</a-descriptions-item>
                         <a-descriptions-item label="Customer" v-model:value="form.dti_customer">{{ form.dti_customer
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Payment Type" v-model:value="form.dti_paymenttype">{{
                             form.dti_paymenttype }}</a-descriptions-item>
                         <a-descriptions-item label="Requested By" v-model:value="form.reqby">{{ form.reqby
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Approved Remarks" v-model:value="form.dti_approved_remarks">{{
                             form.dti_approved_remarks
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Documents" v-model:value="form.dti_doc_second">
                             <img :src="'/storage/' + form.dti_doc_second" class="w-40 h-auto rounded shadow-md" />
                         </a-descriptions-item>
                         <a-descriptions-item label="Date Requested" v-model:value="form.dti_datereq">{{ form.dti_datereq
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Total Denomination" v-model:value="form.total_denomination">{{
                             form.total_denomination
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Payment Amount" v-model:value="form.total_payment">{{
                             form.total_payment }}</a-descriptions-item>
                         <a-descriptions-item label="Date Approved" v-model:value="form.dti_approveddate">{{
                             form.dti_approveddate }}</a-descriptions-item>
                         <a-descriptions-item label="Checked By" v-model:value="form.dti_checkby">{{ form.dti_checkby
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="Prepared By" v-model:value="form.dti_preparedBy">{{
                             form.dti_preparedBy }}</a-descriptions-item>
                     </a-descriptions>
