@@ -1,6 +1,5 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const activeKey = ref('1');
@@ -27,14 +26,14 @@ const form = ref({
 const selectedRecord = async (data) => {
 
     form.value = {
-        dateRequested: data.dateRequested || '',
-        dti_paymenttype: data.dti_paymenttype || '',
-        totalDenomination: data.totalDenomination || '',
-        dti_cancelled_date: data.dti_cancelled_date || '',
-        checkBy: data.checkBy || '',
-        fullname: data.fullname || '',
-        dti_cancelled_remarks: data.dti_cancelled_remarks || '',
-        dti_cancelled_by: data.fullname || ''
+        dateRequested: data?.dateRequested ?? '',
+        dti_paymenttype: data?.dti_paymenttype ?? '',
+        totalDenomination: data?.totalDenomination ?? '',
+        dti_cancelled_date: data?.dti_cancelled_date ?? '',
+        checkBy: data?.checkBy ?? '',
+        fullname: data?.fullname ?? '',
+        dti_cancelled_remarks: data?.dti_cancelled_remarks ?? '',
+        dti_cancelled_by: data?.fullname ?? ''
     }
     openCancelModal.value = true;
 }

@@ -6,8 +6,9 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { Modal } from 'ant-design-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { watchEffect } from 'vue';
 
-defineProps({
+const props = defineProps({
     store: Object,
 });
 
@@ -21,6 +22,7 @@ const form = reactive({
 
 // submit function
 const data = ref([]);
+const count = ref(0);
 
 const submitButton = async () => {
     form.errors = {};
@@ -50,6 +52,7 @@ const submitButton = async () => {
         });
         if (response.data.success) {
             data.value = response.data.data;
+            count.value = response.data.count;
             notification.success({
                 description: response.data.message
             });
@@ -145,15 +148,6 @@ const generateExcel = async () => {
             try {
                 loadingEffect.value = true;
                 progressPercent.value = 0;
-
-                const progressInterval = setInterval(() => {
-                    if (progressPercent.value < 99) {
-                        progressPercent.value += 1;
-                    } else {
-                        clearInterval(progressInterval);
-                    }
-                }, 10000);
-
                 const formatted = dayjs(form.dateSelected).format('YYYY-MM-DD');
                 const response = await axios.post(route('storeaccounting.reports.generateBillingPerDayReport'), {
                     date: formatted,
@@ -162,7 +156,6 @@ const generateExcel = async () => {
                     responseType: 'blob'
                 });
 
-                clearInterval(progressInterval);
                 progressPercent.value = 100;
 
                 const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -185,7 +178,7 @@ const generateExcel = async () => {
                 setTimeout(() => {
                     loadingEffect.value = false;
                     progressPercent.value = 0;
-                }, 2000);
+                }, 1000);
             }
         },
         onCancel() {
@@ -195,11 +188,31 @@ const generateExcel = async () => {
     });
 };
 
+watchEffect(() => {
+    if (loadingEffect.value) {
+        let progress = 0;
+        const interval = setInterval(() => {
+            if (progress < 99) {
+                progress += 10;
+                progressPercent.value = progress;
+            } else {
+                clearInterval(interval);
+            }
+        }, 100);
+        watchEffect(() => {
+            if (!loadingEffect.value) {
+                clearInterval(interval);
+                progressPercent.value = 0;
+            }
+        });
+    }
+});
 
 </script>
 
 <template>
     <AuthenticatedLayout>
+
         <header class="text-black font-bold text-lg text-center mb-6">Billing Per Day</header>
         <section class="flex items-center w-full max-w-3xl mx-auto gap-5 mt-5">
             <!-- Data Type -->
@@ -221,7 +234,7 @@ const generateExcel = async () => {
                     :help="form.errors.storeSelected" class="mt-2">
                     <a-select v-model:value="form.storeSelected" placeholder="Select Store" class="w-full">
                         <a-select-option value=""><span class="text-gray-400">Select</span></a-select-option>
-                        <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
+                        <a-select-option v-for="item in props.store" :key="item.store_id" :value="item.store_id">
                             {{ item.store_name }}
                         </a-select-option>
                     </a-select>
@@ -253,25 +266,27 @@ const generateExcel = async () => {
         </section>
 
         <!-- Table Section -->
-        <section class="mt-8 text-center text-gray-600">
-            <div>
-                <p class="text-gray-800 font-bold">Table showing billing reports per day</p>
-                <a-table size="small" :data-source="data" :columns="columns" class="mt-4 w-full">
-                </a-table>
-            </div>
-        </section>
+        <a-card>
+            <section class="mt-8 text-center text-gray-600">
+                <div>
+                    <p class="text-gray-800 font-bold">Table showing billing reports per day</p>
+                    <a-table size="small" :data-source="data" :columns="columns" class="mt-4 w-full">
+                    </a-table>
+                </div>
+            </section>
+        </a-card>
+        <!-- generate button with the counting of the data  -->
         <section>
-            <div v-if="data.length > 0">
-                <a-float-button @click="generateExcel" type="primary" title="Generate report" :style="{
-                    right: '24px',
-                }">
+            <div v-if="data.length > 0"
+                style="position: fixed; bottom: 80px; right: 24px; display: flex; flex-direction: column; align-items: center;">
+                <a-badge :count="count" style="margin-bottom: 5px; margin-right: 5px; z-index: 100;" />
+                <a-float-button class="w-14 h-14" @click="generateExcel" type="primary" title="Generate report">
                     <template #icon>
                         <FileExcelOutlined />
                     </template>
                 </a-float-button>
             </div>
         </section>
-        <!-- {{ data }} -->
     </AuthenticatedLayout>
 </template>
 <style scoped>

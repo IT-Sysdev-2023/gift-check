@@ -52,7 +52,7 @@ const columns = ref([
 ]);
 
 const form = computed(() => {
-    const items = props.data.data.data[0] as DataItems;
+    const items = (props.data.data.data[0] ?? {}) as DataItems;
     return {
         dti_datereq: items.dti_datereq ?? '',
         dti_paymenttype: items.dti_paymenttype ?? '',

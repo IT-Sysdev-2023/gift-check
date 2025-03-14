@@ -93,7 +93,7 @@ const column = ref([
                                 <a-descriptions :labelStyle="{ fontWeight: 'bold' }" layout="vertical" bordered
                                     size="small">
                                     <a-descriptions-item label="Date Requested">
-                                        {{ dayjs(form.dti_datereq).format('YYYY-MMMM-DD') }}
+                                        {{ dayjs(form.dti_datereq).format('YYYY-MMMM-DD')}}
                                     </a-descriptions-item>
                                     <a-descriptions-item label="Date Needed">{{
                                         dayjs(form.dti_dateneed).format('YYYY-MMMM-DD')
