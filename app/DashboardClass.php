@@ -68,6 +68,7 @@ class DashboardClass extends DashboardService
     public function retailDashboard()
     {
         //
+        // dd();
         return [
             'approved' => ApprovedGcrequest::with('storeGcRequest', 'storeGcRequest.store', 'user')
                 ->whereHas('storeGcRequest', function ($query) {
@@ -221,6 +222,7 @@ class DashboardClass extends DashboardService
     }
     public function iadDashboard()
     {
+
         return [
             'countReceiving' => RequisitionForm::where('used', null)->count(),
             'reviewedCountSpecial' => SpecialExternalGcrequest::select(

@@ -69,6 +69,7 @@ class RetailController extends Controller
             'approved' => $counts['approved'],
         ];
 
+
         $getAvailableGc = $this->retail->getAvailableGC();
 
         $soldGc = StoreReceivedGc::where('strec_storeid', $request->user()->store_assigned)
