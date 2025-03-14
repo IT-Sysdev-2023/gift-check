@@ -36,9 +36,7 @@
                         <a-radio value="yesterday">Yesterday</a-radio>
                         <a-radio value="thisWeek">This Week</a-radio>
                         <a-radio value="currentMonth">Current Month</a-radio>
-                        <a-radio value="allTransactions"
-                            >All Transacions</a-radio
-                        >
+                        <a-radio value="allTransactions">All Transacions</a-radio>
                         <a-radio value="dateRange">Date Range</a-radio>
                     </a-radio-group>
                 </a-form-item>

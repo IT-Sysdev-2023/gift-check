@@ -1,11 +1,11 @@
 <template>
     <AuthenticatedLayout>
         <a-card>
-            <a-descriptions title="Department of Trade and Industry Special GC" size="small" layout="vertical" bordered :labelStyle="{ fontWeight: 'bold' }">
-                <a-descriptions-item label="Transaction No">{{ transNo }}</a-descriptions-item>
-                <a-descriptions-item label="Payment Date">{{ dayjs().format('MMMM, DD, YYYY') }}</a-descriptions-item>
-                <a-descriptions-item label="Customer">{{ dti.label }}</a-descriptions-item>
-            </a-descriptions>
+            <a-descriptions title="Department of Trade and Industry Special GC" size="small" :column="1" layout="horizontal" bordered>
+    <a-descriptions-item label="Transaction No">{{ transNo }}</a-descriptions-item>
+    <a-descriptions-item label="Payment Date">{{ dayjs().format('MMM, DD, YYYY') }}</a-descriptions-item>
+    <a-descriptions-item label="Customer">DEPARTMENT OF TRADE AND INDUSTRY</a-descriptions-item>
+        </a-descriptions>
             <a-form ref="formRef" :model="formState" @finish="submitForm">
                 <div>
                     <a-col :span="12">

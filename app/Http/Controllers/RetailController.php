@@ -97,7 +97,7 @@ class RetailController extends Controller
         $requestNum = StoreGcrequest::select('sgc_num', 'sgc_id')->where('sgc_store', $storeAssigned)->orderByDesc('sgc_num')->first();
         $store = Store::where('store_id', $storeAssigned)->get();
 
-        $requestNumber = intval($requestNum->sgc_num) + 1;
+        $requestNumber = intval($requestNum->sgc_num) + 1 ?? 1;
 
         $denoms = Denomination::where('denom_type', 'RSGC')
             ->where('denom_status', 'active')->get();

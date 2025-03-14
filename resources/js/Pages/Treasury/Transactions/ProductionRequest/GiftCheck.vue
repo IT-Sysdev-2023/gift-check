@@ -42,7 +42,7 @@
                             <ant-upload-image @handle-change="handleChange" />
                         </a-form-item> -->
                         <a-form-item
-                            label="Remarks:."
+                            label="Remarks:"
                             name="name"
                             has-feedback
                             :validate-status="getErrorStatus('remarks')"

@@ -11,7 +11,7 @@
                         </div>
                         <div v-else>
                             <a-button @click="setuppayment(record.dti_num)">
-                                Setup Payment Dti
+                                DTI Payment Setup
                             </a-button>
                         </div>
                     </template>
