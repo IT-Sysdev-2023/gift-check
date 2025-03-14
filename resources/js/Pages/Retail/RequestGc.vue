@@ -112,7 +112,7 @@ export default {
             file: null,
             error: null,
             form: useForm({
-                sgc_id: this.requestno.sgc_id,
+                sgc_id: this.requestno?.sgc_id,
                 quantities: reactive({}),  // Make quantities reactive
                 requestNumber: this.requestNumber,
                 storeName: this.storeName[0]["store_name"],

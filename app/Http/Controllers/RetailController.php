@@ -56,8 +56,7 @@ class RetailController extends Controller
         public RetailServices $retail,
         public AdminServices $statusScanner,
         public DashboardClass $dashboardClass
-    ) {
-    }
+    ) {}
     public function index(Request $request)
     {
 
@@ -95,9 +94,11 @@ class RetailController extends Controller
         $storeAssigned = $request->user()->store_assigned;
 
         $requestNum = StoreGcrequest::select('sgc_num', 'sgc_id')->where('sgc_store', $storeAssigned)->orderByDesc('sgc_num')->first();
+
         $store = Store::where('store_id', $storeAssigned)->get();
 
-        $requestNumber = intval($requestNum->sgc_num) + 1 ?? 1;
+        $requestNumber = $requestNum?->sgc_num ? intval($requestNum->sgc_num) + 1 : 1;
+        // if()
 
         $denoms = Denomination::where('denom_type', 'RSGC')
             ->where('denom_status', 'active')->get();
@@ -353,7 +354,6 @@ class RetailController extends Controller
     public function submitVerify(Request $request)
     {
         return $this->retail->submitVerify($request);
-
     }
     public function availableGcList(Request $request)
     {
@@ -438,8 +438,7 @@ class RetailController extends Controller
         $lostGCnumber = LostGcDetail::where('lostgcd_storeid', $request->user()->store_assigned)
             ->count() + 1 ?? 1;
         $lostgc = LostGcBarcode::select('lostgcb_barcode', 'lostgcb_denom')
-            ->whereAny([
-            ], 'like', $request->q . '%')
+            ->whereAny([], 'like', $request->q . '%')
             ->get();
 
         return inertia('Retail/LostGc', [
@@ -536,7 +535,6 @@ class RetailController extends Controller
         return inertia('Retail/VerifiedGc', [
             'data' => $this->retail->verifiedGc($request)
         ]);
-
     }
 
     public function gcdetails(Request $request)
@@ -600,7 +598,6 @@ class RetailController extends Controller
     {
 
         return Excel::download(new RetailVerifiedGCReport($request->all()), 'excel.xlsx');
-
     }
 
 
@@ -733,7 +730,6 @@ class RetailController extends Controller
                 $cash = TransactionPayment::where('payment_trans_num', $request->id)
                     ->select('payment_cash', 'payment_change')->first();
                 $type = $cash;
-
             }
 
             $datatable = TransactionSale::where('sales_transaction_id', $request->id)
@@ -760,7 +756,6 @@ class RetailController extends Controller
                 'type' => '2'
             ]);
         }
-
     }
 
 
@@ -768,16 +763,16 @@ class RetailController extends Controller
     {
         return inertia('Retail/masterfile/CustomerSetup', [
             'data' =>
-                Customer::orderByDesc('cus_id')
-                    ->whereAny([
-                        'cus_fname',
-                        'cus_lname',
-                        'cus_idnumber',
-                        'cus_address',
-                        'cus_mobile'
-                    ], 'like', '%' . $request->search . '%')
-                    ->paginate(10)
-                    ->withQueryString()
+            Customer::orderByDesc('cus_id')
+                ->whereAny([
+                    'cus_fname',
+                    'cus_lname',
+                    'cus_idnumber',
+                    'cus_address',
+                    'cus_mobile'
+                ], 'like', '%' . $request->search . '%')
+                ->paginate(10)
+                ->withQueryString()
         ]);
     }
 
@@ -828,7 +823,6 @@ class RetailController extends Controller
                 'description' => 'Customer added successfully',
             ]);
         }
-
     }
 
     public function sgcsetup()
@@ -892,7 +886,4 @@ class RetailController extends Controller
     {
         return inertia('Retail/SupplierGcVerification');
     }
-
-
-
 }
