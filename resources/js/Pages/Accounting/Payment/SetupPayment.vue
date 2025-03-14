@@ -6,8 +6,7 @@
                     <a-descriptions-item label="RFSEGC #">{{ record.spexgc_num }}</a-descriptions-item>
                     <a-descriptions-item label="Department">{{ record.title }}</a-descriptions-item>
                     <a-descriptions-item label="Date Requested">{{ record.datereq }}</a-descriptions-item>
-                    <a-descriptions-item label="Time Requested">{{ record.timereq }}
-                    </a-descriptions-item>
+                    <a-descriptions-item label="Time Requested">{{ record.timereq }} </a-descriptions-item>
                     <a-descriptions-item label="Date Needed">{{ record.dateneeded }}</a-descriptions-item>
                     <a-descriptions-item label="Date Approved">{{ record.dateapp }}</a-descriptions-item>
                     <a-descriptions-item :span="2" label="Payment Amount">{{

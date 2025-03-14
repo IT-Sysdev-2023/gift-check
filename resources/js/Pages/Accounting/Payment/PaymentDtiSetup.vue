@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <a-alert class="mb-2" v-if="form.errors.checked" message="Error" description="Please Select a Data first"
+        <a-alert class="mb-2" v-if="form.errors.checked" message="Error" description="Please Select a Data first!"
             type="error" show-icon />
         <a-card class="mb-2">
             <div class="flex justify-between mb-4">

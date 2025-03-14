@@ -72,7 +72,7 @@ const submitButton = async () => {
 
 const columns = ref([
     {
-        title: 'Date Purchased',
+        title: 'Date',
         dataIndex: 'vs_date',
     },
     {
@@ -97,7 +97,7 @@ const columns = ref([
         dataIndex: 'vs_fullname',
     },
     {
-        title: 'Store Purchased',
+        title: 'Store',
         dataIndex: 'store_name',
     },
     {
@@ -213,7 +213,7 @@ watchEffect(() => {
 <template>
     <AuthenticatedLayout>
 
-        <header class="text-black font-bold text-lg text-center mb-6">Billing Per Day</header>
+        <header class="text-black font-bold text-lg text-center mb-6">BILLING PER DAY</header>
         <section class="flex items-center w-full max-w-3xl mx-auto gap-5 mt-5">
             <!-- Data Type -->
             <div class="w-full">
@@ -269,7 +269,7 @@ watchEffect(() => {
         <a-card>
             <section class="mt-8 text-center text-gray-600">
                 <div>
-                    <p class="text-gray-800 font-bold">Table showing billing reports per day</p>
+                    <p class="text-gray-800 font-bold">BILLING TRANSACTIONS PER DAY</p>
                     <a-table size="small" :data-source="data" :columns="columns" class="mt-4 w-full">
                     </a-table>
                 </div>
@@ -293,14 +293,14 @@ watchEffect(() => {
 .loading-container {
     position: fixed;
     top: 0;
-    left: 0;
+    left: 50;
     width: 100%;
     height: 100%;
     background: rgba(255, 255, 255, 0.8);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: right;
+    justify-content: right;
     gap: 10px;
     z-index: 9999;
     backdrop-filter: blur(5px);

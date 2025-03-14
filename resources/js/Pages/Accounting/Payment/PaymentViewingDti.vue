@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <a-card class="text-center" title="DTI Gc Payment Viewing">
+        <a-card class="text-center" title="DTI GC Payment Viewing">
             <a-table :pagination="false" bordered size="small" :data-source="record.data" :columns="column">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'view'">

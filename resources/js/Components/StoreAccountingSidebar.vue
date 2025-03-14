@@ -50,20 +50,20 @@
         <template #title>
             <span>
                 <AppstoreOutlined />
-                <span>Dti Payment Spgc</span>
+                <span>DTI Payment SPGC</span>
             </span>
         </template>
         <a-menu-item class="menu-item" @click="
             () => router.get(route('accounting.payment.payment.gc.dti'))
         " key="releasing.dti">
             <DatabaseOutlined />
-            <span style="font-size: small">Dti SGC Payment</span>
+            <span style="font-size: small">DTI SGC Payment</span>
         </a-menu-item>
         <a-menu-item class="menu-item" @click="
             () => router.get(route('accounting.payment.dti.viewing'))
         " key="releasing.dti.viewing">
             <DatabaseOutlined />
-            <span style="font-size: small">Dti Payment Viewing</span>
+            <span style="font-size: small">DTI Payment Viewing</span>
         </a-menu-item>
     </a-sub-menu>
 

@@ -19,7 +19,7 @@
         <a-modal :footer="false" :width="900" title="Payment Details" :placement="'left'" v-model:open="open">
             <template #extra>
                 <a-button style="margin-right: 8px" @click="onClose">
-                    <ShrinkOutlined /> Close
+                    <ShrinkOutlined /> Closed
                 </a-button>
             </template>
 
