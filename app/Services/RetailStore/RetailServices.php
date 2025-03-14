@@ -586,7 +586,7 @@ class RetailServices
 
                         $success = $this->dbservices->createtextfile($request, $data);
 
-                        if ($success) {
+                        if (!$success) {
                             $this->dbservices->createtextfileSecondaryPath($request, $data);
                         }
                     }

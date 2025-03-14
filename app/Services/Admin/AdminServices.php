@@ -424,7 +424,7 @@ class AdminServices
     }
     public static function promoStatus($promo, $request)
     {
-        
+
         $steps = collect([
             [
                 'title' => 'Treasury',
