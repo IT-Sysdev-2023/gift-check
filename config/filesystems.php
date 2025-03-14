@@ -71,6 +71,12 @@ return [
             ],
         ],
 
+        'shared' => [
+            'driver' => 'local',
+            'root' => env('SHARED_FOLDER_PATH', '\\\\172.16.43.166\\Gift'),
+        ],
+
+
 
 
 

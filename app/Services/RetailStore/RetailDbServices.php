@@ -115,7 +115,7 @@ class RetailDbServices
 
     public function storeInStoreVerification($request, $data)
     {
-       return StoreVerification::create([
+        return StoreVerification::create([
             'vs_barcode' => $request->barcode,
             'vs_cn' => $request->customer,
             'vs_by' => $request->user()->user_id,
@@ -145,12 +145,12 @@ class RetailDbServices
         TransactionRevalidation::where('reval_barcode', $request->barcode)->update([
             'reval_revalidated' => '1',
         ]);
-
     }
     public function createtextfile($request, $data)
     {
 
-        $filePath = storage_path('app/public/cfstextfiles/' . $request->barcode . $data['tfilext']);
+        // $filePath = storage_path('app/public/cfstextfiles/' . $request->barcode . $data['tfilext']);
+        $filePath = '\\\172.16.43.166\\Gift\\' . $request->barcode . $data['tfilext'];
 
         $content = "000," . $request->customer . ",0," . $data['customer']->full_name . "\n";
         $content .= "001," . $data['denom'] . "\n";
@@ -171,13 +171,8 @@ class RetailDbServices
     }
     public function createtextfileSecondaryPath($request, $data)
     {
-        $username = 'Kenjey';
-        $password = 'ken';
 
-        exec('net use C: \\\172.16.42.143\\/username:' . $username . ' ' . $password . ' /');
-
-
-        $filePath = '\\\172.16.42.143\\Gift\\' . $request->barcode . $data['tfilext'];
+        $filePath = '\\\172.16.43.166\\Gift\\' . $request->barcode . $data['tfilext'];
 
         $content = "000," . $request->customer . ",0," . $data['customer']->full_name . "\n";
         $content .= "001," . $data['denom'] . "\n";

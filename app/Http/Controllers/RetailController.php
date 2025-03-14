@@ -45,6 +45,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -341,14 +342,42 @@ class RetailController extends Controller
 
     public function verificationIndex(Request $request)
     {
-        $data = $this->statusScanner->statusScanned($request);
+        $driveLetter = 'Z:'; // Specify a drive letter
+        $networkPath = '\\\\172.16.43.166\\Gift';
+        $username = '"New User"'; // Enclose in quotes if username contains spaces
+        $password = 'san'; // Enclose in quotes if password contains special characters
 
-        return inertia('Retail/Verification', [
-            'data' => $data->steps,
-            'success' => $data->success,
-            'notfound' => $data->barcodeNotFound,
-            'empty' => $data->empty,
-        ]);
+        // Unmap first to avoid conflicts
+        exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
+
+        // Map the drive
+        $command = "C:\\Windows\\System32\\net.exe use $driveLetter $networkPath /user:$username $password /persistent:yes 2>&1";
+
+        exec($command, $output, $return_var);
+
+        if ($return_var === 0) {
+
+            $data = $this->statusScanner->statusScanned($request);
+
+            return inertia('Retail/Verification', [
+                'data' => $data->steps,
+                'success' => $data->success,
+                'notfound' => $data->barcodeNotFound,
+                'empty' => $data->empty,
+            ]);
+        }else{
+            dd('Oppss eror');
+        }
+
+        // $data = $this->statusScanner->statusScanned($request);
+
+        // return inertia('Retail/Verification', [
+        //     'data' => $data->steps,
+        //     'success' => $data->success,
+        //     'notfound' => $data->barcodeNotFound,
+        //     'empty' => $data->empty,
+        // ]);
+
     }
 
     public function submitVerify(Request $request)
