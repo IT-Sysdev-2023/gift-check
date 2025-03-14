@@ -74,6 +74,7 @@ const columns = ref([
     {
         title: 'Date Purchased',
         dataIndex: 'vs_date',
+        customRender: ({text}) => dayjs(text).format('MMMM D, YYYY'),
     },
     {
         title: 'Barcode',
@@ -270,7 +271,7 @@ watchEffect(() => {
             <section class="mt-8 text-center text-gray-600">
                 <div>
                     <p class="text-gray-800 font-bold">Table showing billing reports per day</p>
-                    <a-table size="small" :data-source="data" :columns="columns" class="mt-4 w-full">
+                    <a-table size="small" :data-source="data" :columns="columns" class="mt-4">
                     </a-table>
                 </div>
             </section>

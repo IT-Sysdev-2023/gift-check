@@ -72,7 +72,7 @@ class BillingExcelReportPerDay implements FromArray, WithHeadings, WithStyles, S
         // Merge cells for title rows
         $sheet->mergeCells('A1:N1');
         $sheet->mergeCells('A2:N2');
-        $sheet->mergeCells('A3:N3'); 
+        $sheet->mergeCells('A3:N3');
 
         // Center align the merged cells
         $sheet->getStyle('A1:A3')->getAlignment()->setHorizontal('center');
