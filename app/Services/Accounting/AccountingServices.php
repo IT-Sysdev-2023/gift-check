@@ -29,7 +29,6 @@ class AccountingServices
             ->join('special_external_customer', 'spcus_id', '=', 'spexgc_company')
             ->join('users as reqby', 'user_id', '=', 'spexgc_reqby')
             ->where('spexgc_released', 'released')
-            ->whereNotIn('spexgc_payment_stat', ['whole', 'final'])
             ->orderByDesc('spexgc_num')
             ->paginate(10)
             ->withQueryString();
@@ -172,7 +171,7 @@ class AccountingServices
                 $item->subtotal = $item->dti_denoms * $item->dti_qty;
                 return $item;
             });
-            
+
             $item->total = NumberHelper::currency($q->sum('subtotal'));
 
             return $item;
