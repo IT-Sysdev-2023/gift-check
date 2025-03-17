@@ -39,6 +39,7 @@
         "laravel-precognition-vue": "^0.5.14",
         "laravel-precognition-vue-inertia": "^0.5.14",
         "lodash": "^4.17.21",
+        "lottie-web": "^5.12.2",
         "number-to-words": "^1.2.4",
         "pinia": "^2.3.1",
         "tailwindcss": "^3.4.17",

@@ -43,8 +43,7 @@ class EodController extends Controller
                 'columns' => ColumnHelper::$eod_columns,
             ]);
         } else {
-
-            
+            return inertia('ErrorInServer');
         }
     }
 
