@@ -1,4 +1,5 @@
 <template>
+
     <Head title="Add New Promo" />
     <a-card title="Add New Promo"></a-card>
     <a-row :gutter="[16, 16]" class="mt-5">
@@ -10,79 +11,40 @@
                             <a-input v-model:value="form.promoNo" readonly />
                         </a-form-item>
                         <a-form-item label="Date Created" name="dateCreated">
-                            <a-date-picker
-                                style="width: 100%"
-                                v-model:value="form.dateCreated"
-                                disabled
-                            />
+                            <a-date-picker style="width: 100%" v-model:value="form.dateCreated" disabled />
                         </a-form-item>
                         <a-form-item label="Draw Date" name="drawDate">
-                            <a-date-picker
-                                style="width: 100%"
-                                :disabled-date="disabledDate"
-                                v-model:value="form.drawDate"
-                            />
+                            <a-date-picker style="width: 100%" :disabled-date="disabledDate"
+                                v-model:value="form.drawDate" />
                         </a-form-item>
-                        <a-form-item
-                            label="Date Notified (Winners)"
-                            name="dateNotify"
-                        >
-                            <a-date-picker
-                                style="width: 100%"
-                                :disabled-date="disabledDate"
-                                v-model:value="form.dateNotify"
-                            />
+                        <a-form-item label="Date Notified (Winners)" name="dateNotify">
+                            <a-date-picker style="width: 100%" :disabled-date="disabledDate"
+                                v-model:value="form.dateNotify" />
                         </a-form-item>
                         <a-form-item label="Expiration Date" name="expiryDate">
-                            <a-date-picker
-                                style="width: 100%"
-                                v-model:value="form.expiryDate"
-                                disabled
-                            />
+                            <a-date-picker style="width: 100%" v-model:value="form.expiryDate" disabled />
                         </a-form-item>
                         <a-form-item label="Promo Group:" name="promoGroup">
-                            <a-select
-                                ref="select"
-                                placeholder="select"
-                                v-model:value="form.promoGroup"
-                                style="width: 100%"
-                            >
-                                <a-select-option value="1"
-                                    >Group 1</a-select-option
-                                >
-                                <a-select-option value="2"
-                                    >Group 2</a-select-option
-                                >
+                            <a-select ref="select" placeholder="select" v-model:value="form.promoGroup"
+                                style="width: 100%">
+                                <a-select-option value="1">Group 1</a-select-option>
+                                <a-select-option value="2">Group 2</a-select-option>
                             </a-select>
                         </a-form-item>
                         <a-form-item label="Promo Name:" name="promoName">
                             <a-input v-model:value="form.promoName" />
                         </a-form-item>
                         <a-form-item label="Details:" name="details">
-                            <a-textarea
-                                v-model:value="form.details"
-                                allow-clear
-                            />
+                            <a-textarea v-model:value="form.details" allow-clear />
                         </a-form-item>
                         <a-form-item label="Prepared By:" name="prepby">
-                            <a-input
-                                v-model:value="$page.props.auth.user.full_name"
-                                readonly
-                            />
-                            <a-input
-                                v-model:value="form.prepby"
-                                class="hidden"
-                            />
+                            <a-input v-model:value="$page.props.auth.user.full_name" readonly />
+                            <a-input v-model:value="form.prepby" class="hidden" />
                         </a-form-item>
                         <div>
                             <div class="flex justify-end">
                                 <a-form-item>
-                                    <a-button
-                                        @click="addPromo()"
-                                        type="primary"
-                                        html-type="submit"
-                                        >Submit</a-button
-                                    >
+                                    <a-button @click="addPromo()" type="primary" html-type="submit">Submit</a-button>
                                 </a-form-item>
                             </div>
                         </div>
@@ -94,30 +56,17 @@
             <a-card>
                 <a-card title="" :bordered="false">
                     <div>
-                        <a-table
-                            :dataSource="form.data"
-                            :columns="form.columns"
-                            :pagination="false"
-                            bordered
-                        >
+                        <a-table :dataSource="form.data" :columns="form.columns" :pagination="false" bordered>
                             <template #bodyCell="{ column, record }">
                                 <template v-if="column.key === 'denom_id'">
-                                    <a-input
-                                        readonly
-                                        :value="record.countDen"
-                                        style="width: 100px"
-                                    ></a-input>
+                                    <a-input readonly :value="record.countDen" style="width: 100px"></a-input>
                                 </template>
                             </template>
                         </a-table>
                     </div>
                     <a-space class="mt-2">
                         <div v-if="form.promoGroup !== null">
-                            <a-button
-                                @click="addGcModal(form.promoNo)"
-                                type="primary"
-                                ghost
-                            >
+                            <a-button @click="addGcModal(form.promoNo)" type="primary" ghost>
                                 <PlusOutlined /> Add GC
                             </a-button>
                         </div>
@@ -131,12 +80,7 @@
                                 </a-button>
                             </a-tooltip>
                         </div>
-                        <a-button
-                            @click="scannedGc"
-                            type="primary"
-                            danger
-                            ghost
-                        >
+                        <a-button @click="scannedGc" type="primary" danger ghost>
                             <BarcodeOutlined /> Scanned GC
                         </a-button>
                     </a-space>
@@ -145,79 +89,39 @@
         </a-col>
     </a-row>
 
-    <a-modal
-        v-model:open="open"
-        width="50%"
-        style="top: 65px"
-        :title="(title = 'GC Promo Validation ')"
-    >
+    <a-modal v-model:open="open" width="50%" style="top: 65px" :title="(title = 'GC Promo Validation ')">
         <a-flex justify="space-between" align="middle" style="margin-top: 40px">
             <a-form-item label="Promo No:" name="promoNo">
-                <a-input
-                    style="width: 50px"
-                    v-model:value="form.promoNo"
-                    readonly
-                />
+                <a-input style="width: 50px" v-model:value="form.promoNo" readonly />
             </a-form-item>
             <a-form-item label="Date:" name="date">
                 <a-date-picker v-model:value="form.dateCreated" readonly />
             </a-form-item>
             <a-form-item label="Group:" name="promoGroup">
-                <a-input
-                    style="width: 35px"
-                    v-model:value="form.promoGroup"
-                    readonly
-                />
+                <a-input style="width: 35px" v-model:value="form.promoGroup" readonly />
             </a-form-item>
-            <a-form-item
-                style="width: auto"
-                label="Scanned by:"
-                name="scannedBy"
-            >
-                <a-input
-                    style="width: auto"
-                    v-model:value="form.prepByName"
-                    readonly
-                />
+            <a-form-item style="width: auto" label="Scanned by:" name="scannedBy">
+                <a-input style="width: auto" v-model:value="form.prepByName" readonly />
             </a-form-item>
         </a-flex>
-        <a-input
-            v-model:value="form.barcode"
-            @keyup.enter="validateGc"
-            @input="updateDigitCount"
-            style="height: 100px; font-size: 90px"
-        />
+        <a-input v-model:value="form.barcode" @keyup.enter="validateGc" @input="updateDigitCount"
+            style="height: 100px; font-size: 90px" />
         <a-form-item class="mt-2" label="Input count:" name="promoGroup">
             <a-input style="width: 50px" :value="digitCount" readonly />
         </a-form-item>
         <template #footer>
             <a-button key="back" @click="handleCancel()">Cancel</a-button>
-            <a-button
-                key="submit"
-                type="primary"
-                :disabled="!form.barcode"
-                @click="validateGc()"
-            >
+            <a-button key="submit" type="primary" :disabled="!form.barcode" @click="validateGc()">
                 OK
             </a-button>
         </template>
     </a-modal>
 
-    <a-modal
-        v-model:open="scannedbarcodemodal"
-        title="Scanned GC"
-        @ok="handleOk"
-    >
-        <a-table
-            :dataSource="form.scannedGc"
-            :columns="form.scannedGccolumns"
-            bordered
-        >
+    <a-modal v-model:open="scannedbarcodemodal" title="Scanned GC" @ok="handleOk">
+        <a-table :dataSource="form.scannedGc" :columns="form.scannedGccolumns" bordered>
             <template #bodyCell="{ column, record }">
                 <div v-if="column.dataIndex === 'action'">
-                    <a-button @click="removeGc(record.tp_barcode)" danger
-                        >Remove</a-button
-                    >
+                    <a-button @click="removeGc(record.tp_barcode)" danger>Remove</a-button>
                 </div>
             </template>
         </a-table>
