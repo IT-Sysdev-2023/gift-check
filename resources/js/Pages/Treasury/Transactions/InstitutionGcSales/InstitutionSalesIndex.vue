@@ -1,5 +1,6 @@
 <template>
     <AuthenticatedLayout>
+
         <Head :title="title" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
@@ -9,192 +10,91 @@
         </a-breadcrumb>
 
         <a-card :title="title" class="mt-10">
-            <a-form
-                layout="vertical"
-                ref="formRef"
-                :model="formState"
-                :wrapper-col="{ span: 20 }"
-                @finish="onSubmit"
-            >
-                <!-- @finish="onSubmit" -->
+            <a-form layout="vertical" ref="formRef" :model="formState" :wrapper-col="{ span: 20 }" @finish="onSubmit">
                 <a-row>
-                    <a-col :span="8">
-                        <a-row>
-                            <a-col :span="12">
-                                <a-form-item label="Gc Releasing #:">
-                                    <a-input :value="releasingNo" readonly />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="12">
-                                <a-form-item label="Date Allocated:">
-                                    <a-date-picker
-                                        :value="currentDate"
-                                        disabled
-                                    />
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
+                    <a-col :span="12">
+                        <a-form-item label="Gc Releasing #:">
+                            <a-input :value="releasingNo" readonly />
+                        </a-form-item>
+                        <a-form-item label="Date Allocated:">
+                            <a-date-picker style="width: 100%;" :value="currentDate" disabled />
+                        </a-form-item>
+                        <a-form-item label="Received By:" name="rec" :validate-status="getErrorStatus('receivedBy')"
+                            :help="getErrorMessage('receivedBy')">
+                            <a-input v-model:value="formState.receivedBy" @input="
+                                () => formState.clearErrors('receivedBy')
+                            " />
+                        </a-form-item>
+                        <a-form-item label="Check By:" name="check" :validate-status="getErrorStatus('checkedBy')"
+                            :help="getErrorMessage('checkedBy')">
+                            <ant-select :options="checkBy" @handle-change="handleCheckedBy" />
+                        </a-form-item>
+                        <a-form-item label="Remarks:" name="re" :validate-status="getErrorStatus('remarks')"
+                            :help="getErrorMessage('remarks')">
+                            <a-textarea v-model:value="formState.remarks"
+                                @input="() => formState.clearErrors('remarks')" />
+                        </a-form-item>
+                        <a-form-item label="Customer:" name="cus" :validate-status="getErrorStatus('customer')
+                            " :help="getErrorMessage('customer')">
+                            <ant-select :options="customer" @handle-change="handleCustomer" />
+                        </a-form-item>
+                        <a-form-item label="Payment Fund:" name="fund" :validate-status="getErrorStatus('paymentFund')
+                            " :help="getErrorMessage('paymentFund')">
+                            <ant-select :options="paymentFund" @handle-change="handlePaymentFund" />
+                        </a-form-item>
 
-                        <a-form-item
-                            label="Received By:"
-                            name="rec"
-                            :validate-status="getErrorStatus('receivedBy')"
-                            :help="getErrorMessage('receivedBy')"
-                        >
-                            <a-input
-                                v-model:value="formState.receivedBy"
-                                @input="
-                                    () => formState.clearErrors('receivedBy')
-                                "
-                            />
-                        </a-form-item>
-                        <a-form-item
-                            label="Check By:"
-                            name="check"
-                            :validate-status="getErrorStatus('checkedBy')"
-                            :help="getErrorMessage('checkedBy')"
-                        >
-                            <ant-select
-                                :options="checkBy"
-                                @handle-change="handleCheckedBy"
-                            />
-                        </a-form-item>
-                        <a-form-item
-                            label="Remarks:"
-                            name="re"
-                            :validate-status="getErrorStatus('remarks')"
-                            :help="getErrorMessage('remarks')"
-                        >
-                            <a-textarea
-                                v-model:value="formState.remarks"
-                                @input="() => formState.clearErrors('remarks')"
-                            />
+                        <institution-select :formState="formState" :total="totalScannedDenomination"
+                            @handPaymentType="handlePaymentType" />
+                        <a-form-item label="Upload Document:" name="up">
+                            <ant-upload-multi-image @handle-change="handleDocumentChange" />
                         </a-form-item>
                     </a-col>
-                    <a-col :span="16">
-                        <a-row :gutter="16">
-                            <a-col :span="10">
-                                <a-form-item
-                                    label="Customer:"
-                                    name="cus"
-                                    :validate-status="
-                                        getErrorStatus('customer')
-                                    "
-                                    :help="getErrorMessage('customer')"
-                                >
-                                    <ant-select
-                                        :options="customer"
-                                        @handle-change="handleCustomer"
-                                    />
-                                </a-form-item>
-                                <a-form-item
-                                    label="Payment Fund:"
-                                    name="fund"
-                                    :validate-status="
-                                        getErrorStatus('paymentFund')
-                                    "
-                                    :help="getErrorMessage('paymentFund')"
-                                >
-                                    <ant-select
-                                        :options="paymentFund"
-                                        @handle-change="handlePaymentFund"
-                                    />
-                                </a-form-item>
+                    <a-col :span="12">
+                        <a-flex justify="space-between" align="center">
+                            <a-button @click="scanBarcode" type="primary" ghost>Scan Barcode</a-button>
+                            <a-form-item label="Total Denomination:" name="den">
+                                <a-input :value="currency(
+                                    totalScannedDenomination,
+                                )
+                                    " readonly />
+                            </a-form-item>
+                        </a-flex>
 
-                                <institution-select
-                                    :formState="formState"
-                                    :total="totalScannedDenomination"
-                                    @handPaymentType="handlePaymentType"
-                                />
-                                <a-form-item label="Upload Document:" name="up">
-                                    <ant-upload-multi-image
-                                        @handle-change="handleDocumentChange"
-                                    />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="14">
-                                <a-flex justify="space-between" align="center">
-                                    <a-button
-                                        @click="scanBarcode"
-                                        type="primary"
-                                        ghost
-                                        >Scan Barcode</a-button
-                                    >
-                                    <a-form-item
-                                        label="Total Denomination:"
-                                        name="den"
-                                    >
-                                        <a-input
-                                            :value="
-                                                currency(
-                                                    totalScannedDenomination,
-                                                )
-                                            "
-                                            readonly
-                                        />
-                                    </a-form-item>
-                                </a-flex>
-
-                                <a-table
-                                    bordered
-                                    :pagination="false"
-                                    :data-source="scannedBc.data"
-                                    :columns="tableColumns"
-                                >
-                                    <template #bodyCell="{ record, column }">
-                                        <template v-if="column.key == 'remove'">
-                                            <a-button
-                                                size="small"
-                                                danger
-                                                type="dashed"
-                                                :loading="
-                                                    barcodeRemoveLoading[
-                                                        record.barcode
-                                                    ]
-                                                "
-                                                @click="
-                                                    removeBarcode(
-                                                        record.barcode,
-                                                    )
-                                                "
-                                            >
-                                                <template #icon>
-                                                    <CloseOutlined />
-                                                </template>
-                                                Remove</a-button
-                                            >
+                        <a-table bordered :pagination="false" :data-source="scannedBc.data" :columns="tableColumns">
+                            <template #bodyCell="{ record, column }">
+                                <template v-if="column.key == 'remove'">
+                                    <a-button size="small" danger type="dashed" :loading="barcodeRemoveLoading[
+                                        record.barcode
+                                    ]
+                                        " @click="
+                                            removeBarcode(
+                                                record.barcode,
+                                            )
+                                            ">
+                                        <template #icon>
+                                            <CloseOutlined />
                                         </template>
-                                    </template>
-                                </a-table>
-                                <pagination-axios
-                                    :datarecords="scannedBc"
-                                    @on-pagination="onPaginate"
-                                />
+                                        Remove</a-button>
+                                </template>
+                            </template>
+                        </a-table>
+                        <pagination-axios :datarecords="scannedBc" @on-pagination="onPaginate" />
+                        <div>
+                            <div class="flex justify-end">
                                 <a-form-item class="mt-5">
-                                    <a-button type="primary" html-type="submit"
-                                        >Submit</a-button
-                                    >
+                                    <a-button type="primary" html-type="submit">Submit</a-button>
                                 </a-form-item>
-                            </a-col>
-                        </a-row>
+                            </div>
+                        </div>
                     </a-col>
                 </a-row>
             </a-form>
         </a-card>
 
         <scan-modal-institution v-model:open="openScanModal" />
-        <a-modal
-            v-model:open="openIframe"
-            style="width: 70%; top: 50px"
-            :footer="null"
-            :afterClose="() => router.get(route('treasury.dashboard'))"
-        >
-            <iframe
-                class="mt-7"
-                :src="stream"
-                width="100%"
-                height="600px"
-            ></iframe>
+        <a-modal v-model:open="openIframe" style="width: 70%; top: 50px" :footer="null"
+            :afterClose="() => router.get(route('treasury.dashboard'))">
+            <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
         </a-modal>
     </AuthenticatedLayout>
 </template>
