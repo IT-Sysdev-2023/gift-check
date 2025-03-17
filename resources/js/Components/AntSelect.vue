@@ -2,7 +2,7 @@
     <a-select
         v-model:value="value"
         show-search
-        placeholder="Select an item"
+        :placeholder="placeholderLabel"
         :options="options"
         :filter-option="filterOption"
         @change="handleChange"
@@ -19,6 +19,7 @@ const emit = defineEmits<{
     (e: "onFocus"): void;
 }>();
 const props = defineProps<{
+    placeholderLabel: string,
     options: {
         value: number;
         label: string;

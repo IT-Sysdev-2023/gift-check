@@ -29,8 +29,9 @@
                         >
                             <ant-select
                                 :options="stores"
-                                placehoder=" Select Store"
-                                color :gray;
+                                placeholderLabel="Select Store"
+                                class="text-red-700"
+                                style="color: blue;"
                                 @handle-change="handleStoreChange"
                             />
                         </a-form-item>

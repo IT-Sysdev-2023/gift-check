@@ -16,7 +16,7 @@
                     <a-input-search
                         class="mr-1"
                         v-model:value="form.search"
-                        placeholder="Search here..."
+                        placeholder="Search Customer..."
                         style="width: 300px"
                     />
                     <a-button type="primary" @click="visible = true">

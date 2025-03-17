@@ -1,7 +1,7 @@
 <template>
     <AuthenticatedLayout>
         <Head :title="title" />
-        <a-breadcrumb style="margin: 15px 0">
+        <a-breadcrumb style="margin: 10px 0">
             <a-breadcrumb-item>
                 <Link :href="route(dashboardRoute)">Home</Link>
             </a-breadcrumb-item>
@@ -16,7 +16,7 @@
                     <a-input-search
                         class="mr-1"
                         v-model:value="form.search"
-                        placeholder="Search here..."
+                        placeholder="Search Customer..."
                         style="width: 300px"
                     />
                     <a-button type="primary" @click="visible = true">
