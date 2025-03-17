@@ -2,6 +2,7 @@
 
 namespace App\Services\Eod;
 
+use App\Events\EodProcessEvent;
 use App\Helpers\NumberHelper;
 use App\Http\Resources\EodListDetailResources;
 use App\Models\Store;
@@ -10,6 +11,7 @@ use App\Models\StoreEodItem;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
 use App\Services\Documents\FileHandler;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -101,8 +103,10 @@ class EodServices extends FileHandler
             $notFoundGC = [];
 
             $error = false;
+            $sfiles = 1;
+            $allf = $store->count();
 
-            $store->each(function ($item) use (&$txtfiles_temp, &$notFoundGC, &$error) {
+            $store->each(function ($item) use (&$txtfiles_temp, &$notFoundGC, &$error, &$sfiles, $allf) {
 
                 // $ip = $this->getStoreIp($item->vs_store);
                 $ip = '\\\172.16.43.166\Gift\\';
@@ -137,12 +141,14 @@ class EodServices extends FileHandler
                             'txtfile_ip' => $ip,
                             'payto' => $item->vs_payto
                         ];
-
                     } else {
                         $notFoundGC[] = $item->vs_tf;
                         $error = true;
                     }
                 }
+
+                EodProcessEvent::dispatch("Scanning Barcodes Please Wait...", $sfiles++, $allf, Auth::user());
+
             });
 
 
@@ -155,7 +161,11 @@ class EodServices extends FileHandler
                 ]);
             }
 
-            $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss) {
+            $cFiles = 1;
+
+            $allFiles = $txtfiles_temp->count();
+
+            $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss, &$cFiles, $allFiles) {
 
                 if ($item['payto'] == '') {
 
@@ -290,6 +300,8 @@ class EodServices extends FileHandler
                         ];
                     }
                 }
+
+                EodProcessEvent::dispatch("End of date is now in progress please wait ... ", $cFiles++, $allFiles, Auth::user());
             });
         }
         if ($rss) {

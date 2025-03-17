@@ -1,6 +1,21 @@
 <template>
     <AuthenticatedLayout>
         <a-card>
+            <div v-if="isGenerating">
+                <div class="flex justify-between">
+                    <div>
+                        <a-typography-text keyboard>{{ progressBar?.message }}</a-typography-text>
+                    </div>
+                    <div>
+                        {{ progressBar?.currentRow }} to {{ progressBar?.totalRows }}
+                    </div>
+                </div>
+                <a-progress :stroke-color="{
+                    from: '#108ee9',
+                    to: '#87d068',
+                }" :percent="progressBar?.percentage" status="done" :size="[10, 20]" />
+
+            </div>
             <div v-if="response.length" class="mb-4">
                 <div>
                     <InfoCircleOutlined style="color: red" />
@@ -8,10 +23,9 @@
                 </div>
                 <a-collapse v-model:activeKey="activeKey" ghost>
                     <a-collapse-panel key="1" :header="activeKey == '0'
-                            ? 'Expand this to see the not found barcodes'
-                            : 'Click here to hide the barcodes'
+                        ? 'Expand this to see the not found barcodes'
+                        : 'Click here to hide the barcodes'
                         " style="color: white">
-                        <a-card>
                             <a-divider style="font-size: 14px; color: red">There are {{ response.length }} Barcodes not
                                 found!</a-divider>
                             <div class="scroll-container">
@@ -20,12 +34,12 @@
                                         }}</a-timeline-item>
                                 </a-timeline>
                             </div>
-                        </a-card>
                     </a-collapse-panel>
                 </a-collapse>
             </div>
             <div class="flex justify-end">
-                <a-button size="large" type="dashed"  style="width: 100%; height: 80px;" class="mb-10" @click="submit" v-if="record.data.length">
+                <a-button size="large" :loading="isGenerating" type="dashed" block class="mb-10 mt-10" @click="submit"
+                    v-if="record.data.length">
                     <template #icon>
                         <SettingOutlined />
                     </template>
@@ -39,7 +53,6 @@
                     </template>
                 </template>
             </a-table>
-
             <pagination :datarecords="record" class="mt-5" />
         </a-card>
     </AuthenticatedLayout>
@@ -47,21 +60,36 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router } from "@inertiajs/core";
+import { usePage } from "@inertiajs/vue3";
 import { notification } from "ant-design-vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import CheckBarocde from "./Partials/CheckBarocde.vue";
 const props = defineProps({
     record: Object,
     columns: Array,
 });
 
+const page = usePage().props;
+
 const response = ref({});
 const activeKey = ref("0");
+const progressBar = ref();
+const isGenerating = ref(false);
 
 const submit = () => {
+    progressBar.value = [];
+    response.value = [];
     router.get(
         route("eod.process"),
         {},
         {
+            onStart: () => {
+                window.Echo.private(`process-eod.${page.auth.user.user_id}`)
+                    .listen(".start-processing-eod", (e) => {
+                        progressBar.value = e;
+                    });
+                isGenerating.value = true;
+            },
             onSuccess: (res) => {
                 notification[res.props.flash.status]({
                     message: res.props.flash.title,
@@ -69,12 +97,15 @@ const submit = () => {
                 });
                 if (res.props.flash.data) {
                     response.value = res.props.flash.data;
+                    isGenerating.value = false;
                 }
             },
             preserveState: true,
         },
     );
 };
+
+
 </script>
 
 <style scoped>

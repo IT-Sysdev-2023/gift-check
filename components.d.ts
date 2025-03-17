@@ -177,6 +177,8 @@ declare module 'vue' {
     Cancelledspexgc: typeof import('./resources/js/Pages/Marketing/specialgc/Cancelledspexgc.vue')['default']
     Card: typeof import('./resources/js/Components/Card.vue')['default']
     CardBadge: typeof import('./resources/js/Components/CardBadge.vue')['default']
+    CheckBarocde: typeof import('./resources/js/Pages/Eod/Partials/CheckBarocde.vue')['default']
+    CheckBarocdes: typeof import('./resources/js/Pages/Eod/Partials/CheckBarocdes.vue')['default']
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']
     CheckCashJvPayment: typeof import('./resources/js/Components/Treasury/CheckCashJvPayment.vue')['default']
     CheckCircleFilled: typeof import('@ant-design/icons-vue')['CheckCircleFilled']
