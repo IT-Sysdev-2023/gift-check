@@ -524,7 +524,7 @@ class CustodianServices extends FileHandler
             $item->pe_date_request_tran = Date::parse($item->pe_date_request)->toFormattedDateString();
             $item->ape_approved_at_tran = Date::parse($item->ape_approved_at)->toFormattedDateString();
             $item->reqby = Str::ucfirst($item->firstname) . ' ' . Str::ucfirst($item->lastname);
-
+            $item->appby = User::select('firstname', 'lastname')->where('user_id', $item->ape_approved_by)->value('full_name');
             return $item;
         });
 
@@ -565,12 +565,14 @@ class CustodianServices extends FileHandler
 
     private function approved($id)
     {
-        return ProductionRequest::selectFilterApproved()
+        $d = ProductionRequest::selectFilterApproved()
             ->join('approved_production_request', 'ape_pro_request_id', '=', 'pe_id')
             ->join('users as reqby', 'reqby.user_id', '=', 'pe_requested_by')
             ->join('users as appby', 'appby.user_id', '=', 'ape_preparedby')
+            ->join('users as cby', 'cby.user_id', '=', 'ape_checked_by')
             ->where('pe_id', $id)
             ->first();
+        return $d;
     }
 
     public function getBarcodeApprovedDetails($request, $id)
