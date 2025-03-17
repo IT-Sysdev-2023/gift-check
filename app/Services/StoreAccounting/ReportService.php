@@ -25,6 +25,7 @@ class ReportService
     public function verifiedGcYearlySubmit(Request $request)
     {
         $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
+        // dd($isExists);
 
         $isMonthtly = isset($request->month) ? $request->month : null;
 
@@ -73,9 +74,7 @@ class ReportService
                 }
 
             } else { //LOCAL
-
                 if (ReportsHelper::checkLocalDbBillingReport($request->selectedStore, $request->year, $isMonthtly, self::LOCAL_DB)) {
-
                     StoreGcPurchasedReport::dispatch($request->all(), self::LOCAL_DB);
 
                 } else {
@@ -102,7 +101,6 @@ class ReportService
             $isExists = Store::where([['has_local', 1], ['store_id', $request->selectedStore]])->exists();
 
             if ($isExists) { //OTHER SERVER
-
                 if (ReportsHelper::checkRedeemReport(self::REMOTE_SERVER_DB, $request->selectedStore, $request->year, $isMonthtly)) {
 
                     SpgcRedeemReport::dispatch($request->all(), self::REMOTE_SERVER_DB);
@@ -147,40 +145,41 @@ class ReportService
         if ($dataType === 'store-sales') {
 
             $isExists = Store::where([['has_local', 1], ['store_id', $store]])->exists();
+            // dd($isExists);
 
             if ($isExists) { //Remote server
 
-
                 $records = ReportsHelper::checkBillingReportPerDayRemote($store, $date, self::REMOTE_SERVER_DB);
+                // dd($records);
                 if (!$records->isEmpty()) {
                     return response()->json([
                         'success' => true,
-                        'message' => 'Records found on this date selected from remote server',
+                        'message' => 'Records found on ' . $date . '',
                         'data' => $records,
                         'count' => $records->count()
                     ]);
                 }
                 return response()->json([
                     'error' => true,
-                    'message' => 'No records found on this date selected from remote server'
+                    'message' => 'No records found on ' . $date
                 ]);
             }
             // proceed to local server if $isExists is false
             else {
                 $records = ReportsHelper::checkBillingReportPerDayLocal($store, $date, self::LOCAL_DB);
-
+                // dd($records);
                 if (!$records->isEmpty()) {
 
                     return response()->json([
                         'success' => true,
-                        'message' => 'Records found on this date selected from local server',
+                        'message' => 'Record found on  ' . $date . '',
                         'data' => $records,
                         'count' => $records->count()
                     ]);
                 }
                 return response()->json([
                     'error' => true,
-                    'message' => 'No records found on this date selected from local server'
+                    'message' => 'No records found on ' . $date
                 ]);
             }
         }
@@ -189,6 +188,7 @@ class ReportService
             'message' => 'No records found on both server'
         ]);
     }
+
 }
 
 

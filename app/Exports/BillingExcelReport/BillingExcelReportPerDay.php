@@ -15,7 +15,9 @@ class BillingExcelReportPerDay implements FromArray, WithHeadings, WithStyles, S
 
     public function __construct($request)
     {
+        // dd($this->BillingExcelReportPerDay = $request['data'] ?? []);
         $this->BillingExcelReportPerDay = $request['data'] ?? [];
+
         $this->dateSelected = $request['date'] ?? 'N/A';
     }
 
@@ -49,7 +51,7 @@ class BillingExcelReportPerDay implements FromArray, WithHeadings, WithStyles, S
     {
         return array_map(function ($item) {
             return [
-                $item['vs_date'] ?? '',
+                $item['full_date'] ?? '',
                 $item['seodtt_barcode'] ?? '',
                 $item['vs_tf_denomination'] ?? '',
                 $item['seodtt_credpuramt'] ?? '',
@@ -72,7 +74,7 @@ class BillingExcelReportPerDay implements FromArray, WithHeadings, WithStyles, S
         // Merge cells for title rows
         $sheet->mergeCells('A1:N1');
         $sheet->mergeCells('A2:N2');
-        $sheet->mergeCells('A3:N3'); 
+        $sheet->mergeCells('A3:N3');
 
         // Center align the merged cells
         $sheet->getStyle('A1:A3')->getAlignment()->setHorizontal('center');

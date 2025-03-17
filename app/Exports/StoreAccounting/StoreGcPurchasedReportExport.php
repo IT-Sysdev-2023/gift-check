@@ -115,6 +115,7 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
 
     public function query()
     {
+        // local server
         if ($this->isLocal) {
 
             return $this->database->table('store_eod_textfile_transactions')
@@ -128,7 +129,7 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
                 store_verification.vs_store,
                 customers.cus_fname,
                 customers.cus_lname,
-                customers.cus_mname,   
+                customers.cus_mname,
                 customers.cus_namext,
                 store_verification.vs_tf_balance,
                 store_verification.vs_gctype,
@@ -145,6 +146,8 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
                 ->whereRaw('stores.store_initial <> SUBSTRING(store_eod_textfile_transactions.seodtt_bu, 1, 5)')
                 ->orderBy('trans_sid')
                 ->get();
+
+                    // remote server
         } else {
 
             return $this->database->table('store_eod_textfile_transactions')
@@ -158,7 +161,7 @@ class StoreGcPurchasedReportExport extends Progress implements FromCollection, S
                 store_verification.vs_store,
                 customers.cus_fname,
                 customers.cus_lname,
-                customers.cus_mname,   
+                customers.cus_mname,
                 customers.cus_namext,
                 store_verification.vs_tf_balance,
                 store_verification.vs_gctype,
