@@ -4,7 +4,7 @@
             RELEASE GC REPORTS
         </span>
         <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc">
-            <a-tabs>
+            <a-tabs type="card">
                 <a-tab-pane key="1">
                     <template #tab>
                         <span style="font-weight: bold">
@@ -30,15 +30,6 @@
                             </div>
                         </div>
 
-                        <!-- <div class="input-wrapper">
-                            <input
-                                type="search"
-                                placeholder="Input search here..."
-                                name="text"
-                                class="input"
-                                v-model="pdfPerCustomerSearch"
-                            />
-                        </div> -->
                         <span style="font-weight: bold; margin-left: 60%">
                             <a-input-search allow-clear v-model:value="pdfPerCustomerSearch" enter-button
                                 placeholder="Input search here!" style="width: 35%" />
@@ -57,14 +48,17 @@
                                 Table showing PDF per customer
                             </span>
                         </div>
-                        <div style="margin-top: 20px">
+                        <div style="margin-top: 20px" v-if="data.pdfPerCustomer.data.length > 0">
                             <a-table :columns="pdfPerCustomer" :data-source="data.pdfPerCustomer.data"
                                 :pagination="false" size="small">
                             </a-table>
                             <pagination :datarecords="data.pdfPerCustomer" class="mt-5" />
                         </div>
+                        <div v-else>
+                            <a-empty />
+                        </div>
                     </a-card>
-                    <span style="font-weight: bold; margin-left: 80%">
+                    <span style="font-weight: bold; margin-left: 80%" v-if="data.pdfPerCustomer.data.length > 0">
                         <a-button @click="perCustumerPdf" style="background-color: #b22222; color: white">
                             <FilePdfOutlined />
                             Generate PDF
@@ -97,15 +91,6 @@
                             </div>
                         </div>
 
-                        <!-- <div class="input-wrapper">
-                            <input
-                                type="search"
-                                placeholder="Input search here..."
-                                name="text"
-                                class="input"
-                                v-model="pdfPerBarcodeSearch"
-                            />
-                        </div> -->
                         <span style="font-weight: bold; margin-left: 60%">
                             <a-input-search allow-clear v-model:value="pdfPerBarcodeSearch" enter-button
                                 placeholder="Input search here!" style="width: 35%" />
@@ -123,14 +108,17 @@
                                 Table showing PDF per barcode
                             </span>
                         </div>
-                        <div style="margin-top: 20px">
+                        <div style="margin-top: 20px" v-if="data.pdfPerBarcode.data.length > 0">
                             <a-table :columns="pdfPerBarcode" :data-source="data.pdfPerBarcode.data" :pagination="false"
                                 size="small">
                             </a-table>
                             <pagination :datarecords="data.pdfPerBarcode" class="mt-5" />
                         </div>
+                        <div v-else>
+                            <a-empty />
+                        </div>
                     </a-card>
-                    <span style="font-weight: bold; margin-left: 80%">
+                    <span style="font-weight: bold; margin-left: 80%" v-if="data.pdfPerBarcode.data.length > 0">
                         <a-button @click="perCustumerPdf" style="background-color: #b22222; color: white">
                             <FilePdfOutlined />
                             Generate PDF
@@ -188,14 +176,17 @@
                                 Table showing EXCEL per customer
                             </span>
                         </div>
-                        <div style="margin-top: 20px">
+                        <div style="margin-top: 20px" v-if="data.dataCustomer.data.length > 0">
                             <a-table :columns="perCustomerReleaseTable" :data-source="data.dataCustomer.data"
                                 :pagination="false" size="small">
                             </a-table>
                             <pagination :datarecords="data.dataCustomer" class="mt-5" />
                         </div>
+                        <div v-else>
+                            <a-empty />
+                        </div>
                     </a-card>
-                    <span style="font-weight: bold; margin-left: 80%">
+                    <span style="font-weight: bold; margin-left: 80%" v-if="data.dataCustomer.data.length > 0">
                         <a-button @click="perCustomerExcel" style="background-color: green; color: white">
                             <FileExcelOutlined />
                             Generate EXCEL
@@ -255,14 +246,17 @@
                                 Table showing EXCEL per barcode
                             </span>
                         </div>
-                        <div style="margin-top: 20px">
+                        <div style="margin-top: 20px" v-if="data.dataBarcode.data.length > 0">
                             <a-table :columns="perBarcodeReleaseTable" :data-source="data.dataBarcode.data"
                                 :pagination="false" size="small">
                             </a-table>
                             <pagination :datarecords="data.dataBarcode" class="mt-5" />
                         </div>
+                        <div v-else>
+                            <a-empty />
+                        </div>
                     </a-card>
-                    <span style="font-weight: bold; margin-left: 80%">
+                    <span style="font-weight: bold; margin-left: 80%" v-if="data.dataBarcode.data.length > 0">
                         <a-button @click="perCustomerExcel" style="background-color: green; color: white">
                             <FileExcelOutlined />
                             Generate EXCEL

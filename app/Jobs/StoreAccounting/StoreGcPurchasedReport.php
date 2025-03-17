@@ -41,7 +41,7 @@ class StoreGcPurchasedReport implements ShouldQueue
         $label = isset($this->request['month']) ? $this->monthToName() : $this->request['year'];
 
         $db = DatabaseConnectionService::getLocalConnection($this->local, $this->request['selectedStore']);
-       
+
         $doc = new StoreGcPurchasedReportExport($db, $this->request, $this->local, $this->user);
         (new ExportHandler())
             ->setFolder('Reports')

@@ -15,7 +15,9 @@ class BillingExcelReportPerDay implements FromArray, WithHeadings, WithStyles, S
 
     public function __construct($request)
     {
+        // dd($this->BillingExcelReportPerDay = $request['data'] ?? []);
         $this->BillingExcelReportPerDay = $request['data'] ?? [];
+
         $this->dateSelected = $request['date'] ?? 'N/A';
     }
 
@@ -49,7 +51,7 @@ class BillingExcelReportPerDay implements FromArray, WithHeadings, WithStyles, S
     {
         return array_map(function ($item) {
             return [
-                $item['vs_date'] ?? '',
+                $item['full_date'] ?? '',
                 $item['seodtt_barcode'] ?? '',
                 $item['vs_tf_denomination'] ?? '',
                 $item['seodtt_credpuramt'] ?? '',

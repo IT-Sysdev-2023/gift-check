@@ -26,23 +26,6 @@ const count = ref(0);
 
 const submitButton = async () => {
     form.errors = {};
-
-    const requiredFields = {
-        dataType: 'Data type field is required',
-        storeSelected: 'Store field is required',
-        dateSelected: 'Date field is required',
-    };
-
-    Object.entries(requiredFields).forEach(([field, message]) => {
-        if (!form[field]) {
-            form.errors[field] = message;
-        }
-    });
-
-    if (Object.keys(form.errors).length > 0) {
-        return;
-    }
-
     try {
         const formattedDate = dayjs(form.dateSelected).format('YYYY-MM-DD');
         const response = await axios.post(route('storeaccounting.billingReportPerDay'), {
@@ -57,24 +40,42 @@ const submitButton = async () => {
                 description: response.data.message
             });
         }
-        if (response.data.error) {
+        else if (response.data.error) {
             notification.error({
                 description: response.data.message
             });
         }
     } catch (error) {
-        console.error('Failed to submit', error);
-        notification.error({
-            description: 'Failed to submit the form. Please try again.',
-        });
-    }
-};
+        console.error('Failed', error);
 
+        if (error.response) {
+            if (error.response.status === 422) {
+                form.errors = error.response.data.errors;
+                notification.error({
+                    description: 'Validation failed. Please check the form.'
+                });
+            }
+            else if (error.response.data.message) {
+                notification.error({
+                    description: error.response.data.message
+                });
+            }
+            else {
+                notification.error({
+                    description: `Error ${error.response.status}: ${error.response.statusText}`
+                });
+            }
+        } else {
+            notification.error({
+                description: 'Failed, please try again.'
+            });
+        }
+    }
+}
 const columns = ref([
     {
         title: 'Date Purchased',
-        dataIndex: 'vs_date',
-        customRender: ({text}) => dayjs(text).format('MMMM D, YYYY'),
+        dataIndex: 'full_date',
     },
     {
         title: 'Barcode',
@@ -149,7 +150,7 @@ const generateExcel = async () => {
             try {
                 loadingEffect.value = true;
                 progressPercent.value = 0;
-                const formatted = dayjs(form.dateSelected).format('YYYY-MM-DD');
+                const formatted = dayjs(form.dateSelected).format('MMMM D, YYYY');
                 const response = await axios.post(route('storeaccounting.reports.generateBillingPerDayReport'), {
                     date: formatted,
                     data: data.value
