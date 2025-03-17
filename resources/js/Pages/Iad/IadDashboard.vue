@@ -11,11 +11,7 @@
             </a-col>
             <a-col :span="8">
                 <i-card class="uppercase" revrecLabel="Gc Received" rRoute="iad.view.received" aRoute="iad.receiving"
-<<<<<<< HEAD
-                    approvedLabel="Gc Receiving" title="internal gc" 
-=======
                     approvedLabel="Gc Receiving" title="internal gc" :approved="count.countReceiving"
->>>>>>> 9bb6274e2d6dc4412959eb2187d3c9e8e0b0d2c3
                     :recrev="count.reviewedCount" />
             </a-col>
             <a-col :span="8">
