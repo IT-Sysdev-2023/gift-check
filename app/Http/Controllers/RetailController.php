@@ -69,6 +69,7 @@ class RetailController extends Controller
             'approved' => $counts['approved'],
         ];
 
+
         $getAvailableGc = $this->retail->getAvailableGC();
 
         $soldGc = StoreReceivedGc::where('strec_storeid', $request->user()->store_assigned)
@@ -365,8 +366,8 @@ class RetailController extends Controller
                 'notfound' => $data->barcodeNotFound,
                 'empty' => $data->empty,
             ]);
-        }else{
-            dd('Oppss eror');
+        } else {
+            return inertia('ErrorInServer');
         }
 
         // $data = $this->statusScanner->statusScanned($request);
