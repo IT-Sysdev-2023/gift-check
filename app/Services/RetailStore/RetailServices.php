@@ -32,7 +32,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class RetailServices
 {
-    public function __construct(public RetailDbServices $dbservices) {}
+    public function __construct(public RetailDbServices $dbservices)
+    {
+    }
     public function getDataApproved()
     {
         $data = ApprovedGcrequest::select(
@@ -55,7 +57,7 @@ class RetailServices
             ->leftJoin('users', 'users.user_id', '=', 'approved_gcrequest.agcr_approvedby')
             ->orderByDesc('agcr_request_relnum')
             ->paginate(10)->withQueryString();
-            // dd( $data);
+        // dd( $data);
 
         $data->transform(function ($item) {
             $item->spgc_date_request = Date::parse($item->storeGcRequest->sgc_date_request)->toFormattedDateString();
@@ -83,7 +85,13 @@ class RetailServices
         $store = StoreReceived::where('srec_store_id', $request->user()->store_assigned)
             ->where('srec_receivingtype', 'treasury releasing')
             ->orderByDesc('srec_recid')
-            ->first()->srec_recid + 1;
+            ->first();
+
+        if ($store) {
+            $store = $store->srec_recid + 1;
+        } else {
+            $store = 1;
+        }
 
         // dd($store);
 
@@ -256,11 +264,23 @@ class RetailServices
             ->where('trec_store', $request->user()->store_assigned)
             ->where('trec_by', $request->user()->user_id)->get();
 
-        $lastIdRecnum = StoreReceived::orderByDesc('srec_id')->first()->srec_id + 1;
+        $lastIdRecnum = StoreReceived::orderByDesc('srec_id')->first();
+
+        if ($lastIdRecnum) {
+            $lastIdRecnum = $lastIdRecnum->srec_id + 1;
+        } else {
+            $lastIdRecnum = 1;
+        }
 
         $lnumber = LedgerCheck::orderByDesc('cledger_id')->first()->cledger_no;
 
-        $sledger_no = LedgerStore::where('sledger_store', $request->user()->store_assigned)->orderByDesc('sledger_no')->first()->sledger_no;
+        $sledger_no = LedgerStore::where('sledger_store', $request->user()->store_assigned)->orderByDesc('sledger_no')->first();
+
+        if ($sledger_no) {
+            $sledger_no = $sledger_no->sledger_no;
+        } else {
+            $sledger_no = 1;
+        }
 
         $storeName = Store::where('store_id', $request->user()->store_assigned)->first()->store_name;
 
@@ -314,7 +334,7 @@ class RetailServices
             }
             if (
                 StoreReceivedGc::where('strec_barcode', $request->barcode)
-                ->where('strec_sold', '*')->where('strec_return', '')->exists()
+                    ->where('strec_sold', '*')->where('strec_return', '')->exists()
             ) {
                 $found = true;
                 $gctype = 1;
@@ -380,7 +400,8 @@ class RetailServices
                     'msg' => 'Barcode Not found.',
                 ]);
             }
-        };
+        }
+        ;
 
         if (!$found) {
 
