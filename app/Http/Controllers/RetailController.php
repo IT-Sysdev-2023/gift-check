@@ -370,15 +370,6 @@ class RetailController extends Controller
             return inertia('ErrorInServer');
         }
 
-        // $data = $this->statusScanner->statusScanned($request);
-
-        // return inertia('Retail/Verification', [
-        //     'data' => $data->steps,
-        //     'success' => $data->success,
-        //     'notfound' => $data->barcodeNotFound,
-        //     'empty' => $data->empty,
-        // ]);
-
     }
 
     public function submitVerify(Request $request)
