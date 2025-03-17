@@ -53,25 +53,27 @@
 
             </a-col>
             <a-col :span="8">
-                <a-card size="small" :title="'Online Users - '+ getOnlineUsers?.length">
-                    <a-list size="small" item-layout="horizontal" :data-source="getOnlineUsers">
-                        <template #renderItem="{ item }">
-                            <a-list-item>
-                                <a-list-item-meta>
-                                    <template #avatar>
-                                        <a-avatar :src="item.image" />
-                                    </template>
-                                    <template #title>
-                                        {{ item.name }}
-                                    </template>
-                                    <template #description>
-                                        <small > {{ item.usertype }}</small>
-                                    </template>
-                                </a-list-item-meta>
-                                <a-tag color="green">Online</a-tag>
-                            </a-list-item>
-                        </template>
-                    </a-list>
+                <a-card size="small" :title="'Online Users - ' + getOnlineUsers?.length">
+                    <div class="scrollable-list">
+                        <a-list size="small" item-layout="horizontal" :data-source="getOnlineUsers">
+                            <template #renderItem="{ item }">
+                                <a-list-item>
+                                    <a-list-item-meta>
+                                        <template #avatar>
+                                            <a-avatar src="/images/dog.webp" />
+                                        </template>
+                                        <template #title>
+                                            {{ item.name }}
+                                        </template>
+                                        <template #description>
+                                            <small>{{ item.usertype }}</small>
+                                        </template>
+                                    </a-list-item-meta>
+                                    <a-tag color="green">Online</a-tag>
+                                </a-list-item>
+                            </template>
+                        </a-list>
+                    </div>
                 </a-card>
             </a-col>
         </a-row>
@@ -204,6 +206,19 @@ const chartOptions = computed(() => ({
 .card-hover {
     transition: transform 0.2s ease;
     cursor: pointer;
+}
+
+.scrollable-list {
+    max-height: 300px;
+    /* Adjust the height as needed */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    border: 1px solid #f0f0f0;
+    /* Optional: Add a border for better visibility */
+    border-radius: 4px;
+    /* Optional: Add border radius */
+    padding: 8px;
+    /* Optional: Add padding */
 }
 
 .card-hover:hover {
