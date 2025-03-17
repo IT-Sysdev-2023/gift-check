@@ -3,50 +3,80 @@
         <div>
             <h2>Masterfile</h2>
         </div>
-        <div
-            style="display: flex; margin-top: 1rem; justify-content: center; align-items: center; flex-direction: column; ">
-            <a-form-item>
-                <a-button @click="() => $inertia.get(route('admin.masterfile.users'))" class="buttons">
-                    <UserOutlined /> Setup Users
-                </a-button>
+        <a-row :gutter="[16, 16]">
+            <a-col :span="16">
+                <a-row :gutter="[16, 16]">
+                    <a-col :span="8">
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.users'))" class="buttons">
+                            <UserOutlined /> Setup Users
+                        </a-button>
 
-                <a-button @click="() => $inertia.get(route('admin.masterfile.store.staff'))" class="buttons">
-                    <AppstoreAddOutlined /> Setup Store Staff
-                </a-button>
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.store.staff'))" class="buttons">
+                            <AppstoreAddOutlined /> Setup Store Staff
+                        </a-button>
 
-                <a-button @click="() => $inertia.get(route('admin.masterfile.customer.setup'))" class="buttons">
-                    <CustomerServiceOutlined /> Setup Customer
-                </a-button>
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.customer.setup'))" class="buttons">
+                            <CustomerServiceOutlined /> Setup Customer
+                        </a-button>
+                    </a-col>
+                    <a-col :span="8">
 
-                <a-button @click="() => $inertia.get(route('admin.masterfile.setupStore'))" class="buttons">
-                    <AppstoreFilled /> Setup Store
-                </a-button>
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.creditCardSetup'))"
+                            class="buttons">
+                            <CreditCardFilled /> Setup Credit Card
+                        </a-button>
 
-                <a-button @click="() => $inertia.get(route('admin.masterfile.creditCardSetup'))" class="buttons">
-                    <CreditCardFilled /> Setup Credit Card
-                </a-button>
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.denominationSetup'))"
+                            class="buttons">
+                            <BarcodeOutlined /> Setup Denomination
+                        </a-button>
 
-                <a-button @click="() => $inertia.get(route('admin.masterfile.denominationSetup'))" class="buttons">
-                    <BarcodeOutlined /> Setup Denomination
-                </a-button>
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.revolvingFund'))" class="buttons">
+                            <FundFilled /> Revolving Fund
+                        </a-button>
 
-                <a-button @click="() => $inertia.get(route('admin.masterfile.revolvingFund'))" class="buttons">
-                    <FundFilled /> Revolving Fund
-                </a-button>
 
-                <a-button @click="() => $inertia.get(route('admin.masterfile.tagHennan'))" class="buttons">
-                    <TagOutlined /> Tag Hennan
-                </a-button>
+                    </a-col>
+                    <a-col :span="8">
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.setupStore'))" class="buttons">
+                            <AppstoreFilled /> Setup Store
+                        </a-button>
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.tagHennan'))" class="buttons">
+                            <TagOutlined /> Tag Hennan
+                        </a-button>
 
-                <a-button @click="() => $inertia.get(route('admin.masterfile.blockBarcode'))" class="buttons"
-                    style="margin-top: 1rem;">
-                    <StopOutlined /> Blocked Barcode
-                </a-button>
-            </a-form-item>
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.blockBarcode'))" class="buttons">
+                            <StopOutlined /> Blocked Barcode
+                        </a-button>
+                    </a-col>
+                </a-row>
 
-        </div>
+            </a-col>
+            <a-col :span="8">
+                <a-card size="small" :title="'Online Users - '+ getOnlineUsers?.length">
+                    <a-list size="small" item-layout="horizontal" :data-source="getOnlineUsers">
+                        <template #renderItem="{ item }">
+                            <a-list-item>
+                                <a-list-item-meta>
+                                    <template #avatar>
+                                        <a-avatar :src="item.image" />
+                                    </template>
+                                    <template #title>
+                                        {{ item.name }}
+                                    </template>
+                                    <template #description>
+                                        <small > {{ item.usertype }}</small>
+                                    </template>
+                                </a-list-item-meta>
+                                <a-tag color="green">Online</a-tag>
+                            </a-list-item>
+                        </template>
+                    </a-list>
+                </a-card>
+            </a-col>
+        </a-row>
         <a-card>
-            <div class="flex justify-center gap-5">
+            <div class="flex justify-center gap-5 mt-5">
                 <div class="text-center font-bold" v-for="item in props.data" :key="item.store_name">
                     {{ item.store_name }}<br>
                     <p class="text-gray-500 mt-5 flex justify-center">Sales</p>
@@ -74,7 +104,14 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import LineChart from '@/Layouts/LineChart.vue';
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useOnlineUsersStore } from '@/stores/online-store'
+import { storeToRefs } from "pinia";
+
+const onlineUsersStore = useOnlineUsersStore();
+
+// Access state or getters directly
+const getOnlineUsers = computed(() => onlineUsersStore.getOnlineUsers);
 
 
 const props = defineProps({
@@ -139,6 +176,8 @@ const chartData = computed(() => {
     };
 });
 
+
+
 const chartOptions = computed(() => ({
     responsive: true,
     maintainAspectRatio: false,
@@ -173,6 +212,7 @@ const chartOptions = computed(() => ({
 }
 
 .buttons {
+    width: 100%;
     background-color: #113961;
     height: 5rem;
     color: white;
