@@ -35,7 +35,7 @@
                                 </div>
 
                                 <div style="margin-left: 60%">
-                                    <a-input-search allow-clear v-model:value="cebuTagbilaraaanSearch" enter-button
+                                    <a-input-search allow-clear v-model:value="cebuTagbilaranSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%" />
                                 </div>
                                 <div style="margin-top: 10px">
@@ -113,18 +113,17 @@
                                         Table Showing Talibon
                                     </span>
                                 </div>
-                                <div v-if="cebu.talibon.data.length > 0">
-                                    <a-table :columns="cebuTable" :data-source="cebu.talibon.data" :pagination="false"
-                                        size="small" style="margin-top: 5px">
+                                <div v-if="cebu.talibon.length > 0">
+                                    <a-table :columns="cebuTable" :data-source="cebu.talibon" size="small"
+                                        style="margin-top: 5px">
                                     </a-table>
-                                    <pagination :datarecords="cebu.talibon" class="mt-5" />
                                 </div>
                                 <div v-else>
                                     <a-empty />
                                 </div>
                             </a-card>
                             <span>
-                                <a-button @click="cebuGenerateExcel" v-if="cebu.talibon.data.length > 0" style="
+                                <a-button @click="cebuGenerateExcel" v-if="cebu.talibon.length > 0" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
@@ -178,11 +177,10 @@
                                         Table Showing Tubigon
                                     </span>
                                 </div>
-                                <div v-if="cebu.tubigon.data.length > 0">
-                                    <a-table :columns="cebuTable" :data-source="cebu.tubigon.data" :pagination="false"
-                                        size="small" style="margin-top: 5px">
+                                <div v-if="cebu.tubigon.length > 0">
+                                    <a-table :columns="cebuTable" :data-source="cebu.tubigon" size="small"
+                                        style="margin-top: 5px">
                                     </a-table>
-                                    <pagination :datarecords="cebu.tubigon" class="mt-5" />
 
                                 </div>
                                 <div v-else>
@@ -190,7 +188,7 @@
                                 </div>
                             </a-card>
                             <span>
-                                <a-button v-if="cebu.tubigon.data.length > 0" @click="cebuGenerateExcel" style="
+                                <a-button v-if="cebu.tubigon.length > 0" @click="cebuGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
@@ -201,6 +199,8 @@
                             </span>
                         </a-tab-pane>
                     </a-tabs>
+                    <!-- {{ this.cebu.tagbilaran }} -->
+
                 </a-card>
                 <a-card style="width: 25%; position: absolute; top: 0">
                     <div style="margin-left: 50px">
@@ -272,6 +272,7 @@
                             Check Duplicates
                         </a-button>
                     </div>
+
                     <!-- {{ this.cebu.cebu }} -->
                 </a-card>
                 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -351,6 +352,7 @@
                                     Generate Excel
                                 </a-button>
                             </span>
+
                         </a-tab-pane>
                         <a-tab-pane key="2">
                             <template #tab>
@@ -565,7 +567,6 @@
                             Check Duplicates
                         </a-button>
                     </div>
-                    <!-- {{ this.altta.alttaTable }} -->
                 </a-card>
             </a-tab-pane>
         </a-tabs>
@@ -1004,6 +1005,9 @@ export default {
                 return;
             }
             const data = this.cebu.cebu;
+            const talibonData = this.cebu.talibon;
+            const tubigonData = this.cebu.tubigon;
+            const tagbilaranData = this.cebu.tagbilaran;
             Modal.confirm({
                 title: "Confirmation",
                 content: "Are you sure you want to generate Excel?",
@@ -1017,6 +1021,10 @@ export default {
                         responseType: "blob",
                         params: {
                             barcodes: data,
+                            talibonData: talibonData,
+                            tubigonData: tubigonData,
+                            tagbilaranData: tagbilaranData
+
                         },
                     })
                         .then((response) => {

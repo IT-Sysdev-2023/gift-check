@@ -12,10 +12,11 @@ class VarianceCombinationExcel implements WithMultipleSheets
 
     protected $allVarianceExcel;
 
+
     public function __construct($request){
         $this->allVarianceExcel = $request;
         // dd($this->allVarianceExcel = $request);
-    } 
+    }
 
     public function sheets(): array
     {

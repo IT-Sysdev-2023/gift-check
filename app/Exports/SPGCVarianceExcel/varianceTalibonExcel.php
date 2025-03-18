@@ -3,144 +3,82 @@
 namespace App\Exports\SPGCVarianceExcel;
 
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithTitle;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Carbon\Carbon;
+use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class varianceTalibonExcel implements FromCollection, WithHeadings, WithTitle, ShouldAutoSize, WithEvents, WithStyles
+class varianceTalibonExcel implements WithHeadings, WithTitle, WithStyles, FromArray, ShouldAutoSize
 {
     protected $TalibonData;
+    protected $StoreName;
 
     public function __construct($request)
     {
-        $this->TalibonData = $request;
-    }
-
-    public function collection()
-    {
-        $talibonData = $this->VarianceTalibonData($this->TalibonData);
-
-        $variances2Formatted = [];
-        $paddingRows = [
-            ['', '', '', '', '', '', ''], // Row 1
-            ['', '', '', '', '', '', ''], // Row 2
-            ['', '', '', '', '', '', ''], // Row 3
-            ['', '', '', '', '', '', ''], // Row 4
-            ['', '', '', '', '', '', ''], // Row 5
-        ];
-
-        foreach ($talibonData as $row) {
-            if ($row->vs_date !== null && $row->seodtt_transno !== null) {
-                $status = "Verified and Use";
-            } elseif ($row->vs_date !== null) {
-                $status = "Verified not used";
-            } else {
-                $status = "Not verified / not use";
-            }
-
-            $date = $row->vs_date ? Carbon::parse($row->vs_date)->format('Y-m-d') : 'N/A';
-
-            $variances2Formatted[] = [
-                'barcode' => $row->spexgcemp_barcode,
-                'denom' => number_format($row->spexgcemp_denom, 2),
-                'cusname' => strtoupper($row->customerName),
-                'verifydate' => $date,
-                'store' => $row->store_name ?? 'N/A',
-                'transno' => $row->seodtt_transno ?? 'N/A',
-                'status' => $status
-            ];
-        }
-
-        return collect(array_merge($paddingRows, $variances2Formatted));
-    }
-
-    private function VarianceTalibonData($request)
-    {
-        return DB::table('special_external_gcrequest_emp_assign')
-            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-            ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
-            ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
-            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
-            ->where('special_external_gcrequest.spexgc_company', $this->TalibonData['customerName'])
-            ->select(
-                'special_external_gcrequest_emp_assign.spexgcemp_barcode',
-                'special_external_gcrequest_emp_assign.spexgcemp_denom',
-                DB::raw("CONCAT(special_external_gcrequest_emp_assign.spexgcemp_fname, ' ', special_external_gcrequest_emp_assign.spexgcemp_lname) AS customerName"),
-                'store_verification.vs_date',
-                'stores.store_name',
-                'store_eod_textfile_transactions.seodtt_transno'
-            )
-            ->get();
-    }
-
-    public function styles(Worksheet $sheet)
-    {
-        $data = $this->collection();
-        $rowCount = count($data);
-        $lastColumn = chr(65 + count($this->headings()) - 1);
-        $range = 'A6:' . $lastColumn . ($rowCount + 6);
-
-        return [
-            1 => ['font' => ['bold' => true]],
-            $range => ['alignment' => ['horizontal' => 'left']],
-        ];
-    }
-
-    public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->setCellValue('A1', 'ALTURAS GROUP OF COMPANIES');
-                $event->sheet->setCellValue('A2', 'CUSTOMER FINANCIAL SERVICES CORP');
-                $event->sheet->setCellValue('A3', 'VARIANCE REPORT');
-                $event->sheet->setCellValue('A4', $this->TalibonData['formatCusName']);
-
-                $event->sheet->mergeCells('A1:H1');
-                $event->sheet->mergeCells('A2:H2');
-                $event->sheet->mergeCells('A3:H3');
-                $event->sheet->mergeCells('A4:H4');
-
-
-                $event->sheet->getStyle('A1:A4')->getAlignment()
-                    ->setHorizontal('center')
-                    ->setVertical('center');
-                $event->sheet->getStyle('A1:A4')->getFont()->setBold(true);
-
-                $headings = $this->headings();
-                $column = 'A';
-                foreach ($headings as $heading) {
-                    $event->sheet->setCellValue($column . '5', $heading);
-                    $event->sheet->getStyle($column . '5')->getAlignment()->setHorizontal('center');
-                    $event->sheet->getStyle($column . '5')->getFont()->setBold(true);
-                    $column++;
-                }
-                $event->sheet->getStyle('A5:H5')->getAlignment()->setVertical('center');
-                $event->sheet->getRowDimension(5)->setRowHeight(20);
-            }
-        ];
+        $this->TalibonData = $request['data'] ?? [];
+        $this->StoreName = $request['formatCusName'] ?? '';
     }
 
     public function headings(): array
     {
         return [
-            'Barcode',
-            'Denomination',
-            'Customer Name',
-            'Verify Date',
-            'Store',
-            'Transaction No',
-            'Status',
+            ['ALTURAS GROUP OF COMPANIES'],
+            ['CUSTOMER FINANCIAL SERVICES CORP'],
+            ['VARIANCE REPORT'],
+            [$this->StoreName],
+            [],
+            [
+                'Barcode',
+                'Denomination',
+                'Customer Name',
+                'Verify Date',
+                'Store',
+                'Transaction No',
+                'Status',
+            ],
         ];
+    }
+
+    public function array(): array
+    {
+        return array_map(function ($item) {
+            return [
+                $item['barcode'] ?? '',
+                $item['denom'] ?? '',
+                $item['cusname'] ?? '',
+                $item['verifydate'] ?? '',
+                $item['store'] ?? '',
+                $item['transno'] ?? '',
+                $item['status'] ?? '',
+            ];
+        }, $this->TalibonData);
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        // Merge header title rows
+        $sheet->mergeCells('A1:G1');
+        $sheet->mergeCells('A2:G2');
+        $sheet->mergeCells('A3:G3');
+        $sheet->mergeCells('A4:G4');
+
+        // Center align and bold the title
+        $sheet->getStyle('A1:G4')->getAlignment()->setHorizontal('center');
+        $sheet->getStyle('A1:G4')->getFont()->setBold(true)->setSize(14);
+
+        // Bold and center align column headers
+        $sheet->getStyle('A6:G6')->getFont()->setBold(true);
+        $sheet->getStyle('A6:G6')->getAlignment()->setHorizontal('center');
+
+        // Center align all data rows
+        $sheet->getStyle('A7:G' . $sheet->getHighestRow())->getAlignment()->setHorizontal('center');
+
+        return [];
     }
 
     public function title(): string
     {
-        return "Talibon";
+        return 'Talibon';
     }
 }

@@ -2,127 +2,87 @@
 
 namespace App\Exports\DuplicateBarcodeExcel;
 
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-
-use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Concerns\WithEvents;
 
-use App\Models\User;
-use Maatwebsite\Excel\Concerns\FromCollection;
-
-class talibonExcel implements FromCollection, WithHeadings, WithStyles, WithTitle, ShouldAutoSize, WithEvents
+class talibonExcel implements FromArray, WithHeadings, WithStyles, ShouldAutoSize, WithTitle
 {
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-
     protected $barcodeData;
 
-    public function __construct($barcode)
+    public function __construct($talibonData)
     {
-        $this->barcodeData = $barcode;
+        $this->barcodeData = $talibonData;
     }
 
     public function headings(): array
     {
         return [
-            'Barcode',
-            'Name',
-            'Transaction No',
-            'Terminal',
-            'Business Unit',
-            'Amount',
-            'Date',
-            'Time',
-            'Store',
+            ['ALTURAS GROUP OF COMPANIES'],
+            ['DUPLICATED BARCODES'],
+            [],
+            [
+                'Barcode',
+                'Name',
+                'Transaction No',
+                'Terminal',
+                'Business Unit',
+                'Amount',
+                'Date',
+                'Time',
+                'Store',
+            ],
         ];
     }
 
-    public function startRow():int{
-        return 4;
+    public function array(): array
+    {
+        return array_map(function ($item) {
+            return [
+                $item['barcode'] ?? '',
+                $item['name'] ?? '',
+                $item['transno'] ?? '',
+                $item['terminal'] ?? '',
+                $item['bu'] ?? '',
+                $item['amount'] ?? '',
+                $item['verdate'] ?? '',
+                $item['vertime'] ?? '',
+                $item['store'] ?? '',
+            ];
+        }, $this->barcodeData);
     }
 
     public function styles(Worksheet $sheet)
     {
-        $data = $this->collection();
-        $rowCount = count($data);
-        $range = 'A1:Z' . ($rowCount + 1);
+        // Merge cells for title rows (up to column I, not N)
+        $sheet->mergeCells('A1:I1');
+        $sheet->mergeCells('A2:I2');
+        $sheet->mergeCells('A3:I3');
 
-        return [
-            1 => ['font' => ['bold' => true]],
-            $range => ['alignment' => ['horizontal' => 'left']],
-        ];
-    }
+        // Center align the merged cells
+        $sheet->getStyle('A1:A3')->getAlignment()->setHorizontal('center');
 
-    public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class => function (AfterSheet $event) {
-                $sheet = $event->sheet->getDelegate();
+        // Bold the titles
+        $sheet->getStyle('A1:A3')->getFont()->setBold(true)->setSize(14);
 
-                $sheet->setCellValue('A1', 'STORE VERIFIED / VALIDATED GC');
+        // Bold and center column headers
+        $sheet->getStyle('A5:I5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:I5')->getAlignment()->setHorizontal('center');
 
-                $sheet->mergeCells('A1:I1');
+        // Center all data in each row
+        $sheet->getStyle('A6:I' . $sheet->getHighestRow())
+            ->getAlignment()
+            ->setHorizontal('center');
 
-
-                $sheet->getStyle('A1')->getAlignment()
-                    ->setHorizontal('center')
-                    ->setVertical('center');
-                $sheet->getStyle('A1')->getFont()->setBold(true);
-
-                $headings = $this->headings();
-                $column = 'A';
-                foreach ($headings as $heading) {
-                    $sheet->setCellValue($column . '3', $heading);
-                    $sheet->getStyle($column . '3')->getAlignment()->setHorizontal('center');
-                    $sheet->getStyle($column . '3')->getFont()->setBold(true);
-                    $column++;
-                }
-            },
-        ];
+        return [];
     }
 
     public function title(): string
     {
         return 'Talibon';
     }
-
-    public function collection()
-    {
-        $data = $this->fetchTalibonData($this->barcodeData);
-        $padding = collect(array_fill(0, 2, ['','','','']));
-        $dataPadding = $padding->concat(collect($data));
-        return collect($dataPadding);
-    }
-
-    private function fetchTalibonData()
-    {
-        return DB::table('store_verification')
-        ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-        ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
-        ->select(
-            'store_eod_textfile_transactions.seodtt_transno as transno',
-            DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_mname, ' ', customers.cus_lname) as name"),
-            'store_verification.vs_barcode as barcode',
-            'store_eod_textfile_transactions.seodtt_terminalno as terminal',
-            'store_eod_textfile_transactions.seodtt_bu as bu',
-            'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
-            'store_verification.vs_date as verdate',
-            'store_verification.vs_time as vertime',
-            DB::raw("(CASE
-                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
-                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
-                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
-                    WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM'
-                END) as store")
-        )
-            ->whereIn('store_verification.vs_barcode', $this->barcodeData)
-            ->get();
-    }
 }
+

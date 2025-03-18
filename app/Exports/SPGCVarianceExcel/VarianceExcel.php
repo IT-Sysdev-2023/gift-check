@@ -22,6 +22,7 @@ class VarianceExcel implements FromCollection, ShouldAutoSize, WithTitle, WithSt
     {
         // dd();
         $this->VarianceData = $request;
+        // dd($this->VarianceData = $request);
 
     }
 

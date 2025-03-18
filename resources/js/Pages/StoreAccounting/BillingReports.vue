@@ -49,11 +49,8 @@ const submitButton = async () => {
         console.error('Failed', error);
 
         if (error.response) {
-            if (error.response.status === 422) {
+            if (error.response.status) {
                 form.errors = error.response.data.errors;
-                notification.error({
-                    description: 'Validation failed. Please check the form.'
-                });
             }
             else if (error.response.data.message) {
                 notification.error({
@@ -273,15 +270,13 @@ watchEffect(() => {
 
         <!-- Table Section -->
         <a-card>
-            <section class="mt-8 text-center text-gray-600">
-                <div>
-                    <<<<<<< HEAD <p class="text-gray-800 font-bold">BILLING TRANSACTIONS PER DAY</p>
-                        <a-table size="small" :data-source="data" :columns="columns" class="mt-4 w-full">
-                            =======
-                            <p class="text-gray-800 font-bold">Table showing billing reports per day</p>
-                            <a-table size="small" :data-source="data" :columns="columns" class="mt-4">
-                                >>>>>>> gamale
-                            </a-table>
+            <section class="text-center text-gray-600">
+                <div v-if="data.length > 0">
+                    <p class="text-gray-800 font-bold">BILLING TRANSACTIONS PER DAY</p>
+                    <a-table size="small" :data-source="data" :columns="columns" class="mt-4 w-full" />
+                </div>
+                <div v-else>
+                    <a-empty />
                 </div>
             </section>
         </a-card>
