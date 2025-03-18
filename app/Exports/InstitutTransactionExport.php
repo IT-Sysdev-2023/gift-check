@@ -122,7 +122,7 @@ class InstitutTransactionExport implements FromCollection, WithEvents, WithCusto
                 $sheet->setCellValue('H' . $highestRow += 2, 'Signatures:');
                 $sheet->getStyle('H' . $highestRow)->getFont()->setBold(true);
                 
-                $this->setFooterValue($sheet, $highestRow += 2, 'Prepared Released By: ', $this->records['signatures']['prepared_released_by']);
+                $this->setFooterValue($sheet, $highestRow += 2, 'Prepared By: ', $this->records['signatures']['prepared_released_by']);
                 $this->setFooterValue($sheet, $highestRow += 1, 'Checked By: ', $this->records['signatures']['checked_by']);
                 $this->setFooterValue($sheet, $highestRow += 1, 'Received By: ', $this->records['signatures']['received_by']);
             },
