@@ -176,6 +176,8 @@ declare module 'vue' {
     Cancelledspexgc: typeof import('./resources/js/Pages/Marketing/specialgc/Cancelledspexgc.vue')['default']
     Card: typeof import('./resources/js/Components/Card.vue')['default']
     CardBadge: typeof import('./resources/js/Components/CardBadge.vue')['default']
+    CardSales: typeof import('./resources/js/Pages/Retail/Sales/CardSales.vue')['default']
+    CashSales: typeof import('./resources/js/Pages/Retail/Sales/CashSales.vue')['default']
     CheckBarocde: typeof import('./resources/js/Pages/Eod/Partials/CheckBarocde.vue')['default']
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']
     CheckCashJvPayment: typeof import('./resources/js/Components/Treasury/CheckCashJvPayment.vue')['default']
