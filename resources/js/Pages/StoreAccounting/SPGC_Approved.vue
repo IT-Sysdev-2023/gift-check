@@ -5,7 +5,7 @@
         </span>
         <div>
             <a-card style="width: 85%; margin-left: 16%; border: 1px solid #dcdcdc">
-                <a-tabs>
+                <a-tabs type="card">
                     <a-tab-pane key="1">
                         <template #tab>
                             <span style="font-weight: bold">
@@ -62,15 +62,21 @@
                                     Table showing PDF per customer
                                 </span>
                             </div>
-                            <div style="margin-top: 20px">
-                                <a-table :columns="pdfPerCustomer" :data-source="records.pdfPerCustomer.data"
-                                    :pagination="false" size="small">
-                                </a-table>
+                            <div style="margin-top:20px" v-if="records.pdfPerCustomer.data.length > 0">
+                                <div>
+                                    <a-table :columns="pdfPerCustomer" :data-source="records.pdfPerCustomer.data"
+                                        :pagination="false" size="small">
+                                    </a-table>
+                                </div>
+                                <pagination :datarecords="records.pdfPerCustomer" class="mt-5" />
                             </div>
-                            <pagination :datarecords="records.pdfPerCustomer" class="mt-5" />
+
+                            <div v-else>
+                                <a-empty />
+                            </div>
                         </a-card>
-                        <div style="margin-left: 80%">
-                            <span style="font-weight: bold; margin-left: 3%">
+                        <span style="margin-left: 80%" v-if="records.pdfPerCustomer.data.length > 0">
+                            <span style="font-weight: bold;">
                                 <a-button @click="generatePdf" style="
                                         background-color: #b22222;
                                         color: white;
@@ -79,7 +85,7 @@
                                     Generate PDF
                                 </a-button>
                             </span>
-                        </div>
+                        </span>
                     </a-tab-pane>
                     <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
@@ -125,13 +131,18 @@
                             </div>
                             <div style="margin-top: 20px">
                                 <!-- {{ dataCustomer }}  -->
-                                <a-table :columns="pdfPerBarcode" :data-source="records.pdfPerBarcode.data"
-                                    :pagination="false" size="small">
-                                </a-table>
+                                <div v-if="records.pdfPerBarcode.data.length > 0">
+                                    <a-table :columns="pdfPerBarcode" :data-source="records.pdfPerBarcode.data"
+                                        :pagination="false" size="small">
+                                    </a-table>
+                                    <pagination :datarecords="records.pdfPerBarcode" class="mt-5" />
+                                </div>
+                                <div v-else>
+                                    <a-empty />
+                                </div>
                             </div>
-                            <pagination :datarecords="records.pdfPerBarcode" class="mt-5" />
                         </a-card>
-                        <div style="margin-left: 80%">
+                        <div style="margin-left: 80%" v-if="records.pdfPerBarcode.data.length > 0">
                             <span style="font-weight: bold; margin-left: 3%">
                                 <a-button @click="generatePdf" style="
                                         background-color: #b22222;
@@ -199,13 +210,18 @@
                             </div>
                             <div style="margin-top: 20px">
                                 <!-- {{ dataCustomer }}  -->
-                                <a-table :columns="perCustomerTable" :data-source="records.dataCustomer.data"
-                                    :pagination="false" size="small">
-                                </a-table>
+                                <div v-if="records.dataCustomer.data.length > 0">
+                                    <a-table :columns="perCustomerTable" :data-source="records.dataCustomer.data"
+                                        :pagination="false" size="small">
+                                    </a-table>
+                                    <pagination :datarecords="records.dataCustomer" class="mt-5" />
+                                </div>
+                                <div v-else>
+                                    <a-empty />
+                                </div>
                             </div>
-                            <pagination :datarecords="records.dataCustomer" class="mt-5" />
                         </a-card>
-                        <span style="font-weight: bold; margin-left: 80%">
+                        <span style="font-weight: bold; margin-left: 80%" v-if="records.dataCustomer.data.length > 0">
                             <a-button @click="generateExcel" style="background-color: green; color: white">
                                 <FileExcelOutlined />
                                 Generate EXCEL
@@ -266,13 +282,18 @@
                                 </span>
                             </div>
                             <div style="margin-top: 20px">
-                                <a-table :columns="perBarcodeTable" :data-source="records.dataBarcode.data"
-                                    :pagination="false" size="small">
-                                </a-table>
+                                <div v-if="records.dataBarcode.data.length > 0">
+                                    <a-table :columns="perBarcodeTable" :data-source="records.dataBarcode.data"
+                                        :pagination="false" size="small">
+                                    </a-table>
+                                    <pagination :datarecords="records.dataBarcode" class="mt-5" />
+                                </div>
+                                <div v-else>
+                                    <a-empty />
+                                </div>
                             </div>
-                            <pagination :datarecords="records.dataBarcode" class="mt-5" />
                         </a-card>
-                        <span style="font-weight: bold; margin-left: 80%">
+                        <span style="font-weight: bold; margin-left: 80%" v-if="records.dataBarcode.data.length > 0">
                             <a-button @click="generateExcel" style="background-color: green; color: white">
                                 <FileExcelOutlined />
                                 Generate EXCEL
@@ -858,6 +879,7 @@ export default {
         transform: rotateX(70deg) rotateZ(630deg);
     }
 }
+
 /* loading css  */
 .spinnerContainer {
     display: flex;

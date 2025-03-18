@@ -23,8 +23,8 @@
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;"
-                            label="Ar#">{{ record.special.spexgc_payment_arnum }}</a-descriptions-item>
+                        <a-descriptions-item style="width: 50%;" label="Ar#">{{ record.special.spexgc_payment_arnum
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Payment Type">{{ record.special.paymentStatus
@@ -191,60 +191,62 @@
                             </a-popconfirm>
                         </a-row>
                     </a-card>
-                    <a-card class="mt-3">
-                        <a-card v-if="byBarcode">
-                            <a-alert class="text-center" message="Enter Barcode" type="info" show-icon />
-                            <div class="mt-5">
-                                <p class="ml-2">Enter Barcode</p>
-                                <a-form>
-                                    <a-form-item has-feedback :validate-status="errorBarcode.barcode ? 'error' : ''"
-                                        :help="errorBarcode.barcode">
-                                        <a-input @change="() => errorBarcode = []" allow-clear placeholder="Barcode"
-                                            @keyup.enter="printBarcode" v-model:value="formBarcode.barcode"
-                                            style="width: 100%; font-size: 20px; border: solid gray 1px; font-weight: bolder; height: 60px; color: white;" />
+                    <a-card v-if="byBarcode" class="mt-2">
+                        <h4 class="text-center font-bold">Print Request By Barcode</h4>
+                        <div class="mt-5">
+                            <p class="ml-2">Enter Barcode</p>
+                            <a-form>
+                                <a-form-item has-feedback :validate-status="errorBarcode.barcode ? 'error' : ''"
+                                    :help="errorBarcode.barcode">
+                                    <a-input-number class="p-2 pt-2 pb-2 text-3xl" style="width: 100%;" size="large"
+                                        @change="() => errorBarcode = []" allow-clear placeholder="Barcode"
+                                        @keyup.enter="printBarcode" v-model:value="formBarcode.barcode" />
 
-                                    </a-form-item>
-                                </a-form>
-                                <div class="flex justify-end">
-                                    <a-button type="primary" class="mt-10" @click="printBarcode">
-                                        <template #icon>
-                                            <FastForwardOutlined />
-                                        </template>
-                                        Preview Gift Check Barcode
-                                    </a-button>
-                                </div>
-                            </div>
-                        </a-card>
-                        <a-card v-if="byRange">
-                            <a-alert class="text-center" message="Enter Barcode Range" type="info" show-icon />
-                            <div class="mt-5">
-                                <a-form>
-                                    <a-form-item has-feedback
+                                </a-form-item>
+                            </a-form>
+
+                            <a-button block size="large" type="primary" class="mt-1" @click="printBarcode">
+                                <template #icon>
+                                    <FastForwardOutlined />
+                                </template>
+                                Preview Gift Check Barcode
+                            </a-button>
+
+                        </div>
+                    </a-card>
+                    <a-card v-if="byRange">
+                        <h4 class="text-center font-bold">Print Request By Barcode Range</h4>
+                        <div class="mt-5">
+                            <div class="flex justify-between">
+                                <div>
+                                    <a-form-item style="width: 100%;" has-feedback
                                         :validate-status="errorByRange.barcodeStart ? 'error' : ''"
                                         :help="errorByRange.barcodeStart">
                                         <a-typography-text code>Barcode Start</a-typography-text>
-                                        <a-input allow-clear size="large" placeholder="Barcode Start"
-                                            @keyup.enter="printBarcodeRange" v-model:value="formByRange.barcodeStart"
-                                            style="width: 100%; font-size: 20px; border: solid gray 1px; font-weight: bolder; height: 60px; color: white;" />
+                                        <a-input-number class="p-2 pb-1 pt-1 text-3xl" style="width: 100%;" allow-clear
+                                            size="large" placeholder="Barcode Start" @keyup.enter="printBarcodeRange"
+                                            v-model:value="formByRange.barcodeStart" />
                                     </a-form-item>
+                                </div>
+                                <div>
                                     <a-form-item has-feedback :validate-status="errorByRange.barcodeEnd ? 'error' : ''"
                                         :help="errorByRange.barcodeEnd">
                                         <a-typography-text code>Barcode End</a-typography-text>
-                                        <a-input allow-clear size="large" @keyup.enter="printBarcodeRange"
-                                            placeholder="Barcode End" v-model:value="formByRange.barcodeEnd"
-                                            style="width: 100%; font-size: 20px; border: solid gray 1px; font-weight: bolder; height: 60px; color: white;" />
+                                        <a-input-number class="p-2 pb-1 pt-1 text-3xl" style="width: 100%;" allow-clear
+                                            size="large" @keyup.enter="printBarcodeRange" placeholder="Barcode End"
+                                            v-model:value="formByRange.barcodeEnd" />
                                     </a-form-item>
-                                </a-form>
-                                <div class="flex justify-end">
-                                    <a-button type="primary" class="mt-10" @click="printBarcodeRange">
-                                        <template #icon>
-                                            <FastForwardOutlined />
-                                        </template>
-                                        Preview Gift Check Barcode Range
-                                    </a-button>
+
                                 </div>
                             </div>
-                        </a-card>
+                            <a-button block type="primary" class="mt-1" @click="printBarcodeRange">
+                                <template #icon>
+                                    <FastForwardOutlined />
+                                </template>
+                                Preview Gift Check Barcode Range
+                            </a-button>
+
+                        </div>
                     </a-card>
                 </a-col>
 

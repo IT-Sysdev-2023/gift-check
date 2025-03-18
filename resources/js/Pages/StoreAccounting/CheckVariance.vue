@@ -1,7 +1,7 @@
 <template>
     <a-card>
         <a-card style="width: 59%; margin-left: 42%">
-            <a-tabs>
+            <a-tabs type="card">
                 <a-tab-pane key="1">
                     <template #tab>
                         <span style="font-weight: bold">
@@ -44,11 +44,14 @@
                     <div style="font-weight: bold; margin-top: 20px">
                         <span style="margin-left: 40%">Table Showing Tagbilaran</span>
                     </div>
-                    <div style="margin-top: 10px">
+                    <div style="margin-top: 10px" v-if="variance.tagbilaranData.data.length > 0">
                         <a-table :columns="varianceTable" :data-source="variance.tagbilaranData.data"
                             :pagination="false" size="small">
                         </a-table>
                         <pagination :datarecords="variance.tagbilaranData" class="mt-5" />
+                    </div>
+                    <div v-else>
+                        <a-empty />
                     </div>
                 </a-tab-pane>
                 <a-tab-pane key="2">
@@ -77,33 +80,25 @@
                         </div>
                     </div>
 
-                    <!-- <a-button style="background-color: green; color:white; margin-top: 10px;"
-                        @click="SelectCustomerName">
-                        <FileExcelOutlined />
-                        Generate Excel
-                    </a-button> -->
-                    <!-- <div class="input-wrapper">
-                        <input
-                            type="search"
-                            placeholder="Input search here..."
-                            name="text"
-                            class="input"
-                            v-model="talibonSearch"
-                        />
-                    </div> -->
                     <span style="margin-left: 60%; font-weight: bold">
                         <a-input-search allow-clear v-model:value="talibonSearch" placeholder="Input search here!"
                             enter-button style="width: 40%" />
                     </span>
                     <div style="font-weight: bold; margin-top: 20px">
-                        <span style="margin-left: 40%">Table Showing Tubigon</span>
+                        <span style="margin-left: 40%">Table Showing Talibon</span>
                     </div>
-                    <div style="margin-top: 10px">
+                    <div v-if="variance.talibonData.data.length > 0" style="margin-top: 10px">
                         <a-table :columns="talibonData" :data-source="variance.talibonData.data" :pagination="false"
                             size="small">
                         </a-table>
                         <pagination :datarecords="variance.talibonData" class="mt-5" />
+
                     </div>
+
+                    <div v-else>
+                        <a-empty />
+                    </div>
+
                 </a-tab-pane>
             </a-tabs>
         </a-card>
@@ -112,7 +107,8 @@
                 color: white;
                 margin-top: 10px;
                 margin-left: 85%;
-            " @click="SelectCustomerName">
+            " @click="SelectCustomerName"
+            v-if="variance.tagbilaranData.data.length > 0 || variance.talibonData.data.length > 0">
             <FileExcelOutlined />
             Generate Excel
         </a-button>

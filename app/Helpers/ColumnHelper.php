@@ -245,7 +245,7 @@ class ColumnHelper
         ],
         [
             'title' => 'Approved By',
-            'dataIndex' => 'ape_approved_by',
+            'dataIndex' => 'appby',
 
         ],
         [

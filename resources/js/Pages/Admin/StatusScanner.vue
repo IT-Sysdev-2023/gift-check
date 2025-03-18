@@ -1,14 +1,15 @@
 <template>
-<!-- adding something new hello world  -->
+    <!-- adding something new hello world  -->
+
     <Head title="Dashboard" />
     <div>
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
                 <a-card>
                     <strong class="ml-1">
-                        Scan Barcode Here:
+                        <a-typography-text keyboard>Enter Barcode</a-typography-text>
                     </strong>
-                    <a-input showCount @change="removeSpaces" placeholder="Enter Barcode No" size="large"
+                    <a-input-number class="p-2 pt-3 pb-3 text-2xl" style="width: 100%;" showCount @change="removeSpaces" placeholder="Enter Barcode No" size="large"
                         @keyup.enter="viewStatus1" v-model:value="form.barcode" />
                 </a-card>
                 <div v-if="isFetching">
@@ -23,7 +24,7 @@
                         <a-alert message="Not Found!" class="mb-2" type="error" show-icon>
                             <template #description>
                                 <p>
-                                    Barcode # <strong>{{ form.barcode }}</strong> not found or Do not Exists
+                                    Barcode # <strong>{{ barcode }}</strong> not found or Do not Exists
                                 </p>
                             </template>
                         </a-alert>
@@ -37,7 +38,7 @@
                         <a-alert message="Success!" class="mb-2" type="success" show-icon>
                             <template #description>
                                 <p>
-                                    Barcode # <strong>{{ form.barcode }}</strong> found
+                                    Barcode # <strong>{{ barcode }}</strong> found
                                 </p>
                             </template>
                         </a-alert>
@@ -92,7 +93,7 @@ export default {
     },
     methods: {
         viewStatus1() {
-            const barcode = this.form.barcode.replace(/\s+/g, '');
+            const barcode = this.form.barcode;
             this.isLoading = true;
 
             this.$inertia.get(route("admin.status.scanner"), {

@@ -17,7 +17,7 @@
                 </a-input>
             </a-form-item>
             <a-form-item class="text-right">
-                <a-button @click="submit" type="primary"
+                <a-button @click="submit" type="primary"  @keyup.enter="submit"
                     :disabled="formState.username === '' || formState.password === ''">
                     Submit Credentials
                 </a-button>

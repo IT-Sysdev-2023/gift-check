@@ -1,6 +1,6 @@
 <template>
     <a-card>
-        <a-tabs>
+        <a-tabs type="card">
             <a-tab-pane key="1">
                 <template #tab>
                     <span style="font-weight: bold">
@@ -8,7 +8,7 @@
                     </span>
                 </template>
                 <a-card style="width: 72%; margin-left: 28%">
-                    <a-tabs>
+                    <a-tabs type="card">
                         <a-tab-pane key="1">
                             <template #tab>
                                 <span style="font-weight: bold">
@@ -46,13 +46,18 @@
                                         Table Showing Tagbilaran
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="cebu.tagbilaran.data" :pagination="false"
-                                    size="small" style="margin-top: 5px">
-                                </a-table>
-                                <pagination :datarecords="cebu.tagbilaran" class="mt-5" />
+                                <div v-if="cebu.tagbilaran.data.length > 0">
+                                    <a-table :columns="cebuTable" :data-source="cebu.tagbilaran.data"
+                                        :pagination="false" size="small" style="margin-top: 5px">
+                                    </a-table>
+                                    <pagination :datarecords="cebu.tagbilaran" class="mt-5" />
+                                </div>
+                                <div v-else>
+                                    <a-empty />
+                                </div>
                             </a-card>
                             <span>
-                                <a-button @click="cebuGenerateExcel" style="
+                                <a-button v-if="cebu.tagbilaran.data.length > 0" @click="cebuGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
@@ -108,13 +113,18 @@
                                         Table Showing Talibon
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="cebu.talibon.data" :pagination="false"
-                                    size="small" style="margin-top: 5px">
-                                </a-table>
-                                <pagination :datarecords="cebu.talibon" class="mt-5" />
+                                <div v-if="cebu.talibon.data.length > 0">
+                                    <a-table :columns="cebuTable" :data-source="cebu.talibon.data" :pagination="false"
+                                        size="small" style="margin-top: 5px">
+                                    </a-table>
+                                    <pagination :datarecords="cebu.talibon" class="mt-5" />
+                                </div>
+                                <div v-else>
+                                    <a-empty />
+                                </div>
                             </a-card>
                             <span>
-                                <a-button @click="cebuGenerateExcel" style="
+                                <a-button @click="cebuGenerateExcel" v-if="cebu.talibon.data.length > 0" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
@@ -168,13 +178,19 @@
                                         Table Showing Tubigon
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="cebu.tubigon.data" :pagination="false"
-                                    size="small" style="margin-top: 5px">
-                                </a-table>
-                                <pagination :datarecords="cebu.tubigon" class="mt-5" />
+                                <div v-if="cebu.tubigon.data.length > 0">
+                                    <a-table :columns="cebuTable" :data-source="cebu.tubigon.data" :pagination="false"
+                                        size="small" style="margin-top: 5px">
+                                    </a-table>
+                                    <pagination :datarecords="cebu.tubigon" class="mt-5" />
+
+                                </div>
+                                <div v-else>
+                                    <a-empty />
+                                </div>
                             </a-card>
                             <span>
-                                <a-button @click="cebuGenerateExcel" style="
+                                <a-button v-if="cebu.tubigon.data.length > 0" @click="cebuGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
@@ -269,7 +285,7 @@
                 </template>
 
                 <a-card style="width: 72%; margin-left: 28%">
-                    <a-tabs>
+                    <a-tabs type="card">
                         <a-tab-pane key="1">
                             <template #tab>
                                 <span style="font-weight: bold">
@@ -315,13 +331,18 @@
                                         Table Showing Tagbilaran
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="altta.tagbilaran.data" :pagination="false"
-                                    size="small" style="margin-top: 5px">
-                                </a-table>
-                                <pagination :datarecords="altta.tagbilaran" class="mt-5" />
+                                <div v-if="altta.tagbilaran.data.length > 0">
+                                    <a-table :columns="cebuTable" :data-source="altta.tagbilaran.data"
+                                        :pagination="false" size="small" style="margin-top: 5px">
+                                    </a-table>
+                                    <pagination :datarecords="altta.tagbilaran" class="mt-5" />
+                                </div>
+                                <div v-else>
+                                    <a-empty />
+                                </div>
                             </a-card>
                             <span>
-                                <a-button @click="alttaGenerateExcel" style="
+                                <a-button v-if="altta.tagbilaran.data.length > 0" @click="alttaGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
@@ -377,13 +398,19 @@
                                         Table Showing Talibon
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="altta.talibon.data" :pagination="false"
-                                    size="small" style="margin-top: 5px">
-                                </a-table>
-                                <pagination :datarecords="altta.talibon" class="mt-5" />
+                                <div v-if="altta.talibon.data.length > 0">
+                                    <a-table :columns="cebuTable" :data-source="altta.talibon.data" :pagination="false"
+                                        size="small" style="margin-top: 5px">
+                                    </a-table>
+                                    <pagination :datarecords="altta.talibon" class="mt-5" />
+
+                                </div>
+                                <div v-else>
+                                    <a-empty />
+                                </div>
                             </a-card>
                             <span>
-                                <a-button @click="alttaGenerateExcel" style="
+                                <a-button v-if="altta.talibon.data.length > 0" @click="alttaGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;
@@ -439,13 +466,19 @@
                                         Table Showing Tubigon
                                     </span>
                                 </div>
-                                <a-table :columns="cebuTable" :data-source="altta.tubigon.data" :pagination="false"
-                                    size="small" style="margin-top: 5px">
-                                </a-table>
-                                <pagination :datarecords="altta.tubigon" class="mt-5" />
+                                <div v-if="altta.tubigon.data.length > 0">
+                                    <a-table :columns="cebuTable" :data-source="altta.tubigon.data" :pagination="false"
+                                        size="small" style="margin-top: 5px">
+                                    </a-table>
+                                    <pagination :datarecords="altta.tubigon" class="mt-5" />
+
+                                </div>
+                                <div v-else>
+                                    <a-empty />
+                                </div>
                             </a-card>
                             <span>
-                                <a-button @click="alttaGenerateExcel" style="
+                                <a-button v-if="altta.tubigon.data.length > 0" @click="alttaGenerateExcel" style="
                                         margin-left: 77%;
                                         background-color: green;
                                         color: white;

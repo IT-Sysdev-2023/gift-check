@@ -19,9 +19,11 @@
                         </a-descriptions-item>
                         <a-descriptions-item label="Date Approved">{{ data.approved.ape_approved_at
                             }}</a-descriptions-item>
-                        <a-descriptions-item label="Approved by">{{ data.approved.ape_approved_by
+                        <a-descriptions-item label="Approved by">{{ data.approved.apname
+                            }},{{ data.approved.apsurname
                             }}</a-descriptions-item>
-                        <a-descriptions-item label="Checked by">{{ data.approved.ape_checked_by }}
+                        <a-descriptions-item label="Checked by">{{ data.approved.cfname }}, {{ data.approved.csname
+                            }}
                         </a-descriptions-item>
                         <a-descriptions-item label="Prepared By">{{ data.approved.apname }}, {{ data.approved.apname
                             }}</a-descriptions-item>

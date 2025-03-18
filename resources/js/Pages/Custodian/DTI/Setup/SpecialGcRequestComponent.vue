@@ -4,19 +4,19 @@
             <a-card size="small" class="text-center">
                 <a-descriptions size="small" title="Request Details" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="Date Requested">{{ datarecords.dti_datereq
-                    }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                 </a-descriptions>
                 <a-descriptions size="small" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="Request By">{{ datarecords.user.full_name
-                    }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                 </a-descriptions>
                 <a-descriptions size="small" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="Date Validity">{{ datarecords.dti_dateneed
-                    }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                 </a-descriptions>
                 <a-descriptions size="small" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="Payment Type">{{ datarecords.dti_paymenttype
-                    }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                 </a-descriptions>
                 <a-descriptions size="small" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="Amount">Cloud Database</a-descriptions-item>
@@ -51,15 +51,15 @@
                         </a-descriptions>
                         <a-descriptions size="small" layout="horizontal" bordered>
                             <a-descriptions-item style="width: 50%;" label="Checked By">{{ datarecords.dti_checkby
-                            }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                         </a-descriptions>
                         <a-descriptions size="small" layout="horizontal" bordered>
                             <a-descriptions-item style="width: 50%;" label="Prepared By">{{ datarecords.prepby
-                            }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                         </a-descriptions>
                         <a-descriptions size="small" layout="horizontal" bordered>
                             <a-descriptions-item style="width: 50%;" label="Approved By">{{ datarecords.dti_approvedby
-                            }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                         </a-descriptions>
                     </a-col>
                     <a-col :span="10">
@@ -70,7 +70,9 @@
                             <div v-if="datarecords.dti_doc">
                                 <a-image :src="'/storage/' + datarecords.dti_doc" />
                             </div>
-                            <a-empty />
+                            <div v-else>
+                                <a-empty />
+                            </div>
                         </a-card>
                     </a-col>
                 </a-row>
@@ -104,12 +106,18 @@
                     <div class="flex justify-between">
                         <div>
                             <a-typography-text keyboard>Barcode Start Here</a-typography-text>
-                            <a-input-number v-model:value="formStatebr.barcodestart"
+                            <a-input-number @change="() => formStatebr.errors.barcodestart = null" v-model:value="formStatebr.barcodestart"
                                 class="pt-3 pb-1 text-3xl w-full" />
+                            <span class="text-red-500" v-if="formStatebr.errors.barcodestart">*{{
+                                formStatebr.errors.barcodestart
+                                }}</span>
                         </div>
                         <div>
                             <a-typography-text keyboard>Barcode Start Here</a-typography-text>
-                            <a-input-number v-model:value="formStatebr.barcodeend" class="pt-3 pb-1 text-3xl w-full" />
+                            <a-input-number @change="() => formStatebr.errors.barcodeend = null" v-model:value="formStatebr.barcodeend" class="pt-3 pb-1 text-3xl w-full" />
+                            <span class="text-red-500" v-if="formStatebr.errors.barcodeend">*{{
+                                formStatebr.errors.barcodeend
+                                }}</span>
                         </div>
                     </div>
                     <a-button class="mt-2" block type="primary" @click="printByBarcodeRange">
@@ -125,9 +133,10 @@
                         </p>
                     </template>
 
-                    <a-typography-text keyboard>Barcode Start Here</a-typography-text>
-                    <a-input-number v-model:value="formStateb.barcode" allow-clear class="pt-3 pb-1 text-3xl w-full" />
-
+                    <a-typography-text keyboard>Barcode</a-typography-text>
+                    <a-input-number @change="() => formStateb.errors.barcode = null" placeholder="Enter Barcode Here..." v-model:value="formStateb.barcode" allow-clear
+                        class="pt-3 pb-1 text-3xl w-full" />
+                    <span class="text-red-500" v-if="formStateb.errors.barcode">*{{ formStateb.errors.barcode }}</span>
                     <a-button @click="printByBarcode" class="mt-2" block type="primary">
                         Print Barcode By Barcode
                     </a-button>
