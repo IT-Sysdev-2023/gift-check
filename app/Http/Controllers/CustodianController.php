@@ -341,7 +341,6 @@ class CustodianController extends Controller
 
     public function barcodeOrRangeDti(Request $request)
     {
-        // dd($request->barcodestart, $request->barcodeend);
         if ($request->status == '2') {
             $request->validate(rules: [
                 'barcode' => 'required',
@@ -349,7 +348,7 @@ class CustodianController extends Controller
         } else {
             $request->validate(rules: [
                 'barcodestart' => 'required|lt:barcodeend',
-                'barcodeend' => 'gt:barcodestart',
+                'barcodeend' => 'required|gt:barcodestart',
             ]);
         }
 
