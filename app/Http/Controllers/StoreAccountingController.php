@@ -920,7 +920,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1013,7 +1014,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1105,7 +1107,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1198,7 +1201,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1291,7 +1295,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1383,7 +1388,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1475,7 +1481,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1567,7 +1574,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1659,7 +1667,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1751,7 +1760,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1843,7 +1853,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -1935,7 +1946,8 @@ class StoreAccountingController extends Controller
                     ->orWhere('seodtt_ackslipno', 'LIKE', '%' . $searchQuery . '%')
                     ->orWhere('seodtt_crditpurchaseamt', 'LIKE', '%' . $searchQuery . '%');
             });
-        };
+        }
+        ;
 
         $data = $alturasData->where('seodtt_barcode', $barcode)
             ->orderByDesc('seodtt_id')->paginate(10)->withQueryString();
@@ -2040,8 +2052,7 @@ class StoreAccountingController extends Controller
             )
 
             ->orderBy('special_external_gcrequest.spexgc_datereq', 'asc')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
 
         $searchQuery = $request->input('search', '');
@@ -2077,8 +2088,7 @@ class StoreAccountingController extends Controller
                 });
             })
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'ASC')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
 
         $pdfSearchQuery = $request->input('pdfCustomerSearch', '');
@@ -2117,8 +2127,7 @@ class StoreAccountingController extends Controller
                 'special_external_customer.spcus_companyname'
             )
             ->orderBy('special_external_gcrequest.spexgc_datereq', 'ASC')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
         $searchPdfBarcode = $request->input('pdfPerBarcodeSearch', '');
         // dd($searchPdfBarcode);
@@ -2150,8 +2159,7 @@ class StoreAccountingController extends Controller
                 DB::raw("DATE_FORMAT(approved_request.reqap_date, '%m/%d/%Y') AS daterel")
             )
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'ASC')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
 
 
@@ -2288,8 +2296,7 @@ class StoreAccountingController extends Controller
                 'special_external_customer.spcus_companyname'
             )
             ->orderBy('special_external_gcrequest.spexgc_datereq')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
 
         $searchTerm = $request->input('perBarcode', '');
@@ -2327,8 +2334,7 @@ class StoreAccountingController extends Controller
                 });
             })
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
 
         $pdfCustomerQuery = $request->pdfPerCustomer;
@@ -2370,8 +2376,7 @@ class StoreAccountingController extends Controller
                 'special_external_customer.spcus_companyname',
             )
             ->orderBy('special_external_gcrequest.spexgc_datereq', 'ASC')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
         $pdfBarcodeQuery = $request->pdfPerBarcode;
         // dd($pdfBarcodeQuery);
@@ -2404,8 +2409,7 @@ class StoreAccountingController extends Controller
                 });
             })
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
         // dd($pdfPerBarcode);
 
 
@@ -2510,20 +2514,14 @@ class StoreAccountingController extends Controller
 
     public function alttaTable(Request $request)
     {
-        // dd();
-        // dd($request->toArray());
         $alttaTable = $request->AlttaData;
         $selectedFile = $request->selectedFile;
-        // dd($selectedFile);
-        // dd($alttaTable);
         $cleanedBarcodes = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $alttaTable);
         $barcodes = array_filter(explode(',', $cleanedBarcodes));
 
         $alttaBarcode = array_map('trim', $barcodes);
-        //    dd($barcode);
 
         $alttaTagbilaranSearch = $request->input('search');
-        // dd($alttaTagbilaranSearch);
 
         $tagbilaran = DB::table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
@@ -2565,12 +2563,13 @@ class StoreAccountingController extends Controller
                 });
             })
             ->whereIn('store_verification.vs_barcode', $alttaBarcode)
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
         $talibonSearch = $request->input('search5', '');
 
-        $talibon = DatabaseConnectionService::localServer(self::TALIBON)->table('store_verification')
+            //ALTTA TALIBON QUERY
+
+        $talibon = DatabaseConnectionService::remoteServer(self::TALIBON)->table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->select(
@@ -2610,12 +2609,14 @@ class StoreAccountingController extends Controller
                 });
             })
             ->whereIn('store_verification.vs_barcode', $alttaBarcode)
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
         $tubigonSearch = $request->input('search6', '');
 
-        $tubigon = DatabaseConnectionService::localServer(self::TUBIGON)->table('store_verification')
+
+            // ALTTA TUBIGON QUERY
+
+        $tubigon = DatabaseConnectionService::remoteServer(self::TUBIGON)->table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->select(
@@ -2655,9 +2656,7 @@ class StoreAccountingController extends Controller
                 });
             })
             ->whereIn('store_verification.vs_barcode', $alttaBarcode)
-            ->paginate(10)
-            ->withQueryString();
-        // dd($tagbilaran->toArray());
+            ->paginate(10);
 
 
         return (object) [
@@ -2673,17 +2672,14 @@ class StoreAccountingController extends Controller
 
     public function cebuTable(Request $request)
     {
-        // dd($request->toArray());
         $cebu = $request->barcodes;
 
         $selectedCebuFile = $request->selectedCebuFile;
-        // dd($selectedCebuFile);
         $cleanedBarcodes = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $cebu);
         $barcodes = array_filter(explode(',', $cleanedBarcodes));
         $cebuBarcode = array_map('trim', $barcodes);
 
         $tagbilaranSearch = $request->input('search1', '');
-        // dd($tagbilaranSearch);
 
         $tagbilaran = DB::table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
@@ -2725,11 +2721,11 @@ class StoreAccountingController extends Controller
                 });
             })
             ->whereIn('store_verification.vs_barcode', $cebuBarcode)
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
+            // CEBU TALIBON QUERY
         $talibonSearch = $request->input('search2', '');
-        $talibon = DatabaseConnectionService::localServer(self::TALIBON)->table('store_verification')
+        $talibon = DatabaseConnectionService::remoteServer(self::TALIBON)->table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->select(
@@ -2769,11 +2765,12 @@ class StoreAccountingController extends Controller
                 });
             })
             ->whereIn('store_verification.vs_barcode', $cebuBarcode)
-            ->paginate(10)
-            ->withQueryString();
+            ->get();
 
+
+            //CEBU TUBIGON QUERY
         $tubigonSearch = $request->input('search3', '');
-        $tubigon = DatabaseConnectionService::localServer(self::TUBIGON)->table('store_verification')
+        $tubigon = DatabaseConnectionService::remoteServer(self::TUBIGON)->table('store_verification')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->select(
@@ -2813,8 +2810,7 @@ class StoreAccountingController extends Controller
                 });
             })
             ->whereIn('store_verification.vs_barcode', $cebuBarcode)
-            ->paginate(10)
-            ->withQueryString();
+            ->get();
 
         return (object) [
             'selectedCebuFile' => $selectedCebuFile,
@@ -2830,12 +2826,12 @@ class StoreAccountingController extends Controller
 
     public function duplicateExcel(Request $request)
     {
-        // dd($request->toArray());
         return Excel::download(new allDuplicateExcel($request->toArray()), 'Duplicated Barcode Excel.xlsx');
     }
 
     public function CheckVariance(Request $request)
     {
+        // dd($request->toArray());
         $companyNameList = SpecialExternalCustomer::select(
             'spcus_id',
             'spcus_companyname',
@@ -2895,9 +2891,9 @@ class StoreAccountingController extends Controller
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc');
 
         // Paginate the results
-        $tagbilaran = $tagbilaranQuery->paginate(10)->withQueryString();
+        $tagbilaran = $tagbilaranQuery->get();
 
-        $tagbilaran->getCollection()->transform(function ($row) {
+        $tagbilaran->transform(function ($row) {
             if (is_null($row->vs_date) && is_null($row->seodtt_transno)) {
                 $status = 'Not verified / not use';
             } elseif (!is_null($row->vs_date) && is_null($row->seodtt_transno)) {
@@ -2930,7 +2926,7 @@ class StoreAccountingController extends Controller
 
         $talibonSearch = $request->talibonSearch;
 
-        $talibon = DatabaseConnectionService::localServer(self::TALIBON)->table('special_external_gcrequest_emp_assign')
+        $talibon = DatabaseConnectionService::remoteServer(self::TALIBON)->table('special_external_gcrequest_emp_assign')
             ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
             ->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
@@ -2956,9 +2952,9 @@ class StoreAccountingController extends Controller
                 });
             })
             ->orderBy('special_external_gcrequest_emp_assign.spexgcemp_barcode', 'asc');
-        $talibon = $talibon->paginate(10)->withQueryString();
+        $talibon = $talibon->get();
 
-        $talibon->getCollection()->transform(function ($row2) {
+        $talibon->transform(function ($row2) {
             $date = $row2->vs_date ? Carbon::parse($row2->vs_date)->format('Y-m-d') : 'N/A';
             $store = $row2->store_name ?? 'N/A';
             $transno = $row2->seodtt_transno ?? 'N/A';

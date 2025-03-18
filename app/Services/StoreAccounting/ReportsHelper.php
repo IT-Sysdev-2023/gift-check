@@ -74,9 +74,7 @@ class ReportsHelper
 
     public static function checkBillingReportPerDayRemote($store, $date, $isLocal)
     {
-        // dd($store);
         $server = DatabaseConnectionService::getLocalConnection($isLocal, $store);
-        // dd($server);
 
         return $server->table('store_eod_textfile_transactions')
             ->join('store_verification', 'store_verification.vs_barcode', '=', 'store_eod_textfile_transactions.seodtt_barcode')

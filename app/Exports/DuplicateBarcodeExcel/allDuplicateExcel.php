@@ -17,20 +17,18 @@ class allDuplicateExcel implements WithMultipleSheets
     public function sheets(): array
     {
         $fileName = $this->allDuplicateData['barcodes'];
-        // dd($fileName);
-        $cleanedFileName = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $fileName); 
-        // $baseDirectory = ('c:/Users/it personnel/downloads/' . $fileName); 
+        $talibonData = $this->allDuplicateData['talibonData'] ?? ['kupal'];
+        $tubigonData = $this->allDuplicateData['tubigonData'] ?? ['kupal'];
+
+        $cleanedFileName = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $fileName);
 
         $barcodes = array_filter(explode(',', $cleanedFileName));
-        // $fileContents = file_get_contents($baseDirectory);
-        // $processedData = explode(PHP_EOL, $fileContents);
-        // $processedData = array_map('str_getcsv', $processedData);
+
         $barcodes = array_map('trim', $barcodes);
-        // dd($barcodes);
         return [
             new tagbilaranExcel($barcodes),
-            new talibonExcel($barcodes),
-            new tubigonExcel($barcodes),
+            new talibonExcel($talibonData),
+            new tubigonExcel($tubigonData),
         ];
     }
 }

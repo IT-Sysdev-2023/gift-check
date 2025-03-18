@@ -46,7 +46,6 @@ class DatabaseConnectionService
 
     public static function remoteServer(string|int $store)
     {
-        // dd($store);
         $storeMapping = [
             1 => 'gc',
             2 => 'gc_local',
@@ -62,44 +61,36 @@ class DatabaseConnectionService
             12 => 'gc'
         ];
         if (!isset($storeMapping[$store])) {
-            return response()->json([
-                'error' => true,
-                'message' => "Invalid store ID: $store"
-            ], 400);
+            throw new \Exception("Invalid store ID: $store");
         }
         if ($store == 6 || $store == 7) {
-            return response()->json([
-                'error' => true,
-                'message' => "No server configuration found for store ID: $store"
-            ], 404);
+            throw new \Exception("No server configuration found for store ID: $store");
         }
 
         $lserver = StoreLocalServer::where('stlocser_storeid', $store)
             ->first(['stlocser_ip', 'stlocser_username', 'stlocser_password']);
 
 
-        // return self::getConnection($lserver->stlocser_ip, 'gc', $lserver->stlocser_username, $lserver->stlocser_password);
         if (!$lserver) {
-            return response()->json([
-                'error' => true,
-                'message' => "No server configuration found for store ID: $store"
-            ]);
+            throw new \Exception("No server configuration found for store ID: $store");
         }
         $database = $storeMapping[$store] ?? 'gc_local';
         return self::getConnection($lserver->stlocser_ip, $database, $lserver->stlocser_username, $lserver->stlocser_password);
 
     }
-    // public static function remoteServer(string|int $store)
+    public static function getLocalConnection(bool $isLocal, $store)
+    {
+        return $isLocal ? DB::connection('mariadb') : self::remoteServer($store);
+    }
+
+    // BELOW IS THE ORIGINAL SETUP FOR THE DATABASECONNECTION SERVER
+
+     // public static function remoteServer(string|int $store)
     // {
     //     $lserver = StoreLocalServer::where('stlocser_storeid', $store)
     //         ->first(['stlocser_ip', 'stlocser_username', 'stlocser_password']);
 
     //     return self::getConnection($lserver->stlocser_ip, 'gc_local', $lserver->stlocser_username, $lserver->stlocser_password);
     // }
-    public static function getLocalConnection(bool $isLocal, $store)
-    {
-        return $isLocal ? DB::connection('mariadb') : self::remoteServer($store);
-    }
-
 
 }

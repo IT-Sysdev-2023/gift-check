@@ -56,7 +56,7 @@ class tagbilaranExcel implements FromCollection, WithHeadings, WithTitle, Should
         ];
     }
 
-    
+
     public function registerEvents(): array
     {
         return [
@@ -66,7 +66,7 @@ class tagbilaranExcel implements FromCollection, WithHeadings, WithTitle, Should
                 $sheet->setCellValue('A1', 'STORE VERIFIED / VALIDATED GC');
 
                 $sheet->mergeCells('A1:I1');
-    
+
 
                 $sheet->getStyle('A1')->getAlignment()
                     ->setHorizontal('center')
@@ -85,7 +85,7 @@ class tagbilaranExcel implements FromCollection, WithHeadings, WithTitle, Should
         ];
     }
 
-    
+
     public function title(): string
     {
         return 'Tagbilaran';
@@ -94,7 +94,6 @@ class tagbilaranExcel implements FromCollection, WithHeadings, WithTitle, Should
     public function collection()
     {
         $data = $this->tagbilaranDataExcel($this->barcode);
-        // dd($data);
         $paddingRows = collect(array_fill(0, 2, ['', '', '', '']));
         $dataWithPadding = $paddingRows->concat(collect($data));
         return collect($dataWithPadding);
@@ -114,12 +113,12 @@ class tagbilaranExcel implements FromCollection, WithHeadings, WithTitle, Should
             'store_eod_textfile_transactions.seodtt_crditpurchaseamt as amount',
             'store_verification.vs_date as verdate',
             'store_verification.vs_time as vertime',
-            DB::raw("(CASE 
+            DB::raw("(CASE
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ICM' THEN 'ICM'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'ASC' THEN 'ASC'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TAL' THEN 'TAL'
                     WHEN LEFT(store_eod_textfile_transactions.seodtt_bu, 3) = 'TUB' THEN 'TUB'
-                    ELSE 'PM' 
+                    ELSE 'PM'
                 END) as store")
         )
             ->whereIn('store_verification.vs_barcode', $barcode)
