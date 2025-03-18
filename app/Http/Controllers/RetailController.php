@@ -8,6 +8,7 @@ use App\Exports\RetailVerifiedGCReport;
 use App\Helpers\ColumnHelper;
 use App\Helpers\NumberHelper;
 use App\Models\Assignatory;
+use App\Models\CreditCard;
 use App\Models\CreditcardPayment;
 use App\Models\Customer;
 use App\Models\CustomerInternalAr;
@@ -369,7 +370,6 @@ class RetailController extends Controller
         } else {
             return inertia('ErrorInServer');
         }
-
     }
 
     public function submitVerify(Request $request)
@@ -906,5 +906,56 @@ class RetailController extends Controller
     public function suppliergcverification()
     {
         return inertia('Retail/SupplierGcVerification');
+    }
+    public function cashSales(Request $request)
+    {
+        $data = TransactionStore::where('transaction_stores.trans_store', $request->user()->store_assigned)
+            ->where('transaction_stores.trans_type', 1)
+            ->join('transaction_payment', 'transaction_payment.payment_trans_num', '=', 'transaction_stores.trans_sid')
+            ->whereAny([
+                'payment_stotal',
+                'payment_linediscount',
+                'payment_docdisc',
+                'payment_amountdue'
+            ], 'like', $request->search . '%')
+            ->orderByDesc('transaction_stores.trans_sid')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->transDate = Date::parse($item->trans_datetime)->format('F d, Y');
+            $item->totalPayment = '₱ ' . $item->payment_stotal;
+            $item->lineDiscount = '₱ ' . $item->payment_linediscount;
+            $item->stotalDis = '₱ ' . $item->payment_docdisc;
+            $item->amountDue = '₱ ' . $item->payment_amountdue;
+            return $item;
+        });
+        return inertia('Retail/Sales/CashSales', [
+            'data' => $data
+        ]);
+    }
+
+    public function cardSales(Request $request)
+    {
+        $creditCards = CreditCard::where('ccard_status', 1)->get(['ccard_name', 'ccard_id']);
+        $grandTotal = 0;
+        $creditCards->transform(function ($card) use ($request, &$grandTotal) {
+            $totalSales = CreditcardPayment::join('customer_internal_ar', 'creditcard_payment.cctrans_transid', '=', 'customer_internal_ar.ar_trans_id')
+                ->join('transaction_stores', 'creditcard_payment.cctrans_transid', '=', 'transaction_stores.trans_sid')
+                ->where('creditcard_payment.cc_creaditcard', $card->ccard_id)
+                ->where('customer_internal_ar.ar_type', 2)
+                ->where('transaction_stores.trans_store', $request->user()->store_assigned)
+                ->sum('customer_internal_ar.ar_dbamt');
+
+            $card->total_sales = $totalSales;
+            $grandTotal += $totalSales;
+
+            return $card;
+        });
+
+        return inertia('Retail/Sales/CardSales', [
+            'data' => $creditCards,
+            'grandTotal' => $grandTotal
+        ]);
     }
 }
