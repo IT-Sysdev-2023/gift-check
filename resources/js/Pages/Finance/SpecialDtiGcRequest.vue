@@ -152,7 +152,7 @@ const form = ref({
                                     </a-form-item>
                                     <a-form-item label="Uploaded Document">
                                         <a-image :src="'/storage/' + form.dti_fullpath"
-                                            style="height: 200px; width: 300%;" />
+                                            style="height: 100px; width: 200%;" />
                                     </a-form-item>
                                 </div>
                                 <div v-else>
