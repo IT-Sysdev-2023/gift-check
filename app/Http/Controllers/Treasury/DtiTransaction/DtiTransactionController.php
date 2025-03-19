@@ -8,6 +8,7 @@ use App\Http\Requests\DtiGcRequest as RequestsDtiGcRequest;
 use App\Models\DtiDocument;
 use App\Models\DtiGcRequest;
 use App\Models\DtiGcRequestItem;
+use App\Models\LedgerBudget;
 use App\Models\SpecialExternalCustomer;
 use App\Models\SpecialExternalGcrequest;
 use App\Services\DtiServices;
@@ -19,9 +20,7 @@ class DtiTransactionController extends Controller
 {
     use DtiGcTraits;
     //
-    public function __construct(public DtiServices $dtiServices)
-    {
-    }
+    public function __construct(public DtiServices $dtiServices) {}
     public function index()
     {
 
@@ -49,8 +48,16 @@ class DtiTransactionController extends Controller
             ->first();
     }
 
+    public function budgetSpecial()
+    {
+        return LedgerBudget::budgetSpecial();
+    }
+
     public function submitDtiForm(RequestsDtiGcRequest $request)
     {
+        if ($this->budgetSpecial() < $request->total) {
+            return redirect()->back()->with(['error' => 'Insufficient Balance Special, Unable to proceed']);
+        }
 
         $dti = self::options();
 
@@ -83,7 +90,7 @@ class DtiTransactionController extends Controller
             'title' => 'Dti List View'
         ]);
     }
-        // dti approved part
+    // dti approved part
     public function dtiApprovedView(Request $request)
     {
         // dd($this->dtiApprovedViewList($request));
@@ -92,17 +99,18 @@ class DtiTransactionController extends Controller
             'title' => 'Dti Approved View'
         ]);
     }
-        //dti released part
+    //dti released part
     public function dtiReleasedGc(Request $request)
     {
-        return inertia('Treasury/Dti/DtiReleasedGc',[
+        return inertia('Treasury/Dti/DtiReleasedGc', [
             'data' => $this->dtiReleasedGcView($request),
             'search' => $request->search,
             'title' => 'Dti Released GC'
         ]);
     }
 
-    public function dtiReleasedView(Request $request){
+    public function dtiReleasedView(Request $request)
+    {
         return inertia('Treasury/Dti/DtiReleasedView', [
             'data' => $this->dtiReleasedViewList($request),
             'title' => 'Dti Released View'

@@ -42,7 +42,6 @@ class LedgerService extends ExcelWriter
 
     public function gcLedger(Request $request) // gccheckledger.php
     {
-
         return LedgerCheck::with('user:user_id,firstname,lastname')
             ->select(
                 'cledger_id',
@@ -55,7 +54,7 @@ class LedgerService extends ExcelWriter
                 'ccredit_amt',
                 'c_posted_by'
             )
-            ->orderBy('cledger_id')
+            ->orderByDesc('cledger_datetime')
             ->paginate(10)
             ->withQueryString();
 

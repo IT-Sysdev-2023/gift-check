@@ -96,10 +96,15 @@ class SpecialGcRequestController extends Controller
             'options' => self::options()
         ]);
     }
-
+    public function budgetSpecial()
+    {
+        return LedgerBudget::budgetSpecial();
+    }
     public function gcPaymentSubmission(Request $request)
     {
-
+        if ($this->budgetSpecial() < $request->total) {
+            return redirect()->back()->with(['error' => 'Insufficient Balance Special, Unable to proceed']);
+        }
         $data = $this->specialGcPaymentService->store($request);
 
         $pdf = Pdf::loadView('pdf.specialexternalpayment', ['data' => $data]);

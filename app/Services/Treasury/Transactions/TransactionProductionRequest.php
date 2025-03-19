@@ -28,7 +28,7 @@ class TransactionProductionRequest extends FileHandler
 		}
 		return false;
 	}
-	public function storeGc(Request $request)
+	public function storeGc(Request $request, $bud)
 	{
 
 		if ($this->isAbleToRequest($request)) {
@@ -41,6 +41,10 @@ class TransactionProductionRequest extends FileHandler
 			// 'file' => 'required|image|mimes:jpeg,png,jpg|max:5048',
 			'denom' => ['required', 'array', new DenomQty()],
 		]);
+
+        if($bud < $request->total){
+            return redirect()->back()->with('error', 'Insufficient Budget Unable to proceed');
+        }
 
 		$filename = $this->createFileName($request);
 

@@ -56,18 +56,18 @@
                     </a-col>
 
                 </a-row>
-                <div class="flex justify-end ">
-                    <a-button class="mt-4" type="primary" @click="submit" :disabled="!disableSubmit()">
-                        <template #icon>
-                            <FastForwardOutlined />
-                        </template>
-                        Continue Submitting Form
-                    </a-button>
-                </div>
+                <a-button block class="mt-4" size="large" type="primary" @click="submit" :disabled="!disableSubmit()">
+                    <template #icon>
+                        <FastForwardOutlined />
+                    </template>
+                    Continue Submitting Form
+                </a-button>
+
             </a-card>
         </a-col>
     </a-row>
-    <assign-customer-employee-gc :bunit="bunit" v-model:open="assignModal" :selected="selected" @assign-temp="getAssinTemp" />
+    <assign-customer-employee-gc :bunit="bunit" v-model:open="assignModal" :selected="selected"
+        @assign-temp="getAssinTemp" />
 
 </template>
 <script>

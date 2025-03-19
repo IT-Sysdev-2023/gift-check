@@ -25,15 +25,15 @@
             </a-col>
         </a-row>
         <template #title>
-            <div>Approve Budget Request</div>
+            <div>Review Budget Request</div>
         </template>
         <a-float-button :disabled="apreq == 0" @click="handleClick" :badge="{ count: apreq, color: 'blue' }">
             <template #tooltip>
-                Approve Budget Request?
+                Review Budget Request?
             </template>
         </a-float-button>
 
-        <a-modal :width="600"  v-model:open="modal" :footer="null">
+        <a-modal class="text-center" title="Budget Request Reviewing" :width="600" style="top: 40px;"  v-model:open="modal" :footer="null">
             <for-approval-pending :budget="budgetrequest" @close="closeModal"/>
         </a-modal>
     </AuthenticatedLayout>

@@ -431,7 +431,6 @@ class FinanceController extends Controller
 
     public function SpecialGcApprovalForm(Request $request)
     {
-        // dd($request->all());
         $gcType = $request->gcType;
         // dd($gcType);
         $id = $request->id;
@@ -510,7 +509,7 @@ class FinanceController extends Controller
     // THIS IS FOR THE APPROVED SUBMIT BUTTON
     public function DtiApprovedForm(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $id = $request->data[0]['dti_num'];
         $totalDenom = $request->data[0]['total'];
         $reqType = DtiGcRequest::select('dti_type')->where('dti_num', $id)->first();
@@ -863,7 +862,6 @@ class FinanceController extends Controller
 
     public function setupBudget(Request $request)
     {
-
         $data = $this->financeService->budgetRequest($request);
 
         return inertia('Finance/SetupBudgetRequest', [

@@ -125,8 +125,8 @@ class FinanceService extends FileHandler
         DB::transaction(function () use ($request, $ledger) {
 
             $file = $this->createFileName($request);
-            // dd($request->all());
-            LedgerBudget::create([
+
+            $brs = LedgerBudget::create([
                 'bledger_no' => NumberHelper::leadingZero($ledger, "%013d"),
                 'bledger_trid' => $request->br_id,
                 'bledger_datetime' => now(),
@@ -136,6 +136,20 @@ class FinanceService extends FileHandler
                 'bledger_group' => $request->br_group,
                 'bledger_category' => $request->br_category
             ]);
+
+            if (LedgerBudget::budget() > 0) {
+                if ($brs) {
+                    LedgerBudget::create([
+                        'bledger_no' => '000000',
+                        'bledger_trid' => '0',
+                        'bledger_datetime' => now(),
+                        'bledger_type' => 'RFBRFM',
+                        'bcredit_amt' => $request->br_req,
+                        'bledger_typeid' => $request->br_budtype,
+                        'bledger_group' => $request->br_group,
+                    ]);
+                }
+            }
 
             ApprovedBudgetRequest::create([
                 'abr_budget_request_id' => $request->br_id,
@@ -489,25 +503,25 @@ class FinanceService extends FileHandler
                     'msg' => 'Budget Adjustment Needs Recommendation Approval from Retail Group ' . $request['bgroup'] . '.'
                 ]);
             }
-        }else{
+        } else {
             DB::transaction(function () use ($request) {
                 BudgetAdjustment::where('adj_id', $request['id'])->where('adj_request_status', '0')->update([
                     'adj_request_status' => $request['status'],
                 ]);
 
-              $cancelled =  CancelledAdjRequest::create([
+                $cancelled =  CancelledAdjRequest::create([
                     'cadj_req_id' => $request['id'],
                     'cadj_at' => now(),
                     'cadj_by' => request()->user()->user_id,
                 ]);
 
-                if($cancelled->wasRecentlyCreated){
+                if ($cancelled->wasRecentlyCreated) {
                     return response()->json([
                         'status' => 'error',
                         'title' => 'Error',
                         'msg' => 'Budget Adjustment request cancelled.'
                     ]);
-                }else{
+                } else {
                     return response()->json([
                         'status' => 'error',
                         'title' => 'Error',

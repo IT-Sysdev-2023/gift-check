@@ -43,25 +43,28 @@
                                     formState.errors.companyId
                                     }}</span>
                             </a-form-item>
-                            <a-form-item label="AR no." name="ar">
-                                <a-input v-model:value="formState.arNo" />
-                            </a-form-item>
+
                             <a-form-item label="Payment Type:" :validate-status="getErrorStatus('paymentType.type')
                                 " :help="getErrorMessage('paymentType.type')">
                                 <ant-select :options="paymentType" @handle-change="handlePaymentChange" />
                             </a-form-item>
-                            <PaymentType :form="formState" v-if="formState.paymentType.type" />
+                            <a-form-item v-if="formState?.paymentType?.type != '4'" label="AR no." name="ar">
+                                <a-input v-model:value="formState.arNo" />
+                            </a-form-item>
+                            <PaymentType  :form="formState" v-if="formState.paymentType.type" />
                             <a-form-item label="Remarks:." name="name" has-feedback
                                 :validate-status="getErrorStatus('remarks')" :help="getErrorMessage('remarks')">
                                 <a-textarea v-model:value="formState.remarks" @input="clearError('remarks')" />
                             </a-form-item>
                         </a-card>
+
                     </a-col>
                     <a-col :span="12">
                         <ant-form-nest-item :form="formState" />
-                        <a-form-item class="mt-5" style="float: right">
-                            <a-button type="primary" html-type="submit">Submit Special Gc Payment</a-button>
-                        </a-form-item>
+                        <a-button class="mt-4" size="large" block type="primary" html-type="submit">
+                            <FastForwardOutlined />Submit Special Gc
+                            Payment
+                        </a-button>
                     </a-col>
                 </a-row>
             </a-form>

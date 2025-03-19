@@ -18,13 +18,16 @@ class TransactionsController extends Controller
         public BudgetRequestService $budgetRequestService,
         public TransactionProductionRequest $transactionProductionRequest,
         public RegularGcProcessService $regularGcProcessService
-    ) {
-
-    }
+    ) {}
     public function budgetRequest(Request $request)
     {
         $br = BudgetRequest::max('br_no');
 
+        if ($br) {
+            $br = BudgetRequest::max('br_no');
+        } else {
+            $br = 1;
+        }
         return inertia('Treasury/Transactions/BudgetRequest', [
             'title' => 'Budget Request',
             'br' => NumberHelper::leadingZero($br + 1),
@@ -38,5 +41,4 @@ class TransactionsController extends Controller
     {
         return $this->budgetRequestService->budgetRequestSubmission($request);
     }
-
 }

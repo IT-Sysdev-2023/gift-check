@@ -91,9 +91,7 @@
                             :value="$page.props.auth.user.firstname + ' ' + $page.props.auth.user.lastname" />
                     </a-form-item>
                     <div>
-                        <div class="flex justify-end">
-                            <a-button @click="handleSubmit" type="primary">Submit </a-button>
-                        </div>
+                        <a-button block size="large" :disabled="!disabled()" @click="handleSubmit" type="primary">Submit</a-button>
                     </div>
                 </a-card>
             </a-col>
@@ -180,6 +178,10 @@ const holderData = ref({
     bu: null,
 })
 
+const disabled = () => {
+    return props.data?.special_dti_gcrequest_items_has_many.reduce((sum, item) => sum + item.dti_qty, 0) == gcHolder.value.length ?? 0;
+
+};
 
 const requiredFields = ['lname', 'fname', 'address', 'bu'];
 
@@ -217,7 +219,6 @@ const handleSubmit = () => {
 const idHolder = ref(1);
 
 const checkExistence = (temp) => {
-    console.log(temp);
     return gcHolder.value?.filter((data) => data.trid == temp).length ?? 0;
 };
 const handleAssign = () => {
