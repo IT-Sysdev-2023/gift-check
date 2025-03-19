@@ -41,7 +41,7 @@ const form = ref({
     voucher: props.data?.[0]?.dti_barcodes?.[0]?.voucher ?? '',
     address: props.data?.[0]?.dti_barcodes?.[0]?.address ?? '',
     final_remarks: '',
-    barcode: '',
+    barcode: null,
     errors: {},
     total_gcScan: '',
     final_total_denomination: '',
@@ -77,6 +77,7 @@ const SubmitBtn = async () => {
                 description: response.data.description
             });
             router.visit(response.data.redirect);
+
         }
         else if (response.data.error) {
             notification.error({
@@ -103,15 +104,16 @@ const scanBarcodeBtn = async () => {
             barcode: form.value.barcode
         })
         if (response.data.success) {
+            form.value.barcode = '';
             form.value.total_gcScan = response.data.countSession;
             form.value.final_total_denomination = response.data.denominationSession;
             notification.success({
                 message: response.data.message,
                 description: response.data.description
             });
-            openScanModal.value = false;
 
         } else if (response.data.error) {
+            form.value.barcode = '';
             notification.error({
                 message: response.data.message,
                 description: response.data.description
@@ -179,9 +181,12 @@ const reprintGc = () => {
                         <a-descriptions-item label="AR #" v-model:value="form.id">{{ form.id }}</a-descriptions-item>
                         <a-descriptions-item label="Request Remarks" v-model:value="form.request_remarks">{{
                             form.request_remarks }}</a-descriptions-item>
-                        <a-descriptions-item label="Documents" v-model:value="form.dti_doc">
-                            <img :src="'/storage/' + form.dti_doc" class="w-40 h-auto rounded shadow-md" />
+                        <a-descriptions-item label="Documents">
+                            <a-image v-if="form.dti_doc" :src="`/storage/${form.dti_doc}`"
+                                style="height: 100px; width: 200px;" />
+                            <span v-else>No document available</span>
                         </a-descriptions-item>
+
                         <a-descriptions-item label="Approved By" v-model:value="form.dti_approvedby">{{
                             form.dti_approvedby }}</a-descriptions-item>
                         <a-descriptions-item label="Department" v-model:value="form.dti_department">{{
@@ -195,8 +200,10 @@ const reprintGc = () => {
                         <a-descriptions-item label="Approved Remarks" v-model:value="form.dti_approved_remarks">{{
                             form.dti_approved_remarks
                         }}</a-descriptions-item>
-                        <a-descriptions-item label="Documents" v-model:value="form.dti_doc_second">
-                            <img :src="'/storage/' + form.dti_doc_second" class="w-40 h-auto rounded shadow-md" />
+                        <a-descriptions-item label="Documents">
+                            <a-image v-if="form.dti_doc_second" :src="'/storage/' + form.dti_doc_second"
+                                style="height: 100px; width: 200px;" />
+                            <span v-else>No document available</span>
                         </a-descriptions-item>
                         <a-descriptions-item label="Date Requested" v-model:value="form.dti_datereq">{{ form.dti_datereq
                         }}</a-descriptions-item>
@@ -224,7 +231,8 @@ const reprintGc = () => {
                                     <a-form-item :validate-status="form.errors.barcode ? 'error' : ''"
                                         :help="form.errors.barcode">
                                         <span>Scan Barcode:</span>
-                                        <a-input v-model:value="form.barcode" placeholder="Scan Barcode">
+                                        <a-input @keyup.enter="scanBarcodeBtn" v-model:value="form.barcode"
+                                            placeholder="Scan Barcode">
                                         </a-input>
                                     </a-form-item>
                                 </div>
@@ -261,6 +269,6 @@ const reprintGc = () => {
                 </a-tab-pane>
             </a-tabs>
         </a-card>
-        <!-- {{ props.data }} -->
+        <!-- {{ form.dti_doc }} -->
     </AuthenticatedLayout>
 </template>

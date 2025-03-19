@@ -97,8 +97,8 @@ const form = computed(() => {
                             <a-descriptions-item label="Remarks">{{ form.firstRemarks }}</a-descriptions-item>
                             <a-descriptions-item label="Amount">{{ form.amount }}</a-descriptions-item>
                             <a-descriptions-item label="Documents">
-                                <img v-if="form.dti_doc" :src="'/storage/' + form.dti_doc"
-                                    style="width: 100px; height: 100px" />
+                                <a-image v-if="form.dti_doc" :src="'/storage/' + form.dti_doc"
+                                    style="width: 200px; height: 100px" />
                             </a-descriptions-item>
                         </a-descriptions>
 
@@ -108,8 +108,8 @@ const form = computed(() => {
                                 {{ dayjs(form.dti_approveddate).format('MMMM D, YYYY') }}</a-descriptions-item>
                             <a-descriptions-item label="Checked By">{{ form.dti_checkby }}</a-descriptions-item>
                             <a-descriptions-item label="Documents">
-                                <img v-if="form.approved_doc" :src="'/storage/' + form.approved_doc"
-                                    style="width: 100px; height: 100px" />
+                                <a-image v-if="form.approved_doc" :src="'/storage/' + form.approved_doc"
+                                    style="width: 200px; height: 100px" />
                             </a-descriptions-item>
                             <a-descriptions-item label="Approved By">{{ form.dti_approvedby }}</a-descriptions-item>
                             <a-descriptions-item label="Remarks">{{ form.dti_remarks }}</a-descriptions-item>
