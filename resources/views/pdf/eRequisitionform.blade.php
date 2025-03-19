@@ -21,11 +21,12 @@
         th,
         td {
             border: 1px solid #dddddd;
-            text-align: left;
+            text-align: center;
             padding: 8px;
         }
 
         th {
+            text-align: center;
             background-color: #ffff;
         }
 
@@ -53,6 +54,7 @@
             position: absolute;
             bottom: 0px;
         }
+
         .preparedBy {
             width: 300px;
             height: 100px;
@@ -91,12 +93,12 @@
             </thead>
             <tbody>
                 @foreach ($barcodes as $item)
-                    <tr>
-                        <td>{{$item['denomination']}}</td>
-                        <td>{{$item['pe_items_quantity']}}</td>
-                        <td>{{$item['barcodeStart']}}</td>
-                        <td>{{$item['barcodeEnd']}}</td>
-                    </tr>
+                <tr>
+                    <td>{{$item['denomination']}}</td>
+                    <td>{{$item['pe_items_quantity']}}</td>
+                    <td>{{$item['barcodeStart']}}</td>
+                    <td>{{$item['barcodeEnd']}}</td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
