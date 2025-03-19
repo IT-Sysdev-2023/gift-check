@@ -82,6 +82,7 @@ import { highlighten } from "@/../../resources/js/Mixin/UiUtilities";
 import { ColumnTypes, FilterTypes } from "@/types/treasury";
 import { computed, ref, watch } from "vue";
 import { router } from "@inertiajs/core";
+import axios from "axios";
 
 const { highlightText } = highlighten();
 
@@ -93,10 +94,10 @@ const props = defineProps<{
     filters: FilterTypes;
 }>();
 
-// const modalData = ref({});
-// const denominationList = ref({});
-// const descriptionRecord = ref([]);
-// const showModal = ref(false);
+const modalData = ref({});
+const denominationList = ref({});
+const descriptionRecord = ref([]);
+const showModal = ref(false);
 
 const form = ref({
     search: props.filters.search,
@@ -110,19 +111,19 @@ const dashboardRoute = computed(() => {
     const res = webRoute?.split(".")[0];
     return res + ".dashboard";
 });
-const viewRecord =(record) =>{
-    console.log(1)
-}
+// const viewRecord =(record) =>{
+//     console.log(1)
+// }
 
-// const  viewRecord = async(record) => {
-//     this.modalData = record
-//     const { data } = await axios.get(
-//         route("treasury.transactions.promo.gc.releasing.denominationList", record.req_id)
-//     );
-//     // console.log(data);
-//     this.denominationList = data;
-//     this.showModal = true;
-// },
+const  viewRecord = async(record) => {
+    modalData.value = record
+    const { data } = await axios.get(
+        route("treasury.transactions.promo.gc.releasing.denominationList", record.req_id)
+    );
+    // console.log(data);
+    denominationList.value = data;
+    showModal.value = true;
+}
 
 const getValue = (record, dataIndex) => {
     return dataIndex.reduce((acc, index) => acc[index], record);

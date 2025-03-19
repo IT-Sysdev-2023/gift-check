@@ -94,11 +94,11 @@ class StoreGcController extends Controller
 
         $rgc = StoreRequestItem::leftJoin('denomination', 'store_request_items.sri_items_denomination', '=', 'denomination.denom_id')
             ->selectRaw("
-            store_request_items.sri_items_remain, 
-            store_request_items.sri_items_denomination, 
+            store_request_items.sri_items_remain,
+            store_request_items.sri_items_denomination,
             denomination.denomination, (denomination.denomination * store_request_items.sri_items_remain) AS subtotal,
             (
-                SELECT COUNT(gc_location.loc_barcode_no) 
+                SELECT COUNT(gc_location.loc_barcode_no)
                 FROM gc_location
                 INNER JOIN gc ON gc.barcode_no = gc_location.loc_barcode_no
                 WHERE gc_location.loc_rel = ''

@@ -228,10 +228,6 @@ class MarketingController extends Controller
             return $item;
         });
 
-
-
-
-
         $columns = array_map(
             fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
             ['GC Barcode #', 'Denomination', 'Retail Group', 'Promo Name', 'Customer Name', 'Customer Address', 'Status', 'Date Released', 'Released By'],
@@ -1159,6 +1155,7 @@ class MarketingController extends Controller
                         'bledger_datetime' => Carbon::now()->format('Y-m-d H:i:s'),
                         'bledger_type' => 'PROMOGCRELEASING',
                         'bdebit_amt' => $denom->denomination,
+                        'bledger_category' => 'regular',
                     ]);
 
                     if ($insertBudgetLedger) {

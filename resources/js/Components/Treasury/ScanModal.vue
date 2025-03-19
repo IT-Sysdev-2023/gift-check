@@ -1,102 +1,46 @@
 <template>
-    <a-modal
-        :open="open"
-        title="Scan Gc"
-        style="width: 600px"
-        @cancel="handleClose"
-        centered
-        @ok="onSubmitBarcode"
-    >
+    <a-modal :open="open" title="Scan Gc" style="width: 600px" @cancel="handleClose" centered @ok="onSubmitBarcode">
         <a-descriptions class="mt-5">
-            <a-descriptions-item
-                label="Release No"
-                :span="2"
-                :labelStyle="{ fontWeight: 'bold' }"
-                >{{ data.rel_num }}</a-descriptions-item
-            >
-            <a-descriptions-item
-                label="Date"
-                :labelStyle="{ fontWeight: 'bold' }"
-                >{{ dayjs().format("MMM DD, YYYY") }}</a-descriptions-item
-            >
-            <a-descriptions-item
-                label="Store"
-                :span="2"
-                :labelStyle="{ fontWeight: 'bold' }"
-                >{{ data.details.store.store_name }}</a-descriptions-item
-            >
-            <a-descriptions-item
-                label="Denomination"
-                :labelStyle="{ fontWeight: 'bold' }"
-            >
+            <a-descriptions-item label="Release No" :span="2" :labelStyle="{ fontWeight: 'bold' }">{{ data.rel_num
+                }}</a-descriptions-item>
+            <a-descriptions-item label="Date" :labelStyle="{ fontWeight: 'bold' }">{{ dayjs().format("MMM DD, YYYY")
+                }}</a-descriptions-item>
+            <a-descriptions-item label="Store" :span="2" :labelStyle="{ fontWeight: 'bold' }">{{
+                data.details.store.store_name }}</a-descriptions-item>
+            <a-descriptions-item label="Denomination" :labelStyle="{ fontWeight: 'bold' }">
                 {{ scanData.denomination }}
             </a-descriptions-item>
-            <a-descriptions-item
-                label="Validated By"
-                :span="2"
-                :labelStyle="{ fontWeight: 'bold' }"
-            >
+            <a-descriptions-item label="Validated By" :span="2" :labelStyle="{ fontWeight: 'bold' }">
                 {{ page.auth.user.full_name }}
             </a-descriptions-item>
-            <a-descriptions-item
-                label="Scan Mode"
-                :labelStyle="{ fontWeight: 'bold' }"
-            >
-                <a-switch
-                    @change="() => (errorBarcode = null)"
-                    v-model:checked="scanSwitch"
-                    checked-children="Range Scan"
-                    un-checked-children="Single Scan"
-                />
+            <a-descriptions-item label="Scan Mode" :labelStyle="{ fontWeight: 'bold' }">
+                <a-switch @change="() => (errorBarcode = null)" v-model:checked="scanSwitch"
+                    checked-children="Range Scan" un-checked-children="Single Scan" />
             </a-descriptions-item>
         </a-descriptions>
         <a-form :model="formBc" layout="vertical">
             <!-- //Single Scan -->
-            <a-form-item
-                v-if="!scanSwitch"
-                label="Barcode"
-                :validate-status="errorBarcode?.barcode ? 'error' : ''"
-                :help="errorBarcode?.barcode"
-            >
-                <a-input-number
-                    :maxlength="13"
-                    v-model:value="formBc.barcode"
-                    placeholder="Enter Barcode"
-                    class="w-full h-16 text-3xl pt-4"
-                    @input="() => (errorBarcode = null)"
-                />
+            <a-form-item v-if="!scanSwitch" label="Barcode" :validate-status="errorBarcode?.barcode ? 'error' : ''"
+                :help="errorBarcode?.barcode">
+                <a-input-number :maxlength="13" @keyup.enter="onSubmitBarcode" v-model:value="formBc.barcode"
+                    placeholder="Enter Barcode" class="w-full h-16 text-3xl pt-4"
+                    @input="() => (errorBarcode = null)" />
             </a-form-item>
 
             <!-- //Range Scan -->
             <a-row :gutter="[16, 0]" class="mt-8" v-else>
-                <a-col :span="12"
-                    ><a-form-item
-                        label="Barcode Start"
-                        :validate-status="errorBarcode?.bstart ? 'error' : ''"
-                        :help="errorBarcode?.bstart"
-                    >
-                        <a-input-number
-                            :maxlength="13"
-                            placeholder="Barcode Start"
-                            v-model:value="formBc.startBarcode"
-                            class="w-full h-16 text-3xl pt-4"
-                            @input="() => (errorBarcode = null)"
-                        />
+                <a-col :span="12"><a-form-item label="Barcode Start"
+                        :validate-status="errorBarcode?.bstart ? 'error' : ''" :help="errorBarcode?.bstart">
+                        <a-input-number :maxlength="13" placeholder="Barcode Start" v-model:value="formBc.startBarcode"
+                            class="w-full h-16 text-3xl pt-4" @input="() => (errorBarcode = null)" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
-                    <a-form-item
-                        label="Barcode End"
-                        :validate-status="errorBarcode?.bend ? 'error' : ''"
-                        :help="errorBarcode?.bend"
-                    >
-                        <a-input-number
-                            :maxlength="13"
-                            placeholder="Barcode End"
-                            v-model:value="formBc.endBarcode"
-                            class="w-full h-16 text-3xl pt-4"
-                            @input="() => (errorBarcode = null)"
-                        />
+                    <a-form-item label="Barcode End" :validate-status="errorBarcode?.bend ? 'error' : ''"
+                        :help="errorBarcode?.bend">
+                        <a-input-number @keyup.enter="onSubmitBarcode" :maxlength="13" placeholder="Barcode End"
+                            v-model:value="formBc.endBarcode" class="w-full h-16 text-3xl pt-4"
+                            @input="() => (errorBarcode = null)" />
                     </a-form-item>
                 </a-col>
             </a-row>
@@ -160,7 +104,7 @@ const onSubmitBarcode = async () => {
             formBc.startBarcode = null;
             formBc.endBarcode = null;
             formBc.barcode = null;
-            emit("update:open", false);
+            // emit("update:open", false);
         })
         .catch((err) => {
             if (err.response.status === 400) {

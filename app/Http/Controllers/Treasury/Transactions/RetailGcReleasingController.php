@@ -12,7 +12,6 @@ class RetailGcReleasingController extends Controller
 
     public function index(Request $request)
     {
-
         $record = StoreGcrequest::select('sgc_store', 'sgc_requested_by', 'sgc_id', 'sgc_num', 'sgc_date_needed', 'sgc_date_request', 'sgc_status')
             ->with('store:store_id,store_name', 'user:user_id,firstname,lastname')->where(function ($q) {
                 $q->where('sgc_status', 1)

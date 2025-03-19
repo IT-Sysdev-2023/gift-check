@@ -281,6 +281,7 @@ class InstitutionGcSalesService extends FileHandler
                     });
 
                     $q = LedgerBudget::max('bledger_no');
+                    
                     $lnum = $q ? $q + 1 : 1;
 
                     LedgerBudget::create([
@@ -288,7 +289,8 @@ class InstitutionGcSalesService extends FileHandler
                         'bledger_trid' => $insertedRecord->institutr_id,
                         'bledger_datetime' => now(),
                         'bledger_type' => 'GCRELINS',
-                        'bdebit_amt' => $request->totalDenomination
+                        'bdebit_amt' => $request->totalDenomination,
+                        'bledger_category' => 'regular'
                     ]);
 
                     $this->saveMultiFiles($request, $insertedRecord->institutr_id, function ($id, $path) {
