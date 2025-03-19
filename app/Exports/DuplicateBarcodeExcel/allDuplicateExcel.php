@@ -17,8 +17,8 @@ class allDuplicateExcel implements WithMultipleSheets
     public function sheets(): array
     {
         $fileName = $this->allDuplicateData['barcodes'];
-        $talibonData = $this->allDuplicateData['talibonData'] ?? ['kupal'];
-        $tubigonData = $this->allDuplicateData['tubigonData'] ?? ['kupal'];
+        $talibonData = $this->allDuplicateData['talibonData'] ?? [];
+        $tubigonData = $this->allDuplicateData['tubigonData'] ?? [];
 
         $cleanedFileName = preg_replace('/[\r\n\t\s\x00-\x1F\x7F]+/', ',', $fileName);
 
