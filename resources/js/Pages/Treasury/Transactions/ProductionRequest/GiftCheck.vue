@@ -71,22 +71,7 @@
                     </a-col>
                     <a-col :span="14">
                         <a-card>
-                            <div>
-                                <div>
-                                    <p style="font-size: 20px">
-                                        Current Budget:
-                                        {{
-                                            Number(bud).toLocaleString(
-                                                undefined,
-                                                {
-                                                    minimumFractionDigits: 2,
-                                                    maximumFractionDigits: 2,
-                                                }
-                                            )
-                                        }}
-                                    </p>
-                                </div>
-                            </div>
+                    
                             <a-row :gutter="16" class="text-center">
                                 <a-col :span="8">
                                     <span>Denomination</span>
@@ -152,6 +137,19 @@
                             >
                                 {{ formState.errors.denom }}
                             </div>
+
+                            <div>
+                                <div > 
+                                    <p style="font-size: 20px; text-align:left; margin-top: 15px;padding-left: 2%; ">
+                                              Total Amount:  ₱ {{
+                                                    totalAmount.toLocaleString(undefined, {
+                                                          minimumFractionDigits: 2,
+                                                          maximumFractionDigits: 2,
+                                                   })
+                                          }}
+                                      </p>
+                                </div>
+                            </div>
                         </a-card>
                     </a-col>
                 </a-row>
@@ -173,7 +171,7 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
@@ -227,6 +225,15 @@ const quantityChange = (qty, denom, item) => {
     // Update the previous quantity for this item
     previousQuantities.value[item.id] = qty;
 };
+
+const totalAmount = computed(() => {
+    return formState.denom.reduce((sum, item) => sum + (item.qty || 0) * item.denomination, 0);
+});
+
+const updateTotalAmount = () => {
+    totalAmount.value;
+};
+
 const onSubmit = () => {
     formState.post(route("treasury.transactions.production.gcSubmit"), {
         onSuccess: ({ props }) => {
