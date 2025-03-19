@@ -33,7 +33,7 @@
                     </div>
                     <div style="margin-top: 10px" v-if="variance.tagbilaranData.length > 0">
                         <a-table :columns="varianceTable" :data-source="variance.tagbilaranData"
-                            :pagination="false" size="small">
+                            size="small">
                         </a-table>
                     </div>
                     <div v-else>

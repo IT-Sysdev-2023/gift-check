@@ -375,11 +375,11 @@ class FinanceController extends Controller
                 ->first();
             $budget = $currentBudget->total_debit - $currentBudget->total_credit;
         }
-        $query = DtiGcRequest::
-            join('users as preparedby', 'preparedby.user_id', '=', 'dti_gc_requests.dti_reqby')
+        $query = DtiGcRequest::join('users as preparedby', 'preparedby.user_id', '=', 'dti_gc_requests.dti_reqby')
             ->join('users as checker', 'checker.user_id', '=', 'dti_gc_requests.dti_empaddby')
             ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
             ->join('access_page', 'access_page.access_no', '=', 'preparedby.usertype')
+            ->join('dti_documents', 'dti_documents.dti_trid', '=', 'dti_gc_requests.dti_num')
             ->where('dti_gc_requests.dti_status', 'pending')
             ->where('dti_gc_requests.dti_num', $id)
             ->select(
@@ -390,6 +390,7 @@ class FinanceController extends Controller
                 'checker.lastname as checker_lastname',
                 'special_external_customer.*',
                 'access_page.*',
+                'dti_documents.dti_fullpath as dti_fullpath'
             )
             ->get();
 
@@ -509,7 +510,7 @@ class FinanceController extends Controller
     // THIS IS FOR THE APPROVED SUBMIT BUTTON
     public function DtiApprovedForm(Request $request)
     {
-        // dd($request->status);
+        dd($request->all());
         $id = $request->data[0]['dti_num'];
         $totalDenom = $request->data[0]['total'];
         $reqType = DtiGcRequest::select('dti_type')->where('dti_num', $id)->first();

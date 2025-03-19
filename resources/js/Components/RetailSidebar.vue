@@ -43,7 +43,8 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item key="StoreEOD" @click="() => router.get(route('retail.storeEod'))">Store EOD</a-menu-item>
             <a-menu-item key="LostGC" @click="() => router.get(route('retail.lostGc'))">Lost GC</a-menu-item>
             <a-menu-item key="SupplierGC"
-                @click="() => router.get(route('retail.supplier-gc-verification.suppliergcverification'))">Supplier GC</a-menu-item>
+                @click="() => router.get(route('retail.supplier-gc-verification.suppliergcverification'))">Supplier
+                GC</a-menu-item>
         </a-sub-menu>
 
         <a-sub-menu key="sales">
@@ -53,8 +54,8 @@ const page = usePage<PageWithSharedProps>().props;
                     <span>Sales</span>
                 </span>
             </template>
-            <a-menu-item key="cashSales">Cash Sales</a-menu-item>
-            <a-menu-item key="cardSales">Card Sales</a-menu-item>
+            <a-menu-item @click="() => router.get(route('retail.sales.cashSales'))" key="cashSales">Cash Sales</a-menu-item>
+            <a-menu-item @click="() => router.get(route('retail.sales.cardSales'))" key="cardSales">Card Sales</a-menu-item>
             <a-menu-item key="AR">AR (Customer)</a-menu-item>
             <a-menu-item key="report">Report</a-menu-item>
         </a-sub-menu>
@@ -68,8 +69,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item key="customerSetuo"
                 @click="() => router.get(route('retail.masterfile.customer_setup'))">Customer
                 Setup</a-menu-item>
-            <a-menu-item key="sgcCompanySetup"
-                @click="() => router.get(route('retail.sgc_company_setup.sgcsetup'))">SGC
+            <a-menu-item key="sgcCompanySetup" @click="() => router.get(route('retail.sgc_company_setup.sgcsetup'))">SGC
                 Company Setup</a-menu-item>
             <a-menu-item key="sgcItemSetup" @click="() => router.get(route('retail.sgc_item_setupsgc_item_setup'))">SGC
                 Item
@@ -120,11 +120,13 @@ const page = usePage<PageWithSharedProps>().props;
                 Request</a-menu-item>
             <a-menu-item @click="() => router.get(route('retail.verification.index'))" key="GCVerification">GC
                 Verification</a-menu-item>
-            <a-menu-item key="GCTransfer" @click="() => router.get(route('retail.gc-transfer.gc_transfer_list'))">GC Transfer</a-menu-item>
+            <a-menu-item key="GCTransfer" @click="() => router.get(route('retail.gc-transfer.gc_transfer_list'))">GC
+                Transfer</a-menu-item>
             <a-menu-item key="StoreEOD" @click="() => router.get(route('retail.storeEod'))">Store EOD</a-menu-item>
             <a-menu-item key="LostGC" @click="() => router.get(route('retail.lostGc'))">Lost GC</a-menu-item>
             <a-menu-item key="SupplierGC"
-                @click="() => router.get(route('retail.supplier-gc-verification.suppliergcverification'))">Supplier GC</a-menu-item>
+                @click="() => router.get(route('retail.supplier-gc-verification.suppliergcverification'))">Supplier
+                GC</a-menu-item>
         </a-sub-menu>
 
         <a-sub-menu key="sales">
@@ -134,8 +136,8 @@ const page = usePage<PageWithSharedProps>().props;
                     <span>Sales</span>
                 </span>
             </template>
-            <a-menu-item key="cashSales">Cash Sales</a-menu-item>
-            <a-menu-item key="cardSales">Card Sales</a-menu-item>
+            <a-menu-item @click="() => router.get(route('retail.sales.cashSales'))" key="cashSales">Cash Sales</a-menu-item>
+            <a-menu-item @click="() => router.get(route('retail.sales.cardSales'))" key="cardSales">Card Sales</a-menu-item>
             <a-menu-item key="AR">AR (Customer)</a-menu-item>
             <a-menu-item key="report">Report</a-menu-item>
         </a-sub-menu>
@@ -149,8 +151,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item key="customerSetuo"
                 @click="() => router.get(route('retail.masterfile.customer_setup'))">Customer
                 Setup</a-menu-item>
-            <a-menu-item key="sgcCompanySetup"
-                @click="() => router.get(route('retail.sgc_company_setup.sgcsetup'))">SGC
+            <a-menu-item key="sgcCompanySetup" @click="() => router.get(route('retail.sgc_company_setup.sgcsetup'))">SGC
                 Company Setup</a-menu-item>
             <a-menu-item key="sgcItemSetup" @click="() => router.get(route('retail.sgc_item_setupsgc_item_setup'))">SGC
                 Item Setup</a-menu-item>
