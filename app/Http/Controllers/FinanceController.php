@@ -510,15 +510,13 @@ class FinanceController extends Controller
     // THIS IS FOR THE APPROVED SUBMIT BUTTON
     public function DtiApprovedForm(Request $request)
     {
-        dd($request->all());
+        // dd($request->dti_fullpath);
         $id = $request->data[0]['dti_num'];
         $totalDenom = $request->data[0]['total'];
         $reqType = DtiGcRequest::select('dti_type')->where('dti_num', $id)->first();
-        // dd($reqType);
         $currentbudget = LedgerBudget::whereNull('bledger_category')->get();
         $debit = $currentbudget->sum('debit_amt');
         $credit = $currentbudget->sum('bcredit_amt');
-        // $customer = DtiGcRequest::select('dti_company')->where('dti_num', $id)->get();
         $ledgerBudgetNum = LedgerBudget::select('bledger_no')->orderByDesc('bledger_id')->first();
         $nextLedgerBudgetNum = (int) $ledgerBudgetNum->bledger_no + 1;
         $pending = DtiGcRequest::where('dti_num', $id)->where('dti_status', 'pending')->exists();
@@ -575,7 +573,7 @@ class FinanceController extends Controller
                             'dti_approvedby' => $request->approvedBy,
                             'dti_preparedby' => $request->user()->user_id,
                             'dti_date' => now(),
-                            'dti_doc' => !is_null($request->file) ? $this->financeService->uploadFileHandler($request) : ''
+                            'dti_doc' => $request->dti_fullpath,
                         ]);
                         LedgerBudget::create([
                             'bledger_no' => $nextLedgerBudgetNum,

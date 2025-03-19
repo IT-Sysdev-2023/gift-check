@@ -184,7 +184,7 @@ const requested = computed(() => {
                                 {{ dayjs(approved.dti_date).format('MMMM D, YYYY') }}
                             </a-descriptions-item>
                             <a-descriptions-item label="Documents">
-                                <img :src="'/storage/' + approved.dti_doc" style="width: 100px; height: 100px" />
+                                <a-image :src="'/storage/' + approved.dti_doc" style="width: 200px; height: 100px" />
                             </a-descriptions-item>
                             <a-descriptions-item label="Checked By">
                                 {{ approved.dti_checkby }}
@@ -207,6 +207,6 @@ const requested = computed(() => {
                 </a-tabs>
             </div>
         </a-card>
-        <!-- {{ data.barcode }} -->
+        <!-- {{ approved.dti_doc }} -->
     </AuthenticatedLayout>
 </template>

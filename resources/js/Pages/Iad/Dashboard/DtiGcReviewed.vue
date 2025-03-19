@@ -93,7 +93,7 @@ const column = ref([
                                 <a-descriptions :labelStyle="{ fontWeight: 'bold' }" layout="vertical" bordered
                                     size="small">
                                     <a-descriptions-item label="Date Requested">
-                                        {{ dayjs(form.dti_datereq).format('YYYY-MMMM-DD')}}
+                                        {{ dayjs(form.dti_datereq).format('YYYY-MMMM-DD') }}
                                     </a-descriptions-item>
                                     <a-descriptions-item label="Date Needed">{{
                                         dayjs(form.dti_dateneed).format('YYYY-MMMM-DD')
@@ -105,7 +105,8 @@ const column = ref([
                                     <a-descriptions-item label="Remarks">{{ form.dti_remarks }}</a-descriptions-item>
                                     <a-descriptions-item label="Documents">
                                         <template v-if="form.dti_documents">
-                                            <img :src="form.dti_documents" class="w-40 h-auto rounded shadow-md" />
+                                            <a-image :src="'/storage/' + form.dti_documents"
+                                                style="height: 100px; width: 200px;" />
                                         </template>
                                         <template v-else>
                                             <a-empty />
@@ -128,7 +129,8 @@ const column = ref([
                                 <a-descriptions :labelStyle="{ fontWeight: 'bold' }" bordered layout="vertical">
                                     <a-descriptions-item label="Documents">
                                         <template v-if="form.dti_doc">
-                                            <img :src="form.dti_doc" class="w-40 h-auto rounded shadow-md" />
+                                            <a-image :src="'/storage/' + form.dti_doc"
+                                                style="height: 100px; width: 200px;" />
                                         </template>
                                         <template v-else>
                                             <a-empty />

@@ -75,14 +75,14 @@ const
     viewApprovedDti = async (data) => {
         form.value = {
             dti_datereq: data.dti_datereq ? formatDate(data.dti_datereq) : '',
-            first_remarks: data.dti_remarks || '',
-            approved_remarks: data.approved_remarks || '',
-            dti_paymenttype: data.dti_paymenttype || '',
+            first_remarks: data.dti_remarks ?? '',
+            approved_remarks: data.approved_remarks ?? '',
+            dti_paymenttype: data.dti_paymenttype ?? '',
             dti_approveddate: data.dti_approveddate ? formatDate(data.dti_approveddate) : '',
-            dti_checkby: data.dti_checkby || '',
-            dti_approvedby: data.dti_approvedby || '',
-            dti_doc: data.dti_doc || '',
-            totalDenomination: data.totalDenomination || ''
+            dti_checkby: data.dti_checkby ?? '',
+            dti_approvedby: data.dti_approvedby ?? '',
+            dti_doc: data.dti_doc ?? '',
+            totalDenomination: data.totalDenomination ?? ''
         }
 
         await axios.get(route('finance.approvedGc.selected.dti.request'), {
@@ -158,8 +158,7 @@ const barcodeColumns = ref([
                                     </a-input>
                                 </a-form-item>
                                 <a-form-item label="Document">
-                                    <img :src="form.dti_doc" alt="Document Image"
-                                        style="max-width: 100px; height: auto;">
+                                    <a-image :src="'/storage/' + form.dti_doc" style="height: 200px; width: 300%;" />
                                 </a-form-item>
                             </a-card>
                             <a-card>
@@ -223,6 +222,6 @@ const barcodeColumns = ref([
                 </a-tabs>
             </div>
         </a-modal>
-        <!-- {{ data }} -->
+        <!-- {{ form.dti_doc }} -->
     </AuthenticatedLayout>
 </template>
