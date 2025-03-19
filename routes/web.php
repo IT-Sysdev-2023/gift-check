@@ -470,7 +470,6 @@ Route::middleware('auth')->group(function () {
                 Route::get('generate-eod-report', [ReportsController::class, 'generateEodReports'])->name('generate.eod');
 
                 Route::get('list-of-generated-reports', [ReportsController::class, 'listOfGeneratedReports'])->name('generatedReports');
-
             });
 
             Route::prefix('promo-gc-released')->name('promo.gc.')->group(function () {
@@ -671,6 +670,10 @@ Route::middleware('auth')->group(function () {
             Route::name('supplier-gc-verification.')->group(function () {
                 Route::get('supplier-gc-verification', [RetailController::class, 'suppliergcverification'])->name('suppliergcverification');
             });
+            Route::name('sales.')->group(function () {
+                Route::get('cash-sales', [RetailController::class, 'cashSales'])->name('cashSales');
+                Route::get('card-sales', [RetailController::class, 'cardSales'])->name('cardSales');
+            });
         });
     });
 
@@ -691,9 +694,7 @@ Route::middleware('auth')->group(function () {
 
     //? Custodian
     Route::middleware('userType:custodian,admin,accounting')->prefix('custodian')->group(function () {
-
         Route::name('custodian.')->group(function () {
-
             Route::get('barcode-checker', [CustodianController::class, 'barcodeCheckerIndex'])->name('barcode.checker');
             Route::post('scan-barcode', [CustodianController::class, 'scanBarcode'])->name('scan.barcode');
             Route::get('received-gc-barcode', [CustodianController::class, 'receivedGcIndex'])->name('received.gc');
@@ -784,7 +785,6 @@ Route::middleware('auth')->group(function () {
             // dti Gc recieved
             Route::get('dti-gc-received', [SpecialExternalGcRequestController::class, 'dtiGcReviewed'])->name('dtiGcReviewed');
             Route::get('dti-gc-received-details', [SpecialExternalGcRequestController::class, 'dtiReviewedDetails'])->name('dtiReviewedDetails');
-
         });
 
         Route::prefix('reviewed-gc')->name('reviewed.gc.')->group(function () {

@@ -39,28 +39,8 @@ const submitButton = () => {
         return;
     }
 
-    if (form.value.file == null && form.value.status === "1") {
-        notification.error({
-            description: 'Upload Document is required',
-        });
-        return;
-    }
-
-
-    if (file.value) {
-        const fileType = file.value.type;
-        if (fileType !== 'image/jpeg' && fileType !== 'image/jpg' && fileType !== 'image/png') {
-            notification.error({
-                description: 'Only JPG, JPEG, and PNG files are allowed.',
-            });
-            return;
-        }
-    }
-
     router.post(route('finance.pendingGc.dti.approval'), {
         ...form.value,
-        file: file.value
-
     }, {
         onSuccess: (page) => {
             if (page.props.flash.success) {
@@ -85,18 +65,12 @@ const dateRequestedFormat = (value) => {
     return dayjs(value).format('YYYY-MMMM-DD');
 }
 
-const file = ref(null);
-
-const handleChange = (info) => {
-    file.value = info.file.originFileObj;
-}
 
 const form = ref({
     data: props.data,
     type: props.type,
     currentBudget: props.currentBudget,
     gcHolder: props.gcHolder,
-    file: file,
     status: '1',
     dateApproved: dayjs().format('YYYY-MM-DD'),
     dateCancelled: dayjs().format('YYYY-MM-DD'),
@@ -114,9 +88,12 @@ const form = ref({
     totalDenomination: props.data?.[0]?.total ?? '',
     paymentType: props.data?.[0]?.dti_paymenttype ?? '',
     remarks: props.data?.[0]?.dti_remarks ?? '',
+    dti_fullpath: props.data?.[0]?.dti_fullpath ?? '',
     errors: {}
 
-})
+});
+
+
 </script>
 <template>
     <AuthenticatedLayout>
@@ -173,18 +150,8 @@ const form = ref({
 
                                         </a-input>
                                     </a-form-item>
-                                    <a-form-item label="Upload Document">
-                                        <a-upload-dragger name="file" :multiple="false" file="file"
-                                            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                            @change="handleChange">
-                                            <p class="ant-upload-drag-icon">
-                                                <inbox-outlined></inbox-outlined>
-                                            </p>
-                                            <p class="ant-upload-text">Click or drag file to this area to upload</p>
-                                            <p class="ant-upload-hint">
-                                                JPG, JPEG, PNG only
-                                            </p>
-                                        </a-upload-dragger>
+                                    <a-form-item label="Uploaded Document">
+                                        <a-image :src="'/storage/' + form.dti_fullpath" style="height: 300px;" />
                                     </a-form-item>
                                 </div>
                                 <div v-else>
@@ -266,14 +233,13 @@ const form = ref({
                 <a-tab-pane key="2" tab="GC Holder Details" force-render>
                     <a-card>
                         <a-table :columns="props.columns" :data-source="props.gcHolder.data" :pagination="false"
-                            :size="small">
-
+                            size="small">
                         </a-table>
                         <pagination :datarecords="props.gcHolder" class="mt-5" />
                     </a-card>
                 </a-tab-pane>
             </a-tabs>
         </div>
-        <!-- {{ data }} -->
+        {{ form.dti_fullpath }}
     </AuthenticatedLayout>
 </template>

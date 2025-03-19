@@ -92,15 +92,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="input-wrapper">
-                                    <input
-                                        type="search"
-                                        placeholder="Input search here..."
-                                        name="text"
-                                        class="input"
-                                        v-model="cebuTalibonSearch"
-                                    />
-                                </div> -->
                                 <div style="margin-left: 60%">
                                     <a-input-search allow-clear v-model:value="cebuTalibonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%" />
@@ -156,15 +147,7 @@
                                 </span>
                             </template>
                             <a-card>
-                                <!-- <div class="input-wrapper">
-                                    <input
-                                        type="search"
-                                        placeholder="Input search here..."
-                                        name="text"
-                                        class="input"
-                                        v-model="cebuTubigonSearch"
-                                    />
-                                </div> -->
+
                                 <div style="margin-left: 60%">
                                     <a-input-search allow-clear v-model:value="cebuTubigonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%" />
@@ -237,8 +220,6 @@
                             </label>
                         </div>
 
-                        <!-- <a-input type="file" id="barcodeFile" @change="handleFileChange"
-                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" /> -->
                     </div>
                     <div style="margin-top: 20px">
                         <span v-if="textfile" style="color: green; font-weight: bold">Select:
@@ -276,7 +257,6 @@
                     <!-- {{ this.cebu.cebu }} -->
                 </a-card>
                 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-                <!-- {{ barcodes}} -->
             </a-tab-pane>
             <a-tab-pane key="2">
                 <template #tab>
@@ -311,15 +291,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="input-wrapper">
-                                    <input
-                                        type="search"
-                                        placeholder="Input search here..."
-                                        name="text"
-                                        class="input"
-                                        v-model="alttaTagbilaranSearch"
-                                    />
-                                </div> -->
+
                                 <div style="margin-left: 60%">
                                     <a-input-search allow-clear v-model:value="alttaTagbilaranSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%" />
@@ -379,15 +351,6 @@
                                     </div>
                                 </div>
 
-                                <!-- <div class="input-wrapper">
-                                    <input
-                                        type="search"
-                                        placeholder="Input search here..."
-                                        name="text"
-                                        class="input"
-                                        v-model="alttaTalibonSearch"
-                                    />
-                                </div> -->
                                 <div style="margin-left: 60%">
                                     <a-input-search allow-clear v-model:value="alttaTalibonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%" />
@@ -447,15 +410,6 @@
                                     </div>
                                 </div>
 
-                                <!-- <div class="input-wrapper">
-                                    <input
-                                        type="search"
-                                        placeholder="Input search here..."
-                                        name="text"
-                                        class="input"
-                                        v-model="alttaTubigonSearch"
-                                    />
-                                </div> -->
                                 <div style="margin-left: 60%">
                                     <a-input-search allow-clear v-model:value="alttaTubigonSearch" enter-button
                                         placeholder="Input search here! " style="width: 100%" />
@@ -510,9 +464,6 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px">
-                        <!-- <span :style="{ fontSize: iconSize + 'px' }">
-                            <FileSearchOutlined />
-                        </span> -->
 
                         <div class="container">
                             <div class="folder">
@@ -528,9 +479,6 @@
                             </label>
                         </div>
 
-                        <!-- <a-input type="file" id="barcodeFile" @change="handleFileChangeAltta"
-                            enctype="multipart/form-data"
-                            style="border: 2px solid #1e90ff; font-weight: bold; color:white; font-style: oblique; width: 117px;" /> -->
                     </div>
                     <div style="margin-top: 20px">
                         <span v-if="altaTextFile" style="color: green; font-weight: bold">Select:
@@ -779,11 +727,7 @@ export default {
                 openNotificationWithIcon("warning");
                 return;
             }
-            // const data4 = {
-            //     search4: search,
-            //     // alttaBarcodeSearch: this.altta.alttaTable,
-            //     // alttaBarcode: this.altta.alttaBarcode
-            // }
+           
             this.$inertia.get(
                 route("storeaccounting.DuplicatedBarcodes"),
                 {
@@ -890,7 +834,6 @@ export default {
                             fileLink.click();
                             document.body.removeChild(fileLink);
 
-                            // hideLoading();
                             this.isloadingAltta = false;
                             message.success("EXCEL generated successfully!", 5);
                         })
@@ -903,7 +846,6 @@ export default {
                                 placement: "topRight",
                             });
                         });
-                    // window.location.href = route('storeaccounting.barcodes', { barcodes: data })
                 },
                 onCancel: () => {
                     console.log("Cancel");
@@ -1041,7 +983,6 @@ export default {
                             fileLink.click();
                             document.body.removeChild(fileLink);
 
-                            // hideLoading();
                             this.isloading = false;
                             message.success("EXCEL generated successfully!", 5);
                         })
@@ -1054,7 +995,6 @@ export default {
                                 placement: "topRight",
                             });
                         });
-                    // window.location.href = route('storeaccounting.barcodes', { barcodes: data });
                 },
                 onCancel() {
                     console.log("Cancel");
@@ -1064,7 +1004,6 @@ export default {
 
         handleFileChange(event) {
             const file = event.target.files[0];
-            // console.log(file.name);
             this.textfile = file.name;
             if (file) {
                 const reader = new FileReader();
