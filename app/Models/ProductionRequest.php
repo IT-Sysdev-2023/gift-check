@@ -77,6 +77,8 @@ class ProductionRequest extends Model
             'reqby.lastname as rsname',
             'appby.firstname as apname',
             'appby.lastname as apsurname',
+            'apprep.lastname as prepsurname',
+            'apprep.firstname as prepfname',
             'cby.firstname as cfname',
             'cby.lastname as csname',
         );

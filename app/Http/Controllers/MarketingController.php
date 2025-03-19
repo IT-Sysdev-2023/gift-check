@@ -1922,7 +1922,8 @@ class MarketingController extends Controller
                             'bledger_trid' => '0',
                             'bledger_typeid' => $ptype,
                             'bledger_group' => $pgroup,
-                            'bdebit_amt' => $total
+                            'bdebit_amt' => $total,
+                            'bledger_category' => 'regular'
                         ]);
 
 

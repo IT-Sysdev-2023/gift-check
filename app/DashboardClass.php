@@ -25,6 +25,7 @@ use Illuminate\Http\Request;
 use App\Models\DtiGcRequest;
 use App\Models\DtiLedgerSpgc;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class DashboardClass extends DashboardService
 {
@@ -32,9 +33,7 @@ class DashboardClass extends DashboardService
      * Create a new class instance.
      */
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
     public function treasuryDashboard(Request $request)
     {
         return [
@@ -51,7 +50,7 @@ class DashboardClass extends DashboardService
             'adjustment' => $this->adjustments(),
             'approvedDti' => DtiGcRequest::where([['dti_status', 'approved'], ['dti_addemp', 'done']])->count(),
             'releasedDti' => DtiApprovedRequest::where('dti_approved_requests.dti_approvedtype', 'special external releasing')->count(),
-            'pendingDtiCount' => DtiGcRequest::select('dti_num', 'dti_datereq', 'dti_dateneed', 'firstname', 'lastname', 'spcus_companyname', )
+            'pendingDtiCount' => DtiGcRequest::select('dti_num', 'dti_datereq', 'dti_dateneed', 'firstname', 'lastname', 'spcus_companyname',)
                 ->join('users', 'user_id', 'dti_reqby')
                 ->join('special_external_customer', 'spcus_id', 'dti_company')
                 ->where('dti_status', 'pending')
@@ -118,6 +117,16 @@ class DashboardClass extends DashboardService
                 ->value('sum'),
         ];
     }
+
+    public function budget()
+    {
+        $query = LedgerBudget::select(DB::raw('SUM(bdebit_amt) as debit'), DB::raw('SUM(bcredit_amt) as credit'))
+            ->whereNot('bcus_guide', 'dti')
+            ->whereNull('bledger_category')
+            ->first();
+
+        return bcsub($query->debit, $query->credit, 2);
+    }
     public function financeDashboard()
     {
         // dd();
@@ -140,11 +149,6 @@ class DashboardClass extends DashboardService
         $ledgerSpgc = LedgerSpgc::get();
 
         $dti = DtiLedgerSpgc::get();
-
-
-        $debitTotal = $curBudget->sum('bdebit_amt');
-
-        $creditTotal = $curBudget->sum('bcredit_amt');
 
         $dtiDebitTotal = $dtiBudget->sum('bdebit_amt');
         $dtiCreditTotal = $dtiBudget->sum('bcredit_amt');
@@ -170,7 +174,7 @@ class DashboardClass extends DashboardService
                     ->count(),
             ],
             'budgetCounts' => [
-                'curBudget' => $debitTotal - $creditTotal,
+                'curBudget' => $this->budget(),
                 'dti' => $dtiDebitTotal - $dtiCreditTotal,
                 'spgc' => $spgcDebitTotal - $spgcreditTotal,
                 'dti_new' => $dtiDebitNewTotal - $dtiCreditNewTotal,
@@ -246,10 +250,10 @@ class DashboardClass extends DashboardService
                 'csrr_prepared_by',
                 'csrr_requisition'
             )->with(
-                    'user:user_id,firstname,lastname',
-                    'requisition:requis_id,requis_supplierid,requis_erno',
-                    'requisition.supplier:gcs_id,gcs_companyname'
-                )
+                'user:user_id,firstname,lastname',
+                'requisition:requis_id,requis_supplierid,requis_erno',
+                'requisition.supplier:gcs_id,gcs_companyname'
+            )
                 ->count(),
 
             'approvedgc' => SpecialExternalGcrequest::where([['spexgc_status', 'approved'], ['spexgc_reviewed', '']])->count(),

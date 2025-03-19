@@ -1,5 +1,6 @@
 <template>
     <AuthenticatedLayout>
+
         <Head :title="title" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
@@ -9,22 +10,18 @@
         </a-breadcrumb>
 
         <a-card title="Create a Production Request" class="mt-10">
-            <a-form
-                ref="formRef"
-                :model="formState"
-                :label-col="{ span: 8 }"
-                :wrapper-col="{ span: 12 }"
-                @finish="onSubmit"
-            >
-                <a-row>
+            <a-form ref="formRef" :model="formState" :label-col="{ span: 8 }" :wrapper-col="{ span: 12 }"
+                @finish="onSubmit">
+                <a-row :gutter="[16, 16]">
                     <a-col :span="10">
-                        <a-form-item ref="name" label="PR No." name="name">
-                            <a-input :value="formState.prNo" readonly />
-                        </a-form-item>
-                        <a-form-item label="Date Requested:" name="name">
-                            <a-input v-model:value="currentDate" readonly />
-                        </a-form-item>
-                        <!-- <a-form-item
+                        <a-card>
+                            <a-form-item ref="name" label="PR No." name="name">
+                                <a-input :value="formState.prNo" readonly />
+                            </a-form-item>
+                            <a-form-item label="Date Requested:" name="name">
+                                <a-input v-model:value="currentDate" readonly />
+                            </a-form-item>
+                            <!-- <a-form-item
                             label="Date Needed:"
                             name="name"
                             has-feedback
@@ -37,41 +34,29 @@
                                 @change="clearError('dateNeeded')"
                             />
                         </a-form-item> -->
-                        <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
+                            <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                             :help="getErrorMessage('file')">
                             <ant-upload-image @handle-change="handleChange" />
                         </a-form-item> -->
-                        <a-form-item
-                            label="Remarks:"
-                            name="name"
-                            has-feedback
-                            :validate-status="getErrorStatus('remarks')"
-                            :help="getErrorMessage('remarks')"
-                        >
-                            <a-textarea
-                                v-model:value="formState.remarks"
-                                @input="clearError('remarks')"
-                            />
-                        </a-form-item>
-                        <a-form-item label="Prepared By">
-                            <a-input
-                                :value="page.auth.user.full_name"
-                                readonly
-                            />
-                        </a-form-item>
-                        <div>
-                            <div class="flex justify-end" style="margin-right: 80px;">
-                                <a-form-item class="text-end">
-                                    <a-button type="primary" html-type="submit"
-                                        >Submit</a-button
-                                    >
-                                </a-form-item>
+                            <a-form-item label="Remarks:" name="name" has-feedback
+                                :validate-status="getErrorStatus('remarks')" :help="getErrorMessage('remarks')">
+                                <a-textarea v-model:value="formState.remarks" @input="clearError('remarks')" />
+                            </a-form-item>
+                            <a-form-item label="Prepared By">
+                                <a-input :value="page.auth.user.full_name" readonly />
+                            </a-form-item>
+                            <div>
+                                <div>
+                                    <a-button block type="primary" html-type="submit">
+                                        <FastForwardOutlined />Submit
+                                    </a-button>
+                                </div>
                             </div>
-                        </div>
+                        </a-card>
                     </a-col>
                     <a-col :span="14">
                         <a-card>
-                    
+
                             <a-row :gutter="16" class="text-center">
                                 <a-col :span="8">
                                     <span>Denomination</span>
@@ -83,33 +68,19 @@
                                     <span>Pc's left</span>
                                 </a-col>
                             </a-row>
-                            <a-row
-                                :gutter="16"
-                                class="mt-5"
-                                v-for="(item, index) of formState.denom"
-                                :key="index"
-                            >
+                            <a-row :gutter="16" class="mt-5" v-for="(item, index) of formState.denom" :key="index">
                                 <a-col :span="8">
-                                    <a-input
-                                        :value="item.denomination_format"
-                                        readonly
-                                        class="text-end"
-                                    />
+                                    <a-input :value="item.denomination_format" readonly class="text-end" />
                                 </a-col>
                                 <a-col :span="8" style="text-align: center">
-                                    <a-input-number
-                                        id="inputNumber"
-                                        v-model:value="item.qty"
-                                        placeholder="0"
-                                        :min="0"
+                                    <a-input-number id="inputNumber" v-model:value="item.qty" placeholder="0" :min="0"
                                         @change="
                                             quantityChange(
                                                 item.qty,
                                                 item.denomination,
                                                 item
                                             )
-                                        "
-                                    >
+                                            ">
                                         <template #upIcon>
                                             <ArrowUpOutlined />
                                         </template>
@@ -119,35 +90,28 @@
                                     </a-input-number>
                                 </a-col>
                                 <a-col :span="8">
+
                                     <div style="text-align: center">
-                                        <a-input-number
-                                            :value="
-                                                Math.floor(
-                                                    bud / item.denomination
-                                                )
-                                            "
-                                            readonly
-                                        />
+                                        <a-input-number :value="Math.floor(
+                                            bud / item.denomination
+                                        )
+                                            " readonly />
                                     </div>
                                 </a-col>
                             </a-row>
-                            <div
-                                class="mt-5 text-red-500 text-center"
-                                v-if="formState.errors.denom"
-                            >
+                            <div class="mt-5 text-red-500 text-center" v-if="formState.errors.denom">
                                 {{ formState.errors.denom }}
                             </div>
-
                             <div>
-                                <div > 
+                                <div>
                                     <p style="font-size: 20px; text-align:left; margin-top: 15px;padding-left: 2%; ">
-                                              Total Amount:  ₱ {{
-                                                    totalAmount.toLocaleString(undefined, {
-                                                          minimumFractionDigits: 2,
-                                                          maximumFractionDigits: 2,
-                                                   })
-                                          }}
-                                      </p>
+                                        Total Amount: ₱ {{
+                                            totalAmount.toLocaleString(undefined, {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                            })
+                                        }}
+                                    </p>
                                 </div>
                             </div>
                         </a-card>
@@ -155,23 +119,13 @@
                 </a-row>
             </a-form>
         </a-card>
-        <a-modal
-            v-model:open="openIframe"
-            style="width: 70%; top: 50px"
-            :footer="null"
-            :afterClose="closeIframe"
-        >
-            <iframe
-                class="mt-7"
-                :src="stream"
-                width="100%"
-                height="600px"
-            ></iframe>
+        <a-modal v-model:open="openIframe" style="width: 70%; top: 50px" :footer="null" :afterClose="closeIframe">
+            <iframe class="mt-7" :src="stream" width="100%" height="600px"></iframe>
         </a-modal>
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import { router, useForm, usePage } from "@inertiajs/vue3";
@@ -202,7 +156,10 @@ const formState = useForm<FormStateGc>({
     file: null,
     remarks: "",
     dateNeeded: null,
+    total: null,
 });
+
+
 
 const { openLeftNotification } = onProgress();
 // const handleChange = (file: UploadChangeParam) => {
@@ -228,6 +185,10 @@ const quantityChange = (qty, denom, item) => {
 
 const totalAmount = computed(() => {
     return formState.denom.reduce((sum, item) => sum + (item.qty || 0) * item.denomination, 0);
+});
+
+watch(totalAmount, (newTotal) => {
+    formState.total = newTotal;
 });
 
 const updateTotalAmount = () => {

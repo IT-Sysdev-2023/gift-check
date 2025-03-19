@@ -128,10 +128,16 @@ const submitForm = () => {
                 stream.value = `data:application/pdf;base64,${props.flash.stream}`;
                 openIframe.value = true;
 
-                notification['success']({
+                notification[props.flash.success]({
                     message: 'Success',
                     description:
                         'Created Successfully',
+                });
+            }
+            if (props.flash.error) {
+                notification['error']({
+                    message: 'Request Error',
+                    description: props.flash.error,
                 });
             }
         },

@@ -52,9 +52,16 @@ class SpecialGcPaymentService extends FileHandler
             ->where([['special_external_gcrequest.spexgc_status', 'pending'], ['special_external_gcrequest.spexgc_promo', '*']])
             ->paginate()->withQueryString();
     }
+
+    public function budgetSpecial()
+    {
+        return LedgerBudget::budgetSpecial();
+    }
     public function store(Request $request)
     {
         $this->validateField($request);
+
+
 
         return DB::transaction(function () use ($request) {
 

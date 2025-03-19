@@ -34,12 +34,14 @@ class ProductionRequestController extends Controller
             'title' => 'Gift Check',
             'denomination' => DenominationResource::collection($denomination),
             'prNo' => NumberHelper::leadingZero($increment),
-            'remainingBudget' => (float) str_replace(',', '', LedgerBudget::budget()),
+            'remainingBudget' => (float) str_replace(',', '', LedgerBudget::budgetRegular()),
         ]);
     }
     public function giftCheckStore(Request $request)
     {
-        return $this->transactionProductionRequest->storeGc($request);
+        $bud = (float) str_replace(',', '', LedgerBudget::budgetRegular());
+
+        return $this->transactionProductionRequest->storeGc($request, $bud);
     }
     public function acceptProductionRequest(Request $request, $id)
     {
@@ -51,7 +53,7 @@ class ProductionRequestController extends Controller
 
         $val = Envelope::max('env_amount');
         $q = EnvelopeProductionReq::max('env_num');
-        $pr = $q ? $q + 1:1;    
+        $pr = $q ? $q + 1:1;
 
         return inertia('Treasury/Transactions/ProductionRequest/Envelope', [
             'title'=> 'Envelope Production Request Form',

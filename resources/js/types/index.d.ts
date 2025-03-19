@@ -63,6 +63,7 @@ export interface FormStateGc {
     denom: any[];
     remarks: string;
     dateNeeded: null;
+    total: number,
 }
 
 export interface PaginationMeta {

@@ -67,10 +67,10 @@
                                 @handle-change="categoryHandler"
                             />
                         </a-form-item>
-                        <!-- <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
+                        <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                         :help="getErrorMessage('file')">
                             <ant-upload-image @handle-change="handleChange" />
-                        </a-form-item> -->
+                        </a-form-item>
                         <a-form-item
                             label="Remarks"
                             name="name"
@@ -149,6 +149,7 @@ import { currencyFormatter, getError } from "@/Mixin/UiUtilities";
 import { FlashProps, PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
 import { BudgetRequestForm } from "@/types/treasury";
+import { UploadChangeParam } from "ant-design-vue";
 
 const props = defineProps<{
     title?: string;
@@ -195,9 +196,9 @@ const closeIframe = () => {
 const { getErrorMessage, getErrorStatus, clearError } =
     getError<BudgetRequestForm>(formState);
 
-// const handleChange = (file: UploadChangeParam) => {
-//     formState.file = file.file;
-// };
+const handleChange = (file: UploadChangeParam) => {
+    formState.file = file.file;
+};
 // const disabledDate = (current: Dayjs) => {
 //     return current && current < dayjs().startOf("day");
 // };

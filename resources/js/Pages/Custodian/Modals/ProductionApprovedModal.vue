@@ -25,7 +25,7 @@
                         <a-descriptions-item label="Checked by">{{ data.approved.cfname }}, {{ data.approved.csname
                             }}
                         </a-descriptions-item>
-                        <a-descriptions-item label="Prepared By">{{ data.approved.apname }}, {{ data.approved.apname
+                        <a-descriptions-item label="Prepared By">{{ data.approved.prepfname }}, {{ data.approved.prepsurname
                             }}</a-descriptions-item>
                         <a-descriptions-item label="Approved Remarks" :span="2">
                             <a-badge status="processing" :text="data.approved.ape_remarks" />
