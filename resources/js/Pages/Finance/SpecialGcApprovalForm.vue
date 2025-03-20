@@ -1,6 +1,6 @@
 <template>
     <a-tabs v-model:activeKey="activeKey" type="card">
-        <a-tab-pane key="1" >
+        <a-tab-pane key="1">
             <template #tab>
                 <span>
                     {{ title }}
@@ -17,90 +17,43 @@
                         <a-card>
                             <a-form>
                                 <a-form-item label="Request Status">
-                                    <a-select
-                                        ref="select"
-                                        v-model:value="form.status"
-                                        style="width: 120px"
-                                        @focus="focus"
-                                        @chaImagenge="handleChange"
-                                    >
-                                        <a-select-option value="1"
-                                            >Approved</a-select-option
-                                        >
-                                        <a-select-option value="2"
-                                            >Cancelled</a-select-option
-                                        >
+                                    <a-select ref="select" v-model:value="form.status" style="width: 120px"
+                                        @focus="focus" @chaImagenge="handleChange">
+                                        <a-select-option value="1">Approved</a-select-option>
+                                        <a-select-option value="2">Cancelled</a-select-option>
                                     </a-select>
                                 </a-form-item>
                                 <div v-if="form.status == '1'">
                                     <a-form-item label="Date Approved">
-                                        <a-input
-                                            v-model:value="form.dateApproved"
-                                            readonly
-                                        ></a-input>
+                                        <a-input v-model:value="form.dateApproved" readonly></a-input>
                                     </a-form-item>
                                     <a-form-item label="Remarks">
-                                        <a-textarea
-                                            v-model:value="form.approveRemarks"
-                                        ></a-textarea>
+                                        <a-textarea v-model:value="form.approveRemarks"></a-textarea>
                                     </a-form-item>
                                     <a-form-item label="Checked By:">
-                                        <a-input
-                                            v-model:value="form.checkedBy"
-                                        />
+                                        <a-input v-model:value="form.checkedBy" />
                                     </a-form-item>
                                     <a-form-item label="Approved By">
-                                        <a-input
-                                            v-model:value="form.approvedBy"
-                                            readonly
-                                        ></a-input>
+                                        <a-input v-model:value="form.approvedBy" readonly></a-input>
                                     </a-form-item>
-                                    <a-form-item label="Upload Document">
-                                        <a-upload-dragger
-                                            :before-upload="() => false"
-                                            :max-count="1"
-                                            @change="handleImageChange"
-                                        >
-                                            <p class="ant-upload-drag-icon">
-                                                <inbox-outlined></inbox-outlined>
-                                            </p>
-                                            <p class="ant-upload-text">
-                                                Click or drag file to this area
-                                                to upload
-                                            </p>
-                                            <p class="ant-upload-hint">
-                                                JPG.JPEG,PNG only
-                                            </p>
-                                        </a-upload-dragger>
-                                    </a-form-item>
+                                    <a-image :src="`/storage/${image.replace(/\//g, '').replace(/(externalDocs)([^\/]+\.jpg)/,
+                                        '$1/$2')}`" />
                                 </div>
                                 <div v-else>
-                                    <a-form-item label="Date Cancelled">
-                                        <a-input
-                                            v-model:value="form.dateCancelled"
-                                            readonly
-                                        ></a-input>
+                                     <a-form-item label="Date Cancelled">
+                                        <a-input v-model:value="form.dateCancelled" readonly></a-input>
                                     </a-form-item>
                                     <a-form-item label="Remarks">
-                                        <a-textarea
-                                            v-model:value="form.cancelledRemarks"
-                                        ></a-textarea>
+                                        <a-textarea v-model:value="form.cancelledRemarks"></a-textarea>
                                     </a-form-item>
                                     <a-form-item label="Checked By:">
-                                        <a-input
-                                            v-model:value="form.checkedBy"
-                                            readonly
-                                        />
+                                        <a-input v-model:value="form.checkedBy" readonly />
                                     </a-form-item>
                                     <div>
                                         <div>
                                             <a-form-item label="Cancelled By">
-                                                <a-input
-                                                    v-model:value="
-                                                        form.cancelledBy
-                                                    "
-                                                    readonly
-                                                ></a-input>
+                                                <a-input v-model:value="form.cancelledBy
+                                                    " readonly></a-input>
                                             </a-form-item>
                                         </div>
                                     </div>
@@ -114,101 +67,59 @@
                                 <a-col :span="12">
                                     <a-form>
                                         <a-form-item label="RFSEGC #">
-                                            <a-input
-                                                v-model:value="
-                                                    data[0].spexgc_num
-                                                "
-                                                readonly
-                                            ></a-input>
+                                            <a-input v-model:value="data[0].spexgc_num
+                                                " readonly></a-input>
                                         </a-form-item>
                                         <a-form-item label="Department">
-                                            <a-input
-                                                v-model:value="data[0].title"
-                                                readonly
-                                            ></a-input>
+                                            <a-input v-model:value="data[0].title" readonly></a-input>
                                         </a-form-item>
                                         <a-form-item label="Date Requested">
-                                            <a-input
-                                                v-model:value="
-                                                    data[0].dateRequeted
-                                                "
-                                                readonly
-                                            ></a-input>
+                                            <a-input v-model:value="data[0].dateRequeted
+                                                " readonly></a-input>
                                         </a-form-item>
                                         <a-form-item label="Date Needed">
-                                            <a-input
-                                                v-model:value="data[0].dateNeed"
-                                                readonly
-                                            ></a-input>
+                                            <a-input v-model:value="data[0].dateNeed" readonly></a-input>
                                         </a-form-item>
                                         <a-form-item label="Customer">
-                                            <a-textarea
-                                                v-model:value="
-                                                    data[0].spcus_companyname
-                                                "
-                                                readonly
-                                            ></a-textarea>
+                                            <a-textarea v-model:value="data[0].spcus_companyname
+                                                " readonly></a-textarea>
                                         </a-form-item>
                                     </a-form>
                                 </a-col>
                                 <a-col :span="12">
                                     <a-form>
                                         <a-form-item label="Total Denomination">
-                                            <a-input
-                                                v-model:value="
-                                                    data[0]
-                                                        .special_external_gcrequest_items_has_many[0]
-                                                        .specit_denoms
-                                                "
-                                                readonly
-                                            ></a-input>
+                                            <a-input v-model:value="data[0]
+                                                .special_external_gcrequest_items_has_many[0]
+                                                .specit_denoms
+                                                " readonly></a-input>
                                         </a-form-item>
                                         <a-form-item label="Payment Type">
-                                            <a-input
-                                                v-model:value="paymentType"
-                                                readonly
-                                            ></a-input>
+                                            <a-input v-model:value="paymentType" readonly></a-input>
                                         </a-form-item>
                                         <a-form-item label="Payment Amount">
-                                            <a-input
-                                                v-model:value="
-                                                    data[0].spexgc_payment
-                                                "
-                                                readonly
-                                            ></a-input>
+                                            <a-input v-model:value="data[0].spexgc_payment
+                                                " readonly></a-input>
                                         </a-form-item>
                                         <a-form-item label="AR #">
-                                            <a-input
-                                                v-model:value="
-                                                    data[0].spexgc_payment_arnum
-                                                "
-                                                readonly
-                                            ></a-input>
+                                            <a-input v-model:value="data[0].spexgc_payment_arnum
+                                                " readonly></a-input>
                                         </a-form-item>
                                         <a-form-item label="Remarks">
-                                            <a-textarea
-                                                v-model:value="
-                                                    data[0].spexgc_remarks
-                                                "
-                                                readonly
-                                            ></a-textarea>
+                                            <a-textarea v-model:value="data[0].spexgc_remarks
+                                                " readonly></a-textarea>
                                         </a-form-item>
                                     </a-form>
                                 </a-col>
                             </a-row>
                             <a-form-item label="Prepared by">
-                                <a-input
-                                    v-model:value="data[0].prepby"
-                                    readonly
-                                ></a-input>
+                                <a-input v-model:value="data[0].prepby" readonly></a-input>
                             </a-form-item>
                         </a-card>
                     </a-col>
                 </a-row>
                 <div class="flex justify-end mt-5">
-                    <a-button @click="submitForm" type="primary"
-                        >Submit</a-button
-                    >
+                    <a-button @click="submitForm" type="primary">Submit</a-button>
                 </div>
             </a-card>
         </a-tab-pane>
@@ -220,7 +131,13 @@
         </a-tab-pane>
     </a-tabs>
 
-    <!-- {{ data }} -->
+    <a-modal @ok="handleCancel" @cancel="handleCancel" :open="stream != ''" width="1000px"
+        :bodyStyle="{ height: '600px', padding: '0' }" :style="{ top: '20px' }">
+        <iframe :src="stream" style="height: 100%; width: 100%; border: none;"></iframe>
+    </a-modal>
+
+
+
 </template>
 
 <script>
@@ -236,11 +153,12 @@ export default {
         currentBudget: String,
         gcHolder: Object,
         columns: Object,
+        image: String
     },
     data() {
         return {
             activeKey: "1",
-
+            stream: '',
             title: this.formTitle(),
             detailTitles: this.gcDetailsTitle(),
             paymentType: this.payType(),
@@ -290,6 +208,7 @@ export default {
                     formData: this.form,
                     file: this.file,
                     currentBudget: this.form.budget,
+                    paymentType: this.paymentType
                 },
                 {
                     onSuccess: (response) => {
@@ -298,8 +217,8 @@ export default {
                                 message: response.props.flash.msg,
                                 description: response.props.flash.description,
                             });
-
-                            this.$inertia.get(route("finance.dashboard"));
+                            // this.stream = response.props.flash.stream
+                            this.stream = `data:application/pdf;base64,${response.props.flash.stream}`
                         } else {
                             notification[response.props.flash.type]({
                                 message: response.props.flash.msg,
@@ -310,6 +229,9 @@ export default {
                 }
             );
         },
+        handleCancel() {
+            this.$inertia.get('/')
+        }
     },
 };
 </script>

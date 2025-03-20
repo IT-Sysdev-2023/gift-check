@@ -11,6 +11,7 @@ use App\Models\ApprovedRequest;
 use App\Models\Assignatory;
 use App\Models\BudgetAdjustment;
 use App\Models\BudgetRequest;
+use App\Models\Document;
 use App\Models\DtiApprovedRequest;
 use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
@@ -46,8 +47,7 @@ class FinanceController extends Controller
         public ApprovedReleasedPdfExcelService $appRelPdfExcelService,
         public DashboardClass $dashboardClass,
         public FinanceService $financeService
-    ) {
-    }
+    ) {}
 
     public function index()
     {
@@ -269,7 +269,6 @@ class FinanceController extends Controller
             'columnsDti' => ColumnHelper::getColumns($columns),
             'title' => 'Pending DTI GC List',
         ]);
-
     }
 
 
@@ -436,6 +435,8 @@ class FinanceController extends Controller
         $id = $request->id;
         // dd($id);
 
+        $image = Document::where('doc_trid', $id)->first();
+
         $gcHolder = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)->get();
         $gcHolder = $gcHolder->transform(function ($item) {
             $item->fullname = ucwords($item->spexgcemp_fname . ' ' . $item->spexgcemp_lname);
@@ -503,6 +504,7 @@ class FinanceController extends Controller
             'currentBudget' => $budget,
             'gcHolder' => $gcHolder,
             'columns' => ColumnHelper::getColumns($columns),
+            'image' => $image['doc_fullpath']
         ]);
     }
 
@@ -699,12 +701,14 @@ class FinanceController extends Controller
                     ]);
                 } else {
                     DB::transaction(function () use ($specGet, $reqType, $id, $request, $nextLedgerBudgetNum, $cust, $totalDenom, $barcode) {
+                        // Update the status of the SpecialExternalGcrequest
                         SpecialExternalGcrequest::where('spexgc_id', $id)
                             ->where('spexgc_status', 'pending')
                             ->update([
                                 'spexgc_status' => 'approved'
                             ]);
 
+                        // Create a new ApprovedRequest record
                         ApprovedRequest::create([
                             'reqap_trid' => $id,
                             'reqap_approvedtype' => 'Special External GC Approved',
@@ -715,6 +719,8 @@ class FinanceController extends Controller
                             'reqap_date' => now(),
                             'reqap_doc' => !is_null($request->file) ? $this->financeService->uploadFileHandler($request) : ''
                         ]);
+
+                        // Create a new LedgerBudget record
                         LedgerBudget::create([
                             'bledger_no' => $nextLedgerBudgetNum,
                             'bledger_trid' => $id,
@@ -724,6 +730,8 @@ class FinanceController extends Controller
                             'bcredit_amt' => $totalDenom,
                             'bledger_category' => 'special'
                         ]);
+
+                        // Create LedgerSpgc records based on conditions
                         if ($request['type'] === 'internal') {
                             LedgerSpgc::create([
                                 'spgcledger_no' => $nextLedgerBudgetNum,
@@ -752,7 +760,7 @@ class FinanceController extends Controller
                             ]);
                         }
 
-
+                        // Handle employee assignment based on request type
                         if ($reqType->spexgc_type == '2') {
                             $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
                             foreach ($data->get() as $item) {
@@ -763,9 +771,8 @@ class FinanceController extends Controller
                         } elseif ($reqType->spexgc_type == '1') {
                             $denoms = SpecialExternalGcrequestItem::select('specit_denoms', 'specit_qty')
                                 ->where('specit_trid', $id)
-                                ->orderBy('specit_id');
-
-                            $data = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id);
+                                ->orderBy('specit_id')
+                                ->get();
 
                             foreach ($denoms as $item) {
                                 SpecialExternalGcrequestEmpAssign::create([
@@ -775,17 +782,21 @@ class FinanceController extends Controller
                                 ]);
                             }
                         } else {
-                            return back()->with([
-                                'type' => 'error',
-                                'msg' => 'Opps!',
-                                'description' => 'Request Type Not Found.'
-                            ]);
+                            throw new \Exception('Request Type Not Found.');
                         }
                     });
-                    return Redirect::route('finance.pendingGc.pending')->with([
+
+                    $gcType = $reqType['spexgc_type'] == '2' ? 'External' : 'Internal';
+                    $dataTable = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', 22)->get();
+                    $requestData = $request->data[0];
+                    $paymentType = $request->paymentType;
+                    $pdf = $this->financeService->generateApprovalpdf($gcType, $dataTable, $requestData, $paymentType);
+
+                    return redirect()->back()->with([
                         'type' => 'success',
                         'msg' => 'Nice!',
-                        'description' => 'Request approved successfuly.'
+                        'description' => 'Request approved successfully.',
+                        'stream' => $pdf
                     ]);
                 }
             } else {
@@ -797,12 +808,11 @@ class FinanceController extends Controller
                         'cancelledBy' => $request->formData['cancelledBy'],
                         'cancelledDate' => now()
                     ]);
-                // dd($barcode);
                 SpecialExternalGcrequestEmpAssign::create([
                     'spexgcemp_barcode' => $barcode++
                 ]);
 
-                return Redirect::route('finance.pendingGc.pending')->with([
+                return redirect()->back()->with([
                     'type' => 'success',
                     'msg' => 'Cancelled!',
                     'description' => 'The request was successfully canceled.',
@@ -1074,6 +1084,4 @@ class FinanceController extends Controller
             'title' => 'Dti Cancelled Requests',
         ]);
     }
-
-
 }
