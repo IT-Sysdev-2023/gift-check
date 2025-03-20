@@ -272,7 +272,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('sales-treasury-sales', [MarketingController::class, 'treasurySales'])->name('marketing.sales.treasury.sales');
-    Route::get('sales-store-sales', [MarketingController::class, 'storeSales'])->name('sales.store.sales');
+    // Route::get('sales-store-sales', [MarketingController::class, 'storeSales'])->name('sales.store.sales');
     Route::get('get-view-promo-details', [MarketingController::class, 'getPromoDetails'])->name('get.view.details');
     Route::get('get-store-sales-details', [MarketingController::class, 'getStoreSaleDetails'])->name('get.store.sale.details');
     Route::get('get-transaction-pos-detail', [MarketingController::class, 'getTransactionPOSdetail'])->name('get.transaction.pos.detail');

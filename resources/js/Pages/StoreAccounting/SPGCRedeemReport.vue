@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <a-tabs style="font-weight: bold">
+        <a-tabs type="card" style="font-weight: bold">
             <a-tab-pane key="1">
                 <template #tab>
                     <span>
@@ -13,9 +13,8 @@
                         <a-form-item>
                             <div>Data Type:</div>
 
-                            <a-select style="width: 30%" placeholder="Select"
+                            <a-select  style="width: 30%" placeholder="Select Type"
                                 v-model:value="monthlyRedeem.SPGCDataType">
-                                <a-select-option value="">---Select---</a-select-option>
                                 <a-select-option value="srv">Store Redemption/Verification</a-select-option>
                             </a-select>
                         </a-form-item>
@@ -53,8 +52,8 @@
                         <a-form-item>
                             <div>Data Type:</div>
 
-                            <a-select style="width: 30%" placeholder="Select" v-model:value="yearlyRedeem.SPGCDataType">
-                                <a-select-option value="">---Select---</a-select-option>
+                            <a-select style="width: 30%" placeholder="Select Type" v-model:value="yearlyRedeem.SPGCDataType">
+
                                 <a-select-option value="srv">Store Redemption/Verification</a-select-option>
                             </a-select>
                         </a-form-item>
@@ -78,6 +77,42 @@
                     </div>
                 </a-card>
             </a-tab-pane>
+            <a-tab-pane key="3">
+                <template #tab>
+                    <span>
+                        <PieChartOutlined />
+                       Per Day Redeem
+                    </span>
+                </template>
+                <a-card>
+                    <div style="margin-top: 20px">
+                        <a-form-item>
+                            <div>Data Type:</div>
+
+                            <a-select style="width: 30%" placeholder="Select" v-model:value="daily.SPGCDataType">
+                                <a-select-option value="srv">Store Redemption/Verification</a-select-option>
+                            </a-select>
+                        </a-form-item>
+
+                        <a-form-item>
+                            <div>Store:</div>
+                            <a-select v-model:value="daily.selectedStore" style="width: 30%"
+                                placeholder="Select Store" :options="stores" />
+                        </a-form-item>
+
+                        <a-form-item>
+                            <div>Year:</div>
+                            <a-date-picker size="large" v-model:value="daily.year"
+                                 />
+                        </a-form-item>
+                    </div>
+                    <div>
+                        <a-button @click="dailyRedeemButton" style="background-color: #1e90ff; color: white">
+                            <SendOutlined /> Submit
+                        </a-button>
+                    </div>
+                </a-card>
+            </a-tab-pane>
         </a-tabs>
     </AuthenticatedLayout>
 </template>
@@ -94,15 +129,20 @@ import { useQueueState } from "@/stores/queue-state";
 
 defineProps(["stores"]);
 const monthlyRedeem = ref({
-    year: "",
-    selectedStore: "",
-    SPGCDataType: "",
+    year: null,
+    selectedStore: null,
+    SPGCDataType: null,
 });
 
 const yearlyRedeem = ref({
-    SPGCDataType: "",
-    selectedStore: "",
-    year: "",
+    SPGCDataType: null,
+    selectedStore: null,
+    year: null,
+});
+const daily = ref({
+    SPGCDataType: null,
+    selectedStore: null,
+    year: null,
 });
 
 const disabledDate = (current) => {
@@ -144,6 +184,32 @@ const yearlyRedeemButton = async () => {
             year: dayjs(yearlyRedeem.value.year).year(),
             selectedStore: yearlyRedeem.value.selectedStore,
             SPGCDataType: yearlyRedeem.value.SPGCDataType,
+        })
+        .then(() => {
+            state.setGenerateButton(true);
+            state.setFloatButton(true);
+            state.setOpenFloat(true);
+        })
+        .catch(({ response }) => {
+            if (response.status === 422) {
+                notification.error({
+                    message: "Fields are Required!",
+                    description: response.data.message,
+                });
+            } else {
+                notification.error({
+                    message: "Error!",
+                    description: "No record Found on this date.",
+                });
+            }
+        });
+};
+const dailyRedeemButton = async () => {
+    await axios
+        .post(route("storeaccounting.redeemReportSubmit"), {
+            day: dayjs(daily.value.year).format('YYYY-MM-DD'),
+            selectedStore: daily.value.selectedStore,
+            SPGCDataType: daily.value.SPGCDataType,
         })
         .then(() => {
             state.setGenerateButton(true);
