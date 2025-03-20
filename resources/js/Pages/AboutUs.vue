@@ -47,22 +47,11 @@
                 <a class="headings-Hover" @click="scrollToPage('aboutUsPage')">About GC</a>
             </ul>
         </nav>
+        <!-- EXIT BUTTON  -->
+        <Link :href="route(routeCurrent)" class="animated-button" style="color:black">
+        <RollbackOutlined /> EXIT</Link>
+        <!-- <a-button @click="dashboardRoute">Exit</a-button> -->
 
-        <!-- EXIT Button -->
-        <button onclick="location.href='http://127.0.0.1:8082/';" class="animated-button">
-            <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-                <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z">
-                </path>
-            </svg>
-            <span class="text">E X I T</span>
-            <span class="circle"></span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z">
-                </path>
-            </svg>
-        </button>
     </header>
 
     <!-- scroll up button  -->
@@ -256,7 +245,7 @@
                         <button @click="() => {
                             kentModal = true;
                         }
-                            " style="cursor: pointer" class="card-button">
+                        " style="cursor: pointer" class="card-button">
                             More info
                         </button>
                     </div>
@@ -275,7 +264,7 @@
                         <button @click="() => {
                             jessanModal = true;
                         }
-                            " style="cursor: pointer" class="card-button">
+                        " style="cursor: pointer" class="card-button">
                             More info
                         </button>
                     </div>
@@ -294,7 +283,7 @@
                         <button @click="() => {
                             harveyModal = true;
                         }
-                            " style="cursor: pointer" class="card-button">
+                        " style="cursor: pointer" class="card-button">
                             More info
                         </button>
                     </div>
@@ -313,7 +302,7 @@
                         <button @click="() => {
                             teofredoModal = true;
                         }
-                            " style="cursor: pointer" class="card-button">
+                        " style="cursor: pointer" class="card-button">
                             More info
                         </button>
                     </div>
@@ -1073,7 +1062,7 @@
                         <button @click="() => {
                             claireModal = true;
                         }
-                            " style="cursor: pointer" class="card-button">
+                        " style="cursor: pointer" class="card-button">
                             More info
                         </button>
                     </div>
@@ -1092,7 +1081,7 @@
                         <button @click="() => {
                             norienModal = true;
                         }
-                            " style="cursor: pointer" class="card-button">
+                        " style="cursor: pointer" class="card-button">
                             More info
                         </button>
                     </div>
@@ -1111,7 +1100,7 @@
                         <button @click="() => {
                             maricelModal = true;
                         }
-                            " style="cursor: pointer" class="card-button">
+                        " style="cursor: pointer" class="card-button">
                             More info
                         </button>
                     </div>
@@ -1779,11 +1768,30 @@
 </template>
 
 <script setup>
-import { onMounted, ref, onUnmounted } from "vue";
+import { onMounted, ref, onUnmounted, computed } from "vue";
 import dayjs from "dayjs";
+import { usePage } from "@inertiajs/vue3";
 
+const page = usePage().props;
 
 const showScrollButton = ref(false);
+
+const routeCurrent = computed(() => {
+    const userType = {
+        1: 'admin.dashboard',
+        2: 'treasury.dashboard',
+        3: 'finance.dashboard',
+        4: 'custodian.dashboard',
+        6: 'marketing.dashboard',
+        7: 'retail.dashboard',
+        8: 'retailgroup.dashboard',
+        9: 'accounting.dashboard',
+        10: 'iad.dashboard',
+        12: 'eod.dashboard',
+        13: 'storeaccounting.dashboard',
+    };
+    return userType[page.auth.user.usertype] ?? '';
+})
 
 const handleScroll = () => {
     showScrollButton.value = window.scrollY > 600;

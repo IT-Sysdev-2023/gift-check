@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <a-tabs style="font-weight: bold">
+        <a-tabs style="font-weight: bold" type="card">
             <a-tab-pane key="1">
                 <template #tab>
                     <span>

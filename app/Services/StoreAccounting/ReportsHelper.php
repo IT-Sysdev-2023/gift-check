@@ -67,7 +67,7 @@ class ReportsHelper
             ->whereYear('vs_date', $year)
             ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
             ->where('vs_store', $store)
-            ->where('special_external_gcrequest.spexgc_promo', '*')
+            ->where('special_external_gcrequest.spexgc_promo', '0')
             ->orderBy('vs_id')
             ->exists();
     }
