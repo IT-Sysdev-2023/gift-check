@@ -10,10 +10,11 @@
                 </template>
                 <a-input-search allow-clear enter-button v-model:value="externalSearch" placeholder="Input search here..." style="width:25%; margin-left:75%"/>
 
-                <a-table size="small" :data-source="record.data.data" :columns="columns" :pagination="false" bordered style="margin-top:10px">
+                <a-table size="small" :data-source="record.data.data" :columns="columns" :pagination="false" bordered style="margin-top:10px; ">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.key == 'setup'">
                             <a-button
+                             style="background-color: #1890ff; color: white;"
                                 @click="() => $inertia.get(route('custodian.approved.setup'), { id: record.spexgc_id })">
                                 <template #icon>
                                     <FastForwardOutlined />
@@ -40,6 +41,7 @@
                         <!-- {{record.company}} -->
                         <template v-if="column.key == 'setup'">
                             <a-button
+                             style="background-color: #1890ff; color: white;"
                                 @click="() => $inertia.get(route('custodian.approved.setup'), { id: record.spexgc_id })">
                                 <template #icon>
                                     <FastForwardOutlined />

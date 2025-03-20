@@ -3,10 +3,10 @@
     <a-form>
         <a-card title="Promo GC Request Form">
             <a-row :gutter="[16, 16]">
-                <a-col :span="12" style="margin-top: 20px">
+                <a-col :span="12" style="margin-top: 5px">
                     <a-card>
                         <div>
-                            <div style="width: 300px">
+                            <div style="width: 550px">
                                 <a-form-item label="RFPROM No:" name="rfprom">
                                     <a-input
                                         v-model:value="form.rfprom_number"
@@ -55,7 +55,7 @@
                                 />
                             </a-form-item>
 
-                            <div style="width: 300px">
+                            <div style="width: 550px">
                                 <a-form-item
                                     label="Promo Group:"
                                     name="promoGroup"
@@ -94,17 +94,13 @@
                         </div>
                     </a-card>
                 </a-col>
-                <a-col :span="12" style="margin-top: 20px">
+                <a-col :span="12" style="margin-top: 5px">
                     <a-card>
                         <a-card
-                            title="Total Promo GC Request"
+                            title="Promo GC Request"
                             :bordered="false"
                         >
-                            <a-input
-                                :value="'₱ ' + form.totalValue"
-                                readonly
-                                style="font-size: xx-large"
-                            ></a-input>
+                           
                             <div>
                                 <a-form-item
                                     has-feedback
@@ -140,13 +136,22 @@
                                                     "
                                                     @change="handlequantity()"
                                                 />
+                                                
                                             </template>
                                         </template>
                                     </a-table>
                                 </a-form-item>
                             </div>
-                            <div class="flex justify-end mt-2 mx-4">
-                                <a-button type="primary" @click="submit">
+                            <a-form-item label="Total Promo GC Amount" style="font-size: xx-large; font-weight: bold">
+                                    <a-input
+                                     :value="'₱ ' + form.totalValue"
+                                      readonly
+                             style="font-size: xx-large; font-weight: bold; text-align: center;"
+                             />
+                            </a-form-item>
+                            <div class="flex justify-end ">
+                                <a-button type="primary" 
+                                    @click="submit">
                                     Submit Promo Request
                                 </a-button>
                             </div>

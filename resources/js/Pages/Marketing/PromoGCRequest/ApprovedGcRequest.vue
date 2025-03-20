@@ -244,7 +244,8 @@ export default {
                 },
                 {
                     title: "Retail Group",
-                    dataIndex: "pgcreq_group",
+                    dataIndex:  "pgcreq_group",
+                    customRender: ({ text }) => `Group ${text}`,
                 },
                 {
                     title: "Requested By",
@@ -259,7 +260,7 @@ export default {
                     dataIndex: "approvedBy",
                 },
                 {
-                    title: "View",
+                    title: "Action",
                     dataIndex: "view",
                 },
             ],

@@ -6,7 +6,10 @@
             <a-table :data-source="record.data" :columns="column" size="small" bordered :pagination="false" style="margin-top:10px">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'view'">
-                        <a-button @click="view(record.pe_id)">
+                        <a-button
+                         type="primary" 
+                            style="background-color: #1890ff; border-color: #1890ff; color: white;"
+                        @click="view(record.pe_id)">
                             <template #icon>
                                 <ArrowsAltOutlined />
                             </template>

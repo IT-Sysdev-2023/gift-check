@@ -30,10 +30,11 @@
                     </a-button>
                 </template>
             </template>
+ <!-- Norien --->
         </a-table>
         <pagination-resource class="mt-5" :datarecords="data" />
     </a-card>
-    <a-modal :footer="false" v-model:open="openViewModal" style="width: 80%">
+    <a-modal :footer="false" v-model:open="openViewModal" style="width: 90%">
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <a-list>
@@ -140,6 +141,8 @@
                     </a-row>
                 </a-list>
             </a-col>
+ <!-- Norien --->
+            
             <a-col :span="16">
                 <div>
                     <div class="flex justify-end">

@@ -47,9 +47,82 @@
                         key="1"
                         :tab="
                             'Special External GC Request # ' +
-                            selectedData.spexgc_num
-                        "
+                            selectedData.spexgc_num   "
                     >
+                    <a-row :gutter="[12, 12]">
+                      <!-- Request Details Box -->
+                         <a-col :span="9">
+                            <a-card title="Request Details" style="border: 1px solid #d9d9d9; padding: 4px; width: 500px;">
+                                 <a-form layout="horizontal">
+                                    <a-form-item label="Date Requested">
+                                  <a-input v-model:value="selectedData.datedRequested" readonly />
+                              </a-form-item>
+                            
+                                     <a-form-item label="Requested By">
+                                  <a-input v-model:value="selectedData.requestedby" readonly />
+                              </a-form-item>
+                                    
+                                    <a-form-item label="Document">
+                                 <a-image
+                                 style="height: 100px"  :src="selectedData.reqap_doc ? 'storage/' + selectedData.reqap_doc : ''"
+                                 alt="No Document Uploaded"
+                                  />
+                               </a-form-item>
+                        
+                                   <a-form-item label="Date Validity">
+                                  <a-input v-model:value="selectedData.datedValidity" readonly />
+                              </a-form-item>
+                           
+                                   <a-form-item label="Remarks">
+                                 <a-input v-model:value="selectedData.reqap_remarks" readonly />
+                              </a-form-item>
+                      
+                                    <a-form-item label="AR #">
+                                 <a-input v-model:value="selectedData.spexgc_payment_arnum" readonly />
+                             </a-form-item>
+                       
+                                  <a-form-item label="Payment Type">
+                                 <a-input v-model:value="paymentype" readonly />
+                              </a-form-item>
+                          </a-form>
+                      </a-card>
+                 </a-col>
+           
+                      <a-col :span="12">
+                             <a-card title="Approval Details" style="border: 1px solid #d9d9d9; padding: 4px; width: 500px; margin-top: 1px;">
+                             <a-form layout="horizontal">
+                        
+                                <a-form-item label="Date Approved" class="mt-2">
+                           <a-input v-model:value="selectedData.datedApproved" readonly />
+                     </a-form-item>
+     
+                                <a-form-item label="Document">
+                         <a-image  style="height: 100px" :src="selectedData.reqap_doc ? 'storage/' + selectedData.reqap_doc : ''"
+                       alt="No Document Uploaded"
+                      />
+                    </a-form-item>
+                          
+                    <a-form-item label="Checked By">
+                         <a-input v-model:value="selectedData.checkedby" readonly />
+                 </a-form-item>
+        
+                     <a-form-item label="Prepared By">
+                 <a-input v-model:value="selectedData.approveby" readonly />
+                 </a-form-item>
+      
+                    <a-form-item label="Remarks" class="mt-2">
+                 <a-input v-model:value="selectedData.spexgc_remarks" readonly />
+                 </a-form-item>
+                
+                     <a-form-item label="Approved By">
+               <a-input v-model:value="selectedData.approveby" readonly />
+             </a-form-item>
+         </a-form>
+        </a-card>
+    </a-col>
+</a-row>
+
+<!--                     
                         <a-row :gutter="[16, 16]">
                             <a-col :span="6">
                                 <a-form-item label="Date Requested">
@@ -77,8 +150,6 @@
                                         alt="No Document Uploaded"
                                     />
                                 </a-form-item>
-                            </a-col>
-                            <a-col :span="6">
                                 <a-form-item label="Date Validity">
                                     <a-input
                                         v-model:value="
@@ -109,8 +180,8 @@
                                         readonly
                                     />
                                 </a-form-item>
-                            </a-col>
-                            <a-col :span="6" class="bg-blue-100">
+                            </a-col> -->
+                            <!-- <a-col :span="6">
                                 <a-form-item label="Date Approved" class="mt-2">
                                     <a-input
                                         v-model:value="
@@ -142,8 +213,7 @@
                                         readonly
                                     />
                                 </a-form-item>
-                            </a-col>
-                            <a-col :span="6" class="bg-blue-100">
+                            
                                 <a-form-item label="Remarks" class="mt-2">
                                     <a-input
                                         v-model:value="
@@ -158,8 +228,9 @@
                                         readonly
                                     />
                                 </a-form-item>
-                            </a-col>
-                        </a-row>
+                            </a-col> -->
+                        <!-- </a-row> -->
+                         
                     </a-tab-pane>
                     <a-tab-pane key="2" tab="Barcodes" force-render>
                         <a-table

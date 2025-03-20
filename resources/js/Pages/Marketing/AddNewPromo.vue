@@ -2,11 +2,11 @@
 
     <Head title="Add New Promo" />
     <a-card title="Add New Promo"></a-card>
-    <a-row :gutter="[16, 16]" class="mt-5">
+    <a-row :gutter="[16, 16]" class="mt-2">
         <a-col :span="12">
             <a-card>
                 <div class="flex justify-center">
-                    <div style="width: 400px">
+                    <div style="width: 500px">
                         <a-form-item label="Promo No:" name="promoNo">
                             <a-input v-model:value="form.promoNo" readonly />
                         </a-form-item>
@@ -44,7 +44,9 @@
                         <div>
                             <div class="flex justify-end">
                                 <a-form-item>
-                                    <a-button @click="addPromo()" type="primary" html-type="submit">Submit</a-button>
+                                    <a-button 
+                                    style="width: 500px;"
+                                    @click="addPromo()" type="primary" html-type="submit">SUBMIT</a-button>
                                 </a-form-item>
                             </div>
                         </div>
