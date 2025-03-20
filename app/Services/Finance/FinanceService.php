@@ -489,25 +489,25 @@ class FinanceService extends FileHandler
                     'msg' => 'Budget Adjustment Needs Recommendation Approval from Retail Group ' . $request['bgroup'] . '.'
                 ]);
             }
-        }else{
+        } else {
             DB::transaction(function () use ($request) {
                 BudgetAdjustment::where('adj_id', $request['id'])->where('adj_request_status', '0')->update([
                     'adj_request_status' => $request['status'],
                 ]);
 
-              $cancelled =  CancelledAdjRequest::create([
+                $cancelled =  CancelledAdjRequest::create([
                     'cadj_req_id' => $request['id'],
                     'cadj_at' => now(),
                     'cadj_by' => request()->user()->user_id,
                 ]);
 
-                if($cancelled->wasRecentlyCreated){
+                if ($cancelled->wasRecentlyCreated) {
                     return response()->json([
                         'status' => 'error',
                         'title' => 'Error',
                         'msg' => 'Budget Adjustment request cancelled.'
                     ]);
-                }else{
+                } else {
                     return response()->json([
                         'status' => 'error',
                         'title' => 'Error',
@@ -527,4 +527,20 @@ class FinanceService extends FileHandler
     // {
     //     dd($request->all());
     // }
+
+
+    public function generateApprovalpdf($gcType, $dataTable, $requestData, $paymentType)
+    {
+        $data = $dataTable;
+        $signitures = [
+            'preparedBy' => ucfirst($requestData['preparedby_firstname']) . ' ' . ucfirst($requestData['preparedby_lastname']),
+            'checkedBy' => ucfirst($requestData['checker_first']) . ' ' . ucfirst($requestData['checker_lastname']),
+            'approvedBy' => ucfirst(Auth()->user()->firstname) . ' ' . ucfirst(Auth()->user()->lastname)
+        ];
+
+        $pdf = Pdf::loadView('pdf/generateApprovalpdf', compact('data', 'gcType', 'requestData', 'paymentType', 'signitures'))
+            ->setPaper('letter');
+
+        return base64_encode($pdf->output());
+    }
 }

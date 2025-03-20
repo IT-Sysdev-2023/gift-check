@@ -1,5 +1,4 @@
 <template>
-
     <div v-if="gctype == 'external'">
         <a-card title="Pending Special External GC Request">
             <a-table :dataSource="external" :columns="columns">
