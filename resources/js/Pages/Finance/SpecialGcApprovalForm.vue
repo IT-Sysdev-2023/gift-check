@@ -36,11 +36,10 @@
                                     <a-form-item label="Approved By">
                                         <a-input v-model:value="form.approvedBy" readonly></a-input>
                                     </a-form-item>
-                                    <a-image :src="`/storage/${image.replace(/\//g, '').replace(/(externalDocs)([^\/]+\.jpg)/,
-                                        '$1/$2')}`" />
+                                    <a-image :src="`/storage/` + image" />
                                 </div>
                                 <div v-else>
-                                     <a-form-item label="Date Cancelled">
+                                    <a-form-item label="Date Cancelled">
                                         <a-input v-model:value="form.dateCancelled" readonly></a-input>
                                     </a-form-item>
                                     <a-form-item label="Remarks">
