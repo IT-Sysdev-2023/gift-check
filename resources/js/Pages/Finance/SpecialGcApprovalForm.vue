@@ -40,7 +40,7 @@
                                         '$1/$2')}`" />
                                 </div>
                                 <div v-else>
-                                    <a-form-item label="Date Cancelled">
+                                     <a-form-item label="Date Cancelled">
                                         <a-input v-model:value="form.dateCancelled" readonly></a-input>
                                     </a-form-item>
                                     <a-form-item label="Remarks">
