@@ -7,11 +7,11 @@
                 </span>
             </template>
             <a-card>
-                <div class="flex justify-end">
+                <!-- <div class="flex justify-end">
                     <h2 class="bg-gray-900 text-white p-2 rounded mb-3">
                         Current Budget: {{ form.formattedbudget }}
                     </h2>
-                </div>
+                </div> -->
                 <a-row :gutter="[16, 16]">
                     <a-col :span="12">
                         <a-card>
