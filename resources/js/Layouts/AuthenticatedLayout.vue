@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, ref } from "vue";
+import { onMounted, onBeforeUnmount, ref, createVNode } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { UserType } from "@/userType";
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { PageWithSharedProps } from "@/types/index";
 import IadSideBar from "@/Components/IadSideBar.vue";
 import AdminSidebar from "@/Components/AdminSidebar.vue";
@@ -13,10 +14,11 @@ import RetailGroupSidebar from "@/Components/RetailGroupSidebar.vue";
 import TreasurySideBar from "@/Components/TreasurySideBar.vue";
 import RetailSidebar from "@/Components/RetailSidebar.vue";
 import { computed } from "vue";
-import { MenuProps } from "ant-design-vue";
+import { MenuProps, notification, Modal } from "ant-design-vue";
 import dayjs from "dayjs";
 import MarketingSideBar from "@/Components/MarketingSideBar.vue";
 import { useOnlineUsersStore } from '@/stores/online-store'
+import axios from "axios";
 
 const onlineUsersStore = useOnlineUsersStore();
 
@@ -73,8 +75,176 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
     curr.value = obj.key;
     router.visit(route(obj.key + ".dashboard"));
 };
-</script>
 
+// fetching HRMS user image
+const currentUser = computed(() => usePage().props.auth.user);
+
+const formattedUserName = computed(() => {
+    return `${currentUser.value.lastname.toLowerCase()}, ${currentUser.value.firstname.toLowerCase()}`
+
+});
+const value = ref<string>(formattedUserName.value);
+const imageUrl = ref<string>('');
+const userImage = async () => {
+    try {
+        const response = await axios.get('http://172.16.161.34/api/hrms/filter/employee/name', {
+            params: {
+                q: value.value
+            }
+        })
+        if (response.data.data.employee.length > 0) {
+            imageUrl.value = response.data.data.employee[0].employee_photo;
+
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+onMounted(() => {
+    userImage();
+});
+
+// user defining usertype
+const myProfileModal = ref<boolean>(false);
+
+const Usertype = {
+
+    1: 'Administrator',
+    2: 'Corporate Treasury',
+    3: 'Corporate Finance',
+    4: 'Corporate FAD',
+    5: 'General Manager',
+    6: 'Corporate Marketing',
+    7: 'Retail Store',
+    8: 'Retail Group',
+    9: 'Corporate Accounting',
+    10: 'Internal Audit',
+    11: 'Finance Officer',
+    12: 'IT Personnel ',
+    13: 'CFS',
+    14: 'Store Accounting'
+};
+const usertype = computed(() => {
+    return Usertype[page.auth.user.usertype] ?? 'Unknown';
+});
+
+// change username function
+const enterPassword = ref<boolean>(false);
+const changeUsernameModal = ref<boolean>(false);
+const confirm = ref({
+    password: ''
+})
+const submitUsername = async () => {
+    if (!currentUser.value.username) {
+        notification.error({
+            message: 'Error',
+            description: 'Please input the required field'
+        })
+        return;
+    }
+    try {
+        enterPassword.value = true;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const submitNow = async () => {
+    try {
+        const response = await axios.post(route('admin.newUsername'), {
+            params: {
+                password: confirm.value,
+                username: currentUser.value.username,
+                id: currentUser.value.user_id
+            }
+        });
+        if (response.data.success) {
+            changeUsernameModal.value = false;
+            notification.success({
+                message: 'Success',
+                description: response.data.message
+            });
+            enterPassword.value = false;
+        }
+        else if (response.data.error) {
+            notification.error({
+                message: 'Error',
+                description: response.data.message
+            });
+        }
+        console.log(response);
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+// change password function
+const form = ref<any>({
+    old_password: '',
+    new_password: '',
+    confirm_password: '',
+    id: currentUser.value.user_id,
+    errors: {}
+});
+
+const changePasswordModal = ref<boolean>(false);
+
+const submitPassword = async () => {
+    try {
+        Modal.confirm({
+            title: 'CONFIRMATION?',
+            icon: createVNode(ExclamationCircleOutlined),
+            content: createVNode(
+                'div',
+                {
+                    style: 'color:red;',
+                },
+                'Are you sure to change your password?',
+            ),
+            async onOk() {
+                try {
+                    const response = await axios.post(route('admin.newPassword', form.value));
+                    if (response.data.success) {
+                        notification.success({
+                            message: 'Success',
+                            description: response.data.message
+                        });
+                        changePasswordModal.value = false;
+                    }
+                    else if (response.data.error) {
+                        notification.error({
+                            message: 'Error',
+                            description: response.data.message
+                        });
+                    }
+                } catch (error) {
+                    if (error.response && error.response.data.errors) {
+                        form.value.errors = error.response.data.errors;
+
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: 'Something went wrong. Please try again.'
+                        });
+                    }
+                }
+
+            },
+            onCancel() {
+                changePasswordModal.value = false;
+            },
+            class: 'test',
+        });
+
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+</script>
 <template>
     <div>
         <a-layout style="min-height: 100vh" class="dark-layout">
@@ -89,6 +259,8 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                             border-top: none;
                             border-radius: 0 0 0 0px;
                         ">
+
+                        <!-- if user user_id is 322  -->
                         <div class="flex justify-center">
                             <div v-if="page.auth.user.user_id == 322">
                                 <img style="
@@ -99,20 +271,141 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRec9vI42pnTjYGIpgq9sIzCFrlkZPmRkTCOw&s"
                                     alt="usersimage" />
                             </div>
-                            <div v-else>
+
+                            <!-- user image from hrms  -->
+                            <div v-else-if="imageUrl">
                                 <img style="
                                         height: 100px;
                                         width: 100px;
                                         border-radius: 50%;
                                         object-fit: cover;
                                         object-position: center;
-                                    " src="https://avatars.githubusercontent.com/u/823566?v=4" alt="usersimage" />
+                                    " :src="'http://172.16.161.34:8080/hrms' + imageUrl" />
+                            </div>
+
+                            <!-- default user image if the user has no image found in the hrms  -->
+                            <div v-else>
+                                <img style="
+                                height: 100px;
+                                width:100px;
+                                border-radius: 50%;
+                                object-fit: cover;
+                                object-position: center;" src="/images/new.jpg" />
                             </div>
                         </div>
 
-                        <p class="text-white font-bold text-center mt-4">
-                            Hello, {{ page.auth.user.full_name }}
-                        </p>
+                        <!-- User greetings  -->
+                        <div class="text-white font-bold text-center mt-1">
+                            <div v-if="formattedUserName === 'abarquez, kent'">
+                                <span class="italic">Hello Master,</span> <span class="text-bold">{{
+                                    page.auth.user.full_name }}</span>
+                            </div>
+                            <div v-else-if="formattedUserName == 'gamale, teofredo'">
+                                <span class="italic">Hello Boss,</span> <span class="text-bold">{{
+                                    page.auth.user.full_name }}</span>
+                            </div>
+                            <div v-else-if="formattedUserName == 'barace, harvey'">
+                                <span class="italic"> Hello Master,</span> <span class="font-bold">{{
+                                    page.auth.user.full_name }}</span>
+                            </div>
+                            <div v-else-if="formattedUserName == 'palban, jessan'">
+                                <span class="italic"> Hello Master,</span> <span class="font-bold">{{
+                                    page.auth.user.full_name }}</span>
+                            </div>
+                            <div v-else>
+                                <span class="italic"> Hello,</span> <span class="font-bold">{{ page.auth.user.full_name
+                                }}</span>
+                            </div>
+                        </div>
+
+                        <!-- User details modal  -->
+                        <a-modal v-model:open="myProfileModal" width="50%" :footer="null">
+                            <div v-if="currentUser">
+                                <a-descriptions title="User Details" :labelStyle="{ fontWeight: 'bold' }" bordered
+                                    layout="vertical">
+                                    <a-descriptions-item label="Username">
+                                        {{ currentUser.username }}
+                                    </a-descriptions-item>
+                                    <a-descriptions-item label="ID Number">
+                                        {{ currentUser.emp_id }}
+                                    </a-descriptions-item>
+                                    <a-descriptions-item label="Firstname">
+                                        {{ currentUser.firstname }}
+                                    </a-descriptions-item>
+                                    <a-descriptions-item label="Lastname">
+                                        {{ currentUser.lastname }}
+                                    </a-descriptions-item>
+                                    <a-descriptions-item label="User Type">
+                                        {{ usertype }}
+                                    </a-descriptions-item>
+                                    <a-descriptions-item label="Date Created">
+                                        {{ dayjs(currentUser.date_created).format('MMMM D, YYYY h:mm A') }}
+                                    </a-descriptions-item>
+                                </a-descriptions>
+                            </div>
+                        </a-modal>
+
+                        <!-- change username modal  -->
+                        <a-modal v-model:open="changeUsernameModal" with="50%" title="Change Username"
+                            @ok="submitUsername">
+                            <a-form-item label="Username" class="mt-10">
+                                <a-input v-model:value="currentUser.username" placeholder="Username" />
+                            </a-form-item>
+                            <div class="mt-10">
+                                <p class="text-red-600">Note: Please be careful when changing your username. Make sure
+                                    to remember it.</p>
+                            </div>
+                        </a-modal>
+
+                        <!-- change password modal  -->
+                        <a-modal v-model:open="changePasswordModal" title="Change Password" @ok="submitPassword">
+                            <a-form-item :validate-status="form.errors.old_password ? 'error' : ''"
+                                :help="form.errors.old_password" label="Old Password" class="mt-10">
+                                <a-input v-model:value="form.old_password" type="password" placeholder="Old password" />
+                            </a-form-item>
+                            <a-form-item :validate-status="form.errors.new_password ? 'error' : ''"
+                                :help="form.errors.new_password" label="New Password">
+                                <a-input v-model:value="form.new_password" type="password" placeholder="New password" />
+                            </a-form-item>
+                            <a-form-item :validate-status="form.errors.confirm_password ? 'error' : ''"
+                                :help="form.errors.confirm_password" label="Confirm Password">
+                                <a-input v-model:value="form.confirm_password" type="password"
+                                    placeholder="Confirm password" />
+                            </a-form-item>
+                            <div class="mt-10">
+                                <p class="text-red-600 ">Note: Please be careful when changing your password. Make sure
+                                    to remember it.</p>
+                            </div>
+                        </a-modal>
+                        <!-- confirmation password before changes username  -->
+                        <a-modal v-model:open="enterPassword" title="Enter Password for Confirmation" @ok="submitNow">
+                            <a-form-item>
+                                <a-input v-model:value="confirm.password" type="password" placeholder="Password" />
+                            </a-form-item>
+                        </a-modal>
+
+                        <!-- Account dropdown  -->
+                        <div class="flex justify-center mt-5">
+                            <a-dropdown>
+                                <a class="ant-dropdown-link text-white bg-blue-800 px-4 py-2" @click.prevent>
+                                    My Account
+                                    <DownOutlined />
+                                </a>
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item>
+                                            <a @click="() => (myProfileModal = true)">My Profile</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a @click="() => (changeUsernameModal = true)">Change Username</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a @click="() => { changePasswordModal = true }">Change Password</a>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                        </div>
                     </a-card>
                     <div v-else>
                         <div class="flex justify-center mt-3 mb-5">
@@ -229,8 +522,8 @@ const selectedPage: MenuProps["onClick"] = (obj) => {
                         </a-menu>
                         <p class="space-x-5">
                             <Link class="text-white" :href="page.auth.user.usertype == '1'
-                                    ? route('admin.dashboard')
-                                    : route(dashboardRoute + '.dashboard')
+                                ? route('admin.dashboard')
+                                : route(dashboardRoute + '.dashboard')
                                 ">
                             <HomeOutlined />
                             Home

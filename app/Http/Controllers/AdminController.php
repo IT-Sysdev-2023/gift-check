@@ -39,6 +39,83 @@ class AdminController extends Controller
     public function __construct(public AdminServices $adminservices, public DBTransaction $dBTransaction)
     {
     }
+    public function submitNewUsername(Request $request)
+    {
+        // dd($request->all());
+        // dd($request->params['id']);
+        $password = User::where('user_id', $request->params['id'])->first();
+        $currentPass = $password->password;
+        $currentUsername = $password->username;
+
+        if (Hash::check($request->params['password']['password'], $currentPass)) {
+            $currentUsername = $password->username;
+            if ($currentUsername == $request->params['username']) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Username is not change, please update first'
+                ]);
+            } else {
+                $data = User::where('user_id', $request->params['id'])
+                    ->update([
+                        'username' => $request->params['username']
+                    ]);
+                if ($data) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Username change successfully'
+                    ]);
+                } else {
+                    return response()->json([
+                        'error' => true,
+                        'message' => 'Username change successfully'
+                    ]);
+                }
+            }
+        } else {
+            return response()->json([
+                'error' => true,
+                'message' => 'Your password dont match, please try again'
+            ]);
+        }
+    }
+
+    public function submitNewPassword(Request $request)
+    {
+        $data = $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required',
+            'confirm_password' => 'required'
+        ]);
+
+        $inputOldPassword = $request->old_password;
+
+        $oldPassword = User::where('user_id', $request->id)->first();
+        $getPassword = $oldPassword->password;
+
+        if (Hash::check($inputOldPassword, $getPassword)) {
+            if ($request->new_password != $request->confirm_password) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Password dont match, please try again.'
+                ]);
+            } else {
+                $data = User::where('user_id', $request->id)->update([
+                    'password' => Hash::make($request->new_password)
+                ]);
+                if ($data) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Password updated successfully'
+                    ]);
+                }
+            }
+        } else {
+            return response()->json([
+                'error' => true,
+                'message' => 'Old password is incorrect, please try again.'
+            ]);
+        }
+    }
 
     public function index()
     {
@@ -274,9 +351,8 @@ class AdminController extends Controller
                 }),
             ]
         ]);
-
+        // Check if the data has no changes happen
         $checkUser = User::where('user_id', $request['user_id'])->first();
-        // dd($checkUser);
         if ($checkUser) {
             $CheckData =
                 $checkUser->username === $request['username'] &&
@@ -287,9 +363,9 @@ class AdminController extends Controller
                 $checkUser->user_role === $request['user_role'] &&
                 $checkUser->store_assigned === $request['store_assigned'] &&
                 $checkUser->retail_group === $request['retail_group'] &&
-                $checkUser->it_type === $request['it_type'];
+                $checkUser->it_type === $request['it_type'] &&
+                $checkUser->user_status === $request['status'];
 
-            // dd($CheckData);
             if ($CheckData) {
                 return back()->with(
                     'error',
@@ -337,7 +413,7 @@ class AdminController extends Controller
             'emp_id' => $request->employee_id,
             'usertype' => $request->usertype,
             'usergroup' => null,
-            'user_status' => 'active',
+            'user_status' => $request->status,
             'user_role' => $userRole,
             'login' => 'no',
             'promo_tag' => '0',
@@ -401,7 +477,7 @@ class AdminController extends Controller
             );
         }
 
-        $password = Hash::make('password');
+        $password = Hash::make('GC2015');
 
         $insertUser = User::create([
             'username' => $request->username,

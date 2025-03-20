@@ -2,9 +2,11 @@
 
 namespace App;
 
+use App\Models\Store;
 use App\Models\StoreLocalServer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class DatabaseConnectionService
 {
@@ -64,7 +66,11 @@ class DatabaseConnectionService
             throw new \Exception("Invalid store ID: $store");
         }
         if ($store == 6 || $store == 7) {
-            throw new \Exception("No server configuration found for store ID: $store");
+            $storeSelected = Store::where('stores.store_id', $store)
+                ->value('store_name');
+            throw new HttpResponseException(response()->json([
+                'message' => "No server configuration for store $storeSelected"
+            ], 400));
         }
 
         $lserver = StoreLocalServer::where('stlocser_storeid', $store)
@@ -85,7 +91,7 @@ class DatabaseConnectionService
 
     // BELOW IS THE ORIGINAL SETUP FOR THE DATABASECONNECTION SERVER
 
-     // public static function remoteServer(string|int $store)
+    // public static function remoteServer(string|int $store)
     // {
     //     $lserver = StoreLocalServer::where('stlocser_storeid', $store)
     //         ->first(['stlocser_ip', 'stlocser_username', 'stlocser_password']);
