@@ -2,45 +2,44 @@
     <AuthenticatedLayout>
         <a-card>
             <a-descriptions title="Department of Trade and Industry Special GC" size="small" bordered
-                :column="{ xs: 1, sm: 1, md: 1, lg: 1 }" :labelStyle="{ fontWeight: 'bold', width: '200px' }">
+                :column="{ xs: 1, sm: 1,  }" :labelStyle="{ fontWeight: 'bold', width: '150px' }">
 
-                <a-descriptions-item label="Transaction No">
+                <a-descriptions-item label="Transaction No:">
                     <span>{{ transNo }}</span>
                 </a-descriptions-item>
 
-                <a-descriptions-item label="Payment Date">
+                <a-descriptions-item label="Payment Date:">
                     <span>{{ dayjs().format('MMMM D, YYYY') }}</span>
                 </a-descriptions-item>
 
-                <a-descriptions-item label="Customer">
+                <a-descriptions-item label="Customer:">
                     <span>{{ dti.label }}</span>
                 </a-descriptions-item>
             </a-descriptions>
 
             <a-form ref="formRef" :model="formState" @finish="submitForm">
-                <div class="mt-5">
+                <div class="mt-2">
                     <a-col>
                         <a-card class="w-1/2">
-                            <p>Upload Image</p>
-                            <div class="flex w-full mt-2">
+                            <p>Upload Image:</p>
+                            <div class="flex w-full mt-1">
                                 <ant-upload-multi-image @handle-change="handleImageChange" />
                             </div>
                             <p class="text-red-500 text-center w-full" v-if="formState.errors.file">
                                 {{ formState.errors.file }}
                             </p>
                             <div class="mt-2">
-
-                                <a-typography-text class="mt-5" keyboard>Select Date</a-typography-text>
-                                <a-date-picker size="large" @change="handleChangeDatePicker"
-                                    :disabled-date="disabledDate" style="width: 100%;" />
+                                <a-typography-text class="mt-5" style="color: black;">Select Date: </a-typography-text>
+                                  <a-date-picker size="medium" @change="handleChangeDatePicker"
+                                    :disabled-date="disabledDate" style="width: 85%;" />
                                 <p class="text-red-500" v-if="formState.errors.date">
                                     {{ formState.errors.date }}
                                 </p>
                             </div>
                             <div class="mt-2">
-                                <a-typography-text class="mt-5" keyboard>Remarks</a-typography-text>
-                                <a-textarea :rows="4" placeholder="Remarks" v-model:value="formState.remarks"
-                                    class="mb-2" />
+                                <a-typography-text class="mt-5" style="color:black" >Remarks:  </a-typography-text>
+                                <a-textarea :rows="2" placeholder="Remarks" v-model:value="formState.remarks"
+                                    class="mb-1" style="width: 89%;" />
                                 <p class="text-red-500" v-if="formState.errors.remarks">
                                     {{ formState.errors.remarks }}
                                 </p>
@@ -48,8 +47,8 @@
 
                             <ant-form-nest-item :form="formState" />
                             <div class="flex justify-end">
-                                <a-button size="large" class="mt-4" type="primary" block html-type="submit">
-                                    Submit Form
+                                <a-button size="medium" class="mt-2" type="primary" block html-type="submit">
+                                    SUBMIT REQUEST
                                 </a-button>
                             </div>
                         </a-card>

@@ -173,8 +173,11 @@ Route::middleware('auth')->group(function () {
 
 
             Route::get('setup-po-{any}', [AdminController::class, 'setupPurchaseOrders'])->name('setup');
-
             Route::post('submit-po-to-iad', [AdminController::class, 'submitPurchaseOrdersToIad'])->name('submit.po.to.iad')->middleware([HandlePrecognitiveRequests::class]);
+
+            // username and password route of every users
+            Route::post('submit-new-username', [AdminController::class, 'submitNewUsername'])->name('newUsername');
+            Route::post('submit-new-password', [AdminController::class, 'submitNewPassword'])->name('newPassword');
         });
     });
     Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('treasury.reports.download.gc');

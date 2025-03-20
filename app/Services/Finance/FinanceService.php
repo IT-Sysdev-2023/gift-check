@@ -541,4 +541,20 @@ class FinanceService extends FileHandler
     // {
     //     dd($request->all());
     // }
+
+
+    public function generateApprovalpdf($gcType, $dataTable, $requestData, $paymentType)
+    {
+        $data = $dataTable;
+        $signitures = [
+            'preparedBy' => ucfirst($requestData['preparedby_firstname']) . ' ' . ucfirst($requestData['preparedby_lastname']),
+            'checkedBy' => ucfirst($requestData['checker_first']) . ' ' . ucfirst($requestData['checker_lastname']),
+            'approvedBy' => ucfirst(Auth()->user()->firstname) . ' ' . ucfirst(Auth()->user()->lastname)
+        ];
+
+        $pdf = Pdf::loadView('pdf/generateApprovalpdf', compact('data', 'gcType', 'requestData', 'paymentType', 'signitures'))
+            ->setPaper('letter');
+
+        return base64_encode($pdf->output());
+    }
 }

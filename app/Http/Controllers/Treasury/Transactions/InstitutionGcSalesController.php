@@ -20,7 +20,7 @@ class InstitutionGcSalesController extends Controller
         $record = $this->institutionGcSalesService->index($request);
 
         return inertia('Treasury/Transactions/InstitutionGcSales/InstitutionSalesIndex', [
-            'title' => 'Institution Gc Sales',
+            'title' => 'Institution GC Sales',
             'customer' => $record->customer,
             'paymentFund' => $record->paymentFund,
             'checkBy' => Assignatory::assignatories($request),

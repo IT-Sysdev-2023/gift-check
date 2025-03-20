@@ -49,17 +49,22 @@ const submitButton = async () => {
         console.error('Failed', error);
 
         if (error.response) {
-            if (error.response.status) {
-                form.errors = error.response.data.errors;
-            }
-            else if (error.response.data.message) {
+            form.errors = error.response.data.errors;
+        }
+        if (error.response) {
+            if (error.response.data.message) {
                 notification.error({
                     description: error.response.data.message
                 });
             }
-            else {
+            else if (error.response.status) {
                 notification.error({
                     description: `Error ${error.response.status}: ${error.response.statusText}`
+                });
+            }
+            else {
+                notification.error({
+                    description: 'An unexpected error occurred.'
                 });
             }
         } else {

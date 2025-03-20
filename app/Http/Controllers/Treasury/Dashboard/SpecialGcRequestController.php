@@ -156,7 +156,7 @@ class SpecialGcRequestController extends Controller
         $checkBy = Assignatory::assignatories($request);
 
         return inertia('Treasury/Dashboard/SpecialGc/Components/GcReleasingView', [
-            'title' => 'Special Gc Releasing',
+            'title' => 'Special GC Releasing',
             'id' => $id->spexgc_id,
             'checkBy' => $checkBy,
             'records' => new SpecialExternalGcRequestResource($rec)

@@ -40,7 +40,7 @@
                 pdfHowToRequestSpecialExternal = false;
                 pdfTreasuryDepartment = false;
             }
-                " style="cursor: pointer">
+            " style="cursor: pointer">
                 <div class="menu">
                     <a href="#" class="link">
                         <span class="link-icon">
@@ -94,7 +94,7 @@
                                     pdfHowToRequestSpecialExternal = false;
                                     pdfTreasuryDepartment = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     GC Requisition Per Store</a>
                             </a-menu-item>
                             <a-menu-item>
@@ -111,7 +111,7 @@
                                     pdfHowToRequestSpecialExternal = false;
                                     pdfTreasuryDepartment = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     How to Make GC Production (Regular GC)</a>
                             </a-menu-item>
                             <a-menu-item>
@@ -128,7 +128,7 @@
                                     pdfHowToRequestSpecialExternal = false;
                                     pdfTreasuryDepartment = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     How to Request Promo</a>
                             </a-menu-item>
                             <a-menu-item>
@@ -145,7 +145,7 @@
                                     pdfHowToRequestSpecialExternal = false;
                                     pdfTreasuryDepartment = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     How to Request Special External GC</a>
                             </a-menu-item>
                             <a-menu-item>
@@ -162,7 +162,7 @@
                                     pdfHowToRequestSpecialExternal = false;
                                     pdfTreasuryDepartment = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     Treasury Department</a>
                             </a-menu-item>
                             <a-menu-item>
@@ -179,7 +179,7 @@
                                     pdfHowToRequestSpecialExternal = false;
                                     pdfTreasuryDepartment = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     <EyeOutlined /> Show All
                                 </a>
                             </a-menu-item>
@@ -213,7 +213,7 @@
                                     pdfTreasuryDepartment = false;
                                     homePage = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     GC Requisition Per Store</a>
                             </a-menu-item>
                             <a-menu-item>
@@ -230,7 +230,7 @@
                                     pdfTreasuryDepartment = false;
                                     homePage = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     How to Make GC Production (Regular GC)</a>
                             </a-menu-item>
                             <a-menu-item>
@@ -247,7 +247,7 @@
                                     pdfTreasuryDepartment = false;
                                     homePage = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     How to Request Promo</a>
                             </a-menu-item>
                             <a-menu-item>
@@ -264,7 +264,7 @@
                                     pdfTreasuryDepartment = false;
                                     homePage = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     How to Request Special External GC</a>
                             </a-menu-item>
                             <a-menu-item>
@@ -281,7 +281,7 @@
                                     treasuryDepartmentPerPage = false;
                                     homePage = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     Treasury Department</a>
                             </a-menu-item>
                             <a-menu-item>
@@ -298,7 +298,7 @@
                                     treasuryDepartmentPerPage = false;
                                     homePage = false;
                                 }
-                                    " class="heading-button" href="javascript:;">
+                                " class="heading-button" href="javascript:;">
                                     <EyeOutlined /> Show All
                                 </a>
                             </a-menu-item>
@@ -310,20 +310,8 @@
 
         <!-- EXIT BUTTON  -->
         <div>
-            <button onclick="location.href='http://127.0.0.1:8082/';" class="animated-button">
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-                    <path
-                        d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z">
-                    </path>
-                </svg>
-                <span class="text">E X I T</span>
-                <span class="circle"></span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                    <path
-                        d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z">
-                    </path>
-                </svg>
-            </button>
+            <Link :href="route(currentRoute)" class="animated-button" style="color:black">
+            <RollbackOutlined /> EXIT</Link>
         </div>
     </header>
 
@@ -1216,11 +1204,32 @@
 </template>
 <script setup>
 import { EyeOutlined } from "@ant-design/icons-vue";
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, computed } from "vue";
+import { usePage } from "@inertiajs/vue3";
+
 import dayjs from "dayjs";
+
 
 const showScrollButton = ref(false);
 
+const page = usePage().props;
+
+const currentRoute = computed(() => {
+    const userType = {
+        1: 'admin.dashboard',
+        2: 'treasury.dashboard',
+        3: 'finance.dashboard',
+        4: 'custodian.dashboard',
+        6: 'marketing.dashboard',
+        7: 'retail.dashboard',
+        8: 'retailgroup.dashboard',
+        9: 'accounting.dashboard',
+        10: 'iad.dashboard',
+        12: 'eod.dashboard',
+        13: 'storeaccounting.dashboard',
+    };
+    return userType[page.auth.user.usertype] ?? '';
+});
 
 // SCROLL UP BUTTON
 const handleScroll = () => {

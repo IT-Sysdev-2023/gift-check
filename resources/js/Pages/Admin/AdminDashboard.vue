@@ -78,6 +78,7 @@
             </a-col>
         </a-row>
         <a-card>
+            <!-- Stores and Sales section  -->
             <div class="flex justify-center gap-5 mt-5">
                 <div class="text-center font-bold" v-for="item in props.data" :key="item.store_name">
                     {{ item.store_name }}<br>
@@ -106,9 +107,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import LineChart from '@/Layouts/LineChart.vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { useOnlineUsersStore } from '@/stores/online-store'
-import { storeToRefs } from "pinia";
+// import { storeToRefs } from "pinia";
 
 const onlineUsersStore = useOnlineUsersStore();
 
@@ -141,7 +142,7 @@ const specialGcData = computed(() => {
     }
     return data;
 })
-//  regular gc data to sales counting per month
+//  regular gc data total sales counting per month
 const regularGcData = computed(() => {
     let data = new Array(12).fill(0);
 

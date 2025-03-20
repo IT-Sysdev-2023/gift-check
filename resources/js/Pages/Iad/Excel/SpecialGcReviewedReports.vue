@@ -4,7 +4,7 @@
             <a-row :gutter="[16, 16]">
                 <a-col :span="10">
                     <a-range-picker style="width: 100%;" @change="handleDateRangeChange" />
-                    <a-button block class="mt-4" @click="generate">
+                    <a-button block class="mt-4" @click="generate" style="background-color:#1890ff;color:white">
                         Generate Special Reviewed Excel
                     </a-button>
                 </a-col>
