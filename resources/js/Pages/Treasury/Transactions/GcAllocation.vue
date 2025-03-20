@@ -88,12 +88,25 @@
                                     </a-input-number>
                                 </a-col>
                             </a-row>
-                            <span
+                            
+
+                             <!-- Total Amount Display -->
+                             <a-row class="mt-5 text-lg font-bold text-right">
+                                <a-col :span="12">Total Amount:     ₱</a-col>
+                                <a-col :span="12" style="text-align: center">
+                                    {{ totalAmount.toLocaleString() }}
+                                </a-col>
+                            </a-row>
+                        </a-card>
+
+                            <!--  <span NOTE THIS NORIEN
                                 v-if="formState.errors.denomination"
                                 class="text-red-500"
-                                >{{ formState.errors.denomination }}</span
+                                >{{ formState.errors.denomination }}
+                                </span
                             >
-                        </a-card>
+                        </a-card> -->
+
                         <a-form-item
                             label="Allocated By:"
                             name="name"
@@ -256,7 +269,7 @@
 
 <script setup lang="ts">
 import { router, useForm, usePage } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import { getError, onProgress } from "@/Mixin/UiUtilities";
@@ -297,6 +310,15 @@ const formState = useForm<GcAllocationForm>({
         denom_id: item.denom_id,
     })),
 });
+// Computed property for total amount calculation : Added by Norien
+const totalAmount = computed(() => {
+    return formState.denomination.reduce((sum, item) => {
+        const qty = item.qty ?? 0;
+        const denom = item.denomination ?? 0;
+        return sum + qty * denom;
+    }, 0);
+});
+
 const columns = [
     {
         title: "GC Barcode No",

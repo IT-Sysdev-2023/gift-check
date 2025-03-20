@@ -1,19 +1,27 @@
 <template>
     <AuthenticatedLayout>
         <a-card>
-            <div class="flex justify-center">
+            <div class="flex justify-left">
                 <a-select placeholder="Select Type of Report" v-model:value="selected" ref="select"
-                    style="width: 400px;" :options="selectedType">
+                    style="width: 600px;" :options="selectedType">
                 </a-select>
             </div>
             <a-row :gutter="[16, 16]">
                 <a-col :span="12">
                     <a-card class="mt-5">
-                        <a-row :gutter="[16, 16]">
-                            <a-col :span="12">
-
-                                <a-date-picker @change="handleDateChange" class="mb-2" style="width: 100%;"
+                        <a-row :gutter="[20, 20]">
+                            <a-col :span="30">
+                                <a-col :span="12">
+                                    <a-date-picker @change="handleDateChange" class="mb-5" style="width: 530px;"
                                     :picker="selected === '0' ? 'month' : 'year'" />
+                                <a-select placeholder="Data Type" class="mb-5" @change="handleChangeDataType"
+                                    ref="select" style="width: 530px;" :options="datatype">
+                                </a-select>
+                                <a-select placeholder="Select Store" v-model:value="storeData"
+                                    :disabled="vergc !== 'vgc'" class="mb-5" ref="select" style="width: 530px;"
+                                    :options="selectedStores">
+                                </a-select>
+                            </a-col>
 
                                 <a-button block type="primary" @click="generate">
                                     <template #icon>
@@ -22,15 +30,7 @@
                                     Generate Excel
                                 </a-button>
                             </a-col>
-                            <a-col :span="12">
-                                <a-select placeholder="Data Type" class="mb-2" @change="handleChangeDataType"
-                                    ref="select" style="width: 100%;" :options="datatype">
-                                </a-select>
-                                <a-select placeholder="Select Store" v-model:value="storeData"
-                                    :disabled="vergc !== 'vgc'" class="mb-5" ref="select" style="width: 100%;"
-                                    :options="selectedStores">
-                                </a-select>
-                            </a-col>
+                          
                         </a-row>
                     </a-card>
                 </a-col>

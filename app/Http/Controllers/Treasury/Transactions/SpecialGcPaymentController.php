@@ -13,7 +13,7 @@ class SpecialGcPaymentController extends Controller
         $transactionNumber = SpecialExternalGcrequest::max('spexgc_num');
 
         return inertia('Treasury/Transactions/SpecialGcPayment/SpecialExtPayment', [
-            'title' => 'Special External Gc Payment',
+            'title' => 'Special External GC Payment',
             'trans' => $transactionNumber ? NumberHelper::leadingZero($transactionNumber + 1, "%03d") : '0001'
         ]);
     }

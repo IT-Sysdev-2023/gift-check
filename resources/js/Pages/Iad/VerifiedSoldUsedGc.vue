@@ -1,7 +1,9 @@
 <template>
     <AuthenticatedLayout>
         <a-card>
-            <a-input-search allow-clear enter-button v-model:value="iadVerifiedSearch" placeholder="Input search here..." style="width: 25%; margin-left: 75%"/>
+                <a-typography-title :level="4 " style="font-weight: bold;"> List of Verified/ Sold/ Used GC
+            </a-typography-title>
+            <a-input-search allow-clear enter-button v-model:value="iadVerifiedSearch" placeholder="Input search here..." style="width: 20%; margin-left: 80%"/>
             <a-table :data-source="record.data" :columns="columns" size="small" bordered :pagination="false" style="margin-top: 10px;">
                 <template #bodyCell="{ column, record }">
 

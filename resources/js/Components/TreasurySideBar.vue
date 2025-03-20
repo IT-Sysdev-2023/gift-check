@@ -161,7 +161,7 @@ const setActiveTab = computed(() => {
             >
             <a-menu-item key="treasury.transactions.special.index">
                 <Link :href="route('treasury.transactions.special.index')">
-                    Special Gc Payment</Link
+                    Special GC Payment</Link
                 ></a-menu-item
             >
             <!-- <a-menu-item key="treasury.coupon.transactions.special.index">
