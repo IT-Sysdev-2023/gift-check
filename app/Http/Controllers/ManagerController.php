@@ -15,8 +15,6 @@ class ManagerController extends Controller
             'username' => 'required',
             'password' => 'required'
         ]);
-
-
         $user = User::where('username', $request->username)->first();
 
         if ($user) {

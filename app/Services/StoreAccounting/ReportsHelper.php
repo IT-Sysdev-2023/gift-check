@@ -5,6 +5,7 @@ namespace App\Services\StoreAccounting;
 use App\DatabaseConnectionService;
 use App\Models\Store;
 use Illuminate\Support\Facades\DB;
+
 class ReportsHelper
 {
 
@@ -54,20 +55,32 @@ class ReportsHelper
     }
 
 
-    public static function checkRedeemReport($isLocal, $store, $year, $month)
+    public static function checkRedeemReport($isLocal, $store, $year, $month, $date)
     {
+        // dd();
         $server = DatabaseConnectionService::getLocalConnection($isLocal, $store);
+
+        // return $server->table('store_verification')
+        //     ->join('special_external_gcrequest_emp_assign', 'special_external_gcrequest_emp_assign.spexgcemp_barcode', '=', 'store_verification.vs_barcode')
+        //     ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
+        //     ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+        //     ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+        //     ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+        //     ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+        //     ->whereYear('vs_date', $year)
+        //     ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
+        //     ->where('vs_store', $store)
+        //     ->orderBy('vs_id')
+        //     ->exists();
         return $server->table('store_verification')
-            ->join('special_external_gcrequest_emp_assign', 'special_external_gcrequest_emp_assign.spexgcemp_barcode', '=', 'store_verification.vs_barcode')
-            ->join('special_external_gcrequest', 'special_external_gcrequest.spexgc_id', '=', 'special_external_gcrequest_emp_assign.spexgcemp_trid')
-            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
             ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-            ->whereYear('vs_date', $year)
-            ->when(!is_null($month), fn($q) => $q->whereMonth('vs_date', $month))
+            // ->whereYear('vs_date', $year)
+            ->when(isset($year), fn($q) =>  $q->whereYear('vs_date', $year))
+            ->when(isset($month), fn($q) =>  $q->whereMonth('vs_date', $month))
+            ->when(isset($date), fn($q) =>  $q->whereDate('vs_date', $date))
             ->where('vs_store', $store)
-            ->where('special_external_gcrequest.spexgc_promo', '*')
             ->orderBy('vs_id')
             ->exists();
     }

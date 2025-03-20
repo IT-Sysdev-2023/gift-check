@@ -252,7 +252,7 @@ class EodServices extends FileHandler
 
 
                     $success = $this->updateStoreVerificationEod($item);
-
+                    $this->storeEodItem($item, $id);
                     if (!$success) {
                         return '';
                     }

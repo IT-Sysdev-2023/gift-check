@@ -5,13 +5,12 @@
     <div>
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
-                <a-card>
-                    <strong class="ml-1">
-                        <a-typography-text keyboard>Enter Barcode</a-typography-text>
-                    </strong>
-                    <a-input-number class="p-2 pt-3 pb-3 text-2xl" style="width: 100%;" showCount @change="removeSpaces" placeholder="Enter Barcode No" size="large"
-                        @keyup.enter="viewStatus1" v-model:value="form.barcode" />
-                </a-card>
+                <strong class="ml-1">
+                    <a-typography-text keyboard>Enter Barcode</a-typography-text>
+                </strong>
+                <a-input-number class="p-2 pt-3 pb-3 text-2xl" style="width: 100%;" showCount @change="removeSpaces"
+                    placeholder="Enter Barcode No" size="large" @keyup.enter="viewStatus1"
+                    v-model:value="form.barcode" />
                 <div v-if="isFetching">
                     <a-card class="mt-3" v-if="success">
                         <a-typography-title class="text-center" :level="4">{{ transType }}</a-typography-title>
@@ -43,7 +42,7 @@
                             </template>
                         </a-alert>
                     </div>
-                    <div v-else-if="empty">
+                    <div v-else-if="empty || !isFetching">
                         <a-result title="Status result here" sub-title="This where the status headed">
                             <template #icon>
                                 <smile-twoTone />
@@ -74,7 +73,7 @@ export default {
         latestStatus: Boolean,
         transType: String,
         statusBarcode: String,
-        empty: String,
+        empty: String || null,
         statusbar: Boolean,
         success: Boolean,
         barcode: Number,

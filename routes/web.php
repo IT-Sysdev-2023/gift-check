@@ -173,8 +173,11 @@ Route::middleware('auth')->group(function () {
 
 
             Route::get('setup-po-{any}', [AdminController::class, 'setupPurchaseOrders'])->name('setup');
-
             Route::post('submit-po-to-iad', [AdminController::class, 'submitPurchaseOrdersToIad'])->name('submit.po.to.iad')->middleware([HandlePrecognitiveRequests::class]);
+
+            // username and password route of every users
+            Route::post('submit-new-username', [AdminController::class, 'submitNewUsername'])->name('newUsername');
+            Route::post('submit-new-password', [AdminController::class, 'submitNewPassword'])->name('newPassword');
         });
     });
     Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('treasury.reports.download.gc');
@@ -272,7 +275,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('sales-treasury-sales', [MarketingController::class, 'treasurySales'])->name('marketing.sales.treasury.sales');
-    Route::get('sales-store-sales', [MarketingController::class, 'storeSales'])->name('sales.store.sales');
+    // Route::get('sales-store-sales', [MarketingController::class, 'storeSales'])->name('sales.store.sales');
     Route::get('get-view-promo-details', [MarketingController::class, 'getPromoDetails'])->name('get.view.details');
     Route::get('get-store-sales-details', [MarketingController::class, 'getStoreSaleDetails'])->name('get.store.sale.details');
     Route::get('get-transaction-pos-detail', [MarketingController::class, 'getTransactionPOSdetail'])->name('get.transaction.pos.detail');

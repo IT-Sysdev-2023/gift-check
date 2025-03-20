@@ -9,6 +9,7 @@ use App\Models\StoreLocalServer;
 use App\Models\User;
 use App\Services\Progress;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -32,7 +33,6 @@ class SpgcRedeemReportExport extends Progress implements FromCollection, ShouldA
     {
         parent::__construct($user);
         $this->progress['name'] = 'Store Gc Purchased Report';
-
     }
     public function collection()
     {
@@ -106,8 +106,6 @@ class SpgcRedeemReportExport extends Progress implements FromCollection, ShouldA
                 'cus_namext' => $item->cus_namext,
                 'seodtt_bu' => $item->seodtt_bu
             ]);
-
-
         });
 
         return $transformedData;
@@ -115,11 +113,9 @@ class SpgcRedeemReportExport extends Progress implements FromCollection, ShouldA
 
     public function query()
     {
-        // if ($this->isLocal) {
 
-        // } else {
 
-        return $this->database->table('store_verification')
+        $spgc =  $this->database->table('store_verification')
             ->selectRaw(" DATE(store_verification.vs_date) as datever,
             DATE(store_verification.vs_reverifydate) as daterev,
             store_verification.vs_barcode,
@@ -145,18 +141,104 @@ class SpgcRedeemReportExport extends Progress implements FromCollection, ShouldA
             ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
             ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
             ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-            ->whereYear('vs_date', $this->request['year'])
-            ->when(isset($this->request['month']), fn($q) => $q->whereMonth('vs_date', $this->request['month']))
+            ->when(isset($this->request['year']), fn($q) =>  $q->whereYear('vs_date', $this->request['year']))
+            ->when(isset($this->request['month']), fn($q) =>  $q->whereMonth('vs_date', $this->request['month']))
+            ->when(isset($this->request['day']), fn($q) =>  $q->whereDate('vs_date', $this->request['day']))
             ->where('vs_store', $this->request['selectedStore'])
-            ->where('special_external_gcrequest.spexgc_promo', '*')
             ->orderBy('vs_id')
             ->get();
 
-        // }
+        $first = $spgc->map(function ($item) {
+            return (object) [
+                'datever' => $item->datever,
+                'daterev' => $item->daterev,
+                'vs_barcode' => $item->vs_barcode,
+                'vs_tf_denomination' => $item->vs_tf_denomination,
+                'vs_tf_purchasecredit' => $item->vs_tf_denomination,
+                'vs_tf_balance' => $item->vs_tf_balance,
+                "spexgcemp_lname" => $item->spexgcemp_lname,
+                "spcus_acctname" => $item->spcus_acctname,
+                "seodtt_transno" => $item->seodtt_transno,
+                "seodtt_bu" => $item->seodtt_bu,
+                "seodtt_terminalno" => $item->seodtt_terminalno,
+                "vs_store" => $item->vs_store,
+                "vs_gctype" => $item->vs_gctype,
+                "vs_date" => $item->vs_date,
+                "cus_fname" => $item->cus_fname,
+                "cus_lname" => $item->cus_lname,
+                "cus_mname" => $item->cus_mname,
+                "cus_namext" => $item->cus_namext,
+                "vs_time" => $item->vs_time,
+            ];
+        });
+
+        $spgcdti = $this->database->table('store_verification')
+            ->selectRaw(" DATE(store_verification.vs_date) as datever,
+            DATE(store_verification.vs_reverifydate) as daterev,
+            store_verification.vs_barcode,
+            store_verification.vs_tf_denomination,
+            store_verification.vs_tf_purchasecredit,
+            store_verification.vs_tf_balance,
+            dti_barcodes.lname,
+            special_external_customer.spcus_acctname,
+            store_eod_textfile_transactions.seodtt_transno,
+            store_eod_textfile_transactions.seodtt_bu,
+            store_eod_textfile_transactions.seodtt_terminalno,
+            store_verification.vs_store,
+            store_verification.vs_gctype,
+            store_verification.vs_date,
+            customers.cus_fname,
+            customers.cus_lname,
+            customers.cus_mname,
+            customers.cus_namext,
+            store_verification.vs_time")
+            ->join('dti_barcodes', 'dti_barcodes.dti_barcode', '=', 'store_verification.vs_barcode')
+            ->join('dti_gc_requests', 'dti_gc_requests.dti_num', '=', 'dti_barcodes.dti_trid')
+            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'dti_gc_requests.dti_company')
+            ->join('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->join('store_eod_textfile_transactions', 'store_eod_textfile_transactions.seodtt_barcode', '=', 'store_verification.vs_barcode')
+            ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            ->when(isset($this->request['year']), fn($q) =>  $q->whereYear('vs_date', $this->request['year']))
+            ->when(isset($this->request['month']), fn($q) =>  $q->whereMonth('vs_date', $this->request['month']))
+            ->when(isset($this->request['day']), fn($q) =>  $q->whereDate('vs_date', $this->request['day']))
+            ->where('vs_store', $this->request['selectedStore'])
+            ->orderBy('vs_id')
+            ->get();
+
+        $second = $spgcdti->map(function ($item) {
+            return (object) [
+                'datever' => $item->datever,
+                'daterev' => $item->daterev,
+                'vs_barcode' => $item->vs_barcode,
+                'vs_tf_denomination' => $item->vs_tf_denomination,
+                'vs_tf_purchasecredit' => $item->vs_tf_denomination,
+                'vs_tf_balance' => $item->vs_tf_balance,
+                "spexgcemp_lname" => $item->lname,
+                "spcus_acctname" => $item->spcus_acctname,
+                "seodtt_transno" => $item->seodtt_transno,
+                "seodtt_bu" => $item->seodtt_bu,
+                "seodtt_terminalno" => $item->seodtt_terminalno,
+                "vs_store" => $item->vs_store,
+                "vs_gctype" => $item->vs_gctype,
+                "vs_date" => $item->vs_date,
+                "cus_fname" => $item->cus_fname,
+                "cus_lname" => $item->cus_lname,
+                "cus_mname" => $item->cus_mname,
+                "cus_namext" => $item->cus_namext,
+                "vs_time" => $item->vs_time,
+            ];
+        });
+
+        return $first->merge($second);
     }
     public function startCell(): string
     {
         return 'A8';
+    }
+    public function monthToName()
+    {
+        $date = Date::create(0, $this->request['month'])->format('F'); // Convert integer date into date name
+        return "{$date}-{$this->request['year']}";
     }
     public function registerEvents(): array
     {
@@ -165,11 +247,17 @@ class SpgcRedeemReportExport extends Progress implements FromCollection, ShouldA
             BeforeSheet::class => function (BeforeSheet $event) {
                 $sheet = $event->sheet;
                 $storeName = Store::where('store_id', $this->request['selectedStore'])->value('store_name');
-
+                if (isset($this->request['month'])) {
+                    $label = $this->monthToName();
+                } elseif (isset($this->request['year'])) {
+                    $label = $this->request['year'];
+                } else {
+                    $label = Date::parse($this->request['day'])->toFormattedDateString();
+                }
                 $sheet->setCellValue('C1', 'ALTURAS GROUP OF COMPANIES');
                 $sheet->setCellValue('C2', 'CUSTOMER FINANCIAL SERVICES CORP');
                 $sheet->setCellValue('B3', 'SPECIAL GC REDEMPTION');
-                $sheet->setCellValue('C4', 'PERIOD COVER:' . $this->request['year']);
+                $sheet->setCellValue('C4', 'PERIOD COVER:' . $label);
                 $sheet->setCellValue('C6', 'STORE VERIFIED:' . $storeName);
 
                 $sheet->mergeCells('C1:E1');
@@ -214,11 +302,11 @@ class SpgcRedeemReportExport extends Progress implements FromCollection, ShouldA
     public function headings(): array
     {
         return [
-            "REDEMPTION DATE", 
-            "BARCODE", 
-            "DENOMINATION", 
+            "REDEMPTION DATE",
+            "BARCODE",
+            "DENOMINATION",
             "AMOUNT REDEEM",
-            "BALANCE", 
+            "BALANCE",
             "EMPLOYEE NAME",
             "CUSTOMER ASSIGN",
             "CLAIMED BY",
@@ -234,5 +322,4 @@ class SpgcRedeemReportExport extends Progress implements FromCollection, ShouldA
             8 => ['font' => ['bold' => true]],
         ];
     }
-
 }

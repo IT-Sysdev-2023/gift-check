@@ -4,7 +4,14 @@ export interface User {
     name: string;
     email: string;
     full_name: string;
+    firstname: string;
+    lastname: string;
+    username: string;
+    emp_id: number;
+    usertype: string;
+    date_created: string;
     email_verified_at: string;
+    password: number;
 }
 
 export type PageProps<

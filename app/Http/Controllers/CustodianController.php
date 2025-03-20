@@ -330,7 +330,6 @@ class CustodianController extends Controller
     }
     public function dtiSetupGcRequest($id)
     {
-
         $data = $this->custodianDtiServices->getDataRequest($id);
 
         return inertia('Custodian/DTI/Setup/DtiSetupGcRequest', [

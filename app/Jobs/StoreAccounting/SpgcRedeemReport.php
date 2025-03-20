@@ -14,7 +14,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Throwable; 
+use Throwable;
+
 class SpgcRedeemReport implements ShouldQueue
 {
     use Queueable;
@@ -34,15 +35,23 @@ class SpgcRedeemReport implements ShouldQueue
      */
     public function handle(): void
     {
-        $label = isset($this->request['month']) ? $this->monthToName() : $this->request['year'];
+
+        if (isset($this->request['month'])) {
+            $label = $this->monthToName();
+        } elseif (isset($this->request['year'])) {
+            $label = $this->request['year'];
+        } else {
+            $label = Date::parse($this->request['day'])->toFormattedDateString();
+        }
 
         $db = DatabaseConnectionService::getLocalConnection($this->local, $this->request['selectedStore']);
-       
+
         $doc = new SpgcRedeemReportExport($db, $this->request, $this->local, $this->user);
+
         (new ExportHandler())
             ->setFolder('Reports')
             ->setSubfolderAsUsertype($this->user->usertype)
-            ->setFileName("Special Gc Redeem Report ($label)-" . $this->user->user_id, $this->request['year'])
+            ->setFileName("Special Gc Redeem Report ($label)-" . $this->user->user_id, '')
             ->exportDocument('excel', $doc)
             ->deleteFileIn(now()->addDays(2));
     }
@@ -55,6 +64,7 @@ class SpgcRedeemReport implements ShouldQueue
 
     public function failed(Throwable $exception)
     {
+        // dd();
         Log::error('Job failed', [
             'job' => static::class,
             'exception' => $exception->getMessage(),

@@ -33,7 +33,6 @@ class ReportController extends Controller
 
     public function redeemReportSubmit(Request $request)
     {
-        // dd($request->all());
         return $this->reportService->redeemReport($request);
     }
 
