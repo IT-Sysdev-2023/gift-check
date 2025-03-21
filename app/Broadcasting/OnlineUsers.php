@@ -3,9 +3,7 @@
 namespace App\Broadcasting;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Storage;
-
-
+use Illuminate\Support\Facades\Http;
 class OnlineUsers
 {
     /**
@@ -22,16 +20,19 @@ class OnlineUsers
     public function join(User $user)
     {
         // dd($user);
+        $hrms = Http::get('http://172.16.161.34/api/hrms/filter/employee/name', [
+            'q' => strtolower($user->lastname . ', ' . $user->firstname)
+        ])->json();
 
-        $image = "/storage/users-image/$user->id";
 
         $usertype = $this->transaction($user->usertype);
 
         return [
             'id' => $user->user_id,
             'name' => $user->full_name,
+            'aname' => strtolower($user->lastname . ', ' . $user->firstname),
             'usertype' => $usertype,
-            'image' => $image,
+            'image' => $hrms['data']['employee'][0]['employee_photo'],
             'username' => $user->username
         ];
     }

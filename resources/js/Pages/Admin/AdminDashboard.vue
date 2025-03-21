@@ -57,10 +57,11 @@
                     <div class="scrollable-list">
                         <a-list size="small" item-layout="horizontal" :data-source="getOnlineUsers">
                             <template #renderItem="{ item }">
+                                <!-- <a-input /> -->
                                 <a-list-item>
                                     <a-list-item-meta>
                                         <template #avatar>
-                                            <a-avatar src="/images/dog.webp" />
+                                            <a-avatar :src="'http://172.16.161.34:8080/hrms' + item.image" />
                                         </template>
                                         <template #title>
                                             {{ item.name }}
@@ -107,14 +108,16 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import LineChart from '@/Layouts/LineChart.vue';
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useOnlineUsersStore } from '@/stores/online-store'
-// import { storeToRefs } from "pinia";
 
 const onlineUsersStore = useOnlineUsersStore();
 
+
 // Access state or getters directly
-const getOnlineUsers = computed(() => onlineUsersStore.getOnlineUsers);
+const getOnlineUsers = computed(() =>
+    onlineUsersStore.getOnlineUsers
+);
 
 
 const props = defineProps({
