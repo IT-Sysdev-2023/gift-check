@@ -22,6 +22,7 @@
                     <a-col>
                         <a-card class="w-1/2">
                             <p>Upload Image:</p>
+                            <span class="text-red-500">*Required</span>
                             <div class="flex w-full mt-1">
                                 <ant-upload-multi-image @handle-change="handleImageChange" />
                             </div>
@@ -29,7 +30,8 @@
                                 {{ formState.errors.file }}
                             </p>
                             <div class="mt-2">
-                                <a-typography-text class="mt-5" style="color: black;">Select Date: </a-typography-text>
+                                <a-typography-text  class="mt-5">Select Date: </a-typography-text>
+                                <span class="text-red-500">*Required</span>
                                   <a-date-picker size="medium" @change="handleChangeDatePicker"
                                     :disabled-date="disabledDate" style="width: 85%;" />
                                 <p class="text-red-500" v-if="formState.errors.date">
@@ -37,7 +39,7 @@
                                 </p>
                             </div>
                             <div class="mt-2">
-                                <a-typography-text class="mt-5" style="color:black" >Remarks:  </a-typography-text>
+                                <a-typography-text class="mt-5" style="color:black" >Remarks:  </a-typography-text><span class="text-red-500">*Required</span>
                                 <a-textarea :rows="2" placeholder="Remarks" v-model:value="formState.remarks"
                                     class="mb-1" style="width: 89%;" />
                                 <p class="text-red-500" v-if="formState.errors.remarks">

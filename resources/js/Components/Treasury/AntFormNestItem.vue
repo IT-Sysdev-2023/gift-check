@@ -1,5 +1,6 @@
 <template>
     <a-card>
+        <span class="text-red-500">*Required</span>
         <a-space v-for="(item, index) in form.denomination" :key="item.id">
             <a-form-item :name="['denomination', index, 'denomination']" :rules="{
                 required: true,

@@ -27,17 +27,20 @@
                             </a-form-item>
                             <a-form-item label="Date Needed:" name="dateNeeded" has-feedback
                                 :validate-status="getErrorStatus('dateNeeded')" :help="getErrorMessage('dateNeeded')">
+                                <span class="text-red-500">*Required</span>
                                 <a-date-picker style="width: 100%;" :disabled-date="disabledDate"
                                     v-model:value="formState.dateNeeded" @change="clearError('dateNeeded')" />
                             </a-form-item>
                             <a-form-item label="Upload Scan Copy.:" name="upload"
                                 :validate-status="getErrorStatus('file')" :help="getErrorMessage('file')">
+                                <span class="text-red-500">*Required</span>
                                 <ant-upload-multi-image @handle-change="handleChange" />
                             </a-form-item>
                             <a-form-item label="Account Name" name="account" v-if="accountName">
                                 <a-input :value="accountName" />
                             </a-form-item>
                             <a-form-item label="Lookup Customer:" name="customer">
+                                <span class="text-red-500">*Required</span>
                                 <ant-select :options="props.options" @handle-change="handleCustomerChange" />
                                 <span v-if="formState.errors.companyId" class="text-red-500">{{
                                     formState.errors.companyId
@@ -46,21 +49,25 @@
 
                             <a-form-item label="Payment Type:" :validate-status="getErrorStatus('paymentType.type')
                                 " :help="getErrorMessage('paymentType.type')">
+                                <span class="text-red-500">*Required</span>
                                 <ant-select :options="paymentType" @handle-change="handlePaymentChange" />
                             </a-form-item>
                             <a-form-item v-if="formState?.paymentType?.type != '4'" label="AR no." name="ar">
+                                <span class="text-red-500">*Required</span>
                                 <a-input v-model:value="formState.arNo" />
                             </a-form-item>
                             <PaymentType  :form="formState" v-if="formState.paymentType.type" />
                             <a-form-item label="Remarks:." name="name" has-feedback
                                 :validate-status="getErrorStatus('remarks')" :help="getErrorMessage('remarks')">
+                                <span class="text-red-500">*Required</span>
                                 <a-textarea v-model:value="formState.remarks" @input="clearError('remarks')" />
                             </a-form-item>
                         </a-card>
-
                     </a-col>
                     <a-col :span="12">
+
                         <ant-form-nest-item :form="formState" />
+                        
                         <a-button class="mt-4" size="large" block type="primary" html-type="submit">
                             <FastForwardOutlined />Submit Special Gc
                             Payment
