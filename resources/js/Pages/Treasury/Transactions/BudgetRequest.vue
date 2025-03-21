@@ -45,6 +45,7 @@
                             :validate-status="getErrorStatus('budget')"
                             :help="getErrorMessage('budget')"
                         >
+                        <span class="text-red-500">*Required</span>
                             <a-input-number
                                 style="width: 100%"
                                 :formatter="currencyFormatter"
@@ -59,6 +60,7 @@
                             :validate-status="getErrorStatus('category')"
                             :help="getErrorMessage('category')"
                         >
+                        <span class="text-red-500">*Required</span>
                             <ant-select
                                 :options="[
                                     { label: 'Regular Gc', value: 'regular' },
@@ -69,6 +71,7 @@
                         </a-form-item>
                         <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                         :help="getErrorMessage('file')">
+                        <span class="text-red-500">*Required</span>
                             <ant-upload-image @handle-change="handleChange" />
                         </a-form-item>
                         <a-form-item
@@ -78,6 +81,7 @@
                             :validate-status="getErrorStatus('remarks')"
                             :help="getErrorMessage('remarks')"
                         >
+                        <span class="text-red-500">*Required</span>
                             <a-textarea
                                 v-model:value="formState.remarks"
                                 @input="clearError('remarks')"

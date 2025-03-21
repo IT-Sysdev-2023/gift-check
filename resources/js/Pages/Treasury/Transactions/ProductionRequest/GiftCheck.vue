@@ -40,6 +40,7 @@
                         </a-form-item> -->
                             <a-form-item label="Remarks:" name="name" has-feedback
                                 :validate-status="getErrorStatus('remarks')" :help="getErrorMessage('remarks')">
+                                <span class="text-red-500">*Required</span>
                                 <a-textarea v-model:value="formState.remarks" @input="clearError('remarks')" />
                             </a-form-item>
                             <a-form-item label="Prepared By">
@@ -70,11 +71,12 @@
                             </a-row>
                             <a-row :gutter="16" class="mt-5" v-for="(item, index) of formState.denom" :key="index">
                                 <a-col :span="8">
+
                                     <a-input :value="item.denomination_format" readonly class="text-end" />
                                 </a-col>
                                 <a-col :span="8" style="text-align: center">
                                     <a-input-number id="inputNumber" v-model:value="item.qty" placeholder="0" :min="0"
-                                        @change="
+                                    @change="
                                             quantityChange(
                                                 item.qty,
                                                 item.denomination,
@@ -88,6 +90,7 @@
                                             <ArrowDownOutlined />
                                         </template>
                                     </a-input-number>
+                                    <span class="text-red-500">*</span>
                                 </a-col>
                                 <a-col :span="8">
 
