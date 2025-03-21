@@ -15,7 +15,7 @@
             v-model:value="form.barcode" size="large" />
 
         <a-button block class="mt-2" type="primary" @click="submit"
-            :disabled="form.barcode === null || form.barcode === ''">Submit</a-button>
+            :disabled="form.barcode === null || form.barcode === ''">SUBMIT</a-button>
 
         <a-alert v-if="status.status" class="mt-2" :message="status.msg" :type="status.status" show-icon />
 

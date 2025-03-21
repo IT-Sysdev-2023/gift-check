@@ -6,8 +6,9 @@
                 <p class="text-center">{{ item.count.toLocaleString() }}</p>
             </a-descriptions-item>
         </a-descriptions>
-        <a-button class="mt-2" @click="view" block>
-            <FastForwardOutlined />View Available Gc
+        <a-button class="mt-1" style="background-color: #1890ff; color:white"
+            @click="view" block>
+            <FastForwardOutlined />View Available GC
         </a-button>
     </a-card>
 

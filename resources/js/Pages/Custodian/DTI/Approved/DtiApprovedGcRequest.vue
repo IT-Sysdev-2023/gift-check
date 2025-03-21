@@ -4,7 +4,10 @@
             <a-table bordered :data-source="records.data" :columns="columns" size="small" :pagination="false">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
-                        <a-button @click="setup(record.dti_num)">
+                        <a-button 
+                        type="primary" 
+                         style="background-color: #1890ff; border-color: #1890ff; color: white;"
+                          @click="setup(record.dti_num)">
                             Setup Gc Request Dti
                         </a-button>
                     </template>

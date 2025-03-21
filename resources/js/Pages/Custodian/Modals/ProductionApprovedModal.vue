@@ -62,7 +62,7 @@
                             <template #tab>
                                 <span>
                                     <apple-outlined />
-                                    Gc for validation
+                                    GC for Validation
                                 </span>
                             </template>
                             <a-tabs type="card" v-model:activeKey="activeKey" @change="handlebarcode">
@@ -99,7 +99,7 @@
                             <template #tab>
                                 <span>
                                     <apple-outlined />
-                                    Validated Gc
+                                    Validated GC
                                 </span>
                             </template>
                             <a-tabs type="card" v-model:activeKey="activeKey" @change="handlebarcode">
