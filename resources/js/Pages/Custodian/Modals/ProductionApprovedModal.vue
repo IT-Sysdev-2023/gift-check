@@ -6,28 +6,28 @@
         <a-card>
             <a-row :gutter="[16, 16]">
                 <a-col :span="16">
-                    <a-descriptions size="small" layout="vertical" bordered>
-                        <a-descriptions-item label="PR No">{{ data.approved.pe_num }}</a-descriptions-item>
-                        <a-descriptions-item label="Date Requested">{{ data.approved.pe_date_request
+                    <a-descriptions size="small" layout="horizontal" bordered>
+                        <a-descriptions-item :span="3" label="PR No">{{ data.approved.pe_num }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Date Requested">{{ data.approved.pe_date_request
                             }}</a-descriptions-item>
-                        <a-descriptions-item label="Time Requested:">YES</a-descriptions-item>
-                        <a-descriptions-item label="Requested Prepared By:">{{ data.approved.rname }}, {{
+                        <a-descriptions-item :span="3" label="Time Requested:">YES</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Requested Prepared By:">{{ data.approved.rname }}, {{
                             data.approved.rsname
                             }}</a-descriptions-item>
-                        <a-descriptions-item label="Remarks" :span="2">
+                        <a-descriptions-item  label="Remarks" :span="3">
                             <a-badge status="processing" :text="data.approved.pe_remarks" />
                         </a-descriptions-item>
-                        <a-descriptions-item label="Date Approved">{{ data.approved.ape_approved_at
+                        <a-descriptions-item  :span="3"label="Date Approved">{{ data.approved.ape_approved_at
                             }}</a-descriptions-item>
-                        <a-descriptions-item label="Approved by">{{ data.approved.apname
+                        <a-descriptions-item :span="3" label="Approved by">{{ data.approved.apname
                             }},{{ data.approved.apsurname
                             }}</a-descriptions-item>
-                        <a-descriptions-item label="Checked by">{{ data.approved.cfname }}, {{ data.approved.csname
+                        <a-descriptions-item :span="3"label="Checked by">{{ data.approved.cfname }}, {{ data.approved.csname
                             }}
                         </a-descriptions-item>
-                        <a-descriptions-item label="Prepared By">{{ data.approved.prepfname }}, {{ data.approved.prepsurname
+                        <a-descriptions-item :span="3" label="Prepared By">{{ data.approved.prepfname }}, {{ data.approved.prepsurname
                             }}</a-descriptions-item>
-                        <a-descriptions-item label="Approved Remarks" :span="2">
+                        <a-descriptions-item  label="Approved Remarks" :span="3">
                             <a-badge status="processing" :text="data.approved.ape_remarks" />
                         </a-descriptions-item>
                     </a-descriptions>

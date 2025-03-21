@@ -1,8 +1,8 @@
 <template>
     <a-result status="success" title="Successfully Generated Pdf"
-        sub-title="You can download the pdf in the download here button thank you.">
+        sub-title="You can download the pdf in the download here button thank you">
         <template #extra>
-            <a-button key="console" @click="() => $inertia.get(route('custodian.approved.setup'), {id: id})">
+            <a-button key="console" @click="() => $inertia.get(route('custodian.dashboard'))">
                 <template #icon>
                     <ArrowLeftOutlined />
                 </template> Return Back

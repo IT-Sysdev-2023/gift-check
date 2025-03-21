@@ -2,6 +2,7 @@
 
 namespace App\Services\Custodian;
 
+use App\Models\ReprintRequest;
 use App\Models\SpecialExternalGcrequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use Dompdf\Dompdf;
@@ -32,7 +33,7 @@ class ReprintPdf
         return SpecialExternalGcrequest::select(
             'spexgc_datereq',
             'spexgc_dateneed',
-            'spexgc_num'
+            'spexgc_num',
         )->where('spexgc_id', $id)->first();
     }
     public function reprintRequestService($id)
@@ -66,6 +67,7 @@ class ReprintPdf
         Storage::put($filename, $output);
 
         $filePath = route('download', ['filename' => $filename]);
+
 
         return inertia('Custodian/Result/ReprintRequestResult', [
             'filePath' => $filePath,
@@ -144,10 +146,33 @@ class ReprintPdf
     </div>
 </div>';
 
+        // dd($sprequest->spexgc_num);
+        $count = ReprintRequest::where('rep_reqno', $sprequest->spexgc_num)->max('rep_count');
+
+        if (is_null($count)) {
+            $count = 1;
+            $reprintedLabel = 'Reprinted Copy';
+        } else {
+            $count = $count + 1;
+            $reprintedLabel = 'Reprinted Copies';
+        }
+
         $html .= '</div>';
+
+        $html .= '<div style="position: fixed; bottom: 0; width: 100%; text-align: right; font-size: 10px; color: #666; margin-top: 20px;">
+        ' . $reprintedLabel . ' ' . $count . '  <span class="totalPages"></span>
+</div>';
 
 
         $html .= '</body></html>';
+
+
+        if ($html) {
+            ReprintRequest::updateOrCreate(
+                ['rep_reqno' => $sprequest->spexgc_num],
+                ['rep_count' => $count]
+            );
+        }
 
         return $html;
     }

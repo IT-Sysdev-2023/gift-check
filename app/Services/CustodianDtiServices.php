@@ -70,12 +70,12 @@ class CustodianDtiServices
             ->where('dti_num', $id)
             ->first();
 
-            if($dti){
+        if ($dti) {
 
-                $user =  User::where('user_id', $dti->dti_preparedby)->first();
+            $user =  User::where('user_id', $dti->dti_preparedby)->first();
 
-                $dti->prepby = Str::ucfirst($user->firstname) . ', ' . Str::ucfirst($user->lastname);
-            }
+            $dti->prepby = Str::ucfirst($user->firstname) . ', ' . Str::ucfirst($user->lastname);
+        }
 
 
 
@@ -85,7 +85,8 @@ class CustodianDtiServices
         ];
     }
 
-    private function getBarcodesDti($id){
+    private function getBarcodesDti($id)
+    {
         $data = DtiBarcodes::select(
             'dti_trid',
             'dti_denom',
@@ -105,5 +106,33 @@ class CustodianDtiServices
         });
 
         return $data;
+    }
+
+    public function dtiBarcodesGetter($id)
+    {
+        return DtiBarcodes::select(
+            'dti_denom',
+            'fname',
+            'lname',
+            'mname',
+            'extname',
+            'dti_barcode'
+        )->where('dti_trid', $id)->get();
+    }
+
+    public function dtiRequestGetter($id)
+    {
+        $q = DtiGcRequest::select(
+            'dti_approveddate',
+            'dti_dateneed',
+            'dti_num',
+        )->where('dti_num', $id)->first();
+
+        if ($q) {
+            $q->dti_approveddate = Date::parse($q->dti_approveddate)->toFormattedDateString();
+            $q->dti_dateneed = Date::parse($q->dti_dateneed)->toFormattedDateString();
+        }
+
+        return $q;
     }
 }

@@ -738,6 +738,7 @@ Route::middleware('auth')->group(function () {
             });
 
             Route::get('released', [CustodianController::class, 'releasedIndex'])->name('released');
+            Route::get('released-dti', [CustodianController::class, 'releasedIndexDti'])->name('released.dti');
             Route::get('released-reprint-request-{id}', [CustodianController::class, 'reprintRequest'])->name('reprint.request.released');
             Route::get('released-detail-{id}', [CustodianController::class, 'releasedDetails'])->name('detail');
 
@@ -751,6 +752,7 @@ Route::middleware('auth')->group(function () {
             Route::prefix('dti')->name('dti.')->group(function () {
                 Route::get('dti-approved-gc-request', [CustodianController::class, 'dtiApprovedGcRequest'])->name('approved.index');
                 Route::get('dti-setup-gcrequest-{id}', [CustodianController::class, 'dtiSetupGcRequest'])->name('setup.gc-request');
+                Route::get('dti-reprint-request-{id}', [CustodianController::class, 'dtiSetupGcRequestReprints'])->name('reprint');
             });
 
             Route::prefix('management')->group(function () {

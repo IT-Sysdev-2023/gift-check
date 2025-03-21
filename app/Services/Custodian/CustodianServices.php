@@ -14,6 +14,7 @@ use App\Models\CustodianSrrItem;
 use App\Models\Denomination;
 use App\Models\Document;
 use App\Models\DtiBarcodes;
+use App\Models\DtiGcRequest;
 use App\Models\Gc;
 use App\Models\ProductionRequest;
 use App\Models\ProductionRequestItem;
@@ -843,6 +844,62 @@ class CustodianServices extends FileHandler
                 'revby' => Str::ucfirst($item->firstname) . ' ' . Str::ucfirst($item->lastname),
                 'acctname' => $item->specialExternalCustomer->spcus_acctname,
                 'reqappdate' => Date::parse($item->reqap_date)->toFormattedDateString(),
+            ];
+        });
+
+        return $data;
+    }
+    public function fetchReleasedDti($request)
+    {
+        $search = $request->search;
+        // dd($search);
+        $data = DtiGcRequest::select(
+            'dti_reqby',
+            'dti_company',
+            'dti_approved_requests.id',
+            'dti_num',
+            'dti_datereq',
+            'dti_dateneed',
+            'dti_num',
+            'firstname',
+            'lastname',
+            'dti_date'
+        )
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('dti_num', 'like', '%' . $search . '%')
+                        ->orWhere('dti_datereq', 'like', '%' . $search . '%')
+                        ->orWhere('firstname', 'like', '%' . $search . '%')
+                        ->orWhere('lastname', 'like', '%' . $search . '%')
+                        ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ? ", ['%' . $search . '%'])
+                        ->orWhereHas('user', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT(firstname, ' ', lastname) LIKE ? ", ['%' . $search . '%']);
+                        });
+                });
+            })
+            ->join('dti_approved_requests', 'dti_trid', 'dti_num')
+            ->join('users', 'user_id', 'dti_preparedby')
+            ->with(
+                'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',
+                'user:user_id,firstname,lastname'
+            )
+            ->where('dti_released', 'released')
+            ->where('dti_approvedtype', 'special external releasing')
+            ->orderByDesc('dti_num')
+            ->paginate(10)
+            ->withQueryString();
+
+        $data->transform(function ($item) {
+
+            return (object) [
+                'id' => $item->id,
+                'num' => $item->dti_num,
+                'datereq' => Date::parse($item->dti_datereq)->toFormattedDateString(),
+                'dateneed' => Date::parse($item->dti_dateneed)->toFormattedDateString(),
+                'reqby' => $item->user->full_name,
+                'revby' => Str::ucfirst($item->firstname) . ' ' . Str::ucfirst($item->lastname),
+                'acctname' => $item->specialExternalCustomer->spcus_acctname,
+                'reqappdate' => Date::parse($item->dti_date)->toFormattedDateString(),
             ];
         });
 

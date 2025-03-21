@@ -2,12 +2,14 @@
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
-                <m-card  aRoute="custodian.approved.request" pRoute="custodian.pendings.holder.entry" :pending="count.countIntExRequest" :approved="count.countApproved" class="uppercase"
+                <m-card aRoute="custodian.approved.request" pRoute="custodian.pendings.holder.entry"
+                    :pending="count.countIntExRequest" :approved="count.countApproved" class="uppercase"
                     title="special external gc request">
 
                     <a-badge class="mb-2" :count="count.countReleased" :overflow-count="Infinity"
                         :number-style="{ backgroundColor: '#1677ff' }">
-                        <a-button  style="width: 340px"  type="primary" block @click="() => router.get(route('custodian.released'))">
+                        <a-button style="width: 340px" type="primary" block
+                            @click="() => router.get(route('custodian.released'))">
                             Released
                         </a-button>
                     </a-badge>
@@ -27,8 +29,13 @@
                 <a-col :span="8">
 
                     <MCard title="DTI Special GC Transactions" :pending="pending"
-                        pRoute="custodian.dti_special_gcdti_special_gc_pending"
-                        aRoute="custodian.dti.approved.index" :approved="count.countDtiApproved"/>
+                        pRoute="custodian.dti_special_gcdti_special_gc_pending" aRoute="custodian.dti.approved.index"
+                        :approved="count.countDtiApproved">
+                        <a-button @click="() => router.get(route('custodian.released.dti'))" style="width: 340px" type="primary"
+                           class="mb-1">
+                           Released
+                        </a-button>
+                    </Mcard>
                 </a-col>
             </a-row>
         </div>

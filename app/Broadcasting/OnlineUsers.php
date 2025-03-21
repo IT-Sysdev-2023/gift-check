@@ -32,7 +32,7 @@ class OnlineUsers
             'name' => $user->full_name,
             'aname' => strtolower($user->lastname . ', ' . $user->firstname),
             'usertype' => $usertype,
-            'image' => $hrms['data']['employee'][0]['employee_photo'],
+            'image' => $hrms['data']['employee'][0]['employee_photo'] ?? null,
             'username' => $user->username
         ];
     }

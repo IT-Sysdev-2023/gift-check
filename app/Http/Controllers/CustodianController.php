@@ -10,10 +10,12 @@ use App\Models\BussinessUnit;
 use App\Models\DtiBarcodes;
 use App\Models\DtiGcRequest;
 use App\Models\Gc;
+use App\Models\ReprintRequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Custodian\CustodianServices;
 use App\Services\Custodian\ReprintPdf;
 use App\Services\CustodianDtiServices;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -134,11 +136,6 @@ class CustodianController extends Controller
         }
     }
 
-    public function reprintRequest($id)
-    {
-
-        return (new ReprintPdf)->reprintRequestService($id);
-    }
 
     public function textFileUploader()
     {
@@ -206,6 +203,12 @@ class CustodianController extends Controller
     {
         return inertia('Custodian/Released', [
             'records' => $this->custodianservices->fetchReleased($request)
+        ]);
+    }
+    public function releasedIndexDti(Request $request)
+    {
+        return inertia('Custodian/ReleasedDti', [
+            'records' => $this->custodianservices->fetchReleasedDti($request)
         ]);
     }
     public function releasedDetails($id)
@@ -371,5 +374,62 @@ class CustodianController extends Controller
                 'title' => 'Error',
             ]);
         }
+    }
+    public function reprintRequest($id)
+    {
+        return (new ReprintPdf)->reprintRequestService($id);
+    }
+
+    public function dtiSetupGcRequestReprints($id)
+    {
+        $barcodes = $this->custodianDtiServices->dtiBarcodesGetter($id);
+        $request = $this->custodianDtiServices->dtiRequestGetter($id);
+        $reqNo = NumberHelper::leadingZero($id, "%03d");
+
+        $count = ReprintRequest::where('rep_reqno', $id)->max('rep_count');
+        if ($request) {
+            if (is_null($count)) {
+                $count = 1;
+                $reprintedLabel = 'Reprinted Copy';
+            } else {
+                $count = $count + 1;
+                $reprintedLabel = 'Reprinted Copies';
+            }
+
+            ReprintRequest::updateOrCreate(
+                ['rep_reqno' => $request->dti_num],
+                ['rep_count' => $count]
+            );
+        }
+
+
+        $pdf = Pdf::loadView('reprint.spgcdtireprint', compact(
+            'barcodes', 'request', 'reqNo', 'reprintedLabel', 'count'
+            ))->setPaper('A3');
+
+
+
+
+        $stream = base64_encode($pdf->output());
+
+        $filename = 'reprintRequest at ' . today()->toFormattedDateString() . '.pdf';
+
+        $filePathName = storage_path('app/' . $filename);
+
+        if (!file_exists(dirname($filePathName))) {
+            mkdir(dirname($filePathName), 0755, true);
+        }
+
+        Storage::put($filename, $pdf->output());
+
+        $filePath = route('download', ['filename' => $filename]);
+
+        return inertia('ReprintResult/DtiRequestReprint', [
+            'title' => "Reprinted Request Successfully Generated",
+            'stream' => $stream,
+            'download' => $filePath,
+            'routeTo' => 'custodian.dti.setup.gc-request',
+            'id' => $id
+        ]);
     }
 }

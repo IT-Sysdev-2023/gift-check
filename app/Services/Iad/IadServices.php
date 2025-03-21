@@ -458,9 +458,9 @@ class IadServices extends FileHandler
 
         $data->transform(function ($item) {
             $item->recnumber = NumberHelper::leadingZero($item->csrr_id, '%03d');
-            $item->requisno = $item->requisition->requis_erno;
+            $item->requisno = $item?->requisition?->requis_erno;
             $item->date = Date::parse($item->csrr_datetime)->toFormattedDateString();
-            $item->companyname = $item->requisition->supplier->gcs_companyname;
+            $item->companyname = $item?->requisition?->supplier?->gcs_companyname;
             $item->fullname = $item->user->full_name ?? null;
             return $item;
         });

@@ -36,7 +36,7 @@
                         </div>
                     </a-descriptions-item>
                 </a-descriptions>
-                <a-button class="mt-5 bg-orange-500 text-white" block>
+                <a-button class="mt-5 bg-orange-500 text-white" block @click="reprint(datarecords.dti_num)">
                     Reprint this Request
                 </a-button>
             </a-card>
@@ -150,7 +150,7 @@
 </template>
 <script setup lang="ts">
 
-import { useForm } from '@inertiajs/vue3';
+import { router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { notification } from 'ant-design-vue';
 
@@ -235,5 +235,8 @@ const printByBarcode = () => {
         },
         preserveState: true,
     });
+}
+const reprint = (id: number) => {
+    router.get(route('custodian.dti.reprint', id));
 }
 </script>
