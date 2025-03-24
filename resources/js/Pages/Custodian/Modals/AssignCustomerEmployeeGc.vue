@@ -70,11 +70,6 @@
                 </a-col>
             </a-row>
         </a-card>
-        <a-card title="Details" class="mt-4" size="small">
-            <a-table bordered size="small" :data-source="assignTemp.filter((data) => data.trid == selected.tempId)"
-                :columns="columns">
-            </a-table>
-        </a-card>
         <a-form-item>
             <div class="flex justify-between mt-4">
                 <a-button block class="mr-1" type="primary" danger @click="() => form.reset()">
@@ -85,6 +80,12 @@
                 </a-button>
             </div>
         </a-form-item>
+        <a-card title="Details" class="mt-4" size="small">
+            <a-table bordered size="small" :data-source="assignTemp.filter((data) => data.trid == selected.tempId)"
+                :columns="columns">
+            </a-table>
+        </a-card>
+
     </a-modal>
 </template>
 
@@ -143,7 +144,7 @@ export default {
                     key: 'address',
                 },
                 {
-                    title: 'Busness Unit',
+                    title: 'Business Unit',
                     dataIndex: 'business',
                     key: 'address',
                 },

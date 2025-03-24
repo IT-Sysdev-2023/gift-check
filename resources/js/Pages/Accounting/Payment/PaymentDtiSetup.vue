@@ -333,7 +333,7 @@ const paymentOption = ref<SelectProps['options']>([
     },
     {
         value: '2',
-        label: 'Check',
+        label: 'Cheque',
     },
     {
         value: '3',

@@ -80,7 +80,7 @@
                         <a-select style="width: 100%;" v-model:value="form.payment" ref="select"
                             placeholder="Select Payment Method" @change="handlePaymentMehthod">
                             <a-select-option value="0">CASH</a-select-option>
-                            <a-select-option value="1">CHECK</a-select-option>
+                            <a-select-option value="1">CHEQUE</a-select-option>
                             <a-select-option value="2">JV</a-select-option>
                         </a-select>
                     </a-form-item>

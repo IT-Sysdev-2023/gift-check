@@ -67,7 +67,7 @@
                     <a-col :span="12">
 
                         <ant-form-nest-item :form="formState" />
-                        
+
                         <a-button class="mt-4" size="large" block type="primary" html-type="submit">
                             <FastForwardOutlined />Submit Special Gc
                             Payment
@@ -149,7 +149,7 @@ const paymentType = ref<SelectProps["options"]>([
     },
     {
         value: "2",
-        label: "Check",
+        label: "Cheque",
     },
     {
         value: "3",
