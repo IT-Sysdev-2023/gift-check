@@ -121,7 +121,7 @@ class BudgetRequestService extends FileHandler
 			$this->saveFile($request, $filename);
 
 			$stream = $this->generatePdf($request);
-			return redirect()->back()->with(['stream' => $stream, 'success' => 'SuccessFully Submitted!']);
+			return redirect()->back()->with(['stream' => $stream, 'success' => 'Successfully Submitted!']);
 		}
 		return redirect()->back()->with('error', 'Something went wrong with generating PDF, please try again later');
 	}

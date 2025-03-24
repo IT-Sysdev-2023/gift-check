@@ -499,7 +499,7 @@ class IadServices extends FileHandler
             $stream = $this->generatePdf($request, $id);
             return redirect()->back()->with([
                 'stream' => $stream,
-                'msg' => 'SuccessFully Submitted!',
+                'msg' => 'Successfully Submitted!',
                 'title' => 'Success',
                 'status' => 'success',
             ]);
