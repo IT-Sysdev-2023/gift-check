@@ -42,7 +42,9 @@ class StoreGcController extends Controller
     }
     public function releasedGc(Request $request)
     {
+        // dd();
         $record = $this->storeGcRequestService->releasedGc($request);
+        // dd($record->toArray());
 
         return inertia(
             'Treasury/Dashboard/TableStoreGc',

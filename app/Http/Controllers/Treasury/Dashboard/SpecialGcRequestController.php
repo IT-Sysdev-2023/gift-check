@@ -316,6 +316,7 @@ class SpecialGcRequestController extends Controller
 
     public function releasedGc(Request $request)
     {
+        // dd();
         $promo = $request->has('promo') ? $request->promo : '*';
         $record = SpecialExternalGcrequest::select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed')
             ->where('spexgc_promo', $promo)
