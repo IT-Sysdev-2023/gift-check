@@ -40,6 +40,7 @@
                         }}</a-descriptions-item>
                         <a-descriptions-item label="Payment Amount" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.spexgc_payment }}</a-descriptions-item>
+
                         <a-descriptions-item label="Request Remarks" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.spexgc_remarks }}</a-descriptions-item>
                         <a-descriptions-item label="Requested by" :labelStyle="{ fontWeight: 'bold' }">{{ records.user
@@ -87,6 +88,7 @@
                                         <a-form-item label="Remarks" name="remarks"
                                             :validate-status="formState.errors.remarks ? 'error' : ''"
                                             :help="formState.errors.remarks">
+                                            <span class="text-red-500">*Required</span>
                                             <a-textarea v-model:value="formState.remarks" />
                                         </a-form-item>
                                         <a-form-item label="Total Gc Scanned" name="totalGc">
