@@ -70,7 +70,8 @@
                                     reviewed.user?.full_name
                                 }}</a-descriptions-item>
                             </a-descriptions>
-                            <a-descriptions title="Released Details" size="small" class="mt-10" layout="horizontal" bordered>
+                            <a-descriptions title="Released Details" size="small" class="mt-10" layout="horizontal"
+                                bordered>
                                 <a-descriptions-item style="width: 50%;" :span="3" label="Date Released">
                                     {{ dayjs(released.reqap_date) }}
                                 </a-descriptions-item>
@@ -85,7 +86,8 @@
                                 }}</a-descriptions-item>
                             </a-descriptions>
                         </a-col>
-                    </a-row></a-tab-pane>
+                    </a-row>
+                </a-tab-pane>
                 <a-tab-pane key="2" tab="Barcodes" force-render>
                     <a-table bordered :data-source="barcodes.data" :columns="[{
                         title: 'Barcode',
@@ -115,7 +117,24 @@
                     </a-table>
                 </a-tab-pane>
             </a-tabs>
+            <div class="mt-5">
+                <div class="flex gap-5">
+                    <a-button>
+                        <FilePdfOutlined />Reprint
+                    </a-button>
+                    <a-button :loading="isloading" type="primary" @click="soaPrint">
+                        <FilePdfOutlined />Print SOA
+                    </a-button>
+                </div>
+            </div>
         </a-card>
+        <a-modal :open="isOpen" width="1000px" height="600">
+            <iframe :src="pdf" frameborder="0" width="100%" height="600"></iframe>
+            <template #footer>
+                <a-button key="back" @click="handleCancel">Return</a-button>
+            </template>
+        </a-modal>
+
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
@@ -128,12 +147,15 @@ import type { UploadFile } from "ant-design-vue";
 import { PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
 
+const isOpen = ref(false);
+const isloading = ref(false)
 const props = defineProps<{
     title?: string;
     record: any;
     reviewed: any;
     released: any;
     barcodes: any;
+    id: string
 }>();
 const activeKey = ref("1");
 const page = usePage<PageWithSharedProps>().props;
@@ -146,4 +168,30 @@ const disabledDate = (current: Dayjs) => {
 const stream = ref(null);
 const openIframe = ref(false);
 const { openLeftNotification } = onProgress();
+
+const pdf = ref(null)
+
+const handleCancel = () => {
+    isOpen.value = false
+}
+
+
+
+
+const soaPrint = () => {
+    isloading.value = true
+    router.get(route('treasury.special.gc.soaPrint'), {
+        data: props.record,
+        barcode: props.barcodes,
+        released: props.released,
+        id: props.id
+    }, {
+        onSuccess: (r: any) => {
+            pdf.value = `data:application/pdf;base64,${r.props.flash.stream}`
+            isOpen.value = true
+            isloading.value = false
+        },
+        preserveState: true
+    });
+};
 </script>

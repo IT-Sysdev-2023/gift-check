@@ -25,6 +25,7 @@ use App\Services\Treasury\Transactions\SpecialGcPaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
 class SpecialGcRequestController extends Controller
@@ -369,7 +370,8 @@ class SpecialGcRequestController extends Controller
             'reviewed' => $reviewed,
             'released' => $released,
             'barcodes' => $barcodes,
-            'title' => 'Viewing Special External Gc Request'
+            'title' => 'Viewing Special External Gc Request',
+            'id' => $id
         ]);
     }
 
@@ -472,5 +474,52 @@ class SpecialGcRequestController extends Controller
             ->where('spcus_id', '!=', '342')
             ->orderByDesc('spcus_id')
             ->get();
+    }
+
+    public function soaPrint(Request $request)
+    {
+
+
+        $getDenoms = SpecialExternalGcrequestEmpAssign::select(
+            'spexgcemp_denom',
+            DB::raw('count(spexgcemp_denom) as denom_count'),
+            DB::raw('sum(spexgcemp_denom) as denom_sum'),
+            DB::raw('min(spexgcemp_barcode) as barcodeMin'),
+            DB::raw('max(spexgcemp_barcode) as barcodeMax')
+        )
+            ->where('spexgcemp_trid', $request->id)
+            ->groupBy('spexgcemp_denom')
+            ->get();
+
+        $getDenoms->transform(function ($item) use (&$request) {
+            $item->amount = number_format((float)$item->spexgcemp_denom, 2);
+            $item->Dateissued = $request->data['data']['spexgc_dateneed'];
+            $item->validity = $request->data['data']['spexgc_dateneed'] . '-';
+            return $item;
+        });
+
+        $getCustomer = SpecialExternalCustomer::where('spcus_id', $request->data['data']['specialExternalCustomer']['spcus_id'])->first();
+        $data = $request->data['data'];
+        $data['spexgc_datereq'] = \Carbon\Carbon::parse($data['spexgc_datereq'])->format('F d, Y');
+        $data['spexgc_datereleased'] = \Carbon\Carbon::parse($request->released['reqap_date'])->format('F d, Y');
+        $data['dateGenerated'] = now()->format('F d, Y');
+        $data['customerName'] = $data['specialExternalCustomer']['spcus_companyname'];
+
+        $data['dateRange'] = $data['spexgc_dateneed'];
+
+        $originalDate = $data['spexgc_dateneed'];
+        $date = \Carbon\Carbon::parse($originalDate);
+        $newDate = $date->copy()->addYear()->format('M d, Y');
+        $data['dateRange'] = $originalDate . '- ' . $newDate;
+        $data['approvedBy'] = $data['approvedRequest']['reqap_approvedby'];
+        $data['checkedBy'] = $data['approvedRequest']['reqap_checkedby'];
+        $data['prepBy'] = $data['user'];
+
+        $pdf = Pdf::loadView('pdf/spgcsoapdf', compact('data', 'getCustomer', 'getDenoms'))
+            ->setPaper('letter');
+
+        return redirect()->back()->with([
+            'stream' => base64_encode($pdf->output())
+        ]);
     }
 }
