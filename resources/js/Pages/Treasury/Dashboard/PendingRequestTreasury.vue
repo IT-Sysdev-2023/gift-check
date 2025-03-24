@@ -1,5 +1,6 @@
 <template>
     <AuthenticatedLayout>
+
         <Head :title="title" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
@@ -12,33 +13,17 @@
                 <a-card :loading="formState.processing">
                     <a-typography-title :level="3" class="text-center">{{
                         title
-                    }}</a-typography-title>
-                    <a-form
-                        :model="formState"
-                        name="basic"
-                        :label-col="{ span: 4 }"
-                        :wrapper-col="{ span: 20 }"
-                        autocomplete="off"
-                        @finish="onFinish"
-                    >
+                        }}</a-typography-title>
+                    <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
+                        autocomplete="off" @finish="onFinish">
                         <a-form-item label="BR No." name="brno">
                             <a-input v-model:value="formState.brno" readonly />
                         </a-form-item>
 
-                        <a-row :gutter="8">
-                            <a-col :span="8">
-                                <a-form-item
-                                    label="Date Requested"
-                                    name="daterequested"
-                                    :label-col="{ span: 12 }"
-                                    :wrapper-col="{ span: 16 }"
-                                >
-                                    <a-date-picker
-                                        disabled
-                                        v-model:value="formState.dateRequested"
-                                    />
-                                </a-form-item>
-                            </a-col>
+
+                            <a-form-item label="Date Requested" name="daterequested">
+                                <a-date-picker style="width: 100%;" disabled v-model:value="formState.dateRequested" />
+                            </a-form-item>
                             <!-- <a-col :span="10">
                                 <a-form-item
                                     label="Date Needed"
@@ -52,60 +37,35 @@
                                     />
                                 </a-form-item>
                             </a-col> -->
-                        </a-row>
+
 
                         <a-form-item label="Budget" name="budget">
-                            <ant-input-number
-                                v-model:amount="formState.budget"
-                            />
+                            <ant-input-number v-model:amount="formState.budget" />
                         </a-form-item>
 
                         <a-form-item label="Remarks:" name="remarks">
-                            <a-textarea
-                                v-model:value="formState.remarks"
-                                allow-clear
-                            />
+                            <a-textarea v-model:value="formState.remarks" allow-clear />
                         </a-form-item>
                         <a-row :gutter="8">
-                            <a-col
-                                :span="12"
-                                v-if="
-                                    props.data.br_requested_by !=
-                                    page.auth.user.user_id.toString()
-                                "
-                            >
-                                <a-form-item
-                                    label="Created By:"
-                                    :label-col="{ span: 8 }"
-                                    :wrapper-col="{ span: 16 }"
-                                >
-                                    <a-input
-                                        :value="formState.createdBy"
-                                        readonly
-                                    />
+                            <a-col :span="12" v-if="
+                                props.data.br_requested_by !=
+                                page.auth.user.user_id.toString()
+                            ">
+                                <a-form-item label="Created By:" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
+                                    <a-input :value="formState.createdBy" readonly />
                                 </a-form-item>
                             </a-col>
                             <a-col :span="12">
-                                <a-form-item
-                                    label="Updated By:"
-                                    :label-col="{ span: 8 }"
-                                    :wrapper-col="{ span: 16 }"
-                                >
-                                    <a-input
-                                        readonly
-                                        :value="formState.updatedBy"
-                                    />
+                                <a-form-item label="Updated By:" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
+                                    <a-input readonly :value="formState.updatedBy" />
                                 </a-form-item>
                             </a-col>
                         </a-row>
 
                         <a-form-item label="Uploaded Document">
                             <a-space wrap class="ml-2">
-                                <a-button
-                                    type="primary"
-                                    v-if="props.data.br_file_docno"
-                                    @click="download(props.data.br_file_docno)"
-                                >
+                                <a-button type="primary" v-if="props.data.br_file_docno"
+                                    @click="download(props.data.br_file_docno)">
                                     <template #icon>
                                         <DownloadOutlined />
                                     </template>
@@ -120,7 +80,7 @@
                             </a-space>
                         </a-form-item>
 
-                        <a-form-item
+                        <!-- <a-form-item
                             label="Upload Scan Copy"
                             :validate-status="
                                 formState.errors.file ? 'error' : ''
@@ -128,61 +88,47 @@
                             :help="formState.errors.file"
                         >
                             <ant-upload-image @handleChange="handleChange" />
-                        </a-form-item>
+                        </a-form-item> -->
 
                         <a-form-item :wrapper-col="{ offset: 22, span: 20 }">
-                            <a-button type="primary" html-type="submit"
-                                >Save</a-button
-                            >
+                            <a-button type="primary" html-type="submit">Save</a-button>
                         </a-form-item>
                     </a-form>
                 </a-card>
             </a-col>
             <a-col class="gutter-row space-y-5" :span="8">
                 <a-card>
-                    <a-statistic
-                        title="Regular Gc Budget"
-                        :value="props.regularBudget"
-                        :precision="2"
-                        style="margin-right: 50px"
-                    >
+                    <a-statistic title="Regular Gc Budget" :value="props.regularBudget" :precision="2"
+                        style="margin-right: 50px">
                         <template #prefix>
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
                 </a-card>
                 <a-card>
-                    <a-statistic
-                        title="Special Gc Budget"
-                        :value="props.specialBudget"
-                        :precision="2"
-                        style="margin-right: 50px"
-                    >
+                    <a-statistic title="Special Gc Budget" :value="props.specialBudget" :precision="2"
+                        style="margin-right: 50px">
                         <template #prefix>
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
                 </a-card>
                 <a-card>
-                    <a-statistic
-                        title="Total Balance"
-                        :value="props.currentBudget"
-                        :precision="2"
-                        :value-style="{ color: '#3f8600' }"
-                        style="margin-right: 50px"
-                    >
+                    <a-statistic title="Total Balance" :value="props.currentBudget" :precision="2"
+                        :value-style="{ color: '#3f8600' }" style="margin-right: 50px">
                         <template #prefix>
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>
                     </a-statistic>
                 </a-card>
             </a-col>
+            {{ formState.file }}
         </a-row>
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
 import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayout.vue";
-import type { UploadChangeParam } from "ant-design-vue";
+import type { UploadChangeParam, UploadProps } from "ant-design-vue";
 import { usePage, useForm, router } from "@inertiajs/vue3";
 import dayjs, { Dayjs } from "dayjs";
 import {
@@ -191,6 +137,7 @@ import {
     FlashProps,
 } from "@/../../resources/js/types/index";
 import { onProgress } from "@/../../resources/js/Mixin/UiUtilities";
+import { ref } from "vue";
 
 const props = defineProps<{
     title: string;
@@ -234,7 +181,9 @@ const handleChange = (info: UploadChangeParam) => {
     formState.file = info.file;
 };
 const { openNotification } = onProgress();
+
 const onFinish = () => {
+    // console.log(formState);
     formState
         .transform((data) => ({
             ...data,

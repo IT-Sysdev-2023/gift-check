@@ -438,7 +438,7 @@ class MarketingController extends Controller
     public function storeSales(Request $request)
     {
         $search = $request->search;
-        
+
         $data = TransactionStore::join('stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
             ->join('store_staff', 'store_staff.ss_id', '=', 'transaction_stores.trans_cashier')
             ->select(

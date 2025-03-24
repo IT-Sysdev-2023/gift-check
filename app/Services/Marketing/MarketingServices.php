@@ -302,7 +302,8 @@ class MarketingServices extends FileHandler
             'bledger_type' => 'RFGCP',
             'bcredit_amt' => $request->data['total'],
             'bledger_typeid' => $query[0]->pe_type,
-            'bledger_group' => $query[0]->pe_group
+            'bledger_group' => $query[0]->pe_group,
+            'bledger_category' => 'regular',
         ]);
 
         if ($insertLedgerBudget) {

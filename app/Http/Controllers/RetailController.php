@@ -344,11 +344,13 @@ class RetailController extends Controller
 
     public function verificationIndex(Request $request)
     {
-        $driveLetter = 'Z:'; // Specify a drive letter
-        $networkPath = '\\\\172.16.43.166\\Gift';
-        $username = '"New User"'; // Enclose in quotes if username contains spaces
-        $password = 'san'; // Enclose in quotes if password contains special characters
 
+
+        $st = Store::where('store_id', $request->user()->store_assigned)->first();
+        $driveLetter = 'Z:'; // Specify a drive letter
+        $networkPath = $st->store_textfile_ip;
+        $username = "public";// Enclose in quotes if username contains spaces
+        $password = $st->default_password; // Enclose in quotes if password contains special characters
         // Unmap first to avoid conflicts
         exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
 
