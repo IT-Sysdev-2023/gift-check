@@ -13,89 +13,97 @@
         </a-breadcrumb>
 
         <a-card>
-            <a-descriptions bordered :title="title + ' ' + titl">
-                <a-descriptions-item label="RFSEGC #">{{
-                    records.data.spexgc_num
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Department">{{
-                    records.data?.userAccessPageTitle
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Date and Time Requested">{{
-                    dayjs(records.data.spexgc_datereq).format(
-                        "YYYY-MMM-DD HH:mm:ss a"
-                    )
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Date Needed">{{
-                    records.data.spexgc_dateneed
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Customer">{{
-                    records.data.specialExternalCustomer?.spcus_acctname
-                }}</a-descriptions-item>
+            <a-row :gutter="[16, 16]">
+                <a-col :span="12">
+                    <a-descriptions size="small" layout="horizontal" bordered :title="title + ' ' + titl">
+                        <a-descriptions-item :span="3" label="RFSEGC #">{{
+                            records.data.spexgc_num
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Department">{{
+                            records.data?.userAccessPageTitle
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Date and Time Requested">{{
+                            dayjs(records.data.spexgc_datereq).format(
+                                "YYYY-MMM-DD HH:mm:ss a"
+                            )
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Date Needed">{{
+                            records.data.spexgc_dateneed
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Customer">{{
+                            records.data.specialExternalCustomer?.spcus_acctname
+                        }}</a-descriptions-item>
 
-                <a-descriptions-item label="Total Denomination">{{ records.data.totalDenom?.total }}
-                    <a-button type="primary" size="small"
-                        @click="viewDenominations">View</a-button></a-descriptions-item>
-                <a-descriptions-item label="Payment Type">{{ records.data.spexgc_paymentype }}
-                    <a-button type="primary" size="small"
-                        v-if="records.data.spexgc_paymentype == 'Check'">View</a-button></a-descriptions-item>
-                <a-descriptions-item label="Payment Amount">{{
-                    records.data.spexgc_payment
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Request Remarks">{{
-                    records.data.spexgc_remarks
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Requested By">{{
-                    records.data.user
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Date Approved">{{
-                    records.data.approvedRequest.reqap_date
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Approved Document" v-if="records.data.approvedRequest.reqap_doc">
-                    <ant-image-preview :images="records.data.approvedRequest.reqap_doc" />
-                </a-descriptions-item>
-                <a-descriptions-item label="Approved Remarks">{{
-                    records.data.approvedRequest.reqap_remarks
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Checked By">{{
-                    records.data.approvedRequest.reqap_checkedby
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Approved By">{{
-                    records.data.approvedRequest.reqap_approvedby
-                }}</a-descriptions-item>
-                <a-descriptions-item label="Prepared By">{{
-                    records.data.approvedRequest.user?.full_name
-                }}</a-descriptions-item>
-            </a-descriptions>
+                        <a-descriptions-item :span="3" label="Total Denomination">{{ records.data.totalDenom?.total }}
+                            <a-button type="primary" size="small"
+                                @click="viewDenominations">View</a-button></a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Payment Type">{{ records.data.paymentTypeFormat }}
+                            <a-button type="primary" size="small"
+                                v-if="records.data.spexgc_paymentype == 'Check'">View</a-button></a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Payment Amount">{{
+                            records.data.spexgc_payment
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Request Remarks">{{
+                            records.data.spexgc_remarks
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Requested By">{{
+                            records.data.user
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Date Approved">{{
+                            records.data.approvedRequest.reqap_date
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Approved Document"
+                            v-if="records.data.approvedRequest.reqap_doc">
+                            <ant-image-preview :images="records.data.approvedRequest.reqap_doc" />
+                        </a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Approved Remarks">{{
+                            records.data.approvedRequest.reqap_remarks
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Checked By">{{
+                            records.data.approvedRequest.reqap_checkedby
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Approved By">{{
+                            records.data.approvedRequest.reqap_approvedby
+                        }}</a-descriptions-item>
+                        <a-descriptions-item :span="3" label="Prepared By">{{
+                            records.data.approvedRequest.user?.full_name
+                        }}</a-descriptions-item>
+                    </a-descriptions>
+                </a-col>
+                <a-col :span="12">
+                    <a-card class="mt-10">
+                        <a-form :model="formState" @finish="onFinish">
+                            <a-form-item label="Total Gc">
+                                <a-input :value="records.data.totalDenom?.qty" readonly />
+                            </a-form-item>
+                            <a-form-item label="Total Denomination">
+                                <a-input :value="records.data.totalDenom?.total" readonly />
+                            </a-form-item>
+                            <a-form-item label="Checked By" :validate-status="formState.errors.checkedBy ? 'error' : ''
+                                " :help="formState.errors.checkedBy">
+                                <ant-select @handle-change="onCheckChange" :options="checkBy" />
+                            </a-form-item>
+                            <a-form-item label="Remarks" :validate-status="formState.errors.remarks ? 'error' : ''
+                                " :help="formState.errors.remarks">
+                                <a-textarea v-model:value="formState.remarks" />
+                            </a-form-item>
+                            <a-form-item label="Received By" :validate-status="formState.errors.receivedBy ? 'error' : ''
+                                " :help="formState.errors.receivedBy">
+                                <a-input v-model:value="formState.receivedBy" />
+                            </a-form-item>
+                            <a-form-item label="Released By">
+                                <a-input :value="page.auth.user.full_name" readonly />
+                            </a-form-item>
 
-            <a-card class="mt-10">
-                <a-form :model="formState" @finish="onFinish">
-                    <a-form-item label="Total Gc">
-                        <a-input :value="records.data.totalDenom?.qty" readonly />
-                    </a-form-item>
-                    <a-form-item label="Total Denomination">
-                        <a-input :value="records.data.totalDenom?.total" readonly />
-                    </a-form-item>
-                    <a-form-item label="Checked By" :validate-status="formState.errors.checkedBy ? 'error' : ''
-                        " :help="formState.errors.checkedBy">
-                        <ant-select @handle-change="onCheckChange" :options="checkBy" />
-                    </a-form-item>
-                    <a-form-item label="Remarks" :validate-status="formState.errors.remarks ? 'error' : ''
-                        " :help="formState.errors.remarks">
-                        <a-textarea v-model:value="formState.remarks" />
-                    </a-form-item>
-                    <a-form-item label="Received By" :validate-status="formState.errors.receivedBy ? 'error' : ''
-                        " :help="formState.errors.receivedBy">
-                        <a-input v-model:value="formState.receivedBy" />
-                    </a-form-item>
-                    <a-form-item label="Released By">
-                        <a-input :value="page.auth.user.full_name" readonly />
-                    </a-form-item>
+                            <a-form-item>
+                                <a-button size="large" block type="primary" html-type="submit">Submit</a-button>
+                            </a-form-item>
+                        </a-form>
+                    </a-card>
+                </a-col>
+            </a-row>
 
-                    <a-form-item class="float-right">
-                        <a-button type="primary" html-type="submit">Submit</a-button>
-                    </a-form-item>
-                </a-form>
-            </a-card>
+
 
             <a-modal v-model:open="openModal" title="Customer Requested GC" width="800px" :footer="null">
                 <a-table bordered size="small" :pagination="false" :columns="[

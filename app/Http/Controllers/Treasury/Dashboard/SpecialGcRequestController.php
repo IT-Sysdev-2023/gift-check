@@ -30,9 +30,7 @@ use Illuminate\Support\Str;
 class SpecialGcRequestController extends Controller
 {
 
-    public function __construct(public SpecialGcPaymentService $specialGcPaymentService)
-    {
-    }
+    public function __construct(public SpecialGcPaymentService $specialGcPaymentService) {}
     public function pendingSpecialGc(Request $request)
     {
         $externalData = $this->specialGcPaymentService->pending();
@@ -162,6 +160,18 @@ class SpecialGcRequestController extends Controller
             'records' => new SpecialExternalGcRequestResource($rec)
         ]);
     }
+    private function paymentTypeLabel($type)
+    {
+        $trans = [
+            '1' => 'Cash',
+            '2' => 'Cheque',
+            '3' => 'Jv',
+            '4' => 'Ar',
+            '5' => 'On Account',
+        ];
+
+        return $trans[$type] ?? [];
+    }
     public function viewReleasingDtiSetup(Request $request, $id)
     {
         return inertia('Treasury/Dashboard/SpecialGc/Components/GcReleasingDtiView', [
@@ -271,7 +281,7 @@ class SpecialGcRequestController extends Controller
 
         if ($dbtransaction) {
             return redirect()->route('treasury.special.gc.gcReleasingDti')
-            ->with('success', 'Successfully Submitted');
+                ->with('success', 'Successfully Submitted');
         } else {
             return redirect()->back()->with('error', 'Something went wrong');
         }
@@ -320,7 +330,7 @@ class SpecialGcRequestController extends Controller
         $promo = $request->has('promo') ? $request->promo : '*';
         $record = SpecialExternalGcrequest::select('spexgc_reqby', 'spexgc_company', 'spexgc_id', 'spexgc_num', 'spexgc_datereq', 'spexgc_dateneed')
             ->where('spexgc_promo', $promo)
-            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname', )
+            ->with('user:user_id,firstname,lastname', 'specialExternalCustomer:spcus_id,spcus_acctname,spcus_companyname',)
             ->withWhereHas('approvedRequest', function ($q) {
                 $q->with('user:user_id,firstname,lastname')->select('reqap_preparedby', 'reqap_trid', 'reqap_date')->where('reqap_approvedtype', 'special external releasing');
             })->where('spexgc_released', 'released')
