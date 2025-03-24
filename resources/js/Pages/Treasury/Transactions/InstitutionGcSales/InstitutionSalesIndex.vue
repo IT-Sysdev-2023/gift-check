@@ -1,6 +1,5 @@
 <template>
     <AuthenticatedLayout>
-
         <Head :title="title" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>

@@ -35,8 +35,9 @@
                                     </a-form-item>
                                     <a-form-item label="Approved By">
                                         <a-input v-model:value="form.approvedBy" readonly></a-input>
+                                        <!-- {{ image }} -->
                                     </a-form-item>
-                                    <a-image :src="`/storage/` + image" />
+                                    <a-image style="height: 200px; width: 100%;" :src="`/storage/` + image" />
                                 </div>
                                 <div v-else>
                                     <a-form-item label="Date Cancelled">

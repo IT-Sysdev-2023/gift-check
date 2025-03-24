@@ -49,7 +49,7 @@
                             records.approvedRequest.reqap_date
                         }}</a-descriptions-item>
                         <a-descriptions-item label="Documents" :labelStyle="{ fontWeight: 'bold' }">
-                            <a-image :src="records?.approvedRequest.reqap_doc[0]['url']">
+                            <a-image style="height: 200px;" :src="records?.approvedRequest.reqap_doc[0]['url']">
                             </a-image>
                         </a-descriptions-item>
                         <a-descriptions-item label="Approved Remarks" :labelStyle="{ fontWeight: 'bold' }">{{
@@ -63,7 +63,7 @@
                         }}</a-descriptions-item>
                         <a-descriptions-item label="Documents" :labelStyle="{ fontWeight: 'bold' }"
                             v-if="records.document">
-                            <ant-image-preview :images="records?.document" />
+                            <ant-image-preview  :images="records?.document" />
                         </a-descriptions-item>
                         <a-descriptions-item label="Prepared By" :labelStyle="{ fontWeight: 'bold' }">{{
                             records.approvedRequest?.user?.full_name

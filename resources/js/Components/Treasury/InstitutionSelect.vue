@@ -239,7 +239,7 @@ const paymentTypeOptions = [
     },
     {
         value: "check",
-        label: "Check",
+        label: "Cheque",
     },
     {
         value: "cashcheck",
