@@ -178,6 +178,8 @@ Route::middleware('auth')->group(function () {
             // username and password route of every users
             Route::post('submit-new-username', [AdminController::class, 'submitNewUsername'])->name('newUsername');
             Route::post('submit-new-password', [AdminController::class, 'submitNewPassword'])->name('newPassword');
+            //   activate and deactivate user routes
+            Route::post('deactivate-user', [AdminController::class, 'deactivateUser'])->name('deactivateUser');
         });
     });
     Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('treasury.reports.download.gc');
