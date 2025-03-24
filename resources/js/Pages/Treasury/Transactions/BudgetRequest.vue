@@ -1,26 +1,28 @@
 <template>
     <AuthenticatedLayout>
         <Head :title="title" />
-        <a-breadcrumb style="margin: 15px 0">
+        <a-breadcrumb style="margin: 10px 0">
             <a-breadcrumb-item>
                 <Link :href="route('treasury.dashboard')">Home</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
 
-        <a-card title="Budget Entry Form" class="mt-10">
+        <a-card title="Budget Entry Form" class="mb-1">
+           
             <a-form
                 :model="formState"
                 :label-col="{ span: 7 }"
                 :wrapper-col="{ span: 15 }"
                 @finish="onSubmit"
             >
-                <a-row>
+                <a-row class="mb-1"> 
                     <a-col :span="10">
                         <a-form-item label="BR No." name="name">
                             <a-input :value="br" readonly />
                         </a-form-item>
                         <a-form-item
+                            class="mb-1"
                             label="Date Requested:"
                             name="dateRequested"
                         >
@@ -40,12 +42,13 @@
                             />
                         </a-form-item> -->
                         <a-form-item
+                             class="mb-1"
                             label="Budget:"
                             name="budget"
                             :validate-status="getErrorStatus('budget')"
                             :help="getErrorMessage('budget')"
                         >
-                        <span class="text-red-500">*Required</span>
+                        <span class="text-red-500 text-xs">*Required</span>
                             <a-input-number
                                 style="width: 100%"
                                 :formatter="currencyFormatter"
@@ -55,12 +58,13 @@
                             />
                         </a-form-item>
                         <a-form-item
+                            class="mb-1"
                             label="Budget Category:"
                             name="cat"
                             :validate-status="getErrorStatus('category')"
                             :help="getErrorMessage('category')"
                         >
-                        <span class="text-red-500">*Required</span>
+                        <span class="text-red-500 text-xs">*Required</span>
                             <ant-select
                                 :options="[
                                     { label: 'Regular Gc', value: 'regular' },
@@ -69,35 +73,38 @@
                                 @handle-change="categoryHandler"
                             />
                         </a-form-item>
-                        <a-form-item label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
+                        <a-form-item class="mb-1"label="Upload Scan Copy.:" name="name" :validate-status="getErrorStatus('file')"
                         :help="getErrorMessage('file')">
-                        <span class="text-red-500">*Required</span>
+                        <span class="text-red-500 text-xs">*Required</span>
                             <ant-upload-image @handle-change="handleChange" />
                         </a-form-item>
                         <a-form-item
+                            class="mb-1"
                             label="Remarks"
                             name="name"
                             has-feedback
                             :validate-status="getErrorStatus('remarks')"
                             :help="getErrorMessage('remarks')"
                         >
-                        <span class="text-red-500">*Required</span>
+                        <span class="text-red-500 text-xs">*Required</span>
                             <a-textarea
                                 v-model:value="formState.remarks"
                                 @input="clearError('remarks')"
                             />
                         </a-form-item>
-                        <a-form-item label="Prepared By">
+                        <a-form-item 
+                                 class="mb-1"
+                                 label="Prepared By">
                             <a-input
                                 :value="page.auth.user.full_name"
                                 readonly
                             />
                         </a-form-item>
                         <div>
-                            <div class="flex justify-end mx-9">
+                            <div class="flex justify-end mx-12">
                                 <a-form-item class="text-end">
                                     <a-button type="primary" html-type="submit"
-                                        >Submit</a-button
+                                        >SUBMIT</a-button
                                     >
                                 </a-form-item>
                             </div>

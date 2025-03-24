@@ -176,7 +176,7 @@ class FinanceService extends FileHandler
 
                     return redirect()->back()->with([
                         'stream' => $stream,
-                        'msg' => 'SuccessFully Submitted!',
+                        'msg' => 'Successfully Submitted!',
                         'status' => 'success',
                         'title' => 'Success'
                     ]);
