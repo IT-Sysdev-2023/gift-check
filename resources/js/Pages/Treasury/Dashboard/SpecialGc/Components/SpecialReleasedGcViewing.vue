@@ -1,144 +1,119 @@
 <template>
     <AuthenticatedLayout>
+
         <Head :title="title" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
                 <Link :href="route('treasury.dashboard')">Home</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>
-                <Link :href="route('treasury.special.gc.specialReleasedGc')"
-                    >Released Special External Gc</Link
-                >
+                <Link :href="route('treasury.special.gc.specialReleasedGc')">Released Special External Gc</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
         <a-card>
             <a-tabs v-model:activeKey="activeKey">
-                <a-tab-pane key="1" :tab="title"
-                    ><a-row :gutter="[32, 16]" class="mt-5">
+                <a-tab-pane key="1" :tab="title"><a-row :gutter="[32, 16]" class="mt-5">
                         <a-col :span="12">
-                            <a-descriptions
-                                title="Requested Details"
-                                layout="vertical"
-                                bordered
-                            >
-                                <a-descriptions-item label="Date Requested">{{
+                            <a-descriptions size="small" title="Requested Details" layout="horizontal" bordered>
+                                <a-descriptions-item style="width: 50%;" :span="3" label="Requisition No">{{
+                                    record.data.spexgc_num
+                                }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Date Requested">{{
                                     record.data.spexgc_datereq
                                 }}</a-descriptions-item>
-                                <a-descriptions-item label="Requested By">{{
+                                <a-descriptions-item :span="3" label="Requested By">{{
                                     record.data.user
                                 }}</a-descriptions-item>
-                                <a-descriptions-item label="Date Validity">{{
+                                <a-descriptions-item :span="3" label="Date Validity">{{
                                     record.data.spexgc_dateneed
                                 }}</a-descriptions-item>
-                                <a-descriptions-item label="Remarks">{{
+                                <a-descriptions-item :span="3" label="Remarks">{{
                                     record.data.approvedRequest?.reqap_remarks
                                 }}</a-descriptions-item>
-                                <a-descriptions-item
-                                    label="Payment Type"
-                                    :span="2"
-                                    >{{
-                                        record.data.paymentTypeFormat
-                                    }}</a-descriptions-item
-                                >
+                                <a-descriptions-item label="Payment Type" :span="2">{{
+                                    record.data.paymentTypeFormat
+                                    }}</a-descriptions-item>
                             </a-descriptions>
-                            <a-descriptions
-                                title="Approved Details"
-                                class="mt-10"
-                                layout="vertical"
-                                bordered
-                            >
-                                <a-descriptions-item label="Date Approved">
+                            <a-descriptions size="small" title="Approved Details" class="mt-10" layout="horizontal"
+                                bordered>
+                                <a-descriptions-item style="width: 50%;" :span="3" label="Date Approved">
                                     {{ record.data.spexgc_datereq }}
                                 </a-descriptions-item>
-                                <a-descriptions-item label="Documents">
-                                    <ant-image-preview :images="record.data.approvedRequest?.reqap_doc"/>
-                                    </a-descriptions-item>
-                                <a-descriptions-item label="Checked By">{{
+                                <a-descriptions-item :span="3" label="Documents">
+                                    <ant-image-preview :images="record.data.approvedRequest?.reqap_doc" />
+                                </a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Checked By">{{
                                     record.data.approvedRequest?.reqap_checkedby
                                 }}</a-descriptions-item>
-                                <a-descriptions-item label="Prepared By">{{
+                                <a-descriptions-item :span="3" label="Prepared By">{{
                                     record.data.approvedRequest?.user.full_name
                                 }}</a-descriptions-item>
-                                <a-descriptions-item label="Remarks">{{
+                                <a-descriptions-item :span="3" label="Remarks">{{
                                     record.data.spexgc_remarks
                                 }}</a-descriptions-item>
-                                <a-descriptions-item label="Approved By">{{
+                                <a-descriptions-item :span="3" label="Approved By">{{
                                     record.data.approvedRequest
                                         ?.reqap_approvedby
                                 }}</a-descriptions-item>
                             </a-descriptions>
                         </a-col>
                         <a-col :span="12">
-                            <a-descriptions
-                                title="Reviewed Details"
-                                layout="vertical"
-                                bordered
-                            >
-                                <a-descriptions-item label="Date Reviewed">
+                            <a-descriptions size="small" title="Reviewed Details" layout="horizontal" bordered>
+                                <a-descriptions-item style="width: 50%;" :span="3" label="Date Reviewed">
                                     {{ dayjs(reviewed.reqap_date) }}
                                 </a-descriptions-item>
-                                <a-descriptions-item label="Remarks">{{
+                                <a-descriptions-item :span="3" label="Remarks">{{
                                     reviewed.reqap_remarks
                                 }}</a-descriptions-item>
-                                <a-descriptions-item label="Reviewed By">{{
+                                <a-descriptions-item :span="3" label="Reviewed By">{{
                                     reviewed.user?.full_name
                                 }}</a-descriptions-item>
                             </a-descriptions>
-                            <a-descriptions
-                                title="Released Details"
-                                class="mt-10"
-                                layout="vertical"
-                                bordered
-                            >
-                                <a-descriptions-item label="Date Released">
+                            <a-descriptions title="Released Details" size="small" class="mt-10" layout="horizontal" bordered>
+                                <a-descriptions-item style="width: 50%;" :span="3" label="Date Released">
                                     {{ dayjs(released.reqap_date) }}
                                 </a-descriptions-item>
-                                <a-descriptions-item label="Remarks">{{
+                                <a-descriptions-item :span="3" label="Remarks">{{
                                     released.reqap_remarks
                                 }}</a-descriptions-item>
-                                <a-descriptions-item label="Received By">{{
+                                <a-descriptions-item :span="3" label="Received By">{{
                                     record.data.spexgc_receviedby
                                 }}</a-descriptions-item>
-                                <a-descriptions-item label="Released By">{{
+                                <a-descriptions-item :span="3" label="Released By">{{
                                     released.user.full_name
                                 }}</a-descriptions-item>
                             </a-descriptions>
                         </a-col>
-                    </a-row></a-tab-pane
-                >
-                <a-tab-pane key="2" tab="Barcodes" force-render
-                    >
-                    <a-table bordered 
-                    :data-source="barcodes.data"
-                    :columns="[{
+                    </a-row></a-tab-pane>
+                <a-tab-pane key="2" tab="Barcodes" force-render>
+                    <a-table bordered :data-source="barcodes.data" :columns="[{
                         title: 'Barcode',
-                        dataIndex: 'spexgcemp_barcode' 
+                        dataIndex: 'spexgcemp_barcode'
                     },
                     {
                         title: 'Denomination',
-                        dataIndex: 'spexgcemp_denom' 
+                        dataIndex: 'spexgcemp_denom'
                     },
                     {
                         title: 'Lastname',
-                        dataIndex: 'spexgcemp_lname' 
-                    }, 
+                        dataIndex: 'spexgcemp_lname'
+                    },
                     {
                         title: 'Firstname',
-                        dataIndex: 'spexgcemp_fname' 
+                        dataIndex: 'spexgcemp_fname'
                     },
                     {
                         title: 'Middlename',
-                        dataIndex: 'spexgcemp_mname' 
+                        dataIndex: 'spexgcemp_mname'
                     },
                     {
                         title: 'Name Ext.',
-                        dataIndex: 'spexgcemp_extname' 
+                        dataIndex: 'spexgcemp_extname'
                     }]">
 
                     </a-table>
-                    </a-tab-pane
-                >
+                </a-tab-pane>
             </a-tabs>
         </a-card>
     </AuthenticatedLayout>

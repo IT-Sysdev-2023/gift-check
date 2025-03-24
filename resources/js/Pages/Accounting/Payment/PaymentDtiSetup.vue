@@ -35,43 +35,43 @@
                 <a-card>
                     <a-descriptions size="small" title="Details" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="RFSEGC#">{{ props.record.dti_num
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Department">{{ props.record.title
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date Request">{{ props.record.dti_datereq
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Time Requested">{{ props.record.timerequested
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date Needed">{{ props.record.dti_dateneed
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Date Approved">{{ props.record.dti_approveddate
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Payment Amount">{{ props.record.dti_balance
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Total Denomination">{{ selected?.denomcount
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Requested Remarks">{{ props.record.remarks
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Approved Remarks">{{ props.record.apremarks
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                 </a-card>
                 <a-divider>
@@ -80,19 +80,19 @@
                 <a-card>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Requested By">{{ props.record.refullname
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Checked By">{{ props.record.dti_checkby
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Approved By">{{ props.record.dti_approvedby
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Prepared By">{{ props.record.prefullname
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                 </a-card>
 
@@ -101,84 +101,92 @@
                 <a-card title="Releasing Form">
                     <a-row :gutter="[16, 16]" class="text-center">
                         <a-col :span="12">
-                            <a-descriptions size="small" layout="vertical" bordered>
+                            <a-descriptions size="small" layout="horizontal" bordered>
                                 <a-descriptions-item style="width: 50%;" label="Total Gift Check">{{ selected?.total
-                                }}</a-descriptions-item>
+                                    }}</a-descriptions-item>
                             </a-descriptions>
-                            <a-descriptions size="small" layout="vertical" bordered>
+                            <a-descriptions size="small" layout="horizontal" bordered>
                                 <a-descriptions-item style="width: 50%;" label="Payment Date">{{
                                     dayjs().format('MMM, DD, YYYY') }}</a-descriptions-item>
                             </a-descriptions>
-
-                            <div class="text-start mt-6">
-                                <a-typography-text keyboard>Received By</a-typography-text>
-                            </div>
-                            <a-input v-model:value.lazy="form.recby" autofocus placeholder="Lazy usage" />
-                            <p class="text-start ml-1 text-red-500" v-if="form.errors.recby">
-                                * This field is Required
-                            </p>
                         </a-col>
                         <a-col :span="12">
-                            <a-descriptions size="small" layout="vertical" bordered>
+                            <a-descriptions size="small" layout="horizontal" bordered>
                                 <a-descriptions-item style="width: 50%;" label="Released By">{{
                                     page.auth.user.full_name }}</a-descriptions-item>
                             </a-descriptions>
-                            <a-descriptions size="small" layout="vertical" bordered>
-                                <a-descriptions-item style="width: 50%;" label="Checked By">
-                                    <a-input placeholder="Enter Checked By" v-model:value="form.checkedby" />
-                                    <p class="text-start ml-1 text-red-500" v-if="form.errors.checkedby">
-                                        * This field is Required
-                                    </p>
-                                </a-descriptions-item>
-                            </a-descriptions>
+                            <div class="text-start mt-2">
+                                <a-typography-text keyboard>Checked By</a-typography-text><span
+                                    class="text-red-500">*required</span>
+                                <a-input placeholder="Enter Checked By" v-model:value="form.checkedby" />
+                                <p class="text-start ml-1 text-red-500" v-if="form.errors.checkedby">
+                                    * This field is Required
+                                </p>
+                            </div>
                             <div class="text-start mt-3">
-                                <a-typography-text keyboard>Payment Status</a-typography-text>
+                                <a-typography-text keyboard>Payment Status</a-typography-text><span
+                                    class="text-red-500">*required</span>
                                 <a-select placeholder="Select Payment Type" v-model:value="form.paymentstats"
                                     class="w-full" :options="paymentStatus"></a-select>
                                 <p class="text-start ml-1 text-red-500" v-if="form.errors.paymentstats">
                                     * This field is Required
                                 </p>
                             </div>
+                            <div class="text-start mt-2">
+                                <a-typography-text keyboard>Received By</a-typography-text><span
+                                    class="text-red-500">*required</span>
+                            </div>
+                            <a-input v-model:value.lazy="form.recby" autofocus placeholder="Enter Received By" />
+                            <p class="text-start ml-1 text-red-500" v-if="form.errors.recby">
+                                * This field is Required
+                            </p>
                         </a-col>
                         <div class="mt-2 text-start w-[97%] m-auto">
-                            <a-typography-text keyboard>Remarks</a-typography-text>
+                            <a-typography-text keyboard>Remarks</a-typography-text><span
+                                class="text-red-500">*required</span>
                             <a-textarea v-model:value="form.remarks" placeholder="Enter remarks here.." :row="2" />
                             <p class="text-start ml-1 text-red-500" v-if="form.errors.remarks">
                                 * This field is Required
                             </p>
                         </div>
                         <div class="mt-2 text-start w-[97%] m-auto">
-                            <a-typography-text keyboard>Payment Type</a-typography-text>
+                            <a-typography-text keyboard>Payment Type</a-typography-text><span
+                                class="text-red-500">*required</span>
                             <a-select placeholder="Select Payment Type" @change="handlePaymentTypChange" class="w-full"
                                 :options="paymentOption"></a-select>
                             <p class="text-start ml-1 text-red-500" v-if="form.errors.paymentType">
                                 * This field is Required
                             </p>
                         </div>
+
                     </a-row>
                     <div v-if="pmValue.check">
                         <a-card size="small" title="Add Check Details" class="mt-2">
                             <a-row :gutter="[16, 16]">
                                 <a-col :span="12">
-                                    <a-typography-text  keyboard>Bank
-                                        Name</a-typography-text>
+                                    <a-typography-text keyboard>Bank
+                                        Name</a-typography-text><span
+                                        class="text-red-500">*required</span>
                                     <a-input class="mb-3" v-model:value="form.bankname" placeholder="Enter here..." />
                                     <p class="text-start ml-1 text-red-500" v-if="form.errors.bankname">
                                         * This field is Required
                                     </p>
-                                    <a-typography-text keyboard>Account Number</a-typography-text>
+                                    <a-typography-text keyboard>Account Number</a-typography-text><span
+                                    class="text-red-500">*required</span>
                                     <a-input placeholder="Enter here..." v-model:value="form.accountno" />
                                     <p class="text-start ml-1 text-red-500" v-if="form.errors.accountno">
                                         * This field is Required
                                     </p>
                                 </a-col>
                                 <a-col :span="12">
-                                    <a-typography-text keyboard>Check Number</a-typography-text>
+                                    <a-typography-text keyboard>Check Number</a-typography-text><span
+                                    class="text-red-500">*required</span>
                                     <a-input class="mb-3" v-model:value="form.checkno" placeholder="Enter here..." />
                                     <p class="text-start ml-1 text-red-500" v-if="form.errors.accountno">
                                         * This field is Required
                                     </p>
-                                    <a-typography-text keyboard>Check Amount</a-typography-text>
+                                    <a-typography-text keyboard>Check Amount</a-typography-text><span
+                                    class="text-red-500">*required</span>
                                     <a-input-number style="width: 100%;" @change="handleChange" :formatter="(value) =>
                                         `₱ ${value}`.replace(
                                             /\B(?=(\d{3})+(?!\d))/g,
@@ -198,7 +206,8 @@
                     </div>
                     <div v-else-if="pmValue.cash">
                         <a-card size="small" title="Enter Cash Amount" class="mt-2">
-                            <a-typography-text keyboard>Cash Amount</a-typography-text>
+                            <a-typography-text keyboard>Cash Amount</a-typography-text><span
+                            class="text-red-500">*required</span>
                             <a-input-number placeholder="Enter here..." style="width: 100%;" v-model:value="form.amount"
                                 @change="handleChange" :formatter="(value) =>
                                     `₱ ${value}`.replace(
@@ -217,7 +226,8 @@
                     </div>
                     <div v-else-if="pmValue.jv">
                         <a-card size="small" title="Customer Details" class="mt-2">
-                            <a-typography-text keyboard>Customer Name</a-typography-text>
+                            <a-typography-text keyboard>Customer Name</a-typography-text><span
+                            class="text-red-500">*required</span>
                             <a-input v-model:value="form.custname" class="uppercase" placeholder="Enter here..." />
                         </a-card>
                     </div>

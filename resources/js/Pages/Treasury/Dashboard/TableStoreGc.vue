@@ -46,9 +46,10 @@ const { highlightText } = highlighten();
                     </span>
                 </template>
                 <template v-if="column.key">
+                    <!-- {{ column?.dataIndex }} -->
                     <span>
                         <!-- for the dynamic implementation of object properties, just add a key in column-->
-                        {{ getValue(record, column.dataIndex) }}
+                        {{ getValue(record, column?.dataIndex) }}
                     </span>
                 </template>
 
@@ -250,7 +251,7 @@ export default {
     },
     methods: {
         getValue(record, dataIndex) {
-            return dataIndex.reduce((acc, index) => acc[index], record);
+            return dataIndex?.reduce((acc, index) => acc?.[index], record);
         },
         reprint(id) {
             const url = route("treasury.store.gc.reprint", { id: id });
