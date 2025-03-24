@@ -215,7 +215,6 @@ declare module 'vue' {
     DatabaseOutlined: typeof import('@ant-design/icons-vue')['DatabaseOutlined']
     DeleteUserForm: typeof import('./resources/js/Pages/Profile/Partials/DeleteUserForm.vue')['default']
     Description: typeof import('./resources/js/Pages/Treasury/Description.vue')['default']
-    DollarCircleOutlined: typeof import('@ant-design/icons-vue')['DollarCircleOutlined']
     DollarOutlined: typeof import('@ant-design/icons-vue')['DollarOutlined']
     DownloadOutlined: typeof import('@ant-design/icons-vue')['DownloadOutlined']
     DownOutlined: typeof import('@ant-design/icons-vue')['DownOutlined']

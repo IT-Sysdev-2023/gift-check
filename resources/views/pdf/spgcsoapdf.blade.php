@@ -117,33 +117,35 @@
     <div>B. All gift checks passes the date of validity cannot be redeemed</div>
     <div>C. For any discrepancies, please contact(1020, Treasury Dept.)</div>
 
-    <table style="width: 100%; margin-top: 30px">
+    <table style="width: 100%; margin-top: 30px; border-spacing: 10px;">
         <thead>
-            <td style="text-align: left;">
-                Prepared By:
-            </td>
-            <td style="text-align: left;">
-                Checked By:
-            </td>
-            <td style="text-align: left;">
-                Approved By:
-            </td>
+            <tr>
+                <td style="text-align: left; width: 33.33%;">
+                    Prepared By:
+                </td>
+                <td style="text-align: left; width: 33.33%;">
+                    Checked By:
+                </td>
+                <td style="text-align: left; width: 33.33%;">
+                    Approved By:
+                </td>
+            </tr>
         </thead>
         <tbody>
             <tr>
-                <td>
+                <td style="width: 33.33%;">
                     <p style="text-align: center; margin: 0;">
                         {{ strtoupper($data['prepBy']) }}
                     </p>
                     <hr style="margin-top: 0; margin-bottom: 0;">
                 </td>
-                <td>
+                <td style="width: 33.33%;">
                     <p style="text-align: center; margin: 0;">
                         {{ strtoupper($data['checkedBy']) }}
                     </p>
                     <hr style="margin-top: 0; margin-bottom: 0;">
                 </td>
-                <td>
+                <td style="width: 33.33%;">
                     <p style="text-align: center; margin: 0;">
                         {{ strtoupper($data['approvedBy']) }}
                     </p>
@@ -152,6 +154,7 @@
             </tr>
         </tbody>
     </table>
+
 </body>
 
 </html>

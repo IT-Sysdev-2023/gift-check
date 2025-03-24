@@ -44,8 +44,8 @@
                         </a-table>
                     </a-card>
 
-                    <a-typography-text keyboard>Check By</a-typography-text>
-                    <a-select class="mb-3" placeholder="Select Check By" ref="select" v-model:value="form.checkby"
+                    <a-typography-text keyboard>Checked By</a-typography-text>
+                    <a-select class="mb-3" placeholder="Select Checked By" ref="select" v-model:value="form.checkby"
                         style="width: 100%" :options="options"></a-select>
                     <a-typography-text keyboard>Remarks</a-typography-text>
                     <a-textarea class="mb-3" v-model:value="form.remarks" placeholder="Input Remarks..." />

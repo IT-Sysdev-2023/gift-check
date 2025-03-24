@@ -62,7 +62,7 @@
                             :help="errors.remarks">
                             <a-input allow-clear v-model:value="form.remarks" placeholder="Enter Here..." />
                         </a-form-item>
-                        <a-form-item label="Prepare By." :validate-status="errors.prep_by ? 'error' : ''"
+                        <a-form-item label="Prepared By." :validate-status="errors.prep_by ? 'error' : ''"
                             :help="errors.prep_by">
                             <a-input allow-clear v-model:value="form.prep_by" placeholder="Enter Here..." />
                         </a-form-item>

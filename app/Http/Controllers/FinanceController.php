@@ -794,7 +794,7 @@ class FinanceController extends Controller
 
                     return redirect()->back()->with([
                         'type' => 'success',
-                        'msg' => 'Nice!',
+                        'msg' => 'Success!',
                         'description' => 'Request approved successfully.',
                         'stream' => $pdf
                     ]);

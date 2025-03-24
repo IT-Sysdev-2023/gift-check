@@ -35,7 +35,7 @@ class PromoForApprovalRequest extends FormRequest
     {
         return [
             'appby.required' => 'Approved By is required',
-            'checkby.required' => 'Check By is required',
+            'checkby.required' => 'Checked By is required',
             'status.required' => 'Status is required',
             'remarks.required' => 'Remarks is required',
             'docs.image' => 'Docs should be a type of image',

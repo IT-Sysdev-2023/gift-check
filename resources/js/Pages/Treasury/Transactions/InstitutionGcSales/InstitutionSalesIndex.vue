@@ -25,7 +25,7 @@
                                     () => formState.clearErrors('receivedBy')
                                 " />
                             </a-form-item>
-                            <a-form-item label="Check By:" name="check" :validate-status="getErrorStatus('checkedBy')"
+                            <a-form-item label="Checked By:" name="check" :validate-status="getErrorStatus('checkedBy')"
                                 :help="getErrorMessage('checkedBy')">
                                 <ant-select :options="checkBy" @handle-change="handleCheckedBy" />
                             </a-form-item>
@@ -84,7 +84,7 @@
                             <div>
                                 <div class="flex justify-end">
                                     <a-form-item class="mt-5">
-                                        <a-button type="primary" html-type="submit">Submit</a-button>
+                                        <a-button type="primary" html-type="submit">SUBMIT</a-button>
                                     </a-form-item>
                                 </div>
                             </div>

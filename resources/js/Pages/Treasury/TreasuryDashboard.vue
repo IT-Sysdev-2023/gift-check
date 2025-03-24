@@ -19,7 +19,7 @@
                                 margin-bottom: 30px;
                             " justify="center">
                             <a-col :span="8">
-                                <a-statistic title="Regular Gc Budget" :value="data?.budget?.regularBudget"
+                                <a-statistic title="Regular GC Budget" :value="data?.budget?.regularBudget"
                                     style="margin-right: 50px">
                                 </a-statistic>
                             </a-col>

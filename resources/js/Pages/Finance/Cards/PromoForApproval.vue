@@ -63,7 +63,7 @@
                                 <template #icon>
                                     <TagsFilled />
                                 </template>
-                                Submit Approval Form
+                                SUBMIT APPROVAL FORM
                             </a-button>
                         </a-form-item>
 

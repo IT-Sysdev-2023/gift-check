@@ -76,11 +76,11 @@
                                     </a-col>
                                     <a-col :span="12">
                                         <a-descriptions size="small" layout="horizontal" bordered>
-                                            <a-descriptions-item style="width: 50%;" label="Check By">{{ record.check_by
+                                            <a-descriptions-item style="width: 50%;" label="Checked By">{{ record.check_by
                                                 }}</a-descriptions-item>
                                         </a-descriptions>
                                         <a-descriptions size="small" layout="horizontal" bordered>
-                                            <a-descriptions-item style="width: 50%;" label="Prepare By">{{
+                                            <a-descriptions-item style="width: 50%;" label="Prepared By">{{
                                                 record.prep_by
                                                 }}</a-descriptions-item>
                                         </a-descriptions>
