@@ -14,101 +14,113 @@
         <a-card>
             <a-tabs type="card" v-model:activeKey="activeKey">
                 <a-tab-pane key="1" tab="Special External Gc Details">
-                    <a-descriptions bordered size="small" layout="vertical">
-                        <a-descriptions-item label="RFSEGC #" :labelStyle="{ fontWeight: 'bold' }">{{ records.spexgc_num
-                        }}</a-descriptions-item>
-                        <a-descriptions-item label="Department" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.userAccessPageTitle
-                        }}</a-descriptions-item>
-                        <a-descriptions-item label="Date Requested" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.spexgc_datereq }}</a-descriptions-item>
-                        <a-descriptions-item label="Date Validity" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.spexgc_dateneed }}
-                        </a-descriptions-item>
-                        <a-descriptions-item label="Customer" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.specialExternalCustomer?.spcus_acctname
-                        }}
-                        </a-descriptions-item>
-                        <a-descriptions-item label="Total Denomination" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.totalGcRequestItems }}
-                        </a-descriptions-item>
-                        <a-descriptions-item label="AR #" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.spexgc_payment_arnum }}
-                        </a-descriptions-item>
-                        <a-descriptions-item label="Payment Type" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.spexgc_paymentype
-                        }}</a-descriptions-item>
-                        <a-descriptions-item label="Payment Amount" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.spexgc_payment }}</a-descriptions-item>
+                    <a-row :gutter="[16, 16]">
+                        <a-col :span="12">
+                            <a-descriptions bordered size="small" layout="horizontal">
+                                <a-descriptions-item style="width: 50%;" :span="3" label="RFSEGC #"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.spexgc_num
+                                    }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Department"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.userAccessPageTitle
+                                    }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Date Requested"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.spexgc_datereq }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Date Validity"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.spexgc_dateneed }}
+                                </a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Customer" :labelStyle="{ fontWeight: 'bold' }">{{
+                                    records.specialExternalCustomer?.spcus_acctname
+                                    }}
+                                </a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Total Denomination"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.totalGcRequestItems }}
+                                </a-descriptions-item>
+                                <a-descriptions-item :span="3" label="AR #" :labelStyle="{ fontWeight: 'bold' }">{{
+                                    records.spexgc_payment_arnum }}
+                                </a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Payment Type"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.spexgc_paymentype
+                                    }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Payment Amount"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.spexgc_payment }}</a-descriptions-item>
 
-                        <a-descriptions-item label="Request Remarks" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.spexgc_remarks }}</a-descriptions-item>
-                        <a-descriptions-item label="Requested by" :labelStyle="{ fontWeight: 'bold' }">{{ records.user
-                        }}</a-descriptions-item>
-                        <a-descriptions-item label="Date Approved" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.approvedRequest.reqap_date
-                        }}</a-descriptions-item>
-                        <a-descriptions-item label="Documents" :labelStyle="{ fontWeight: 'bold' }">
-                            <a-image style="height: 200px;" :src="records?.approvedRequest.reqap_doc[0]['url']">
-                            </a-image>
-                        </a-descriptions-item>
-                        <a-descriptions-item label="Approved Remarks" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.approvedRequest?.reqap_remarks
-                        }}</a-descriptions-item>
-                        <a-descriptions-item label="Checked By" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.approvedRequest?.reqap_checkedby
-                        }}</a-descriptions-item>
-                        <a-descriptions-item label="Approved By" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.approvedRequest?.reqap_approvedby
-                        }}</a-descriptions-item>
-                        <a-descriptions-item label="Documents" :labelStyle="{ fontWeight: 'bold' }"
-                            v-if="records.document">
-                            <ant-image-preview  :images="records?.document" />
-                        </a-descriptions-item>
-                        <a-descriptions-item label="Prepared By" :labelStyle="{ fontWeight: 'bold' }">{{
-                            records.approvedRequest?.user?.full_name
-                        }}</a-descriptions-item>
-                    </a-descriptions>
-
-
-                    <a-card class="mt-10">
-                        <a-row :gutter="[16, 16]">
-                            <a-col :span="8">
+                                <a-descriptions-item :span="3" label="Request Remarks"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.spexgc_remarks }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Requested by"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.user
+                                    }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Date Approved"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.approvedRequest.reqap_date
+                                    }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Documents" :labelStyle="{ fontWeight: 'bold' }">
+                                    <a-image style="height: 200px;" :src="records?.approvedRequest.reqap_doc[0]['url']">
+                                    </a-image>
+                                </a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Approved Remarks"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.approvedRequest?.reqap_remarks
+                                    }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Checked By"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.approvedRequest?.reqap_checkedby
+                                    }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Approved By"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.approvedRequest?.reqap_approvedby
+                                    }}</a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Documents" :labelStyle="{ fontWeight: 'bold' }"
+                                    v-if="records.document">
+                                    <ant-image-preview :images="records?.document" />
+                                </a-descriptions-item>
+                                <a-descriptions-item :span="3" label="Prepared By"
+                                    :labelStyle="{ fontWeight: 'bold' }">{{
+                                        records.approvedRequest?.user?.full_name
+                                    }}</a-descriptions-item>
+                            </a-descriptions>
+                        </a-col>
+                        <a-col :span="12">
+                            <a-card>
                                 <a-button type="primary" block @click="scanGc">
                                     <FastForwardOutlined /> Scan GC
                                 </a-button>
                                 <a-button type="primary" block @click="reprint" class="mt-2">
                                     <PrinterOutlined /> Reprint Gc
                                 </a-button>
-                            </a-col>
-                            <a-col :span="16">
-                                <a-card>
-                                    <a-form class="mt-10" :model="formState" name="basic" :label-col="{ span: 8 }"
-                                        :wrapper-col="{ span: 16 }" autocomplete="off" @finish="onFinish">
-                                        <a-form-item label="Remarks" name="remarks"
-                                            :validate-status="formState.errors.remarks ? 'error' : ''"
-                                            :help="formState.errors.remarks">
-                                            <span class="text-red-500">*Required</span>
-                                            <a-textarea v-model:value="formState.remarks" />
-                                        </a-form-item>
-                                        <a-form-item label="Total Gc Scanned" name="totalGc">
-                                            <a-input-number readonly style="width: 100%;" :value="totalCount">
-                                            </a-input-number>
-                                        </a-form-item>
-                                        <a-form-item label="Total Denomination" name="denomination">
-                                            <a-input-number style="width: 100%;" readonly :value="totalDenom" />
-                                        </a-form-item>
+                                <a-form class="mt-10" :model="formState" name="basic" :label-col="{ span: 8 }"
+                                    :wrapper-col="{ span: 16 }" autocomplete="off" @finish="onFinish">
+                                    <a-form-item label="Remarks" name="remarks"
+                                        :validate-status="formState.errors.remarks ? 'error' : ''"
+                                        :help="formState.errors.remarks">
+                                        <span class="text-red-500">*Required</span>
+                                        <a-textarea v-model:value="formState.remarks" />
+                                    </a-form-item>
+                                    <a-form-item label="Total Gc Scanned" name="totalGc">
+                                        <a-input-number readonly style="width: 100%;" :value="totalCount">
+                                        </a-input-number>
+                                    </a-form-item>
+                                    <a-form-item label="Total Denomination" name="denomination">
+                                        <a-input-number style="width: 100%;" readonly :value="totalDenom" />
+                                    </a-form-item>
 
-                                        <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-                                            <a-button type="primary" html-type="submit" block>
-                                                <FastForwardOutlined /> Submit
-                                            </a-button>
-                                        </a-form-item>
-                                    </a-form>
-                                </a-card>
-                            </a-col>
-                        </a-row>
-                    </a-card>
+                                    <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+                                        <a-button type="primary" html-type="submit" block>
+                                            <FastForwardOutlined /> Submit
+                                        </a-button>
+                                    </a-form-item>
+                                </a-form>
+                            </a-card>
+                        </a-col>
+                    </a-row>
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="GC Holder" force-render>
                     <a-table size="small" bordered :dataSource="gcHolder" :columns="gcholderCol" :pagination="false" />
@@ -125,7 +137,8 @@
                         message: 'Please input the Barcode!',
                     },
                 ]" :validate-status="barcodeForm.errors.barcode ? 'error' : ''" :help="barcodeForm.errors.barcode">
-                    <a-input-number size="large" v-model:value="barcodeForm.barcode"
+                    <a-input-number allow-count class="p-1 pt-3 pb-3 text-3xl"  ref="barcodeRef" size="large" v-model:value="barcodeForm.barcode"
+                       @keyup.enter="onFinishBarcode"
                         @change="() => barcodeForm.errors.barcode = ''" style="width: 100%" />
                 </a-form-item>
 
@@ -140,7 +153,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useForm, router, usePage } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 import axios from "axios";
 import { onProgress } from "@/Mixin/UiUtilities";
 import { notification } from "ant-design-vue";
@@ -184,6 +197,7 @@ const props = defineProps<{
     };
 }>();
 
+
 interface barcodeFormTypes {
     barcode: number;
 }
@@ -191,6 +205,9 @@ interface formState {
     remarks: string;
     reviewedBy: string;
 }
+
+const barcodeRef = ref(null);
+
 
 const barcodeForm = useForm<barcodeFormTypes>({
     barcode: 0,
@@ -280,17 +297,23 @@ const onFinish = () => {
         },
     });
 };
+
+
 const totalCount = ref();
 const totalDenom = ref();
 const onFinishBarcode = () => {
     barcodeForm.post(route("iad.special.external.barcode", records.spexgc_id), {
         onSuccess: ({ props }) => {
+            barcodeForm.reset();
             openLeftNotification(props.flash);
             if (props.flash.success) {
                 totalCount.value = props.flash.countSession ?? '';
                 totalDenom.value = props.flash.denominationSession ?? '';
-                openScanGc.value = false;
+                barcodeForm.reset();
             }
+        },
+        onError: () => {
+            barcodeForm.reset();
         },
         preserveState: true,
     });

@@ -14,7 +14,7 @@
                 <a-form class="mt-3">
                     <a-form-item has-feedback :help="errors.barcode"
                         :validate-status="form.barcode?.length === 13 ? 'success' : errors.barcode ? 'error' : ''">
-                        <a-input size="large" v-model:value="form.barcode" placeholder="Enter Barcode" @keyup.enter="validate">
+                        <a-input-number @change="() => errors.barcode = ''"  class="text-4xl p-1 pt-2 pb-2" style="width: 100%;" size="large" v-model:value="form.barcode" placeholder="Enter Barcode" @keyup.enter="validate">
                             <template #prefix>
                                 <PaperClipOutlined />
                             </template>
@@ -23,7 +23,7 @@
                                     <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                                 </a-tooltip>
                             </template>
-                        </a-input>
+                        </a-input-number>
                     </a-form-item>
                 </a-form>
             </a-item>
@@ -75,6 +75,7 @@ export default {
                 ...pickBy(this.form)
             }, {
                 onSuccess: (response) => {
+                    this.form.reset();
                     this.response = response.props.flash;
                     notification[response.props.flash.status]({
                         message: response.props.flash.title,
@@ -89,6 +90,7 @@ export default {
                     }
                 },
                 onError: (errors) => {
+                    this.form.reset();
                     this.errors = errors;
                     this.response = [];
                 }
