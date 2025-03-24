@@ -25,7 +25,7 @@
                     <a-statistic title="Total Denomination" :value="record[0]?.total" :precision="2"
                         class="demo-class text-center" :value-style="{ color: '#399918' }">
                         <template #prefix>
-                            <DollarCircleOutlined />
+                            ₱
                         </template>
                     </a-statistic>
                 </a-card>

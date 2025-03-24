@@ -25,8 +25,9 @@
             </template>
         </template>
     </a-table>
-    <a-descriptions class="mt-6 ml-1" size="small" layout="horizontal">
-        <a-descriptions-item style="width: 50%;" label="Total Gc"> <a-tag style="font-size: 14px;" color="blue">
+    <a-descriptions bordered class="mt-6 ml-1" size="small" layout="horizontal">
+        <a-descriptions-item style="width: 50%;" :span="3" label="Total Gc"> <a-tag style="font-size: 14px;"
+                color="blue">
                 <p>{{ selected.total }}
                     pc's</p>
             </a-tag></a-descriptions-item>
@@ -36,137 +37,135 @@
                     }}</p>
             </a-tag></a-descriptions-item>
     </a-descriptions>
-    <a-descriptions class="ml-1" size="small" layout="horizontal">
-        <a-descriptions-item style="width: 50%;" label="Payment Date">
+    <a-descriptions class="ml-1" bordered size="small" layout="horizontal">
+        <a-descriptions-item style="width: 50%;" :span="3" label="Payment Date">
             <p class="underline">{{ dayjs().format('MMM DD, YYYY')
                 }}</p>
         </a-descriptions-item>
-        <a-descriptions-item style="width: 50%;" label="Checked by">
+    </a-descriptions>
+
+    <a-card class="mt-1">
+        <div class="mt-2">
+            <a-typography-text keyboard>Check by</a-typography-text><span class="text-red-500">*required</span>
             <a-form-item has-feedback :validate-status="error.checkedby ? 'error' : ''" :help="error.checkedby">
                 <a-input v-model:value="form.checkedby" placeholder="Enter Checked By"
                     @change="() => error.checkedby = ''">
                 </a-input>
             </a-form-item>
-        </a-descriptions-item>
-    </a-descriptions>
-    <a-descriptions class="ml-1 mt-1" size="small" layout="vertical">
-        <a-descriptions-item style="width: 50%;" label="Received By">
-            <a-form-item has-feedback :validate-status="error.receiveby ? 'error' : ''" :help="error.receiveby">
-                <a-input style="width: 320px;" v-model:value="form.receiveby" placeholder="Type here..."
-                    @change="() => error.receiveby = ''" />
-            </a-form-item>
-        </a-descriptions-item>
-        <a-descriptions-item style="width: 50%;" label="Payment Status">
-            <a-form-item has-feedback :validate-status="error.status ? 'error' : ''" :help="error.status">
-                <a-select style="width: 320px;" ref="select" v-model:value="form.status" placeholder="Select Status"
-                    @change="() => error.status = ''">
-                    <a-select-option value="partial">PARTIAL</a-select-option>
-                    <a-select-option value="whole">WHOLE</a-select-option>
-                </a-select>
-            </a-form-item>
-        </a-descriptions-item>
-    </a-descriptions>
-    <a-descriptions class="ml-1 mt-4" size="small" layout="horizontal">
+        </div>
+        <a-typography-text keyboard>Received By</a-typography-text><span class="text-red-500">*required</span>
+        <a-form-item has-feedback :validate-status="error.receiveby ? 'error' : ''" :help="error.receiveby">
+            <a-input v-model:value="form.receiveby" placeholder="Type here..." @change="() => error.receiveby = ''" />
+        </a-form-item>
+        <a-typography-text keyboard>Select Status</a-typography-text><span class="text-red-500">*required</span>
+        <a-form-item has-feedback :validate-status="error.status ? 'error' : ''" :help="error.status">
+            <a-select ref="select" v-model:value="form.status" placeholder="Select Status"
+                @change="() => error.status = ''">
+                <a-select-option value="partial">PARTIAL</a-select-option>
+                <a-select-option value="whole">WHOLE</a-select-option>
+            </a-select>
+        </a-form-item>
+        <a-typography-text keyboard>Remarks</a-typography-text><span class="text-red-500">*required</span>
         <a-descriptions-item style="width: 50%;" label="Remarks">
-            <a-textarea v-model:value="form.remarks" :rows="3" placeholder="Type here..." />
+            <a-textarea v-model:value="form.remarks" :rows="2" placeholder="Type here..." />
         </a-descriptions-item>
-    </a-descriptions>
+    </a-card>
 
     <div class="mt-3">
-        <a-row :gutter="[16, 16]">
-            <a-col :span="8">
-                <p class="ml-1">
-                    Payment Type
-                </p>
-                <a-form-item has-feedback :validate-status="error.payment ? 'error' : ''" :help="error.payment">
-                    <a-select style="width: 100%;" v-model:value="form.payment" ref="select"
-                        placeholder="Select Payment Method" @change="handlePaymentMehthod">
-                        <a-select-option value="0">CASH</a-select-option>
-                        <a-select-option value="1">CHECK</a-select-option>
-                        <a-select-option value="2">JV</a-select-option>
-                    </a-select>
-                </a-form-item>
-            </a-col>
-            <a-col :span="16">
-                <a-card style="width: 100%;" v-if="paymentstat.cash">
-                    <p class="text-center mb-5 font-bold">CASH</p>
-                    <p>Cash Amount</p>
-                    <a-form-item has-feedback :validate-status="error.amount ? 'error' : ''" :help="error.amount">
-                        <a-input-number placeholder="Enter here..." style="width: 100%;" v-model:value="form.amount"
-                            @change="handleChange" :formatter="(value) =>
-                                `₱ ${value}`.replace(
-                                    /\B(?=(\d{3})+(?!\d))/g,
-                                    ','
-                                )
-                                " />
+        <a-card>
+            <a-row :gutter="[16, 16]">
+                <a-col :span="8">
+                    <a-typography-text keyboard>Payment Type</a-typography-text><span class="text-red-500">*required</span>
+                    <a-form-item has-feedback :validate-status="error.payment ? 'error' : ''" :help="error.payment">
+                        <a-select style="width: 100%;" v-model:value="form.payment" ref="select"
+                            placeholder="Select Payment Method" @change="handlePaymentMehthod">
+                            <a-select-option value="0">CASH</a-select-option>
+                            <a-select-option value="1">CHECK</a-select-option>
+                            <a-select-option value="2">JV</a-select-option>
+                        </a-select>
                     </a-form-item>
-                    <a-descriptions size="small" class="mt-4" layout="vertical" bordered>
-                        <a-descriptions-item style="width: 100%;">
-                            <template #label>
-                                Number Into Words
-                            </template>
-                            <a-badge status="processing" class="font-bold font-italic" :text="form.numToWords" />
-                        </a-descriptions-item>
-                    </a-descriptions>
+                </a-col>
+                <a-col :span="16">
+                    <a-card style="width: 100%;" v-if="paymentstat.cash">
+                        <p class="text-center mb-5 font-bold">CASH</p>
+                        <p>Cash Amount <span class="text-red-500">*required</span></p>
+                        <a-form-item has-feedback :validate-status="error.amount ? 'error' : ''" :help="error.amount">
+                            <a-input-number placeholder="Enter here..." style="width: 100%;" v-model:value="form.amount"
+                                @change="handleChange" :formatter="(value) =>
+                                    `₱ ${value}`.replace(
+                                        /\B(?=(\d{3})+(?!\d))/g,
+                                        ','
+                                    )
+                                    " />
+                        </a-form-item>
+                        <a-descriptions size="small" class="mt-4" layout="vertical" bordered>
+                            <a-descriptions-item style="width: 100%;">
+                                <template #label>
+                                    Number Into Words
+                                </template>
+                                <a-badge status="processing" class="font-bold font-italic" :text="form.numToWords" />
+                            </a-descriptions-item>
+                        </a-descriptions>
 
-                </a-card>
+                    </a-card>
 
-                <a-card style="width: 100%;" v-if="paymentstat.check">
-                    <p class="text-center mb-5 font-bold">CHECK</p>
-                    <p class="mt-2 ml-1">
-                        Bank Name
-                    </p>
-                    <a-form-item has-feedback :validate-status="error.bank ? 'error' : ''" :help="error.bank">
-                        <a-input v-model:value="form.bank" placeholder="Enter here..." />
+                    <a-card style="width: 100%;" v-if="paymentstat.check">
+                        <p class="text-center mb-5 font-bold">CHECK</p>
+                        <p class="mt-2 ml-1">
+                            Bank Name <span class="text-red-500">*required</span>
+                        </p>
+                        <a-form-item has-feedback :validate-status="error.bank ? 'error' : ''" :help="error.bank">
+                            <a-input v-model:value="form.bank" placeholder="Enter here..." />
 
-                    </a-form-item>
-                    <p class="mt-2 ml-1">
-                        Account Number
-                    </p>
-                    <a-form-item has-feedback :validate-status="error.account ? 'error' : ''" :help="error.account">
+                        </a-form-item>
+                        <p class="mt-2 ml-1">
+                            Account Number <span class="text-red-500">*required</span>
+                        </p>
+                        <a-form-item has-feedback :validate-status="error.account ? 'error' : ''" :help="error.account">
 
-                        <a-input v-model:value="form.account" placeholder="Enter here..." />
-                    </a-form-item>
-                    <p class="mt-2 ml-1">
-                        Check Number
-                    </p>
-                    <a-form-item has-feedback :validate-status="error.checkno ? 'error' : ''" :help="error.checkno">
-                        <a-input placeholder="Enter here..." v-model:value="form.checkno" />
-                    </a-form-item>
-                    <p class="mt-2 ml-1">
-                        Check Amount
-                    </p>
-                    <a-form-item has-feedback :validate-status="error.amount ? 'error' : ''" :help="error.amount">
-                        <a-input-number placeholder="Enter here..." style="width: 100%;" v-model:value="form.amount"
-                            @change="handleChange" :formatter="(value) =>
-                                `₱ ${value}`.replace(
-                                    /\B(?=(\d{3})+(?!\d))/g,
-                                    ','
-                                )
-                                " />
-                    </a-form-item>
-                    <a-descriptions size="small"  class="mt-4" layout="vertical" bordered>
-                        <a-descriptions-item :span="2" style="width: 50%;">
-                            <template #label>
-                                Number Into Words
-                            </template>
-                            <a-badge status="processing" class="font-bold font-italic" :text="form.numToWords" />
-                        </a-descriptions-item>
-                    </a-descriptions>
-                </a-card>
+                            <a-input v-model:value="form.account" placeholder="Enter here..." />
+                        </a-form-item>
+                        <p class="mt-2 ml-1">
+                            Check Number <span class="text-red-500">*required</span>
+                        </p>
+                        <a-form-item has-feedback :validate-status="error.checkno ? 'error' : ''" :help="error.checkno">
+                            <a-input placeholder="Enter here..." v-model:value="form.checkno" />
+                        </a-form-item>
+                        <p class="mt-2 ml-1">
+                            Check Amount <span class="text-red-500">*required</span>
+                        </p>
+                        <a-form-item has-feedback :validate-status="error.amount ? 'error' : ''" :help="error.amount">
+                            <a-input-number placeholder="Enter here..." style="width: 100%;" v-model:value="form.amount"
+                                @change="handleChange" :formatter="(value) =>
+                                    `₱ ${value}`.replace(
+                                        /\B(?=(\d{3})+(?!\d))/g,
+                                        ','
+                                    )
+                                    " />
+                        </a-form-item>
+                        <a-descriptions size="small" class="mt-4" layout="horizontal" bordered>
+                            <a-descriptions-item :span="2" style="width: 50%;">
+                                <template #label>
+                                    Number Into Words
+                                </template>
+                                <a-badge status="processing" class="font-bold font-italic" :text="form.numToWords" />
+                            </a-descriptions-item>
+                        </a-descriptions>
+                    </a-card>
 
-                <a-card style="width: 100%;" v-if="paymentstat.jv">
-                    <p class="text-center mb-5 font-bold">JV</p>
-                    <p>
-                        *Customer Name
-                    </p>
-                    <a-input style="font-weight: bold;" :value="accname" />
-                </a-card>
-            </a-col>
-        </a-row>
+                    <a-card style="width: 100%;" v-if="paymentstat.jv">
+                        <p class="text-center mb-5 font-bold">JV</p>
+                        <p>
+                            *Customer Name
+                        </p>
+                        <a-input style="font-weight: bold;" :value="accname" />
+                    </a-card>
+                </a-col>
+            </a-row>
+        </a-card>
     </div>
     <div class=" mt-6">
-        <a-button type="primary" @click="submit">
+        <a-button size="large" block type="primary" @click="submit">
             <template #icon>
                 <FastForwardOutlined />
             </template>

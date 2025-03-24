@@ -33,7 +33,6 @@ class AccountingController extends Controller
     }
     public function setupPayment($id)
     {
-
         return inertia('Accounting/Payment/SetupPayment', [
             'record' => $this->accountingservices->getDetialsEveryPayment($id),
         ]);
