@@ -36,6 +36,15 @@
                                 style="margin-left: 10px; background-color: #1b76f8; color:white">
                                 <UndoOutlined />
                             </a-button>
+                            <a-button v-if="record.user_status === 'active'" @click="deactivateButton(record.user_id)"
+                                title="Deactivate User"
+                                style="margin-left: 10px; background-color: #ae2029; color:white">
+                                <StopOutlined />
+                            </a-button>
+                            <a-button v-else style="margin-left: 10px; background-color: #f50; color:white"
+                                @click="deactivateButton(record)" title="Activate User">
+                                <CheckOutlined />
+                            </a-button>
                         </template>
                     </template>
                 </a-table>
@@ -82,17 +91,10 @@
                         </a-select>
                     </a-form-item>
 
-                    <!-- IT Type -->
-                    <a-form-item label="IT Type" v-if="showItType" :validate-status="form.errors.it_type ? 'error' : ''"
-                        :help="form.errors.it_type">
-                        <a-select v-model:value="form.it_type">
-                            <a-select-option :value="1">Corporate IT</a-select-option>
-                            <a-select-option :value="2">Store IT</a-select-option>
-                        </a-select>
-                    </a-form-item>
-
                     <!-- User Role -->
-                    <a-form-item label="User Role" v-if="showUserRole"
+                    <a-form-item v-if="form.usertype == 2 || form.usertype == 3 || form.usertype == 4 || form.usertype == 5 || form.usertype == 6
+                        || form.usertype == 7 || form.usertype == 8 || form.usertype == 9 || form.usertype == 10 || form.usertype == 11
+                        || form.usertype == 12 || form.usertype == 13 || form.usertype == 14" label="User Role"
                         :validate-status="form.errors.user_role ? 'error' : ''" :help="form.errors.user_role">
                         <a-select v-model:value="form.user_role">
                             <a-select-option :value="1">Dept. Manager</a-select-option>
@@ -102,7 +104,7 @@
                     </a-form-item>
 
                     <!-- Store Assigned -->
-                    <a-form-item label="Store Assigned" v-if="showStoreAssigned"
+                    <a-form-item v-if="form.usertype == 7 || form.usertype == 14" label="Store Assigned"
                         :validate-status="form.errors.store_assigned ? 'error' : ''" :help="form.errors.store_assigned">
                         <a-select v-model:value="form.store_assigned">
                             <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
@@ -112,12 +114,20 @@
                     </a-form-item>
 
                     <!-- Retail Group -->
-                    <a-form-item label="Retail Group" v-if="showRetailGroup"
+                    <a-form-item v-if="form.usertype == 8" label="Retail Group"
                         :validate-status="form.errors.retail_group ? 'error' : ''" :help="form.errors.retail_group">
-                        <span>User Group:</span>
                         <a-select v-model:value="form.retail_group">
                             <a-select-option :value="1">Group 1</a-select-option>
                             <a-select-option :value="2">Group 2</a-select-option>
+                        </a-select>
+                    </a-form-item>
+
+                    <!-- IT Type -->
+                    <a-form-item v-if="form.usertype == 12" label="IT Type"
+                        :validate-status="form.errors.it_type ? 'error' : ''" :help="form.errors.it_type">
+                        <a-select v-model:value="form.it_type">
+                            <a-select-option :value="1">Corporate IT</a-select-option>
+                            <a-select-option :value="2">Store IT</a-select-option>
                         </a-select>
                     </a-form-item>
                 </div>
@@ -161,16 +171,6 @@
                         <a-input v-model:value="updateForm.emp_id" type="text" placeholder="Employee_Id" />
                     </a-form-item>
 
-                    <!-- STATUS  -->
-                    <a-form-item label="Status" for="status"
-                        :validate-status="updateForm.errors?.user_status ? 'error' : ''"
-                        :help="updateForm.errors?.user_status">
-                        <a-select v-model:value="updateForm.user_status">
-                            <a-select-option value="active">Active</a-select-option>
-                            <a-select-option value="inactive">Inactive</a-select-option>
-                        </a-select>
-                    </a-form-item>
-
                     <!-- USERTYPE  -->
                     <a-form-item label="Usertype" for="usertype"
                         :validate-status="updateForm.errors?.usertype ? 'error' : ''"
@@ -183,8 +183,10 @@
                     </a-form-item>
 
                     <!-- USER ROLE  -->
-                    <a-form-item label="User Role" v-if="disabledUserRole" for="user_role"
-                        :validate-status="updateForm.errors?.user_role ? 'error' : ''"
+                    <a-form-item label="User Role" v-if="updateForm.usertype == 2 || updateForm.usertype == 3 || updateForm.usertype == 4 || updateForm.usertype == 5 || updateForm.usertype == 6
+                        || updateForm.usertype == 7 || updateForm.usertype == 8 || updateForm.usertype == 9 || updateForm.usertype == 10 || updateForm.usertype == 11
+                        || updateForm.usertype == 12 || updateForm.usertype == 13 || updateForm.usertype == 14"
+                        for="user_role" :validate-status="updateForm.errors?.user_role ? 'error' : ''"
                         :help="updateForm.errors?.user_role">
                         <a-select v-model:value="updateForm.user_role" allow-clear>
                             <a-select-option value=1>Dept. Manager</a-select-option>
@@ -195,8 +197,8 @@
                     </a-form-item>
 
                     <!-- STORE ASSIGNED  -->
-                    <a-form-item label="Store Assigned" v-if="disabledStoreAssigned" for="store_assigned"
-                        :validate-status="updateForm.errors?.store_assigned ? 'error' : ''"
+                    <a-form-item label="Store Assigned" v-if="updateForm.usertype == 7 || updateForm.usertype == 14"
+                        for="store_assigned" :validate-status="updateForm.errors?.store_assigned ? 'error' : ''"
                         :help="updateForm.errors?.store_assigned">
                         <a-select v-model:value="updateForm.store_assigned" allow-clear>
                             <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
@@ -206,7 +208,7 @@
                     </a-form-item>
 
                     <!-- RETAIL GROUP  -->
-                    <a-form-item label="Retail Group" v-if="disabledRetailGroup" for="retail_group"
+                    <a-form-item label="Retail Group" v-if="updateForm.usertype == 8" for="retail_group"
                         :validate-status="updateForm.errors?.retail_group ? 'error' : ''"
                         :help="updateForm.errors?.retail_group">
                         <a-select v-model:value="updateForm.retail_group" allow-clear>
@@ -220,7 +222,7 @@
                     </a-form-item>
 
                     <!-- IT TYPE  -->
-                    <a-form-item label="IT Type" v-if="disabledItType" for="it_type"
+                    <a-form-item label="IT Type" v-if="updateForm.usertype == 12" for="it_type"
                         :validate-status="updateForm.errors?.it_type ? 'error' : ''" :help="updateForm.errors?.it_type">
                         <a-select v-model:value="updateForm.it_type" allow-clear>
                             <a-select-option value=1>
@@ -317,46 +319,6 @@ const handleEmployeeSelect = (selectedValue) => {
     }
 };
 
-// UPDATE USER USERTYPE SHOW HIDE PART
-const showUserRole = computed(() => {
-    return form.value.usertype && (
-        [2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14].includes(Number(form.value.usertype)) || form.value.it_type === '1'
-    );
-});
-
-const disabledUserRole = computed(() => {
-    return [2, '2', 3, '3', 4, '4', 5, '5', 6, '6', 7, '7', 9, '9', 10, '10', 11, '11', 13, '13', 14, '14'].includes(Number(updateForm.value.usertype))
-        || [1, '1'].includes(Number(updateForm.value.it_type));
-}
-);
-
-const showStoreAssigned = computed(() => {
-    return form.value.usertype && (
-        [7, 8, 14].includes(Number(form.value.usertype)) || form.value.it_type === '2'
-    );
-});
-
-const disabledStoreAssigned = computed(() => {
-    return [7, '7', 8, '8', 14, '14'].includes(Number(updateForm.value.usertype)) || [2, '2'].includes(Number(updateForm.value.it_type));
-});
-
-const showRetailGroup = computed(() => {
-    return Number(form.value.usertype) === 8;
-});
-
-const disabledRetailGroup = computed(() => {
-    return [8, '8'].includes(Number(updateForm.value.usertype));
-});
-
-const showItType = computed(() => {
-    return Number(form.value.usertype) === 12;
-});
-
-const disabledItType = computed(() => {
-    return [12, '12'].includes(Number(updateForm.value.usertype));
-});
-
-
 const searchUserValue = ref(props.search); //SEARCH VALUE
 const resetPasswordModal = ref(false); //RESET PASSWORD MODAL
 const addUserModal = ref(false); //ADD USER MODAL
@@ -438,24 +400,13 @@ const searchUser = () => {
 }
 // SAVE USER LOGIC
 const saveNewUser = async () => {
-    form.value.errors = {};
-    if (!value.value) {
-        notification.error({
-            description: 'Please select name first'
+    if (!value.value || !form.value.usertype) {
+        notification.warning({
+            message: 'Warning',
+            description: 'Please fill all required fields'
         });
+        return;
     }
-    const requiredFields = {
-        usertype: "Usertype field is required",
-        user_role: "User Role field is required",
-        store_assigned: "Store Assigned field is required",
-        retail_group: "Retail Group field is required",
-        it_type: "IT Type field is required"
-    }
-    Object.entries(requiredFields).forEach(([field, message]) => {
-        if (!form.value[field]) {
-            form.value.errors[field] = message
-        }
-    });
     try {
         router.post(route('admin.masterfile.user.saveUser'), {
             ...form.value
@@ -478,45 +429,28 @@ const saveNewUser = async () => {
                     addUserModal.value = false;
 
                 } else if (page.props.flash.error) {
-                    notification.warning({
-                        message: 'WARNING',
+                    notification.error({
+                        message: 'Error',
                         description: page.props.flash.error
+
                     });
                     addUserModal.value = true;
-
-
                 }
             }
         }
         );
     } catch (error) {
         console.error("Failed Adding User", error);
+        if (error.response && error.response.status === 422) {
+            notification.warning({
+                message: 'Warning',
+                description: 'Please fill all required fields'
+            });
+        }
     }
 }
 // UPDATE USER LOGIC
 const saveUpdateUser = async () => {
-    updateForm.value.errors = {};
-    if (!updateForm.value.username) {
-        updateForm.value.errors.username = "Username field is required"
-        if (!updateForm.value.firstname) {
-            updateForm.value.errors.firstname = "Firstname field is required"
-        }
-        if (!updateForm.value.lastname) {
-            updateForm.value.errors.lastname = "Lastname field is required"
-        }
-        if (!updateForm.value.emp_id) {
-            updateForm.value.errors.emp_id = "Employee ID field is required"
-        }
-        if (updateForm.value.usertype === '12') {
-            updateForm.value.errors.usertype = "Usertype field is required"
-        }
-        if (!updateForm.value.it_type) {
-            console.log(updateForm.value.it_type);
-            updateForm.value.errors.it_type = "IT Type field is required"
-        }
-        return
-    }
-
     try {
         router.post(route('admin.masterfile.updateUser'), {
             username: updateForm.value.username,
@@ -596,4 +530,39 @@ const resetPasswordData = async () => {
         class: 'test',
     });
 }
+
+
+const deactivateButton = (user_id) => {
+    Modal.confirm({
+        title: 'Confirmation?',
+        icon: createVNode(ExclamationCircleOutlined),
+        content: createVNode(
+            'div',
+            {
+                style: 'color:red;',
+            },
+            'Are you sure to deactivate this user',
+        ),
+        onOk() {
+            router.post(route('admin.deactivateUser'), {
+                id: user_id,
+            }, {
+                onSuccess: (page) => {
+                    if (page.props.flash.success) {
+                        notification.success({
+                            message: 'Success',
+                            description: page.props.flash.success
+                        });
+                    }
+                }
+            });
+
+        },
+        onCancel() {
+            console.log('Cancel');
+        },
+        class: 'test',
+    });
+}
+
 </script>

@@ -117,6 +117,19 @@ class AdminController extends Controller
         }
     }
 
+    public function deactivateUser(Request $request)
+    {
+        $checkStatus = User::where('user_id', $request->id)->first();
+        $status = $checkStatus->user_status === 'active' ? 'inactive' : 'active';
+
+        $checkStatus->update([
+            'user_status' => $status
+        ]);
+        return back()->with([
+            'success' => "Status {$status}d successfully"
+        ]);
+    }
+
     public function index()
     {
         $users = User::count();
@@ -324,33 +337,6 @@ class AdminController extends Controller
     public function updateUser(Request $request)
     {
         // dd($request->all());
-        $request->validate([
-            'username' => 'required',
-            'firstname' => 'required',
-            'lastname' => 'required',
-            'employee_id' => 'required',
-            'usertype' => 'required',
-            'user_role' => [
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->input('usertype'), [2, '2', 3, 4, 5, 6, 7, 9, 10, 11, 13, 14]) || $request->input('it_type') === 1;
-                }),
-            ],
-            'store_assigned' => [
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->input('user_role'), [7, 8, 14]) || $request->input('it_type') === 2;
-                }),
-            ],
-            'retail_group' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('usertype') === 8;
-                }),
-            ],
-            'it_type' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('usertype') === 12;
-                }),
-            ]
-        ]);
         // Check if the data has no changes happen
         $checkUser = User::where('user_id', $request['user_id'])->first();
         if ($checkUser) {
@@ -374,103 +360,69 @@ class AdminController extends Controller
             }
         }
 
-        $userRole = 0;
-        $storeAssign = 0;
-        $retailGroup = null;
-        $itType = null;
+        $validations = [
+            'usertype' => 'required'
+        ];
+        if (in_array($request->usertype, [2, 3, 4, 5, 6, 9, 10, 11, 13, 14])) {
+            $validations['user_role'] = 'required';
+        }
+        if (in_array($request->usertype, [7, 14])) {
+            $validations['store_assigned'] = 'required';
+        }
+        if (in_array($request->usertype, [8])) {
+            $validations['retail_group'] = 'required';
+        }
+        if (in_array($request->usertype, [12])) {
+            $validations['it_type'] = 'required';
+        }
+        $request->validate($validations);
 
-        if (in_array($request->usertype, ['2', 2, '3', 3, '4', 4, '5', 5, '6', 6, '9', 9, '10', 10, '11', 11, '13', 13])) {
-            $userRole = $request->user_role;
-        }
-        if (in_array($request->usertype, [7, '7'])) {
-            $userRole = $request->user_role;
-            $storeAssign = $request->store_assigned;
-        }
-        if (in_array($request->usertype, [8, '8'])) {
-            $storeAssign = $request->store_assigned;
-            $retailGroup = $request->retail_group;
-        }
-        if (in_array($request->usertype, [12, '12'])) {
-            $itType = $request->it_type;
-        }
-        if (in_array($request->it_type, [1, '1'])) {
-            $userRole = $request->user_role;
-            $itType = $request->it_type;
-        }
-        if (in_array($request->it_type, [2, '2'])) {
-            $storeAssign = $request->store_assigned;
-            $itType = $request->it_type;
-        }
-        if (in_array($request->usertype, [14, '14'])) {
-            $userRole = $request->user_role;
-            $storeAssign = $request->store_assigned;
-        }
-
-        $updateUser = User::where('user_id', $request->user_id)->update([
+        User::where('user_id', $request->user_id)->update([
             'username' => $request->username,
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'emp_id' => $request->employee_id,
             'usertype' => $request->usertype,
             'usergroup' => null,
-            'user_status' => $request->status,
-            'user_role' => $userRole,
+            'user_status' => 'active',
+            'user_role' => in_array($request->usertype, [1]) ? 0 : $request->user_role,
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => $storeAssign,
+            'store_assigned' => in_array($request->usertype, [7, 14]) ? $request->store_assigned : 0,
             'date_created' => now(),
             'date_updated' => now(),
             'user_addby' => $request->user()->user_id,
-            'retail_group' => $retailGroup,
-            'it_type' => $itType
+            'retail_group' => in_array($request->usertype, [8]) ? $request->retail_group : null,
+            'it_type' => in_array($request->usertype, [12]) ? $request->it_type : null
         ]);
 
-        if ($updateUser) {
-            return back()->with(
-                'success',
-                'User updated successfully'
-            );
-        }
         return back()->with(
-            'error',
-            'ERROR'
+            'success',
+            'User updated successfully'
         );
     }
 
 
     public function users_save_user(Request $request)
     {
-        // dd($request->all());
-        $request->validate([
-            'username' => 'required',
-            'firstname' => 'required',
-            'lastname' => 'required',
-            'employee_id' => 'required',
-            'usertype' => 'required',
-            'user_role' => [
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->input('usertype'), [2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14]) || $request->input('it_type') === 1;
-                }),
-            ],
-            'store_assigned' => [
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->input('user_role'), [7, 8, 14]) || $request->input('it_type') === 2;
-                }),
-            ],
-            'retail_group' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('usertype') === 8;
-                }),
-            ],
-            'it_type' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('usertype') === 12;
-                }),
-            ]
-        ]);
+        $validations = [
+            'usertype' => 'required'
+        ];
+        if (in_array($request->usertype, [2, 3, 4, 5, 6, 9, 10, 11, 13, 14])) {
+            $validations['user_role'] = 'required';
+        }
+        if (in_array($request->usertype, [7, 14])) {
+            $validations['store_assigned'] = 'required';
+        }
+        if (in_array($request->usertype, [8])) {
+            $validations['retail_group'] = 'required';
+        }
+        if (in_array($request->usertype, [12])) {
+            $validations['it_type'] = 'required';
+        }
+        $request->validate($validations);
 
-        $checkUsername = User::where('username', $request->username)->exists();
-        if ($checkUsername) {
+        if (User::where('username', $request->username)->exists()) {
             return back()->with(
                 'error',
                 "{$request->username} username already exist, please try other username"
@@ -479,14 +431,14 @@ class AdminController extends Controller
 
         $password = Hash::make('GC2015');
 
-        $insertUser = User::create([
+        User::create([
             'username' => $request->username,
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'emp_id' => $request->employee_id,
             'usertype' => $request->usertype,
             'password' => $password,
-            'usergroup' => '',
+            'usergroup' => null,
             'user_status' => 'active',
             'user_role' => $request->user_role,
             'login' => 'no',
@@ -498,15 +450,9 @@ class AdminController extends Controller
             'it_type' => $request->it_type
         ]);
 
-        if ($insertUser) {
-            return back()->with(
-                'success',
-                'User added successfully'
-            );
-        }
         return back()->with(
-            'error',
-            'Failed to add user'
+            'success',
+            'User added successfully'
         );
     }
     public function usersResetPassword(Request $request)
