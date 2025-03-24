@@ -26,11 +26,11 @@ class DocumentBudgetLedgerService extends ExcelWriter
         $this->header = [
             "No.",
             "Ledger No.",
-            "Date.",
-            "Transaction #.",
-            "Transaction Type.",
-            "Debit.",
-            "Credit.",
+            "Date",
+            "Transaction #",
+            "Transaction Type",
+            "Debit",
+            "Credit",
         ];
         $this->legendHeader = [
             "RFBR  - BUDGET ENTRY",

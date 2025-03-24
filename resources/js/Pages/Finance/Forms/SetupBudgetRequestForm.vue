@@ -22,9 +22,9 @@
                 <a-textarea placeholder="Remarks" @change="() => errors.br_remarks = null" :row="4"
                     v-model:value="form.br_remarks" allow-clear show-count />
             </a-form-item>
-            <div class="flex justify-center mt-5">
+            <!-- <div class="flex justify-center mt-5">
                 <ant-upload-image @handle-change="image" />
-            </div>
+            </div> -->
 
         </a-col>
         <a-col :span="15">

@@ -12,7 +12,7 @@
                         <a-input readonly :value="dayjs().format('MMMM, DD YYYY')"></a-input>
                         <div v-if="form.status === '1'">
                             <p class="font-bold ml-2 mt-4">Checked By</p>
-                            <a-select placeholder="Assign Check By" v-model:value="form.checkby" style="width: 100%"
+                            <a-select placeholder="Assign Checked By" v-model:value="form.checkby" style="width: 100%"
                                 :options="optionAssign"></a-select>
                             <p class="font-bold ml-2 mt-4">Approved By</p>
                             <a-select placeholder="Assign Approved" v-model:value="form.appby" style="width: 100%"

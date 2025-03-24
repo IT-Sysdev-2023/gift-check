@@ -5,7 +5,7 @@
             <budget-statistics :title="'Current Budget'" :count="count.budgetCounts.curBudget" />
         </a-col>
         <a-col :span="8">
-            <budget-statistics :title="'Special Gc (Promotional)'" :count="count.budgetCounts.spgc" />
+            <budget-statistics :title="'Special GC (Promotional)'" :count="count.budgetCounts.spgc" />
         </a-col>
         <!-- <a-col :span="8">
             <budget-statistics :title="'DTI GC Deprecated'" :count="count.budgetCounts.dti" />

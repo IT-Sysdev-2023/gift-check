@@ -141,7 +141,7 @@
             <a-col class="gutter-row space-y-5" :span="8">
                 <a-card>
                     <a-statistic
-                        title="Regular Gc Budget"
+                        title="Regular GC Budget"
                         :value="props.regularBudget"
                         :precision="2"
                         style="margin-right: 50px"

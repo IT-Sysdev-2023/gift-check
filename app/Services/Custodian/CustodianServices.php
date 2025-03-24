@@ -149,7 +149,7 @@ class CustodianServices extends FileHandler
             ]);
         } else {
             return redirect()->back()->with([
-                'title' => '404 not Found!',
+                'title' => 'Error!',
                 'status' => 'error',
                 'msg' => 'Oppss! The Barcode ' . $request->barcode . ' not found',
             ]);

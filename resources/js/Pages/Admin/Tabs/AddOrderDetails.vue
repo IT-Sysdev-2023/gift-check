@@ -174,7 +174,7 @@
                         placeholder="Enter Here..."
                     />
                 </a-form-item>
-                <strong>Prepare By.</strong>
+                <strong>Prepared By.</strong>
                 <a-form-item
                     has-feedback
                     :validate-status="form.errors.prep_by ? 'error' : ''"

@@ -38,7 +38,7 @@
                             <template #tab>
                                 <span>
                                     <apple-outlined />
-                                    Denomation Available
+                                    Denomination Available
                                 </span>
                             </template>
                             <a-table :data-source="denomination" :columns="columns" size="small" :pagination="false">

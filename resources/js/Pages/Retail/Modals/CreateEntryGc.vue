@@ -41,7 +41,7 @@
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <span>
-                        <a-typography-text keyboard>Check By</a-typography-text>
+                        <a-typography-text keyboard>Checked By</a-typography-text>
                     </span>
                     <!-- {{assign}} -->
                     <a-select style="width: 100%;" placeholder="Select Assignatory" v-model:value="form.checkby"
