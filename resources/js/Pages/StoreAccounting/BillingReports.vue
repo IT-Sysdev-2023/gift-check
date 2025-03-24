@@ -297,6 +297,7 @@ watchEffect(() => {
                 </a-float-button>
             </div>
         </section>
+        <!-- {{data}} -->
     </AuthenticatedLayout>
 </template>
 <style scoped>
