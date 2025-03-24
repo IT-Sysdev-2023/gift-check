@@ -169,7 +169,7 @@
             <template #icon>
                 <FastForwardOutlined />
             </template>
-            Release Special Gc Payments
+            Release Special GC Payments
         </a-button>
     </div>
 </template>
