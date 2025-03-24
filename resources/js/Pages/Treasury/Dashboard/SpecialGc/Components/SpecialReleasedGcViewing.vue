@@ -18,22 +18,22 @@
                             <a-descriptions size="small" title="Requested Details" layout="horizontal" bordered>
                                 <a-descriptions-item style="width: 50%;" :span="3" label="Requisition No">{{
                                     record.data.spexgc_num
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Date Requested">{{
                                     record.data.spexgc_datereq
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Requested By">{{
                                     record.data.user
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Date Validity">{{
                                     record.data.spexgc_dateneed
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Remarks">{{
                                     record.data.approvedRequest?.reqap_remarks
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item label="Payment Type" :span="2">{{
                                     record.data.paymentTypeFormat
-                                }}</a-descriptions-item>
+                                    }}</a-descriptions-item>
                             </a-descriptions>
                             <a-descriptions size="small" title="Approved Details" class="mt-10" layout="horizontal"
                                 bordered>
@@ -45,13 +45,13 @@
                                 </a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Checked By">{{
                                     record.data.approvedRequest?.reqap_checkedby
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Prepared By">{{
                                     record.data.approvedRequest?.user.full_name
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Remarks">{{
                                     record.data.spexgc_remarks
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Approved By">{{
                                     record.data.approvedRequest
                                         ?.reqap_approvedby
@@ -65,10 +65,10 @@
                                 </a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Remarks">{{
                                     reviewed.reqap_remarks
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Reviewed By">{{
                                     reviewed.user?.full_name
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                             </a-descriptions>
                             <a-descriptions title="Released Details" size="small" class="mt-10" layout="horizontal"
                                 bordered>
@@ -77,13 +77,13 @@
                                 </a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Remarks">{{
                                     released.reqap_remarks
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Received By">{{
                                     record.data.spexgc_receviedby
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                                 <a-descriptions-item :span="3" label="Released By">{{
                                     released.user.full_name
-                                    }}</a-descriptions-item>
+                                }}</a-descriptions-item>
                             </a-descriptions>
                         </a-col>
                     </a-row>
@@ -130,6 +130,9 @@
         </a-card>
         <a-modal :open="isOpen" width="1000px" height="600">
             <iframe :src="pdf" frameborder="0" width="100%" height="600"></iframe>
+            <template #footer>
+                <a-button key="back" @click="handleCancel">Return</a-button>
+            </template>
         </a-modal>
 
     </AuthenticatedLayout>
@@ -167,6 +170,12 @@ const openIframe = ref(false);
 const { openLeftNotification } = onProgress();
 
 const pdf = ref(null)
+
+const handleCancel = () => {
+    isOpen.value = false
+}
+
+
 
 
 const soaPrint = () => {
