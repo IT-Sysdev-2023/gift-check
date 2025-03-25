@@ -2992,7 +2992,7 @@ class StoreAccountingController extends Controller
 
     public function aboutUs(Request $request)
     {
-        return inertia('AboutUs');
+        return inertia('About-Us');
     }
 
     public function userGuide(Request $request)
