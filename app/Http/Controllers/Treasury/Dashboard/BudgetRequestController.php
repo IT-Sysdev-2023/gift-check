@@ -54,6 +54,7 @@ class BudgetRequestController extends Controller
     }
     public function submitBudgetEntry(BudgetRequest $id, Request $request)
     {
+        // dd($request->all());
         return $this->budgetRequestService->submitBudgetEntry($id, $request);
     }
     public function downloadDocument($file)

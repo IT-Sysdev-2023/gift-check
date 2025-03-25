@@ -32,7 +32,7 @@
             <a-input v-model:value="formState.paymentType.accountNumber" />
         </a-form-item>
         <a-form-item
-            label="Check Number:"
+            label="Cheque Number:"
             name="check"
             :validate-status="
                 formState.errors?.['paymentType.checkNumber'] ? 'error' : ''
@@ -45,7 +45,7 @@
             />
         </a-form-item>
         <a-form-item
-            label="Check Amount:"
+            label="Cheque Amount:"
             name="anmount"
             :validate-status="
                 formState.errors?.['paymentType.amount'] ? 'error' : ''
@@ -243,7 +243,7 @@ const paymentTypeOptions = [
     },
     {
         value: "cashcheck",
-        label: "Check and Cash",
+        label: "Cheque and Cash",
     },
     {
         value: "gad",

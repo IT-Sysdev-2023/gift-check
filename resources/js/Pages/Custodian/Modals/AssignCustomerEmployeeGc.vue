@@ -172,7 +172,7 @@ export default {
                 notification['success']({
                     message: 'Success',
                     description:
-                        'Successfully Assigning Customer Employee!',
+                        'Successfully Assigned Customer/Employee Name!',
                     placement: 'topLeft'
                 });
                 this.$emit('assignTemp', this.assignTemp);

@@ -240,7 +240,7 @@ const handleAssign = () => {
         notification['success']({
             message: 'Success',
             description:
-                'Successfully Assigning Customer Employee!',
+                'Successfully Assigned Customer/Employee Name!',
             placement: 'topLeft'
         });
     } else {

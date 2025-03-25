@@ -1085,7 +1085,7 @@ class MarketingController extends Controller
                     return redirect(route('marketing.addPromo.list'));
                 });
             }
-            $response = ['msg' => 'Nice!', 'description' => 'Promo successfully saved', 'type' => 'success'];
+            $response = ['msg' => 'Success!', 'description' => 'Promo successfully saved', 'type' => 'success'];
         }
         return response()->json(['response' => $response]);
     }
@@ -1164,27 +1164,27 @@ class MarketingController extends Controller
                         PromoGc::where('prom_barcode', $barcode)
                             ->update(['pr_stat' => 1]);
                         $response = [
-                            'msg' => 'Nice!',
+                            'msg' => 'Success!',
                             'description' => 'Barcode Has Been Released',
                             'type' => 'success'
                         ];
                     } else {
                         $response = [
-                            'msg' => 'Oops!',
+                            'msg' => 'Error!',
                             'description' => 'Failed to insert into LedgerBudget.',
                             'type' => 'error'
                         ];
                     }
                 } else {
                     $response = [
-                        'msg' => 'Oops!',
+                        'msg' => 'Error!',
                         'description' => 'Denomination not found for the given barcode.',
                         'type' => 'error'
                     ];
                 }
             } else {
                 $response = [
-                    'msg' => 'Oops!',
+                    'msg' => 'Error!',
                     'description' => 'Failed to insert release record.',
                     'type' => 'error'
                 ];
@@ -1322,7 +1322,7 @@ class MarketingController extends Controller
                 if ($this->marketing->handleRequestCancellation($request, $prid)) {
                     return back()->with([
                         'type' => 'success',
-                        'msg' => 'Nice!',
+                        'msg' => 'Success!',
                         'description' => 'Production request successfully cancelled'
                     ]);
                 }
@@ -1447,7 +1447,7 @@ class MarketingController extends Controller
 
         if ($inserted) {
             return back()->with([
-                'msg' => "Nice!",
+                'msg' => "Success!",
                 'description' => "Promo GC Request Successfully Updated",
                 'type' => "success",
             ]);

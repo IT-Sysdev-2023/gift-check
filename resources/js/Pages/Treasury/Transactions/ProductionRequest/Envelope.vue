@@ -77,13 +77,13 @@
                             <a-row>
                                 <a-col :span="8">
                                     <a-statistic
-                                        title="Regular Gc Budget"
+                                        title="Regular GC Budget"
                                         :value="regularBudget"
                                     />
                                 </a-col>
                                 <a-col :span="8">
                                     <a-statistic
-                                        title="Special Gc Budget"
+                                        title="Special GC Budget"
                                         :value="specialBudget"
                                     />
                                 </a-col>

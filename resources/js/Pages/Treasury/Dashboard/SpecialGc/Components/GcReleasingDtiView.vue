@@ -1,54 +1,51 @@
 <template>
     <AuthenticatedLayout>
-        <a-descriptions size="small" title="Dti Releasing Form" layout="vertical" bordered>
-            <a-descriptions-item label="RFSEGC#">{{ record.dti_num }}</a-descriptions-item>
-            <a-descriptions-item label="Department">{{ record.title }}</a-descriptions-item>
-            <a-descriptions-item label="Date and Time Requested">{{ record.dti_datereq }}</a-descriptions-item>
-            <a-descriptions-item label="Date Needed">{{ record.dti_dateneed }}</a-descriptions-item>
-            <a-descriptions-item label="Customer">{{ record.customer }}</a-descriptions-item>
-            <a-descriptions-item label="Payment type">
-                <a-badge status="processing" text="Ar" />
-            </a-descriptions-item>
-            <a-descriptions-item label="Payment Amount">{{ record.totalDenom }}</a-descriptions-item>
-            <a-descriptions-item label="Requested Remarks">{{ record.dti_remarks }}</a-descriptions-item>
-            <a-descriptions-item label="Requested By">{{ record.recby }}</a-descriptions-item>
-            <a-descriptions-item label="Date Approved">{{ record.dti_approveddate }}</a-descriptions-item>
-            <a-descriptions-item label="Approved Document">
-                <a-image style="height: 150px; width: 150px; border-radius: 1rem;" :src="'/storage/' + record.appdocs">
+        <a-row :gutter="[16, 16]">
+            <a-col :span="12">
+                <a-descriptions size="small" title="Dti Releasing Form" layout="horizontal" bordered>
+                    <a-descriptions-item style="width: 50%;" :span="3" label="RFSEGC#">{{ record.dti_num
+                    }}</a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Department">{{ record.title }}</a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Date and Time Requested">{{ record.dti_datereq
+                    }}</a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Date Needed">{{ record.dti_dateneed }}</a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Customer">{{ record.customer }}</a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Payment type">
+                        <a-badge status="processing" text="Ar" />
+                    </a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Payment Amount">{{ record.totalDenom }}</a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Requested Remarks">{{ record.dti_remarks
+                    }}</a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Requested By">{{ record.recby }}</a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Date Approved">{{ record.dti_approveddate
+                    }}</a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Approved Document">
+                        <a-image style="height: 150px; width: 150px; border-radius: 1rem;"
+                            :src="'/storage/' + record.appdocs">
 
-                </a-image>
-            </a-descriptions-item>
-            <a-descriptions-item label="Approved Remarks">{{ record.apremarks }}</a-descriptions-item>
-            <a-descriptions-item label="Approved By">{{ record.approvedby }}</a-descriptions-item>
-            <a-descriptions-item label="Prepared By" :span="3">{{ record.cby }}</a-descriptions-item>
-            <a-descriptions-item label="Total Denomination">
-                <p class="text-xl mt-4">
-                    {{ record.totalDenom }}
-                </p>
-                <br>
-                <a-collapse v-model:activeKey="activeKey">
-                    <a-collapse-panel key="1" header="Click here to view details">
+                        </a-image>
+                    </a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Approved Remarks">{{ record.apremarks }}</a-descriptions-item>
+                    <a-descriptions-item :span="3" label="Approved By">{{ record.approvedby }}</a-descriptions-item>
+                    <a-descriptions-item label="Prepared By" :span="3">{{ record.cby }}</a-descriptions-item>
+                </a-descriptions>
+            </a-col>
+            <a-col :span="12">
+                <a-card>
+                    <div class="flex justify-center">
+
+                        <a-statistic class="text-center" title="Total Denomination" :value="record.totalDenom"
+                            style="margin-right: 50px" />
+
+                    </div>
+                    <br>
+                    <a-card class="text-center mb-2" title="Denomination Details">
                         <a-table size="small" bordered :data-source="dataDenom" :columns="columns">
                         </a-table>
-                    </a-collapse-panel>
-                </a-collapse>
-            </a-descriptions-item>
-        </a-descriptions>
-        <a-card class="mt-2">
-            <a-row :gutter="[16, 16]">
-                <a-col :span="12">
-                    <a-descriptions class="text-center" size="small" title="More Details" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Gc Count" :span="3">{{ record.countBcode
-                            }}</a-descriptions-item>
-                        <a-descriptions-item label="Denomination Total" :span="5">{{ record.totalDenom
-                        }}</a-descriptions-item>
-                        <a-descriptions-item label="Released By" :span="5">{{
-                            page.auth.user.full_name }}</a-descriptions-item>
-                    </a-descriptions>
-                </a-col>
-                <a-col :span="12">
-                    <a-typography-text keyboard>Check By</a-typography-text>
-                    <a-select class="mb-3" placeholder="Select Check By" ref="select" v-model:value="form.checkby"
+                    </a-card>
+
+                    <a-typography-text keyboard>Checked By</a-typography-text>
+                    <a-select class="mb-3" placeholder="Select Checked By" ref="select" v-model:value="form.checkby"
                         style="width: 100%" :options="options"></a-select>
                     <a-typography-text keyboard>Remarks</a-typography-text>
                     <a-textarea class="mb-3" v-model:value="form.remarks" placeholder="Input Remarks..." />
@@ -57,6 +54,23 @@
                     <a-button size="large" class="mt-5" type="primary" block @click="submit">
                         Submit for Releasing
                     </a-button>
+                </a-card>
+            </a-col>
+        </a-row>
+        <a-card class="mt-2">
+            <a-row :gutter="[16, 16]">
+                <a-col :span="12">
+                    <a-descriptions class="text-center" size="small" title="More Details" layout="horizontal" bordered>
+                        <a-descriptions-item style="width: 50%;" label="Gc Count" :span="3">{{ record.countBcode
+                        }}</a-descriptions-item>
+                        <a-descriptions-item label="Denomination Total" :span="5">{{ record.totalDenom
+                            }}</a-descriptions-item>
+                        <a-descriptions-item label="Released By" :span="5">{{
+                            page.auth.user.full_name }}</a-descriptions-item>
+                    </a-descriptions>
+                </a-col>
+                <a-col :span="12">
+
                 </a-col>
             </a-row>
         </a-card>

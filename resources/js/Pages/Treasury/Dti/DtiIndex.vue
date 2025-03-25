@@ -22,8 +22,8 @@
                     <a-col>
                         <a-card class="w-1/2">
                             <p>Upload Image:</p>
-                            <span class="text-red-500">*Required</span>
-                            <div class="flex w-full mt-1">
+                            <span class="text-red-500 text-xs">*Required</span>
+                            <div class="flex w-full">
                                 <ant-upload-multi-image @handle-change="handleImageChange" />
                             </div>
                             <p class="text-red-500 text-center w-full" v-if="formState.errors.file">

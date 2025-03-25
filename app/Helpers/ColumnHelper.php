@@ -553,7 +553,7 @@ class ColumnHelper
 
         ],
         [
-            'title' => 'Prepare By',
+            'title' => 'Prepared By',
             'dataIndex' => 'fullname',
 
         ],
@@ -700,18 +700,18 @@ class ColumnHelper
             'dataIndex' => 'bcheck_barcode',
         ],
         [
-            'title' => 'Denomination.',
+            'title' => 'Denomination',
             'dataIndex' => 'denomination',
 
         ],
         [
-            'title' => 'Date Scanned.',
+            'title' => 'Date Scanned',
             'dataIndex' => 'bcheck_date',
             'key' => 'denom_id'
 
         ],
         [
-            'title' => 'Scanned By.',
+            'title' => 'Scanned By',
             'dataIndex' => 'fullname',
         ],
     ];
@@ -802,11 +802,11 @@ class ColumnHelper
             'dataIndex' => 'full_name',
         ],
         [
-            'title' => 'Denomination.',
+            'title' => 'Denomination',
             'dataIndex' => 'spexgcemp_denom',
         ],
         [
-            'title' => 'Date Approved.',
+            'title' => 'Date Approved',
             'dataIndex' => 'daterel',
         ],
     ];
@@ -840,39 +840,39 @@ class ColumnHelper
             'dataIndex' => 'rec_no',
         ],
         [
-            'title' => 'Date Received.',
+            'title' => 'Date Received',
             'dataIndex' => 'date_rec',
         ],
         [
-            'title' => 'E Requisiton No.',
+            'title' => 'E Requisiton No',
             'dataIndex' => 'e_reqno',
         ],
         [
-            'title' => 'Supplier Name.',
+            'title' => 'Supplier Name',
             'dataIndex' => 'supname',
         ],
         [
-            'title' => 'Received By.',
+            'title' => 'Received By',
             'dataIndex' => 'recby',
         ],
         [
-            'title' => 'Received Type.',
+            'title' => 'Received Type',
             'dataIndex' => 'rectype',
         ],
 
     ];
     public static $purchase_details_columns = [
         [
-            'title' => 'Requisiton No.',
+            'title' => 'Requisition No.',
             'dataIndex' => 'req_no',
             'align' => 'center'
         ],
         [
-            'title' => 'Supplier Name.',
+            'title' => 'Supplier Name',
             'dataIndex' => 'sup_name',
         ],
         [
-            'title' => 'MOP.',
+            'title' => 'MOP',
             'dataIndex' => 'mop',
         ],
         // [
@@ -884,7 +884,7 @@ class ColumnHelper
         //     'dataIndex' => 'pur_date',
         // ],
         [
-            'title' => 'Srr Type.',
+            'title' => 'SRR Type',
             'dataIndex' => 'srr_type',
         ],
         // [

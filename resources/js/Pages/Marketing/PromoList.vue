@@ -310,7 +310,7 @@ export default {
                     dataIndex: "prom_barcode",
                 },
                 {
-                    title: "Denomination.",
+                    title: "Denomination",
                     dataIndex: "denomination",
                 },
                 {

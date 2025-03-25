@@ -8,42 +8,37 @@
         </div>
         <a-row :gutter="[16, 16]">
             <a-col :span="10">
-                <a-alert v-if="errors.scanned" :message="errors.scanned" type="error" show-icon class="mb-2"/>
+                <a-alert v-if="errors.scanned" :message="errors.scanned" type="error" show-icon class="mb-2" />
 
                 <a-descriptions size="small" class="mb-0 text-center" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="Received No.">{{ recnum }}</a-descriptions-item>
                 </a-descriptions>
                 <a-descriptions size="small" class="mb-0 text-center" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="E-Requisition No   ">0{{ reqid
-                        }}</a-descriptions-item>
+                    }}</a-descriptions-item>
                 </a-descriptions>
 
                 <a-descriptions size="small" class="mb-3 text-center" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" label="FAD Receiving Type"> {{ record.srr_type
-                        }}</a-descriptions-item>
+                    }}</a-descriptions-item>
                 </a-descriptions>
-                <a-descriptions size="small" class="mb-3 text-center" layout="horizontal" bordered>
-                    <a-descriptions-item style="width: 50%;" label="Received as">
-                        <a-form>
-                            <a-form-item has-feedback :help="errors.select"
-                                :validate-status="errors.select ? 'error' : ''">
-                                <a-select ref="select" placeholder="Select Type" v-model:value="select"
-                                    style="width: 100%" @focus="focus" @change="handleChange">
-                                    <a-select-option v-if="ifPartial()" value="whole">Whole</a-select-option>
-                                    <a-select-option v-if="!ifPartial()" value="partial">Partials</a-select-option>
-                                    <a-select-option v-if="ifPartial()" value="final">Final</a-select-option>
-                                </a-select>
-                            </a-form-item>
-                        </a-form>
-                    </a-descriptions-item>
-                </a-descriptions>
+
+                <a-typography-text keyboard>Select Type</a-typography-text><span class="text-red-500">*required</span>
+                <a-form-item has-feedback :help="errors.select" :validate-status="errors.select ? 'error' : ''">
+                    <a-select ref="select" placeholder="Select Type" v-model:value="select" style="width: 100%"
+                        @focus="focus" @change="handleChange">
+                        <a-select-option v-if="ifPartial()" value="whole">Whole</a-select-option>
+                        <a-select-option v-if="!ifPartial()" value="partial">Partials</a-select-option>
+                        <a-select-option v-if="ifPartial()" value="final">Final</a-select-option>
+                    </a-select>
+                </a-form-item>
                 <a-card>
                     <a-tabs v-model:activeKey="denomKey" size=small>
                         <a-tab-pane key="1">
                             <template #tab>
                                 <span>
                                     <apple-outlined />
-                                    Denomation Available
+                                    Denomination Available
                                 </span>
                             </template>
                             <a-table :data-source="denomination" :columns="columns" size="small" :pagination="false">

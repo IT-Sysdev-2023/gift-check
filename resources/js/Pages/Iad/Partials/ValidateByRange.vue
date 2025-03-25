@@ -1,11 +1,11 @@
 <template>
-    <a-modal title="Validate By Range" style="width: 45%;" :footer="false" :mask-closable="false" @cancel="cancel">
+    <a-modal title="Validate By Range" style="width: 50%;" :footer="false" :mask-closable="false" @cancel="cancel">
         <div class="mt-5 mb-4">
             <a-descriptions size="small" class="mb-1 text-center" layout="horizontal" bordered>
-                <a-descriptions-item label="Received No.">{{ recnum }}</a-descriptions-item>
+                <a-descriptions-item style="width: 50%" label="Received No.">{{ recnum }}</a-descriptions-item>
             </a-descriptions>
             <a-descriptions size="small" class="mb-3 text-center" layout="horizontal" bordered>
-                <a-descriptions-item label="Date">{{ date }}</a-descriptions-item>
+                <a-descriptions-item style="width: 50%" label="Date">{{ date }}</a-descriptions-item>
             </a-descriptions>
 
             <div v-if="response.status">
@@ -18,7 +18,7 @@
                         <a-typography-text keyboard>Barcode Start:</a-typography-text>
                         <a-form-item has-feedback :help="errors.barcodeStart"
                             :validate-status="form.barcodeStart?.length === 13 ? 'success' : errors.barcodeStart ? 'error' : ''">
-                            <a-input v-model:value="form.barcodeStart" size="large"  @keyup.enter="validateRange"
+                            <a-input-number @change="() => errors.barcodeStart = ''" class="p-1 pt-2 pb-2 text-3xl" style="width: 100%" v-model:value="form.barcodeStart" size="large"  @keyup.enter="validateRange"
                                 placeholder="Start of Barcode here.." show-count allow-clear @keypress="handleKeyPress">
                                 <template #prefix>
                                     <PaperClipOutlined />
@@ -28,7 +28,7 @@
                                         <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                                     </a-tooltip>
                                 </template>
-                            </a-input>
+                            </a-input-number>
                         </a-form-item>
 
                     </a-input-group>
@@ -38,8 +38,9 @@
                         <a-typography-text keyboard>Barcode End:</a-typography-text>
                         <a-form-item :help="errors.barcodeEnd" has-feedback
                             :validate-status="form.barcodeEnd?.length === 13 ? 'success' : errors.barcodeEnd ? 'error' : ''">
-                            <a-input v-model:value="form.barcodeEnd" @keyup.enter="validateRange" size="large"
+                            <a-input-number class="p-1 pt-2 pb-2 text-3xl" style="width: 100%" v-model:value="form.barcodeEnd" @keyup.enter="validateRange" size="large"
                                 placeholder="End of Barcode here.." show-count allow-clear
+                                @change="() => errors.barcodeEnd = ''"
                                 :disabled="form.barcodeStart === null || form.barcodeStart.length <= 0"
                                 @keypress="handleKeyPress">
                                 <template #prefix>
@@ -50,7 +51,7 @@
                                         <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                                     </a-tooltip>
                                 </template>
-                            </a-input>
+                            </a-input-number>
                         </a-form-item>
                     </a-input-group>
                 </a-col>
@@ -65,7 +66,7 @@
                 </a-col>
                 <a-col :span="12">
                     <div class="mt-2 flex justify-between">
-                        <a-button block type="primary" @click="validateRange" :loading="form.processing"
+                        <a-button size="large" block type="primary" @click="validateRange" :loading="form.processing"
                             :disabled="(form.barcodeStart === null || form.barcodeEnd === null) || (form.barcodeEnd == '' || form.barcodeStart == '')">
                             <template #icon>
                                 <SaveOutlined />
