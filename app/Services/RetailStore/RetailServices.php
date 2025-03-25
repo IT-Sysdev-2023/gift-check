@@ -327,7 +327,10 @@ class RetailServices
         $isRevalidateGC = false;
         $verifyGc = false;
 
-        if (Gc::where('barcode_no', $request->barcode)->where('status', '!=', 'inactive')->exists()) {
+        if (
+            Gc::where('barcode_no', $request->barcode)->where('status', null)->exists() ||
+            Gc::where('barcode_no', $request->barcode)->where('status', '')->exists()
+        ) {
             if (InstitutTransactionsItem::where('instituttritems_barcode', $request->barcode)->exists()) {
                 $found = true;
                 $gctype = 1;

@@ -24,6 +24,9 @@ class SpecialExternalGcRequestController extends Controller
     }
     public function approvedGc(Request $request)
     {
+        // dd();
+        $request->session()->forget("scanReviewGC");
+
         $data = $this->specialExternalGcService->approvedGc($request);
         // dd($data);
         return inertia('Iad/Dashboard/ApprovedGcTable', [
