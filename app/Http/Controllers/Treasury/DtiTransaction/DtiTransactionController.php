@@ -78,7 +78,7 @@ class DtiTransactionController extends Controller
     {
         return inertia('Treasury/Dti/DtiPendingRequest', [
             'records' => $this->getDtiPendingGcRequest(),
-            'title' => 'Dti Pending Request'
+            'title' => 'DTI Pending Request'
         ]);
     }
 
@@ -87,7 +87,7 @@ class DtiTransactionController extends Controller
         return inertia('Treasury/Dti/DtiApprovedRequestView', [
             'data' => $this->dtiApprovedRequestView($request),
             'searchValue' => $request->search,
-            'title' => 'Dti List View'
+            'title' => 'DTI List View'
         ]);
     }
     // dti approved part
@@ -96,7 +96,7 @@ class DtiTransactionController extends Controller
         // dd($this->dtiApprovedViewList($request));
         return inertia('Treasury/Dti/DtiApprovedView', [
             'data' => $this->dtiApprovedViewList($request),
-            'title' => 'Dti Approved View'
+            'title' => 'DTI Approved View'
         ]);
     }
     //dti released part
@@ -105,7 +105,7 @@ class DtiTransactionController extends Controller
         return inertia('Treasury/Dti/DtiReleasedGc', [
             'data' => $this->dtiReleasedGcView($request),
             'search' => $request->search,
-            'title' => 'Dti Released GC'
+            'title' => 'DTI Released GC'
         ]);
     }
 
@@ -113,7 +113,7 @@ class DtiTransactionController extends Controller
     {
         return inertia('Treasury/Dti/DtiReleasedView', [
             'data' => $this->dtiReleasedViewList($request),
-            'title' => 'Dti Released View'
+            'title' => 'DTI Released View'
         ]);
     }
 
@@ -139,7 +139,7 @@ class DtiTransactionController extends Controller
             'total' => $denom->sum('subtotal'),
             'denom' => $denom,
             'docs' => $documents,
-            'title' => 'Dti Edit Request View'
+            'title' => 'DTI Edit Request View'
         ]);
     }
     public function dtiUpdateRequest(Request $request)

@@ -2,7 +2,7 @@
     <AuthenticatedLayout>
         <a-card>
             <a-descriptions title="Department of Trade and Industry Special GC" size="small" bordered
-                :column="{ xs: 1, sm: 1,  }" :labelStyle="{ fontWeight: 'bold', width: '150px' }">
+                :column="{ xs: 1, sm: 1,w: 1/2  }" :labelStyle="{ fontWeight: 'bold', width: '20%' }">
 
                 <a-descriptions-item label="Transaction No:">
                     <span>{{ transNo }}</span>
@@ -21,35 +21,35 @@
                 <div class="mt-2">
                     <a-col>
                         <a-card class="w-1/2">
-                            <p>Upload Image:</p>
-                            <span class="text-red-500 text-xs">*Required</span>
+                            <p>Upload Image <span class="text-red-500 text-xs">*Required</span></p>
                             <div class="flex w-full">
                                 <ant-upload-multi-image @handle-change="handleImageChange" />
                             </div>
-                            <p class="text-red-500 text-center w-full" v-if="formState.errors.file">
+                            <p class="text-red-500 " v-if="formState.errors.file">
                                 {{ formState.errors.file }}
                             </p>
                             <div class="mt-2">
                                 <a-typography-text  class="mt-5">Select Date: </a-typography-text>
-                                <span class="text-red-500">*Required</span>
+                                <span class="text-red-500 text-xs">*Required</span>
                                   <a-date-picker size="medium" @change="handleChangeDatePicker"
-                                    :disabled-date="disabledDate" style="width: 85%;" />
+                                    :disabled-date="disabledDate" style="width: 100%;" />
                                 <p class="text-red-500" v-if="formState.errors.date">
                                     {{ formState.errors.date }}
                                 </p>
                             </div>
                             <div class="mt-2">
-                                <a-typography-text class="mt-5" style="color:black" >Remarks:  </a-typography-text><span class="text-red-500">*Required</span>
+                                <a-typography-text class="mt-5" style="color:black" >Remarks:  </a-typography-text>
+                                <span class="text-red-500 text-xs">*Require</span>
                                 <a-textarea :rows="2" placeholder="Remarks" v-model:value="formState.remarks"
-                                    class="mb-1" style="width: 89%;" />
-                                <p class="text-red-500" v-if="formState.errors.remarks">
+                                    class="mb-1" style="width: 100%;" />
+                                <p class="text-red-500 text-xs" v-if="formState.errors.remarks">
                                     {{ formState.errors.remarks }}
                                 </p>
                             </div>
 
                             <ant-form-nest-item :form="formState" />
                             <div class="flex justify-end">
-                                <a-button size="medium" class="mt-2" type="primary" block html-type="submit">
+                                <a-button size="medium"  type="primary" block html-type="submit">
                                     SUBMIT REQUEST
                                 </a-button>
                             </div>
