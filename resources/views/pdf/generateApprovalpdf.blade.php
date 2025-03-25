@@ -116,7 +116,7 @@
         <div style="margin-left: 20px;">
             <div style="text-align: center;">{{$signitures['preparedBy']}}</div>
             <hr>
-            <div style="text-align: center;">Signiture over Printed Name</div>
+            <div style="text-align: center;">Signature over Printed Name</div>
         </div>
 
         <div style="visibility: hidden">
@@ -135,7 +135,7 @@
         <div style="margin-left: 20px;">
             <div style="text-align: center;">{{$signitures['checkedBy']}}</div>
             <hr>
-            <div style="text-align: center;">Signiture over Printed Name</div>
+            <div style="text-align: center;">Signature over Printed Name</div>
         </div>
         <div>
             Approved By:
@@ -143,7 +143,7 @@
         <div style="margin-left: 20px;">
             <div style="text-align: center;">{{$signitures['approvedBy']}}</div>
             <hr>
-            <div style="text-align: center;">Signiture over Printed Name</div>
+            <div style="text-align: center;">Signature over Printed Name</div>
         </div>
     </div>
 </body>

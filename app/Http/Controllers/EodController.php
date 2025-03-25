@@ -7,6 +7,7 @@ use App\Http\Resources\InstitutPaymentResource;
 use App\Jobs\EodScheduler;
 use App\Models\InstitutEod;
 use App\Models\InstitutPayment;
+use App\Models\Store;
 use App\Models\StoreEod;
 use App\Models\StoreVerification;
 use App\Services\Eod\EodServices;
@@ -23,28 +24,10 @@ class EodController extends Controller
     }
     public function eodVerifiedGc()
     {
-
-        $driveLetter = 'Z:';
-        $networkPath = '\\\\172.16.43.166\\Gift';
-        $username = '"New User"'; // Enclose in quotes if username contains spaces
-        $password = 'san'; // Enclose in quotes if password contains special characters
-
-        // Unmap first to avoid conflicts
-        exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
-
-        // Map the drive
-        $command = "C:\\Windows\\System32\\net.exe use $driveLetter $networkPath /user:$username $password /persistent:yes 2>&1";
-
-        exec($command, $output, $return_var);
-
-        if ($return_var == 0) {
-            return inertia('Eod/VerifiedGc', [
-                'record' => $this->eodServices->getVerifiedFromStore(),
-                'columns' => ColumnHelper::$eod_columns,
-            ]);
-        } else {
-            return inertia('ErrorInServer');
-        }
+        return inertia('Eod/VerifiedGc', [
+            'record' => $this->eodServices->getVerifiedFromStore(),
+            'columns' => ColumnHelper::$eod_columns,
+        ]);
     }
 
 

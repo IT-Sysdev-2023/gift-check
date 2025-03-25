@@ -322,12 +322,12 @@ class RetailServices
 
     public function submitVerify($request)
     {
-
         $found = false;
         $isRevalidateGC = false;
         $verifyGc = false;
 
         if (Gc::where('barcode_no', $request->barcode)->where('status', '!=', 'inactive')->exists()) {
+
             if (InstitutTransactionsItem::where('instituttritems_barcode', $request->barcode)->exists()) {
                 $found = true;
                 $gctype = 1;
@@ -876,4 +876,6 @@ class RetailServices
         ])->setPaper('letter');
         return $pdf;
     }
+
+   
 }

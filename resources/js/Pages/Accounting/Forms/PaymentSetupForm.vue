@@ -164,6 +164,7 @@
             </a-row>
         </a-card>
     </div>
+    <!-- {{  form.checked }} -->
     <div class=" mt-6">
         <a-button size="large" block type="primary" @click="submit">
             <template #icon>

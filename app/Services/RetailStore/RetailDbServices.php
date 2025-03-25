@@ -6,6 +6,7 @@ use App\Helpers\NumberHelper;
 use App\Models\ApprovedGcrequest;
 use App\Models\LedgerCheck;
 use App\Models\LedgerStore;
+use App\Models\Store;
 use App\Models\StoreReceived;
 use App\Models\StoreReceivedGc;
 use App\Models\StoreVerification;
@@ -149,8 +150,12 @@ class RetailDbServices
     public function createtextfile($request, $data)
     {
 
+        $st = Store::where('store_id', $request->user()->store_assigned)->first();
+
+        $networkPath =  $st->store_textfile_ip;
+
         // $filePath = storage_path('app/public/cfstextfiles/' . $request->barcode . $data['tfilext']);
-        $filePath = '\\\172.16.43.166\\Gift\\' . $request->barcode . $data['tfilext'];
+        $filePath =  $networkPath . $request->barcode . $data['tfilext'];
 
         $content = "000," . $request->customer . ",0," . $data['customer']->full_name . "\n";
         $content .= "001," . $data['denom'] . "\n";
@@ -171,6 +176,7 @@ class RetailDbServices
     }
     public function createtextfileSecondaryPath($request, $data)
     {
+
 
         $filePath = '\\\172.16.43.166\\Gift\\' . $request->barcode . $data['tfilext'];
 

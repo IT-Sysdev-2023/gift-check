@@ -98,17 +98,12 @@
             </a-col>
             <a-col class="gutter-row space-y-5" :span="8">
                 <a-card>
-<<<<<<< HEAD
-                    <a-statistic title="Regular Gc Budget" :value="props.regularBudget" :precision="2"
-                        style="margin-right: 50px">
-=======
                     <a-statistic
                         title="Regular GC Budget"
                         :value="props.regularBudget"
                         :precision="2"
                         style="margin-right: 50px"
                     >
->>>>>>> 31710ea72f6bf10b82e52fd5fca2c708e04755bb
                         <template #prefix>
                             <FireOutlined twoToneColor="#3f8600" />
                         </template>

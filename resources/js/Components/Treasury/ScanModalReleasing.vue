@@ -8,7 +8,7 @@
         @ok="onSubmitBarcode"
     >
         <a-descriptions class="mt-5">
-            
+
             <a-descriptions-item
                 label="Scan Mode"
                 :labelStyle="{ fontWeight: 'bold' }"
@@ -26,7 +26,7 @@
             <a-form-item
                 v-if="!scanSwitch"
                 label="Barcode"
-               
+
             >
                 <a-input-number
                     :maxlength="13"
@@ -42,7 +42,7 @@
                 <a-col :span="12"
                     ><a-form-item
                         label="Barcode Start"
-                       
+
                     >
                         <a-input-number
                             :maxlength="13"
@@ -56,7 +56,7 @@
                 <a-col :span="12">
                     <a-form-item
                         label="Barcode End"
-                       
+
                     >
                         <a-input-number
                             :maxlength="13"

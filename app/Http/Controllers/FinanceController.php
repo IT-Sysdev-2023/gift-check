@@ -786,8 +786,9 @@ class FinanceController extends Controller
                         }
                     });
 
+
                     $gcType = $reqType['spexgc_type'] == '2' ? 'External' : 'Internal';
-                    $dataTable = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', 22)->get();
+                    $dataTable = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)->get();
                     $requestData = $request->data[0];
                     $paymentType = $request->paymentType;
                     $pdf = $this->financeService->generateApprovalpdf($gcType, $dataTable, $requestData, $paymentType);

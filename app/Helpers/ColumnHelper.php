@@ -933,31 +933,31 @@ class ColumnHelper
 
         return Collection::make([
             [
-                'title' => 'RFPROM #.',
+                'title' => 'RFPROM #',
                 'dataIndex' => 'req_no',
             ],
             [
-                'title' => 'Date Requested.',
+                'title' => 'Date Requested',
                 'dataIndex' => 'date_req',
             ],
             [
-                'title' => 'Date Needed.',
+                'title' => 'Date Needed',
                 'dataIndex' => 'date_needed',
             ],
             [
-                'title' => 'Total Gc.',
+                'title' => 'Total Gc',
                 'dataIndex' => 'total',
             ],
             [
-                'title' => 'Recommended By.',
+                'title' => 'Recommended By',
                 'dataIndex' => 'approved_by',
             ],
             [
-                'title' => 'Requested By.',
+                'title' => 'Requested By',
                 'dataIndex' => 'user',
             ],
             $isPending ? [
-                'title' => 'Action.',
+                'title' => 'Action',
                 'dataIndex' => 'open',
                 'align' => 'center'
             ] : null,
