@@ -24,10 +24,11 @@
         
         </a-descriptions>
     </div>
-
+    
+    <div class="flex flex-col gap-4">
         <div class="border border-gray-300 rounded-lg p-4 shadow-md bg-white">
             <a-descriptions bordered :column="1" title="Approved Budget Details" > 
-            <a-descriptions bordered style="margin-top: 20px" :column="1">
+            <!-- <a-descriptions bordered style="margin-top: 20px" :column="1"> -->
         
             <a-descriptions-item label="Date Approved">{{data.abr?.approved_at }}</a-descriptions-item>
 
@@ -46,10 +47,10 @@
         <a-descriptions-item label="Approved By" :span="2">{{  data.abr?.approved_by }}</a-descriptions-item>
         <a-descriptions-item label="Checked By">{{ data.abr?.checked_by}}</a-descriptions-item>
         <a-descriptions-item label="Prepared By">{{data.abr?.user_prepared_by.full_name }}</a-descriptions-item>
-    </a-descriptions>
-</a-descriptions>
-</div>
-</div>
+      </a-descriptions>
+    </div>
+   </div>
+  </div>
 </template>
 
 <script>
