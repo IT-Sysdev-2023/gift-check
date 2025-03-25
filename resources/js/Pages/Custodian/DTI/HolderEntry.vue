@@ -103,11 +103,11 @@
                 <a-row :gutter="[16, 16]">
                     <a-col :span="12">
                         <a-form-item>
-                            <a-typography-text keyboard>Last Name</a-typography-text><span class="text-red-500">*Required</span>
+                            <a-typography-text keyboard>Last Name</a-typography-text><span class="text-red-500 text-xs">*Required</span>
                             <a-input required placeholder="This field is required" v-model:value="holderData.lname" />
                         </a-form-item>
                         <a-form-item>
-                            <a-typography-text keyboard>First Name</a-typography-text><span class="text-red-500">*Required</span>
+                            <a-typography-text keyboard>First Name</a-typography-text><span class="text-red-500 text-xs">*Required</span>
                             <a-input placeholder="This field is required" v-model:value="holderData.fname" />
                         </a-form-item>
                         <a-form-item>
@@ -121,17 +121,17 @@
                             <a-input placeholder="This field is required" v-model:value="holderData.ext" />
                         </a-form-item>
                         <a-form-item>
-                            <a-typography-text keyboard>Address</a-typography-text><span class="text-red-500">*Required</span>
+                            <a-typography-text keyboard>Address</a-typography-text><span class="text-red-500 text-xs">*Required</span>
                             <a-input placeholder="Enter Here.." v-model:value="holderData.address" />
                         </a-form-item>
                         <a-form-item>
-                            <a-typography-text keyboard>Voucher</a-typography-text><span class="text-red-500">*Required</span>
+                            <a-typography-text keyboard>Voucher</a-typography-text><span class="text-red-500 text-xs">*Required</span>
                             <a-input placeholder="This field is required" v-model:value="holderData.voucher" />
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-form-item>
-                    <a-typography-text keyboard>Business Unit</a-typography-text><span class="text-red-500">*Required</span>
+                    <a-typography-text keyboard>Business Unit</a-typography-text><span class="text-red-500 text-xs">*Required</span>
                     <a-select placeholder="This field is required" ref="select" v-model:value="holderData.bu"
                         style="width: 100%">
                         <a-select-option v-for="(bu, key) in bunit" :key="key" :value="bu.name">{{ bu.name
@@ -240,7 +240,7 @@ const handleAssign = () => {
         notification['success']({
             message: 'Success',
             description:
-                'Successfully Assigning Customer Employee!',
+                'Successfully Assigned Customer/Employee Name!',
             placement: 'topLeft'
         });
     } else {

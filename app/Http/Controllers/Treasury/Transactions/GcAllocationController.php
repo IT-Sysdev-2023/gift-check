@@ -81,7 +81,7 @@ class GcAllocationController extends Controller
                 });
             });
         });
-        return redirect()->back()->with('success', 'Success mate!');
+        return redirect()->back()->with('success', 'Successfully Submitted!');
 
 
     }

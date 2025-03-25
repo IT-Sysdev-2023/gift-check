@@ -16,7 +16,9 @@ use Illuminate\Support\Facades\Date;
 
 class EodController extends Controller
 {
-    public function __construct(public EodServices $eodServices) {}
+    public function __construct(public EodServices $eodServices)
+    {
+    }
     //
     public function index()
     {

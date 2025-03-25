@@ -117,6 +117,7 @@ class SpecialGcRequestController extends Controller
 
     public function releasingGc(Request $request)
     {
+        // dd();
         $promo = $request->has('promo') ? $request->promo : '*';
 
         $record = $this->specialGcPaymentService->releasingGc($promo);
@@ -228,7 +229,7 @@ class SpecialGcRequestController extends Controller
                 $lnum = $l ? $l + 1 : 1;
 
                 //external
-                if ($request->promo === '0') {
+                if ($request->promo === '0' && $request['paymentType'] != 4) {
                     LedgerBudget::create([
                         'bledger_no' => $lnum,
                         'bledger_trid' => $id,
@@ -248,15 +249,15 @@ class SpecialGcRequestController extends Controller
                     ]);
                 }
 
-                if ($request['paymentType'] == 4) {
-                    LedgerSpgc::create([
-                        'spgcledger_no' => $lnum,
-                        'spgcledger_trid' => $id,
-                        'spgcledger_datetime' => now(),
-                        'spgcledger_type' => 'RFGCSEGCREL',
-                        'spgcledger_debit' => $total,
-                    ]);
-                }
+                // if ($request['paymentType'] == 4) {
+                //     LedgerSpgc::create([
+                //         'spgcledger_no' => $lnum,
+                //         'spgcledger_trid' => $id,
+                //         'spgcledger_datetime' => now(),
+                //         'spgcledger_type' => 'RFGCSEGCREL',
+                //         'spgcledger_debit' => $total,
+                //     ]);
+                // }
 
 
                 return redirect()->back()->with('success', 'Successfully Submitted');

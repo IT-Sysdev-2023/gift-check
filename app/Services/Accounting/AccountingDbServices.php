@@ -77,8 +77,7 @@ class AccountingDbServices
 
     public function insertIntoLedgerBudget($request)
     {
-        $denom = $this->totalEnternalRequest($request);
-
+        $total = collect($request->checked)->sum('spexgcemp_denom');
         $ledgerNumber = $this->getLedgerNumber();
 
         LedgerBudget::create([
@@ -86,7 +85,7 @@ class AccountingDbServices
             'bledger_trid' => $request->id,
             'bledger_datetime' => now(),
             'bledger_type' => 'RFGCSEGCPAYMENT',
-            'bdebit_amt' => $denom->total,
+            'bdebit_amt' => $total,
             'bledger_typeid' => '0',
             'bledger_group' => '0',
             'bcredit_amt' => '0.00',
@@ -219,7 +218,7 @@ class AccountingDbServices
 
     public function insertIntoLedgerBudgetDtiNew($request)
     {
-        $denom = $this->totalEnternalRequestDti($request);
+        $total = collect($request->checked)->sum('dti_denom');
 
         $ledgerNumber = $this->getLedgerNumber();
 
@@ -228,7 +227,7 @@ class AccountingDbServices
             'bledger_trid' => $request->id,
             'bledger_datetime' => now(),
             'bledger_type' => 'RFGCSEGCPAYMENT',
-            'bdebit_amt' => $denom->total,
+            'bdebit_amt' => $total,
             'bledger_typeid' => '0',
             'bledger_group' => '0',
             'bcredit_amt' => '0.00',
