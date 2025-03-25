@@ -546,6 +546,7 @@ class FinanceService extends FileHandler
     public function generateApprovalpdf($gcType, $dataTable, $requestData, $paymentType)
     {
         $data = $dataTable;
+        
         $signitures = [
             'preparedBy' => ucfirst($requestData['preparedby_firstname']) . ' ' . ucfirst($requestData['preparedby_lastname']),
             'checkedBy' => ucfirst($requestData['checker_first']) . ' ' . ucfirst($requestData['checker_lastname']),

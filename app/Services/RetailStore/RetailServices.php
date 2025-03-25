@@ -322,7 +322,6 @@ class RetailServices
 
     public function submitVerify($request)
     {
-
         $found = false;
         $isRevalidateGC = false;
         $verifyGc = false;
@@ -879,4 +878,6 @@ class RetailServices
         ])->setPaper('letter');
         return $pdf;
     }
+
+
 }

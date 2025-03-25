@@ -108,8 +108,9 @@ class EodServices extends FileHandler
 
             $store->each(function ($item) use (&$txtfiles_temp, &$notFoundGC, &$error, &$sfiles, $allf) {
 
-                // $ip = $this->getStoreIp($item->vs_store);
-                $ip = '\\\172.16.43.166\Gift\\';
+                $ip = $this->getStoreIp($item->vs_store).'\\';
+                // $ip = '\\\172.16.43.166\Gift\\';
+                // dd($ip);
 
                 $quickCheck = collect(File::files($ip));
 

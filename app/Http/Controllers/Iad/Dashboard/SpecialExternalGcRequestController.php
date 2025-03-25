@@ -24,9 +24,7 @@ class SpecialExternalGcRequestController extends Controller
     }
     public function approvedGc(Request $request)
     {
-        // dd();
         $request->session()->forget("scanReviewGC");
-
         $data = $this->specialExternalGcService->approvedGc($request);
         // dd($data);
         return inertia('Iad/Dashboard/ApprovedGcTable', [
@@ -71,7 +69,7 @@ class SpecialExternalGcRequestController extends Controller
 
     public function viewApprovedGcRecord(Request $request, SpecialExternalGcrequest $id)
     {
-
+        // $sessionName = 'scanReviewGC';
         $gcHolder = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id->spexgc_id)->get();
         $total = $gcHolder->count();
         $col = ColumnHelper::$gcHolder;

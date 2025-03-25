@@ -1,4 +1,5 @@
 <template>
+     <!-- {{  record[0].spexgc_paymentype }} -->
     <a-descriptions size="small" layout="horizontal" bordered>
         <a-descriptions-item style="width: 50%;" label="GC Request">{{ record[0]?.spexgc_num }}</a-descriptions-item>
     </a-descriptions>
@@ -23,10 +24,10 @@
             }}</a-descriptions-item>
     </a-descriptions>
     <a-descriptions size="small" layout="horizontal" bordered>
-        <a-descriptions-item style="width: 50%;" label="Payment Type">{{ record[0]?.spexgc_type ? 'Cash' :
-            'AR' }}</a-descriptions-item>
+
+        <a-descriptions-item style="width: 50%;" label="Payment Type">{{ record[0]?.type }}</a-descriptions-item>
     </a-descriptions>
-    <a-descriptions size="small" layout="horizontal" bordered>
+    <a-descriptions v-if="record[0]?.type !== 'AR'" size="small" layout="horizontal" bordered>
         <a-descriptions-item style="width: 50%;" label="Amount Paid">{{ record[0]?.spexgc_payment
             }}</a-descriptions-item>
     </a-descriptions>

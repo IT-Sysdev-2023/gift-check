@@ -252,8 +252,7 @@ class AccountingDbServices
 
     public function insertInstitutionalDtiPayment($request)
     {
-        // dd($)
-
+    
         $instpayment = 0;
 
         if ($this->instituteLedgerNumberDti() > $this->instituteLedgerNumber()) {

@@ -786,6 +786,7 @@ class FinanceController extends Controller
                         }
                     });
 
+
                     $gcType = $reqType['spexgc_type'] == '2' ? 'External' : 'Internal';
                     $dataTable = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $id)->get();
                     $requestData = $request->data[0];

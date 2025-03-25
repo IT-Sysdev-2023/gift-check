@@ -7,6 +7,7 @@ use App\Http\Resources\InstitutPaymentResource;
 use App\Jobs\EodScheduler;
 use App\Models\InstitutEod;
 use App\Models\InstitutPayment;
+use App\Models\Store;
 use App\Models\StoreEod;
 use App\Models\StoreVerification;
 use App\Services\Eod\EodServices;
