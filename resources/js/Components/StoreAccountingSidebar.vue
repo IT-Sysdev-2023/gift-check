@@ -131,14 +131,18 @@
             Generated Reports</Link>
         </span>
     </a-menu-item>
-    <a-menu-item>
+
+    <!-- THIS BUTTON IS TRANSFERRED  -->
+
+    <!-- <a-menu-item>
         <MoneyCollectOutlined />
         <span>
             <Link :href="route('storeaccounting.billing_reports')">
             Billing
             </Link>
         </span>
-    </a-menu-item>
+    </a-menu-item> -->
+
 </template>
 <script setup lang="ts">
 import { PageWithSharedProps } from "@/types";

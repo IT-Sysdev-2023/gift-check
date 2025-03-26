@@ -541,7 +541,7 @@ const deactivateButton = (user_id) => {
             {
                 style: 'color:red;',
             },
-            'Are you sure to deactivate this user',
+            'Are you sure to update status of this user',
         ),
         onOk() {
             router.post(route('admin.deactivateUser'), {
@@ -556,7 +556,6 @@ const deactivateButton = (user_id) => {
                     }
                 }
             });
-
         },
         onCancel() {
             console.log('Cancel');
