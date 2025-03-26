@@ -419,7 +419,7 @@ class RetailServices
             return back()->with([
                 'status' => 'error',
                 'msg' => 'Barcode #' . $request->barcode . ' not found',
-                'title' => '404 Not Found'
+                'title' => 'Error!'
             ]);
         }
 

@@ -1,63 +1,73 @@
 <template>
     <AuthenticatedLayout>
-        <a-card title="Report Lost GC">
-            <a-row :gutter="[16, 16]">
-                <a-col :span="8">
-                    <a-form-item label="Lost GC #">
-                        <a-input v-model:value="data.lostGCnumber" readonly />
+        <a-card title="Report Lost GC" >
+            <a-row :gutter="[16, 16]" justify="start">
+                <a-col :span="10">
+                    <a-form layout="horizontal">
+                    <a-form-item label="Lost GC #" labelAlign="right">
+                        <a-input v-model:value="data.lostGCnumber" readonly style="width: 100%" />
                     </a-form-item>
-                    <a-form-item label="Date Reported">
-                        <a-input v-model:value="data.dateReported" readonly />
+                    <a-form-item label="Date Reported" labelAlign="right">
+                        <a-input v-model:value="data.dateReported" readonly  style="width: 100%"/>
                     </a-form-item>
-                    <a-form-item label="Date Lost">
-                        <a-date-picker style="width: 300px" @change="onDateLostChange" value-format="YYYY-MM-DD" />
+                    <a-form-item label="Date Lost" labelAlign="right">
+                        <a-date-picker style="width: 100%" @change="onDateLostChange" value-format="YYYY-MM-DD" />
                     </a-form-item>
-                    <a-form-item label="Owner" has-feedback :help="data.errors.owner"
-                        :validate-status="data.errors.owner ? 'error' : ''">
-                        <a-input v-model:value="data.owner" @change="data.errors.owner = ''" />
+                    <a-form-item  label="Owner" labelAlign="right"  has-feedback :help="data.errors.owner"
+                        :validate-status="data.errors.owner ? 'error' : '' " >
+                        <a-input v-model:value="data.owner" @change="data.errors.owner = ''"  />
                     </a-form-item>
-                    <a-form-item label="Address" has-feedback :help="data.errors.address"
+                    <a-form-item label="Address" labelAlign="right" has-feedback :help="data.errors.address"
                         :validate-status="data.errors.address ? 'error' : ''">
-                        <a-textarea v-model:value="data.address" @change="data.errors.address = ''" />
+                        <a-textarea v-model:value="data.address" @change="data.errors.address = ''" style="width: 100%" />
                     </a-form-item>
-                    <a-form-item label="Contact #" has-feedback :help="data.errors.contact"
+                    <a-form-item label="Contact #" labelAlign="right" has-feedback :help="data.errors.contact"
                         :validate-status="data.errors.contact ? 'error' : ''">
-                        <a-input v-model:value="data.contact" @change="data.errors.contact = ''" />
+                        <a-input v-model:value="data.contact" @change="data.errors.contact = ''" style="width: 100%" />
+                    </a-form-item>
+                   
+                    <a-form-item label="Lost Barcode" labelAlign="right" has-feedback :help="data.errors.lostbarcode" :validate-status="data.errors.lostbarcode ? 'error' : ''
+                        " >
+                        <a-input v-model:value="data.lostbarcode" @change="data.errors.lostbarcode = ''" style="width: 100%" />
+                    </a-form-item>
+                    <a-form-item label="Remarks"  labelAlign="right" :help="data.errors.remarks"
+                        :validate-status="data.errors.remarks ? 'error' : ''">
+                        <a-textarea v-model:value="data.remarks" @change="data.errors.remarks = ''" style="width: 100%" />
                     </a-form-item>
                     <a-form-item label="Prepared By">
-                        <a-input v-model:value="$page.props.auth.user.full_name" readonly />
+                        <a-input v-model:value="$page.props.auth.user.full_name" readonly style="width: 100%"/>
                     </a-form-item>
-                </a-col>
-                <a-col :span="8">
-                    <a-form-item label="Lost Barcode" has-feedback :help="data.errors.lostbarcode" :validate-status="data.errors.lostbarcode ? 'error' : ''
-                        ">
-                        <a-input v-model:value="data.lostbarcode" @change="data.errors.lostbarcode = ''" />
-                    </a-form-item>
-                    <a-form-item label="Remarks" :help="data.errors.remarks"
-                        :validate-status="data.errors.remarks ? 'error' : ''">
-                        <a-textarea v-model:value="data.remarks" @change="data.errors.remarks = ''" />
-                    </a-form-item>
-                    <div>
-                        <div class="flex justify-end">
-                            <a-button @click="onsubmit" type="primary">Submit</a-button>
+    
+                        <div class="flex justify-end mt-4">
+                            <a-button @click="onsubmit" type="primary" style="width: 100%">SUBMIT</a-button>
                         </div>
-                    </div>
+                    </a-form>
                 </a-col>
-                <a-col :span="8">
-                    <div>
-                        <div class="flex justify-end">
-                            <a-form-item label="Search Barcode">
-                                <a-input-search v-model:value="barcode" placeholder="" style="width: 200px"
-                                    @change="onSearch" />
+              
+                <a-col :span="14" class="flex flex-col items-justify-between">
+                        <!-- <div class="flex justify-end w-full"> -->
+                            <a-form-item  class="flex justify-end w-full " label="Search Barcode" >
+                                <a-input-search 
+                                    v-model:value="barcode" 
+                                    placeholder="Enter barcode..." 
+                                    style="width: 100%"
+                                    @change="onSearch" 
+                                    />
                             </a-form-item>
-                        </div>
-                    </div>
-                    <a-spin tip="Searching Barcode..." :spinning="isloading">
-                        <a-card size="small" title="Lost Barcode List">
-                            <a-table bordered size="small" :dataSource="barcodes" :columns="columns">
+                        <!-- </div> -->
+                   
+                    <a-spin tip="Searching Barcode..." :spinning="isloading" >
+                        <a-card size="small" title="Lost Barcode List" class="w-full mt-4 "> 
+                            <a-table 
+                                bordered size="small" 
+                                :dataSource="barcodes" 
+                                :columns="columns"
+                                :scroll="{ x: 'max-content' }"
+                                style="width: 100%">
+
                                 <template v-slot:bodyCell="{ column, record }">
                                     <template v-if="column.dataIndex === 'view'">
-                                        <a-button type="dashedh  hh">
+                                        <a-button type="dashed">
                                             <EyeOutlined />
                                         </a-button>
                                     </template> 

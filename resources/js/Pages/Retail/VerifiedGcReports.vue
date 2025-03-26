@@ -4,16 +4,16 @@
             <a-row>
                 <a-col :span="8">
                     <div>
-                        <div class="flex justify-center">
+                        <div class="flex justify-center w-full">
                             <a-range-picker @change="getdate" />
                         </div>
                     </div>
                     <a-row>
                         <a-col :span="12">
-                            <div class="flex justify-center">
+                            <div class="flex justify-center w-full">
                                 <a-button
                                     :disabled="daterange == null"
-                                    class="mt-5 mx-2"
+                                    class="mt-5 mx-5"
                                     @click="generatePdf"
                                 >
                                     <FilePdfOutlined /> Generate PDF
@@ -21,7 +21,7 @@
                             </div>
                         </a-col>
                         <a-col :span="12">
-                            <div class="flex justify-center">
+                            <div class="flex justify-center  w-full">
                                 <a-button
                                     :disabled="daterange == null"
                                     class="mt-5 mx-3"
