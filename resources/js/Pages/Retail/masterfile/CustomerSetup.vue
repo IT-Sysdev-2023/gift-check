@@ -81,6 +81,7 @@ import { router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { notification } from 'ant-design-vue';
 import Pagination from '@/Components/Pagination.vue';
+import { route } from 'ziggy-js';
 
 defineProps({
     data: Object

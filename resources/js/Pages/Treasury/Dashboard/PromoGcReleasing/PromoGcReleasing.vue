@@ -183,6 +183,7 @@ import { computed, ref, watch } from "vue";
 import axios from "axios";
 import { router } from "@inertiajs/vue3";
 import { PaginationTypes } from "@/types";
+import { route } from 'ziggy-js';
 
 const dashboardRoute = computed(() => {
     const webRoute = route().current();

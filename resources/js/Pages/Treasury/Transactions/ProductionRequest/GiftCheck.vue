@@ -135,6 +135,7 @@ import { router, useForm, usePage } from "@inertiajs/vue3";
 import { FormStateGc } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
 import { PageWithSharedProps } from "@/types";
+import { route } from 'ziggy-js';
 
 const page = usePage<PageWithSharedProps>().props;
 

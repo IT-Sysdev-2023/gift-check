@@ -212,6 +212,7 @@ import pickBy from "lodash/pickBy";
 import { highlighten, onProgress } from "@/Mixin/UiUtilities";
 import { useForm } from "laravel-precognition-vue";
 import { router } from "@inertiajs/core";
+import { route } from 'ziggy-js';
 import {
     ColumnTypes,
     FilterTypes,

@@ -14,6 +14,7 @@
 <script setup lang="ts">
 import { PageWithSharedProps } from "@/types";
 import { usePage } from "@inertiajs/vue3";
+import { route } from 'ziggy-js';
 
 const page = usePage<PageWithSharedProps>().props;
 </script>

@@ -25,6 +25,7 @@
 import { Vue3Lottie } from 'vue3-lottie';
 import animationData from '../../../../public/json/success.json'; // Import your JSON animation
 import { router } from '@inertiajs/core';
+import { route } from 'ziggy-js';
 
 defineProps<{
     title: string,

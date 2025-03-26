@@ -21,6 +21,7 @@
 <script setup lang="ts">
 import { PageWithSharedProps } from "@/types";
 import {  usePage, router } from "@inertiajs/vue3";
+import { route } from 'ziggy-js';
 interface Props {
     label: string;
     routeTo: string;

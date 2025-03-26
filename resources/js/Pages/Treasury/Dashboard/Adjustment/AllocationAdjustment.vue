@@ -103,6 +103,7 @@ import { PaginationTypes } from "@/types";
 import { AllocationAdjustment, ColumnTypes } from "@/types/treasury";
 import axios from "axios";
 import { computed, ref } from "vue";
+import { route } from 'ziggy-js';
 
 defineProps<{
     title: string;
