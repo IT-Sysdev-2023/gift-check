@@ -152,6 +152,7 @@ declare module 'vue' {
     AvailableGc: typeof import('./resources/js/Pages/Retail/Cards/AvailableGc.vue')['default']
     AvailableGcAllocationCard: typeof import('./resources/js/Pages/Custodian/Cards/AvailableGcAllocationCard.vue')['default']
     AvailableGcTable: typeof import('./resources/js/Pages/Retail/AvailableGcTable.vue')['default']
+    BackOutlined: typeof import('@ant-design/icons-vue')['BackOutlined']
     BankOutlined: typeof import('@ant-design/icons-vue')['BankOutlined']
     BarChartOutlined: typeof import('@ant-design/icons-vue')['BarChartOutlined']
     BarcodeChecker: typeof import('./resources/js/Pages/Custodian/BarcodeChecker.vue')['default']
