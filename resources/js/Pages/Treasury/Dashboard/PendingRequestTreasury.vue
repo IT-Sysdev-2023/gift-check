@@ -110,7 +110,7 @@
                     </a-statistic>
                 </a-card>
                 <a-card>
-                    <a-statistic title="Special Gc Budget" :value="props.specialBudget" :precision="2"
+                    <a-statistic title="Special GC Budget" :value="props.specialBudget" :precision="2"
                         style="margin-right: 50px">
                         <template #prefix>
                             <FireOutlined twoToneColor="#3f8600" />

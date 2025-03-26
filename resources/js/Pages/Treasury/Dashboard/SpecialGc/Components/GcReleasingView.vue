@@ -73,7 +73,7 @@
                 <a-col :span="12">
                     <a-card class="mt-10">
                         <a-form :model="formState" @finish="onFinish">
-                            <a-form-item label="Total Gc">
+                            <a-form-item label="Total GC">
                                 <a-input :value="records.data.totalDenom?.qty" readonly />
                             </a-form-item>
                             <a-form-item label="Total Denomination">

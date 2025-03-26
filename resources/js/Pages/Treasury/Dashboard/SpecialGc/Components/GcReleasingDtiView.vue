@@ -158,7 +158,7 @@ const submit = () => {
             notification['success']({
                 message: 'Success',
                 description:
-                    'Successfully Release Reviewed Gc',
+                    'Successfully Release Reviewed GC',
             });
             window.location.href = route('treasury.special.gc.gcReleasingDti');
         },

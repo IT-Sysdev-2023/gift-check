@@ -99,7 +99,7 @@
     </a-card>
     <a-modal v-model:open="viewModal" width="1000px">
         <a-descriptions
-            title="Institution Gc Sales"
+            title="Institution GC Sales"
             layout="vertical"
             size="small"
             bordered

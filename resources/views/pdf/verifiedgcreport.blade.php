@@ -89,7 +89,7 @@
             <thead>
                 <tr>
                     <th>Barcode #</th>
-                    <th>Denom</th>
+                    <th>Denomination</th>
                     <th>GC Type</th>
                     <th>Customer</th>
                     <th>Status</th>

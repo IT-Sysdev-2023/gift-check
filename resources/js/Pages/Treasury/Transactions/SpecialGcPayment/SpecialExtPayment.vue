@@ -11,8 +11,8 @@
 
         <a-card :title="'Submit ' + titleGc" class="mt-10">
             <template #extra>
-                <a-switch v-model:checked="formState.switchGc" checked-children="Special Int. Gc"
-                    un-checked-children="Special Ext. Gc" />
+                <a-switch v-model:checked="formState.switchGc" checked-children="Special Int. GC"
+                    un-checked-children="Special Ext. GC" />
             </template>
             <a-form ref="formRef" :model="formState" :label-col="{ span: 7 }" :wrapper-col="{ span: 15 }"
                 @finish="onSubmit">
@@ -69,7 +69,7 @@
                         <ant-form-nest-item :form="formState" />
 
                         <a-button class="mt-4" size="large" block type="primary" html-type="submit">
-                            <FastForwardOutlined />Submit Special Gc
+                            <FastForwardOutlined />Submit Special GC
                             Payment
                         </a-button>
                     </a-col>

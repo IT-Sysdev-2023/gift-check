@@ -7,7 +7,7 @@
                 <Link :href="route('treasury.dashboard')">Home</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>
-                <Link :href="route('treasury.special.gc.specialReleasedGc')">Released Special External Gc</Link>
+                <Link :href="route('treasury.special.gc.specialReleasedGc')">Released Special External GC</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>

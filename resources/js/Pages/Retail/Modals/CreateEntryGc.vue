@@ -85,7 +85,7 @@
                         </a-col>
                         <a-col :span="12">
                             <span>
-                                Scanned Gc
+                                Scanned GC
                             </span>
                             <a-input class="text-center" size="large" readonly :value="record.totscanned" />
                         </a-col>

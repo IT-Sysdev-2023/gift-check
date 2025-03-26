@@ -190,7 +190,7 @@
                                         class="float-right mt-5"
                                         @click="viewAllocatedGc"
                                     >
-                                        View Allocated Gc
+                                        View Allocated GC
                                     </a-button>
                                 </a-card>
                             </a-col>
@@ -201,7 +201,7 @@
         </a-card>
         <ant-modal-table
             v-model:open="openModal"
-            title="Allocated Gc"
+            title="Allocated GC"
             :columns="columns"
             :data="allocatedData"
             :denoms="allDenoms"
@@ -211,7 +211,7 @@
 
         <a-modal
             v-model:open="gcAllocationModal"
-            title="Scanned Gc"
+            title="Scanned GC"
             style="width: 1000px"
             centered
             :footer="null"
@@ -245,7 +245,7 @@
                         key: 'date',
                     },
                     {
-                        title: 'Validate By',
+                        title: 'Validated By',
                         key: 'validate',
                     },
                 ]"

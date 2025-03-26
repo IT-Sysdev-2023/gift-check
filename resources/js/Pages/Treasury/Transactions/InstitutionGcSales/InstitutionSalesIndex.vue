@@ -13,7 +13,7 @@
                 <a-row :gutter="[16, 16]">
                     <a-col :span="12">
                         <a-card>
-                            <a-form-item label="Gc Releasing #:">
+                            <a-form-item label="GC Releasing #:">
                                 <a-input :value="releasingNo" readonly />
                             </a-form-item>
                             <a-form-item label="Date Allocated:">
@@ -172,7 +172,7 @@ const onSubmit = () => {
         }))
         .post(route("treasury.transactions.institution.gc.sales.submission"), {
             onSuccess: ({ props }) => {
-                openLeftNotification(props.flash, "Institution Gc Sales");
+                openLeftNotification(props.flash, "Institution GC Sales");
                 if (props.flash.success) {
                     stream.value = `data:application/pdf;base64,${props.flash.stream}`;
                     openIframe.value = true;

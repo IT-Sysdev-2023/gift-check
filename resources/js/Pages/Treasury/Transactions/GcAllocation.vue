@@ -8,16 +8,16 @@
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
 
-        <a-card :title="title" class="mt-10">
+        <a-card :title="title">
             <a-form
                 ref="formRef"
                 :model="formState"
-                :label-col="{ span: 8 }"
-                :wrapper-col="{ span: 12 }"
+                :label-col="{ span: 5 }"
+                :wrapper-col="{ span: 18 }"
                 @finish="onSubmit"
             >
                 <a-row>
-                    <a-col :span="10">
+                    <a-col :span="10" >
                         <a-form-item label="Date Allocated:" name="name">
                             <a-input :value="currentDate" readonly />
                         </a-form-item>
@@ -51,12 +51,12 @@
                         </a-form-item> -->
 
                         <a-card>
-                            <a-row :gutter="16" class="text-center">
+                            <a-row :gutter="16" class="text-center" >
                                 <a-col :span="12">
-                                    <span>Denomination</span>
+                                    <span style="font-weight: bold;"> Denomination </span>
                                 </a-col>
                                 <a-col :span="12">
-                                    <span>Quantity</span>
+                                    <span style="font-weight: bold;">Quantity</span>
                                 </a-col>
                             </a-row>
                             <a-row
@@ -92,7 +92,7 @@
 
                              <!-- Total Amount Display -->
                              <a-row class="mt-5 text-lg font-bold text-right">
-                                <a-col :span="12">Total Amount:     ₱</a-col>
+                                <a-col :span="12" style="font-weight: bold;">Total Amount: ₱</a-col>
                                 <a-col :span="12" style="text-align: center">
                                     {{ totalAmount.toLocaleString() }}
                                 </a-col>
@@ -120,12 +120,12 @@
 
                         <div>
                             <div
-                                class="flex justify-end"
-                                style="margin-right: 80px"
+                                class="flex justify-end w-full pr-5"
+                                style="margin-right: 90px"
                             >
                                 <a-form-item class="text-end">
-                                    <a-button type="primary" html-type="submit"
-                                        >Submit</a-button
+                                    <a-button type="primary" html-type="submit"class="w-[550px]"
+                                        >SUBMIT</a-button
                                     >
                                 </a-form-item>
                             </div>
@@ -204,7 +204,7 @@
 
         <a-modal
             v-model:open="gcAllocationModal"
-            title="Scanned Gc"
+            title="Scanned GC"
             style="width: 1000px"
             centered
             :footer="null"
@@ -238,7 +238,7 @@
                         key: 'date',
                     },
                     {
-                        title: 'Validate By',
+                        title: 'Validated By',
                         key: 'validate',
                     },
                 ]"
@@ -341,7 +341,7 @@ const columns = [
         key: "productionrequest",
     },
     {
-        title: "Denom",
+        title: "Denomination",
         key: "denom",
     },
 ];

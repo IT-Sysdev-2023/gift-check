@@ -132,7 +132,7 @@
                 </a-form>
             </a-card>
 
-            <a-card title="Released Gc">
+            <a-card title="Released GC">
                 <a-table
                     bordered
                     :dataSource="denomination.data"

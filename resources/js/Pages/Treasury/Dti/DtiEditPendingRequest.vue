@@ -14,7 +14,7 @@
             <a-col :span="13">
                 <a-card title="Update DTI Request Form">
                     <a-descriptions size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Dti Gc Request #">{{ props.record.dti_num
+                        <a-descriptions-item style="width: 50%;" label="Dti GC Request #">{{ props.record.dti_num
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>

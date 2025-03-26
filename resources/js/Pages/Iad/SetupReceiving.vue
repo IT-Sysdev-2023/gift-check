@@ -120,7 +120,7 @@
                         </a-popconfirm>
 
                         <a-button block class="mb-2" @click="validateBarcode">
-                            Validate By Barcode
+                            Validated By Barcode
                         </a-button>
                         <a-button block class="mb-2" type="primary" @click="submit" :loading="isSubmittingReq">
                             <!-- :disabled="denomination.filter((data) => data.scanned).length === 0" -->
