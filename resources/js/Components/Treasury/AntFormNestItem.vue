@@ -1,6 +1,6 @@
 <template>
-    <a-card>
-        <span class="text-red-500">*Required</span>
+  
+        <!-- <span class="text-red-500 text-xs">*Required</span> -->
         <a-space v-for="(item, index) in form.denomination" :key="item.id">
             <a-form-item :name="['denomination', index, 'denomination']" :rules="{
                 required: true,
@@ -34,7 +34,7 @@
                     `₱ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                 " :min="0" style="width: 100%" readonly />
         </a-form-item>
-    </a-card>
+
 </template>
 <script lang="ts" setup>
 import { computed } from "vue";

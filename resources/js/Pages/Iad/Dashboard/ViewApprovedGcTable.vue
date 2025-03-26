@@ -129,23 +129,18 @@
         </a-card>
 
         <a-modal v-model:open="openScanGc" title="Scan GC" :footer="null">
-            <a-form :model="barcodeForm" name="basic" autocomplete="off" @finish="onFinishBarcode">
+            <!-- <a-form :model="barcodeForm" name="basic" autocomplete="off" @finish="onFinishBarcode"> -->
                 <p class="mt-5 ml-1">Scan Barcode:</p>
-                <a-form-item name="barcode" :rules="[
-                    {
-                        required: true,
-                        message: 'Please input the Barcode!',
-                    },
-                ]" :validate-status="barcodeForm.errors.barcode ? 'error' : ''" :help="barcodeForm.errors.barcode">
+                <a-form-item name="barcode" :validate-status="barcodeForm.errors.barcode ? 'error' : ''" :help="barcodeForm.errors.barcode">
                     <a-input-number allow-count class="p-1 pt-3 pb-3 text-3xl"  ref="barcodeRef" size="large" v-model:value="barcodeForm.barcode"
                        @keyup.enter="onFinishBarcode"
                         @change="() => barcodeForm.errors.barcode = ''" style="width: 100%" />
                 </a-form-item>
 
                 <a-form-item>
-                    <a-button block type="primary" html-type="submit">Scan Barcode</a-button>
+                    <a-button block type="primary" @click="onFinishBarcode">Scan Barcode</a-button>
                 </a-form-item>
-            </a-form>
+            <!-- </a-form> -->
         </a-modal>
     </AuthenticatedLayout>
 </template>

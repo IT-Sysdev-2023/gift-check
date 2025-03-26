@@ -206,7 +206,7 @@ class GcProductionRequestService extends FileHandler
                 return redirect()->back()->with('error', 'Production request already approved/cancelled.');
             }
 
-            return redirect()->back()->with('success', 'Success mate!.');
+            return redirect()->back()->with('success', 'Successfully Submitted!');
 
         });
     }

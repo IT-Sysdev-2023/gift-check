@@ -209,12 +209,14 @@ class CustodianServices extends FileHandler
         $count = 1;
 
         $data->transform(function ($item) use (&$count) {
+           $item->type = $this->paymentType($item->spexgc_paymentype);
 
             $item->specialExternalGcrequestItemsHasMany->each(function ($subitem) use (&$count) {
                 $subitem->tempId = $count++;
                 $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
                 return $subitem;
             });
+            
             $item->dateneeded = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
             $item->datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();
 
@@ -227,6 +229,19 @@ class CustodianServices extends FileHandler
 
 
         return $data;
+    }
+
+    private function paymentType(int $num)
+    {
+        $types = [
+            1 => 'Cash',
+            2 => 'Check',
+            3 => 'JV',
+            4 => 'AR',
+            5 => 'On Account'
+        ];
+
+        return $types[$num] ?? '';
     }
 
     public function submitSpecialExternalGc($request)

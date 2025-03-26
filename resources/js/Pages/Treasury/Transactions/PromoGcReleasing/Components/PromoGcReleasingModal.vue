@@ -314,7 +314,7 @@ const submitForm = () => {
             onSuccess: (e) => {
                 if(e.props.flash.success){
                     notification.success({
-                        message: "Success mate!",
+                        message: "Successfully Submitted!",
                         description: e.props.flash.success,
                     });
                     location.reload();

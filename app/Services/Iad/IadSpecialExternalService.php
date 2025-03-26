@@ -76,7 +76,7 @@ class IadSpecialExternalService
 
         $sessionName = 'scanReviewGC';
         $scanGc = collect($request->session()->get($sessionName, []));
-        
+
         //Checks for Gc Errors
         if ($errorResponse = $this->checkGcErrors($request, $gc, $scanGc)) {
             return $errorResponse;
@@ -141,7 +141,7 @@ class IadSpecialExternalService
     }
 
     private function checkGcErrors(Request $request, $gc, $scanGc)
-    {  
+    {
         if (is_null($gc)) {
             return redirect()->back()->with('error', "GC Barcode # {$request->barcode} not Valid!");
         }
@@ -172,5 +172,5 @@ class IadSpecialExternalService
             "trid" => $id,
             "gcid" => $gc->spexgcemp_id
         ];
-    } 
+    }
 }

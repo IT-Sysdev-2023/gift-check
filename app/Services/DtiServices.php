@@ -31,7 +31,7 @@ class DtiServices extends FileHandler
 
                 DtiDocument::create([
                     'dti_trid' => $id,
-                    'dti_type' => 'Special External GC Request Dti',
+                    'dti_type' => 'Special External GC Request DTI',
                     'dti_fullpath' => $path
                 ]);
             });
@@ -42,7 +42,7 @@ class DtiServices extends FileHandler
 
     private function dataForPdf(Request $request, $listOfDenom, $dtiId)
     {
-        $gcMode = 'Special External Request Report Dti';
+        $gcMode = 'Special External Request Report DTI';
         $company = SpecialExternalCustomer::select('spcus_companyname', 'spcus_acctname')->find($dtiId);
 
 

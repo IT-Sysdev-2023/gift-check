@@ -90,7 +90,7 @@
                                     }}</a-descriptions-item>
                                 </a-descriptions>
                                 <a-descriptions class="mt-1" size="small" layout="horizontal" bordered>
-                                    <a-descriptions-item style="width: 50%;" label="Chekced By">{{
+                                    <a-descriptions-item style="width: 50%;" label="Checked By">{{
                                         record.special.approved_request.reqap_checkedby
                                     }}</a-descriptions-item>
                                 </a-descriptions>

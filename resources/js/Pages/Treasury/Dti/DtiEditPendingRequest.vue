@@ -12,7 +12,7 @@
         </a-breadcrumb>
         <a-row :gutter="[16, 16]" class="mt-5">
             <a-col :span="13">
-                <a-card title="Update Dti Request Form">
+                <a-card title="Update DTI Request Form">
                     <a-descriptions size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%;" label="Dti Gc Request #">{{ props.record.dti_num
                             }}</a-descriptions-item>
