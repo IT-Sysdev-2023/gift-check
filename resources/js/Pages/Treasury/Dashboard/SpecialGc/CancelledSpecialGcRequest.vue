@@ -157,6 +157,7 @@ import { highlighten } from "@/Mixin/UiUtilities";
 import { CancelledSpecialMoreDetails, ColumnTypes, FilterTypes, StoreGcRequest } from "@/types/treasury";
 import { computed, ref, watch } from "vue";
 import { router } from "@inertiajs/core";
+import { route } from 'ziggy-js';
 
 const { highlightText } = highlighten();
 

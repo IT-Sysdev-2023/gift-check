@@ -27,6 +27,7 @@
 </template>
 <script setup lang="ts">
 import { router } from '@inertiajs/core';
+import { route } from 'ziggy-js';
 
 interface Record {
     records: {

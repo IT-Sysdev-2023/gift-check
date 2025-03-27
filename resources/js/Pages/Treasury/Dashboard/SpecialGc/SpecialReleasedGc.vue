@@ -84,6 +84,7 @@ import pickBy from "lodash/pickBy";
 import { router } from "@inertiajs/core";
 import { computed, ref, watch } from "vue";
 import { ColumnTypes, FilterTypes } from "@/types/treasury";
+import { route } from 'ziggy-js';
 
 const props = defineProps<{
     desc: string;

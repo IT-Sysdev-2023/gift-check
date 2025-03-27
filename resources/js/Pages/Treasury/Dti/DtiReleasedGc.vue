@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { router } from '@inertiajs/core';
 import dayjs from 'dayjs';
 import { ref } from 'vue';
+import { route } from 'ziggy-js';
 
 const props = defineProps<{
     data: {

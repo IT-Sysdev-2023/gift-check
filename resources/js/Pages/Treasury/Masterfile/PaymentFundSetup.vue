@@ -115,6 +115,7 @@ import { router } from "@inertiajs/core";
 import { computed, ref, watch } from "vue";
 import { ColumnTypes, FilterTypes, PaymentFundTypes } from "@/types/treasury";
 import { PaginationTypes } from "@/types";
+import { route } from 'ziggy-js';
 
 const { openLeftNotification } = onProgress();
 const { highlightText } = highlighten();

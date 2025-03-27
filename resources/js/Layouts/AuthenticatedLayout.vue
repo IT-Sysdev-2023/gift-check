@@ -19,6 +19,7 @@ import dayjs from "dayjs";
 import MarketingSideBar from "@/Components/MarketingSideBar.vue";
 import { useOnlineUsersStore } from '@/stores/online-store'
 import axios from "axios";
+import { route } from 'ziggy-js';
 
 const onlineUsersStore = useOnlineUsersStore();
 

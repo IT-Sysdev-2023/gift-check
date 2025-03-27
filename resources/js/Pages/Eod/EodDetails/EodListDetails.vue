@@ -36,6 +36,7 @@
 import { router } from '@inertiajs/core';
 import axios from 'axios';
 import { ref } from 'vue';
+import { route } from 'ziggy-js';
 
 
 interface Records {

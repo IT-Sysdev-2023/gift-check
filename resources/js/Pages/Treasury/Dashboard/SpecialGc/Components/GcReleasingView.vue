@@ -128,6 +128,7 @@ import { computed } from "vue";
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import { onProgress } from "@/Mixin/UiUtilities";
 import { PageWithSharedProps } from "@/types";
+import { route } from 'ziggy-js';
 
 const page = usePage<PageWithSharedProps>().props;
 const props = defineProps<{

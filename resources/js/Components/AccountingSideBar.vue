@@ -2,6 +2,7 @@
 import { PageWithSharedProps } from "@/types";
 import { usePage } from "@inertiajs/vue3";
 import { ref, computed } from "vue";
+import { route } from 'ziggy-js';
 
 const page = usePage<PageWithSharedProps>().props;
 
