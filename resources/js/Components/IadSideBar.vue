@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PageWithSharedProps } from "@/types";
+import { route } from 'ziggy-js';
 import {
     LineChartOutlined,
     GroupOutlined,

@@ -83,6 +83,7 @@ import { ColumnTypes, FilterTypes } from "@/types/treasury";
 import { computed, ref, watch } from "vue";
 import { router } from "@inertiajs/core";
 import axios from "axios";
+import { route } from 'ziggy-js';
 
 const { highlightText } = highlighten();
 

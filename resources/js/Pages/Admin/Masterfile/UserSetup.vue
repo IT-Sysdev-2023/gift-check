@@ -1,30 +1,34 @@
 <template>
     <AuthenticatedLayout>
-        <a-card>
-            <!-- BACK BUTTON  -->
-            <div>
-                <a-button @click="() => $inertia.get(route('admin.dashboard'))" style="font-weight: bold;">
-                    <RollbackOutlined /> Back
-                </a-button>
-            </div>
 
+        <Head :title="title" />
+        <div>
+            <a-breadcrumb>
+                <a-breadcrumb-item>
+                    <Link :href="route('admin.dashboard')">Home</Link>
+                </a-breadcrumb-item>
+                <a-breadcrumb-item>
+                    {{ title }}
+                </a-breadcrumb-item>
+            </a-breadcrumb>
+        </div>
+
+        <a-card title="User Setup" class="mt-5">
             <!-- ADD USER BUTTON  -->
-            <div>
-                <a-button @click="() => (addUserModal = true)"
-                    style="margin-left: 80%; background-color: #1b76f8; color:white">
+            <div class="flex justify-end">
+                <a-button @click="() => (addUserModal = true)" class="bg-blue-500 justify-end text-white"
+                    type="primary">
                     <PlusOutlined /> Add New User
                 </a-button>
             </div>
-
-            <!-- SEARCH AND HEADER  -->
-            <span style="font-weight: bold; font-size: 1.5rem; font-family: sans-serif;">Users Setup</span>
-            <div>
+            <!-- SEARCH -->
+            <div class="mt-5">
                 <a-input-search @change="searchUser" v-model:value="searchUserValue" enter-button allow-clear
-                    placeholder="Input search here..." style="margin-left: 70%; width: 25%;" />
+                    placeholder="Input search here..." class="w-1/4 float-right" />
             </div>
 
             <!-- TABLE -->
-            <div style="margin-top: 1rem;">
+            <div class="mt-10">
                 <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">
@@ -259,6 +263,7 @@ import { ref, computed, createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
 
+const title = ref('User Setup');
 const props = defineProps({
     data: Object,
     access_page: Object,
@@ -541,7 +546,7 @@ const deactivateButton = (user_id) => {
             {
                 style: 'color:red;',
             },
-            'Are you sure to deactivate this user',
+            'Are you sure to update status of this user',
         ),
         onOk() {
             router.post(route('admin.deactivateUser'), {
@@ -556,7 +561,6 @@ const deactivateButton = (user_id) => {
                     }
                 }
             });
-
         },
         onCancel() {
             console.log('Cancel');

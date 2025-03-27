@@ -26,7 +26,7 @@
             <a-tabs v-model:activeKey="activeKey" @change="onTabChange">
                 <a-tab-pane key="*" tab="Internal"> </a-tab-pane>
                 <a-tab-pane key="0" tab="External" force-render> </a-tab-pane>
-                
+
             </a-tabs>
             <reviewed-gc-releasing :loading="onLoading" :records="records" :columns="columns" @view-record="viewRecord"/>
         </a-card>
@@ -36,6 +36,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router } from "@inertiajs/core";
 import { ref } from "vue";
+import { route } from 'ziggy-js';
 const props = defineProps<{
     title: string;
     records: {

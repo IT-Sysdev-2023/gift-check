@@ -146,6 +146,7 @@ import { router, useForm, usePage } from "@inertiajs/vue3";
 import type { UploadFile } from "ant-design-vue";
 import { PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
+import { route } from 'ziggy-js';
 
 const isOpen = ref(false);
 const isloading = ref(false)

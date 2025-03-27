@@ -218,6 +218,7 @@
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { notification } from "ant-design-vue";
+import { route } from 'ziggy-js';
 
 export default {
     layout: AuthenticatedLayout,

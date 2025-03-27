@@ -7,7 +7,8 @@ import { notification } from 'ant-design-vue';
 const props = defineProps({
     data: Object,
     search: String
-})
+});
+const title = ref('Denomination Setup');
 
 const columns = ref([
     {
@@ -151,103 +152,106 @@ const denominationSubmit = async () => {
 </script>
 <template>
     <AuthenticatedLayout>
-        <!-- back button  -->
-        <div>
-            <a-button :href="route('admin.dashboard')" style="font-weight: bold;">
-                <RollbackOutlined /> Back
-            </a-button>
-        </div>
-        <!-- add denomination button  -->
-        <div>
-            <a-button @click="() => addDenominationModal = true"
-                style="margin-left: 80%; color: white; background-color: #1b76f8;">
-                <PlusOutlined /> Add Denomination
-            </a-button>
-        </div>
-        <!-- label  -->
-        <div>
-            <p style="font-weight: bold; font-size: large;">Denomination Setup</p>
-        </div>
-        <!-- search input  -->
-        <div>
-            <a-input-search v-model:value="searchData" @change="searchInput" enter-button
-                placeholder="input search here..." allow-clear style="width: 25%; margin-left: 70%;" />
-        </div>
-        <!-- loading effect  -->
-        <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 6rem">
-            <div class="spinnerContainer">
-                <div class="spinner"></div>
-                <div class="loader">
-                    <p>loading</p>
-                    <div class="words">
-                        <span class="word">please wait...</span>
-                        <span class="word">please wait...</span>
-                        <span class="word">please wait...</span>
-                        <span class="word">please wait...</span>
-                        <span class="word">please wait...</span>
+
+        <Head :title="title" />
+        <a-breadcrumb>
+            <a-breadcrumb-item>
+                <Link :href="route('admin.dashboard')">Home</Link>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>
+                {{ title }}
+            </a-breadcrumb-item>
+        </a-breadcrumb>
+        <a-card title="Denomination Setup" class="mt-5">
+            <!-- add denomination button  -->
+            <div class="flex justify-end">
+                <a-button @click="() => addDenominationModal = true" type="primary" class="bg-blue-500 text-white">
+                    <PlusOutlined /> Add Denomination
+                </a-button>
+            </div>
+            <!-- search input  -->
+            <div>
+                <a-input-search v-model:value="searchData" @change="searchInput" enter-button
+                    placeholder="input search here..." allow-clear class="w-1/4 float-right mt-5" />
+            </div>
+            <!-- loading effect  -->
+            <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 6rem">
+                <div class="spinnerContainer">
+                    <div class="spinner"></div>
+                    <div class="loader">
+                        <p>loading</p>
+                        <div class="words">
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- table  -->
-        <div>
-            <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'action'">
-                        <a-button @click="updateDenomination(record)" style="background-color: green; color: white">
-                            <EditOutlined />
-                        </a-button>
+            <!-- table  -->
+            <div>
+                <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'action'">
+                            <a-button @click="updateDenomination(record)" style="background-color: green; color: white">
+                                <EditOutlined />
+                            </a-button>
+                        </template>
                     </template>
-                </template>
-            </a-table>
-            <pagination :datarecords="props.data" class="mt-5" />
-        </div>
-        <!-- update denomination modal  -->
-        <div>
-            <a-modal v-model:open="updateDenominationModal" @ok="addDenomination">
-                <header style="font-weight: bold; font-size: large;">
-                    <EditOutlined /> Update Denomination
-                </header>
-                <a-form-item style="margin-top: 2rem; font-weight: bold;"
-                    :validate-status="formUpdate.errors?.denomination ? 'error' : ''"
-                    :help="formUpdate.errors?.denomination">
-                    Denomination:
-                    <a-input v-model:value="formUpdate.denomination" type="text" placeholder="Denomination" />
-                </a-form-item>
-                <a-form-item style="font-weight: bold;"
-                    :validate-status="formUpdate.errors?.denom_fad_item_number ? 'error' : ''"
-                    :help="formUpdate.errors?.denom_fad_item_number">
-                    Fad Item #:
-                    <a-input v-model:value="formUpdate.denom_fad_item_number" type="text" placeholder="Barcode start" />
-                </a-form-item>
-                <a-form-item style="font-weight: bold;"
-                    :validate-status="formUpdate.errors?.denom_barcode_start ? 'error' : ''"
-                    :help="formUpdate.errors?.denom_barcode_start">
-                    Barcode # Start:
-                    <a-input v-model:value="formUpdate.denom_barcode_start" type="text" placeholder="Barcode start" />
-                </a-form-item>
-            </a-modal>
-        </div>
-        <!-- add denomination modal  -->
-        <div>
-            <a-modal v-model:open="addDenominationModal" @ok="denominationSubmit">
-                <header style="font-weight: bold; font-size: large;">
-                    <PlusOutlined /> Add Denomination
-                </header>
-                <a-form-item :validate-status="addForm.errors.denomination ? 'error' : ''"
-                    :help="addForm.errors.denomination" style="margin-top: 2rem; font-weight: bold;">
-                    Denomination:
-                    <a-input v-model:value="addForm.denomination" type="number" allow-clear
-                        placeholder="Denomination" />
-                </a-form-item>
-                <a-form-item :validate-status="addForm.errors.denom_barcode_start ? 'error' : ''"
-                    :help="addForm.errors.denom_barcode_start" style="margin-top: 2rem; font-weight: bold;">
-                    Barcode # start:
-                    <a-input v-model:value="addForm.denom_barcode_start" type="number" allow-clear
-                        placeholder="Barcode start" />
-                </a-form-item>
-            </a-modal>
-        </div>
+                </a-table>
+                <pagination :datarecords="props.data" class="mt-5" />
+            </div>
+            <!-- update denomination modal  -->
+            <div>
+                <a-modal v-model:open="updateDenominationModal" @ok="addDenomination">
+                    <header style="font-weight: bold; font-size: large;">
+                        <EditOutlined /> Update Denomination
+                    </header>
+                    <a-form-item style="margin-top: 2rem; font-weight: bold;"
+                        :validate-status="formUpdate.errors?.denomination ? 'error' : ''"
+                        :help="formUpdate.errors?.denomination">
+                        Denomination:
+                        <a-input v-model:value="formUpdate.denomination" type="text" placeholder="Denomination" />
+                    </a-form-item>
+                    <a-form-item style="font-weight: bold;"
+                        :validate-status="formUpdate.errors?.denom_fad_item_number ? 'error' : ''"
+                        :help="formUpdate.errors?.denom_fad_item_number">
+                        Fad Item #:
+                        <a-input v-model:value="formUpdate.denom_fad_item_number" type="text"
+                            placeholder="Barcode start" />
+                    </a-form-item>
+                    <a-form-item style="font-weight: bold;"
+                        :validate-status="formUpdate.errors?.denom_barcode_start ? 'error' : ''"
+                        :help="formUpdate.errors?.denom_barcode_start">
+                        Barcode # Start:
+                        <a-input v-model:value="formUpdate.denom_barcode_start" type="text"
+                            placeholder="Barcode start" />
+                    </a-form-item>
+                </a-modal>
+            </div>
+            <!-- add denomination modal  -->
+            <div>
+                <a-modal v-model:open="addDenominationModal" @ok="denominationSubmit">
+                    <header style="font-weight: bold; font-size: large;">
+                        <PlusOutlined /> Add Denomination
+                    </header>
+                    <a-form-item :validate-status="addForm.errors.denomination ? 'error' : ''"
+                        :help="addForm.errors.denomination" style="margin-top: 2rem; font-weight: bold;">
+                        Denomination:
+                        <a-input v-model:value="addForm.denomination" type="number" allow-clear
+                            placeholder="Denomination" />
+                    </a-form-item>
+                    <a-form-item :validate-status="addForm.errors.denom_barcode_start ? 'error' : ''"
+                        :help="addForm.errors.denom_barcode_start" style="margin-top: 2rem; font-weight: bold;">
+                        Barcode # start:
+                        <a-input v-model:value="addForm.denom_barcode_start" type="number" allow-clear
+                            placeholder="Barcode start" />
+                    </a-form-item>
+                </a-modal>
+            </div>
+        </a-card>
     </AuthenticatedLayout>
 </template>
 <style scoped>

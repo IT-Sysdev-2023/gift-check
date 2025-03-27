@@ -1,26 +1,22 @@
 <template>
     <AuthenticatedLayout>
-        <a-card>
-            <!-- Back button  -->
-            <div>
-                <a-button @click="backButton" style="font-weight: bold;">
-                    <RollbackOutlined /> Back
-                </a-button>
-            </div>
-            <div style="
-                    margin-top: 1rem;
-                    font-family: sans-serif;
-                    font-size: 1.5rem;
-                    font-weight: bold;
-                ">
-                <span>
-                    Tag Hennan Setup
-                </span>
-            </div>
+
+        <Head :title="title" />
+        <div>
+            <a-breadcrumb>
+                <a-breadcrumb-item>
+                    <Link :href="route('admin.dashboard')">Home</Link>
+                </a-breadcrumb-item>
+                <a-breadcrumb-item>
+                    {{ title }}
+                </a-breadcrumb-item>
+            </a-breadcrumb>
+        </div>
+        <a-card class="mt-5" title="Tag Hennan Setup">
             <!-- Search input  -->
-            <div>
+            <div class="flex justify-end">
                 <a-input-search allow-clear @change="searchFunction" v-model:value="tagHennanSearch" size="medium"
-                    enter-button placeholder="Input search here..." style="width: 25%; margin-left: 70%" />
+                    enter-button placeholder="Input search here..." class="w-1/4" />
             </div>
             <!-- Loading spinner effect  -->
             <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 3rem">
@@ -52,6 +48,7 @@
                 </a-table>
                 <pagination :datarecords="data" class="mt-5" />
             </div>
+
             <!-- Update modal  -->
             <a-modal v-model:open="updateModal" @ok="submitUpdatedTag">
                 <header style="font-weight: bold; font-size: large;">
@@ -90,6 +87,8 @@ const props = defineProps({
     fullname: Object,
     search: Array
 });
+
+const title = ref("Tag Hennan Setup");
 const loading = ref(false);
 const tagHennanSearch = ref(props.search);
 const form = ref([
@@ -140,10 +139,6 @@ const columns = ref([
         dataIndex: "action",
     },
 ]);
-// Back button function
-const backButton = () => {
-    router.get(route("admin.dashboard"));
-};
 
 // Update button function
 const updateTagHennan = (data) => {

@@ -132,6 +132,7 @@ import { router, useForm, usePage } from "@inertiajs/vue3";
 import type { UploadFile } from "ant-design-vue";
 import { PageWithSharedProps } from "@/types/index";
 import { getError, onProgress } from "@/Mixin/UiUtilities";
+import { route } from 'ziggy-js';
 
 interface FormStateGc {
     file: UploadFile | null;

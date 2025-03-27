@@ -51,6 +51,7 @@ import axios from "axios";
 import { ref } from "vue";
 import { notification } from "ant-design-vue";
 import { useQueueState } from "@/stores/queue-state";
+import { route } from 'ziggy-js';
 
 defineProps<{
     title: string;

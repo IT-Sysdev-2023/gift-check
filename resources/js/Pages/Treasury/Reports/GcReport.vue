@@ -62,6 +62,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import axios from "axios";
+import { route } from 'ziggy-js';
 
 import { ref } from "vue";
 import { notification } from "ant-design-vue";

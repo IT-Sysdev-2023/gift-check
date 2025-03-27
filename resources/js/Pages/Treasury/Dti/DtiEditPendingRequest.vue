@@ -112,6 +112,7 @@
     </AuthenticatedLayout>
 </template>
 <script setup lang="ts">
+import { route } from 'ziggy-js';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { notification, SelectProps, UploadProps } from "ant-design-vue";
 import dayjs from 'dayjs';

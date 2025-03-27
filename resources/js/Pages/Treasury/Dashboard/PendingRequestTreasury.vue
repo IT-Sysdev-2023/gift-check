@@ -135,6 +135,7 @@ import AuthenticatedLayout from "@/../../resources/js/Layouts/AuthenticatedLayou
 import type { UploadChangeParam, UploadProps } from "ant-design-vue";
 import { usePage, useForm, router } from "@inertiajs/vue3";
 import dayjs, { Dayjs } from "dayjs";
+import { route } from 'ziggy-js';
 import {
     PageProps,
     FormState,
