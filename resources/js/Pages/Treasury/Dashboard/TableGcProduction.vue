@@ -207,7 +207,7 @@ const { highlightText } = highlighten();
                     <FormItem
                         class="mt-8"
                         v-if="!record.productionRequest.pe_generate_code"
-                        label="Total Gc:"
+                        label="Total GC:"
                         :value="record.items.total"
                     />
                 </a-form>

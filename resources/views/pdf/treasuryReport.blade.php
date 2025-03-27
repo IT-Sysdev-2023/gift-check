@@ -101,7 +101,7 @@
                             <th colspan="5">Cash Sales</th>
                         </tr>
                         <tr>
-                            <th class="left">Gc Denomination</th>
+                            <th class="left">GC Denomination</th>
                             <th>GC Sold</th>
                             <th>Sub Total</th>
                             <th>Line Disc.</th>
@@ -183,7 +183,7 @@
 
                 @if (!empty($store['footer']['gcSalesFooter']))
                     <table>
-                        <!-- Gc Sales Footer -->
+                        <!-- GC Sales Footer -->
                         @foreach($store['footer']['gcSalesFooter'] as $title => $name)
                             <tr class="total">
                                 <td colspan="4" class="left">{{Str::headline($title)}}:</td>

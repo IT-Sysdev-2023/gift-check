@@ -62,7 +62,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item key="iad-excel-verified">
                 <UnorderedListOutlined />
                 <span>
-                    <Link :href="route('iad.excel.verified')">Verified Gc Reports</Link>
+                    <Link :href="route('iad.excel.verified')">Verified GC Reports</Link>
                 </span>
             </a-menu-item>
             <a-menu-item key="iad-excel-verified">
@@ -74,7 +74,7 @@ const page = usePage<PageWithSharedProps>().props;
             <a-menu-item key="iad-excel-special-gc-reviewed">
                 <OrderedListOutlined />
                 <span>
-                    <Link :href="route('iad.excel.special')">Special Gc Reviewed</Link>
+                    <Link :href="route('iad.excel.special')">Special GC Reviewed</Link>
                 </span>
             </a-menu-item>
         </a-sub-menu>

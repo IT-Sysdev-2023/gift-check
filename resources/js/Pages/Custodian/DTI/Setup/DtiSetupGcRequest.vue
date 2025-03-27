@@ -5,7 +5,7 @@
                 <template #tab>
                     <span>
                         <apple-outlined />
-                        Special Gc Request Setup Dti
+                        Special GC Request Setup DTI
                     </span>
                 </template>
                 <special-gc-request-component :datarecords="props.records" />
@@ -17,7 +17,7 @@
                         Barcodes
                     </span>
                 </template>
-                <a-card title="Dti Barcodes For Printing">
+                <a-card title="DTI Barcodes For Printing">
                     <a-table bordered :pagination="false" :data-source="barcodes.data" size="small" :columns="columns"/>
                     <pagination :datarecords="barcodes" class="mt-5"/>
                 </a-card>

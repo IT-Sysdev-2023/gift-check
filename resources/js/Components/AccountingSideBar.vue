@@ -51,7 +51,7 @@ const setActiveTab = computed(() => {
             <a-menu-item key="requestGCwithName">
                 <Link :href="route('retail.soldGc')">
                 <span>
-                    Sold Gc
+                    Sold C
                 </span>
                 </Link>
             </a-menu-item>

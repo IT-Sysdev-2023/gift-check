@@ -1,49 +1,43 @@
 <template>
     <a-card title="Store GC Request Form">
-        <div class="flex justify-end mb-2">
-            <a-button @click="submitForm" type="primary">
-                <CheckOutlined /> Submit Form
-            </a-button>
-        </div>
+        <div class="flex justify-end mb-2"></div>
 
-        <a-row :gutter="[16, 16]">
+        <a-row :gutter="[16, 16]" justify="start">
             <a-col :span="8">
                 <a-card>
                     <a-form-item label="GC Request No">
                         <a-input
-                            v-model:value="form.requestNumber"
-                            readonly
-                        ></a-input>
+                            v-model:value="form.requestNumber" readonly style="width: 100%">
+                        </a-input>
                     </a-form-item>
-                    <a-form-item label="Retail Store">
-                        <a-input
-                            v-model:value="form.storeName"
-                            readonly
-                        ></a-input>
+                    
+                    <a-form-item label="Retail Store" >
+                        <a-input v-model:value="form.storeName"readonly style="width: 100%">
+                        </a-input>
                     </a-form-item>
+                    
                     <a-form-item label="Date Requested">
-                        <a-input
-                            v-model:value="form.dateReq"
-                            readonly
-                        ></a-input>
+                        <a-input v-model:value="form.dateReq" readonly style="width: 100%">
+                        </a-input>
                     </a-form-item>
-                    <a-form-item
-                        label="Remarks"
-                        has-feedback
-                        :help="error?.remarks"
-                        :validate-status="error?.remarks ? 'error' : ''"
-                    >
-                        <a-textarea v-model:value="form.remarks"></a-textarea>
+                   
+                    <a-form-item has-feedback   :help="error?.remarks" :validate-status="error?.remarks ? 'error' : ''"  label="Remarks" >
+                   
+                    <a-input v-model:value="form.remarks"   placeholder="Enter remarks" @blur="validateField('remarks')"  /> 
                     </a-form-item>
-                    <a-form-item label="Prepared by">
-                        <a-input
-                            v-model:value="form.approvedBy"
-                            readonly
-                        ></a-input>
-                    </a-form-item>
-                </a-card>
-            </a-col>
 
+                    <a-form-item label="Prepared by">
+                        <a-input v-model:value="form.approvedBy" readonly  >    
+                        </a-input>
+                    </a-form-item>
+                     <!-- Submit Button -->
+                     <div class="flex justify-start">
+                  <a-button @click="submitForm" type="primary" class="w-[400px]">
+                <CheckOutlined /> SUBMIT FORM
+            </a-button>
+        </div>
+     </a-card>
+ </a-col>
             <a-col :span="8">
                 <a-card>
                     <a-form-item
@@ -57,7 +51,7 @@
                             :columns="denomColumns"
                             :pagination="false"
                         >
-                            <template #bodyCell="{ column, record, index }">
+                            <template #bodyCell="{ column, record }">
                                 <template v-if="column.key === 'qty'">
                                     <a-input
                                         type="number"
@@ -67,27 +61,31 @@
                                 </template>
                             </template>
                         </a-table>
-                        <div class="flex justify-end">Total: {{ total }}</div>
+                        <div class="flex justify-end text-xl font-bold ">Total:  ₱ {{ total }}</div>
                     </a-form-item>
                 </a-card>
             </a-col>
+
             <a-col :span="8">
-                <a-table
-                    :dataSource="allocated"
-                    :columns="allocatedGcColumns"
-                    :pagination="false"
-                    bordered
-                >
-                    <template #bodyCell="{ column, record }">
-                        <template v-if="column.dataIndex === 'qty'">
-                            <a-input :value="record.count"></a-input>
-                        </template>
-                    </template>
-                </a-table>
-            </a-col>
-        </a-row>
-    </a-card>
+                <!-- <a-card title="Allocated GC" class="shadow-md"> -->
+                 <a-table
+                     :dataSource="allocated"
+                     :columns="allocatedGcColumns"
+                     :pagination="false"
+                      bordered
+                      >
+            <template #bodyCell="{ column, record, index }">
+                <template v-if="column.dataIndex === 'qty'">
+                    <a-input :value="record.count"></a-input>
+                </template>
+            </template>
+          </a-table>
+      <!-- </a-card> -->
+    </a-col>
+</a-row>              
+</a-card>
 </template>
+
 
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
@@ -95,6 +93,7 @@ import dayjs from "dayjs";
 import { notification } from "ant-design-vue";
 import { useForm } from "@inertiajs/vue3";
 import { reactive, watch } from "vue";
+import { toPadding } from "chart.js/helpers";
 
 export default {
     layout: AuthenticatedLayout,
@@ -131,6 +130,7 @@ export default {
             this.form.quantities[denom.denom_id] = 0;
         });
     },
+    
     methods: {
         disabledDate(current) {
             return current && current < new Date().setHours(0, 0, 0, 0);
@@ -163,12 +163,12 @@ export default {
                         this.$inertia.get(route("retail.dashboard"));
                     }
                 },
-            });
-        },
-        handleImageChange(document) {
+            })
+        handleImageChange(document) ;
             this.file = document.file;
-        },
-    },
+        }
+     },
+    
     watch: {
         // Watch the quantities object for changes and recalculate total
         'form.quantities': {
@@ -176,5 +176,6 @@ export default {
             deep: true,  // Ensure deep watching for nested object changes
         },
     },
+    
 };
 </script>

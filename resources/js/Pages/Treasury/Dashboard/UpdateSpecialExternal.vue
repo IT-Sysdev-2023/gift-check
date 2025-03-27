@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <Head title="Update Special External Gc" />
+        <Head title="Update Special External GC" />
         <a-breadcrumb style="margin: 15px 0">
             <a-breadcrumb-item>
                 <Link :href="route(dRoute)">Home</Link>
@@ -13,7 +13,7 @@
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
 
-        <a-card title="Update Special Gc Request">
+        <a-card title="Update Special GC Request">
             <a-form
                 ref="formRef"
                 name="advanced_search"
@@ -23,7 +23,7 @@
             >
                 <a-row :gutter="24">
                     <a-col :span="8">
-                        <a-form-item label="Gc Request #:">
+                        <a-form-item label="GC Request #:">
                             <a-input
                                 :value="page.spexgc_num"
                                 readonly

@@ -78,7 +78,7 @@ const form = computed(() => {
         <Head :title="title" />
         <a-breadcrumb>
             <a-breadcrumb-item><a :href="route('treasury.dashboard')">Home</a></a-breadcrumb-item>
-            <a-breadcrumb-item><a :href="route('treasury.transactions.dti.dtiApprovedRequest')">Dti List
+            <a-breadcrumb-item><a :href="route('treasury.transactions.dti.dtiApprovedRequest')">DTI List
                     View</a></a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>

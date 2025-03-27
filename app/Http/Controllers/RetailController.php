@@ -362,9 +362,15 @@ class RetailController extends Controller
         $st = Store::where('store_id', $request->user()->store_assigned)->first();
 
         $driveLetter = 'Z:';
-        $networkPath =  rtrim($st->store_textfile_ip, '\\');
-        $username = $st->username;  // No extra quotes
-        $password = $st->new_password;
+        // $networkPath =  rtrim($st->store_textfile_ip, '\\');
+        // $username = $st->username;  // No extra quotes
+        // $password = $st->new_password;
+
+        // $driveLetter = 'Z:'; // Specify a drive letter
+    $networkPath = '\\\\172.16.43.166\Gift';
+
+    $username = "New User";// Enclose in quotes if username contains spaces
+    $password = 'san'; // Enclose in quotes if password contains special characters
 
         exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
 

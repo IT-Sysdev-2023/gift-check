@@ -148,7 +148,7 @@ h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"></path>
                     </template>
                 </a-statistic>
                 <div class="flex justify-center">
-                    <a-typography-text class="mb-1 " keyboard>Promo Gc Request Details</a-typography-text>
+                    <a-typography-text class="mb-1 " keyboard>Promo GC Request Details</a-typography-text>
                 </div>
                 <div class="mt-2">
                     <a-descriptions size="small" bordered>

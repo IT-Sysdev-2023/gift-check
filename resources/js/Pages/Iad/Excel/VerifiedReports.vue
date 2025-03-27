@@ -103,11 +103,11 @@ const handleDateChange = (obj: any, str: any) => {
 const selectedType = ref<SelectProps['options']>([
     {
         value: '0',
-        label: 'Verified Gc Report Monthly',
+        label: 'Verified GC Report Monthly',
     },
     {
         value: '1',
-        label: 'Verified Gc Report Yearly',
+        label: 'Verified GC Report Yearly',
     },
 
 ]);
@@ -116,7 +116,7 @@ const selectedType = ref<SelectProps['options']>([
 const datatype = ref<SelectProps['options']>([
     {
         value: 'vgc',
-        label: 'Verified Gc',
+        label: 'Verified GC',
     },
 ]);
 

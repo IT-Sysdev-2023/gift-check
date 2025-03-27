@@ -89,7 +89,7 @@ class ColumnHelper
 
     public static $pendingStoreGcRequest = [
         [
-            'title' => 'Gc Request No.',
+            'title' => 'GC Request No.',
             'dataIndex' => 'sgc_num',
 
         ],

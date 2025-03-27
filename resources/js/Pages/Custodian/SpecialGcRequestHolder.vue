@@ -1,7 +1,7 @@
 <template>
     <a-breadcrumb class="mb-4">
         <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-        <a-breadcrumb-item>Pending Gc Holders</a-breadcrumb-item>
+        <a-breadcrumb-item>Pending GC Holders</a-breadcrumb-item>
     </a-breadcrumb>
     <a-card>
         <a-tabs type="card" v-model:activeKey="activeKey" @change="switchData">
@@ -20,7 +20,7 @@
                                 <template #icon>
                                     <FastForwardOutlined />
                                 </template>
-                                Setup Gc Holders
+                                Setup GC Holders
                             </a-button>
                         </template>
                     </template>
@@ -41,7 +41,7 @@
                                 <template #icon>
                                     <FastForwardOutlined />
                                 </template>
-                                Setup Gc Holders
+                                Setup GC Holders
                             </a-button>
                         </template>
                     </template>

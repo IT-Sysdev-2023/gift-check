@@ -11,8 +11,8 @@
 
         <a-card :title="'Submit ' + titleGc" class="mt-10">
             <template #extra>
-                <a-switch v-model:checked="formState.switchGc" checked-children="Special Int. Gc"
-                    un-checked-children="Special Ext. Gc" />
+                <a-switch v-model:checked="formState.switchGc" checked-children="Special Int. GC"
+                    un-checked-children="Special Ext. GC" />
             </template>
             <a-form ref="formRef" :model="formState" :label-col="{ span: 7 }" :wrapper-col="{ span: 15 }"
                 @finish="onSubmit">
@@ -22,23 +22,28 @@
                             <a-form-item label="Transaction No." name="name">
                                 <a-input :value="formState.trans" readonly />
                             </a-form-item>
+                           
                             <a-form-item label="Payment date:" name="dateRequested">
                                 <a-input v-model:value="currentDate" readonly />
                             </a-form-item>
+                            
                             <a-form-item label="Date Needed:" name="dateNeeded" has-feedback
                                 :validate-status="getErrorStatus('dateNeeded')" :help="getErrorMessage('dateNeeded')">
                                 <span class="text-red-500">*Required</span>
                                 <a-date-picker style="width: 100%;" :disabled-date="disabledDate"
                                     v-model:value="formState.dateNeeded" @change="clearError('dateNeeded')" />
                             </a-form-item>
+                           
                             <a-form-item label="Upload Scan Copy.:" name="upload"
                                 :validate-status="getErrorStatus('file')" :help="getErrorMessage('file')">
                                 <span class="text-red-500">*Required</span>
                                 <ant-upload-multi-image @handle-change="handleChange" />
                             </a-form-item>
+                            
                             <a-form-item label="Account Name" name="account" v-if="accountName">
                                 <a-input :value="accountName" />
                             </a-form-item>
+                           
                             <a-form-item label="Lookup Customer:" name="customer">
                                 <span class="text-red-500">*Required</span>
                                 <ant-select :options="props.options" @handle-change="handleCustomerChange" />
@@ -69,7 +74,7 @@
                         <ant-form-nest-item :form="formState" />
 
                         <a-button class="mt-4" size="large" block type="primary" html-type="submit">
-                            <FastForwardOutlined />Submit Special Gc
+                            <FastForwardOutlined />Submit Special GC
                             Payment
                         </a-button>
                     </a-col>

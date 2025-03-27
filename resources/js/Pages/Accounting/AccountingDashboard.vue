@@ -2,11 +2,11 @@
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
-                <m-card title="Special Gc Request" aRoute="custodian.approved.request" pRoute="accounting.pending.index"
+                <m-card title="Special GC Request" aRoute="custodian.approved.request" pRoute="accounting.pending.index"
                     :pending="count.pending">
                     <a-button style="width: 340px" type="primary" class="mb-2"
                         @click="router.get(route('accounting.payment.payment.gc'))">
-                        Payment Gc
+                        Payment GC
                     </a-button>
                     <a-button style="width: 340px" type="primary" class="mb-2"
                         @click="router.get(route('accounting.payment.viewing'))">

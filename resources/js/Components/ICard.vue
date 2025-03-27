@@ -12,7 +12,7 @@
                 type="primary"
                 @click="() => $inertia.get(route(aRoute))"
             >
-                {{ approvedLabel ?? "Approved Gc" }}
+                {{ approvedLabel ?? "Approved GC" }}
                 {{ aextension ? `(${aextension})` : "" }}
             </a-button>
         </a-badge>
@@ -28,7 +28,7 @@
                 type="primary"
                 @click="() => $inertia.get(route(rRoute))"
             >
-                {{ revrecLabel ?? "Reviewed Gc" }}
+                {{ revrecLabel ?? "Reviewed GC" }}
                 {{ aextension ? `(${aextension})` : "" }}
             </a-button>
         </a-badge>

@@ -43,7 +43,7 @@ import {
         <a-menu-item key="recievedGC">
             <GroupOutlined />
             <span>
-                <Link :href="route('custodian.received.gc')"> Received Gc</Link>
+                <Link :href="route('custodian.received.gc')"> Received GC</Link>
             </span>
         </a-menu-item>
         <a-menu-item key="gcTracking">
@@ -75,7 +75,7 @@ import {
         <a-menu-item key="recievedGC">
             <GroupOutlined />
             <span>
-                <Link :href="route('custodian.received.gc')">Received Gc</Link>
+                <Link :href="route('custodian.received.gc')">Received GC</Link>
             </span>
         </a-menu-item>
         <a-menu-item key="gcTracking">
