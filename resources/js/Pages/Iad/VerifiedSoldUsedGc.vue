@@ -66,7 +66,7 @@ const columns = ref([
         key: 'name',
     },
     {
-        title: 'Gc Type',
+        title: 'GC Type',
         dataIndex: 'gctype',
         key: 'name',
     },
@@ -87,7 +87,7 @@ const columns = ref([
         key: 'name',
     },
     {
-        title: 'Gc Details',
+        title: 'GC Details',
         key: 'details',
     },
 ]);

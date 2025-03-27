@@ -5,7 +5,7 @@
             <a-row :gutter="[16, 16]">
                 <a-col :span="7">
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Gc Receiving No.">{{ record.store
+                        <a-descriptions-item style="width: 50%;" label="GC Receiving No.">{{ record.store
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
@@ -13,7 +13,7 @@
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Gc Request No">{{
+                        <a-descriptions-item style="width: 50%;" label="GC Request No">{{
                             record.approved.store_gc_request.sgc_num }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
@@ -21,7 +21,7 @@
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Gc Released No.">{{
+                        <a-descriptions-item style="width: 50%;" label="GC Released No.">{{
                             record.approved?.agcr_request_relnum }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
@@ -71,7 +71,7 @@
                                     <template #icon>
                                         <FastForwardOutlined />
                                     </template>
-                                    Scan Gc
+                                    Scan GC
                                 </a-button>
                             </a-descriptions-item>
                         </a-descriptions>
@@ -85,7 +85,7 @@
                         </a-col>
                         <a-col :span="12">
                             <span>
-                                Scanned Gc
+                                Scanned GC
                             </span>
                             <a-input class="text-center" size="large" readonly :value="record.totscanned" />
                         </a-col>

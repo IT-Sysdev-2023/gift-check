@@ -1,7 +1,7 @@
 <template>
     <a-modal
         :open="open"
-        title="Allocated Gc"
+        title="Allocated GC"
         style="width: 1000px"
         @cancel="handleClose"
         centered

@@ -96,7 +96,7 @@ class ColumnHelper
 
         ],
         [
-            'title' => 'Scanned Gc',
+            'title' => 'Scanned GC',
             'dataIndex' => 'countDen',
             'key' => 'denom_id'
 
@@ -828,7 +828,7 @@ class ColumnHelper
             'dataIndex' => 'spcus_acctname',
         ],
         [
-            'title' => 'Total Denom.',
+            'title' => 'Total Denomination.',
             'dataIndex' => 'totdenom',
         ],
 

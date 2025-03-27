@@ -35,7 +35,7 @@ class GcAllocationController extends Controller
             ->get();
 
         return inertia('Treasury/Transactions/GcAllocation', [
-            'title' => 'Gc Allocation',
+            'title' => 'GC Allocation',
             'stores' => $store,
             'gcTypes' => $gcTypes,
             'denoms' => $denoms

@@ -115,7 +115,7 @@
                     </a-descriptions>
                     <div class="mb-8 pt-5 text-right space-x-5">
                         <a-button @click="viewScannedGc" type="dashed"
-                            >View Scanned Gc</a-button
+                            >View Scanned GC</a-button
                         >
                     </div>
                     <a-table
@@ -175,10 +175,10 @@
         :scan-data="scanData"
     />
 
-    <!-- View Scanned Gc -->
+    <!-- View Scanned GC -->
     <a-modal
         v-model:open="viewScannedModal"
-        title="Promo Scanned Gc"
+        title="Promo Scanned GC"
         style="width: 800px"
         centered
         :footer="null"
@@ -288,7 +288,7 @@ const denominationColumns = [
         dataIndex: "denomination",
     },
     {
-        title: "Requested Gc",
+        title: "Requested GC",
         key: "reqgc",
     },
     {
@@ -300,7 +300,7 @@ const denominationColumns = [
         key: "action",
     },
     {
-        title: "Scanned Gc",
+        title: "Scanned GC",
         key: "scan",
     },
 ];

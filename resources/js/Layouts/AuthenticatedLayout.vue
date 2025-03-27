@@ -313,20 +313,32 @@ const submitPassword = async () => {
                         <!-- User greetings  -->
                         <div class="text-white font-bold text-center mt-1">
                             <div v-if="formattedUserName === 'abarquez, kent'">
-                                <span class="italic">Hello Master,</span> <span class="text-bold">{{
+                                <span class="italic">Konnichiwa Master,</span> <span class="text-bold">{{
                                     page.auth.user.full_name }}</span>
                             </div>
                             <div v-else-if="formattedUserName == 'gamale, teofredo'">
-                                <span class="italic">Hello Boss,</span> <span class="text-bold">{{
+                                <span class="italic">Musta Boss,</span> <span class="text-bold">{{
                                     page.auth.user.full_name }}</span>
                             </div>
                             <div v-else-if="formattedUserName == 'barace, harvey'">
-                                <span class="italic"> Hello Master,</span> <span class="font-bold">{{
+                                <span class="italic"> Sawasdee Krub,</span> <span class="font-bold">{{
                                     page.auth.user.full_name }}</span>
                             </div>
                             <div v-else-if="formattedUserName == 'palban, jessan'">
                                 <span class="italic"> Hello Master,</span> <span class="font-bold">{{
                                     page.auth.user.full_name }}</span>
+                            </div>
+                            <div v-else-if="formattedUserName == 'caren, norien'">
+                                <span class="italic">Annyeong Haseyo,</span>
+                                {{ page.auth.user.full_name }}
+                            </div>
+                            <div v-else-if="formattedUserName == 'lansang, pearl'">
+                                <span class="italic">Konnichiwa,</span>
+                                {{ page.auth.user.full_name }}
+                            </div>
+                            <div v-else-if="formattedUserName == 'cagas, claire'">
+                                <span class="italic">Nǐ hǎo,</span>
+                                {{ page.auth.user.full_name }}
                             </div>
                             <div v-else>
                                 <span class="italic"> Hello,</span> <span class="font-bold">{{ page.auth.user.full_name

@@ -138,7 +138,7 @@
                 </tr>
             @endforeach
         </table>
-        <p>Total No. of Gc: {{$data['total']['noOfGc']}}</p>
+        <p>Total No. of GC: {{$data['total']['noOfGc']}}</p>
         <p>Total GC Amount: {{$data['total']['gcAmount']}}</p>
     </div>
 </body>

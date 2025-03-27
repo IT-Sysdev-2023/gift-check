@@ -1,6 +1,6 @@
 <template>
     <a-card class="bg-card">
-        <a-alert message="Special External Gc Request" show-icon />
+        <a-alert message="Special External GC Request" show-icon />
         <div class="card" style="background-color: #EE4E4E">
             <svg class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -14,7 +14,7 @@
 
             <div class="message-text-container">
                 <p class="message-text text-white">Pendings</p>
-                <p class="sub-text text-white">Gc Holder Entry</p>
+                <p class="sub-text text-white">GC Holder Entry</p>
             </div>
             <a-badge :count="count.countIntExRequest" :overflow-count="999">
                 <a-button @click="() => $inertia.get(route('custodian.pendings.holder.entry'))" >
@@ -39,7 +39,7 @@
             </div>
             <div class="message-text-container">
                 <p class="message-text text-white">Approved</p>
-                <p class="sub-text text-white">Approved Gc Request</p>
+                <p class="sub-text text-white">Approved GC Request</p>
             </div>
             <a-badge :overflow-count="999" :number-style="{ backgroundColor: '#52c41a' }" :count="count.countApproved" @click="() => $inertia.get(route('custodian.approved.request'))">
                 <a-button >
@@ -63,7 +63,7 @@
             </div>
             <div class="message-text-container">
                 <p class="message-text text-white">Released</p>
-                <p class="sub-text text-white">Released Gc Infos</p>
+                <p class="sub-text text-white">Released GC Infos</p>
             </div>
             <a-badge :overflow-count="999" :count="count.countReleased" :number-style="{ backgroundColor: '#52c41a' }"  @click="() => $inertia.get(route('custodian.released'))">
                 <a-button >

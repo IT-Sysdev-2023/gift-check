@@ -9,40 +9,42 @@
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%" label="Verify By">{{
+                        <a-descriptions-item style="width: 50%" label="Verified By">{{
                             $page.props.auth.user.full_name
                             }}</a-descriptions-item>
                     </a-descriptions>
 
-                    <a-typography-text keyboard>Payment To</a-typography-text>
-                    <a-select size="large" ref="select" v-model:value="form.payment" style="width: 100%"
+                    <a-row class="mt-5 mb-5">
+                    <a-description-text keyboard>Payment To: </a-description-text>
+                    <a-select size="large" ref="select" v-model:value="form.payment" style="width: 540px"
                         placeholder="Select Payment Type">
                         <a-select-option value="STORE DEPARTMENT">STORE DEPARTMENT</a-select-option>
                         <a-select-option value="WHOLESALE">WHOLESALE</a-select-option>
                     </a-select>
-                    <a-row class="mt-2 mb-2">
+                    </a-row>
+                    <a-row class="mt-5 mb-5">
                         <a-col :span="16">
-                            <a-typography-text keyboard>Customer</a-typography-text>
+                            <a-description-text keyboard>Customer Name: </a-description-text>
                             <a-select size="large" allow-clear show-search placeholder="Search customer here..."
-                                :default-active-first-option="false" v-model:value="form.customer" style="width: 100%"
+                                :default-active-first-option="false" v-model:value="form.customer" style="width: 360px"
                                 :show-arrow="false" :filter-option="false" :not-found-content="isRetrieving ? undefined : 'No Customer found'
                                     " :options="optionCustomer" @search="debounceCustomer">
                                 <template v-if="isRetrieving" #notFoundContent>
-                                    <a-spin size="small" />
+                                    <a-spin size="large" />
                                 </template>
                             </a-select>
                         </a-col>
-                        <a-col :span="4">
+                        <a-col :span="8">
                             <a-button type="primary" class="mt-6" size="large" @click="addCustomerButton">
                                 <PlusOutlined />
                                 Add Customer
                             </a-button>
                         </a-col>
                     </a-row>
-                    <a-typography-text keyboard>Scan Barcode</a-typography-text>
+                    <a-description-text keyboard>Barcode:</a-description-text>
 
-                    <a-input-number class="pb-3 pt-3 p-1 text-2xl" v-model:value="form.barcode" @change="viewstatus"
-                        @keyup.enter="viewstatus" style="width: 100%" size="large" placeholder="Enter Barode..." />
+                    <a-input-number class="pb-3 pt-3 p-1 text-xl" v-model:value="form.barcode" @change="viewstatus"
+                        @keyup.enter="viewstatus" style="width: 100%" size="medium" placeholder="Scan Barode" />
                     <a-button size="large" type="primary" class="mt-3" :disabled="form.barcode == null ||
                         form.barcode == '' ||
                         form.customer == null ||
@@ -56,7 +58,7 @@
                         {{
                             form.processing
                                 ? "Verifying Barcode..."
-                                : "Verify Barcode"
+                                : "VERIFY BARCODE"
                         }}
                     </a-button>
                 </a-card>
@@ -109,11 +111,11 @@
                     </p>
                 </a-card>
             </a-col>
-            <a-col :span="14">
-                <a-alert v-if="success" :message="'Barcode # ' + form.barcode + ' found'" class="mb-1" type="success"
+            <a-col :span="13">
+                <a-alert v-if="success" :message="'BARCODE # ' + form.barcode + ' FOUND'" class="mb-1" type="success"
                     show-icon />
-                <a-alert v-if="notfound" :message="'Barcode # ' + form.barcode + '  not found'" class="mb-1"
-                    type="error" show-icon />
+                <a-alert v-if="notfound" :message="'BARCODE # ' + form.barcode + '  NOT FOUND'" class="mb-1"
+                    type="404" show-icon />
                 <a-card v-if="!empty">
                     <div v-if="skeleton">
                         <a-skeleton avatar :paragraph="{ rows: 4 }" />
@@ -127,7 +129,7 @@
                     <a-skeleton avatar :paragraph="{ rows: 4 }" />
                 </div>
                 <a-card v-else>
-                    <a-result status="404" title="Enter Barcode" sub-title="In order to show barcode status">
+                    <a-result status="Error!" title="Warning: Scan Barcode" sub-title="In order to show barcode status">
                     </a-result>
                 </a-card>
             </a-col>
@@ -135,17 +137,17 @@
         <a-modal title="Add Customer" v-model:open="addCustomerModal" @ok="customerSubmit">
             <a-form-item :validate-status="addingCustomer.errors?.firstname ? 'error' : ''
                 " :help="addingCustomer.errors.firstname">
-                Firstname:
+                First Name:
                 <a-input allow-clear v-model:value="addingCustomer.firstname" placeholder="firstname"></a-input>
             </a-form-item>
             <a-form-item :validate-status="addingCustomer.errors?.lastname ? 'error' : ''
                 " :help="addingCustomer.errors.lastname">
-                Lastname:
+                Last Name:
                 <a-input allow-clear v-model:value="addingCustomer.lastname" placeholder="lastname"></a-input>
             </a-form-item>
             <a-form-item :validate-status="addingCustomer.errors?.middlename ? 'error' : ''
                 " :help="addingCustomer.errors.middlename">
-                Middlename:
+                Middle Name:
                 <a-input allow-clear v-model:value="addingCustomer.middlename" placeholder="middlename"></a-input>
             </a-form-item>
             <a-form-item :validate-status="addingCustomer.errors?.extention ? 'error' : ''
@@ -238,7 +240,7 @@ const customerSubmit = async () => {
 
         notification.success({
             message: "Success",
-            description: "Successfully adding Customer",
+            description: "Successfully Added Customer",
         });
     } catch (error) {
         console.error("Error adding Customer", error);

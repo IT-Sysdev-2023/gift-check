@@ -150,7 +150,7 @@ const barcodeColumns = ref([
         <a-modal v-model:open="openModal" width="100%" :footer="false">
             <div class="card-container">
                 <a-tabs v-model:activeKey="activeKey" type="card">
-                    <a-tab-pane key="1" tab="DTI Special Gc Request">
+                    <a-tab-pane key="1" tab="DTI Special GC Request">
                         <div class="flex direction-columns gap-5">
                             <a-card>
                                 <a-form-item label="Date Requested">

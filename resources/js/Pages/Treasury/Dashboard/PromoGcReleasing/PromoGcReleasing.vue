@@ -124,7 +124,7 @@
                                 :value="viewedData.prrelto_approvedby"
                             />
                             <FormItem
-                                label="Total Gc Amount:"
+                                label="Total GC Amount:"
                                 :value="viewedData.user.full_name"
                             />
                         </a-col>
@@ -132,7 +132,7 @@
                 </a-form>
             </a-card>
 
-            <a-card title="Released Gc">
+            <a-card title="Released GC">
                 <a-table
                     bordered
                     :dataSource="denomination.data"

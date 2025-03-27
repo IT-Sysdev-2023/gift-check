@@ -1,6 +1,5 @@
 <template>
     <AuthenticatedLayout>
-
         <Head :title="title" />
         <div>
             <a-breadcrumb>
@@ -117,6 +116,8 @@ const storeSearch = ref<string>(props.search);
 const storeSearchFunction = () => {
     router.get(route('admin.masterfile.setupStore'), {
         search: storeSearch.value
+    }, {
+        preserveState: true
     });
 }
 

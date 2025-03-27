@@ -19,7 +19,7 @@
                                 <template #icon>
                                     <FastForwardOutlined />
                                 </template>
-                                Setup Gc Request
+                                Setup GC Request
                             </a-button>
                         </template>
                     </template>
@@ -46,7 +46,7 @@
                                 <template #icon>
                                     <FastForwardOutlined />
                                 </template>
-                                Setup Gc Request
+                                Setup GC Request
                             </a-button>
                         </template>
                     </template>

@@ -6,7 +6,7 @@
                     <template #tab>
                         <span>
                             <apple-outlined />
-                            Special External Gc Request
+                            Special External GC Request
                         </span>
                     </template>
                     <a-row :gutter="[16, 16]">

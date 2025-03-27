@@ -6,7 +6,7 @@
                 <a :href="route('treasury.dashboard')">Home</a>
             </a-breadcrumb-item>
             <a-breadcrumb-item>
-                <a :href="route('treasury.transactions.dti.dtiPendingRequest')">Dti Pending Request</a>
+                <a :href="route('treasury.transactions.dti.dtiPendingRequest')">DTI Pending Request</a>
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
@@ -14,7 +14,7 @@
             <a-col :span="13">
                 <a-card title="Update DTI Request Form">
                     <a-descriptions size="small" layout="horizontal" bordered>
-                        <a-descriptions-item style="width: 50%;" label="Dti Gc Request #">{{ props.record.dti_num
+                        <a-descriptions-item style="width: 50%;" label="DTI GC Request #">{{ props.record.dti_num
                             }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions size="small" layout="horizontal" bordered>

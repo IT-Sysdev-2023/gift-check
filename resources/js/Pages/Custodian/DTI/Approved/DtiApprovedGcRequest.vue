@@ -8,7 +8,7 @@
                         type="primary" 
                          style="background-color: #1890ff; border-color: #1890ff; color: white;"
                           @click="setup(record.dti_num)">
-                            Setup Gc Request Dti
+                            Setup GC Request DTI
                         </a-button>
                     </template>
                 </template>

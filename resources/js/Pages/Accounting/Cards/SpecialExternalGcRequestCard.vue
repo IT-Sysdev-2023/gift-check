@@ -35,7 +35,7 @@
                 <button type="button" class="track" @click="() => $inertia.get(route('accounting.payment.payment.gc'))">
                     <span>
                         <LogoutOutlined />
-                        Payment Gc
+                        Payment GC
                     </span>
                 </button>
                 <button type="button" class="track" @click="() => $inertia.get(route('accounting.payment.viewing'))">

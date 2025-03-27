@@ -12,7 +12,7 @@
         </a-button>
     </a-card>
 
-    <a-modal style="width: auto; top: 50px;" title="Gc For Allocation" v-model:open="openDrawer" @close="onClose">
+    <a-modal style="width: auto; top: 50px;" title="GC For Allocation" v-model:open="openDrawer" @close="onClose">
         <template #extra>
             <a-button style="margin-right: 8px" @click="onClose">Exit</a-button>
         </template>

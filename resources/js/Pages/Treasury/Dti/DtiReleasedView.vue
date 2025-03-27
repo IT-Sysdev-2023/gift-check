@@ -124,7 +124,7 @@ const requested = computed(() => {
         <Head :title="title" />
         <a-breadcrumb>
             <a-breadcrumb-item><a :href="route('treasury.dashboard')">Home</a></a-breadcrumb-item>
-            <a-breadcrumb-item><a :href="route('treasury.transactions.dti.dtiReleasedGc')">Dti Released
+            <a-breadcrumb-item><a :href="route('treasury.transactions.dti.dtiReleasedGc')">DTI Released
                     GC</a></a-breadcrumb-item>
             <a-breadcrumb-item>
                 {{ props.title }}

@@ -20,13 +20,13 @@
                 <a-form-item label="Report Type">
                     <a-checkbox-group v-model:value="formState.reportType">
                         <a-checkbox value="gcSales" name="type"
-                            >Gc Sales</a-checkbox
+                            >GC Sales</a-checkbox
                         >
                         <a-checkbox value="gcRevalidation" name="type"
-                            >Gc Revalidation</a-checkbox
+                            >GC Revalidation</a-checkbox
                         >
                         <a-checkbox value="refund" name="type"
-                            >Gc Refund</a-checkbox
+                            >GC Refund</a-checkbox
                         >
                     </a-checkbox-group>
                 </a-form-item>

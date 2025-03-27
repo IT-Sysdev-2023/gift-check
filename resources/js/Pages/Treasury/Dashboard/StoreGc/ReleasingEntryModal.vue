@@ -7,12 +7,12 @@
         @ok="submitForm"
         title="Releasing Entry"
     >
-        <a-row :gutter="[16, 0]" class="mt-3">
+        <a-row :gutter="[16, 0] ">
             <a-col :span="10">
                 <a-card>
                     <a-form
                         layout="horizontal"
-                        style="max-width: 600px; padding-top: 10px"
+                        style="max-width: 600px; padding-top: 1px"
                     >
                         <a-form-item label="GC Releasing No.:">
                             <a-input :value="data.rel_num" readonly />
@@ -80,56 +80,47 @@
             </a-col>
             <a-col :span="14">
                 <a-card>
-                    <a-descriptions title="More Details">
-                        <a-descriptions-item
-                            label="Store"
-                            :labelStyle="{ fontWeight: 'bold' }"
-                            >{{
-                                data.details.store.store_name
-                            }}</a-descriptions-item
+                    <a-descriptions title="Store Request Details"  bordered :column="1" size="middle" >
+                        
+                        <a-descriptions-item label="GC Request No" :labelStyle="{ fontWeight: 'bold' }"
                         >
-                        <a-descriptions-item
-                            label="Date Requested"
-                            :labelStyle="{ fontWeight: 'bold' }"
-                            >{{
-                                dayjs(data.details.sgc_date_request).format(
-                                    "MMM DD YYYY"
-                                )
-                            }}</a-descriptions-item
+                            {{ data.details.sgc_num }} </a-descriptions-item>  
+
+                        <a-descriptions-item label="Retail Store":labelStyle="{ fontWeight: 'bold' }"
+                            > {{ data.details.store.store_name}}</a-descriptions-item
                         >
-                        <a-descriptions-item
+                       
+                        <a-descriptions-item label="Date Requested" :labelStyle="{ fontWeight: 'bold' }"
+                            > {{  dayjs(data.details.sgc_date_request).format( "MMM DD, YYYY" )}}</a-descriptions-item
+                        >
+
+                        
+                        <a-descriptions-item label="Remarks":labelStyle="{ fontWeight: 'bold' }"
+                            >{{ data.details.sgc_remarks }}</a-descriptions-item
+                        >
+
+                        <a-descriptions-item label="Requested By" :labelStyle="{ fontWeight: 'bold' }"
+                        >  {{ data.details.user.full_name }}
+                        </a-descriptions-item>
+                      
+                        <!-- <a-descriptions-item
                             label="Date Needed"
                             :labelStyle="{ fontWeight: 'bold' }"
                             >{{
                                 dayjs(data.details.sgc_date_needed).format(
                                     "MMM DD YYYY"
                                 )
-                            }}</a-descriptions-item
+                            }}</a-descriptions-item -->
                         >
-                        <a-descriptions-item
-                            label="GC Request No"
-                            :labelStyle="{ fontWeight: 'bold' }"
-                        >
-                            {{ data.details.sgc_num }}
-                        </a-descriptions-item>
-                        <a-descriptions-item
+                       
+                        <!-- <a-descriptions-item
                             label="Document"
                             v-if="data.details.sgc_file_docno"
                         >
                             ...On Development
-                        </a-descriptions-item>
-                        <a-descriptions-item
-                            label="Remarks"
-                            :labelStyle="{ fontWeight: 'bold' }"
-                            >{{ data.details.sgc_remarks }}</a-descriptions-item
-                        >
-                        <a-descriptions-item
-                            label="Requested By"
-                            :labelStyle="{ fontWeight: 'bold' }"
-                        >
-                            {{ data.details.user.full_name }}
-                        </a-descriptions-item>
-                        <a-descriptions-item
+                        </a-descriptions-item> -->
+                       
+                        <!-- <a-descriptions-item
                             label="Time Requested"
                             :labelStyle="{ fontWeight: 'bold' }"
                         >
@@ -138,7 +129,7 @@
                                     "HH:mm:ss a"
                                 )
                             }}
-                        </a-descriptions-item>
+                        </a-descriptions-item> -->
                         <a-descriptions-item
                             label="Company Req.:"
                             v-if="data.details.sgc_type === 'special internal'"
@@ -151,7 +142,7 @@
                             >View Allocated GC</a-button
                         >
                         <a-button @click="viewScannedGc" type="dashed"
-                            >View Scanned Gc</a-button
+                            >View Scanned GC</a-button
                         >
                     </div>
                     <a-table
@@ -166,7 +157,7 @@
                                 dataIndex: 'denomination',
                             },
                             {
-                                title: 'Requested Gc',
+                                title: 'Requested GC',
                                 dataIndex: 'sri_items_remain',
                             },
                             {
@@ -174,7 +165,7 @@
                                 dataIndex: 'subtotal',
                             },
                             {
-                                title: 'Allocated Gc',
+                                title: 'Allocated GC',
                                 dataIndex: 'count',
                             },
                             {
@@ -182,7 +173,7 @@
                                 key: 'action',
                             },
                             {
-                                title: 'Scanned Gc',
+                                title: 'Scanned GC',
                                 key: 'scan',
                             },
                         ]"
@@ -234,10 +225,10 @@
     <!-- Scan Modal  sadasd-->
     <ScanModal v-model:open="scanModal" :data="data" :scan-data="scanData" />
 
-    <!-- View Scanned Gc -->
+    <!-- View Scanned GC -->
     <a-modal
         v-model:open="viewScannedModal"
-        title="Scanned Gc"
+        title="Scanned GC"
         style="width: 800px"
         centered
         :footer="null"

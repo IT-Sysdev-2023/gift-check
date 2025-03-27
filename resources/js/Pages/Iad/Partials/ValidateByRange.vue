@@ -1,5 +1,5 @@
 <template>
-    <a-modal title="Validate By Range" style="width: 50%;" :footer="false" :mask-closable="false" @cancel="cancel">
+    <a-modal title="Validated By Range" style="width: 50%;" :footer="false" :mask-closable="false" @cancel="cancel">
         <div class="mt-5 mb-4">
             <a-descriptions size="small" class="mb-1 text-center" layout="horizontal" bordered>
                 <a-descriptions-item style="width: 50%" label="Received No.">{{ recnum }}</a-descriptions-item>

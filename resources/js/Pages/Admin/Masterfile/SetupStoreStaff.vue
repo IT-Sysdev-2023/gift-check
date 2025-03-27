@@ -209,7 +209,7 @@ const resetPassword = (data) => {
         </div>
         <a-card title="Store Staff Setup" class="mt-5">
             <div class="flex justify-end ">
-                <a-button @click="showAddNewUserModal" type="primary" class="bg-blue-500 text-white">
+                <a-button @click="showAddNewUserModal" type="primary" class="bg-blue-600 text-white">
                     <PlusOutlined /> Add New User
                 </a-button>
             </div>
@@ -221,12 +221,12 @@ const resetPassword = (data) => {
                 <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">
-                            <a-button title="Update" @click="showUpdateUserModal(record)"
-                                style="color:white; background-color: green;">
+                            <a-button title="Update" type="primary" @click="showUpdateUserModal(record)"
+                                class="bg-green-600 text-white">
                                 <EditOutlined />
                             </a-button>
-                            <a-button title="Reset Password" @click="resetPassword(record)" class="ml-1"
-                                style="color:white; background-color: #1b76f8;">
+                            <a-button title="Reset Password" type="primary" @click="resetPassword(record)"
+                                class="bg-blue-600 text-white ml-1">
                                 <UndoOutlined />
                             </a-button>
                         </template>
@@ -244,8 +244,7 @@ const resetPassword = (data) => {
                     <a-form-item :validate-status="addingForm.errors.ss_username ? 'error' : ''"
                         :help="addingForm.errors.ss_username" style="font-weight: bold;">
                         Username:
-                        <a-input allow-clear placeholder="Username" v-model:value="addingForm.ss_username"
-                            type="text" />
+                        <a-input allow-clear placeholder="Username" v-model:value="addingForm.ss_username" />
                     </a-form-item>
                     <a-form-item :validate-status="addingForm.errors.ss_firstname ? 'error' : ''"
                         :help="addingForm.errors.ss_firstname" style="font-weight: bold;">
@@ -262,14 +261,13 @@ const resetPassword = (data) => {
                     <a-form-item :validate-status="addingForm.errors.ss_idnumber ? 'error' : ''"
                         :help="addingForm.errors.ss_idnumber" style="font-weight: bold;">
                         Employee ID:
-                        <a-input allow-clear placeholder="Employee ID number" v-model:value="addingForm.ss_idnumber"
-                            type="number" />
+                        <a-input-number class="w-full" allow-clear placeholder="Employee ID number" v-model:value="addingForm.ss_idnumber"
+                             />
                     </a-form-item>
                     <a-form-item :validate-status="addingForm.errors.ss_password ? 'error' : ''"
                         :help="addingForm.errors.ss_password" style="font-weight: bold;">
                         Password:
-                        <a-input allow-clear placeholder="Password" v-model:value="addingForm.ss_password"
-                            type="password" />
+                        <a-input-password allow-clear placeholder="Password" v-model:value="addingForm.ss_password" />
                     </a-form-item>
                     <a-form-item :validate-status="addingForm.errors.ss_store ? 'error' : ''"
                         :help="addingForm.errors.ss_store" style="font-weight: bold;">

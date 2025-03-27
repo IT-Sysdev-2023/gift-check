@@ -3,7 +3,7 @@
         <a-breadcrumb separator="">
             <a-breadcrumb-item href="">Dashboard</a-breadcrumb-item>
             <a-breadcrumb-separator />
-            <a-breadcrumb-item>Setup Approved Gc Request</a-breadcrumb-item>
+            <a-breadcrumb-item>Setup Approved GC Request</a-breadcrumb-item>
         </a-breadcrumb>
         <div class="flex justify-end mb-3">
             <a-button @click="() => $inertia.get(route('retail.dashboard'))">

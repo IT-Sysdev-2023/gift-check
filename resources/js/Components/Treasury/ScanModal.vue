@@ -1,5 +1,5 @@
 <template>
-    <a-modal :open="open" title="Scan Gc" style="width: 600px" @cancel="handleClose" centered @ok="onSubmitBarcode">
+    <a-modal :open="open" title="Scan GC" style="width: 600px" @cancel="handleClose" centered @ok="onSubmitBarcode">
         <a-descriptions class="mt-5">
             <a-descriptions-item label="Release No" :span="2" :labelStyle="{ fontWeight: 'bold' }">{{ data.rel_num
                 }}</a-descriptions-item>

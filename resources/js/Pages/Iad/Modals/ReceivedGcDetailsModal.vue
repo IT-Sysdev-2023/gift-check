@@ -1,5 +1,5 @@
 <template>
-    <a-modal style="top: 10px; width: 70%;" size="small" title="GC Received Gc" placement="left" :width="900"
+    <a-modal style="top: 10px; width: 70%;" size="small" title="GC Received GC" placement="left" :width="900"
         :body-style="{ paddingBottom: '80px' }" @close="onClose">
         <a-row :gutter="[16, 16]">
             <a-col :span="10">

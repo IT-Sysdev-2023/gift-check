@@ -133,7 +133,7 @@
                 </a-form-item>
                 <a-form-item
                     name="gcType"
-                    label="Gc Type"
+                    label="GC Type"
                     has-feedback
                     :validate-status="
                         formState.invalid('gcType') ? 'error' : ''
