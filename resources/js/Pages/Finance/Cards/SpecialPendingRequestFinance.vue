@@ -72,7 +72,7 @@
             </div>
             <div class="message-text-container">
                 <p class="message-text text-white">Approved</p>
-                <p class="sub-text text-white">Approved Gc Request</p>
+                <p class="sub-text text-white">Approved GC Request</p>
             </div>
             <a-badge :count="count.approve" :overflow-count="999">
                 <a-button

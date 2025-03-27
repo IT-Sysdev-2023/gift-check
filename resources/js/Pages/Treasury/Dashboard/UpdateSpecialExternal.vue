@@ -13,7 +13,7 @@
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
 
-        <a-card title="Update Special Gc Request">
+        <a-card title="Update Special GC Request">
             <a-form
                 ref="formRef"
                 name="advanced_search"

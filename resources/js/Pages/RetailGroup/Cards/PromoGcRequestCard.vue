@@ -1,6 +1,6 @@
 <template>
     <a-card class="bg-card">
-        <a-alert message="Promo Gc Request" show-icon />
+        <a-alert message="Promo GC Request" show-icon />
         <div class="card" style="background-color: #EE4E4E">
             <svg class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -14,7 +14,7 @@
 
             <div class="message-text-container">
                 <p class="message-text text-white">Pendings</p>
-                <p class="sub-text text-white">All Pending Gc Request</p>
+                <p class="sub-text text-white">All Pending GC Request</p>
             </div>
             <a-badge :count="counts.pending">
                 <a-button
@@ -40,7 +40,7 @@
             </div>
             <div class="message-text-container">
                 <p class="message-text text-white">Approved</p>
-                <p class="sub-text text-white">All Approved Gc Request</p>
+                <p class="sub-text text-white">All Approved GC Request</p>
             </div>
             <a-badge :count="counts.approved" :number-style="{ backgroundColor: '#52c41a' }">
                 <a-button

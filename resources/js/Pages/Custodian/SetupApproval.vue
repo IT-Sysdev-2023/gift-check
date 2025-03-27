@@ -5,7 +5,7 @@
             <template #tab>
                 <span>
                     <apple-outlined />
-                    Special Gc Request Setup
+                    Special GC Request Setup
                 </span>
             </template>
             <a-row :gutter="[16, 16]">
@@ -256,7 +256,7 @@
             <template #tab>
                 <span>
                     <android-outlined />
-                    Gc Barcode List
+                    GC Barcode List
                 </span>
             </template>
             <!-- {{ barcodes }} -->

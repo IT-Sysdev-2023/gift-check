@@ -1,7 +1,7 @@
 <template>
     <AuthenticatedLayout>
         <a-tabs v-model:activeKey="activeKey" type="card">
-            <a-tab-pane key="1" :tab="'Promo Gc Request # ' + records.data.pgcreq_reqnum + ''">
+            <a-tab-pane key="1" :tab="'Promo GC Request # ' + records.data.pgcreq_reqnum + ''">
                 <a-descriptions size="small" layout="vertical" bordered>
                     <a-descriptions-item label="Date Requested">{{ records.data.pgcreq_datereq }}</a-descriptions-item>
                     <a-descriptions-item label="Date Needed">{{ records.data.pgcreq_dateneeded }}</a-descriptions-item>

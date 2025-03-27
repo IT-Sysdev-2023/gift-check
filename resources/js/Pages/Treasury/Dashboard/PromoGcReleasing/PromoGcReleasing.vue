@@ -124,7 +124,7 @@
                                 :value="viewedData.prrelto_approvedby"
                             />
                             <FormItem
-                                label="Total Gc Amount:"
+                                label="Total GC Amount:"
                                 :value="viewedData.user.full_name"
                             />
                         </a-col>

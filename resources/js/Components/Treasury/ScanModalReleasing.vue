@@ -1,7 +1,7 @@
 <template>
     <a-modal
         :open="open"
-        title="Scan Gc"
+        title="Scan GC"
         style="width: 600px"
         @cancel="handleClose"
         centered

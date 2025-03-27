@@ -39,7 +39,7 @@
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <m-card
-                title="Store Gc Request"
+                title="Store GC Request"
                 :pending="countGcRequest.PendingGcRequest"
                 :approved="countGcRequest.approved"
                 :cancelled="0"

@@ -98,8 +98,8 @@ const selectedType = ref<SelectProps['options']>([
 
 const datatype = ref<SelectProps['options']>([
     {
-        value: 'vgc',
-        label: 'Verified Gc',
+        value: 'vgc'
+        label: 'Verified GC',
     },
 ]);
 

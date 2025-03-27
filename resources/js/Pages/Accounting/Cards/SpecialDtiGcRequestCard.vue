@@ -26,14 +26,14 @@
                     @click="() => $inertia.get(route('accounting.payment.payment.gc.dti'))">
                     <span>
                         <LogoutOutlined />
-                        Payment Dti Gc
+                        Payment DTI GC
                     </span>
                 </button>
                 <button type="button" class="track"
                     @click="() => $inertia.get(route('accounting.payment.dti.viewing'))">
                     <span>
                         <LogoutOutlined />
-                        Payment Dti Viewing
+                        Payment DTI Viewing
                     </span>
                 </button>
             </div>

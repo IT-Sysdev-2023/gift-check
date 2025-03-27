@@ -11,7 +11,7 @@
             <budget-statistics :title="'DTI GC Deprecated'" :count="count.budgetCounts.dti" />
         </a-col> -->
         <a-col :span="8">
-            <budget-statistics title="Special GC Dti (Promotional)" :count="count.budgetCounts.dti_new" />
+            <budget-statistics title="Special GC DTI (Promotional)" :count="count.budgetCounts.dti_new" />
         </a-col>
     </a-row>
     <a-row :gutter="[16, 16]">
@@ -20,7 +20,7 @@
                 :approved="count.appPromoCount" pRoute="finance.pen.promo.request" aRoute="finance.app.promo.request" />
             <!-- <PromoGcViewCard :count="count"></PromoGCViewCard> -->
 
-            <!-- Dti Special GC Request  -->
+            <!-- DTI Special GC Request  -->
             <m-card class="uppercase" title="DTI SPECIAL GC REQUEST" :pending="count.dtiCounts.pending"
                 pRoute="finance.pendingGc.dti.request.pending" :approved="count.dtiCounts.approved"
                 aRoute="finance.request.approve" :cancelled="count.dtiCounts.cancelled"

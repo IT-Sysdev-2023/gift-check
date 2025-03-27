@@ -161,7 +161,7 @@
                                         class="mt-5 float-right"
                                         @click="viewGcAllocation"
                                     >
-                                        View Gc For Allocation
+                                        View GC For Allocation
                                     </a-button>
                                 </a-card>
                             </a-col>

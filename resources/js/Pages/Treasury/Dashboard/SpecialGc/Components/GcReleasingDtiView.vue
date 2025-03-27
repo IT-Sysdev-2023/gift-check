@@ -2,7 +2,7 @@
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="12">
-                <a-descriptions size="small" title="Dti Releasing Form" layout="horizontal" bordered>
+                <a-descriptions size="small" title="DTI Releasing Form" layout="horizontal" bordered>
                     <a-descriptions-item style="width: 50%;" :span="3" label="RFSEGC#">{{ record.dti_num
                     }}</a-descriptions-item>
                     <a-descriptions-item :span="3" label="Department">{{ record.title }}</a-descriptions-item>

@@ -166,7 +166,7 @@ const reprintGc = () => {
             </a-breadcrumb-item>
             <a-breadcrumb-item>
                 <Link :href="route('iad.special.dti.viewDtiGc')">
-                Dti Gc Request List</Link>
+                DTI GC Request List</Link>
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ title }}</a-breadcrumb-item>
         </a-breadcrumb>
@@ -226,7 +226,7 @@ const reprintGc = () => {
                                 <ScanOutlined /> Scan GC
                             </a-button>
                             <a-modal v-model:open="openScanModal" :footer="false">
-                                <p class="text-center text-lg">Scan Gc</p>
+                                <p class="text-center text-lg">Scan GC</p>
                                 <div class="w-full mt-8">
                                     <a-form-item :validate-status="form.errors.barcode ? 'error' : ''"
                                         :help="form.errors.barcode">

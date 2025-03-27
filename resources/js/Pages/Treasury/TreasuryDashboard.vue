@@ -24,7 +24,7 @@
                                 </a-statistic>
                             </a-col>
                             <a-col :span="8">
-                                <a-statistic title="Special Gc Budget" :precision="2"
+                                <a-statistic title="Special GC Budget" :precision="2"
                                     :value="data?.budget?.specialBudget" />
                             </a-col>
                             <a-col :span="8">

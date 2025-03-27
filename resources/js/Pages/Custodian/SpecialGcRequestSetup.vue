@@ -6,7 +6,7 @@
             <template #icon>
                 <RollbackOutlined />
             </template>
-            Back to Pending Gc Holders
+            Back to Pending GC Holders
         </a-button>
     </div>
     <a-row :gutter="[16, 16]">

@@ -82,14 +82,14 @@ defineProps<{
                             />
                             <Card
                                 use-default
-                                title="Store Gc Request"
+                                title="Store GC Request"
                                 :pending="data?.storeGcRequest.pending"
                                 :approved="data?.storeGcRequest.released"
                                 :cancelled="data?.storeGcRequest.cancelled"
                             />
                             <Card
                                 use-default
-                                title="Gc Production Request"
+                                title="GC Production Request"
                                 :pending="data?.gcProductionRequest.pending"
                                 :approved="data?.gcProductionRequest.approved"
                                 :cancelled="data?.gcProductionRequest.cancelled"
@@ -126,7 +126,7 @@ defineProps<{
                                 <template #badge>
                                     <CardBadge
                                         :count="data?.adjustment.budget"
-                                        title="Released Gc"
+                                        title="Released GC"
                                     />
                                 </template>
                             </Card>

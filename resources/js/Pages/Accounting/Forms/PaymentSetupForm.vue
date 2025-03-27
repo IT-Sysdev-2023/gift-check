@@ -26,7 +26,7 @@
         </template>
     </a-table>
     <a-descriptions bordered class="mt-6 ml-1" size="small" layout="horizontal">
-        <a-descriptions-item style="width: 50%;" :span="3" label="Total Gc"> <a-tag style="font-size: 14px;"
+        <a-descriptions-item style="width: 50%;" :span="3" label="Total GC"> <a-tag style="font-size: 14px;"
                 color="blue">
                 <p>{{ selected.total }}
                     pc's</p>

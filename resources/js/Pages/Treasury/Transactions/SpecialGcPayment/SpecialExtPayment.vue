@@ -22,23 +22,28 @@
                             <a-form-item label="Transaction No." name="name">
                                 <a-input :value="formState.trans" readonly />
                             </a-form-item>
+                           
                             <a-form-item label="Payment date:" name="dateRequested">
                                 <a-input v-model:value="currentDate" readonly />
                             </a-form-item>
+                            
                             <a-form-item label="Date Needed:" name="dateNeeded" has-feedback
                                 :validate-status="getErrorStatus('dateNeeded')" :help="getErrorMessage('dateNeeded')">
                                 <span class="text-red-500">*Required</span>
                                 <a-date-picker style="width: 100%;" :disabled-date="disabledDate"
                                     v-model:value="formState.dateNeeded" @change="clearError('dateNeeded')" />
                             </a-form-item>
+                           
                             <a-form-item label="Upload Scan Copy.:" name="upload"
                                 :validate-status="getErrorStatus('file')" :help="getErrorMessage('file')">
                                 <span class="text-red-500">*Required</span>
                                 <ant-upload-multi-image @handle-change="handleChange" />
                             </a-form-item>
+                            
                             <a-form-item label="Account Name" name="account" v-if="accountName">
                                 <a-input :value="accountName" />
                             </a-form-item>
+                           
                             <a-form-item label="Lookup Customer:" name="customer">
                                 <span class="text-red-500">*Required</span>
                                 <ant-select :options="props.options" @handle-change="handleCustomerChange" />

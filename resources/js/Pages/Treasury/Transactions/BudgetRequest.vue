@@ -67,8 +67,8 @@
                         <span class="text-red-500 text-xs">*Required</span>
                             <ant-select
                                 :options="[
-                                    { label: 'Regular Gc', value: 'regular' },
-                                    { label: 'Special Gc', value: 'special' },
+                                    { label: 'Regular GC', value: 'regular' },
+                                    { label: 'Special GC', value: 'special' },
                                 ]"
                                 @handle-change="categoryHandler"
                             />
@@ -121,7 +121,7 @@
                                 </a-col>
                                 <a-col :span="8">
                                     <a-statistic
-                                        title="Special Gc Budget"
+                                        title="Special GC Budget"
                                         :value="specialBudget"
                                     />
                                 </a-col>
