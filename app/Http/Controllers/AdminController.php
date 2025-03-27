@@ -495,24 +495,15 @@ class AdminController extends Controller
     }
     public function issueReceipt(Request $request)
     {
-        // dd($request->store_id);
-        $receipt = Store::where('store_id', $request->store_id)->first();
-
-        if ($receipt) {
-            Store::where('store_id', $receipt->store_id)->update([
-                'issuereceipt' => $receipt['issuereceipt'] == 'yes' ? 'no' : 'yes'
-            ]);
-
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
-        }
-        return back()->with([
-            'error',
-            'FAILED TO UPDATE'
-
+        // dd($request->all());
+        $status = Store::findOrFail($request->id);
+        $status->update([
+            'issuereceipt' => $status['issuereceipt'] == 'yes' ? 'no' : 'yes'
         ]);
+        return back()->with(
+            'success',
+            "{$status->store_name} Issue Receipt updated successfully"
+        );
     }
     public function eodReports(Request $request)
     {
@@ -759,42 +750,26 @@ class AdminController extends Controller
     }
     public function setupStore(Request $request)
     {
+        $data = Store::when($request->search, function ($query, $search) {
+            $query->where('store_name', 'like', '%' . $search . '%')
+                ->orWhere('store_code', 'like', '%' . $search . '%')
+                ->orWhere('company_code', 'like', '%' . $search . '%');
+        })->paginate(10);
 
-        // dd($request->toArray());
-
-        $searchTerm = $request->input('data', '');
-        $selectEntries = $request->input('value', 10);
-
-        $data = store::query();
-
-        if ($searchTerm) {
-            $data = $data->where(function ($query) use ($searchTerm) {
-                $query->where('store_name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('store_code', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('company_code', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('default_password', 'like', '%' . $searchTerm . '%');
-            });
-        }
-        $data = $data->orderByDesc('store_id')
-            ->paginate($selectEntries)
-            ->withQueryString();
-
-        // $data = $data->paginate(10);
-        $data->transform(function ($item) {
-            $item->status = $item->issuereceipt == 'yes';
-            return $item;
-        });
-
-        return inertia('Admin/Masterfile/SetupStore', [
+        $columns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Store Name', 'Store Code', 'Company Code', 'Default Password', 'Issue Receipt'],
+            ['store_name', 'store_code', 'company_code', 'default_password', 'action',]
+        );
+        return inertia('Admin/Masterfile/Setup-Store', [
             'data' => $data,
-            'search' => $request->data,
-            'value' => $request->value
+            'search' => $request->search,
+            'columns' => $columns
         ]);
     }
     public function saveStore(Request $request)
     {
 
-        // dd($request->toArray());
         $request->validate([
             'store_name' => 'required|string|max:50',
             'store_code' => 'required|integer',
@@ -802,29 +777,21 @@ class AdminController extends Controller
             'default_password' => 'required'
         ]);
 
-        $isSuccessful = Store::create([
+        Store::create([
             'store_name' => $request->store_name,
             'store_code' => $request->store_code,
             'company_code' => $request->company_code,
             'default_password' => $request->default_password,
-            'store_status' => 'active',
+            'store_status' => '',
             'issuereceipt' => '',
             'store_bng' => '',
             'has_local' => '1',
-            'store_textfile_ip' => '172.16.161.205\CFS_Txt\GiftCheck',
+            'store_textfile_ip' => '',
             'store_initial' => '',
-
         ]);
-
-        if ($isSuccessful) {
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
-        }
         return back()->with(
-            'error',
-            'FAILED TO ADD'
+            'success',
+            'Store added successfully'
         );
     }
 

@@ -467,7 +467,7 @@ declare module 'vue' {
     SetupPurchaseOrders: typeof import('./resources/js/Pages/Admin/SetupPurchaseOrders.vue')['default']
     SetupReceiving: typeof import('./resources/js/Pages/Iad/SetupReceiving.vue')['default']
     SetupRecommendation: typeof import('./resources/js/Pages/RetailGroup/SetupRecommendation.vue')['default']
-    SetupStore: typeof import('./resources/js/Pages/Admin/Masterfile/SetupStore.vue')['default']
+    SetupStore: typeof import('./resources/js/Pages/Admin/Masterfile/Setup-Store.vue')['default']
     SetupStoreStaff: typeof import('./resources/js/Pages/Admin/Masterfile/SetupStoreStaff.vue')['default']
     SGC_item_setup: typeof import('./resources/js/Pages/Retail/SGC_item_setup.vue')['default']
     ShoppingOutlined: typeof import('@ant-design/icons-vue')['ShoppingOutlined']
