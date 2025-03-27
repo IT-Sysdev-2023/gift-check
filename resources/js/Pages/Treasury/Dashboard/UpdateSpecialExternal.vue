@@ -147,6 +147,7 @@
 </template>
 
 <script setup lang="ts">
+import { route } from 'ziggy-js';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { dashboardRoute } from "@/Mixin/UiUtilities";
 import { usePage, useForm } from "@inertiajs/vue3";

@@ -88,7 +88,7 @@
                                     </a-input-number>
                                 </a-col>
                             </a-row>
-                            
+
 
                              <!-- Total Amount Display -->
                              <a-row class="mt-5 text-lg font-bold text-right">
@@ -130,7 +130,7 @@
                                 </a-form-item>
                             </div>
                         </div>
-                        
+
                     </a-col>
                     <a-col :span="14">
                         <a-row :gutter="16">
@@ -273,6 +273,7 @@ import { computed, ref } from "vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import { getError, onProgress } from "@/Mixin/UiUtilities";
+import { route } from 'ziggy-js';
 import {
     Denomination,
     GcAllocationForm,

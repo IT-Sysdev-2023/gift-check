@@ -5,6 +5,7 @@ import { ref } from 'vue';
 import { notification } from 'ant-design-vue';
 import axios from 'axios';
 import { router } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
 
 const activeKey = ref('1');
 const props = defineProps({

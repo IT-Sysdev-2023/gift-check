@@ -83,6 +83,7 @@
     </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
+import { route } from 'ziggy-js';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";

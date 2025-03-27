@@ -153,6 +153,7 @@ import axios from "axios";
 import { onProgress } from "@/Mixin/UiUtilities";
 import { notification } from "ant-design-vue";
 import { PageWithSharedProps } from "@/types";
+import { route } from 'ziggy-js';
 
 const page = usePage<PageWithSharedProps>().props;
 const props = defineProps<{

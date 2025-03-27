@@ -121,6 +121,7 @@ import { ref } from "vue";
 import { computed } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
 import { onProgress } from "@/Mixin/UiUtilities";
+import { route } from 'ziggy-js';
 const props = defineProps<{
     title: string;
     records: any;

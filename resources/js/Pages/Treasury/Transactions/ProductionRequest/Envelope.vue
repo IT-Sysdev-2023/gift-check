@@ -120,6 +120,8 @@ import dayjs, { Dayjs } from "dayjs";
 import { useForm, usePage } from "@inertiajs/vue3";
 import { PageWithSharedProps } from "@/types/index";
 import { onProgress } from "@/Mixin/UiUtilities";
+import { route } from 'ziggy-js';
+
 interface FormStateGc {
     prNo: string | null;
     remarks: string;
