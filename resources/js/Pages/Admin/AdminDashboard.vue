@@ -108,7 +108,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import LineChart from '@/Layouts/LineChart.vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed} from 'vue';
 import { useOnlineUsersStore } from '@/stores/online-store'
 
 const onlineUsersStore = useOnlineUsersStore();

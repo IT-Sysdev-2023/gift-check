@@ -41,8 +41,7 @@
                                 <UndoOutlined />
                             </a-button>
                             <a-button v-if="record.user_status === 'active'" @click="deactivateButton(record.user_id)"
-                                title="Deactivate User"
-                                class="bg-red-600 text-white ml-1" type="primary">
+                                title="Deactivate User" class="bg-red-600 text-white ml-1" type="primary">
                                 <StopOutlined />
                             </a-button>
                             <a-button v-else style="margin-left: 10px; background-color: #f50; color:white"
@@ -195,7 +194,7 @@
                         <a-select v-model:value="updateForm.user_role" allow-clear>
                             <a-select-option value=1>Dept. Manager</a-select-option>
                             <a-select-option value=2>Dept. User</a-select-option>
-                            <a-select-option v-if="updateForm.usertype === 6" value=3>Releasing
+                            <a-select-option v-if="updateForm.usertype != 1" value=3>Releasing
                                 Personnel</a-select-option>
                         </a-select>
                     </a-form-item>

@@ -375,7 +375,7 @@ class AdminController extends Controller
             'usertype' => $request->usertype,
             'usergroup' => null,
             'user_status' => 'active',
-            'user_role' => in_array($request->usertype, [1]) ? 0 : $request->user_role,
+            'user_role' => in_array($request->usertype, [1, 2, 3]) ? $request->user_role : 0,
             'login' => 'no',
             'promo_tag' => '0',
             'store_assigned' => in_array($request->usertype, [7, 14]) ? $request->store_assigned : 0,
