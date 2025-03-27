@@ -202,6 +202,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { router } from '@inertiajs/core';
 import { notification } from 'ant-design-vue';
 import { ref, computed } from 'vue';
+import { route } from 'ziggy-js';
 
 const props = defineProps<{
     institutional: {
