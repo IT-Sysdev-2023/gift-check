@@ -23,10 +23,6 @@ const columns = ref([
         dataIndex: 'ccard_created_formatted'
     },
     {
-        title: 'Created By',
-        dataIndex: 'ccard_by'
-    },
-    {
         title: 'Status',
         dataIndex: 'ccard_status'
     }
@@ -109,9 +105,9 @@ const addCreditCard = async () => {
                 </a-button>
             </div>
             <!-- search input  -->
-            <div>
+            <div class="flex justify-end">
                 <a-input-search @change="inputSearchData" v-model:value="searchData" allow-clear enter-button
-                    placeholder="Input search here..." class="w-1/4 float-right mt-5" />
+                    placeholder="Input search here..." class="w-1/4 mt-5" />
             </div>
             <!-- loading effect  -->
             <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 6rem">
@@ -130,7 +126,7 @@ const addCreditCard = async () => {
                 </div>
             </div>
             <!-- table  -->
-            <div style="margin-top: 1rem;">
+            <div class="mt-5">
                 <a-table :data-source="props.data.data" :columns="columns" :pagination="false" size="small">
                 </a-table>
                 <pagination :datarecords="props.data" class="mt-5" />

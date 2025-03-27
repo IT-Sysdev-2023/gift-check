@@ -109,13 +109,15 @@ const addDenominationModal = ref(false);
 const addForm = reactive({
     denomination: '',
     denom_barcode_start: '',
+    denom_fad_item_number: '',
     errors: {}
 })
 const denominationSubmit = async () => {
     addForm.errors = {}
     const validation = {
         denomination: 'This field is required',
-        denom_barcode_start: 'This field is required'
+        denom_barcode_start: 'This field is required',
+        denom_fad_item_number: 'This field is required'
     }
     for (const field in validation) {
         if (!addForm[field]) {
@@ -128,17 +130,18 @@ const denominationSubmit = async () => {
     try {
         router.get(route('admin.masterfile.saveDenomination'), {
             denomination: addForm.denomination,
-            denom_barcode_start: addForm.denom_barcode_start
+            denom_barcode_start: addForm.denom_barcode_start,
+            denom_fad_item_number: addForm.denom_fad_item_number
         }, {
             onSuccess: (page) => {
                 if (page.props.flash.success) {
                     notification.success({
-                        message: 'SUCCESS',
+                        message: 'Success',
                         description: page.props.flash.success
                     });
                 } else if (page.props.flash.error) {
                     notification.error({
-                        message: 'ERROR',
+                        message: 'Error',
                         description: page.props.flash.error
                     });
                 }
@@ -241,6 +244,12 @@ const denominationSubmit = async () => {
                         :help="addForm.errors.denomination" style="margin-top: 2rem; font-weight: bold;">
                         Denomination:
                         <a-input v-model:value="addForm.denomination" type="number" allow-clear
+                            placeholder="Denomination" />
+                    </a-form-item>
+                    <a-form-item :validate-status="addForm.errors.denom_fad_item_number ? 'error' : ''"
+                        :help="addForm.errors.denom_fad_item_number" style="margin-top: 2rem; font-weight: bold;">
+                        Fad Item Number:
+                        <a-input v-model:value="addForm.denom_fad_item_number" type="number" allow-clear
                             placeholder="Denomination" />
                     </a-form-item>
                     <a-form-item :validate-status="addForm.errors.denom_barcode_start ? 'error' : ''"

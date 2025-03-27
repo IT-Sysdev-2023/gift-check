@@ -1,6 +1,5 @@
 <template>
     <AuthenticatedLayout>
-
         <Head :title="title" />
         <div>
             <a-breadcrumb>
@@ -59,6 +58,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { router } from '@inertiajs/core';
 import { notification } from 'ant-design-vue';
 import { ref } from 'vue';
+import { route } from 'ziggy-js';
 
 const title = ref<string>('Store Setup');
 
@@ -116,6 +116,8 @@ const storeSearch = ref<string>(props.search);
 const storeSearchFunction = () => {
     router.get(route('admin.masterfile.setupStore'), {
         search: storeSearch.value
+    }, {
+        preserveState: true
     });
 }
 

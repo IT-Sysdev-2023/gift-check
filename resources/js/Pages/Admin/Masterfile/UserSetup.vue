@@ -16,7 +16,7 @@
         <a-card title="User Setup" class="mt-5">
             <!-- ADD USER BUTTON  -->
             <div class="flex justify-end">
-                <a-button @click="() => (addUserModal = true)" class="bg-blue-500 justify-end text-white"
+                <a-button @click="() => (addUserModal = true)" class="bg-blue-600 justify-end text-white"
                     type="primary">
                     <PlusOutlined /> Add New User
                 </a-button>
@@ -32,17 +32,16 @@
                 <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">
-                            <a-button @click="updateUser(record)" title="Update User"
-                                style="background-color: green; color:white">
+                            <a-button @click="updateUser(record)" type="primary" title="Update User"
+                                class="bg-green-600 text-white">
                                 <EditOutlined />
                             </a-button>
-                            <a-button @click="resetPassword(record)" title="Reset Password"
-                                style="margin-left: 10px; background-color: #1b76f8; color:white">
+                            <a-button @click="resetPassword(record)" title="Reset Password" type="primary"
+                                class="bg-blue-600 text-white ml-1">
                                 <UndoOutlined />
                             </a-button>
                             <a-button v-if="record.user_status === 'active'" @click="deactivateButton(record.user_id)"
-                                title="Deactivate User"
-                                style="margin-left: 10px; background-color: #ae2029; color:white">
+                                title="Deactivate User" class="bg-red-600 text-white ml-1" type="primary">
                                 <StopOutlined />
                             </a-button>
                             <a-button v-else style="margin-left: 10px; background-color: #f50; color:white"
@@ -195,7 +194,7 @@
                         <a-select v-model:value="updateForm.user_role" allow-clear>
                             <a-select-option value=1>Dept. Manager</a-select-option>
                             <a-select-option value=2>Dept. User</a-select-option>
-                            <a-select-option v-if="updateForm.usertype === 6" value=3>Releasing
+                            <a-select-option v-if="updateForm.usertype != 1" value=3>Releasing
                                 Personnel</a-select-option>
                         </a-select>
                     </a-form-item>
