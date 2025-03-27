@@ -1,17 +1,20 @@
 <template>
-    <a-card>
-        <div>
-            <a-button class="back-button" @click="backButton" style="font-weight: bold;">
-                <RollbackOutlined />Back
-            </a-button>
-        </div>
-        <div style="margin-top: 20px;">
-            <h2>Revolving Fund Setup</h2>
-        </div>
 
-        <div style="margin-left: 70%">
-            <a-input-search size="medium" enter-button placeholder=" Search User" v-model:value="searchTerm" allow-clear
-                style="width: 80%" />
+    <Head :title="title" />
+    <div>
+        <a-breadcrumb>
+            <a-breadcrumb-item>
+                <Link :href="route('admin.dashboard')">Home</Link>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>
+                {{ title }}
+            </a-breadcrumb-item>
+        </a-breadcrumb>
+    </div>
+    <a-card title="Revolving Fund Setup" class="mt-5">
+        <div>
+            <a-input-search enter-button placeholder=" Search User" v-model:value="searchTerm" allow-clear
+                class="w-1/4 float-right" />
         </div>
         <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 3rem">
             <div class="spinnerContainer">
@@ -79,6 +82,7 @@ export default {
     },
     data() {
         return {
+            title: "Revolving Fund Setup",
             loading: false,
             dataForSelectEntries: {
                 select_entries: this.value,

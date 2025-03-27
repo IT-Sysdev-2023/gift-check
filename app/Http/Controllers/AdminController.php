@@ -30,9 +30,11 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\PurchaseOrderRequest;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
+use BcMath\Number;
 use Illuminate\Support\Facades\DB;
 use Symfony\Contracts\Service\Attribute\Required;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Date;
 
 class AdminController extends Controller
 {
@@ -42,79 +44,67 @@ class AdminController extends Controller
     public function submitNewUsername(Request $request)
     {
         // dd($request->all());
-        // dd($request->params['id']);
-        $password = User::where('user_id', $request->params['id'])->first();
-        $currentPass = $password->password;
-        $currentUsername = $password->username;
+        $request->validate([
+            'username' => 'required',
+            'password.password' => 'required'
+        ], [
+            'password.password.required' => 'Password field is required'
+        ]);
 
-        if (Hash::check($request->params['password']['password'], $currentPass)) {
-            $currentUsername = $password->username;
-            if ($currentUsername == $request->params['username']) {
-                return response()->json([
-                    'error' => true,
-                    'message' => 'Username is not change, please update first'
-                ]);
-            } else {
-                $data = User::where('user_id', $request->params['id'])
-                    ->update([
-                        'username' => $request->params['username']
-                    ]);
-                if ($data) {
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Username change successfully'
-                    ]);
-                } else {
-                    return response()->json([
-                        'error' => true,
-                        'message' => 'Username change successfully'
-                    ]);
-                }
-            }
-        } else {
+        $password = User::findOrFail($request->id);
+        if (!Hash::check($request->password['password'], $password->password)) {
             return response()->json([
                 'error' => true,
-                'message' => 'Your password dont match, please try again'
+                'message' => 'Confirmation password is incorrect, please try again'
             ]);
         }
+
+        if ($request->username == $password->username) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Username is not change, please update first'
+            ]);
+        }
+
+        $password->update([
+            'username' => $request->username
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Username updated successfully'
+        ]);
+
     }
 
     public function submitNewPassword(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'old_password' => 'required',
-            'new_password' => 'required',
-            'confirm_password' => 'required'
+            'new_password' => 'required|same:confirm_password',
+            'confirm_password' => 'required|same:new_password'
         ]);
 
-        $inputOldPassword = $request->old_password;
+        $oldPassword = User::findOrFail($request->id);
 
-        $oldPassword = User::where('user_id', $request->id)->first();
-        $getPassword = $oldPassword->password;
-
-        if (Hash::check($inputOldPassword, $getPassword)) {
-            if ($request->new_password != $request->confirm_password) {
-                return response()->json([
-                    'error' => true,
-                    'message' => 'Password dont match, please try again.'
-                ]);
-            } else {
-                $data = User::where('user_id', $request->id)->update([
-                    'password' => Hash::make($request->new_password)
-                ]);
-                if ($data) {
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Password updated successfully'
-                    ]);
-                }
-            }
-        } else {
+        if (!Hash::check($request->old_password, $oldPassword->password)) {
             return response()->json([
                 'error' => true,
                 'message' => 'Old password is incorrect, please try again.'
             ]);
         }
+        if (Hash::check($request->new_password, $oldPassword->password)) {
+            return response()->json([
+                'error' => true,
+                'message' => 'New password is the same as the old password, please try again.'
+            ]);
+        }
+        $oldPassword->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Password updated successfully'
+        ]);
     }
 
     public function deactivateUser(Request $request)
@@ -505,24 +495,15 @@ class AdminController extends Controller
     }
     public function issueReceipt(Request $request)
     {
-        // dd($request->store_id);
-        $receipt = Store::where('store_id', $request->store_id)->first();
-
-        if ($receipt) {
-            Store::where('store_id', $receipt->store_id)->update([
-                'issuereceipt' => $receipt['issuereceipt'] == 'yes' ? 'no' : 'yes'
-            ]);
-
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
-        }
-        return back()->with([
-            'error',
-            'FAILED TO UPDATE'
-
+        // dd($request->all());
+        $status = Store::findOrFail($request->id);
+        $status->update([
+            'issuereceipt' => $status['issuereceipt'] == 'yes' ? 'no' : 'yes'
         ]);
+        return back()->with(
+            'success',
+            "{$status->store_name} Issue Receipt updated successfully"
+        );
     }
     public function eodReports(Request $request)
     {
@@ -642,176 +623,153 @@ class AdminController extends Controller
     }
     public function customerSetup(Request $request)
     {
-        // dd($request->tabs);
-        $institutional = InstitutCustomer::get();
-        $special = SpecialExternalCustomer::get();
-        $store = Store::get();
-        $data = Customer::get();
-        $searchTerm = $request->input('data', '');
-        $activeTab = $request->input('tabs', 'store_customer');
-        // dd($activeTab);
+        // Institutional Customer
+        $institutional = InstitutCustomer::when($request->institutionalSearch, function ($query, $search) {
+            $query->where('ins_name', 'like', '%' . $search . '%')
+                ->orWhere('ins_custype', 'like', '%' . $search . '%')
+                ->orWhere('ins_gctype', 'like', '%' . $search . '%')
+                ->orWhere('ins_date_created', 'like', '%' . $search . '%')
+                ->orWhere('ins_status', 'like', '%' . $search . '%');
+        })->paginate(10);
+        $gc_type = [
+            1 => 'Regular',
+            2 => 'Special',
+            3 => 'Special External',
+            4 => 'Promo',
+            5 => 'Supplier GC',
+            6 => 'Beam and Go'
+        ];
+        $institutional->transform(function ($item) use ($gc_type) {
+            $item->created_by = User::where('user_id', $item->ins_by)->first();
+            $item->createdBy_fullname = $item->created_by->firstname . ' ' . $item->created_by->lastname;
+            $item->gcType = $gc_type[$item->ins_gctype] ?? '';
+            $item->dateCreated = Date::parse($item->ins_date_created)->format('F j, Y, h:i A');
 
-        $data = DB::table('customers')
-            ->select(
-                'cus_id',
-                'cus_store_register',
-                'cus_register_at',
-                'cus_register_by',
-                'cus_fname',
-                'cus_lname',
-                'cus_mname',
-                'cus_namext',
-                'stores.store_id',
-                'stores.store_name',
-                'institut_customer.ins_id',
-                'institut_customer.ins_name as ins_name',
-                'institut_customer.ins_status as ins_status',
-                'institut_customer.ins_custype as ins_custype',
-                'institut_customer.ins_gctype as ins_gctype',
-                'institut_customer.ins_date_created as ins_date_created',
-                'institut_customer.ins_by as ins_by',
-                'special_external_customer.spcus_id',
-                'special_external_customer.spcus_companyname as spcus_companyname',
-                'special_external_customer.spcus_acctname as spcus_acctname',
-                'special_external_customer.spcus_address as spcus_address',
-                'special_external_customer.spcus_cperson as spcus_cperson',
-                'special_external_customer.spcus_cnumber as spcus_cnumber',
-                'special_external_customer.spcus_type as spcus_type',
-                'users.user_id',
-                'users.firstname as firstname',
-                'users.lastname as lastname',
-                User::raw("CONCAT(users.firstname, ' ', users.lastname) as fullname")
+            return $item;
+        });
 
-            )
-            ->whereAny([
-                'cus_id',
-                'cus_store_register',
-                'cus_register_at',
-                'cus_register_by',
-                'cus_fname',
-                'cus_lname',
-                'cus_mname',
-                'cus_namext',
-                'stores.store_id',
-                'stores.store_name',
-                'institut_customer.ins_id',
-                'institut_customer.ins_name',
-                'institut_customer.ins_status',
-                'institut_customer.ins_custype',
-                'institut_customer.ins_gctype',
-                'institut_customer.ins_date_created',
-                'institut_customer.ins_by',
-                'special_external_customer.spcus_id',
-                'special_external_customer.spcus_companyname',
-                'special_external_customer.spcus_acctname',
-                'special_external_customer.spcus_address',
-                'special_external_customer.spcus_cperson',
-                'special_external_customer.spcus_cnumber',
-                'special_external_customer.spcus_type',
-                'users.user_id',
-                'users.firstname',
-                'users.lastname',
-            ], 'like', '%' . $searchTerm . '%')
+        $InstitutionalColumns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Name', 'Customer Type', 'GC Type', 'Date Created', 'Created By', 'Status', 'Action'],
+            ['ins_name', 'ins_custype', 'gcType', 'dateCreated', 'createdBy_fullname', 'ins_status', 'action']
+        );
 
-            ->leftJoin('users', 'cus_register_by', '=', 'users.user_id')
-            ->leftJoin('institut_customer', 'cus_id', '=', 'institut_customer.ins_id')
-            ->leftJoin('special_external_customer', 'cus_id', '=', 'special_external_customer.spcus_id')
-            ->leftJoin('stores', 'cus_store_register', '=', 'stores.store_id');
+        // Regular Customer
+        $regularCustomer = Customer::when($request->regularSearch, function ($query, $search) {
+            $query->where('cus_fname', 'like', '%' . $search . '%')
+                ->orWhere('cus_lname', 'like', '%' . $search . '%')
+                ->orWhere('cus_store_register', 'like', '%' . $search . '%')
+                ->orWhere('cus_register_at', 'like', '%' . $search . '%')
+                ->orWhere('cus_register_by', 'like', '%' . $search . '%');
+        })->paginate(10)->withQueryString();
 
-        if ($activeTab === 'store_customer') {
-            $data = $data->whereNotNull('cus_id')
-                ->orderBy('cus_id', 'asc')
-                ->paginate(10);
-        } elseif ($activeTab === 'institutional_customer') {
-            $data = $data->whereNotNull('institut_customer.ins_id')
-                ->orderBy('institut_customer.ins_id', 'ASC')
-                ->paginate(10);
-        } elseif ($activeTab === 'special_customer') {
-            $data = $data->whereNotNull('special_external_customer.spcus_id')
-                ->orderBy('special_external_customer.spcus_id', 'ASC')
-                ->paginate(10);
-        }
+        $regularCustomer->transform(function ($item) {
+            $item->storeRegistered = Store::where('store_id', $item->cus_store_register)->value('store_name');
+            $item->registeredAt = Date::parse($item->cus_register_at)->format('F j, Y, h:i A');
+            $item->registeredBy = User::where('user_id', $item->cus_register_by)->first();
+            $item->registeredBy_fullname = ucwords($item->registeredBy->firstname . ' ' . $item->registeredBy->lastname);
+            return $item;
+        });
 
-        return inertia('Admin/Masterfile/CustomerSetup', [
-            'data' => $data,
-            'search' => $request->data,
-            'value' => $request->value,
+        $regularCustomerColumns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Firstname', 'Lastname', 'Store Registered', 'Registered At', 'Registered By', 'Action'],
+            ['cus_fname', 'cus_lname', 'storeRegistered', 'registeredAt', 'registeredBy_fullname', 'action']
+        );
+
+        // Special External Customer
+        $specialCustomer = SpecialExternalCustomer::when($request->specialCustomerSearch, function ($query, $search) {
+            $query->where('spcus_companyname', 'like', '%' . $search . '%')
+                ->orWhere('spcus_acctname', 'like', '%' . $search . '%')
+                ->orWhere('spcus_address', 'like', '%' . $search . '%')
+                ->orWhere('spcus_cperson', 'like', '%' . $search . '%')
+                ->orWhere('spcus_cnumber', 'like', '%' . $search . '%')
+                ->orWhere('spcus_type', 'like', '%' . $search . '%');
+        })->paginate(10);
+        $sp_type = [
+            1 => 'Internal',
+            2 => 'External',
+        ];
+        $specialCustomer->transform(function ($item) use ($sp_type) {
+            $item->special_type = $sp_type[$item->spcus_type] ?? '';
+            return $item;
+        });
+        $specialCustomerColumns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Company Name', 'Account Name', 'Address', 'Contact Person', 'Contact Number', 'Type', 'Action'],
+            ['spcus_companyname', 'spcus_acctname', 'spcus_address', 'spcus_cperson', 'spcus_cnumber', 'special_type', 'action']
+        );
+        $store = store::get();
+
+        return inertia('Admin/Masterfile/Customer-Setup', [
+            'regularCustomer' => $regularCustomer,
+            'regularCustomerColumns' => $regularCustomerColumns,
+            'regularSearch' => $request->regularSearch,
             'institutional' => $institutional,
-            'special' => $special,
-            'store' => $store,
-
+            'institutinalColumns' => $InstitutionalColumns,
+            'institutionalSearch' => $request->institutionalSearch,
+            'specialCustomer' => $specialCustomer,
+            'specialCustomerColumns' => $specialCustomerColumns,
+            'specialCustomerSearch' => $request->specialCustomerSearch,
+            'activeTabs' => $request->activeKey,
+            'store' => $store
         ]);
     }
     public function updateCustomerStoreRegister(Request $request)
     {
-        // dd($request->toArray());
         $request->validate([
-            'cus_fname' => 'required',
-            'cus_lname' => 'required',
-            'cus_store_register' => 'required'
+            'id' => 'required|integer',
+            'firstname' => 'required|string',
+            'lastname' => 'required|string',
+            'store' => 'required'
         ]);
-        $validation = Customer::findOrFail($request->cus_id);
-        if (
-            $validation->cus_fname == $request->cus_fname
-            && $validation->cus_lname == $request->cus_lname
-            && $validation->cus_store_register == $request->cus_store_register
-        ) {
-            return back()->with('error', 'WARNING');
-        }
+        $store = [
+            'Alturas Mall' => 1,
+            'Alturas Talibon' => 2,
+            'Island City Mall' => 3,
+            'Plaza Marcela' => 4,
+            'Alturas Tubigon' => 5,
+            'Colonade Colon' => 6,
+            'Colonade Mandaue' => 7,
+            'Alta Citta' => 8,
+            'Farmers Market' => 9,
+            'Ubay Distribution Center' => 10,
+            'Screenville' => 11,
+            'Asc Tech' => 12
+        ];
 
-
-        $onSuccess = Customer::where('cus_id', $request->cus_id)->update([
-            'cus_fname' => $request->cus_fname,
-            'cus_lname' => $request->cus_lname,
-            'cus_store_register' => $request->cus_store_register
-
+        Customer::where('cus_id', $request->id)->update([
+            'cus_fname' => $request->firstname,
+            'cus_lname' => $request->lastname,
+            'cus_store_register' => is_numeric($request->store) ? $request->store : $store[$request->store]
         ]);
-        if ($onSuccess) {
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
-        }
-        return back()->with('error', 'WARNING');
+        return back()->with(
+            'success',
+            'Regular customer updated successfully'
+        );
     }
     public function setupStore(Request $request)
     {
+        $data = Store::when($request->search, function ($query, $search) {
+            $query->where('store_name', 'like', '%' . $search . '%')
+                ->orWhere('store_code', 'like', '%' . $search . '%')
+                ->orWhere('company_code', 'like', '%' . $search . '%');
+        })->paginate(10);
 
-        // dd($request->toArray());
-
-        $searchTerm = $request->input('data', '');
-        $selectEntries = $request->input('value', 10);
-
-        $data = store::query();
-
-        if ($searchTerm) {
-            $data = $data->where(function ($query) use ($searchTerm) {
-                $query->where('store_name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('store_code', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('company_code', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('default_password', 'like', '%' . $searchTerm . '%');
-            });
-        }
-        $data = $data->orderByDesc('store_id')
-            ->paginate($selectEntries)
-            ->withQueryString();
-
-        // $data = $data->paginate(10);
-        $data->transform(function ($item) {
-            $item->status = $item->issuereceipt == 'yes';
-            return $item;
-        });
-
-        return inertia('Admin/Masterfile/SetupStore', [
+        $columns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Store Name', 'Store Code', 'Company Code', 'Default Password', 'Issue Receipt'],
+            ['store_name', 'store_code', 'company_code', 'default_password', 'action',]
+        );
+        return inertia('Admin/Masterfile/Setup-Store', [
             'data' => $data,
-            'search' => $request->data,
-            'value' => $request->value
+            'search' => $request->search,
+            'columns' => $columns
         ]);
     }
     public function saveStore(Request $request)
     {
 
-        // dd($request->toArray());
         $request->validate([
             'store_name' => 'required|string|max:50',
             'store_code' => 'required|integer',
@@ -819,29 +777,21 @@ class AdminController extends Controller
             'default_password' => 'required'
         ]);
 
-        $isSuccessful = Store::create([
+        Store::create([
             'store_name' => $request->store_name,
             'store_code' => $request->store_code,
             'company_code' => $request->company_code,
             'default_password' => $request->default_password,
-            'store_status' => 'active',
+            'store_status' => '',
             'issuereceipt' => '',
             'store_bng' => '',
             'has_local' => '1',
-            'store_textfile_ip' => '172.16.161.205\CFS_Txt\GiftCheck',
+            'store_textfile_ip' => '',
             'store_initial' => '',
-
         ]);
-
-        if ($isSuccessful) {
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
-        }
         return back()->with(
-            'error',
-            'FAILED TO ADD'
+            'success',
+            'Store added successfully'
         );
     }
 
@@ -1246,7 +1196,6 @@ class AdminController extends Controller
 
     public function updateRevolvingFund(Request $request)
     {
-        // dd($request->store_id);
         $request->validate([
             'r_fund' => 'required|integer',
             'store_status' => 'required'
@@ -1278,89 +1227,67 @@ class AdminController extends Controller
     public function updateInstituteCustomer(Request $request)
     {
         $request->validate([
-            'ins_name' => 'required',
-            'ins_gctype' => [
-                'sometimes',
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('ins_custype') === 'internal' && $request->input('ins_gctype') === 0;
-                }),
-            ],
-            'ins_custype' => 'required',
-            'ins_status' => 'required'
+            'id' => 'required|int',
+            'name' => 'required|string',
+            'customerType' => 'required|string',
+            'gcType' => 'required',
+            'status' => 'required'
+        ]);
+        $gcType = [
+            'Regular' => 1,
+            'Special' => 2,
+            'Special External' => 3,
+            'Promo' => 4,
+            'Supplier GC' => 5,
+            'Beam and Go' => 6
+        ];
+
+        InstitutCustomer::where('ins_id', $request->id)->update([
+            'ins_name' => $request->name,
+            'ins_custype' => $request->customerType,
+            'ins_gctype' => is_numeric($request->gcType) ? $request->gcType : $gcType[$request->gcType],
+            'ins_status' => $request->status
         ]);
 
-        $institute = InstitutCustomer::findOrFail($request->ins_id);
-        if (
-            $institute->ins_name == $request->ins_name
-            && $institute->ins_gctype == $request->ins_gctype
-            && $institute->ins_custype == $request->ins_custype
-            && $institute->ins_status == $request->ins_status
-        ) {
-            return back()->with('error', 'WARNING');
-        }
-
-        $updateInstitute = [
-            'ins_name' => $request->ins_name,
-            'ins_custype' => $request->ins_custype,
-            'ins_status' => $request->ins_status,
-            'ins_date_updated' => now(),
-        ];
-        if ($request->ins_custype === 'external') {
-            $updateInstitute['ins_gctype'] = 0;
-        } else {
-            $updateInstitute['ins_gctype'] = $request->ins_gctype;
-        }
-
-        $onSuccess = InstitutCustomer::where('ins_id', $request->ins_id)->update($updateInstitute);
-        if ($onSuccess) {
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
-        }
         return back()->with(
-            'error',
-            'ERROR'
+            'success',
+            'Institute customer updated successfully'
         );
     }
     public function updateSpecialCustomer(Request $request)
     {
         $request->validate([
-            'spcus_companyname' => 'required',
-            'spcus_acctname' => 'required'
+            'id' => 'required|int',
+            'companyname' => 'required|string',
+            'acctname' => 'required|string',
+            'address' => 'required|string',
+            'cperson' => 'required|string',
+            'cnumber' => 'required|string',
+            'type' => 'required|string',
         ]);
-        // dd($request->toArray());
-        $validation = SpecialExternalCustomer::findOrFail($request->spcus_id);
-        if (
-            $validation->spcus_companyname == $request->spcus_companyname
-            && $validation->spcus_acctname == $request->spcus_acctname
-            && $validation->spcus_address == $request->spcus_address
-            && $validation->spcus_cperson == $request->spcus_cperson
-            && $validation->spcus_cnumber == $request->spcus_cnumber
-            && $validation->spcus_type == $request->spcus_type
-        ) {
+        $checkUpdate = SpecialExternalCustomer::findOrFail($request->id);
+        if (!$checkUpdate) {
             return back()->with(
                 'error',
-                'WARNING'
+                'Customer not found'
             );
         }
-        $onSuccess = SpecialExternalCustomer::where('spcus_id', $request->spcus_id)->update([
-            'spcus_companyname' => $request->spcus_companyname,
-            'spcus_acctname' => $request->spcus_acctname,
-            'spcus_address' => $request->spcus_address,
-            'spcus_cperson' => $request->spcus_cperson,
-            'spcus_cnumber' => $request->spcus_cnumber,
-            'spcus_type' => $request->spcus_type
+        $sp_type = [
+            'Internal' => 1,
+            'External' => 2
+        ];
+        $checkUpdate->update([
+            'spcus_companyname' => $request->companyname,
+            'spcus_acctname' => $request->acctname,
+            'spcus_address' => $request->address,
+            'spcus_cperson' => $request->cperson,
+            'spcus_cnumber' => $request->cnumber,
+            'spcus_type' => is_numeric($request->type) ? $request->type : $sp_type[$request->type]
         ]);
-        if ($onSuccess) {
-            return back()->with(
-                'success',
-                'SUCCESS'
-            );
-        }
+
         return back()->with(
-            'error',
-            'ERROR'
+            'success',
+            'Special customer updated successfully'
         );
     }
 

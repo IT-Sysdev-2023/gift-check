@@ -4,6 +4,8 @@ import { reactive, ref } from 'vue';
 import { router } from '@inertiajs/core';
 import { notification } from 'ant-design-vue';
 
+const title = ref('Credit Card Setup');
+
 const props = defineProps({
     data: ([
         Object,
@@ -35,7 +37,7 @@ const form = reactive({
 })
 const loading = ref(false);
 const searchData = ref(props.search);
-    // search function
+// search function
 const inputSearchData = () => {
     router.get(route('admin.masterfile.creditCardSetup'), {
         data: searchData.value
@@ -89,61 +91,62 @@ const addCreditCard = async () => {
 
 <template>
     <AuthenticatedLayout>
-        <!-- back button  -->
-        <div>
-            <a-button :href="route('admin.dashboard')" style="font-weight: bold;">
-                <RollbackOutlined /> Back
-            </a-button>
-        </div>
-        <!-- add button  -->
-        <div>
-            <a-button @click="() => (openAddingCreditCard = true)"
-                style="margin-left: 80%; background-color: #1b76f8; color:white">
-                <PlusOutlined /> Add Credit Card
-            </a-button>
-        </div>
-        <!-- label  -->
-        <div>
-            <p style="font-weight: bold; font-size: large;">CREDIT CARD SETUP</p>
-        </div>
-        <!-- search input  -->
-        <div>
-            <a-input-search @change="inputSearchData" v-model:value="searchData" allow-clear enter-button
-                placeholder="Input search here..." style="width: 25%; margin-left: 70%;" />
-        </div>
-        <!-- loading effect  -->
-        <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 6rem">
-            <div class="spinnerContainer">
-                <div class="spinner"></div>
-                <div class="loader">
-                    <p>loading</p>
-                    <div class="words">
-                        <span class="word">please wait...</span>
-                        <span class="word">please wait...</span>
-                        <span class="word">please wait...</span>
-                        <span class="word">please wait...</span>
-                        <span class="word">please wait...</span>
+
+        <Head :title="title" />
+        <a-breadcrumb>
+            <a-breadcrumb-item>
+                <Link :href="route('admin.dashboard')">Home</Link>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>
+                {{ title }}
+            </a-breadcrumb-item>
+        </a-breadcrumb>
+        <a-card title="Credit Card Setup" class="mt-5">
+            <!-- add button  -->
+            <div class="flex justify-end">
+                <a-button @click="() => (openAddingCreditCard = true)" type="primary" class="bg-blue-500 text-white">
+                    <PlusOutlined /> Add Credit Card
+                </a-button>
+            </div>
+            <!-- search input  -->
+            <div>
+                <a-input-search @change="inputSearchData" v-model:value="searchData" allow-clear enter-button
+                    placeholder="Input search here..." class="w-1/4 float-right mt-5" />
+            </div>
+            <!-- loading effect  -->
+            <div v-if="loading" style="position: absolute; z-index: 1000; right: 0; left: 0; top: 6rem">
+                <div class="spinnerContainer">
+                    <div class="spinner"></div>
+                    <div class="loader">
+                        <p>loading</p>
+                        <div class="words">
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                            <span class="word">please wait...</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- table  -->
-        <div style="margin-top: 1rem;">
-            <a-table :data-source="props.data.data" :columns="columns" :pagination="false" size="small">
-            </a-table>
-            <pagination :datarecords="props.data" class="mt-5" />
-        </div>
-        <!-- add modal  -->
-        <a-modal v-model:open="openAddingCreditCard" @ok="addCreditCard">
-            <header style="font-size: large; font-weight: bold;">
-                <PlusOutlined /> Add Credit Card
-            </header>
-            <a-form-item style="margin-top: 2rem; font-weight: bold;"
-                :validate-status="form.errors.ccard_name ? 'error' : ''" :help="form.errors.ccard_name">
-                Card Name:
-                <a-input v-model:value="form.ccard_name" type="text" placeholder="Credit Card Name" />
-            </a-form-item>
-        </a-modal>
+            <!-- table  -->
+            <div style="margin-top: 1rem;">
+                <a-table :data-source="props.data.data" :columns="columns" :pagination="false" size="small">
+                </a-table>
+                <pagination :datarecords="props.data" class="mt-5" />
+            </div>
+            <!-- add modal  -->
+            <a-modal v-model:open="openAddingCreditCard" @ok="addCreditCard">
+                <header style="font-size: large; font-weight: bold;">
+                    <PlusOutlined /> Add Credit Card
+                </header>
+                <a-form-item style="margin-top: 2rem; font-weight: bold;"
+                    :validate-status="form.errors.ccard_name ? 'error' : ''" :help="form.errors.ccard_name">
+                    Card Name:
+                    <a-input v-model:value="form.ccard_name" type="text" placeholder="Credit Card Name" />
+                </a-form-item>
+            </a-modal>
+        </a-card>
     </AuthenticatedLayout>
 </template>
 

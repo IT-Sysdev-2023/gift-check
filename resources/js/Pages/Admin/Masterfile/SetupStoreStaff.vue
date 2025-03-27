@@ -11,6 +11,7 @@ const props = defineProps({
     data: Object,
     store: Object
 });
+const title = ref('Store Staff');
 
 const columns = ref([
     { title: 'Username', dataIndex: 'ss_username' },
@@ -194,137 +195,151 @@ const resetPassword = (data) => {
 
 <template>
     <AuthenticatedLayout>
-        <a-button :href="route('admin.dashboard')" style="font-weight: bold;">
-            <RollbackOutlined /> Back
-        </a-button>
+
+        <Head :title="title" />
         <div>
-            <a-button @click="showAddNewUserModal" style="background-color: #1b76f8; color:white; margin-left: 80%;">
-                <PlusOutlined /> Add New User
-            </a-button>
+            <a-breadcrumb>
+                <a-breadcrumb-item>
+                    <Link :href="route('admin.dashboard')">Home</Link>
+                </a-breadcrumb-item>
+                <a-breadcrumb-item>
+                    {{ title }}
+                </a-breadcrumb-item>
+            </a-breadcrumb>
         </div>
-        <div>
-            <p style="font-weight: bold; font-size: large;">Store Staff Setup</p>
-        </div>
-        <div>
-            <a-input-search enter-button allow-clear placeholder="Input search here..."
-                style="width: 25%; margin-left: 70%;" />
-        </div>
-        <div class="mt-4">
-            <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'action'">
-                        <a-button title="Update" @click="showUpdateUserModal(record)"
-                            style="color:white; background-color: green;">
-                            <EditOutlined />
-                        </a-button>
-                        <a-button title="Reset Password" @click="resetPassword(record)" class="ml-1"
-                            style="color:white; background-color: #1b76f8;">
-                            <UndoOutlined />
-                        </a-button>
-                    </template>
-                </template>
-            </a-table>
-            <pagination :datarecords="props.data" class="mt-5" />
-        </div>
-        <a-modal v-model:open="addNewUser" @ok="submitAddingUser">
-            <header style="font-weight: bold; font-size: large;">
-                <p>
+        <a-card title="Store Staff Setup" class="mt-5">
+            <div class="flex justify-end ">
+                <a-button @click="showAddNewUserModal" type="primary" class="bg-blue-500 text-white">
                     <PlusOutlined /> Add New User
-                </p>
-            </header>
-            <div style="margin-top: 2rem;">
-                <a-form-item :validate-status="addingForm.errors.ss_username ? 'error' : ''"
-                    :help="addingForm.errors.ss_username" style="font-weight: bold;">
-                    Username:
-                    <a-input allow-clear placeholder="Username" v-model:value="addingForm.ss_username" type="text" />
-                </a-form-item>
-                <a-form-item :validate-status="addingForm.errors.ss_firstname ? 'error' : ''"
-                    :help="addingForm.errors.ss_firstname" style="font-weight: bold;">
-                    Firstname:
-                    <a-input allow-clear placeholder="Firstname" v-model:value="addingForm.ss_firstname" type="text" />
-                </a-form-item>
-                <a-form-item :validate-status="addingForm.errors.ss_lastname ? 'error' : ''"
-                    :help="addingForm.errors.ss_lastname" style="font-weight: bold;">
-                    Lastname:
-                    <a-input allow-clear placeholder="Lastname" v-model:value="addingForm.ss_lastname" type="text" />
-                </a-form-item>
-                <a-form-item :validate-status="addingForm.errors.ss_idnumber ? 'error' : ''"
-                    :help="addingForm.errors.ss_idnumber" style="font-weight: bold;">
-                    Employee ID:
-                    <a-input allow-clear placeholder="Employee ID number" v-model:value="addingForm.ss_idnumber"
-                        type="number" />
-                </a-form-item>
-                <a-form-item :validate-status="addingForm.errors.ss_password ? 'error' : ''"
-                    :help="addingForm.errors.ss_password" style="font-weight: bold;">
-                    Password:
-                    <a-input allow-clear placeholder="Password" v-model:value="addingForm.ss_password"
-                        type="password" />
-                </a-form-item>
-                <a-form-item :validate-status="addingForm.errors.ss_store ? 'error' : ''"
-                    :help="addingForm.errors.ss_store" style="font-weight: bold;">
-                    Store Assigned:
-                    <a-select v-model:value="addingForm.ss_store">
-                        <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">{{
-                            item.store_name
-                            }}</a-select-option>
-                    </a-select>
-                </a-form-item>
-                <a-form-item :validate-status="addingForm.errors.ss_usertype ? 'error' : ''"
-                    :help="addingForm.errors.ss_usertype" style="font-weight: bold;">
-                    User Type:
-                    <a-select v-model:value="addingForm.ss_usertype">
-                        <a-select-option value="cashier">Cashier</a-select-option>
-                        <a-select-option value="manager">Manager</a-select-option>
-                    </a-select>
-                </a-form-item>
+                </a-button>
             </div>
-        </a-modal>
-        <a-modal v-model:open="updateNewUser" @ok="submitUpdateUser">
-            <header style="font-weight: bold; font-size: large;">
-                <p>
-                    <EditOutlined /> Update User
-                </p>
-            </header>
-            <div style="margin-top: 2rem;">
-                <a-form-item :validate-status="updateForm.errors.ss_username ? 'error' : ''"
-                    :help="updateForm.errors.ss_username" style="font-weight: bold;">
-                    Username:
-                    <a-input allow-clear placeholder="Username" v-model:value="updateForm.ss_username" type="text" />
-                </a-form-item>
-                <a-form-item :validate-status="updateForm.errors.ss_firstname ? 'error' : ''"
-                    :help="updateForm.errors.ss_firstname" style="font-weight: bold;">
-                    Firstname:
-                    <a-input allow-clear placeholder="Firstname" v-model:value="updateForm.ss_firstname" type="text" />
-                </a-form-item>
-                <a-form-item :validate-status="updateForm.errors.ss_lastname ? 'error' : ''"
-                    :help="updateForm.errors.ss_lastname" style="font-weight: bold;">
-                    Lastname:
-                    <a-input allow-clear placeholder="Lastname" v-model:value="updateForm.ss_lastname" type="text" />
-                </a-form-item>
-                <a-form-item :validate-status="updateForm.errors.ss_idnumber ? 'error' : ''"
-                    :help="updateForm.errors.ss_idnumber" style="font-weight: bold;">
-                    Employee ID:
-                    <a-input allow-clear placeholder="Employee ID number" v-model:value="updateForm.ss_idnumber"
-                        type="number" />
-                </a-form-item>
-                <a-form-item :validate-status="updateForm.errors.ss_store ? 'error' : ''"
-                    :help="updateForm.errors.ss_store" style="font-weight: bold;">
-                    Store Assigned:
-                    <a-select v-model:value="updateForm.ss_store">
-                        <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">{{
-                            item.store_name
-                            }}</a-select-option>
-                    </a-select>
-                </a-form-item>
-                <a-form-item :validate-status="updateForm.errors.ss_usertype ? 'error' : ''"
-                    :help="updateForm.errors.ss_usertype" style="font-weight: bold;">
-                    User Type:
-                    <a-select v-model:value="updateForm.ss_usertype">
-                        <a-select-option value="cashier">Cashier</a-select-option>
-                        <a-select-option value="manager">Manager</a-select-option>
-                    </a-select>
-                </a-form-item>
+            <div>
+                <a-input-search enter-button allow-clear placeholder="Input search here..."
+                    class="mt-5 w-1/4 float-right" />
             </div>
-        </a-modal>
+            <div class="mt-4">
+                <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'action'">
+                            <a-button title="Update" @click="showUpdateUserModal(record)"
+                                style="color:white; background-color: green;">
+                                <EditOutlined />
+                            </a-button>
+                            <a-button title="Reset Password" @click="resetPassword(record)" class="ml-1"
+                                style="color:white; background-color: #1b76f8;">
+                                <UndoOutlined />
+                            </a-button>
+                        </template>
+                    </template>
+                </a-table>
+                <pagination :datarecords="props.data" class="mt-5" />
+            </div>
+            <a-modal v-model:open="addNewUser" @ok="submitAddingUser">
+                <header style="font-weight: bold; font-size: large;">
+                    <p>
+                        <PlusOutlined /> Add New User
+                    </p>
+                </header>
+                <div style="margin-top: 2rem;">
+                    <a-form-item :validate-status="addingForm.errors.ss_username ? 'error' : ''"
+                        :help="addingForm.errors.ss_username" style="font-weight: bold;">
+                        Username:
+                        <a-input allow-clear placeholder="Username" v-model:value="addingForm.ss_username"
+                            type="text" />
+                    </a-form-item>
+                    <a-form-item :validate-status="addingForm.errors.ss_firstname ? 'error' : ''"
+                        :help="addingForm.errors.ss_firstname" style="font-weight: bold;">
+                        Firstname:
+                        <a-input allow-clear placeholder="Firstname" v-model:value="addingForm.ss_firstname"
+                            type="text" />
+                    </a-form-item>
+                    <a-form-item :validate-status="addingForm.errors.ss_lastname ? 'error' : ''"
+                        :help="addingForm.errors.ss_lastname" style="font-weight: bold;">
+                        Lastname:
+                        <a-input allow-clear placeholder="Lastname" v-model:value="addingForm.ss_lastname"
+                            type="text" />
+                    </a-form-item>
+                    <a-form-item :validate-status="addingForm.errors.ss_idnumber ? 'error' : ''"
+                        :help="addingForm.errors.ss_idnumber" style="font-weight: bold;">
+                        Employee ID:
+                        <a-input allow-clear placeholder="Employee ID number" v-model:value="addingForm.ss_idnumber"
+                            type="number" />
+                    </a-form-item>
+                    <a-form-item :validate-status="addingForm.errors.ss_password ? 'error' : ''"
+                        :help="addingForm.errors.ss_password" style="font-weight: bold;">
+                        Password:
+                        <a-input allow-clear placeholder="Password" v-model:value="addingForm.ss_password"
+                            type="password" />
+                    </a-form-item>
+                    <a-form-item :validate-status="addingForm.errors.ss_store ? 'error' : ''"
+                        :help="addingForm.errors.ss_store" style="font-weight: bold;">
+                        Store Assigned:
+                        <a-select v-model:value="addingForm.ss_store">
+                            <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">{{
+                                item.store_name
+                                }}</a-select-option>
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item :validate-status="addingForm.errors.ss_usertype ? 'error' : ''"
+                        :help="addingForm.errors.ss_usertype" style="font-weight: bold;">
+                        User Type:
+                        <a-select v-model:value="addingForm.ss_usertype">
+                            <a-select-option value="cashier">Cashier</a-select-option>
+                            <a-select-option value="manager">Manager</a-select-option>
+                        </a-select>
+                    </a-form-item>
+                </div>
+            </a-modal>
+            <a-modal v-model:open="updateNewUser" @ok="submitUpdateUser">
+                <header style="font-weight: bold; font-size: large;">
+                    <p>
+                        <EditOutlined /> Update User
+                    </p>
+                </header>
+                <div style="margin-top: 2rem;">
+                    <a-form-item :validate-status="updateForm.errors.ss_username ? 'error' : ''"
+                        :help="updateForm.errors.ss_username" style="font-weight: bold;">
+                        Username:
+                        <a-input allow-clear placeholder="Username" v-model:value="updateForm.ss_username"
+                            type="text" />
+                    </a-form-item>
+                    <a-form-item :validate-status="updateForm.errors.ss_firstname ? 'error' : ''"
+                        :help="updateForm.errors.ss_firstname" style="font-weight: bold;">
+                        Firstname:
+                        <a-input allow-clear placeholder="Firstname" v-model:value="updateForm.ss_firstname"
+                            type="text" />
+                    </a-form-item>
+                    <a-form-item :validate-status="updateForm.errors.ss_lastname ? 'error' : ''"
+                        :help="updateForm.errors.ss_lastname" style="font-weight: bold;">
+                        Lastname:
+                        <a-input allow-clear placeholder="Lastname" v-model:value="updateForm.ss_lastname"
+                            type="text" />
+                    </a-form-item>
+                    <a-form-item :validate-status="updateForm.errors.ss_idnumber ? 'error' : ''"
+                        :help="updateForm.errors.ss_idnumber" style="font-weight: bold;">
+                        Employee ID:
+                        <a-input allow-clear placeholder="Employee ID number" v-model:value="updateForm.ss_idnumber"
+                            type="number" />
+                    </a-form-item>
+                    <a-form-item :validate-status="updateForm.errors.ss_store ? 'error' : ''"
+                        :help="updateForm.errors.ss_store" style="font-weight: bold;">
+                        Store Assigned:
+                        <a-select v-model:value="updateForm.ss_store">
+                            <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">{{
+                                item.store_name
+                                }}</a-select-option>
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item :validate-status="updateForm.errors.ss_usertype ? 'error' : ''"
+                        :help="updateForm.errors.ss_usertype" style="font-weight: bold;">
+                        User Type:
+                        <a-select v-model:value="updateForm.ss_usertype">
+                            <a-select-option value="cashier">Cashier</a-select-option>
+                            <a-select-option value="manager">Manager</a-select-option>
+                        </a-select>
+                    </a-form-item>
+                </div>
+            </a-modal>
+        </a-card>
     </AuthenticatedLayout>
 </template>

@@ -135,29 +135,23 @@ const changeUsernameModal = ref<boolean>(false);
 const confirm = ref({
     password: ''
 })
-const submitUsername = async () => {
-    if (!currentUser.value.username) {
+const submitUsername = () => {
+    if (!username.value.username) {
         notification.error({
             message: 'Error',
-            description: 'Please input the required field'
-        })
+            description: 'Username field is required'
+        });
         return;
     }
-    try {
-        enterPassword.value = true;
-    } catch (error) {
-        console.log(error);
-    }
+    enterPassword.value = true;
 };
 
 const submitNow = async () => {
     try {
         const response = await axios.post(route('admin.newUsername'), {
-            params: {
-                password: confirm.value,
-                username: currentUser.value.username,
-                id: currentUser.value.user_id
-            }
+            password: confirm.value,
+            username: username.value.username,
+            id: currentUser.value.user_id
         });
         if (response.data.success) {
             changeUsernameModal.value = false;
@@ -177,17 +171,38 @@ const submitNow = async () => {
     }
     catch (error) {
         console.log(error);
+        if (error.response && error.response.status === 422) {
+            notification.error({
+                message: 'Error',
+                description: error.response.data.message
+            });
+        }
     }
 }
 
 // change password function
-const form = ref<any>({
+interface PasswordForm {
+    old_password: string;
+    new_password: string;
+    confirm_password: string;
+    id: number;
+    errors: Record<string, string[]>;
+}
+
+const form = ref<PasswordForm>({
     old_password: '',
     new_password: '',
     confirm_password: '',
     id: currentUser.value.user_id,
     errors: {}
 });
+
+interface usernameForm {
+    username: string;
+}
+const username = ref<usernameForm>({
+    username: ''
+})
 
 const changePasswordModal = ref<boolean>(false);
 
@@ -346,19 +361,26 @@ const submitPassword = async () => {
                         </a-modal>
 
                         <!-- change username modal  -->
-                        <a-modal v-model:open="changeUsernameModal" with="50%" title="Change Username"
+                        <a-modal v-model:open="changeUsernameModal" with="50%" title="Change Username Setup"
                             @ok="submitUsername">
-                            <a-form-item label="Username" class="mt-10">
-                                <a-input v-model:value="currentUser.username" placeholder="Username" />
+                            <a-descriptions class="mt-5" :labelStyle="{ fontWeight: 'bold' }" bordered
+                                layout="horizontal">
+                                <a-descriptions-item label="Current Username">
+                                    {{ currentUser.username }}
+                                </a-descriptions-item>
+                            </a-descriptions>
+                            <a-form-item label="New Username" class="mt-5">
+                                <a-input v-model:value="username.username" placeholder="Input new username" />
                             </a-form-item>
                             <div class="mt-10">
-                                <p class="text-red-600">Note: Please be careful when changing your username. Make sure
+                                <p class="text-red-600 text-sm">Note: Please be careful when changing your username.
+                                    Make sure
                                     to remember it.</p>
                             </div>
                         </a-modal>
 
                         <!-- change password modal  -->
-                        <a-modal v-model:open="changePasswordModal" title="Change Password" @ok="submitPassword">
+                        <a-modal v-model:open="changePasswordModal" title="Change Password Setup" @ok="submitPassword">
                             <a-form-item :validate-status="form.errors.old_password ? 'error' : ''"
                                 :help="form.errors.old_password" label="Old Password" class="mt-10">
                                 <a-input v-model:value="form.old_password" type="password" placeholder="Old password" />
@@ -372,8 +394,9 @@ const submitPassword = async () => {
                                 <a-input v-model:value="form.confirm_password" type="password"
                                     placeholder="Confirm password" />
                             </a-form-item>
-                            <div class="mt-10">
-                                <p class="text-red-600 ">Note: Please be careful when changing your password. Make sure
+                            <div class="mt-16">
+                                <p class="text-red-600 text-sm">Note: Please be careful when changing your password.
+                                    Make sure
                                     to remember it.</p>
                             </div>
                         </a-modal>
