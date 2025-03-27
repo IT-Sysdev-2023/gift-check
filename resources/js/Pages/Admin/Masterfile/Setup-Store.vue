@@ -59,6 +59,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { router } from '@inertiajs/core';
 import { notification } from 'ant-design-vue';
 import { ref } from 'vue';
+import { route } from 'ziggy-js';
 
 const title = ref<string>('Store Setup');
 
