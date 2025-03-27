@@ -1,6 +1,5 @@
 <template>
     <AuthenticatedLayout>
-
         <Head :title="title" />
         <div>
             <a-breadcrumb>
