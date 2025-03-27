@@ -375,7 +375,7 @@ class AdminController extends Controller
             'usertype' => $request->usertype,
             'usergroup' => null,
             'user_status' => 'active',
-            'user_role' => in_array($request->usertype, [1]) ? 0 : $request->user_role,
+            'user_role' => in_array($request->usertype, [1, 2, 3]) ? $request->user_role : 0,
             'login' => 'no',
             'promo_tag' => '0',
             'store_assigned' => in_array($request->usertype, [7, 14]) ? $request->store_assigned : 0,
@@ -797,36 +797,28 @@ class AdminController extends Controller
 
     public function creditCardSetup(Request $request)
     {
-        $searchTerm = $request->input('data', '');
-        $dataQuery = creditcard::query();
+        $data = CreditCard::when($request->data, function ($query, $search) {
+            $query->where('ccard_name', 'like', '%' . $search . '%')
+                ->orWhere('ccard_status', 'like', '%' . $search . '%')
+                ->orWhere('ccard_created', 'like', '%' . $search . '%')
+                ->orWhere('ccard_by', 'like', '%' . $search . '%');
+        })->paginate(10);
 
-        if ($searchTerm) {
-            $dataQuery->where(function ($query) use ($searchTerm) {
-                $query->where('ccard_name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('ccard_status', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('ccard_created', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('ccard_by', 'like', '%' . $searchTerm . '%');
-            });
-        }
-
-        $data = $dataQuery->orderByDesc('ccard_id')
-            ->paginate(10)
-            ->through(function ($item) {
-                $item['ccard_created_formatted'] = Carbon::parse($item['ccard_created'])->format('Y-m-d H:i:s');
-                return $item;
-            })
-            ->withQueryString();
+        $data->transform(function ($item) {
+            $item['ccard_created_formatted'] = Carbon::parse($item['ccard_created'])->format('F d, Y');
+            $item->ccardBy = User::where('user_id', $item->ccard_by)->first();
+            $item->ccardBy_fullname = ($item->ccardBy->firstname ?? $item->ccard_by) . ' ' . ($item->ccardBy->lastname ?? $item->ccard_by);
+            return $item;
+        });
 
         return inertia('Admin/Masterfile/SetupCreditCard', [
             'data' => $data,
-            'search' => $searchTerm,
+            'search' => $request->data,
         ]);
     }
 
-
     public function saveCreditCard(Request $request)
     {
-        // dd($request->toArray());
         $request->validate([
             'ccard_name' => 'required|string|max:30'
         ]);
@@ -892,24 +884,22 @@ class AdminController extends Controller
         $request->validate([
             'denomination' => 'required|integer',
             'denom_barcode_start' => 'required|integer',
+            'denom_fad_item_number' => 'required|integer'
         ]);
 
         $denom_code = Denomination::max('denom_code');
         $newDenomCode = $denom_code ? $denom_code + 1 : 1;
 
-        $denom_fad_item_number = Denomination::max('denom_fad_item_number');
-        $newDenomFadItemNumber = $denom_fad_item_number ? $denom_fad_item_number + 1 : 1;
-
         $newDenom = Denomination::where('denomination', $request->denomination)->first();
         if ($newDenom) {
-            return back()->with('error', 'OPPS');
+            return back()->with('error', 'Denomination already exist');
         }
         $isSuccessful = Denomination::create([
             'denomination' => $request->denomination,
             'denom_barcode_start' => $request->denom_barcode_start,
             'denom_dateupdated' => now(),
             'denom_code' => $newDenomCode,
-            'denom_fad_item_number' => $newDenomFadItemNumber,
+            'denom_fad_item_number' => $request->denom_fad_item_number,
             'denom_type' => 'RSGC',
             'denom_status' => 'active',
             'denom_createdby' => $request->user()->user_id,

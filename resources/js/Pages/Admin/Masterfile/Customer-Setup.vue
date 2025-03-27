@@ -279,6 +279,8 @@ const regularSearchFunction = () => {
     router.get(route('admin.masterfile.customer.setup'), {
         regularSearch: regularCustomerData.value,
         activeKey: activeKey.value
+    }, {
+        preserveState: true
     });
 };
 // Regular Customer Modal
@@ -321,6 +323,8 @@ const institutionalSearchFunction = () => {
     router.get(route('admin.masterfile.customer.setup'), {
         institutionalSearch: institutionalData.value,
         activeKey: activeKey.value
+    }, {
+        preserveState: true
     });
 };
 // Institutional Customer Modal
@@ -364,6 +368,8 @@ const specialCustomerSearchFunction = () => {
     router.get(route('admin.masterfile.customer.setup'), {
         specialCustomerSearch: specialCustomerData.value,
         activeKey: activeKey.value
+    }, {
+        preserveState: true
     });
 };
 // Special Customer Modal
