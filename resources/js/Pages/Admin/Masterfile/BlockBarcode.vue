@@ -1,23 +1,21 @@
 <template>
     <AuthenticatedLayout>
-        <a-card>
-            <!-- BACK BUTTON  -->
-            <div>
-                <a-button @click="backButton" style="font-weight: bold">
-                    <RollbackOutlined /> Back
-                </a-button>
-            </div>
-            <div style="
-                    margin-top: 1rem;
-                    font-family: sans-serif;
-                    font-size: 1.5rem;
-                    font-weight: bold;
-                ">
-                <span> Block Barcode Setup </span>
-            </div>
+
+        <Head :title="title" />
+        <div>
+            <a-breadcrumb>
+                <a-breadcrumb-item>
+                    <Link :href="route('admin.dashboard')">Home</Link>
+                </a-breadcrumb-item>
+                <a-breadcrumb-item>
+                    {{ title }}
+                </a-breadcrumb-item>
+            </a-breadcrumb>
+        </div>
+        <a-card class="mt-5" title="Block Barcodes Setup">
             <!-- SHOW ALL BARCODES BUTTON  -->
-            <div style="margin-left: 12.5rem; margin-top: 3rem">
-                <a-button @click="showBarcodesTable" style="color: #1b76f8">
+            <div class="flex justify-left">
+                <a-button class="bg-blue-500 text-white" type="primary" @click="showBarcodesTable">
                     <EyeOutlined /> Show Blocked/Unblocked Barcodes
                 </a-button>
             </div>
@@ -26,27 +24,27 @@
                 <div style="margin-top: 1rem">
                     <a-form-item for="barcode" :validate-status="form.errors.barcode ? 'error' : ''"
                         :help="form.errors.barcode">
-                        <span style="font-size: large; font-weight: bold">Barcode to Block:</span>
-                        <a-input type="number" v-model:value="form.barcode"
-                            placeholder="Scan barcodes here to block..." style="
+                        <span style="font-size: large; font-weight: bold">Barcodes to Block:</span>
+                        <a-input allow-clear type="number" @keyup.enter="submitBlockedBarcode"
+                            v-model:value="form.barcode" placeholder="Scan barcodes here to block..." style="
                                 font-size: x-large;
                                 width: 25rem;
                                 height: 5rem;
                             " />
                     </a-form-item>
                     <div style="margin-left: 19rem">
-                        <a-button @click="submitBlockedBarcode" style="background-color: #1b76f8; color: white">
-                            <SendOutlined /> Submit
+                        <a-button @click="submitBlockedBarcode" class="bg-blue-500 text-white" type="primary">
+                            <CheckOutlined /> Submit
                         </a-button>
                     </div>
                 </div>
             </a-card>
             <!-- TABLE PART  -->
             <a-modal v-model:open="blockedBarcodesTable" :footer="false" style="width: 50%">
-                <a-card>
-                    <div>
+                <a-card title="Blocked/Unblocked Barcodes Setup">
+                    <div class="flex justify-end">
                         <a-input-search v-model:value="searchData" @change="searchBlockedBarcodes" enter-button
-                            placeholder="Input search here..." allow-clear style="width: 40%; margin-left: 60%" />
+                            placeholder="Input search here..." allow-clear class="w-1/3" />
                     </div>
                     <!-- LOADING EFFECT DIVISION  -->
                     <div v-if="loading" style="
@@ -131,6 +129,8 @@ const form = reactive({
     errors: {},
 });
 
+const title = ref("Blocked Barcodes Setup");
+
 const loading = ref(false); //LOADING BOOLEAN
 const blockedBarcodesTable = ref(false); //BLOCKED BARCODE MODAL TABLE
 const byBarcodeTable = ref(false); //BY BARCODE TABLE MODAL
@@ -169,10 +169,6 @@ const byBarcode = ref([
         dataIndex: "updated_at",
     },
 ]);
-
-const backButton = () => {
-    router.get(route("admin.dashboard"));
-};
 
 const showBarcodesTable = () => {
     blockedBarcodesTable.value = true;
@@ -318,49 +314,32 @@ const submitBlockedBarcode = () => {
         form.errors.barcode = "Input barcode first before submitting";
         return;
     }
-
-    Modal.confirm({
-        title: "Confirmation?",
-        icon: createVNode(ExclamationCircleOutlined),
-        content: createVNode(
-            "div",
+    try {
+        router.get(
+            route("admin.masterfile.addBlockedBarcode"),
             {
-                style: "color:red;",
+                ...form,
             },
-            "Are you sure you want to block this barcode?",
-        ),
-        onOk: () => {
-            try {
-                router.get(
-                    route("admin.masterfile.addBlockedBarcode"),
-                    {
-                        ...form,
-                    },
-                    {
-                        onSuccess: (page) => {
-                            if (page.props.flash.success) {
-                                notification.success({
-                                    message: "SUCCESS",
-                                    description: page.props.flash.success,
-                                });
-                                form.barcode = "";
-                            } else if (page.props.flash.error) {
-                                notification.warning({
-                                    message: "Opps",
-                                    description: page.props.flash.error,
-                                });
-                            }
-                        },
-                    },
-                );
-            } catch (error) {
-                console.error("Failed to add barcode", error);
-            }
-        },
-        onCancel() {
-            console.log("Cancel");
-        },
-    });
+            {
+                onSuccess: (page) => {
+                    if (page.props.flash.success) {
+                        notification.success({
+                            message: "SUCCESS",
+                            description: page.props.flash.success,
+                        });
+                        form.barcode = "";
+                    } else if (page.props.flash.error) {
+                        notification.warning({
+                            message: "Opps",
+                            description: page.props.flash.error,
+                        });
+                    }
+                },
+            },
+        );
+    } catch (error) {
+        console.error("Failed to add barcode", error);
+    }
 };
 </script>
 <style scoped>
