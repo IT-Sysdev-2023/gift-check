@@ -6,21 +6,21 @@
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Date">{{
                             dayjs().format('MMM, DD, YYYY')
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Verified By">{{
                             $page.props.auth.user.full_name
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
 
                     <a-row class="mt-5 mb-5">
-                    <a-description-text keyboard>Payment To: </a-description-text>
-                    <a-select size="large" ref="select" v-model:value="form.payment" style="width: 540px"
-                        placeholder="Select Payment Type">
-                        <a-select-option value="STORE DEPARTMENT">STORE DEPARTMENT</a-select-option>
-                        <a-select-option value="WHOLESALE">WHOLESALE</a-select-option>
-                    </a-select>
+                        <a-description-text keyboard>Payment To: </a-description-text>
+                        <a-select size="large" ref="select" v-model:value="form.payment" style="width: 540px"
+                            placeholder="Select Payment Type">
+                            <a-select-option value="STORE DEPARTMENT">STORE DEPARTMENT</a-select-option>
+                            <a-select-option value="WHOLESALE">WHOLESALE</a-select-option>
+                        </a-select>
                     </a-row>
                     <a-row class="mt-5 mb-5">
                         <a-col :span="16">
@@ -76,46 +76,46 @@
                         Issue: Barcode #
                         <span class="font-bold">{{
                             notif.data.lostgcb_barcode
-                            }}</span>
+                        }}</span>
                         was reported as lost
                     </p>
                     <p>
                         Owner's Name:
                         <span class="font-bold">{{
                             notif.data.lostgcd_owname
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Address:
                         <span class="font-bold">{{
                             notif.data.lostgcd_address
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Contact No:
                         <span class="font-bold">{{
                             notif.data.lostgcd_contactnum
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Date Lost:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datelost
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Date Reported:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datereported
-                            }}</span>
+                        }}</span>
                     </p>
                 </a-card>
             </a-col>
             <a-col :span="13">
                 <a-alert v-if="success" :message="'BARCODE # ' + form.barcode + ' FOUND'" class="mb-1" type="success"
                     show-icon />
-                <a-alert v-if="notfound" :message="'BARCODE # ' + form.barcode + '  NOT FOUND'" class="mb-1"
-                    type="404" show-icon />
+                <a-alert v-if="notfound" :message="'BARCODE # ' + form.barcode + '  NOT FOUND'" class="mb-1" type="404"
+                    show-icon />
                 <a-card v-if="!empty">
                     <div v-if="skeleton">
                         <a-skeleton avatar :paragraph="{ rows: 4 }" />
@@ -262,7 +262,11 @@ const submit = () => {
                 message: response.props.flash.title,
                 description: response.props.flash.msg,
             });
+            form.reset();
         },
+        onError: () => {
+            form.reset();
+        }
     });
 };
 
