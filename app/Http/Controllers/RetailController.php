@@ -358,28 +358,6 @@ class RetailController extends Controller
 
     public function verificationIndex(Request $request)
     {
-
-          $st = Store::where('store_id', $request->user()->store_assigned)->first();
-
-        $driveLetter = 'Z:';
-        $networkPath =  rtrim($st->store_textfile_ip, '\\');
-        $username = $st->username;  // No extra quotes
-        $password = $st->new_password;
-
-        // $driveLetter = 'Z:'; // Specify a drive letter
-        // $networkPath = '\\\\172.16.43.166\Gift';
-
-        // $username = "New User";// Enclose in quotes if username contains spaces
-        // $password = 'san'; // Enclose in quotes if password contains special characters
-
-        exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
-
-        // Map the drive - note the quoting of username/password if needed
-        $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$username\" \"$password\" /persistent:yes 2>&1";
-
-
-        exec($command, $output, $return_var);
-
             $data = $this->statusScanner->statusScanned($request);
 
             return inertia('Retail/Verification', [
@@ -393,7 +371,25 @@ class RetailController extends Controller
 
     public function submitVerify(Request $request)
     {
-        return $this->retail->submitVerify($request);
+         $st = Store::where('store_id', $request->user()->store_assigned)->first();
+
+        $driveLetter = 'Z:';
+        $networkPath =  rtrim($st->store_textfile_ip, '\\');
+        $username = $st->username;  // No extra quotes
+        $password = $st->new_password;
+
+        // Map the drive - note the quoting of username/password if needed
+        $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$username\" \"$password\" /persistent:yes 2>&1";
+
+
+        exec($command, $output, $return_var);
+
+
+        if ($return_var === 0) {
+            return $this->retail->submitVerify($request);
+        } else {
+            return inertia('ErrorInServer');
+        }
     }
     public function availableGcList(Request $request)
     {
