@@ -186,21 +186,21 @@
                     </a-form-item>
 
                     <!-- USER ROLE  -->
-                    <a-form-item label="User Role" v-if="updateForm.usertype == 2 || updateForm.usertype == 3 || updateForm.usertype == 4 || updateForm.usertype == 5 || updateForm.usertype == 6
-                        || updateForm.usertype == 7 || updateForm.usertype == 8 || updateForm.usertype == 9 || updateForm.usertype == 10 || updateForm.usertype == 11
-                        || updateForm.usertype == 12 || updateForm.usertype == 13 || updateForm.usertype == 14"
+                    <a-form-item label="User Role" v-if="updateForm.userType == 2 || updateForm.userType == 3 || updateForm.userType == 4 || updateForm.userType == 5 || updateForm.userType == 6
+                        || updateForm.userType == 7 || updateForm.userType == 8 || updateForm.userType == 9 || updateForm.userType == 10 || updateForm.userType == 11
+                        || updateForm.userType == 12 || updateForm.userType == 13 || updateForm.userType == 14"
                         for="userRole" :validate-status="updateForm.errors?.userRole ? 'error' : ''"
                         :help="updateForm.errors?.userRole">
                         <a-select v-model:value="updateForm.userRole" allow-clear>
                             <a-select-option value=0>Dept. User</a-select-option>
                             <a-select-option value=1>Dept. Manager</a-select-option>
-                            <a-select-option v-if="updateForm.usertype != 1" value=2>Releasing
+                            <a-select-option v-if="updateForm.userType != 1" value=2>Releasing
                                 Personnel</a-select-option>
                         </a-select>
                     </a-form-item>
 
                     <!-- STORE ASSIGNED  -->
-                    <a-form-item label="Store Assigned" v-if="updateForm.usertype == 7 || updateForm.usertype == 14"
+                    <a-form-item label="Store Assigned" v-if="updateForm.userType == 7 || updateForm.userType == 14"
                         for="store_assigned" :validate-status="updateForm.errors?.store_assigned ? 'error' : ''"
                         :help="updateForm.errors?.store_assigned">
                         <a-select v-model:value="updateForm.store_assigned" allow-clear>
@@ -211,7 +211,7 @@
                     </a-form-item>
 
                     <!-- RETAIL GROUP  -->
-                    <a-form-item label="Retail Group" v-if="updateForm.usertype == 8" for="retail_group"
+                    <a-form-item label="Retail Group" v-if="updateForm.userType == 8" for="retail_group"
                         :validate-status="updateForm.errors?.retail_group ? 'error' : ''"
                         :help="updateForm.errors?.retail_group">
                         <a-select v-model:value="updateForm.retail_group" allow-clear>
@@ -225,7 +225,7 @@
                     </a-form-item>
 
                     <!-- IT TYPE  -->
-                    <a-form-item label="IT Type" v-if="updateForm.usertype == 12" for="it_type"
+                    <a-form-item label="IT Type" v-if="updateForm.userType == 12" for="it_type"
                         :validate-status="updateForm.errors?.it_type ? 'error' : ''" :help="updateForm.errors?.it_type">
                         <a-select v-model:value="updateForm.it_type" allow-clear>
                             <a-select-option value=1>
@@ -463,7 +463,7 @@ const saveUpdateUser = async () => {
             firstname: updateForm.value.firstname,
             lastname: updateForm.value.lastname,
             employee_id: updateForm.value.emp_id,
-            usertype: updateForm.value.usertype,
+            usertype: updateForm.value.userType,
             user_role: updateForm.value.userRole,
             store_assigned: updateForm.value.store_assigned,
             retail_group: updateForm.value.retail_group,
