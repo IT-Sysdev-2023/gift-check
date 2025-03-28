@@ -40,16 +40,20 @@
                         <a-descriptions-item style="width: 50%;" label="Received by">{{ $page.props.auth.user.full_name
                             }}</a-descriptions-item>
                     </a-descriptions>
+    
                     <span>
-                        <a-typography-text keyboard>Checked By</a-typography-text>
+                        <a-description-text>Checked By:</a-description-text>
                     </span>
-                    <!-- {{assign}} -->
-                    <a-select style="width: 100%;" placeholder="Select Assignatory" v-model:value="form.checkby"
+                    
+                    <a-descriptions-item style="width: 100%;" label="Checked by">
+                    <a-select label="Checked by" style="width: 7e0%;" placeholder="Select Assignatory" v-model:value="form.checkby"
                         allow-clear>
                         <a-select-item v-for="name in assign" :value="name.assig_name">
                             {{ name.assig_name }}
                         </a-select-item>
                     </a-select>
+                    </a-descriptions-item>
+                   
                     <!-- <a-input v-model:value="form.checkby" allow-clear>
                     </a-input> -->
                 </a-col>
