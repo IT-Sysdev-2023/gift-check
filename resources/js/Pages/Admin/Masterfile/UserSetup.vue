@@ -22,13 +22,13 @@
                 </a-button>
             </div>
             <!-- SEARCH -->
-            <div class="mt-5">
+            <div class="mt-5 flex justify-end">
                 <a-input-search @change="searchUser" v-model:value="searchUserValue" enter-button allow-clear
-                    placeholder="Input search here..." class="w-1/4 float-right" />
+                    placeholder="Input search here..." class="w-1/4" />
             </div>
 
             <!-- TABLE -->
-            <div class="mt-10">
+            <div class="mt-5">
                 <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">

@@ -306,6 +306,11 @@ const updateRegularCustomer = () => {
                     description: page.props.flash.success
                 });
                 regularModal.value = false;
+            } else if (page.props.flash.error) {
+                notification.warning({
+                    message: 'Warning',
+                    description: page.props.flash.error
+                });
             }
         },
         onError: () => {
@@ -351,6 +356,11 @@ const updateInstitutional = () => {
                     description: page.props.flash.success
                 });
                 institutionalModal.value = false;
+            } else if (page.props.flash.error) {
+                notification.warning({
+                    message: 'Warning',
+                    description: page.props.flash.error
+                });
             }
         },
         onError: () => {
@@ -398,6 +408,11 @@ const updateSpecialCustomer = () => {
                     description: page.props.flash.success
                 });
                 specialModal.value = false;
+            } else if (page.props.flash.error) {
+                notification.warning({
+                    message: 'Warning',
+                    description: page.props.flash.error
+                });
             }
         },
         onError: () => {
