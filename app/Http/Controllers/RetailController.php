@@ -380,13 +380,6 @@ class RetailController extends Controller
 
         exec($command, $output, $return_var);
 
-        // dd($command)
-;
-
-
-
-        if ($return_var === 0) {
-
             $data = $this->statusScanner->statusScanned($request);
 
             return inertia('Retail/Verification', [
@@ -395,9 +388,7 @@ class RetailController extends Controller
                 'notfound' => $data->barcodeNotFound,
                 'empty' => $data->empty,
             ]);
-        } else {
-            return inertia('ErrorInServer');
-        }
+       
     }
 
     public function submitVerify(Request $request)
