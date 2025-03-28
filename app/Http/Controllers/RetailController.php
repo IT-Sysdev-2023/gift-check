@@ -359,7 +359,7 @@ class RetailController extends Controller
     public function verificationIndex(Request $request)
     {
 
-        $st = Store::where('store_id', $request->user()->store_assigned)->first();
+          $st = Store::where('store_id', $request->user()->store_assigned)->first();
 
         $driveLetter = 'Z:';
         $networkPath =  rtrim($st->store_textfile_ip, '\\');
@@ -379,6 +379,10 @@ class RetailController extends Controller
 
 
         exec($command, $output, $return_var);
+
+        // dd($command)
+;
+
 
 
         if ($return_var === 0) {

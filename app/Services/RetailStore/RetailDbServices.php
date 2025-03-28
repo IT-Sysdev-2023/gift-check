@@ -150,10 +150,10 @@ class RetailDbServices
     public function createtextfile($request, $data)
     {
 
-        // $st = Store::where('store_id', $request->user()->store_assigned)->first();
+        $st = Store::where('store_id', $request->user()->store_assigned)->first();
 
-        // $networkPath =  $st->store_textfile_ip;
-        $networkPath =  '\\\\172.16.43.166\Gift\\';
+        $networkPath =  $st->store_textfile_ip;
+        // $networkPath =  '\\\\172.16.43.166\Gift\\';
 
         // $filePath = storage_path('app/public/cfstextfiles/' . $request->barcode . $data['tfilext']);
         $filePath =  $networkPath . $request->barcode . $data['tfilext'];
