@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\DB;
 use Symfony\Contracts\Service\Attribute\Required;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -310,9 +311,16 @@ class AdminController extends Controller
         $users = $usersQuery->orderByDesc('users.user_id')
             ->paginate(10)
             ->withQueryString();
+        $userRole = [
+            '0' => 'Dept. User',
+            '1' => 'Dept. Manager',
+            '2' => 'Releasing Personel'
+        ];
 
-        $users->transform(function ($item) {
+        $users->transform(function ($item) use ($userRole) {
             $item->status = $item->user_status == 'active';
+            $item->userRole = $userRole[$item->user_role] ?? '';
+            $item->userType = AccessPage::where('access_no', $item->usertype)->value('title') ?? '';
             return $item;
         });
         // dd($users);
@@ -328,30 +336,13 @@ class AdminController extends Controller
     {
         // dd($request->all());
         // Check if the data has no changes happen
-        $checkUser = User::where('user_id', $request['user_id'])->first();
-        if ($checkUser) {
-            $CheckData =
-                $checkUser->username === $request['username'] &&
-                $checkUser->firstname === $request['firstname'] &&
-                $checkUser->lastname === $request['lastname'] &&
-                $checkUser->emp_id === $request['employee_id'] &&
-                $checkUser->usertype === $request['usertype'] &&
-                $checkUser->user_role === $request['user_role'] &&
-                $checkUser->store_assigned === $request['store_assigned'] &&
-                $checkUser->retail_group === $request['retail_group'] &&
-                $checkUser->it_type === $request['it_type'] &&
-                $checkUser->user_status === $request['status'];
-
-            if ($CheckData) {
-                return back()->with(
-                    'error',
-                    " {$request->username}'s data has no changes, please update first before submitting"
-                );
-            }
-        }
 
         $validations = [
-            'usertype' => 'required'
+            'usertype' => 'required',
+            'username' => 'required',
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'employee_id' => 'required'
         ];
         if (in_array($request->usertype, [2, 3, 4, 5, 6, 9, 10, 11, 13, 14])) {
             $validations['user_role'] = 'required';
@@ -365,7 +356,18 @@ class AdminController extends Controller
         if (in_array($request->usertype, [12])) {
             $validations['it_type'] = 'required';
         }
-        $request->validate($validations);
+        $validation = Validator::make($request->all(), $validations);
+        if ($validation->fails()) {
+            return back()->with(
+                'error',
+                'Please fill all required fields'
+            );
+        }
+        $userRole = [
+            'Dept. User' => 0,
+            'Dept. Manager' => 1,
+            'Releasing Personel' => 2
+        ];
 
         User::where('user_id', $request->user_id)->update([
             'username' => $request->username,
@@ -375,10 +377,15 @@ class AdminController extends Controller
             'usertype' => $request->usertype,
             'usergroup' => null,
             'user_status' => 'active',
-            'user_role' => in_array($request->usertype, [1, 2, 3]) ? $request->user_role : 0,
+            'user_role' => in_array($request->usertype, [1])
+                ? null
+                : (is_numeric($request->user_role)
+                    ? $request->user_role
+                    : ($userRole[$request->user_role] ?? null)),
+
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => in_array($request->usertype, [7, 14]) ? $request->store_assigned : 0,
+            'store_assigned' => in_array($request->usertype, [7, 14]) ? $request->store_assigned : null,
             'date_created' => now(),
             'date_updated' => now(),
             'user_addby' => $request->user()->user_id,
@@ -410,8 +417,14 @@ class AdminController extends Controller
         if (in_array($request->usertype, [12])) {
             $validations['it_type'] = 'required';
         }
-        $request->validate($validations);
-
+        // $request->validate($validations);
+        $validation = Validator::make($request->all(), $validations);
+        if ($validation->fails()) {
+            return back()->with(
+                'error',
+                'Please fill all required fields'
+            );
+        }
         if (User::where('username', $request->username)->exists()) {
             return back()->with(
                 'error',
@@ -430,13 +443,13 @@ class AdminController extends Controller
             'password' => $password,
             'usergroup' => null,
             'user_status' => 'active',
-            'user_role' => $request->user_role,
+            'user_role' => $request->user_role ? $request->user_role : null,
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => $request->store_assigned,
+            'store_assigned' => $request->store_assigned ? $request->store_assigned : null,
             'date_created' => now(),
             'user_addby' => $request->user()->user_id,
-            'retail_group' => $request->retail_group,
+            'retail_group' => $request->retail_group ? $request->retail_group : null,
             'it_type' => $request->it_type
         ]);
 

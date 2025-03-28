@@ -176,9 +176,9 @@
 
                     <!-- USERTYPE  -->
                     <a-form-item label="Usertype" for="usertype"
-                        :validate-status="updateForm.errors?.usertype ? 'error' : ''"
-                        :help="updateForm.errors?.usertype">
-                        <a-select v-model:value="updateForm.usertype">
+                        :validate-status="updateForm.errors?.userType ? 'error' : ''"
+                        :help="updateForm.errors?.userType">
+                        <a-select v-model:value="updateForm.userType">
                             <a-select-option v-for="item in access_page" :key="item.access_no" :value="item.access_no">
                                 {{ item.title }}
                             </a-select-option>
@@ -189,12 +189,12 @@
                     <a-form-item label="User Role" v-if="updateForm.usertype == 2 || updateForm.usertype == 3 || updateForm.usertype == 4 || updateForm.usertype == 5 || updateForm.usertype == 6
                         || updateForm.usertype == 7 || updateForm.usertype == 8 || updateForm.usertype == 9 || updateForm.usertype == 10 || updateForm.usertype == 11
                         || updateForm.usertype == 12 || updateForm.usertype == 13 || updateForm.usertype == 14"
-                        for="user_role" :validate-status="updateForm.errors?.user_role ? 'error' : ''"
-                        :help="updateForm.errors?.user_role">
-                        <a-select v-model:value="updateForm.user_role" allow-clear>
+                        for="userRole" :validate-status="updateForm.errors?.userRole ? 'error' : ''"
+                        :help="updateForm.errors?.userRole">
+                        <a-select v-model:value="updateForm.userRole" allow-clear>
+                            <a-select-option value=0>Dept. User</a-select-option>
                             <a-select-option value=1>Dept. Manager</a-select-option>
-                            <a-select-option value=2>Dept. User</a-select-option>
-                            <a-select-option v-if="updateForm.usertype != 1" value=3>Releasing
+                            <a-select-option v-if="updateForm.usertype != 1" value=2>Releasing
                                 Personnel</a-select-option>
                         </a-select>
                     </a-form-item>
@@ -373,8 +373,8 @@ const updateForm = ref({
     firstname: "",
     lastname: "",
     emp_id: "",
-    usertype: "",
-    user_role: "",
+    userType: "",
+    userRole: "",
     store_assigned: "",
     retail_group: "",
     it_type: "",
@@ -454,7 +454,9 @@ const saveNewUser = async () => {
     }
 }
 // UPDATE USER LOGIC
+
 const saveUpdateUser = async () => {
+    // if(updateForm.)
     try {
         router.post(route('admin.masterfile.updateUser'), {
             username: updateForm.value.username,
@@ -462,7 +464,7 @@ const saveUpdateUser = async () => {
             lastname: updateForm.value.lastname,
             employee_id: updateForm.value.emp_id,
             usertype: updateForm.value.usertype,
-            user_role: updateForm.value.user_role,
+            user_role: updateForm.value.userRole,
             store_assigned: updateForm.value.store_assigned,
             retail_group: updateForm.value.retail_group,
             status: updateForm.value.user_status,
@@ -477,13 +479,12 @@ const saveUpdateUser = async () => {
                     });
                     updateUserModal.value = false;
                 } else if (page.props.flash.error) {
-                    notification.warning({
-                        message: 'Opps',
+                    notification.error({
+                        message: 'Error',
                         description: page.props.flash.error
                     });
                     updateUserModal.value = true;
-                };
-
+                }
             }
         });
     }
