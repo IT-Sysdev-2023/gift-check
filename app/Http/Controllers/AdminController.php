@@ -128,7 +128,7 @@ class AdminController extends Controller
         $currentMonth = date('m');
 
         // This query is for the total sales per store
-        $query = DB::table('stores')
+        $storeQuery = DB::table('stores')
             ->leftJoin('transaction_stores', 'stores.store_id', '=', 'transaction_stores.trans_store')
             ->leftJoin('transaction_sales', 'transaction_sales.sales_transaction_id', '=', 'transaction_stores.trans_sid')
             ->leftJoin('gc', 'gc.barcode_no', '=', 'transaction_sales.sales_barcode')
@@ -137,10 +137,8 @@ class AdminController extends Controller
                 'stores.store_name',
                 DB::raw("IFNULL(COUNT(transaction_sales.sales_barcode), 0) as gc_count")
             )
-            ->where(function ($query) use ($currentYear, $currentMonth) {
-                $query->whereYear('transaction_stores.trans_datetime', $currentYear)
-                    ->whereMonth('transaction_stores.trans_datetime', $currentMonth);
-            })
+            ->whereYear('transaction_stores.trans_datetime', $currentYear)
+            ->whereMonth('transaction_stores.trans_datetime', $currentMonth)
             ->orWhereNull('transaction_stores.trans_sid')
             ->groupBy('stores.store_name')
             ->get();
@@ -169,36 +167,43 @@ class AdminController extends Controller
             ->whereYear('institut_transactions.institutr_date', $currentYear)
             ->groupBy(DB::raw("MONTH(institut_transactions.institutr_date)"));
 
-        $storesQuery = DB::table('approved_gcrequest')
-            ->join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
-            ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
-            ->select(
-                DB::raw("MONTH(approved_gcrequest.agcr_approved_at) as month"),
-                DB::raw("COUNT(*) as total_count")
-            )
-            ->whereYear('approved_gcrequest.agcr_approved_at', $currentYear)
-            ->groupBy(DB::raw("MONTH(approved_gcrequest.agcr_approved_at)"))
-            ->unionAll($institutionQuery);
+        $storesQuery = DB::query()->fromSub($institutionQuery, 'institutionQuery')
+            ->unionAll(
+                DB::table('approved_gcrequest')
+                    ->join('store_gcrequest', 'store_gcrequest.sgc_id', '=', 'approved_gcrequest.agcr_request_id')
+                    ->join('stores', 'stores.store_id', '=', 'store_gcrequest.sgc_store')
+                    ->select(
+                        DB::raw("MONTH(approved_gcrequest.agcr_approved_at) as month"),
+                        DB::raw("COUNT(*) as total_count")
+                    )
+                    ->whereYear('approved_gcrequest.agcr_approved_at', $currentYear)
+                    ->groupBy(DB::raw("MONTH(approved_gcrequest.agcr_approved_at)"))
+            );
 
-        $specialQuery = DB::table('special_external_gcrequest')
-            ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
-            ->select(
-                DB::raw("MONTH(special_external_gcrequest.spexgc_datereq) as month"),
-                DB::raw("COUNT(*) as total_count")
-            )
-            ->whereYear('special_external_gcrequest.spexgc_datereq', $currentYear)
-            ->groupBy(DB::raw("MONTH(special_external_gcrequest.spexgc_datereq)"))
-            ->unionAll($storesQuery);
+        $specialQuery = DB::query()->fromSub($storesQuery, 'storesQuery')
+            ->unionAll(
+                DB::table('special_external_gcrequest')
+                    ->join('special_external_customer', 'special_external_customer.spcus_id', '=', 'special_external_gcrequest.spexgc_company')
+                    ->select(
+                        DB::raw("MONTH(special_external_gcrequest.spexgc_datereq) as month"),
+                        DB::raw("COUNT(*) as total_count")
+                    )
+                    ->whereYear('special_external_gcrequest.spexgc_datereq', $currentYear)
+                    ->groupBy(DB::raw("MONTH(special_external_gcrequest.spexgc_datereq)"))
+            );
 
-        //use this code if the error is mysql version error
+        // Perform final aggregation of Special GC
         $specialGcData = collect($specialGcQuery);
+
+        // Perform final aggregation of Regular GC
         $storesData = collect(DB::select($storesQuery->toSql(), $storesQuery->getBindings()));
         $institutionData = collect(DB::select($institutionQuery->toSql(), $institutionQuery->getBindings()));
+        $specialData = collect(DB::select($specialQuery->toSql(), $specialQuery->getBindings()));
 
-        // Manually merge the collections
-        $mergedData = $specialGcData->merge($storesData)->merge($institutionData);
+        //Merge all the data of Regular Gc
+        $mergedData = collect($storesData)->merge($institutionData)->merge($specialData);
 
-        // Perform final aggregation in Laravel instead of MySQL
+        // Perform final aggregation in all regular gc data
         $finalQuery = $mergedData->groupBy('month')->map(function ($group) {
             return [
                 'month' => $group->first()->month,
@@ -206,21 +211,11 @@ class AdminController extends Controller
             ];
         })->values();
 
-        //change this one above code given
-        // $finalQuery = DB::table(DB::raw("({$specialQuery->toSql()}) as merged"))
-        //     ->mergeBindings($specialQuery)
-        //     ->select(
-        //         'month',
-        //         DB::raw("SUM(total_count) as total_transactions")
-        //     )
-        //     ->groupBy('month')
-        //     ->orderBy('month')
-        //     ->get();
         return inertia('Admin/AdminDashboard', [
-            'users' => $users,
-            'data' => $query,
-            'specialGcData' => $specialGcQuery,
-            'regularGcData' => $finalQuery
+            'users' => $users, //gettin all users data
+            'storeQuery' => $storeQuery, //per store query
+            'specialGcData' => $specialGcData, // special gc query
+            'regularGcData' => $finalQuery // merge query of all regular gc
         ]);
     }
 
@@ -269,7 +264,6 @@ class AdminController extends Controller
 
     public function userlist(Request $request)
     {
-
         // dd($request->store);
         $Store = Store::get();
         $access_page = AccessPage::get();
@@ -316,11 +310,23 @@ class AdminController extends Controller
             '1' => 'Dept. Manager',
             '2' => 'Releasing Personel'
         ];
+        $retailGroup = [
+            '1' => 'Group 1',
+            '2' => 'Group 2'
+        ];
+        $itType = [
+            '1' => 'Corporate IT',
+            '2' => 'Store IT'
+        ];
 
-        $users->transform(function ($item) use ($userRole) {
+        $users->transform(function ($item) use ($userRole, $retailGroup, $itType) {
             $item->status = $item->user_status == 'active';
             $item->userRole = $userRole[$item->user_role] ?? '';
             $item->userType = AccessPage::where('access_no', $item->usertype)->value('title') ?? '';
+            $item->storeAssigned = Store::where('store_id', $item->store_assigned)->value('store_name') ?? '';
+            $item->retailGroup = $retailGroup[$item->retail_group] ?? '';
+            $item->itType = $itType[$item->it_type] ?? '';
+
             return $item;
         });
         // dd($users);
@@ -335,68 +341,136 @@ class AdminController extends Controller
     public function updateUser(Request $request)
     {
         // dd($request->all());
-        // Check if the data has no changes happen
-
-        $validations = [
-            'usertype' => 'required',
-            'username' => 'required',
-            'firstname' => 'required',
-            'lastname' => 'required',
-            'employee_id' => 'required'
+        // Mapping of request brooooo
+        $userType = [
+            'Administrator' => 1,
+            'Corporate Treasury' => 2,
+            'Corporate Finance' => 3,
+            'Corporate FAD' => 4,
+            'General Manager' => 5,
+            'Corporate Marketing' => 6,
+            'Retail Store' => 7,
+            'Retail Group' => 8,
+            'Corporate Accounting' => 9,
+            'Internal Audit' => 10,
+            'Finance Officer' => 11,
+            'IT Personnel' => 12,
+            'CFS' => 13,
+            'Store Accounting' => 14
         ];
-        if (in_array($request->usertype, [2, 3, 4, 5, 6, 9, 10, 11, 13, 14])) {
-            $validations['user_role'] = 'required';
-        }
-        if (in_array($request->usertype, [7, 14])) {
-            $validations['store_assigned'] = 'required';
-        }
-        if (in_array($request->usertype, [8])) {
-            $validations['retail_group'] = 'required';
-        }
-        if (in_array($request->usertype, [12])) {
-            $validations['it_type'] = 'required';
-        }
-        $validation = Validator::make($request->all(), $validations);
-        if ($validation->fails()) {
-            return back()->with(
-                'error',
-                'Please fill all required fields'
-            );
-        }
+
         $userRole = [
             'Dept. User' => 0,
             'Dept. Manager' => 1,
             'Releasing Personel' => 2
         ];
 
+        $storeAssigned = [
+            'Alturas Mall' => 1,
+            'Alturas Talibon' => 2,
+            'Island City Mall' => 3,
+            'Plaza Marcela' => 4,
+            'Alturas Tubigon' => 5,
+            'Colonade Colon' => 6,
+            'Colonade Mandaue' => 7,
+            'Alta Citta' => 8,
+            'Farmers Market' => 9,
+            'Ubay Distribution Center' => 10,
+            'Screenville' => 11,
+            'Asc Tech' => 12
+        ];
+
+        $retailGroup = [
+            'Group 1' => 1,
+            'Group 2' => 2
+        ];
+
+        $itType = [
+            'Corporate IT' => 1,
+            'Store IT' => 2
+        ];
+        // Convert usertype to integer
+        $usertypeInt = $userType[$request->usertype] ?? null;
+
+        //Validation
+        $validation = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,user_id',
+            'usertype' => 'required|string|in:' . implode(',', array_keys($userType)),
+            'username' => 'required|string|max:255',
+            'firstname' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'employee_id' => 'required|string|max:50',
+
+            // Validate user_role only if usertype is NOT 1
+            'user_role' => [
+                function ($attribute, $value, $fail) use ($usertypeInt, $userRole) {
+                    if ($usertypeInt !== 1 && (!isset($userRole[$value]) || !array_key_exists($value, $userRole))) {
+                        $fail("The selected {$attribute} is invalid.");
+                    }
+                }
+            ],
+
+            // Validate store_assigned only if usertype is 7 or 14
+            'store_assigned' => [
+                function ($attribute, $value, $fail) use ($usertypeInt, $storeAssigned) {
+                    if (in_array($usertypeInt, [7, 14]) && (!isset($storeAssigned[$value]) || !array_key_exists($value, $storeAssigned))) {
+                        $fail("The selected {$attribute} is invalid.");
+                    }
+                }
+            ],
+
+            // Validate retail_group only if usertype is 8
+            'retail_group' => [
+                function ($attribute, $value, $fail) use ($usertypeInt, $retailGroup) {
+                    if ($usertypeInt === 8 && (!isset($retailGroup[$value]) || !array_key_exists($value, $retailGroup))) {
+                        $fail("The selected {$attribute} is invalid.");
+                    }
+                }
+            ],
+
+            // Validate it_type only if usertype is 12
+            'it_type' => [
+                function ($attribute, $value, $fail) use ($usertypeInt, $itType) {
+                    if ($usertypeInt === 12 && (!isset($itType[$value]) || !array_key_exists($value, $itType))) {
+                        $fail("The selected {$attribute} is invalid.");
+                    }
+                }
+            ]
+        ]);
+
+        if ($validation->fails()) {
+            return back()->with(
+                'error',
+                'Please fill all the required fields'
+            );
+        }
+
+        // Convert request strings to mapped integers
+        $userRoleInt = isset($request->user_role) ? ($userRole[$request->user_role] ?? null) : null;
+        $storeAssignedInt = isset($request->store_assigned) ? ($storeAssigned[$request->store_assigned] ?? null) : null;
+        $retailGroupInt = isset($request->retail_group) ? ($retailGroup[$request->retail_group] ?? null) : null;
+        $itTypeInt = isset($request->it_type) ? ($itType[$request->it_type] ?? null) : null;
+
+        // Update user data
         User::where('user_id', $request->user_id)->update([
             'username' => $request->username,
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'emp_id' => $request->employee_id,
-            'usertype' => $request->usertype,
+            'usertype' => $usertypeInt,
             'usergroup' => null,
             'user_status' => 'active',
-            'user_role' => in_array($request->usertype, [1])
-                ? null
-                : (is_numeric($request->user_role)
-                    ? $request->user_role
-                    : ($userRole[$request->user_role] ?? null)),
-
+            'user_role' => $userRoleInt,
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => in_array($request->usertype, [7, 14]) ? $request->store_assigned : null,
-            'date_created' => now(),
+            'store_assigned' => in_array($usertypeInt, [7, 14]) ? $storeAssignedInt : null,
             'date_updated' => now(),
             'user_addby' => $request->user()->user_id,
-            'retail_group' => in_array($request->usertype, [8]) ? $request->retail_group : null,
-            'it_type' => in_array($request->usertype, [12]) ? $request->it_type : null
+            'retail_group' => $usertypeInt === 8 ? $retailGroupInt : null,
+            'it_type' => $usertypeInt === 12 ? $itTypeInt : null
         ]);
 
-        return back()->with(
-            'success',
-            'User updated successfully'
-        );
+        return back()->with('success', 'User updated successfully');
     }
 
 

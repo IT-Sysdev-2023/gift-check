@@ -179,60 +179,60 @@
                         :validate-status="updateForm.errors?.userType ? 'error' : ''"
                         :help="updateForm.errors?.userType">
                         <a-select v-model:value="updateForm.userType">
-                            <a-select-option v-for="item in access_page" :key="item.access_no" :value="item.access_no">
+                            <a-select-option v-for="item in access_page" :key="item.title" :value="item.title">
                                 {{ item.title }}
                             </a-select-option>
                         </a-select>
                     </a-form-item>
 
                     <!-- USER ROLE  -->
-                    <a-form-item label="User Role" v-if="updateForm.userType == 2 || updateForm.userType == 3 || updateForm.userType == 4 || updateForm.userType == 5 || updateForm.userType == 6
-                        || updateForm.userType == 7 || updateForm.userType == 8 || updateForm.userType == 9 || updateForm.userType == 10 || updateForm.userType == 11
-                        || updateForm.userType == 12 || updateForm.userType == 13 || updateForm.userType == 14"
-                        for="userRole" :validate-status="updateForm.errors?.userRole ? 'error' : ''"
+                    <a-form-item label="User Role" v-if="updateForm.userType != 'Administrator'" for="userRole"
+                        :validate-status="updateForm.errors?.userRole ? 'error' : ''"
                         :help="updateForm.errors?.userRole">
                         <a-select v-model:value="updateForm.userRole" allow-clear>
-                            <a-select-option value=0>Dept. User</a-select-option>
-                            <a-select-option value=1>Dept. Manager</a-select-option>
-                            <a-select-option v-if="updateForm.userType != 1" value=2>Releasing
+                            <a-select-option value='Dept. User'>Dept. User</a-select-option>
+                            <a-select-option value='Dept. Manager'>Dept. Manager</a-select-option>
+                            <a-select-option v-if="updateForm.userType != 'Administrator'"
+                                value='Releasing Personel'>Releasing
                                 Personnel</a-select-option>
                         </a-select>
                     </a-form-item>
 
                     <!-- STORE ASSIGNED  -->
-                    <a-form-item label="Store Assigned" v-if="updateForm.userType == 7 || updateForm.userType == 14"
-                        for="store_assigned" :validate-status="updateForm.errors?.store_assigned ? 'error' : ''"
-                        :help="updateForm.errors?.store_assigned">
-                        <a-select v-model:value="updateForm.store_assigned" allow-clear>
-                            <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
+                    <a-form-item label="Store Assigned"
+                        v-if="updateForm.userType == 'Retail Store' || updateForm.userType == 'Store Accounting'"
+                        for="store_assigned" :validate-status="updateForm.errors?.storeAssigned ? 'error' : ''"
+                        :help="updateForm.errors?.storeAssigned">
+                        <a-select v-model:value="updateForm.storeAssigned" allow-clear>
+                            <a-select-option v-for="item in store" :key="item.store_name" :value="item.store_name">
                                 {{ item.store_name }}
                             </a-select-option>
                         </a-select>
                     </a-form-item>
 
                     <!-- RETAIL GROUP  -->
-                    <a-form-item label="Retail Group" v-if="updateForm.userType == 8" for="retail_group"
-                        :validate-status="updateForm.errors?.retail_group ? 'error' : ''"
-                        :help="updateForm.errors?.retail_group">
-                        <a-select v-model:value="updateForm.retail_group" allow-clear>
-                            <a-select-option value=1>
+                    <a-form-item label="Retail Group" v-if="updateForm.userType == 'Retail Group'" for="retail_group"
+                        :validate-status="updateForm.errors?.retailGroup ? 'error' : ''"
+                        :help="updateForm.errors?.retailGroup">
+                        <a-select v-model:value="updateForm.retailGroup" allow-clear>
+                            <a-select-option value='Group 1'>
                                 Group 1
                             </a-select-option>
-                            <a-select-option value=2>
+                            <a-select-option value='Group 2'>
                                 Group 2
                             </a-select-option>
                         </a-select>
                     </a-form-item>
 
                     <!-- IT TYPE  -->
-                    <a-form-item label="IT Type" v-if="updateForm.userType == 12" for="it_type"
-                        :validate-status="updateForm.errors?.it_type ? 'error' : ''" :help="updateForm.errors?.it_type">
-                        <a-select v-model:value="updateForm.it_type" allow-clear>
-                            <a-select-option value=1>
+                    <a-form-item label="IT Type" v-if="updateForm.userType == 'IT Personnel '" for="it_type"
+                        :validate-status="updateForm.errors?.itType ? 'error' : ''" :help="updateForm.errors?.itType">
+                        <a-select v-model:value="updateForm.itType" allow-clear>
+                            <a-select-option value='Corporate IT'>
                                 Corporate IT
                             </a-select-option>
-                            <a-select-option value=2>
-                                Store It
+                            <a-select-option value='Store IT'>
+                                Store IT
                             </a-select-option>
                         </a-select>
                     </a-form-item>
@@ -267,7 +267,7 @@ const props = defineProps({
     data: Object,
     access_page: Object,
     store: Object,
-    search: Array
+    search: Array,
 })
 const value = ref('');
 const options = ref([]);
@@ -292,7 +292,7 @@ const getEmployee = async () => {
             }
         });
         options.value = response.data.data.employee;
-        console.log(response.data.data.employee);
+        // console.log(response.data.data.employee);
     }
     catch (error) {
         console.log(error);
@@ -375,9 +375,9 @@ const updateForm = ref({
     emp_id: "",
     userType: "",
     userRole: "",
-    store_assigned: "",
-    retail_group: "",
-    it_type: "",
+    storeAssigned: "",
+    retailGroup: "",
+    itType: "",
     user_id: "",
     user_status: "",
     errors: {}
@@ -465,10 +465,10 @@ const saveUpdateUser = async () => {
             employee_id: updateForm.value.emp_id,
             usertype: updateForm.value.userType,
             user_role: updateForm.value.userRole,
-            store_assigned: updateForm.value.store_assigned,
-            retail_group: updateForm.value.retail_group,
+            store_assigned: updateForm.value.storeAssigned,
+            retail_group: updateForm.value.retailGroup,
             status: updateForm.value.user_status,
-            it_type: updateForm.value.it_type,
+            it_type: updateForm.value.itType,
             user_id: updateForm.value.user_id
         }, {
             onSuccess: (page) => {
