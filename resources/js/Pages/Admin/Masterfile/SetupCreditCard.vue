@@ -22,10 +22,13 @@ const columns = ref([
         title: 'Date Created',
         dataIndex: 'ccard_created_formatted'
     },
-    {
-        title: 'Status',
-        dataIndex: 'ccard_status'
-    }
+    // {
+    //     title: ''
+    // },
+    // {
+    //     title: 'Status',
+    //     dataIndex: 'ccard_status'
+    // }
 ])
 const form = reactive({
     ccard_name: "",

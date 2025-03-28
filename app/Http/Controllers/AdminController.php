@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\DB;
 use Symfony\Contracts\Service\Attribute\Required;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -310,9 +311,16 @@ class AdminController extends Controller
         $users = $usersQuery->orderByDesc('users.user_id')
             ->paginate(10)
             ->withQueryString();
+        $userRole = [
+            '0' => 'Dept. User',
+            '1' => 'Dept. Manager',
+            '2' => 'Releasing Personel'
+        ];
 
-        $users->transform(function ($item) {
+        $users->transform(function ($item) use ($userRole) {
             $item->status = $item->user_status == 'active';
+            $item->userRole = $userRole[$item->user_role] ?? '';
+            $item->userType = AccessPage::where('access_no', $item->usertype)->value('title') ?? '';
             return $item;
         });
         // dd($users);
@@ -328,30 +336,13 @@ class AdminController extends Controller
     {
         // dd($request->all());
         // Check if the data has no changes happen
-        $checkUser = User::where('user_id', $request['user_id'])->first();
-        if ($checkUser) {
-            $CheckData =
-                $checkUser->username === $request['username'] &&
-                $checkUser->firstname === $request['firstname'] &&
-                $checkUser->lastname === $request['lastname'] &&
-                $checkUser->emp_id === $request['employee_id'] &&
-                $checkUser->usertype === $request['usertype'] &&
-                $checkUser->user_role === $request['user_role'] &&
-                $checkUser->store_assigned === $request['store_assigned'] &&
-                $checkUser->retail_group === $request['retail_group'] &&
-                $checkUser->it_type === $request['it_type'] &&
-                $checkUser->user_status === $request['status'];
-
-            if ($CheckData) {
-                return back()->with(
-                    'error',
-                    " {$request->username}'s data has no changes, please update first before submitting"
-                );
-            }
-        }
 
         $validations = [
-            'usertype' => 'required'
+            'usertype' => 'required',
+            'username' => 'required',
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'employee_id' => 'required'
         ];
         if (in_array($request->usertype, [2, 3, 4, 5, 6, 9, 10, 11, 13, 14])) {
             $validations['user_role'] = 'required';
@@ -365,7 +356,18 @@ class AdminController extends Controller
         if (in_array($request->usertype, [12])) {
             $validations['it_type'] = 'required';
         }
-        $request->validate($validations);
+        $validation = Validator::make($request->all(), $validations);
+        if ($validation->fails()) {
+            return back()->with(
+                'error',
+                'Please fill all required fields'
+            );
+        }
+        $userRole = [
+            'Dept. User' => 0,
+            'Dept. Manager' => 1,
+            'Releasing Personel' => 2
+        ];
 
         User::where('user_id', $request->user_id)->update([
             'username' => $request->username,
@@ -375,10 +377,15 @@ class AdminController extends Controller
             'usertype' => $request->usertype,
             'usergroup' => null,
             'user_status' => 'active',
-            'user_role' => in_array($request->usertype, [1, 2, 3]) ? $request->user_role : 0,
+            'user_role' => in_array($request->usertype, [1])
+                ? null
+                : (is_numeric($request->user_role)
+                    ? $request->user_role
+                    : ($userRole[$request->user_role] ?? null)),
+
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => in_array($request->usertype, [7, 14]) ? $request->store_assigned : 0,
+            'store_assigned' => in_array($request->usertype, [7, 14]) ? $request->store_assigned : null,
             'date_created' => now(),
             'date_updated' => now(),
             'user_addby' => $request->user()->user_id,
@@ -410,8 +417,14 @@ class AdminController extends Controller
         if (in_array($request->usertype, [12])) {
             $validations['it_type'] = 'required';
         }
-        $request->validate($validations);
-
+        // $request->validate($validations);
+        $validation = Validator::make($request->all(), $validations);
+        if ($validation->fails()) {
+            return back()->with(
+                'error',
+                'Please fill all required fields'
+            );
+        }
         if (User::where('username', $request->username)->exists()) {
             return back()->with(
                 'error',
@@ -430,13 +443,13 @@ class AdminController extends Controller
             'password' => $password,
             'usergroup' => null,
             'user_status' => 'active',
-            'user_role' => $request->user_role,
+            'user_role' => $request->user_role ? $request->user_role : null,
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => $request->store_assigned,
+            'store_assigned' => $request->store_assigned ? $request->store_assigned : null,
             'date_created' => now(),
             'user_addby' => $request->user()->user_id,
-            'retail_group' => $request->retail_group,
+            'retail_group' => $request->retail_group ? $request->retail_group : null,
             'it_type' => $request->it_type
         ]);
 
@@ -624,13 +637,20 @@ class AdminController extends Controller
     public function customerSetup(Request $request)
     {
         // Institutional Customer
-        $institutional = InstitutCustomer::when($request->institutionalSearch, function ($query, $search) {
-            $query->where('ins_name', 'like', '%' . $search . '%')
-                ->orWhere('ins_custype', 'like', '%' . $search . '%')
-                ->orWhere('ins_gctype', 'like', '%' . $search . '%')
-                ->orWhere('ins_date_created', 'like', '%' . $search . '%')
-                ->orWhere('ins_status', 'like', '%' . $search . '%');
-        })->paginate(10);
+        $institutional = InstitutCustomer::query()
+            ->leftJoin('users', 'users.user_id', '=', 'institut_customer.ins_by')
+            ->select(
+                'institut_customer.*',
+                DB::raw("CONCAT(users.firstname,  ' ', users.lastname)as createdBy_fullname")
+            )
+            ->when($request->institutionalSearch, function ($query, $search) {
+                $query->where('ins_name', 'like', '%' . $search . '%')
+                    ->orWhere('ins_custype', 'like', '%' . $search . '%')
+                    ->orWhere('ins_gctype', 'like', '%' . $search . '%')
+                    ->orWhere('ins_date_created', 'like', '%' . $search . '%')
+                    ->orWhere(DB::raw("CONCAT(users.firstname,  ' ', users.lastname)"), 'like', '%' . $search . '%')
+                    ->orWhere('ins_status', 'like', '%' . $search . '%');
+            })->paginate(10);
         $gc_type = [
             1 => 'Regular',
             2 => 'Special',
@@ -640,8 +660,8 @@ class AdminController extends Controller
             6 => 'Beam and Go'
         ];
         $institutional->transform(function ($item) use ($gc_type) {
-            $item->created_by = User::where('user_id', $item->ins_by)->first();
-            $item->createdBy_fullname = $item->created_by->firstname . ' ' . $item->created_by->lastname;
+            // $item->created_by = User::where('user_id', $item->ins_by)->first();
+            // $item->createdBy_fullname = $item->created_by->firstname . ' ' . $item->created_by->lastname;
             $item->gcType = $gc_type[$item->ins_gctype] ?? '';
             $item->dateCreated = Date::parse($item->ins_date_created)->format('F j, Y, h:i A');
 
@@ -655,19 +675,27 @@ class AdminController extends Controller
         );
 
         // Regular Customer
-        $regularCustomer = Customer::when($request->regularSearch, function ($query, $search) {
-            $query->where('cus_fname', 'like', '%' . $search . '%')
-                ->orWhere('cus_lname', 'like', '%' . $search . '%')
-                ->orWhere('cus_store_register', 'like', '%' . $search . '%')
-                ->orWhere('cus_register_at', 'like', '%' . $search . '%')
-                ->orWhere('cus_register_by', 'like', '%' . $search . '%');
-        })->paginate(10)->withQueryString();
+        $regularCustomer = Customer::query()
+            ->leftJoin('stores', 'stores.store_id', '=', 'customers.cus_store_register')
+            ->leftJoin('users', 'users.user_id', '=', 'customers.cus_register_by')
+            ->select([
+                'customers.*',
+                'stores.store_name as storeRegistered',
+                DB::raw("CONCAT(users.firstname, ' ', users.lastname) as registeredBy_fullname"),
+            ])
+            ->when($request->regularSearch, function ($query, $search) {
+                $query->where(DB::raw("CONCAT(customers.cus_fname, ' ', customers.cus_lname)"), 'like', '%' . $search . '%')
+                    ->orWhere('customers.cus_fname', 'like', '%' . $search . '%')
+                    ->orWhere('customers.cus_lname', 'like', '%' . $search . '%')
+                    ->orWhere('stores.store_name', 'like', '%' . $search . '%')
+                    ->orWhere(DB::raw("CONCAT(users.firstname, ' ', users.lastname)"), 'like', '%' . $search . '%')
+                    ->orWhere('customers.cus_register_at', 'like', '%' . $search . '%');
+            })
+            ->paginate(10)
+            ->withQueryString();
 
         $regularCustomer->transform(function ($item) {
-            $item->storeRegistered = Store::where('store_id', $item->cus_store_register)->value('store_name');
             $item->registeredAt = Date::parse($item->cus_register_at)->format('F j, Y, h:i A');
-            $item->registeredBy = User::where('user_id', $item->cus_register_by)->first();
-            $item->registeredBy_fullname = ucwords($item->registeredBy->firstname . ' ' . $item->registeredBy->lastname);
             return $item;
         });
 
@@ -723,6 +751,7 @@ class AdminController extends Controller
             'lastname' => 'required|string',
             'store' => 'required'
         ]);
+
         $store = [
             'Alturas Mall' => 1,
             'Alturas Talibon' => 2,
@@ -738,10 +767,23 @@ class AdminController extends Controller
             'Asc Tech' => 12
         ];
 
+        $customer = Customer::findOrFail($request->id);
+        if (
+            $customer->cus_fname == $request->firstname &&
+            $customer->cus_lname == $request->lastname &&
+            $customer->cus_store_register == $store[$request->store]
+        ) {
+            return back()->with(
+                'error',
+                "{$request->firstname} {$request->lastname} data has no changes, please update before submitting."
+            );
+        }
+
+
         Customer::where('cus_id', $request->id)->update([
             'cus_fname' => $request->firstname,
             'cus_lname' => $request->lastname,
-            'cus_store_register' => is_numeric($request->store) ? $request->store : $store[$request->store]
+            'cus_store_register' => is_numeric($request->store) ? $request->store : $store[$request->store] ?? 0
         ]);
         return back()->with(
             'success',
@@ -1031,7 +1073,7 @@ class AdminController extends Controller
                     ->orWhere('store_status', 'like', '%' . $searchTerm . '%');
             });
         }
-        $data = $data->orderByDesc('store_id')
+        $data = $data->orderBy('store_id', 'ASC')
             ->paginate($selectEntries)
             ->withQueryString();
 
@@ -1232,6 +1274,20 @@ class AdminController extends Controller
             'Beam and Go' => 6
         ];
 
+        $checkUpdate = InstitutCustomer::findOrFail($request->id);
+        if ($checkUpdate) {
+            $checkData =
+                $checkUpdate->ins_name == $request->name && $checkUpdate->ins_custype == $request->customerType
+                && $checkUpdate->ins_gctype == $gcType[$request->gcType] && $checkUpdate->ins_status == $request->status;
+
+        }
+        if ($checkData) {
+            return back()->with(
+                'error',
+                "{$request->name} data has no changes happen, please update first before submitting"
+            );
+        }
+
         InstitutCustomer::where('ins_id', $request->id)->update([
             'ins_name' => $request->name,
             'ins_custype' => $request->customerType,
@@ -1255,17 +1311,24 @@ class AdminController extends Controller
             'cnumber' => 'required|string',
             'type' => 'required|string',
         ]);
-        $checkUpdate = SpecialExternalCustomer::findOrFail($request->id);
-        if (!$checkUpdate) {
-            return back()->with(
-                'error',
-                'Customer not found'
-            );
-        }
         $sp_type = [
             'Internal' => 1,
             'External' => 2
         ];
+
+        $checkUpdate = SpecialExternalCustomer::findOrFail($request->id);
+        if ($checkUpdate) {
+            $checkData =
+                $checkUpdate->spcus_companyname == $request->companyname && $checkUpdate->spcus_acctname == $request->acctname
+                && $checkUpdate->spcus_address == $request->address && $checkUpdate->spcus_cperson == $request->cperson
+                && $checkUpdate->spcus_cnumber == $request->cnumber && $checkUpdate->spcus_type == $sp_type[$request->type];
+        }
+        if ($checkData) {
+            return back()->with(
+                'error',
+                "{$request->companyname} data has no changes happen, please update first before submitting"
+            );
+        }
         $checkUpdate->update([
             'spcus_companyname' => $request->companyname,
             'spcus_acctname' => $request->acctname,
