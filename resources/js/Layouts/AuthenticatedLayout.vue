@@ -93,6 +93,7 @@ const userImage = async () => {
                 q: value.value
             }
         })
+        // console.log(response);
         if (response.data.data.employee.length > 0) {
             imageUrl.value = response.data.data.employee[0].employee_photo;
 
@@ -342,7 +343,7 @@ const submitPassword = async () => {
                             </div>
                             <div v-else>
                                 <span class="italic"> Hello,</span> <span class="font-bold">{{ page.auth.user.full_name
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
 

@@ -81,7 +81,7 @@
         <a-card>
             <!-- Stores and Sales section  -->
             <div class="flex justify-center gap-5 mt-5">
-                <div class="text-center font-bold" v-for="item in props.data" :key="item.store_name">
+                <div class="text-center font-bold" v-for="item in props.storeQuery" :key="item.store_name">
                     {{ item.store_name }}<br>
                     <p class="text-gray-500 mt-5 flex justify-center">Sales</p>
                     <p class="text-[#0047AB] text-2xl">
@@ -98,9 +98,8 @@
             </section>
 
         </a-card>
-
         <!-- {{ regularGcData }} -->
-        <!-- {{ data }} -->
+        <!-- {{ storeQuery }} -->
 
     </AuthenticatedLayout>
 </template>
@@ -122,7 +121,7 @@ const getOnlineUsers = computed(() =>
 
 const props = defineProps({
     users: Number,
-    data: Object,
+    storeQuery: Object,
     specialGcData: Object,
     regularGcData: Object
 });
