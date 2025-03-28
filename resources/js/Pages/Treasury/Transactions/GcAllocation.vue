@@ -119,15 +119,12 @@
                         </a-form-item>
 
                         <div>
-                            <div
-                                class="flex justify-end w-full pr-5"
-                                style="margin-right: 90px"
-                            >
-                                <a-form-item class="text-end">
-                                    <a-button type="primary" html-type="submit"class="w-[550px]"
-                                        >SUBMIT</a-button
-                                    >
-                                </a-form-item>
+                            <div class="flex justify-center w-full">
+                             <a-form-item>
+                                <a-button type="primary" html-type="submit" class="w-[300px]">
+                                   SUBMIT
+                                  </a-button>
+                                 </a-form-item>
                             </div>
                         </div>
 

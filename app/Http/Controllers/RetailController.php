@@ -148,6 +148,7 @@ class RetailController extends Controller
 
     public function gcRequestsubmit(Request $request)
     {
+        
         $request->validate([
             'remarks' => 'required',
             'quantities' => 'required'
@@ -199,7 +200,7 @@ class RetailController extends Controller
                     'sgc_num' => $penumValue,
                     'sgc_requested_by' => $request->user()->user_id,
                     'sgc_date_request' => now(),
-                    'sgc_date_needed' => null,
+                    'sgc_date_needed' => now(),
                     'sgc_file_docno' => !is_null($request->file) ? $this->financeService->uploadFileHandler($request) : '',
                     'sgc_remarks' => $request['remarks'],
                     'sgc_status' => '0',
