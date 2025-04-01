@@ -1,5 +1,5 @@
 <template>
-    <a-modal style="width: 80%; top: 40px" :mask-closable="false" class="text-center" title="Create Entry Store"
+    <a-modal style="width: 80%; top: 40px" :mask-closable="false" class="text-center" title="Create Store Entry"
         :footer="null">
         <a-card>
             <a-row :gutter="[16, 16]">
@@ -46,7 +46,7 @@
                     </span>
                     
                     <a-descriptions-item style="width: 100%;" label="Checked by">
-                    <a-select label="Checked by" style="width: 7e0%;" placeholder="Select Assignatory" v-model:value="form.checkby"
+                    <a-select label="Checked by" style="width: 70%;" placeholder="Select Assignatory" v-model:value="form.checkby"
                         allow-clear>
                         <a-select-item v-for="name in assign" :value="name.assig_name">
                             {{ name.assig_name }}
