@@ -20,16 +20,31 @@ class QueryFilterController extends Controller
     }
     public function customer(Request $request)
     {
-        $result = Customer::whereAny(['cus_fname', 'cus_lname', 'cus_mname', 'cus_namext'], 'LIKE', '%' . $request->search . '%')->get();
-
-        return response()->json($result);
+        $result = Customer::whereAny(['cus_lname', 'cus_fname', 'cus_mname', 'cus_namext'], 'LIKE', '%' . $request->search . '%')->get();
+        if ($result->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'data' => [],
+                'message' => 'No customer found',
+            ]);
+        }
+        $formattedResult = $result->map(function ($item) {
+            return [
+                'value' => $item->cus_id,
+                'label' => trim("{$item->cus_lname}, {$item->cus_fname} {$item->cus_mname} {$item->cus_namext}")
+            ];
+        });
+        return response()->json([
+            'success' => true,
+            'data' => $formattedResult
+        ]);
     }
 
-    public function addCustomer(Request $request){
+    public function addCustomer(Request $request)
+    {
         $request->validate([
             'firstname' => 'required',
             'lastname' => 'required',
-            'middlename' => 'required',
         ]);
         try {
             $addCustomer = Customer::create([
@@ -51,8 +66,7 @@ class QueryFilterController extends Controller
                 ]
 
             ]);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             Log::error('Error adding customer:' . $e->getMessage());
 
             return response()->json([

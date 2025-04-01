@@ -620,7 +620,7 @@ class RetailServices
 
                         return back()->with([
                             'status' => 'success',
-                            'msg' => 'Successfully reverfied!.',
+                            'msg' => 'Successfully reverified!.',
                             'title' => 'Verification'
                         ]);
                     } else {
@@ -846,14 +846,13 @@ class RetailServices
     public function verifiedGc(Request $request)
     {
 
-
         $data = StoreVerification::join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('gc_type', 'gc_type.gc_type_id', '=', 'store_verification.vs_gctype')
-            ->leftJoin('gc', 'gc.barcode_no', '=', 'store_verification.vs_barcode')
+            // ->leftJoin('gc', 'gc.barcode_no', '=', 'store_verification.vs_barcode')
             ->leftJoin('transaction_revalidation', 'transaction_revalidation.reval_barcode', '=', 'store_verification.vs_barcode')
             ->leftJoin('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_revalidation.reval_trans_id')
-            ->Join('institut_transactions_items', 'institut_transactions_items.instituttritems_barcode', '=', 'store_verification.vs_barcode')
-            ->Join('institut_transactions', 'institut_transactions.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
+            ->leftJoin('institut_transactions_items', 'institut_transactions_items.instituttritems_barcode', '=', 'store_verification.vs_barcode')
+            ->leftJoin('institut_transactions', 'institut_transactions.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
             ->whereAny([
                 'vs_barcode'
             ], 'like', '%' . $request->barcode . '%')
@@ -861,7 +860,6 @@ class RetailServices
             ->orderByDesc('vs_barcode')
             ->paginate()
             ->withQueryString();
-
 
         return $data;
     }
