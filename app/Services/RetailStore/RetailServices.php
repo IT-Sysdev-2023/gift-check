@@ -32,9 +32,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class RetailServices
 {
-    public function __construct(public RetailDbServices $dbservices)
-    {
-    }
+    public function __construct(public RetailDbServices $dbservices) {}
     public function getDataApproved()
     {
         $data = ApprovedGcrequest::select(
@@ -336,7 +334,7 @@ class RetailServices
             }
             if (
                 StoreReceivedGc::where('strec_barcode', $request->barcode)
-                    ->where('strec_sold', '*')->where('strec_return', '')->exists()
+                ->where('strec_sold', '*')->where('strec_return', '')->exists()
             ) {
                 $found = true;
                 $gctype = 1;
@@ -402,8 +400,7 @@ class RetailServices
                     'msg' => 'Barcode Not found.',
                 ]);
             }
-        }
-        ;
+        };
 
         if (!$found) {
 
@@ -842,26 +839,41 @@ class RetailServices
         return $data;
     }
 
-
     public function verifiedGc(Request $request)
     {
+        if ($request->user()->store_assigned == 5) {
 
+            $data = StoreVerification::join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+                ->join('gc_type', 'gc_type.gc_type_id', '=', 'store_verification.vs_gctype')
+                ->leftJoin('gc', 'gc.barcode_no', '=', 'store_verification.vs_barcode')
+                ->leftJoin('transaction_revalidation', 'transaction_revalidation.reval_barcode', '=', 'store_verification.vs_barcode')
+                ->leftJoin('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_revalidation.reval_trans_id')
+                ->Join('institut_transactions_items', 'institut_transactions_items.instituttritems_barcode', '=', 'store_verification.vs_barcode')
+                ->Join('institut_transactions', 'institut_transactions.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
+                ->whereAny([
+                    'vs_barcode'
+                ], 'like', '%' . $request->barcode . '%')
+                ->where('store_verification.vs_store', $request->user()->store_assigned)
+                ->orderByDesc('vs_barcode')
+                ->paginate()
+                ->withQueryString();
 
-        $data = StoreVerification::join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
-            ->join('gc_type', 'gc_type.gc_type_id', '=', 'store_verification.vs_gctype')
-            ->leftJoin('gc', 'gc.barcode_no', '=', 'store_verification.vs_barcode')
-            ->leftJoin('transaction_revalidation', 'transaction_revalidation.reval_barcode', '=', 'store_verification.vs_barcode')
-            ->leftJoin('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_revalidation.reval_trans_id')
-            ->Join('institut_transactions_items', 'institut_transactions_items.instituttritems_barcode', '=', 'store_verification.vs_barcode')
-            ->Join('institut_transactions', 'institut_transactions.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
-            ->whereAny([
-                'vs_barcode'
-            ], 'like', '%' . $request->barcode . '%')
-            ->where('store_verification.vs_store', $request->user()->store_assigned)
-            ->orderByDesc('vs_barcode')
-            ->paginate()
-            ->withQueryString();
-
+        } else {
+            $data = StoreVerification::join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+                ->join('gc_type', 'gc_type.gc_type_id', '=', 'store_verification.vs_gctype')
+                ->leftJoin('gc', 'gc.barcode_no', '=', 'store_verification.vs_barcode')
+                ->leftJoin('transaction_revalidation', 'transaction_revalidation.reval_barcode', '=', 'store_verification.vs_barcode')
+                ->leftJoin('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_revalidation.reval_trans_id')
+                ->Join('institut_transactions_items', 'institut_transactions_items.instituttritems_barcode', '=', 'store_verification.vs_barcode')
+                ->Join('institut_transactions', 'institut_transactions.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
+                ->whereAny([
+                    'vs_barcode'
+                ], 'like', '%' . $request->barcode . '%')
+                ->where('store_verification.vs_store', $request->user()->store_assigned)
+                ->orderByDesc('vs_barcode')
+                ->paginate()
+                ->withQueryString();
+        }
 
         return $data;
     }
@@ -878,6 +890,4 @@ class RetailServices
         ])->setPaper('letter');
         return $pdf;
     }
-
-
 }
