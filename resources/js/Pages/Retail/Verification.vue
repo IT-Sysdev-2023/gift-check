@@ -6,12 +6,12 @@
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Date">{{
                             dayjs().format('MMM, DD, YYYY')
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Verified By">{{
                             $page.props.auth.user.full_name
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                     </a-descriptions>
 
                     <a-row class="mt-5 mb-5">
@@ -67,7 +67,7 @@
                 </a-card>
                 <a-modal v-model:open="modalOpen" title="Customer Verification Info" :footer="null">
                     <div>
-                        <p><strong>Customer Name: {{ optionCustomer.label }}</strong></p>
+                        <p><strong>Customer Name: {{ selectedfullName }}</strong></p>
                     </div>
                 </a-modal>
                 <!-- {{ notif.data }} -->
@@ -84,38 +84,38 @@
                         Issue: Barcode #
                         <span class="font-bold">{{
                             notif.data.lostgcb_barcode
-                        }}</span>
+                            }}</span>
                         was reported as lost
                     </p>
                     <p>
                         Owner's Name:
                         <span class="font-bold">{{
                             notif.data.lostgcd_owname
-                        }}</span>
+                            }}</span>
                     </p>
                     <p>
                         Address:
                         <span class="font-bold">{{
                             notif.data.lostgcd_address
-                        }}</span>
+                            }}</span>
                     </p>
                     <p>
                         Contact No:
                         <span class="font-bold">{{
                             notif.data.lostgcd_contactnum
-                        }}</span>
+                            }}</span>
                     </p>
                     <p>
                         Date Lost:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datelost
-                        }}</span>
+                            }}</span>
                     </p>
                     <p>
                         Date Reported:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datereported
-                        }}</span>
+                            }}</span>
                     </p>
                 </a-card>
             </a-col>
@@ -164,7 +164,7 @@
                 <a-input allow-clear v-model:value="addingCustomer.extention" placeholder="name extention"></a-input>
             </a-form-item>
         </a-modal>
-        <!-- {{ optionCustomer }} -->
+        {{ selectedfullName }}
     </AuthenticatedLayout>
 </template>
 
@@ -206,6 +206,7 @@ const isRetrieving = ref(false);
 const skeleton = ref(false);
 const modalOpen = ref(false);
 const viewing = ref([]);
+const selectedfullName = ref("");
 
 
 const addCustomerButton = () => {
@@ -268,10 +269,10 @@ const submit = () => {
                     description: page.props.flash.msg,
                     name: page.props.flash.data
                 });
-                // modalOpen.value = true;
-                // setTimeout(() => {
-                // window.print();
-                // },200)
+                modalOpen.value = true;
+                setTimeout(() => {
+                    window.print();
+                }, 200)
                 form.reset();
             } else if (page.props.flash.status == 'error') {
                 notification.error({
@@ -310,6 +311,8 @@ const debounceCustomer = debounce(async function (query) {
             );
             if (response.data.success) {
                 optionCustomer.value = response.data.data;
+                selectedfullName.value = optionCustomer.value[0].label;
+
             }
             viewing.value = optionCustomer.value.length ? optionCustomer.value[0].value : null;
         }
