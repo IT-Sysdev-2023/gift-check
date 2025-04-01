@@ -164,7 +164,6 @@
                 <a-input allow-clear v-model:value="addingCustomer.extention" placeholder="name extention"></a-input>
             </a-form-item>
         </a-modal>
-        {{ selectedfullName }}
     </AuthenticatedLayout>
 </template>
 
