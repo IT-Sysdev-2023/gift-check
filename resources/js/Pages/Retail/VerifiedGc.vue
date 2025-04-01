@@ -3,46 +3,28 @@
         <a-card title="Verified GC">
             <div>
                 <div class="flex justify-end mb-2">
-                    <a-input-search
-                        v-model:value="search"
-                        placeholder="Search Barcode"
-                        style="width: 200px"
-                        @change="onSearch"
-                    />
+                    <a-input-search v-model:value="search" placeholder="Search Barcode" style="width: 200px"
+                        @change="onSearch" />
                 </div>
             </div>
             <a-spin tip="Searching..." :spinning="isloading">
-                <a-table
-                    size="small"
-                    :dataSource="data.data"
-                    :columns="columns"
-                >
+                <a-table :pagination="false" size="small" :dataSource="data.data" :columns="columns">
                     <template v-slot:bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'customer'">
                             {{ record.cus_fname + " " }}{{ record.cus_lname }}
                         </template>
                         <template v-if="column.dataIndex === 'details'">
-                            <a-button
-                                @click="details(record)"
-                                style="background-color: green; color: white"
-                                ><ContainerOutlined
-                            /></a-button>
+                            <a-button @click="details(record)" style="background-color: green; color: white">
+                                <ContainerOutlined />
+                            </a-button>
                         </template>
                     </template>
                 </a-table>
+                <pagination class="mt-3" :datarecords="data"></pagination>
             </a-spin>
         </a-card>
-        <a-modal
-            @ok="handleok"
-            v-model:open="open"
-            title="GC Navision POS Transactions"
-            width="90%"
-        >
-            <a-table
-                :pagination="false"
-                :dataSource="datafetched"
-                :columns="detailcolumn"
-            />
+        <a-modal @ok="handleok" v-model:open="open" title="GC Navision POS Transactions" width="90%">
+            <a-table :pagination="false" :dataSource="datafetched" :columns="detailcolumn" />
         </a-modal>
     </AuthenticatedLayout>
 </template>
@@ -118,8 +100,8 @@ const columns = [
         dataIndex: "vs_payto",
     },
     {
-        title: "Date Sold/Released",
-        dataIndex: "institutr_date",
+        title: "Date Verified",
+        dataIndex: "vs_date",
     },
     {
         title: "Verified Customer",
