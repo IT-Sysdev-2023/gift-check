@@ -6,12 +6,12 @@
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Date">{{
                             dayjs().format('MMM, DD, YYYY')
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Verified By">{{
                             $page.props.auth.user.full_name
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
 
                     <a-row class="mt-5 mb-5">
@@ -24,19 +24,24 @@
                     </a-row>
                     <a-row class="mb-5">
                         <a-description-text keyboard>Customer Name: </a-description-text>
-                        <div class="flex direction-row gap-2">
-                            <a-select size="large" allow-clear show-search placeholder="Search customer here..."
-                                :default-active-first-option="false" v-model:value="form.customer" style="width: 300px"
-                                :show-arrow="false" :filter-option="false" :not-found-content="isRetrieving ? undefined : 'No Customer found'
-                                    " :options="optionCustomer" @search="debounceCustomer">
-                                <template v-if="isRetrieving" #notFoundContent>
-                                    <a-spin size="large" />
-                                </template>
-                            </a-select>
-                            <a-button type="primary" size="large" @click="addCustomerButton">
-                                <PlusOutlined />
-                                Add Customer
-                            </a-button>
+                        <div class="flex direction-row gap-2 w-full">
+                            <div class="w-full">
+                                <a-select size="large" allow-clear show-search
+                                    placeholder="Search lastname, firstname..." :default-active-first-option="false"
+                                    v-model:value="form.customer" class="w-full" :show-arrow="false"
+                                    :filter-option="false" :not-found-content="isRetrieving ? undefined : 'No Customer found'
+                                        " :options="optionCustomer" @search="debounceCustomer">
+                                    <template v-if="isRetrieving" #notFoundContent>
+                                        <a-spin size="large" />
+                                    </template>
+                                </a-select>
+                            </div>
+                            <div class="w-full">
+                                <a-button class="w-full" type="primary" size="large" @click="addCustomerButton">
+                                    <PlusOutlined />
+                                    Add Customer
+                                </a-button>
+                            </div>
                         </div>
                     </a-row>
                     <a-description-text keyboard>Barcode:</a-description-text>
@@ -56,13 +61,18 @@
                         {{
                             form.processing
                                 ? "Verifying Barcode..."
-                                : "VERIFY BARCODE"
+                                : "VERIFY BARCODE "
                         }}
                     </a-button>
                 </a-card>
-
+                <a-modal v-model:open="modalOpen" title="Customer Verification Info" :footer="null">
+                    <div>
+                        <p><strong>Customer Name: {{ optionCustomer.label }}</strong></p>
+                    </div>
+                </a-modal>
                 <!-- {{ notif.data }} -->
-                <a-alert v-if="notif.status" :message="notif.msg" class="mb-1 mt-2" :type="notif.status" show-icon />
+                <a-alert v-if="notif.status" :message="notif.title" class="mb-1 mt-2" :description="notif.msg"
+                    :type="notif.status" show-icon />
                 <a-card v-if="notif.error == 'lost'" class="mt-5" style="
                         background-color: rgba(255, 0, 0, 0.1);
                         border: solid 1px rgba(255, 0, 0, 0.6);
@@ -74,38 +84,38 @@
                         Issue: Barcode #
                         <span class="font-bold">{{
                             notif.data.lostgcb_barcode
-                            }}</span>
+                        }}</span>
                         was reported as lost
                     </p>
                     <p>
                         Owner's Name:
                         <span class="font-bold">{{
                             notif.data.lostgcd_owname
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Address:
                         <span class="font-bold">{{
                             notif.data.lostgcd_address
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Contact No:
                         <span class="font-bold">{{
                             notif.data.lostgcd_contactnum
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Date Lost:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datelost
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Date Reported:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datereported
-                            }}</span>
+                        }}</span>
                     </p>
                 </a-card>
             </a-col>
@@ -133,15 +143,15 @@
             </a-col>
         </a-row>
         <a-modal title="Add Customer" v-model:open="addCustomerModal" @ok="customerSubmit">
-            <a-form-item :validate-status="addingCustomer.errors?.firstname ? 'error' : ''
-                " :help="addingCustomer.errors.firstname">
-                First Name:
-                <a-input allow-clear v-model:value="addingCustomer.firstname" placeholder="firstname"></a-input>
-            </a-form-item>
             <a-form-item :validate-status="addingCustomer.errors?.lastname ? 'error' : ''
                 " :help="addingCustomer.errors.lastname">
                 Last Name:
                 <a-input allow-clear v-model:value="addingCustomer.lastname" placeholder="lastname"></a-input>
+            </a-form-item>
+            <a-form-item :validate-status="addingCustomer.errors?.firstname ? 'error' : ''
+                " :help="addingCustomer.errors.firstname">
+                First Name:
+                <a-input allow-clear v-model:value="addingCustomer.firstname" placeholder="firstname"></a-input>
             </a-form-item>
             <a-form-item :validate-status="addingCustomer.errors?.middlename ? 'error' : ''
                 " :help="addingCustomer.errors.middlename">
@@ -154,6 +164,7 @@
                 <a-input allow-clear v-model:value="addingCustomer.extention" placeholder="name extention"></a-input>
             </a-form-item>
         </a-modal>
+        {{ optionCustomer }}
     </AuthenticatedLayout>
 </template>
 
@@ -164,10 +175,7 @@ import { router, useForm } from "@inertiajs/vue3";
 import { notification } from "ant-design-vue";
 import dayjs from "dayjs";
 import { ref } from "vue";
-import { Empty } from "ant-design-vue";
-import AddOrderDetails from "../Admin/Tabs/AddOrderDetails.vue";
 import axios from "axios";
-const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 
 const form = useForm({
     payment: null,
@@ -179,6 +187,7 @@ const props = defineProps({
     success: Boolean,
     notfound: Boolean,
     empty: Boolean,
+    name: String
 });
 
 const addingCustomer = useForm({
@@ -191,11 +200,13 @@ const addingCustomer = useForm({
 
 const addCustomerModal = ref(false);
 const optionCustomer = ref([]);
-const viewing = ref([]);
-const notif = ref([]);
+// const viewing = ref([]);
+const notif = ref({});
 const isRetrieving = ref(false);
 const skeleton = ref(false);
-const status = ref({});
+const modalOpen = ref(false);
+const viewing = ref([]);
+
 
 const addCustomerButton = () => {
     addCustomerModal.value = true;
@@ -217,7 +228,7 @@ const customerSubmit = async () => {
             route("search.addCustomer"),
             addingCustomer,
         );
-        const fullName = `${addingCustomer.firstname} ${addingCustomer.middlename} ${addingCustomer.lastname} ${addingCustomer.extention}`;
+        const fullName = `${addingCustomer.lastname}, ${addingCustomer.firstname} ${addingCustomer.middlename} ${addingCustomer.extention}`;
         optionCustomer.value = [
             {
                 label: fullName,
@@ -249,14 +260,38 @@ const submit = () => {
     form.transform((data) => ({
         ...data,
     })).post(route("retail.verification.submit"), {
-        onSuccess: (response) => {
-            notif.value = response.props.flash;
+        onSuccess: (page) => {
+            notif.value = page.props.flash;
+            if (page.props.flash.status == 'success') {
+                notification.success({
+                    message: page.props.flash.title,
+                    description: page.props.flash.msg,
+                    name: page.props.flash.data
+                });
+                // modalOpen.value = true;
+                // setTimeout(() => {
+                // window.print();
+                // },200)
+                form.reset();
+            } else if (page.props.flash.status == 'error') {
+                notification.error({
+                    message: page.props.flash.title,
+                    description: page.props.flash.msg,
+                });
+            } else if (page.props.flash.status == 'warning') {
+                notification.warning({
+                    message: page.props.flash.title,
+                    description: page.props.flash.msg,
+                });
+            }
 
-            notification[response.props.flash.status]({
-                message: response.props.flash.title,
-                description: response.props.flash.msg,
-            });
-            form.reset();
+            // notif.value = response.props.flash;
+            // notification[response.props.flash.status]({
+            //     message: response.props.flash.title,
+            //     description: response.props.flash.msg,
+            // });
+            // modalOpen.value = true;
+            // form.reset();
         },
         onError: () => {
             form.reset();
@@ -267,22 +302,16 @@ const submit = () => {
 const debounceCustomer = debounce(async function (query) {
     try {
         if (query.trim().length) {
-            // isRetrieving.value = true;
+            isRetrieving.value = true;
             optionCustomer.value = [];
 
-            const { data } = await axios.get(
+            const response = await axios.get(
                 route("search.customer", { search: query }),
             );
-
-            optionCustomer.value = data.map((data) => ({
-                title: data.full_name,
-                value: data.cus_id,
-                label: data.full_name,
-            }));
-
-            viewing.value = optionCustomer.value.length
-                ? optionCustomer.value[0]
-                : null;
+            if (response.data.success) {
+                optionCustomer.value = response.data.data;
+            }
+            viewing.value = optionCustomer.value.length ? optionCustomer.value[0].value : null;
         }
     } catch (error) {
         console.error("Error fetching data:", error);

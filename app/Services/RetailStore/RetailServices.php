@@ -617,7 +617,7 @@ class RetailServices
 
                         return back()->with([
                             'status' => 'success',
-                            'msg' => 'Successfully reverfied!.',
+                            'msg' => 'Successfully reverified!.',
                             'title' => 'Verification'
                         ]);
                     } else {
