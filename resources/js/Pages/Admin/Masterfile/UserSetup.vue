@@ -292,7 +292,7 @@ const getEmployee = async () => {
             }
         });
         options.value = response.data.data.employee;
-        // console.log(response.data.data.employee);
+        console.log(response.data.data.employee);
     }
     catch (error) {
         console.log(error);
