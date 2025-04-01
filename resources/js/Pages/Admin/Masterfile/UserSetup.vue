@@ -189,7 +189,7 @@
                     <a-form-item label="User Role" v-if="updateForm.userType != 'Administrator'" for="userRole"
                         :validate-status="updateForm.errors?.userRole ? 'error' : ''"
                         :help="updateForm.errors?.userRole">
-                        <a-select v-model:value="updateForm.userRole" allow-clear>
+                        <a-select v-model:value="updateForm.userRole">
                             <a-select-option value='Dept. User'>Dept. User</a-select-option>
                             <a-select-option value='Dept. Manager'>Dept. Manager</a-select-option>
                             <a-select-option v-if="updateForm.userType != 'Administrator'"
@@ -203,7 +203,7 @@
                         v-if="updateForm.userType == 'Retail Store' || updateForm.userType == 'Store Accounting'"
                         for="store_assigned" :validate-status="updateForm.errors?.storeAssigned ? 'error' : ''"
                         :help="updateForm.errors?.storeAssigned">
-                        <a-select v-model:value="updateForm.storeAssigned" allow-clear>
+                        <a-select v-model:value="updateForm.storeAssigned">
                             <a-select-option v-for="item in store" :key="item.store_name" :value="item.store_name">
                                 {{ item.store_name }}
                             </a-select-option>
@@ -214,7 +214,7 @@
                     <a-form-item label="Retail Group" v-if="updateForm.userType == 'Retail Group'" for="retail_group"
                         :validate-status="updateForm.errors?.retailGroup ? 'error' : ''"
                         :help="updateForm.errors?.retailGroup">
-                        <a-select v-model:value="updateForm.retailGroup" allow-clear>
+                        <a-select v-model:value="updateForm.retailGroup">
                             <a-select-option value='Group 1'>
                                 Group 1
                             </a-select-option>
@@ -227,7 +227,7 @@
                     <!-- IT TYPE  -->
                     <a-form-item label="IT Type" v-if="updateForm.userType == 'IT Personnel '" for="it_type"
                         :validate-status="updateForm.errors?.itType ? 'error' : ''" :help="updateForm.errors?.itType">
-                        <a-select v-model:value="updateForm.itType" allow-clear>
+                        <a-select v-model:value="updateForm.itType">
                             <a-select-option value='Corporate IT'>
                                 Corporate IT
                             </a-select-option>

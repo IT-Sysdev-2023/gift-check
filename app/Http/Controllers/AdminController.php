@@ -389,10 +389,8 @@ class AdminController extends Controller
             'Corporate IT' => 1,
             'Store IT' => 2
         ];
-        // Convert usertype to integer
         $usertypeInt = $userType[$request->usertype] ?? null;
 
-        //Validation
         $validation = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,user_id',
             'usertype' => 'required|string|in:' . implode(',', array_keys($userType)),
@@ -401,7 +399,6 @@ class AdminController extends Controller
             'lastname' => 'required|string|max:255',
             'employee_id' => 'required|string|max:50',
 
-            // Validate user_role only if usertype is NOT 1
             'user_role' => [
                 function ($attribute, $value, $fail) use ($usertypeInt, $userRole) {
                     if ($usertypeInt !== 1 && (!isset($userRole[$value]) || !array_key_exists($value, $userRole))) {
@@ -410,7 +407,6 @@ class AdminController extends Controller
                 }
             ],
 
-            // Validate store_assigned only if usertype is 7 or 14
             'store_assigned' => [
                 function ($attribute, $value, $fail) use ($usertypeInt, $storeAssigned) {
                     if (in_array($usertypeInt, [7, 14]) && (!isset($storeAssigned[$value]) || !array_key_exists($value, $storeAssigned))) {
@@ -419,7 +415,6 @@ class AdminController extends Controller
                 }
             ],
 
-            // Validate retail_group only if usertype is 8
             'retail_group' => [
                 function ($attribute, $value, $fail) use ($usertypeInt, $retailGroup) {
                     if ($usertypeInt === 8 && (!isset($retailGroup[$value]) || !array_key_exists($value, $retailGroup))) {
@@ -428,7 +423,6 @@ class AdminController extends Controller
                 }
             ],
 
-            // Validate it_type only if usertype is 12
             'it_type' => [
                 function ($attribute, $value, $fail) use ($usertypeInt, $itType) {
                     if ($usertypeInt === 12 && (!isset($itType[$value]) || !array_key_exists($value, $itType))) {

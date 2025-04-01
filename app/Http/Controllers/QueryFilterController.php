@@ -29,7 +29,6 @@ class QueryFilterController extends Controller
         $request->validate([
             'firstname' => 'required',
             'lastname' => 'required',
-            'middlename' => 'required',
         ]);
         try {
             $addCustomer = Customer::create([

@@ -6,12 +6,12 @@
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Date">{{
                             dayjs().format('MMM, DD, YYYY')
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Verified By">{{
                             $page.props.auth.user.full_name
-                        }}</a-descriptions-item>
+                            }}</a-descriptions-item>
                     </a-descriptions>
 
                     <a-row class="mt-5 mb-5">
@@ -22,24 +22,22 @@
                             <a-select-option value="WHOLESALE">WHOLESALE</a-select-option>
                         </a-select>
                     </a-row>
-                    <a-row class="mt-5 mb-5">
-                        <a-col :span="16">
-                            <a-description-text keyboard>Customer Name: </a-description-text>
+                    <a-row class="mb-5">
+                        <a-description-text keyboard>Customer Name: </a-description-text>
+                        <div class="flex direction-row gap-2">
                             <a-select size="large" allow-clear show-search placeholder="Search customer here..."
-                                :default-active-first-option="false" v-model:value="form.customer" style="width: 360px"
+                                :default-active-first-option="false" v-model:value="form.customer" style="width: 300px"
                                 :show-arrow="false" :filter-option="false" :not-found-content="isRetrieving ? undefined : 'No Customer found'
                                     " :options="optionCustomer" @search="debounceCustomer">
                                 <template v-if="isRetrieving" #notFoundContent>
                                     <a-spin size="large" />
                                 </template>
                             </a-select>
-                        </a-col>
-                        <a-col :span="8">
-                            <a-button type="primary" class="mt-6" size="large" @click="addCustomerButton">
+                            <a-button type="primary" size="large" @click="addCustomerButton">
                                 <PlusOutlined />
                                 Add Customer
                             </a-button>
-                        </a-col>
+                        </div>
                     </a-row>
                     <a-description-text keyboard>Barcode:</a-description-text>
 
@@ -76,38 +74,38 @@
                         Issue: Barcode #
                         <span class="font-bold">{{
                             notif.data.lostgcb_barcode
-                        }}</span>
+                            }}</span>
                         was reported as lost
                     </p>
                     <p>
                         Owner's Name:
                         <span class="font-bold">{{
                             notif.data.lostgcd_owname
-                        }}</span>
+                            }}</span>
                     </p>
                     <p>
                         Address:
                         <span class="font-bold">{{
                             notif.data.lostgcd_address
-                        }}</span>
+                            }}</span>
                     </p>
                     <p>
                         Contact No:
                         <span class="font-bold">{{
                             notif.data.lostgcd_contactnum
-                        }}</span>
+                            }}</span>
                     </p>
                     <p>
                         Date Lost:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datelost
-                        }}</span>
+                            }}</span>
                     </p>
                     <p>
                         Date Reported:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datereported
-                        }}</span>
+                            }}</span>
                     </p>
                 </a-card>
             </a-col>
@@ -211,9 +209,6 @@ const customerSubmit = async () => {
     if (!addingCustomer.lastname) {
         addingCustomer.errors.lastname = "Lastname field is required";
     }
-    if (!addingCustomer.middlename) {
-        addingCustomer.errors.middlename = "Middlename field is required";
-    }
     if (Object.keys(addingCustomer.errors).length > 0) {
         return;
     }
@@ -223,7 +218,6 @@ const customerSubmit = async () => {
             addingCustomer,
         );
         const fullName = `${addingCustomer.firstname} ${addingCustomer.middlename} ${addingCustomer.lastname} ${addingCustomer.extention}`;
-        // alert(data.data.cus_id);
         optionCustomer.value = [
             {
                 label: fullName,
