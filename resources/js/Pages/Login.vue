@@ -12,7 +12,7 @@
                 align-items: center;
                 background-color: white;
                 border-radius: 23px;
-                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+                box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
             ">
                 <a-col
                     :span="12"
@@ -45,7 +45,7 @@
                     >
                         <div style="height: 250px; width: 400px">
                             <a-form-item
-                                label="Username"
+                                label="USERNAME"
                                 has-feedback
                                 :help="form.errors.username"
                                 :validate-status="
@@ -59,7 +59,7 @@
                                 />
                             </a-form-item>
                             <a-form-item
-                                label="Password"
+                                label="PASSWORD"
                                 has-feedback
                                 :help="form.errors.password"
                                 :validate-status="
@@ -78,9 +78,9 @@
                                     <a-button
                                         :loading="loading"
                                         @click="login"
-                                        style="width: 200px"
+                                        style="width: 400px"
                                         type="primary"
-                                        >Login</a-button
+                                        >LOGIN </a-button
                                     >
                                 </div>
                             </div>
