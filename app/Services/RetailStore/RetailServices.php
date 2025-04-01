@@ -29,12 +29,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class RetailServices
 {
-    public function __construct(public RetailDbServices $dbservices)
-    {
-    }
+    public function __construct(public RetailDbServices $dbservices) {}
     public function getDataApproved()
     {
         $data = ApprovedGcrequest::select(
@@ -336,7 +335,7 @@ class RetailServices
             }
             if (
                 StoreReceivedGc::where('strec_barcode', $request->barcode)
-                    ->where('strec_sold', '*')->where('strec_return', '')->exists()
+                ->where('strec_sold', '*')->where('strec_return', '')->exists()
             ) {
                 $found = true;
                 $gctype = 1;
@@ -402,8 +401,7 @@ class RetailServices
                     'msg' => 'Barcode Not found.',
                 ]);
             }
-        }
-        ;
+        };
 
         if (!$found) {
 
@@ -845,23 +843,55 @@ class RetailServices
 
     public function verifiedGc(Request $request)
     {
+        if (in_array($request->user()->store_assigned, [5, 2, 7, 6])) {
 
-        $data = StoreVerification::join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+            if ($request->user()->store_assigned == 2) {
+                $dbconnection = DB::connection('mysqltalibon');
+            } else if ($request->user()->store_assigned == 5) {
+                $dbconnection = DB::connection('mysqltubigon');
+            }
+
+            $collect = $this->storeVerification($request);
+
+            $collectTubigon  = $dbconnection->table('store_verification')
+                ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
+                ->join('gc_type', 'gc_type.gc_type_id', '=', 'store_verification.vs_gctype')
+                ->whereAny(['vs_barcode'], 'like', '%' . $request->barcode . '%')
+                ->where('store_verification.vs_store', $request->user()->store_assigned)
+                ->orderByDesc('vs_barcode')->get();
+
+            $dataCollect = collect($collect->items())->merge(collect($collectTubigon));
+
+            // **Manual Pagination**
+            $page = request()->input('page', 1); // Get current page from request
+            $perPage = 10; // Items per page
+            $offset = ($page - 1) * $perPage; // Calculate offset
+
+            $data = new LengthAwarePaginator(
+                $dataCollect->slice($offset, $perPage)->values(), // Slice data for pagination
+                $dataCollect->count(), // Total items
+                $perPage,
+                $page,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
+            // Your logic here
+        } else {
+            $data = $this->storeVerification($request);
+        }
+
+        return $data;
+    }
+
+    private function storeVerification($request)
+    {
+        return StoreVerification::join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
             ->join('gc_type', 'gc_type.gc_type_id', '=', 'store_verification.vs_gctype')
-            // ->leftJoin('gc', 'gc.barcode_no', '=', 'store_verification.vs_barcode')
-            ->leftJoin('transaction_revalidation', 'transaction_revalidation.reval_barcode', '=', 'store_verification.vs_barcode')
-            ->leftJoin('transaction_stores', 'transaction_stores.trans_sid', '=', 'transaction_revalidation.reval_trans_id')
-            ->leftJoin('institut_transactions_items', 'institut_transactions_items.instituttritems_barcode', '=', 'store_verification.vs_barcode')
-            ->leftJoin('institut_transactions', 'institut_transactions.institutr_id', '=', 'institut_transactions_items.instituttritems_trid')
             ->whereAny([
                 'vs_barcode'
             ], 'like', '%' . $request->barcode . '%')
             ->where('store_verification.vs_store', $request->user()->store_assigned)
             ->orderByDesc('vs_barcode')
-            ->paginate()
-            ->withQueryString();
-
-        return $data;
+            ->paginate(10);
     }
 
 
@@ -876,6 +906,4 @@ class RetailServices
         ])->setPaper('letter');
         return $pdf;
     }
-
-
 }
