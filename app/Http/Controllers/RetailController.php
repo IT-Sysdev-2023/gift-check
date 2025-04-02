@@ -58,8 +58,7 @@ class RetailController extends Controller
         public RetailServices $retail,
         public AdminServices $statusScanner,
         public DashboardClass $dashboardClass
-    ) {
-    }
+    ) {}
     public function index(Request $request)
     {
 
@@ -344,22 +343,10 @@ class RetailController extends Controller
         }
     }
 
-    //jessan server testing
-    // $st = Store::where('store_id', $request->user()->store_assigned)->first();
-    // $driveLetter = 'Z:'; // Specify a drive letter
-    // $networkPath = '\\\\172.16.43.166\Gift';
-
-    // $username = "New User";// Enclose in quotes if username contains spaces
-    // $password = 'san'; // Enclose in quotes if password contains special characters
-    // // Unmap first to avoid conflicts
-    // exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
-
-    // // Map the drive - note the quoting of username/password if needed
-    // $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$username\" \"$password\" /persistent:yes 2>&1";
-
-
     public function verificationIndex(Request $request)
     {
+        $this->commandExecute($request);
+        
         $data = $this->statusScanner->statusScanned($request);
 
         return inertia('Retail/Verification', [
@@ -369,6 +356,20 @@ class RetailController extends Controller
             'empty' => $data->empty,
         ]);
 
+    }
+
+    public function commandExecute($request){
+        $st = Store::where('store_id', $request->user()->store_assigned)->first();
+$driveLetter = 'Z:'; 
+$networkPath = rtrim($st->store_textfile_ip, '\\');
+
+// Unmap the drive first
+exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
+
+    $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$st->username\" \"$st->new_password\" /persistent:yes 2>&1";
+
+
+return exec($command, $output, $return_var);
     }
 
     public function submitVerify(Request $request)
@@ -559,12 +560,26 @@ class RetailController extends Controller
 
     public function gcdetails(Request $request)
     {
-
         $data = StoreEodTextfileTransaction::where('seodtt_barcode', $request->barcode)->get();
+
+        if ($data->count() == 0) {
+
+            if ($request->user()->store_assigned == 5) {
+                $dbconnection = DB::connection('mysqltubigon');
+            }
+            if ($request->user()->store_assigned == 2) {
+                $dbconnection = DB::connection('mysqltalibon');
+            }
+
+            $data = $dbconnection->table('store_eod_textfile_transactions')
+                ->where('seodtt_barcode', $request->barcode)
+                ->get();
+        }
         $data->transform(function ($item) {
-            $item->time = Date::parse($item->seodtt_timetrnx)->format('H:i:s: A');
+            $item->time = $item->seodtt_timetrnx;
             return $item;
         });
+
         return response()->json(['data' => $data]);
     }
     public function verified_gc_report()
@@ -783,16 +798,16 @@ class RetailController extends Controller
     {
         return inertia('Retail/masterfile/CustomerSetup', [
             'data' =>
-                Customer::orderByDesc('cus_id')
-                    ->whereAny([
-                        'cus_fname',
-                        'cus_lname',
-                        'cus_idnumber',
-                        'cus_address',
-                        'cus_mobile'
-                    ], 'like', '%' . $request->search . '%')
-                    ->paginate(10)
-                    ->withQueryString()
+            Customer::orderByDesc('cus_id')
+                ->whereAny([
+                    'cus_fname',
+                    'cus_lname',
+                    'cus_idnumber',
+                    'cus_address',
+                    'cus_mobile'
+                ], 'like', '%' . $request->search . '%')
+                ->paginate(10)
+                ->withQueryString()
         ]);
     }
 
