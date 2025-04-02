@@ -562,19 +562,23 @@ return exec($command, $output, $return_var);
     {
         $data = StoreEodTextfileTransaction::where('seodtt_barcode', $request->barcode)->get();
 
-        if ($data->count() == 0) {
 
+        if ($data->count() == 0) {
+            $dbconnection = false;
             if ($request->user()->store_assigned == 5) {
                 $dbconnection = DB::connection('mysqltubigon');
             }
             if ($request->user()->store_assigned == 2) {
                 $dbconnection = DB::connection('mysqltalibon');
             }
-
-            $data = $dbconnection->table('store_eod_textfile_transactions')
+            if($dbconnection){
+                    $data = $dbconnection?->table('store_eod_textfile_transactions')
                 ->where('seodtt_barcode', $request->barcode)
                 ->get();
+            }
+        
         }
+
         $data->transform(function ($item) {
             $item->time = $item->seodtt_timetrnx;
             return $item;
