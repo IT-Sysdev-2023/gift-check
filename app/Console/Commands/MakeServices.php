@@ -19,7 +19,7 @@ class MakeServices extends Command
      *
      * @var string
      */
-    protected $description = 'Generate a new service class inside the App\Services namespace';
+    protected $description = 'Generate a new service class inside the App\Services namespace - by kent';
 
     /**
      * Execute the console command.

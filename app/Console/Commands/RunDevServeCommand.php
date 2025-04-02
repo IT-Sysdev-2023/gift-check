@@ -18,7 +18,7 @@ class RunDevServeCommand extends Command
         $this->runInBackground([$this->getPhpBinary(), 'artisan', 'serve']);
 
         $this->info("Starting Development Server...");
-        $this->runInBackground(['bun', 'run', 'dev']);
+        $this->runInBackground(['pnpm', 'run', 'dev']);
 
         $this->info("Starting Reverb Server...");
         $this->runInBackground(['php', 'artisan', 'reverb:start', '--host=127.0.0.1', '--port=8080']);
