@@ -104,7 +104,7 @@ const page = usePage<PageWithSharedProps>().props;
         </a-sub-menu>
     </a-sub-menu>
     <div v-else>
-        <div v-if="[5, 2, 6, 7].includes(page.auth.user.store_assigned)">
+        <div v-if="[5, 2, 6, 7, 8].includes(page.auth.user.store_assigned)">
             <a-menu-item @click="() => router.get(route('retail.verification.index'))" key="GCVerification">
                 <BarcodeOutlined />
                 <span>Verification</span>
