@@ -20,7 +20,8 @@ class QueryFilterController extends Controller
     }
     public function customer(Request $request)
     {
-        $result = Customer::whereAny(['cus_lname', 'cus_fname', 'cus_mname', 'cus_namext'], 'LIKE', '%' . $request->search . '%')->get();
+        $result = Customer::whereRaw("CONCAT(cus_lname, ' ', cus_fname, ' ', cus_mname, ' ', cus_namext) LIKE ?", ['%' . $request->search . '%'])
+            ->get();
         if ($result->isEmpty()) {
             return response()->json([
                 'success' => true,
@@ -28,7 +29,7 @@ class QueryFilterController extends Controller
                 'message' => 'No customer found',
             ]);
         }
-        $formattedResult = $result->map(function ($item) {
+        $formattedResult = $result->map(function ($item) use ($request) {
             return [
                 'value' => $item->cus_id,
                 'label' => trim("{$item->cus_lname}, {$item->cus_fname} {$item->cus_mname} {$item->cus_namext}")

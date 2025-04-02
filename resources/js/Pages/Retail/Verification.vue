@@ -47,7 +47,7 @@
                     <a-description-text keyboard>Barcode:</a-description-text>
 
                     <a-input-number class="pb-3 pt-3 p-1 text-xl" v-model:value="form.barcode" @change="viewstatus"
-                        @keyup.enter="viewstatus" style="width: 100%" size="medium" placeholder="Scan Barode" />
+                        @keyup.enter="viewstatus" style="width: 100%" size="medium" placeholder="Scan Barcode" />
                     <a-button size="large" type="primary" class="mt-3" :disabled="form.barcode == null ||
                         form.barcode == '' ||
                         form.customer == null ||
@@ -65,11 +65,13 @@
                         }}
                     </a-button>
                 </a-card>
-                <a-modal v-model:open="modalOpen" title="Customer Verification Info" :footer="null">
-                    <div>
-                        <p><strong>Customer Name: {{ selectedfullName }}</strong></p>
-                    </div>
+
+                <!-- print modal after successfull verification  -->
+                <!-- print modal after successful verification -->
+                <a-modal v-if="dataForPrinting" v-model:open="modalOpen" style="width: 70%; top: 50px" :footer="null">
+                    <iframe class="mt-7" :src="dataForPrinting" width="100%" height="600px"></iframe>
                 </a-modal>
+
                 <!-- {{ notif.data }} -->
                 <a-alert v-if="notif.status" :message="notif.title" class="mb-1 mt-2" :description="notif.msg"
                     :type="notif.status" show-icon />
@@ -164,7 +166,7 @@
                 <a-input allow-clear v-model:value="addingCustomer.extention" placeholder="name extention"></a-input>
             </a-form-item>
         </a-modal>
-        {{ selectedfullName }}
+        <!-- {{ dataForPrinting }} -->
     </AuthenticatedLayout>
 </template>
 
@@ -182,12 +184,11 @@ const form = useForm({
     customer: null,
     barcode: null,
 });
-const props = defineProps({
+defineProps({
     data: Object,
     success: Boolean,
     notfound: Boolean,
     empty: Boolean,
-    name: String
 });
 
 const addingCustomer = useForm({
@@ -198,6 +199,7 @@ const addingCustomer = useForm({
     errors: {},
 });
 
+
 const addCustomerModal = ref(false);
 const optionCustomer = ref([]);
 // const viewing = ref([]);
@@ -206,7 +208,7 @@ const isRetrieving = ref(false);
 const skeleton = ref(false);
 const modalOpen = ref(false);
 const viewing = ref([]);
-const selectedfullName = ref("");
+const dataForPrinting = ref('');
 
 
 const addCustomerButton = () => {
@@ -262,37 +264,30 @@ const submit = () => {
         ...data,
     })).post(route("retail.verification.submit"), {
         onSuccess: (page) => {
+            console.log("Flash Data:", page.props.flash);
             notif.value = page.props.flash;
             if (page.props.flash.status == 'success') {
                 notification.success({
                     message: page.props.flash.title,
                     description: page.props.flash.msg,
-                    name: page.props.flash.data
                 });
+                dataForPrinting.value = `data:application/pdf;base64,${page.props.flash.data}`
                 modalOpen.value = true;
-                setTimeout(() => {
-                    window.print();
-                }, 200)
                 form.reset();
             } else if (page.props.flash.status == 'error') {
                 notification.error({
                     message: page.props.flash.title,
                     description: page.props.flash.msg,
                 });
+                form.reset();
+
             } else if (page.props.flash.status == 'warning') {
                 notification.warning({
                     message: page.props.flash.title,
                     description: page.props.flash.msg,
                 });
+                form.reset();
             }
-
-            // notif.value = response.props.flash;
-            // notification[response.props.flash.status]({
-            //     message: response.props.flash.title,
-            //     description: response.props.flash.msg,
-            // });
-            // modalOpen.value = true;
-            // form.reset();
         },
         onError: () => {
             form.reset();
@@ -305,14 +300,14 @@ const debounceCustomer = debounce(async function (query) {
         if (query.trim().length) {
             isRetrieving.value = true;
             optionCustomer.value = [];
-
             const response = await axios.get(
-                route("search.customer", { search: query }),
+                route("search.customer", {
+                    search: query,
+                    customer: form.customer
+                }),
             );
             if (response.data.success) {
                 optionCustomer.value = response.data.data;
-                selectedfullName.value = optionCustomer.value[0].label;
-
             }
             viewing.value = optionCustomer.value.length ? optionCustomer.value[0].value : null;
         }

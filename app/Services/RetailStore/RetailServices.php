@@ -23,6 +23,7 @@ use App\Models\StoreReceivedGc;
 use App\Models\StoreVerification;
 use App\Models\TempReceivestore;
 use App\Models\TransactionRevalidation;
+use App\Models\User;
 use Illuminate\Support\Facades\Date;
 use App\Services\RetailStore\RetailDbServices;
 use Illuminate\Http\Request;
@@ -32,7 +33,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class RetailServices
 {
-    public function __construct(public RetailDbServices $dbservices) {}
+    public function __construct(public RetailDbServices $dbservices)
+    {
+    }
     public function getDataApproved()
     {
         $data = ApprovedGcrequest::select(
@@ -320,6 +323,32 @@ class RetailServices
 
     public function submitVerify($request)
     {
+        // dd($request->all());
+        $name = Customer::find($request->customer);
+        if ($name) {
+            $selectedName = trim(implode(' ', array_filter([
+                $name->cus_lname,
+                $name->cus_fname,
+                $name->cus_mname,
+                $name->cus_namext
+            ])));
+            $barcode = $request->barcode;
+            $store = $request->user()->store_assigned;
+            if ($store) {
+                $storeName = Store::where('store_id', $store)->first()->store_name ?? '';
+                $date = now()->format('Y-m-d H:i:s');
+            }
+        }
+        $printData = (object) [
+            'name' => $selectedName,
+            'barcode' => $barcode,
+            'store' => $storeName,
+            'date' => $date
+        ];
+        $pdf = Pdf::loadView('gc.verification', ['data' => $printData]);
+        $pdf->setPaper('A3');
+        $stream = base64_encode($pdf->output());
+
         $found = false;
         $isRevalidateGC = false;
         $verifyGc = false;
@@ -334,7 +363,7 @@ class RetailServices
             }
             if (
                 StoreReceivedGc::where('strec_barcode', $request->barcode)
-                ->where('strec_sold', '*')->where('strec_return', '')->exists()
+                    ->where('strec_sold', '*')->where('strec_return', '')->exists()
             ) {
                 $found = true;
                 $gctype = 1;
@@ -378,6 +407,8 @@ class RetailServices
                     'status' => 'error',
                     'title' => 'Opss Error',
                     'msg' => 'Barcode Not found.',
+                    'data' => $stream
+
                 ]);
             }
         } elseif (DtiBarcodes::where('dti_barcode', $request->barcode)->exists()) {
@@ -398,9 +429,12 @@ class RetailServices
                     'status' => 'error',
                     'title' => 'Opss Error',
                     'msg' => 'Barcode Not found.',
+                    'data' => $stream
+
                 ]);
             }
-        };
+        }
+        ;
 
         if (!$found) {
 
@@ -409,14 +443,18 @@ class RetailServices
                 return back()->with([
                     'status' => 'warning',
                     'msg' => 'GC is blocked and not allowed to used.',
-                    'title' => '400 Invalid'
+                    'title' => '400 Invalid',
+                    'data' => $stream
+
                 ]);
             }
 
             return back()->with([
                 'status' => 'error',
                 'msg' => 'Barcode #' . $request->barcode . ' not found',
-                'title' => 'Error!'
+                'title' => 'Error!',
+                'data' => $stream
+
             ]);
         }
 
@@ -426,7 +464,8 @@ class RetailServices
             return back()->with([
                 'status' => 'error',
                 'msg' => 'Invalid Store ' . '<br/>' . ' Store Purchased: ' . $bandgo[0]->store_name,
-                'title' => '400 Invalid'
+                'title' => '400 Invalid',
+                'data' => $stream
             ]);
         }
 
@@ -434,7 +473,8 @@ class RetailServices
             return back()->with([
                 'status' => 'warning',
                 'msg' => 'BEAM AND GO GC are only allowed to redeemed at Store Department',
-                'title' => '400 Invalid'
+                'title' => '400 Invalid',
+                'data' => $stream
             ]);
         }
 
@@ -462,6 +502,7 @@ class RetailServices
                         'msg' => 'GC Barcode # ' . $request->barcode . ' is already verified and used.',
                         'title' => 'Already Verified and Used',
                         'status' => 'warning',
+                        'data' => $stream,
                     ]);
                 } else {
 
@@ -473,6 +514,8 @@ class RetailServices
                             'msg' => 'GC Barcode # ' . $request->barcode . ' is already verified.',
                             'title' => 'Already Verified',
                             'status' => 'warning',
+                            'data' => $stream
+
                         ]);
                     }
 
@@ -482,6 +525,7 @@ class RetailServices
                             'msg' => 'GC Barcode # ' . $request->barcode . ' is already reverified.',
                             'title' => 'Already Reverified',
                             'status' => 'warning',
+                            'data' => $stream
                         ]);
                     }
 
@@ -490,7 +534,9 @@ class RetailServices
                             'msg' => 'GC Revalidated at ' . $revalidated->store_name,
                             'title' => 'Already Reverified',
                             'status' => 'warning',
-                            'date' => 'Date Revalidated: ' . Date::parse($revalidated->trans_datetime)->toFormattedDateString()
+                            'date' => 'Date Revalidated: ' . Date::parse($revalidated->trans_datetime)->toFormattedDateString(),
+                            'data' => $stream
+
                         ]);
                     }
 
@@ -503,6 +549,8 @@ class RetailServices
                                 'msg' => 'GC Barcode # ' . $request->barcode . ' already verified at ' . $revalidated->store_name,
                                 'title' => 'Already Verified',
                                 'status' => 'error',
+                                'data' => $stream
+
                             ]);
                         }
                     } else {
@@ -533,7 +581,8 @@ class RetailServices
                     return back()->with([
                         'status' => 'error',
                         'msg' => 'Sorry the Promo Gift Check is Expired!.',
-                        'title' => 'Expired'
+                        'title' => 'Expired',
+                        'data' => $stream
                     ]);
                 }
                 $lost = self::lostGcQuery($request);
@@ -544,7 +593,7 @@ class RetailServices
                         'title' => 'Lost Gc',
                         'status' => 'warning',
                         'error' => 'lost',
-                        'data' => $lost
+                        'data' => $lost,
                     ]);
                 }
 
@@ -567,14 +616,17 @@ class RetailServices
                         return back()->with([
                             'status' => 'success',
                             'msg' => 'Successfully reverfied!.',
-                            'title' => 'Reverified'
+                            'title' => 'Reverified',
+                            'data' => $stream,
+                            // 'printStream' =>
                         ]);
                     } else {
 
                         return back()->with([
                             'status' => 'success',
                             'msg' => 'Successfully Verified!.',
-                            'title' => 'Reverified'
+                            'title' => 'Reverified',
+                            'data' => $stream
                         ]);
                     }
                 }
@@ -618,13 +670,17 @@ class RetailServices
                         return back()->with([
                             'status' => 'success',
                             'msg' => 'Successfully reverified!.',
-                            'title' => 'Verification'
+                            'title' => 'Verification',
+                            'data' => $stream
+
                         ]);
                     } else {
                         return back()->with([
                             'status' => 'success',
                             'msg' => 'Successfully Verified!.',
-                            'title' => 'Verification'
+                            'title' => 'Verification',
+                            'data' => $stream
+
                         ]);
                     }
                 }
