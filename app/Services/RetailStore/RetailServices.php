@@ -899,12 +899,17 @@ class RetailServices
 
     public function verifiedGc(Request $request)
     {
-        if (in_array($request->user()->store_assigned, [5, 2, 7, 6])) {
-
+        if (in_array($request->user()->store_assigned, [5, 2, 7, 6, 8])) {
             if ($request->user()->store_assigned == 2) {
                 $dbconnection = DB::connection('mysqltalibon');
             } else if ($request->user()->store_assigned == 5) {
                 $dbconnection = DB::connection('mysqltubigon');
+            }else if ($request->user()->store_assigned == 8) {
+                $dbconnection = DB::connection('mysqlaltacitta');
+            }else if ($request->user()->store_assigned == 7) {
+                $dbconnection = DB::connection('mysqlmandaue');
+            }else if ($request->user()->store_assigned == 6) {
+                $dbconnection = DB::connection('mysqlcolon');
             }
 
             $collect = $this->storeVerification($request);
