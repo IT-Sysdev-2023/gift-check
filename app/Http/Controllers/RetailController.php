@@ -345,6 +345,8 @@ class RetailController extends Controller
 
     public function verificationIndex(Request $request)
     {
+        $this->commandExecute($request);
+        
         $data = $this->statusScanner->statusScanned($request);
 
         return inertia('Retail/Verification', [
@@ -353,11 +355,25 @@ class RetailController extends Controller
             'notfound' => $data->barcodeNotFound,
             'empty' => $data->empty,
         ]);
+
+    }
+
+    public function commandExecute($request){
+        $st = Store::where('store_id', $request->user()->store_assigned)->first();
+$driveLetter = 'Z:'; 
+$networkPath = rtrim($st->store_textfile_ip, '\\');
+
+// Unmap the drive first
+exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
+
+    $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$st->username\" \"$st->new_password\" /persistent:yes 2>&1";
+
+
+return exec($command, $output, $return_var);
     }
 
     public function submitVerify(Request $request)
     {
-
         return $this->retail->submitVerify($request);
     }
     public function availableGcList(Request $request)
