@@ -106,6 +106,7 @@ const userImage = async () => {
 onMounted(() => {
     userImage();
 });
+const secretSearch = ref<boolean>(false);
 
 // user defining usertype
 const myProfileModal = ref<boolean>(false);
@@ -264,10 +265,20 @@ const confirmLogout = ref<boolean>(false);
 
 const logout = () => {
     router.post(route('logout'));
+};
+
+
+const secretData = () => {
+
 }
 
 </script>
 <template>
+    <div>
+        <a-modal v-model:open="secretSearch" :footer="false">
+            <a-input v-model:value="value" @change="secretData"/>
+        </a-modal>
+    </div>
     <div>
         <a-modal v-model:open="confirmLogout" centered @ok="logout">
             <div class="flex flex-col items-center text-center">
@@ -468,6 +479,9 @@ const logout = () => {
                                         </a-menu-item>
                                         <a-menu-item>
                                             <a @click="() => { changePasswordModal = true }">Change Password</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a @click="() => { secretSearch = true }">Secret Search</a>
                                         </a-menu-item>
                                     </a-menu>
                                 </template>
