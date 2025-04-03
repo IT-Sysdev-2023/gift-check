@@ -86,6 +86,7 @@ const formattedUserName = computed(() => {
 });
 const value = ref<string>(formattedUserName.value);
 const imageUrl = ref<string>('');
+const userUniqueDetails = ref<string>('');
 const userImage = async () => {
     try {
         const response = await axios.get('http://172.16.161.34/api/hrms/filter/employee/name', {
@@ -93,11 +94,9 @@ const userImage = async () => {
                 q: value.value
             }
         })
-        // console.log(response);
+        userUniqueDetails.value = response.data.data.employee[0].employee_no;
         if (response.data.data.employee.length > 0) {
             imageUrl.value = response.data.data.employee[0].employee_photo;
-            // console.log(imageUrl.value);
-
         }
     }
     catch (error) {
@@ -260,10 +259,29 @@ const submitPassword = async () => {
     catch (error) {
         console.log(error);
     }
+};
+const confirmLogout = ref<boolean>(false);
+
+const logout = () => {
+    router.post(route('logout'));
 }
 
 </script>
 <template>
+    <div>
+        <a-modal v-model:open="confirmLogout" centered @ok="logout">
+            <div class="flex flex-col items-center text-center">
+                <!-- GIF Image -->
+                <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWplNGg2bXFkbWhscnJhdTh4bTRhY2R5YmdkaG03bW1lYXdsbWdqciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/c1seDJJhCzE73jFwkU/giphy.gif"
+                    alt="Logout Image" class="w-40 h-40 object-cover object-center mb-4" />
+
+                <!-- Confirmation Message -->
+                <p class="text-lg font-semibold text-red-600">Are you sure you want to logout?</p>
+                <p class="text-gray-600">You will need to log in again to access your account.</p>
+            </div>
+        </a-modal>
+    </div>
+
     <div>
         <a-layout style="min-height: 100vh" class="dark-layout">
             <a-layout-sider v-model:collapsed="collapsed" collapsible width="250px">
@@ -290,8 +308,9 @@ const submitPassword = async () => {
                                     alt="usersimage" />
                             </div>
 
-                             <!-- if gamale is the user hahaha -->
-                             <div v-else-if="imageUrl === '../images/users/02354-2023=2024-08-28=Profile=14-21-59-PM.JPG'">
+                            <!-- if gamale is the user hahaha -->
+                            <div
+                                v-else-if="imageUrl === '../images/users/02354-2023=2024-08-28=Profile=14-21-59-PM.JPG'">
                                 <img style="
                                         height: 100px;
                                         width: 100px;
@@ -325,33 +344,31 @@ const submitPassword = async () => {
 
                         <!-- User greetings  -->
                         <div class="text-white font-bold text-center mt-1">
-                            <div v-if="formattedUserName === 'abarquez, kent'">
+                            <div v-if="userUniqueDetails === '1000048967'">
                                 <span class="italic">Konnichiwa Master,</span> <span class="text-bold">{{
                                     page.auth.user.full_name }}</span>
                             </div>
-                            <div v-else-if="formattedUserName == 'gamale, teofredo'">
-                                <span class="italic">Bossing, kamusta ang buhay buhay ?</span> <span class="text-bold">
-                                    {{ page.auth.user.full_name }}
-                                </span>
+                            <div v-else-if="userUniqueDetails == '1000048642'">
+                                <span class="italic">User is anonymous</span>
                             </div>
-                            <div v-else-if="formattedUserName == 'barace, harvey'">
+                            <div v-else-if="userUniqueDetails == '1000049981'">
                                 <span class="italic"> Sawasdee Krub,</span> <span class="font-bold">{{
                                     page.auth.user.full_name }}</span>
                             </div>
-                            <div v-else-if="formattedUserName == 'palban, jessan'">
+                            <div v-else-if="userUniqueDetails == '1000047805'">
                                 <span class="italic"> Hello Master,</span> <span class="font-bold">{{
                                     page.auth.user.full_name }}</span>
                             </div>
-                            <div v-else-if="formattedUserName == 'caren, norien'">
+                            <div v-else-if="userUniqueDetails == '1000048984'">
                                 <span class="italic">Annyeong Haseyo,</span>
                                 {{ page.auth.user.full_name }}
                             </div>
-                            <div v-else-if="formattedUserName == 'lansang, pearl'">
-                                <span class="italic">Konnichiwa,</span>
+                            <div v-else-if="userUniqueDetails == '1000055538'">
+                                <span class="italic">Nikaon naka?</span>
                                 {{ page.auth.user.full_name }}
                             </div>
-                            <div v-else-if="formattedUserName == 'cagas, claire'">
-                                <span class="italic">Nǐ hǎo,</span>
+                            <div v-else-if="userUniqueDetails == '1000052515'">
+                                <span class="italic">Goodmorning Maam,</span>
                                 {{ page.auth.user.full_name }}
                             </div>
                             <div v-else>
@@ -578,7 +595,7 @@ const submitPassword = async () => {
                             <HomeOutlined />
                             Home
                             </Link>
-                            <a-button class="text-white" type="ghost" @click="() => router.post(route('logout'))">
+                            <a-button class="text-white" @click="() => (confirmLogout = true)" type="ghost">
                                 <PoweroffOutlined />Logout
                             </a-button>
                         </p>

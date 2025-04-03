@@ -100,9 +100,9 @@
                         || form.usertype == 12 || form.usertype == 13 " label="User Role"
                         :validate-status="form.errors.user_role ? 'error' : ''" :help="form.errors.user_role">
                         <a-select v-model:value="form.user_role">
-                            <a-select-option :value="1">Dept. Manager</a-select-option>
-                            <a-select-option :value="2">Dept. User</a-select-option>
-                            <a-select-option v-if="form.usertype === 6" :value="3">Releasing Personnel</a-select-option>
+                            <a-select-option :value="0">Dept. Manager</a-select-option>
+                            <a-select-option :value="1">Dept. User</a-select-option>
+                            <a-select-option v-if="form.usertype === 6" :value="2">Releasing Personnel</a-select-option>
                         </a-select>
                     </a-form-item>
 
