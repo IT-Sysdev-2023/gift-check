@@ -272,7 +272,7 @@ class AdminController extends Controller
             '2' => 'Corporate Treasury',
             '3' => 'Corporate Finance',
             '4' => 'Corporate FAD',
-            '5' => 'Corporate Marketing',
+            '5' => 'General Manager',
             '6' => 'Corporate Marketing',
             '7' => 'Retail Store',
             '8' => 'Retail Group',
