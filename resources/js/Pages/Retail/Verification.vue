@@ -69,7 +69,7 @@
                 </a-card>
 
                 <!-- print modal after successful verification -->
-                <a-modal v-if="dataForPrinting" v-model:open="modalOpen" style="width: 70%; top: 50px" :footer="null">
+                <a-modal v-if="dataForPrinting" v-model:open="modalOpen" style="width: 70%; top: 50px" :footer="null" @cancel="closeFunction">
                     <iframe class="mt-7" :src="dataForPrinting" width="100%" height="600px"></iframe>
                 </a-modal>
 
@@ -176,7 +176,7 @@ import debounce from "lodash/debounce";
 import { router, useForm } from "@inertiajs/vue3";
 import { notification } from "ant-design-vue";
 import dayjs from "dayjs";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import axios from "axios";
 
 const form = useForm({
@@ -200,6 +200,7 @@ const addingCustomer = useForm({
 });
 
 
+
 const addCustomerModal = ref(false);
 const optionCustomer = ref([]);
 const notif = ref({});
@@ -209,6 +210,9 @@ const modalOpen = ref(false);
 const viewing = ref([]);
 const dataForPrinting = ref('');
 
+const closeFunction = () => {
+    router.get(route("retail.verification.index"));
+}
 
 const addCustomerButton = () => {
     addCustomerModal.value = true;

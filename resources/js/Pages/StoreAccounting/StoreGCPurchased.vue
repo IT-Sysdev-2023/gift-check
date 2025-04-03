@@ -29,20 +29,6 @@
                             <div>Month & Year:</div>
                             <a-date-picker v-model:value="billMonthly.month" picker="month" />
                         </a-form-item>
-
-                        <!-- <a-form-item
-                            :validate-status="
-                                billMonthly.errors.year ? 'error' : ''
-                            "
-                            :help="billMonthly.errors.year"
-                        >
-                            <div>Year:</div>
-                            <a-date-picker
-                                v-model:value="billMonthly.year"
-                                picker="year"
-                                :disabled-date="disabledDate"
-                            />
-                        </a-form-item> -->
                     </div>
                     <div>
                         <a-button @click="monthlySubmitButton" style="background-color: #1e90ff; color: white">

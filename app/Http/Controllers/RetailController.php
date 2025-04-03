@@ -58,7 +58,8 @@ class RetailController extends Controller
         public RetailServices $retail,
         public AdminServices $statusScanner,
         public DashboardClass $dashboardClass
-    ) {}
+    ) {
+    }
     public function index(Request $request)
     {
 
@@ -148,6 +149,7 @@ class RetailController extends Controller
 
     public function gcRequestsubmit(Request $request)
     {
+
 
         $request->validate([
             'remarks' => 'required',
@@ -345,7 +347,7 @@ class RetailController extends Controller
 
     public function verificationIndex(Request $request)
     {
-        $this->commandExecute($request);
+      
 
         $data = $this->statusScanner->statusScanned($request);
 
@@ -373,6 +375,7 @@ class RetailController extends Controller
 
     public function submitVerify(Request $request)
     {
+          $this->commandExecute($request);
         return $this->retail->submitVerify($request);
     }
     public function availableGcList(Request $request)
@@ -810,16 +813,16 @@ class RetailController extends Controller
     {
         return inertia('Retail/masterfile/CustomerSetup', [
             'data' =>
-            Customer::orderByDesc('cus_id')
-                ->whereAny([
-                    'cus_fname',
-                    'cus_lname',
-                    'cus_idnumber',
-                    'cus_address',
-                    'cus_mobile'
-                ], 'like', '%' . $request->search . '%')
-                ->paginate(10)
-                ->withQueryString()
+                Customer::orderByDesc('cus_id')
+                    ->whereAny([
+                        'cus_fname',
+                        'cus_lname',
+                        'cus_idnumber',
+                        'cus_address',
+                        'cus_mobile'
+                    ], 'like', '%' . $request->search . '%')
+                    ->paginate(10)
+                    ->withQueryString()
         ]);
     }
 
