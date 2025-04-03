@@ -144,7 +144,7 @@ const columns = [
     },
     {
         title: 'Middle Name',
-        dataIndex: 'cus_lname',
+        dataIndex: 'cus_mname',
     },
     {
         title: 'Valid ID Number',
