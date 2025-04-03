@@ -89,7 +89,7 @@
                         :help="form.errors.usertype">
                         <a-select v-model:value="form.usertype">
                             <a-select-option v-for="item in access_page" :key="item.access_no" :value="item.access_no">
-                                {{ item.title }}
+                                {{ item.usertype }}
                             </a-select-option>
                         </a-select>
                     </a-form-item>
@@ -97,7 +97,7 @@
                     <!-- User Role -->
                     <a-form-item v-if="form.usertype == 2 || form.usertype == 3 || form.usertype == 4 || form.usertype == 5 || form.usertype == 6
                         || form.usertype == 7 || form.usertype == 8 || form.usertype == 9 || form.usertype == 10 || form.usertype == 11
-                        || form.usertype == 12 || form.usertype == 13 || form.usertype == 14" label="User Role"
+                        || form.usertype == 12 || form.usertype == 13 " label="User Role"
                         :validate-status="form.errors.user_role ? 'error' : ''" :help="form.errors.user_role">
                         <a-select v-model:value="form.user_role">
                             <a-select-option :value="1">Dept. Manager</a-select-option>
@@ -107,7 +107,7 @@
                     </a-form-item>
 
                     <!-- Store Assigned -->
-                    <a-form-item v-if="form.usertype == 7 || form.usertype == 14" label="Store Assigned"
+                    <a-form-item v-if="form.usertype == 7" label="Store Assigned"
                         :validate-status="form.errors.store_assigned ? 'error' : ''" :help="form.errors.store_assigned">
                         <a-select v-model:value="form.store_assigned">
                             <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
@@ -135,7 +135,7 @@
                     </a-form-item>
                 </div>
                 <div>
-                    <p class="text-red-600">Note: "GC2015" is the default password to every new added user.</p>
+                    <p class="text-red-600">Note: "GC2025" is the default password to every new added user.</p>
                 </div>
             </a-modal>
 
@@ -180,7 +180,7 @@
                         :help="updateForm.errors?.userType">
                         <a-select v-model:value="updateForm.userType">
                             <a-select-option v-for="item in access_page" :key="item.title" :value="item.title">
-                                {{ item.title }}
+                                {{ item.usertype }}
                             </a-select-option>
                         </a-select>
                     </a-form-item>
@@ -251,7 +251,6 @@
                         default?</span>
                 </div>
             </a-modal>
-            <!-- {{ data }} -->
         </a-card>
     </AuthenticatedLayout>
 </template>
@@ -348,7 +347,7 @@ const columns = ref([
     },
     {
         title: 'User Group',
-        dataIndex: 'title'
+        dataIndex: 'userGroup'
     },
     {
         title: 'Store Assigned',

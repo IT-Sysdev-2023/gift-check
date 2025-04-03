@@ -20,7 +20,10 @@ class QueryFilterController extends Controller
     }
     public function customer(Request $request)
     {
-        $result = Customer::whereRaw("CONCAT(cus_lname, ' ', cus_fname, ' ', cus_mname, ' ', cus_namext) LIKE ?", ['%' . $request->search . '%'])
+        $result = Customer::whereRaw("CONCAT(cus_lname, ' ', cus_fname) LIKE ?", ['%' . $request->search . '%'])
+            ->orWhereRaw("CONCAT(cus_fname, ' ', cus_lname) LIKE ?", ['%' . $request->search . '%'])
+            ->orWhereRaw('cus_mname LIKE ?', ['%' . $request->search . '%'])
+            ->orWhereRaw('cus_namext LIKE ?', ['%' . $request->search . '%'])
             ->get();
         if ($result->isEmpty()) {
             return response()->json([
@@ -29,7 +32,7 @@ class QueryFilterController extends Controller
                 'message' => 'No customer found',
             ]);
         }
-        $formattedResult = $result->map(function ($item) use ($request) {
+        $formattedResult = $result->map(function ($item) {
             return [
                 'value' => $item->cus_id,
                 'label' => trim("{$item->cus_lname}, {$item->cus_fname} {$item->cus_mname} {$item->cus_namext}")
@@ -44,72 +47,24 @@ class QueryFilterController extends Controller
     public function addCustomer(Request $request)
     {
         $request->validate([
-            'firstname' => 'required',
-            'lastname' => 'required',
+            'firstname' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'middlename' => 'nullable|string|max:255',
+            'extension' => 'nullable|string|max:10',
         ]);
-        try {
-            $addCustomer = Customer::create([
-                'cus_fname' => $request->firstname,
-                'cus_lname' => $request->lastname,
-                'cus_mname' => $request->middlename,
-                'cus_namext' => $request->extention,
-                'cus_store_register' => '1',
-                'cus_register_by' => $request->user()->user_id,
 
+        $customer = Customer::create([
+            'cus_fname' => $request->firstname,
+            'cus_lname' => $request->lastname,
+            'cus_mname' => $request->middlename ?? null,
+            'cus_namext' => $request->extension ?? null,
+            'cus_store_register' => 1,
+            'cus_register_by' => $request->user()->user_id,
+        ]);
 
-
-            ]);
-            return response()->json([
-                'status' => 'Success',
-                'message' => 'Customer added successfully',
-                'data' => [
-                    'cus_id' => $addCustomer->cus_id
-                ]
-
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error adding customer:' . $e->getMessage());
-
-            return response()->json([
-                'status' => 'Error',
-                'message' => 'Failed to add customer',
-            ], 500);
-        }
+        return back()->with([
+            'success' => 'Customer added successfully',
+            'data' => ['cus_id' => $customer->cus_id]
+        ]);
     }
-
-    // $query =  $link->query("SELECT
-    // 		CONCAT(cus_fname,' ',cus_mname,' ',cus_lname,' ',cus_namext) as name,
-    // 		cus_id,
-    // 		cus_fname,
-    // 		cus_mname,
-    // 		cus_lname,
-    // 		cus_namext
-    // 	FROM
-    // 		customers
-    // 	WHERE
-    // 		CONCAT(cus_fname,' ', cus_lname) LIKE '%" . $cust . "%' OR CONCAT(cus_fname,' ',cus_mname,' ', cus_lname) LIKE '%" . $cust . "%' LIMIT 8
-    // 	");
-
-    // 				if ($query->num_rows > 0) {
-    // 					$html = "<ul>";
-    // 					while ($row = $query->fetch_object()) {
-    // 						$fullname = "";
-    // 						$fullname .= $row->cus_fname;
-    // 						if (!empty($row->cus_mname)) {
-
-    // 							$fullname .= ' ' . $row->cus_mname;
-    // 						}
-
-    // 						$fullname .= ' ' . $row->cus_lname;
-    // 						if (!empty($row->cus_namext)) {
-    // 							$fullname .= ' ' . $row->cus_namext;
-    // 						}
-    // 						$html .= "<li class='vernames' data-id='" . $row->cus_id . "' data-fname='" . $row->cus_fname . "' data-mname='" . $row->cus_mname . "' data-lname='" . $row->cus_lname . "' data-namext='" . $row->cus_namext . "'>" . $fullname . "</li>";
-    // 					}
-    // 					$html .= "</ul>";
-    // 					$response['st'] = true;
-    // 					$response['msg'] = $html;
-    // 				} else {
-    // 					$response['msg'] = '<div class="_emptyresajax">No Result Found.<div>';
-    // 				}
 }
