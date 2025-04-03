@@ -154,7 +154,6 @@ const submitForm = () => {
 
 //disabled the past date, past date can not be use
 
-
 const disabledDate = (current) => {
     return current && current.isBefore(dayjs(), "day");
 };

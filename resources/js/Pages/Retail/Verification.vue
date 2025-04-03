@@ -27,27 +27,29 @@
                         <div class="flex direction-row gap-2 w-full">
                             <div class="w-full">
                                 <a-select size="large" allow-clear show-search
-                                    placeholder="Search lastname, firstname..." :default-active-first-option="false"
-                                    v-model:value="form.customer" class="w-full" :show-arrow="false"
-                                    :filter-option="false" :not-found-content="isRetrieving ? undefined : 'No Customer found'
+                                    placeholder="Search lastname, firstname..." v-model:value="form.customer"
+                                    class="w-full" :show-arrow="false" :filter-option="false" :not-found-content="isRetrieving ? undefined : 'No Customer found'
                                         " :options="optionCustomer" @search="debounceCustomer">
                                     <template v-if="isRetrieving" #notFoundContent>
                                         <a-spin size="large" />
                                     </template>
                                 </a-select>
                             </div>
-                            <div class="w-full">
-                                <a-button class="w-full" type="primary" size="large" @click="addCustomerButton">
+                            <a-tooltip placement="top">
+                                <template #title>
+                                    <span>Add Customer</span>
+                                </template>
+                                <a-button ghost type="primary" size="large" @click="addCustomerButton">
                                     <PlusOutlined />
-                                    Add Customer
+
                                 </a-button>
-                            </div>
+                            </a-tooltip>
                         </div>
                     </a-row>
                     <a-description-text keyboard>Barcode:</a-description-text>
 
-                    <a-input-number class="pb-3 pt-3 p-1 text-xl" v-model:value="form.barcode" @change="viewstatus"
-                        @keyup.enter="viewstatus" style="width: 100%" size="medium" placeholder="Scan Barcode" />
+                    <a-input-number class="pb-3 pt-3 p-1 text-xl" v-model:value="form.barcode" @keyup.enter="viewstatus"
+                        style="width: 100%" size="medium" placeholder="Scan Barcode" />
                     <a-button size="large" type="primary" class="mt-3" :disabled="form.barcode == null ||
                         form.barcode == '' ||
                         form.customer == null ||
@@ -66,7 +68,6 @@
                     </a-button>
                 </a-card>
 
-                <!-- print modal after successfull verification  -->
                 <!-- print modal after successful verification -->
                 <a-modal v-if="dataForPrinting" v-model:open="modalOpen" style="width: 70%; top: 50px" :footer="null">
                     <iframe class="mt-7" :src="dataForPrinting" width="100%" height="600px"></iframe>
@@ -175,7 +176,7 @@ import debounce from "lodash/debounce";
 import { router, useForm } from "@inertiajs/vue3";
 import { notification } from "ant-design-vue";
 import dayjs from "dayjs";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import axios from "axios";
 
 const form = useForm({
@@ -201,7 +202,6 @@ const addingCustomer = useForm({
 
 const addCustomerModal = ref(false);
 const optionCustomer = ref([]);
-// const viewing = ref([]);
 const notif = ref({});
 const isRetrieving = ref(false);
 const skeleton = ref(false);
@@ -214,7 +214,7 @@ const addCustomerButton = () => {
     addCustomerModal.value = true;
 };
 
-const customerSubmit = async () => {
+const customerSubmit = () => {
     addingCustomer.errors = {};
     if (!addingCustomer.firstname) {
         addingCustomer.errors.firstname = "Firstname field is required";
@@ -225,37 +225,36 @@ const customerSubmit = async () => {
     if (Object.keys(addingCustomer.errors).length > 0) {
         return;
     }
-    try {
-        const { data } = await axios.post(
-            route("search.addCustomer"),
-            addingCustomer,
-        );
-        const fullName = `${addingCustomer.lastname}, ${addingCustomer.firstname} ${addingCustomer.middlename} ${addingCustomer.extention}`;
-        optionCustomer.value = [
-            {
-                label: fullName,
-                value: data.data.cus_id,
-            },
-        ];
-        form.customer = data.data.cus_id;
-
-        addCustomerModal.value = false;
-        addingCustomer.firstname = "";
-        addingCustomer.lastname = "";
-        addingCustomer.middlename = "";
-        addingCustomer.extention = "";
-
-        notification.success({
-            message: "Success",
-            description: "Successfully Added Customer",
-        });
-    } catch (error) {
-        console.error("Error adding Customer", error);
-        notification.error({
-            message: "Error Adding",
-            description: "Failed to add Customer",
-        });
-    }
+    router.post(route("search.addCustomer"), {
+        ...addingCustomer
+    }, {
+        onSuccess: (page) => {
+            if (page.props.flash.success) {
+                notification.success({
+                    message: "Success",
+                    description: page.props.flash.success,
+                });
+                const fullname = `${addingCustomer.lastname}, ${addingCustomer.firstname} ${addingCustomer.middlename} ${addingCustomer.extention}`;
+                optionCustomer.value = [{
+                    label: fullname,
+                    value: page.props.flash.data.cus_id
+                }];
+                form.customer = page.props.flash.data.cus_id;
+                addCustomerModal.value = false;
+            } else if (page.props.flash.error) {
+                notification.warning({
+                    message: "Warning",
+                    description: page.props.flash.error,
+                });
+            }
+        },
+        onError: () => {
+            notification.error({
+                message: "Error",
+                description: "Something went wrong",
+            });
+        }
+    });
 };
 
 const submit = () => {

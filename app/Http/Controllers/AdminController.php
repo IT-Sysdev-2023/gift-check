@@ -266,7 +266,31 @@ class AdminController extends Controller
     {
         // dd($request->store);
         $Store = Store::get();
+
+        $accessName = [
+            '1' => 'Administrator',
+            '2' => 'Corporate Treasury',
+            '3' => 'Corporate Finance',
+            '4' => 'Corporate FAD',
+            '5' => 'Corporate Marketing',
+            '6' => 'Corporate Marketing',
+            '7' => 'Retail Store',
+            '8' => 'Retail Group',
+            '9' => 'Corporate Accounting',
+            '10' => 'Internal Audit',
+            '11' => 'Finance Officer',
+            '12' => 'IT Personnel ',
+            '13' => 'CFS / Store Accounting',
+            '14' => '',
+
+        ];
         $access_page = AccessPage::get();
+        $formattedUsertype = $access_page->filter(function ($item) {
+            return $item->access_no != 14;
+        })->transform(function ($item) use ($accessName) {
+            $item->usertype = $accessName[$item->access_no] ?? null;
+            return $item;
+        });
 
         $usersQuery = User::select(
             'users.user_id',
@@ -319,29 +343,43 @@ class AdminController extends Controller
             '2' => 'Store IT'
         ];
 
-        $users->transform(function ($item) use ($userRole, $retailGroup, $itType) {
+
+        $users->transform(function ($item) use ($userRole, $retailGroup, $itType, $accessName) {
             $item->status = $item->user_status == 'active';
             $item->userRole = $userRole[$item->user_role] ?? '';
             $item->userType = AccessPage::where('access_no', $item->usertype)->value('title') ?? '';
             $item->storeAssigned = Store::where('store_id', $item->store_assigned)->value('store_name') ?? '';
             $item->retailGroup = $retailGroup[$item->retail_group] ?? '';
             $item->itType = $itType[$item->it_type] ?? '';
+            $item->userGroup = $accessName[$item->usertype] ?? '';
 
             return $item;
         });
-        // dd($users);
 
         return Inertia::render('Admin/Masterfile/UserSetup', [
             'data' => $users,
-            'access_page' => $access_page,
+            'access_page' => $formattedUsertype,
             'store' => $Store,
             'search' => $request['searchData']
         ]);
     }
     public function updateUser(Request $request)
     {
-        // dd($request->all());
-        // Mapping of request brooooo
+        // this is the usertype mapping guide
+        // '1' => 'admin',
+        // '2' => 'treasury',
+        // '3' => 'finance',
+        // '4' => 'custodian',
+        // '6' => 'marketing',
+        // '7' => 'retail',
+        // '8' => 'retailgroup',
+        // '9' => 'accounting',
+        // '11' => 'storeaccounting'
+        // '10' => 'iad',
+        // '12' => 'eod',
+        // '13' => 'storeaccounting',
+
+
         $userType = [
             'Administrator' => 1,
             'Corporate Treasury' => 2,
@@ -356,7 +394,6 @@ class AdminController extends Controller
             'Finance Officer' => 11,
             'IT Personnel' => 12,
             'CFS' => 13,
-            'Store Accounting' => 14
         ];
 
         $userRole = [
@@ -409,7 +446,7 @@ class AdminController extends Controller
 
             'store_assigned' => [
                 function ($attribute, $value, $fail) use ($usertypeInt, $storeAssigned) {
-                    if (in_array($usertypeInt, [7, 14]) && (!isset($storeAssigned[$value]) || !array_key_exists($value, $storeAssigned))) {
+                    if (in_array($usertypeInt, [7]) && (!isset($storeAssigned[$value]) || !array_key_exists($value, $storeAssigned))) {
                         $fail("The selected {$attribute} is invalid.");
                     }
                 }
@@ -457,7 +494,7 @@ class AdminController extends Controller
             'user_role' => $userRoleInt,
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => in_array($usertypeInt, [7, 14]) ? $storeAssignedInt : null,
+            'store_assigned' => in_array($usertypeInt, [7]) ? $storeAssignedInt : null,
             'date_updated' => now(),
             'user_addby' => $request->user()->user_id,
             'retail_group' => $usertypeInt === 8 ? $retailGroupInt : null,
@@ -473,10 +510,10 @@ class AdminController extends Controller
         $validations = [
             'usertype' => 'required'
         ];
-        if (in_array($request->usertype, [2, 3, 4, 5, 6, 9, 10, 11, 13, 14])) {
+        if (in_array($request->usertype, [2, 3, 4, 5, 6, 9, 10, 11, 13])) {
             $validations['user_role'] = 'required';
         }
-        if (in_array($request->usertype, [7, 14])) {
+        if (in_array($request->usertype, [7])) {
             $validations['store_assigned'] = 'required';
         }
         if (in_array($request->usertype, [8])) {
@@ -500,7 +537,7 @@ class AdminController extends Controller
             );
         }
 
-        $password = Hash::make('GC2015');
+        $password = Hash::make('GC2025');
 
         User::create([
             'username' => $request->username,
@@ -531,7 +568,7 @@ class AdminController extends Controller
         // dd($request->all());
         $userPassword = User::where('user_id', $request['user_id'])->first();
 
-        $defaultPassword = 'GC2015';
+        $defaultPassword = 'GC2025';
         $newPassword = Hash::make($defaultPassword);
 
         if (Hash::check($defaultPassword, $userPassword->password)) {

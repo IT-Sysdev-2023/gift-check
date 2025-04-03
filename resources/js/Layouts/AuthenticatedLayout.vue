@@ -96,6 +96,7 @@ const userImage = async () => {
         // console.log(response);
         if (response.data.data.employee.length > 0) {
             imageUrl.value = response.data.data.employee[0].employee_photo;
+            // console.log(imageUrl.value);
 
         }
     }
@@ -289,6 +290,17 @@ const submitPassword = async () => {
                                     alt="usersimage" />
                             </div>
 
+                             <!-- if gamale is the user hahaha -->
+                             <div v-else-if="imageUrl === '../images/users/02354-2023=2024-08-28=Profile=14-21-59-PM.JPG'">
+                                <img style="
+                                        height: 100px;
+                                        width: 100px;
+                                        border-radius: 50%;
+                                        object-fit: cover;
+                                        object-position: center;
+                                    " src="/images/hacker.webp" />
+                            </div>
+
                             <!-- user image from hrms  -->
                             <div v-else-if="imageUrl">
                                 <img style="
@@ -318,8 +330,9 @@ const submitPassword = async () => {
                                     page.auth.user.full_name }}</span>
                             </div>
                             <div v-else-if="formattedUserName == 'gamale, teofredo'">
-                                <span class="italic">Musta Boss,</span> <span class="text-bold">{{
-                                    page.auth.user.full_name }}</span>
+                                <span class="italic">Bossing, kamusta ang buhay buhay ?</span> <span class="text-bold">
+                                    {{ page.auth.user.full_name }}
+                                </span>
                             </div>
                             <div v-else-if="formattedUserName == 'barace, harvey'">
                                 <span class="italic"> Sawasdee Krub,</span> <span class="font-bold">{{
@@ -343,7 +356,7 @@ const submitPassword = async () => {
                             </div>
                             <div v-else>
                                 <span class="italic"> Hello,</span> <span class="font-bold">{{ page.auth.user.full_name
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
 
