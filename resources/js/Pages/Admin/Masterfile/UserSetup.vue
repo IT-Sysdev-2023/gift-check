@@ -44,14 +44,83 @@
                                 title="Deactivate User" class="bg-red-600 text-white ml-1" type="primary">
                                 <StopOutlined />
                             </a-button>
-                            <a-button v-else style="margin-left: 10px; background-color: #f50; color:white"
-                                @click="deactivateButton(record)" title="Activate User">
+                            <a-button v-else class="bg-orange-600 text-white ml-1" @click="deactivateButton(record)"
+                                title="Activate User">
                                 <CheckOutlined />
+                            </a-button>
+                            <a-button title="User Details" @click="showUserDetails(record)"
+                                class="ml-1 bg-white text-blue-600" type="primary">
+                                <QuestionCircleOutlined />
                             </a-button>
                         </template>
                     </template>
                 </a-table>
                 <pagination :datarecords="data" class="mt-5" />
+            </div>
+
+            <!-- USER DETAILS MODAL  -->
+            <div>
+                <a-modal v-model:open="userDetailsModal" :footer="null" width="80%">
+                    <div class="flex flex-col items-center">
+                        <a-modal v-if="fetchUserDetails != ''" v-model:visible="imageModalVisible" :footer="null"
+                            width="auto"
+                            :bodyStyle="{ padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }">
+                            <img :src="'http://172.16.161.34:8080/hrms' + fetchUserDetails.employee_photo"
+                                alt="User Image" class="max-w-[90vw] max-h-[90vh] object-contain"
+                                style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" />
+                        </a-modal>
+
+                        <div class="text-center">
+                            <a-button type="text" @click="imageModalVisible = true" class="p-0">
+                                <div v-if="fetchUserDetails.employee_photo != null">
+                                    <img :src="'http://172.16.161.34:8080/hrms' + fetchUserDetails.employee_photo"
+                                        alt="UserImage"
+                                        class="w-[200px] h-[200px] rounded-full mx-auto object-cover border-2 border-gray-200 hover:border-blue-500 cursor-pointer transition-all" />
+                                </div>
+                                <div v-else>
+                                    <img src="/images/new.jpg" alt="UserImage"
+                                        class="w-[200px] h-[200px] rounded-full mx-auto object-cover border-2 border-gray-200 hover:border-blue-500 cursor-pointer transition-all" />
+                                </div>
+                            </a-button>
+                            <div v-if="fetchUserDetails.employee_name != null" class="mt-2 text-lg font-medium">
+                                <span class="font-bold italic">{{ fetchUserDetails.employee_name }}</span>
+                            </div>
+                            <div v-else>
+                                <span class="font-bold italic">Unknown</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a-descriptions layout="vertical" bordered class="mt-10" :labelStyle="{ fontWeight: 'bold' }">
+                        <a-descriptions-item label="Employee Business Unit">
+                            {{ fetchUserDetails.employee_bunit }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="Employee Company">
+                            {{ fetchUserDetails.employee_company }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="Employee Department">
+                            {{ fetchUserDetails.employee_dept }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="Employee ID">
+                            {{ fetchUserDetails.employee_id }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="Employee No.">
+                            {{ fetchUserDetails.employee_no }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="Employee Pins">
+                            {{ fetchUserDetails.employee_pins }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="Employee Position">
+                            {{ fetchUserDetails.employee_position }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="Employee Section">
+                            {{ fetchUserDetails.employee_section }}
+                        </a-descriptions-item>
+                        <a-descriptions label="Employee Type">
+                            {{ fetchUserDetails.employee_type }}
+                        </a-descriptions>
+                    </a-descriptions>
+                </a-modal>
             </div>
 
             <!-- ADD USER MODAL  -->
@@ -97,7 +166,7 @@
                     <!-- User Role -->
                     <a-form-item v-if="form.usertype == 2 || form.usertype == 3 || form.usertype == 4 || form.usertype == 5 || form.usertype == 6
                         || form.usertype == 7 || form.usertype == 8 || form.usertype == 9 || form.usertype == 10 || form.usertype == 11
-                        || form.usertype == 12 || form.usertype == 13 " label="User Role"
+                        || form.usertype == 12 || form.usertype == 13" label="User Role"
                         :validate-status="form.errors.user_role ? 'error' : ''" :help="form.errors.user_role">
                         <a-select v-model:value="form.user_role">
                             <a-select-option :value="0">Dept. Manager</a-select-option>
@@ -252,6 +321,7 @@
                 </div>
             </a-modal>
         </a-card>
+        <!-- {{ data }} -->
     </AuthenticatedLayout>
 </template>
 <script setup>
@@ -270,6 +340,7 @@ const props = defineProps({
 })
 const value = ref('');
 const options = ref([]);
+const fetchUserDetails = ref([]);
 
 const form = ref({
     username: '',
@@ -283,15 +354,17 @@ const form = ref({
     it_type: '',
     errors: {}
 });
-const getEmployee = async () => {
+const getEmployee = async (value) => {
     try {
         const response = await axios.get('http://172.16.161.34/api/hrms/filter/employee/name', {
             params: {
-                q: value.value
+                q: value
             }
         });
+        fetchUserDetails.value = response.data.data.employee[0];
+        console.log(fetchUserDetails.value);
         options.value = response.data.data.employee;
-        console.log(response.data.data.employee);
+
     }
     catch (error) {
         console.log(error);
@@ -363,7 +436,7 @@ const columns = ref([
     },
     {
         title: 'Action',
-        dataIndex: 'action'
+        dataIndex: 'action',
     }
 ]);
 
@@ -566,6 +639,14 @@ const deactivateButton = (user_id) => {
         },
         class: 'test',
     });
-}
+};
 
+
+const userDetailsModal = ref(false);
+const showUserDetails = (record) => {
+    const value = record.lastname + ", " + record.firstname;
+    getEmployee(value);
+    userDetailsModal.value = true;
+}
+const imageModalVisible = ref(false);
 </script>
