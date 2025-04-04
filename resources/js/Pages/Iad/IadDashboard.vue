@@ -1,6 +1,6 @@
 <template>
     <Head title="Dashboard" />
-    <!-- sample of  -->
+    <!-- sample of  PUSH-->
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
