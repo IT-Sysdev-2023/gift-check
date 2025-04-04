@@ -347,8 +347,7 @@ class RetailController extends Controller
 
     public function verificationIndex(Request $request)
     {
-        $this->commandExecute($request);
-
+     
         $data = $this->statusScanner->statusScanned($request);
 
         return inertia('Retail/Verification', [
@@ -376,6 +375,8 @@ class RetailController extends Controller
 
     public function submitVerify(Request $request)
     {
+        $this->commandExecute($request);
+
         return $this->retail->submitVerify($request);
     }
     public function availableGcList(Request $request)
