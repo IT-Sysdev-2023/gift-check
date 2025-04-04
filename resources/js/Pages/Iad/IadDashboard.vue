@@ -1,7 +1,6 @@
 <template>
-
     <Head title="Dashboard" />
-
+    <!-- sample of  -->
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
@@ -15,8 +14,6 @@
                     :recrev="count.reviewedCount" />
             </a-col>
             <a-col :span="8">
-
-
             </a-col>
             <a-col :span="8">
                 <i-card class="uppercase" revrecLabel="Gc Received" rRoute="iad.special.dti.dtiGcReviewed"
