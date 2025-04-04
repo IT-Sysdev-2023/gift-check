@@ -7,6 +7,7 @@
         <a-descriptions-item label="Reviewed By " style="width: 50%;">{{ $page.props.auth.user.full_name
             }}</a-descriptions-item>
     </a-descriptions>
+    <!-- sample napd ni -->
     <strong class="ml-1">
         Request Status
     </strong>
