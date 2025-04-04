@@ -514,7 +514,7 @@ class IadServices extends FileHandler
 
         $data = [
             'pr' => $bud->br_no,
-            'budget' => NumberHelper::format(LedgerBudget::budget()),
+            'budget' => NumberHelper::format($this->budgetLedgerRegOrSpGc($request)),
             'dateRequested' => today()->toFormattedDateString(),
             'dateNeeded' => Date::parse($bud->br_requested_needed)->toFormattedDateString(),
             'remarks' => $bud->br_remarks,
@@ -542,6 +542,16 @@ class IadServices extends FileHandler
         $this->savePdfFile($request, $bud->br_no, $pdf->output());
 
         return base64_encode($pdf->output());
+    }
+
+    private function budgetLedgerRegOrSpGc($request)
+    {
+        $query = LedgerBudget::select(DB::raw('SUM(bdebit_amt) as debit'), DB::raw('SUM(bcredit_amt) as credit'))
+            ->whereNot('bcus_guide', 'dti')
+            ->where('bledger_category', $request->data['br_category'])
+            ->first();
+
+        return bcsub($query->debit, $query->credit, 2);
     }
 
     public function getDetails($id)
@@ -764,7 +774,7 @@ class IadServices extends FileHandler
     {
 
         $folder = "e-requisitionform/";
-        $pdfName = '0'.$id;
-        return $this->retrieveFile($folder, $pdfName.'.pdf');
+        $pdfName = '0' . $id;
+        return $this->retrieveFile($folder, $pdfName . '.pdf');
     }
 }
