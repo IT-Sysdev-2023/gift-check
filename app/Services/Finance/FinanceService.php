@@ -548,11 +548,6 @@ class FinanceService extends FileHandler
     {
         return BudgetAdjustment::where('adj_id', $id)->value('adj_request_status');
     }
-    // public function bugdetAdSubmission($request)
-    // {
-    //     dd($request->all());
-    // }
-
 
     public function generateApprovalpdf($gcType, $dataTable, $requestData, $paymentType)
     {
@@ -561,7 +556,7 @@ class FinanceService extends FileHandler
         $signitures = [
             'preparedBy' => ucfirst($requestData['preparedby_firstname']) . ' ' . ucfirst($requestData['preparedby_lastname']),
             'checkedBy' => ucfirst($requestData['checker_first']) . ' ' . ucfirst($requestData['checker_lastname']),
-            'approvedBy' => ucfirst(Auth()->user()->firstname) . ' ' . ucfirst(Auth()->user()->lastname)
+            'approvedBy' => ucfirst(request()->user()->firstname) . ' ' . ucfirst(request()->user()->lastname)
         ];
 
         $pdf = Pdf::loadView('pdf/generateApprovalpdf', compact('data', 'gcType', 'requestData', 'paymentType', 'signitures'))
