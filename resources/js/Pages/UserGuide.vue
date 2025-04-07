@@ -347,8 +347,8 @@
         </span>
         <div>
             <a>
-                <img src="https://user-images.githubusercontent.com/74038190/219923823-bf1ce878-c6b8-4faa-be07-93e6b1006521.gif"
-                    style="width: 1100px; height: 500px" />
+                <img src="/images/guide.webp"
+                    style="width: 1200px; height: 500px" />
             </a>
         </div>
     </a-card>

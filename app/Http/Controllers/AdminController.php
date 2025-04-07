@@ -331,8 +331,8 @@ class AdminController extends Controller
             ->paginate(10)
             ->withQueryString();
         $userRole = [
-            '0' => 'Dept. User',
-            '1' => 'Dept. Manager',
+            '1' => 'Dept. User',
+            '0' => 'Dept. Manager',
             '2' => 'Releasing Personel'
         ];
         $retailGroup = [
@@ -398,8 +398,8 @@ class AdminController extends Controller
         ];
 
         $userRole = [
-            'Dept. User' => 0,
-            'Dept. Manager' => 1,
+            'Dept. User' => 1,
+            'Dept. Manager' => 0,
             'Releasing Personel' => 2
         ];
 
@@ -446,9 +446,13 @@ class AdminController extends Controller
             ],
 
             'store_assigned' => [
-                function ($attribute, $value, $fail) use ($usertypeInt, $storeAssigned) {
-                    if (in_array($usertypeInt, [7]) && (!isset($storeAssigned[$value]) || !array_key_exists($value, $storeAssigned))) {
-                        $fail("The selected {$attribute} is invalid.");
+                function ($attribute, $value, $fail) use ($usertypeInt, $storeAssigned, $itType) {
+                    $shouldValidate = ($usertypeInt == 7 || ($itType[request()->input('it_type')] ?? null) == 2);
+
+                    if ($shouldValidate && $value !== null) {
+                        if (empty($storeAssigned[$value])) {
+                            $fail("The selected {$attribute} is invalid.");
+                        }
                     }
                 }
             ],
@@ -495,7 +499,7 @@ class AdminController extends Controller
             'user_role' => $userRoleInt,
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => in_array($usertypeInt, [7]) ? $storeAssignedInt : null,
+            'store_assigned' => (in_array($usertypeInt, [7]) || $itTypeInt == 2) ? $storeAssignedInt : null,
             'date_updated' => now(),
             'user_addby' => $request->user()->user_id,
             'retail_group' => $usertypeInt === 8 ? $retailGroupInt : null,
@@ -508,13 +512,17 @@ class AdminController extends Controller
 
     public function users_save_user(Request $request)
     {
+        // dd($request->all());
         $validations = [
-            'usertype' => 'required'
+            'usertype' => 'required',
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'username' => 'required',
         ];
         if (in_array($request->usertype, [2, 3, 4, 5, 6, 9, 10, 11, 13])) {
             $validations['user_role'] = 'required';
         }
-        if (in_array($request->usertype, [7])) {
+        if (in_array($request->usertype, [7]) || $request->it_type == 2) {
             $validations['store_assigned'] = 'required';
         }
         if (in_array($request->usertype, [8])) {
@@ -538,8 +546,8 @@ class AdminController extends Controller
             );
         }
 
-        $password = Hash::make('GC2025');
 
+        $password = Hash::make('GC2025');
         User::create([
             'username' => $request->username,
             'firstname' => $request->firstname,
@@ -549,7 +557,7 @@ class AdminController extends Controller
             'password' => $password,
             'usergroup' => null,
             'user_status' => 'active',
-            'user_role' => $request->user_role ? $request->user_role : null,
+            'user_role' => $request->user_role ?? null,
             'login' => 'no',
             'promo_tag' => '0',
             'store_assigned' => $request->store_assigned ? $request->store_assigned : null,
@@ -894,6 +902,15 @@ class AdminController extends Controller
         return back()->with(
             'success',
             'Regular customer updated successfully'
+        );
+    }
+
+    public function deleteRegularCustomer(Request $request)
+    {
+        Customer::where('cus_id', $request->id)->delete();
+        return back()->with(
+            'success',
+            'Regular customer deleted successfully'
         );
     }
     public function setupStore(Request $request)
@@ -1406,6 +1423,15 @@ class AdminController extends Controller
             'Institute customer updated successfully'
         );
     }
+
+    public function deleteInstitutionalCustomer(Request $request)
+    {
+        InstitutCustomer::where('ins_id', $request->id)->delete();
+        return back()->with(
+            'success',
+            'Institutional customer deleted successfully'
+        );
+    }
     public function updateSpecialCustomer(Request $request)
     {
         $request->validate([
@@ -1450,6 +1476,15 @@ class AdminController extends Controller
         );
     }
 
+    public function deleteSpecialCustomer(Request $request)
+    {
+        SpecialExternalCustomer::where('spcus_id', $request->id)->delete();
+        return back()->with(
+            'success',
+            'Special Customer deleted successfully'
+        );
+    }
+
     public function submitPurchaseOrdersToIad(Request $request)
     {
         return $this->adminservices->submitOrderPurchase($request);
@@ -1466,12 +1501,29 @@ class AdminController extends Controller
         ]);
     }
 
-    public function spgcDesign(Request $request){
-        return inertia('Admin/SpgcDesign', [
-            'design' => AdminImages::all(),
-        ]);
+    public function pass(Request $request)
+    {
+        $pass = 'wefindways';
+        if ($request->password == $pass) {
+            return back()->with(
+                'success',
+                'Access Granted'
+            );
+        } else {
+            return back()->with(
+                'error',
+                'Access Denied'
+            );
+        }
+
     }
-    public function uploadImage(){
-        dd();
+
+    public function deleteUser(Request $request)
+    {
+        User::where('user_id', $request->id)->delete();
+        return back()->with(
+            'success',
+            'User deleted successfully'
+        );
     }
 }

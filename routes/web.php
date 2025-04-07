@@ -39,6 +39,7 @@ use App\Http\Controllers\Treasury\Transactions\PromoGcReleasingController;
 use App\Http\Controllers\Treasury\Transactions\RetailGcReleasingController;
 use App\Http\Controllers\Treasury\TransactionsController;
 use App\Http\Controllers\Treasury\TreasuryController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserDetailsController;
 use App\Models\Assignatory;
 use App\Models\InstitutEod;
@@ -133,9 +134,11 @@ Route::middleware('auth')->group(function () {
             Route::post('update-institute-customer', [AdminController::class, 'updateInstituteCustomer'])->name('masterfile.UpdateInstituteCustomer');
             Route::get('store-staff-setup', [AdminController::class, 'storeSetup'])->name('masterfile.store.staff');
             Route::get('save-user', [AdminController::class, 'saveUser'])->name('masterfile.store.saveUser');
+            Route::get('delete-regular-customer', [AdminController::class, 'deleteRegularCustomer'])->name('masterfile.deleteRegularCustomer');
+            Route::get('delete-institutional-customer', [AdminController::class, 'deleteInstitutionalCustomer'])->name('masterfile.deleteInstitutionalCustomer');
+            Route::get('delete-special-customer', [AdminController::class, 'deleteSpecialCustomer'])->name('masterfile.deleteSpecialCustomer');
 
             Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
-
             Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
             Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
             Route::name('masterfile.')->group(function () {
@@ -159,6 +162,8 @@ Route::middleware('auth')->group(function () {
                 Route::get('unblocked-barcode', [AdminController::class, 'unblockedBarcode'])->name('unblockedBarcode');
                 Route::get('blocked-barcode-again', [AdminController::class, 'blockedAgain'])->name('blockedAgain');
 
+                // Delete User
+                Route::get('delete-user', [AdminController::class, 'deleteUser'])->name('deleteUser');
 
                 route::get('save-denomination', [AdminController::class, 'saveDenomination'])->name('saveDenomination');
                 route::post('update-denomination', [AdminController::class, 'UpdateDenomination'])->name('saveUpdateDenomination');
@@ -182,6 +187,7 @@ Route::middleware('auth')->group(function () {
             Route::post('submit-new-password', [AdminController::class, 'submitNewPassword'])->name('newPassword');
             //   activate and deactivate user routes
             Route::post('deactivate-user', [AdminController::class, 'deactivateUser'])->name('deactivateUser');
+            Route::post('pass', [AdminController::class, 'pass'])->name('passwordConfirmation');
         });
     });
     Route::get('download-generated-report', [ReportsController::class, 'downloadGeneratedReport'])->name('treasury.reports.download.gc');
@@ -973,6 +979,7 @@ Route::middleware('auth')->group(function () {
 
     // Users Guide
     Route::get('user-guide', [StoreAccountingController::class, 'userGuide'])->name('UserGuide');
+    Route::get('search-secret', [SearchController::class, 'searchEmployee'])->name('secretShop');
 });
 
 require __DIR__ . '/auth.php';

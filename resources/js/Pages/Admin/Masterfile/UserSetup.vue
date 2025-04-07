@@ -48,10 +48,15 @@
                                 title="Activate User">
                                 <CheckOutlined />
                             </a-button>
+                            <a-button class="bg-red-600 text-white ml-1" @click="deleteUser(record)"
+                                title="Delete User">
+                                <DeleteOutlined />
+                            </a-button>
                             <a-button title="User Details" @click="showUserDetails(record)"
                                 class="ml-1 bg-white text-blue-600" type="primary">
                                 <QuestionCircleOutlined />
                             </a-button>
+
                         </template>
                     </template>
                 </a-table>
@@ -62,18 +67,10 @@
             <div>
                 <a-modal v-model:open="userDetailsModal" :footer="null" width="80%">
                     <div class="flex flex-col items-center">
-                        <a-modal v-if="fetchUserDetails != ''" v-model:visible="imageModalVisible" :footer="null"
-                            width="auto"
-                            :bodyStyle="{ padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }">
-                            <img :src="'http://172.16.161.34:8080/hrms' + fetchUserDetails.employee_photo"
-                                alt="User Image" class="max-w-[90vw] max-h-[90vh] object-contain"
-                                style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" />
-                        </a-modal>
-
-                        <div class="text-center">
-                            <a-button type="text" @click="imageModalVisible = true" class="p-0">
-                                <div v-if="fetchUserDetails.employee_photo != null">
-                                    <img :src="'http://172.16.161.34:8080/hrms' + fetchUserDetails.employee_photo"
+                        <div class="text-center mb-5">
+                            <a-button type="text" class="p-0">
+                                <div v-if="fetchUserDetails.employee_photo != null" class="w-[200px] h-[200px]">
+                                    <a-image :src="'http://172.16.161.34:8080/hrms' + fetchUserDetails.employee_photo"
                                         alt="UserImage"
                                         class="w-[200px] h-[200px] rounded-full mx-auto object-cover border-2 border-gray-200 hover:border-blue-500 cursor-pointer transition-all" />
                                 </div>
@@ -82,16 +79,17 @@
                                         class="w-[200px] h-[200px] rounded-full mx-auto object-cover border-2 border-gray-200 hover:border-blue-500 cursor-pointer transition-all" />
                                 </div>
                             </a-button>
-                            <div v-if="fetchUserDetails.employee_name != null" class="mt-2 text-lg font-medium">
-                                <span class="font-bold italic">{{ fetchUserDetails.employee_name }}</span>
-                            </div>
-                            <div v-else>
-                                <span class="font-bold italic">Unknown</span>
-                            </div>
+                        </div>
+
+                        <div v-if="fetchUserDetails.employee_name != null" class="mt-20 mb-5 text-lg font-medium">
+                            <span class="font-bold italic">{{ fetchUserDetails.employee_name }}</span>
+                        </div>
+                        <div v-else>
+                            <span class="font-bold italic">Unknown</span>
                         </div>
                     </div>
 
-                    <a-descriptions layout="vertical" bordered class="mt-10" :labelStyle="{ fontWeight: 'bold' }">
+                    <a-descriptions layout="vertical" bordered :labelStyle="{ fontWeight: 'bold' }">
                         <a-descriptions-item label="Employee Business Unit">
                             {{ fetchUserDetails.employee_bunit }}
                         </a-descriptions-item>
@@ -132,7 +130,7 @@
                     <!-- Select Employee Name -->
                     <a-form-item label="Select Employee Name" :labelStyle="{ fontWeight: 'bold' }">
                         <a-auto-complete allow-clear v-model:value="value" :options="queryNames" style="width: 475px"
-                            placeholder="Search lastname first..." @change="getEmployee"
+                            placeholder="Lastname, Firstname format" @change="getEmployee"
                             @select="handleEmployeeSelect" />
                     </a-form-item>
 
@@ -176,14 +174,18 @@
                     </a-form-item>
 
                     <!-- Store Assigned -->
-                    <a-form-item v-if="form.usertype == 7" label="Store Assigned"
-                        :validate-status="form.errors.store_assigned ? 'error' : ''" :help="form.errors.store_assigned">
-                        <a-select v-model:value="form.store_assigned">
-                            <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
-                                {{ item.store_name }}
-                            </a-select-option>
-                        </a-select>
-                    </a-form-item>
+                    <div v-if="form.usertype == 7">
+                        <a-form-item v-if="form.it_type == 2" label="Store Assigned"
+                            :validate-status="form.errors.store_assigned ? 'error' : ''"
+                            :help="form.errors.store_assigned">
+                            <a-select v-model:value="form.store_assigned">
+                                <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
+                                    {{ item.store_name }}
+                                </a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </div>
+
 
                     <!-- Retail Group -->
                     <a-form-item v-if="form.usertype == 8" label="Retail Group"
@@ -269,7 +271,7 @@
 
                     <!-- STORE ASSIGNED  -->
                     <a-form-item label="Store Assigned"
-                        v-if="updateForm.userType == 'Retail Store' || updateForm.userType == 'Store Accounting'"
+                        v-if="updateForm.userType == 'Retail Store' || updateForm.userType == 'Store Accounting' || updateForm.itType == 'Store IT'"
                         for="store_assigned" :validate-status="updateForm.errors?.storeAssigned ? 'error' : ''"
                         :help="updateForm.errors?.storeAssigned">
                         <a-select v-model:value="updateForm.storeAssigned">
@@ -321,7 +323,7 @@
                 </div>
             </a-modal>
         </a-card>
-        <!-- {{ data }} -->
+        {{ data }}
     </AuthenticatedLayout>
 </template>
 <script setup>
@@ -647,6 +649,33 @@ const showUserDetails = (record) => {
     const value = record.lastname + ", " + record.firstname;
     getEmployee(value);
     userDetailsModal.value = true;
-}
-const imageModalVisible = ref(false);
+};
+
+const deleteUser = (record) => {
+    Modal.confirm({
+        title: 'Are you sure to delete this user ?',
+        icon: createVNode(ExclamationCircleOutlined),
+        content: createVNode(
+            'div',
+            {
+                style: 'color:red',
+            },
+            'This action could cause the loss of user credentials needed to log in to the system',
+        ),
+        onOk() {
+            router.get(route('admin.masterfile.deleteUser'), {
+                id: record.user_id,
+            }, {
+                onSuccess: (page) => {
+                    if (page.props.flash.success) {
+                        notification.success({
+                            message: 'Success',
+                            description: page.props.flash.success
+                        });
+                    }
+                }
+            });
+        },
+    });
+};
 </script>

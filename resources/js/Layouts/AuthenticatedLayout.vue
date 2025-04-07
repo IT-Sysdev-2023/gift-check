@@ -106,7 +106,6 @@ const userImage = async () => {
 onMounted(() => {
     userImage();
 });
-const secretSearch = ref<boolean>(false);
 
 // user defining usertype
 const myProfileModal = ref<boolean>(false);
@@ -267,26 +266,263 @@ const logout = () => {
     router.post(route('logout'));
 };
 
+const secretSearchData = ref<string>('');
+const secretName = ref([]);
+const finalDetails = ref<finalProps>();
 
-const secretData = () => {
-
+interface finalProps {
+    employee_name: string
+    employee_bunit: string
+    employee_company: string
+    employee_dept: string
+    employee_id: string
+    employee_no: string
+    employee_pins: string
+    employee_position: string
+    employee_section: string
+    employee_type: string
+    employee_photo: string
 }
+
+const nameOptions = computed(() => {
+    return secretName.value.map(employee => ({
+        value: employee.employee_name,
+        label: employee.employee_name,
+    }))
+});
+
+const secretData = async () => {
+    try {
+        const response = await axios.get('http://172.16.161.34/api/hrms/filter/employee/name', {
+            params: {
+                q: secretSearchData.value
+            }
+        });
+        secretName.value = response.data.data.employee
+        finalDetails.value = response.data.data.employee[0]
+        console.log(finalDetails.value);
+    } catch (error) {
+        console.error(error);
+    }
+};
+const secretModal = ref<boolean>(false);
+const secretModalPassword = ref<boolean>(false);
+const secretForm = ref<string>('');
+const pass = () => {
+    router.post(route('admin.passwordConfirmation'), {
+        password: secretForm.value
+    }, {
+        onSuccess: (page) => {
+            if (page.props.flash.success) {
+                secretModal.value = true;
+                secretModalPassword.value = false;
+                secretForm.value = '';
+            } else {
+                notification.error({
+                    message: '',
+                    description: page.props.flash.error
+                });
+            }
+        },
+        onError: () => {
+            notification.error({
+                message: 'Error',
+                description: page.props.flash.error
+            });
+        }
+    });
+};
+const proPlacement = ref<string>('right');
+const secretPlacement = ref<string>('left');
+const proModal = ref<boolean>(false);
+const proData = ref<proDataSearch[]>([]);
+
+interface proDataSearch {
+    firstname: string
+    lastname: string
+    middlename: string
+    school: string,
+    emp_type: string,
+    startdate: string,
+    year: string,
+    gender: string
+    photo: string
+    name: string
+    home_address: string
+    civilstatus: string
+}
+const passProSearch = async () => {
+    const response = await axios.get(route('secretShop'), {
+        params: {
+            firstname: pro.value.firstname,
+            lastname: pro.value.lastname,
+            middlename: pro.value.middlename,
+            school: pro.value.school,
+            employee_type: pro.value.employee_type,
+            startdate: pro.value.startdate,
+            gender: pro.value.gender,
+            year: pro.value.year
+        }
+    });
+    if (response.data.success) {
+        proData.value = response.data.data;
+        proDataResult.value = true;
+    }
+};
+const pro = ref({
+    firstname: '',
+    lastname: '',
+    middlename: '',
+    school: '',
+    employee_type: '',
+    startdate: '',
+    year: '',
+    gender: ''
+});
+const proDataResult = ref<boolean>(false);
 
 </script>
 <template>
+    <!-- Developers option  -->
     <div>
-        <a-modal v-model:open="secretSearch" :footer="false">
-            <a-input v-model:value="value" @change="secretData"/>
+        <a-modal v-model:open="proDataResult" width="80%" :footer="false">
+            <div class="grid grid-cols-3 gap-4" v-if="proData.length > 0">
+                <div v-for="item in proData" :key="item.photo" class="text-center">
+                    <a-image :src="`http://172.16.161.34:8080/hrms${item.photo}`"
+                        :alt="`${item.firstname} ${item.lastname}`" width="100%" />
+                    <p class="font-bold mt-5">{{ item.name }}</p>
+                    <p class="text-gray-600">{{ item.home_address }}</p>
+                    <p class="text-gray-600">{{ item.school }}</p>
+                    <p class="text-gray-600">{{ item.civilstatus }}</p>
+
+                </div>
+            </div>
+            <div v-else>
+                <img src="/images/noData.jpg" alt="No data found" class="w-full h-full object-cover object-center" />
+            </div>
         </a-modal>
     </div>
     <div>
+        <a-drawer :width="500" :placement="proPlacement" :open="proModal" @close="proModal = false">
+            <p class="text-red-600 flex justify-center">Fields are not all required just fill up what you know</p>
+            <div class="mt-5">
+                <a-form-item label="First name" class="">
+                    <a-input v-model:value="pro.firstname" />
+
+                </a-form-item>
+                <a-form-item label="Last name" class="">
+                    <a-input v-model:value="pro.lastname" />
+
+                </a-form-item>
+                <a-form-item label="Middle name" class="">
+                    <a-input v-model:value="pro.middlename" />
+
+                </a-form-item>
+                <a-form-item label="School">
+                    <a-input v-model:value="pro.school" />
+
+                </a-form-item>
+                <a-form-item label="Employee Type">
+                    <a-input v-model:value="pro.employee_type" />
+
+                </a-form-item>
+                <a-form-item label="Gender">
+                    <a-select v-model:value="pro.gender">
+                        <a-select-option value="Male">
+                            Male
+                        </a-select-option>
+                        <a-select-option value="Female">
+                            Female
+                        </a-select-option>
+                    </a-select>
+
+                </a-form-item>
+                <a-form-item label="Start Date">
+                    <a-date-picker v-model:value="pro.startdate" />
+                </a-form-item>
+
+                <a-form-item label="Year">
+                    <a-date-picker v-model:value="pro.year" picker="year" />
+                </a-form-item>
+            </div>
+            <a-button type="primary" @click="passProSearch">Submit</a-button>
+        </a-drawer>
+    </div>
+    <div>
+        <a-modal v-model:open="secretModalPassword" width="20%" @ok="pass">
+            <a-form-item class="mt-10">
+                <span class="flex justify-center">Developer's option only</span>
+                <a-input-password class="mt-5" @keydown.enter="pass" v-model:value="secretForm"
+                    placeholder="Input password" />
+            </a-form-item>
+        </a-modal>
+    </div>
+    <div>
+        <a-drawer :width="800" :placement="secretPlacement" :open="secretModal" @close="secretModal = false">
+            <template #extra>
+            </template>
+            <div>
+                <a-button @click="() => { proModal = true, secretModal = true }">Search like a pro</a-button>
+            </div>
+            <div>
+                <a-form-item label="Search Name" class="mt-10">
+                    <a-auto-complete allow-clear :options="nameOptions" placeholder="lastname, firstname format"
+                        v-model:value="secretSearchData" @change="secretData" />
+                </a-form-item>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="text-center" v-if="secretSearchData">
+                    <a-button type="text">
+                        <div v-if="finalDetails?.employee_photo" class="w-[150px] h-[150px]">
+                            <a-image :src="'http://172.16.161.34:8080/hrms' + finalDetails?.employee_photo"
+                                alt="UserImage"
+                                class="rounded-full mx-auto object-cover border-2 border-gray-200 hover:border-blue-500 cursor-pointer transition-all" />
+                        </div>
+                    </a-button>
+                    <div v-if="finalDetails?.employee_name" class="mt-20 text-lg font-medium">
+                        <span class="font-bold italic">{{ finalDetails?.employee_name }}</span>
+                    </div>
+                </div>
+            </div>
+            <div v-if="secretSearchData">
+                <a-descriptions layout="vertical" bordered class="mt-10" :labelStyle="{ fontWeight: 'bold' }">
+                    <a-descriptions-item label="Employee Business Unit">
+                        {{ finalDetails?.employee_bunit }}
+                    </a-descriptions-item>
+                    <a-descriptions-item label="Employee Company">
+                        {{ finalDetails?.employee_company }}
+                    </a-descriptions-item>
+                    <a-descriptions-item label="Employee Department">
+                        {{ finalDetails?.employee_dept }}
+                    </a-descriptions-item>
+                    <a-descriptions-item label="Employee ID">
+                        {{ finalDetails?.employee_id }}
+                    </a-descriptions-item>
+                    <a-descriptions-item label="Employee No.">
+                        {{ finalDetails?.employee_no }}
+                    </a-descriptions-item>
+                    <a-descriptions-item label="Employee Pins">
+                        {{ finalDetails?.employee_pins }}
+                    </a-descriptions-item>
+                    <a-descriptions-item label="Employee Position">
+                        {{ finalDetails?.employee_position }}
+                    </a-descriptions-item>
+                    <a-descriptions-item label="Employee Section">
+                        {{ finalDetails?.employee_section }}
+                    </a-descriptions-item>
+                    <a-descriptions label="Employee Type">
+                        {{ finalDetails?.employee_type }}
+                    </a-descriptions>
+                </a-descriptions>
+            </div>
+        </a-drawer>
+    </div>
+    <!-- confirmation logout modal  -->
+    <div>
         <a-modal v-model:open="confirmLogout" centered @ok="logout">
             <div class="flex flex-col items-center text-center">
-                <!-- GIF Image -->
-                <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWplNGg2bXFkbWhscnJhdTh4bTRhY2R5YmdkaG03bW1lYXdsbWdqciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/c1seDJJhCzE73jFwkU/giphy.gif"
-                    alt="Logout Image" class="w-40 h-40 object-cover object-center mb-4" />
+                <img src="/images/log_out.webp" alt="Logout Image" class="w-80 h-60 object-cover object-center mb-4" />
 
-                <!-- Confirmation Message -->
                 <p class="text-lg font-semibold text-red-600">Are you sure you want to logout?</p>
                 <p class="text-gray-600">You will need to log in again to access your account.</p>
             </div>
@@ -319,18 +555,6 @@ const secretData = () => {
                                     alt="usersimage" />
                             </div>
 
-                            <!-- if gamale is the user hahaha -->
-                            <div
-                                v-else-if="imageUrl === '../images/users/02354-2023=2024-08-28=Profile=14-21-59-PM.JPG'">
-                                <img style="
-                                        height: 100px;
-                                        width: 100px;
-                                        border-radius: 50%;
-                                        object-fit: cover;
-                                        object-position: center;
-                                    " src="/images/hacker.webp" />
-                            </div>
-
                             <!-- user image from hrms  -->
                             <div v-else-if="imageUrl">
                                 <img style="
@@ -360,7 +584,8 @@ const secretData = () => {
                                     page.auth.user.full_name }}</span>
                             </div>
                             <div v-else-if="userUniqueDetails == '1000048642'">
-                                <span class="italic">User is anonymous</span>
+                                <span class="italic">What's Up, </span>
+                                <span class="font-bold">{{ page.auth.user.full_name }}</span>
                             </div>
                             <div v-else-if="userUniqueDetails == '1000049981'">
                                 <span class="italic"> Sawasdee Krub,</span> <span class="font-bold">{{
@@ -480,8 +705,9 @@ const secretData = () => {
                                         <a-menu-item>
                                             <a @click="() => { changePasswordModal = true }">Change Password</a>
                                         </a-menu-item>
-                                        <a-menu-item>
-                                            <a @click="() => { secretSearch = true }">Secret Search</a>
+                                        <a-menu-item
+                                            v-if="userUniqueDetails == '1000048642' || userUniqueDetails == '1000048967'">
+                                            <a @click="() => { secretModalPassword = true }">Developers Option</a>
                                         </a-menu-item>
                                     </a-menu>
                                 </template>

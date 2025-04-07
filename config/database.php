@@ -203,6 +203,17 @@ return [
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
+        
+        // PIS Database
+        'pis' => [
+            'driver' => env('DB_CONNECTIONPIS'),
+            'host' => env('DB_HOSTPIS'),
+            'port' => env('DB_PORTPIS'),
+            'database' => env('DB_DATABASEPIS'),
+            'username' => env('DB_USERNAMEPIS'),
+            'password' => env('DB_PASSWORDPIS'),
+        ],
+
 
     ],
 
