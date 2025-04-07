@@ -18,6 +18,9 @@
                         <a-button @click="() => $inertia.get(route('admin.masterfile.customer.setup'))" class="buttons">
                             <CustomerServiceOutlined /> Setup Customer
                         </a-button>
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.designs'))" class="buttons">
+                            <CustomerServiceOutlined /> Special Gc Design
+                        </a-button>
                     </a-col>
                     <a-col :span="8">
 

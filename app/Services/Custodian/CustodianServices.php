@@ -7,6 +7,7 @@ use App\Helpers\NumberHelper;
 use App\Helpers\NumberInWordsHelper;
 use App\Http\Resources\CustodianSrrResource;
 use App\Http\Resources\SpecialGcRequestResource;
+use App\Models\AdminImages;
 use App\Models\BarcodeChecker;
 use App\Models\CancelledProductionRequest;
 use App\Models\CustodianSrr;
@@ -216,7 +217,7 @@ class CustodianServices extends FileHandler
                 $subitem->subtotal = $subitem->specit_denoms * $subitem->specit_qty;
                 return $subitem;
             });
-            
+
             $item->dateneeded = Date::parse($item->spexgc_dateneed)->toFormattedDateString();
             $item->datereq = Date::parse($item->spexgc_datereq)->toFormattedDateString();
 
@@ -397,7 +398,7 @@ class CustodianServices extends FileHandler
 
 
         $data->transform(function ($item) {
-            // dd($item->specialExternalGcRequest->specialExternalCustomer->spcus_acctname);
+            $item->image = AdminImages::where('status',  'active')->value('url');
             $holdername = Str::ucfirst($item->spexgcemp_fname) . ', ' .
                 Str::ucfirst($item->spexgcemp_lname) . ' ' .
                 Str::ucfirst($item->spexgcemp_mname) . '' .

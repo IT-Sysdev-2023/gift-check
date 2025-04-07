@@ -139,6 +139,8 @@ Route::middleware('auth')->group(function () {
             Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
             Route::post('submit-po', [AdminController::class, 'submitPurchaseOrders'])->name('submit.po');
             Route::name('masterfile.')->group(function () {
+                Route::get('spgc-design-index', [AdminController::class, 'spgcDesign'])->name('designs');
+                Route::get('upload-image', [AdminController::class, 'uploadImage'])->name('upload.image');
                 Route::get('user-list', [AdminController::class, 'userlist'])->name('users');
                 Route::get('update-status', [AdminController::class, 'updatestatus'])->name('updatestatus');
                 Route::get('user-reset-password', [AdminController::class, 'usersResetPassword'])->name('usersResetPassword');
