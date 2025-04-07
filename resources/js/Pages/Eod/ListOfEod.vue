@@ -20,7 +20,6 @@
                             <template #icon>
                                 <EyeOutlined />
                             </template>
-                            View
                         </a-button>
                     </template>
                 </template>

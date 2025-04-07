@@ -200,6 +200,7 @@ class FinanceService extends FileHandler
 
     private function generatePdf($request)
     {
+        // dd($req)
         $bud = BudgetRequest::where('br_id', $request->br_id)->first();
 
         $appby = User::select('firstname', 'lastname')->where('user_id', $bud->br_requested_by)->value('full_name');
@@ -207,7 +208,7 @@ class FinanceService extends FileHandler
 
         $data = [
             'pr' => $bud->br_no,
-            'budget' => NumberHelper::format(LedgerBudget::budget()),
+            'budget' => NumberHelper::format($this->budgetLedgerRegOrSpGc($request)),
             'dateRequested' => today()->toFormattedDateString(),
             'dateNeeded' => Date::parse($bud->br_requested_needed)->toFormattedDateString(),
             'remarks' => $bud->br_remarks,
@@ -239,6 +240,16 @@ class FinanceService extends FileHandler
         $this->savePdfFile($request, $bud->br_no, $pdf->output());
 
         return base64_encode($pdf->output());
+    }
+
+    private function budgetLedgerRegOrSpGc($request)
+    {
+        $query = LedgerBudget::select(DB::raw('SUM(bdebit_amt) as debit'), DB::raw('SUM(bcredit_amt) as credit'))
+            ->whereNot('bcus_guide', 'dti')
+            ->where('bledger_category', $request->br_category)
+            ->first();
+
+        return bcsub($query->debit, $query->credit, 2);
     }
 
     private function cancelBudgetRequest($request)
@@ -531,26 +542,21 @@ class FinanceService extends FileHandler
             });
         }
     }
-
+//new
 
     private function getAdjustmentBudget($id)
     {
         return BudgetAdjustment::where('adj_id', $id)->value('adj_request_status');
     }
-    // public function bugdetAdSubmission($request)
-    // {
-    //     dd($request->all());
-    // }
-
 
     public function generateApprovalpdf($gcType, $dataTable, $requestData, $paymentType)
     {
         $data = $dataTable;
-        
+
         $signitures = [
             'preparedBy' => ucfirst($requestData['preparedby_firstname']) . ' ' . ucfirst($requestData['preparedby_lastname']),
             'checkedBy' => ucfirst($requestData['checker_first']) . ' ' . ucfirst($requestData['checker_lastname']),
-            'approvedBy' => ucfirst(Auth()->user()->firstname) . ' ' . ucfirst(Auth()->user()->lastname)
+            'approvedBy' => ucfirst(request()->user()->firstname) . ' ' . ucfirst(request()->user()->lastname)
         ];
 
         $pdf = Pdf::loadView('pdf/generateApprovalpdf', compact('data', 'gcType', 'requestData', 'paymentType', 'signitures'))

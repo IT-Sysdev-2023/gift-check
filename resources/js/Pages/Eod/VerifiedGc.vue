@@ -26,25 +26,30 @@
                         ? 'Expand this to see the not found barcodes'
                         : 'Click here to hide the barcodes'
                         " style="color: white">
-                            <a-divider style="font-size: 14px; color: red">There are {{ response.length }} Barcodes not
-                                found!</a-divider>
-                            <div class="scroll-container">
-                                <a-timeline class="mt-7">
-                                    <a-timeline-item v-for="res in response" :key="res" color="red">{{ res
-                                        }}</a-timeline-item>
-                                </a-timeline>
-                            </div>
+                        <a-divider style="font-size: 14px; color: red">There are {{ response.length }} Barcodes not
+                            found!</a-divider>
+                        <div class="scroll-container">
+                            <a-timeline class="mt-7">
+                                <a-timeline-item v-for="res in response" :key="res" color="red">{{ res
+                                    }}</a-timeline-item>
+                            </a-timeline>
+                        </div>
                     </a-collapse-panel>
                 </a-collapse>
             </div>
-            <div class="flex justify-end">
-                <a-button size="large" :loading="isGenerating" type="dashed" block class="mb-10 mt-10" @click="submit"
-                    v-if="record.data.length">
-                    <template #icon>
-                        <SettingOutlined />
-                    </template>
-                    Start Process End Of Day
-                </a-button>
+            <div>
+                <div v-if="page.auth.user.it_type == '1'">
+                    <a-button size="large" :loading="isGenerating" type="dashed" block class="mb-10 mt-10"
+                        @click="submit" v-if="record.data.length">
+                        <template #icon>
+                            <SettingOutlined />
+                        </template>
+                        Start Process End Of Day
+                    </a-button>
+                </div>
+                <div v-else>
+                    <a-alert class="w-full mb-3" message="Please be informed that performing end of day (EOD) will be centralized as of today. For concerns, please contact 1844/1953 and look for Norien & Claire" type="info" show-icon />
+                </div>
             </div>
             <a-table size="small" :pagination="false" :data-source="record.data" :columns="columns" bordered>
                 <template #bodyCell="{ column, record }">

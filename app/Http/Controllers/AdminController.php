@@ -28,6 +28,7 @@ use Illuminate\Validation\getPromoTag;
 use App\Models\SpecialExternalCustomer;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\PurchaseOrderRequest;
+use App\Models\AdminImages;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Services\Treasury\Transactions\SpecialGcPaymentService;
 use BcMath\Number;
@@ -1463,5 +1464,14 @@ class AdminController extends Controller
             'denom' => $this->adminservices->getDenomination($data->denom),
             'title' => $name,
         ]);
+    }
+
+    public function spgcDesign(Request $request){
+        return inertia('Admin/SpgcDesign', [
+            'design' => AdminImages::all(),
+        ]);
+    }
+    public function uploadImage(){
+        dd();
     }
 }

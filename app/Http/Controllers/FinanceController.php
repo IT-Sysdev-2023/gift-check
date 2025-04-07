@@ -899,7 +899,6 @@ class FinanceController extends Controller
 
     public function selectedDtiRequest(Request $request)
     {
-        // dd($request ->all());
         $barcode = DtiBarcodes::where('dti_trid', $request->id)->get();
 
         $barcode->transform(function ($item) {
@@ -908,7 +907,6 @@ class FinanceController extends Controller
             $item->barcode = SpecialExternalGcrequestEmpAssign::where('spexgcemp_trid', $item->dti_trid);
             return $item;
         });
-        // dd($barcode);
 
         return response()->json([
             'barcodes' => $barcode,

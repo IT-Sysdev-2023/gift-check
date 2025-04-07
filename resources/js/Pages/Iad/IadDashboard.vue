@@ -1,7 +1,6 @@
 <template>
-
     <Head title="Dashboard" />
-
+    <!-- sample of  PUSH-->
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
@@ -15,8 +14,6 @@
                     :recrev="count.reviewedCount" />
             </a-col>
             <a-col :span="8">
-
-
             </a-col>
             <a-col :span="8">
                 <i-card class="uppercase" revrecLabel="Gc Received" rRoute="iad.special.dti.dtiGcReviewed"
@@ -32,7 +29,7 @@
                 Review Budget Request?
             </template>
         </a-float-button>
-
+<!-- mao ni akong gi utro -->
         <a-modal class="text-center" title="Budget Request Reviewing" :width="600" style="top: 40px;"  v-model:open="modal" :footer="null">
             <for-approval-pending :budget="budgetrequest" @close="closeModal"/>
         </a-modal>

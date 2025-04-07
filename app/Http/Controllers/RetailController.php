@@ -370,7 +370,6 @@ class RetailController extends Controller
 
         $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$st->username\" \"$st->new_password\" /persistent:yes 2>&1";
 
-
         return exec($command, $output, $return_var);
     }
 
@@ -588,7 +587,7 @@ class RetailController extends Controller
                 ->where('seodtt_barcode', $request->barcode)
                 ->get();
             }
-        
+
         }
 
         $data->transform(function ($item) {

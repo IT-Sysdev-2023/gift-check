@@ -499,6 +499,7 @@ declare module 'vue' {
     SpecialReleasedGcViewing: typeof import('./resources/js/Pages/Treasury/Dashboard/SpecialGc/Components/SpecialReleasedGcViewing.vue')['default']
     SPGC_Approved: typeof import('./resources/js/Pages/StoreAccounting/SPGC_Approved.vue')['default']
     SPGC_Release: typeof import('./resources/js/Pages/StoreAccounting/SPGC_Release.vue')['default']
+    SpgcDesign: typeof import('./resources/js/Pages/Admin/SpgcDesign.vue')['default']
     SpgcLedger: typeof import('./resources/js/Pages/Finance/SpgcLedger.vue')['default']
     SpgcLedgerResult: typeof import('./resources/js/Pages/Finance/Results/SpgcLedgerResult.vue')['default']
     SPGCRedeemReport: typeof import('./resources/js/Pages/StoreAccounting/SPGCRedeemReport.vue')['default']

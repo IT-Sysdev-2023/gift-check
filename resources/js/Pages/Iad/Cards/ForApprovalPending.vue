@@ -1,5 +1,5 @@
 <template>
-    <a-modal v-model:open="open" title="Basic Modal" style="width: 60%;">
+    <a-modal :footer="null" v-model:open="open" title="Basic Modal" style="width: 60%;">
         <iframe :src="stream" frameborder="2" style="width: 100%; height: 400px;"></iframe>
     </a-modal>
 
@@ -24,7 +24,7 @@
     <a-card size="small" title="Documents" class="mt-1 text-center">
         <a-image class="rounded-xl" :src="'/storage/budgetRequestScanCopy/' + budget.br_file_docno" />
     </a-card>
-    <a-button class="mt-4" size="large" type="primary" block @click="approve(budget.br_id)">
+    <a-button class="mt-4" size="large" type="primary" block @click="approve(budget)">
         <LikeOutlined />Review Budget Request
     </a-button>
 
@@ -43,8 +43,9 @@ const props = defineProps({
 const stream = ref();
 const open = ref(false);
 
-const approve = (id) => {
-    router.put(route('iad.approve', id), {
+const approve = (data) => {
+    router.put(route('iad.approve', data.br_id), {
+        data
     }, {
         onSuccess: (res) => {
             notification[res.props.flash.status]({

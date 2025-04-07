@@ -25,7 +25,7 @@ class EodServices extends FileHandler
         parent::__construct();
         $this->folderName = 'eod';
     }
-    public function getVerifiedFromStore()
+    public function getVerifiedFromStore($request)
     {
         $eod = StoreVerification::selectFilter()->join('users', 'user_id', '=', 'vs_by')
             ->join('customers', 'cus_id', '=', 'vs_cn')
@@ -33,6 +33,9 @@ class EodServices extends FileHandler
             ->join('gc_type', 'gc_type_id', '=', 'vs_gctype')
             ->where('vs_tf_used', '')
             ->where('vs_tf_eod', '')
+            ->when($request->user()->it_type === '2', function ($q) use($request) {
+                $q->where('vs_store', $request->user()->store_assigned);
+            })
             ->where(function ($q) {
                 $q->whereDate('vs_reverifydate', today())
                     ->orWhereDate('vs_date', '<=', today());
@@ -57,7 +60,6 @@ class EodServices extends FileHandler
 
     public function processEod($request, $id)
     {
-
         $wholesaletime = now()->format('H:i');
 
         $store = StoreVerification::select(
@@ -147,7 +149,6 @@ class EodServices extends FileHandler
                 }
 
                 EodProcessEvent::dispatch("Scanning Barcodes Please Wait...", $sfiles++, $allf, Auth::user());
-
             });
 
 
@@ -179,6 +180,7 @@ class EodServices extends FileHandler
                 } else {
 
                     $file = $item['txtfile_ip'] . '\\' . $item['ver_textfilename'];
+
                     $text = File::get($file);
 
                     if (!File::exists($file)) {
@@ -251,6 +253,7 @@ class EodServices extends FileHandler
 
 
                     $success = $this->updateStoreVerificationEod($item);
+
                     $this->storeEodItem($item, $id);
                     if (!$success) {
                         return '';

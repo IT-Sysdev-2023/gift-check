@@ -11,6 +11,7 @@ use App\Models\PromoGcReleaseToItem;
 use App\Models\RequisitionForm;
 use App\Models\SpecialExternalGcrequestEmpAssign;
 use App\Models\Store;
+use App\Models\StoreVerification;
 use App\Models\Supplier;
 use App\Models\TransactionStore;
 use Dompdf\Dompdf;
@@ -47,6 +48,10 @@ class AdminServices
     {
         return Denomination::where('denom_status', 'active')->select('denom_id', 'denom_fad_item_number', 'denomination')->get();
     }
+    public static function whereBarcodeVerified($request)
+    {
+        return  StoreVerification::where('vs_barcode', $request->barcode)->join('stores', 'store_id', '=', 'vs_store')->value('store_name');
+    }
 
     public function statusScanned(Request $request)
     {
@@ -60,8 +65,7 @@ class AdminServices
         $steps = [];
         $transType = '';
         $success = false;
-
-
+        // dd($request->all());
         if (
             $regular->where('barcode_no', $request->barcode)->exists()
             && !$regular->whereHas('barcodePromo', fn($query) => $query->where('barcode_no', $request->barcode))->exists()
@@ -87,13 +91,14 @@ class AdminServices
             $transType = 'Institutional Gift Check';
             $steps = self::institutionStatus($inst, $request);
             $success = true;
-        }elseif($specialDti->where('dti_barcode', $request->barcode)
-        ->where('dti_barcode', '!=', '0')
-        ->exists()){
+        } elseif ($specialDti->where('dti_barcode', $request->barcode)
+            ->where('dti_barcode', '!=', '0')
+            ->exists()
+        ) {
             $transType = 'Special Gift Check';
             $steps = self::specialStatusDti($specialDti, $request);
             $success = true;
-        }elseif (empty($request->barcode)) {
+        } elseif (empty($request->barcode)) {
             $empty = true;
         } else {
             $barcodeNotFound = true;
@@ -219,7 +224,7 @@ class AdminServices
 
             $steps->push((object) [
                 'title' => 'Verification',
-                'description' => 'Verified By CFS ' . ' at ' . Date::parse($vs_date)->toFormattedDateString(),
+                'description' => 'Verified By CFS ' . ' at ' . Date::parse($vs_date)->toFormattedDateString() . ' at ' . self::whereBarcodeVerified($request),
             ]);
         } else {
             $steps->push((object) [
@@ -303,7 +308,7 @@ class AdminServices
         if ($special->whereHas('reverified', fn($query) => $query->where('vs_barcode', $request->barcode))->exists()) {
             $steps->push((object) [
                 'title' => 'Verification',
-                'description' => 'Verified By CFS ' . ' at ' . Date::parse($data->first()->vs_date)->toFormattedDateString(),
+                'description' => 'Verified By CFS ' . ' at ' . Date::parse($data->first()->vs_date)->toFormattedDateString(). ' at ' . self::whereBarcodeVerified($request),
             ]);
         } else {
             $steps->push((object) [
@@ -382,7 +387,7 @@ class AdminServices
         if ($special->whereHas('reverified', fn($query) => $query->where('vs_barcode', $request->barcode))->exists()) {
             $steps->push((object) [
                 'title' => 'Verification',
-                'description' => 'Verified By CFS ' . ' at ' . Date::parse($data->first()->vs_date)->toFormattedDateString(),
+                'description' => 'Verified By CFS ' . ' at ' . Date::parse($data->first()->vs_date)->toFormattedDateString() . ' at ' . self::whereBarcodeVerified($request),
             ]);
         } else {
             $steps->push((object) [
@@ -506,7 +511,7 @@ class AdminServices
         if ($promo->whereHas('reverified', fn($query) => $query->where('vs_barcode', $request->barcode))->exists()) {
             $steps->push((object) [
                 'title' => 'Verification',
-                'description' => 'Verified By CFS at ' . Date::parse($q2->first()->vs_date)->toFormattedDateString(),
+                'description' => 'Verified By CFS at ' . Date::parse($q2->first()->vs_date)->toFormattedDateString() . ' at ' . self::whereBarcodeVerified($request),
             ]);
         } else {
             $steps->push((object) [
@@ -598,7 +603,7 @@ class AdminServices
 
             $steps->push((object) [
                 'title' => 'Verification',
-                'description' => 'Verified By CFS ' . ' at ' . Date::parse($vs_date)->toFormattedDateString(),
+                'description' => 'Verified By CFS ' . ' at ' . Date::parse($vs_date)->toFormattedDateString() . ' at ' . self::whereBarcodeVerified($request),
             ]);
         } else {
             $steps->push((object) [

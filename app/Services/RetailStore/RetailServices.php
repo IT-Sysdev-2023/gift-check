@@ -34,9 +34,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class RetailServices
 {
-    public function __construct(public RetailDbServices $dbservices)
-    {
-    }
+    public function __construct(public RetailDbServices $dbservices) {}
     public function getDataApproved()
     {
         $data = ApprovedGcrequest::select(
@@ -364,7 +362,7 @@ class RetailServices
             }
             if (
                 StoreReceivedGc::where('strec_barcode', $request->barcode)
-                    ->where('strec_sold', '*')->where('strec_return', '')->exists()
+                ->where('strec_sold', '*')->where('strec_return', '')->exists()
             ) {
                 $found = true;
                 $gctype = 1;
@@ -434,8 +432,7 @@ class RetailServices
 
                 ]);
             }
-        }
-        ;
+        };
 
         if (!$found) {
 
@@ -904,17 +901,27 @@ class RetailServices
                 $dbconnection = DB::connection('mysqltalibon');
             } else if ($request->user()->store_assigned == 5) {
                 $dbconnection = DB::connection('mysqltubigon');
-            }else if ($request->user()->store_assigned == 8) {
+            } else if ($request->user()->store_assigned == 8) {
                 $dbconnection = DB::connection('mysqlaltacitta');
-            }else if ($request->user()->store_assigned == 7) {
+            } else if ($request->user()->store_assigned == 7) {
                 $dbconnection = DB::connection('mysqlmandaue');
-            }else if ($request->user()->store_assigned == 6) {
+            } else if ($request->user()->store_assigned == 6) {
                 $dbconnection = DB::connection('mysqlcolon');
             }
 
             $collect = $this->storeVerification($request);
 
             $collectTubigon  = $dbconnection->table('store_verification')
+                ->select(
+                    'vs_barcode',
+                    'vs_tf_denomination',
+                    'gctype',
+                    'vs_payto',
+                    'vs_date',
+                    'cus_fname',
+                    'cus_lname',
+                    'cus_mname'
+                )
                 ->join('customers', 'customers.cus_id', '=', 'store_verification.vs_cn')
                 ->join('gc_type', 'gc_type.gc_type_id', '=', 'store_verification.vs_gctype')
                 ->whereAny(['vs_barcode'], 'like', '%' . $request->barcode . '%')
