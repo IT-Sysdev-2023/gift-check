@@ -1,8 +1,5 @@
 <template>
     <AuthenticatedLayout>
-        <div>
-            <h2>Masterfile</h2>
-        </div>
         <a-row :gutter="[16, 16]">
             <a-col :span="16">
                 <a-row :gutter="[16, 16]">
@@ -64,16 +61,17 @@
                                 <a-list-item>
                                     <a-list-item-meta>
                                         <template #avatar>
+                                            <a-tag color="green">Active</a-tag>
                                             <a-avatar :src="'http://172.16.161.34:8080/hrms' + item.image" />
                                         </template>
                                         <template #title>
-                                            {{ item.name }}
+                                            {{ item.name }} - <a-tag color="blue">{{ item.storeAssigned }}</a-tag>
                                         </template>
                                         <template #description>
                                             <small>{{ item.usertype }}</small>
                                         </template>
                                     </a-list-item-meta>
-                                    <a-tag color="green">Online</a-tag>
+                                    <!-- <a-tag color="green">Online</a-tag> -->
                                 </a-list-item>
                             </template>
                         </a-list>
@@ -103,6 +101,7 @@
         </a-card>
         <!-- {{ regularGcData }} -->
         <!-- {{ storeQuery }} -->
+        <!-- {{ getOnlineUsers }} -->
 
     </AuthenticatedLayout>
 </template>
@@ -110,7 +109,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import LineChart from '@/Layouts/LineChart.vue';
-import { computed} from 'vue';
+import { computed } from 'vue';
 import { useOnlineUsersStore } from '@/stores/online-store'
 
 const onlineUsersStore = useOnlineUsersStore();
