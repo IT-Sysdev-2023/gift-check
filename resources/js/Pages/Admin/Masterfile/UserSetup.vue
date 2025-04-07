@@ -174,18 +174,14 @@
                     </a-form-item>
 
                     <!-- Store Assigned -->
-                    <div v-if="form.usertype == 7">
-                        <a-form-item v-if="form.it_type == 2" label="Store Assigned"
-                            :validate-status="form.errors.store_assigned ? 'error' : ''"
-                            :help="form.errors.store_assigned">
-                            <a-select v-model:value="form.store_assigned">
-                                <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
-                                    {{ item.store_name }}
-                                </a-select-option>
-                            </a-select>
-                        </a-form-item>
-                    </div>
-
+                    <a-form-item v-if="form.usertype == 7 || form.it_type == 2" label="Store Assigned"
+                        :validate-status="form.errors.store_assigned ? 'error' : ''" :help="form.errors.store_assigned">
+                        <a-select v-model:value="form.store_assigned">
+                            <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">
+                                {{ item.store_name }}
+                            </a-select-option>
+                        </a-select>
+                    </a-form-item>
 
                     <!-- Retail Group -->
                     <a-form-item v-if="form.usertype == 8" label="Retail Group"
@@ -323,7 +319,7 @@
                 </div>
             </a-modal>
         </a-card>
-        {{ data }}
+        <!-- {{ data }} -->
     </AuthenticatedLayout>
 </template>
 <script setup>

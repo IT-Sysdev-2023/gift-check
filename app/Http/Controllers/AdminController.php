@@ -428,6 +428,7 @@ class AdminController extends Controller
             'Store IT' => 2
         ];
         $usertypeInt = $userType[$request->usertype] ?? null;
+        // dd($usertypeInt);
 
         $validation = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,user_id',
@@ -446,17 +447,21 @@ class AdminController extends Controller
             ],
 
             'store_assigned' => [
-                function ($attribute, $value, $fail) use ($usertypeInt, $storeAssigned, $itType) {
-                    $shouldValidate = ($usertypeInt == 7 || ($itType[request()->input('it_type')] ?? null) == 2);
-
-                    if ($shouldValidate && $value !== null) {
-                        if (empty($storeAssigned[$value])) {
-                            $fail("The selected {$attribute} is invalid.");
-                        }
+                function ($value, $fail) use ($request, $storeAssigned) {
+                    $shouldValidate = ($request->usertype == 7) ||
+                        (isset($request->it_type) && $request->it_type == 2);
+                    if (!$shouldValidate) {
+                        return;
+                    }
+                    if (empty($value)) {
+                        $fail("The store assignment is required.");
+                        return;
+                    }
+                    if (!array_key_exists($value, $storeAssigned)) {
+                        $fail("The selected store is invalid.");
                     }
                 }
             ],
-
             'retail_group' => [
                 function ($attribute, $value, $fail) use ($usertypeInt, $retailGroup) {
                     if ($usertypeInt === 8 && (!isset($retailGroup[$value]) || !array_key_exists($value, $retailGroup))) {
