@@ -6,12 +6,12 @@
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Date">{{
                             dayjs().format('MMM, DD, YYYY')
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Verified By">{{
                             $page.props.auth.user.full_name
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
 
                     <a-row class="mt-5 mb-5">
@@ -69,7 +69,8 @@
                 </a-card>
 
                 <!-- print modal after successful verification -->
-                <a-modal v-if="dataForPrinting" v-model:open="modalOpen" style="width: 70%; top: 50px" :footer="null" @cancel="closeFunction">
+                <a-modal v-if="dataForPrinting" v-model:open="modalOpen" style="width: 70%; top: 50px" :footer="null"
+                    @cancel="closeFunction">
                     <iframe class="mt-7" :src="dataForPrinting" width="100%" height="600px"></iframe>
                 </a-modal>
 
@@ -87,38 +88,38 @@
                         Issue: Barcode #
                         <span class="font-bold">{{
                             notif.data.lostgcb_barcode
-                            }}</span>
+                        }}</span>
                         was reported as lost
                     </p>
                     <p>
                         Owner's Name:
                         <span class="font-bold">{{
                             notif.data.lostgcd_owname
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Address:
                         <span class="font-bold">{{
                             notif.data.lostgcd_address
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Contact No:
                         <span class="font-bold">{{
                             notif.data.lostgcd_contactnum
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Date Lost:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datelost
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Date Reported:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datereported
-                            }}</span>
+                        }}</span>
                     </p>
                 </a-card>
             </a-col>
@@ -176,8 +177,9 @@ import debounce from "lodash/debounce";
 import { router, useForm } from "@inertiajs/vue3";
 import { notification } from "ant-design-vue";
 import dayjs from "dayjs";
-import { ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 import axios from "axios";
+import { route } from 'ziggy-js';
 
 const form = useForm({
     payment: null,
@@ -335,5 +337,12 @@ const viewstatus = () => {
         },
     );
 };
+
+// onMounted(() => {
+//     const isReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+
+//     if (isReload) {
+//         router.get(route("retail.verification.index"));
+//     }
+// })
 </script>
-<style scoped></style>
