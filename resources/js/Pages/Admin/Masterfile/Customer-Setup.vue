@@ -46,6 +46,10 @@
                                         class="bg-green-600 text-white">
                                         <EditOutlined />
                                     </a-button>
+                                    <a-button @click="deleteRegularCustomer(record)" type="primary"
+                                        class="bg-red-600 ml-1 text-white">
+                                        <DeleteOutlined />
+                                    </a-button>
                                 </template>
                             </template>
                         </a-table>
@@ -124,6 +128,10 @@
                                         class="bg-green-600 text-white">
                                         <EditOutlined />
                                     </a-button>
+                                    <a-button @click="deleteInstitutionalCustomer(record)" type="primary"
+                                        class="bg-red-600 ml-1 text-white">
+                                        <DeleteOutlined />
+                                    </a-button>
                                 </template>
                             </template>
                         </a-table>
@@ -183,6 +191,10 @@
                                         class="bg-green-600 text-white">
                                         <EditOutlined />
                                     </a-button>
+                                    <a-button @click="deleteSpecialCustomer(record)" type="primary"
+                                        class="bg-red-600 ml-1 text-white">
+                                        <DeleteOutlined />
+                                    </a-button>
                                 </template>
                             </template>
                         </a-table>
@@ -200,9 +212,12 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { router } from '@inertiajs/core';
-import { notification } from 'ant-design-vue';
-import { ref, computed } from 'vue';
+import { notification, Modal } from 'ant-design-vue';
+import { ref, computed, createVNode } from 'vue';
 import { route } from 'ziggy-js';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+
+
 
 const props = defineProps<{
     institutional: {
@@ -322,6 +337,39 @@ const updateRegularCustomer = () => {
     });
 };
 
+const deleteRegularCustomer = (record) => {
+    Modal.confirm({
+        title: 'Are you sure to delete this customer ?',
+        icon: createVNode(ExclamationCircleOutlined),
+        content: createVNode(
+            'div',
+            {
+                style: 'color:red',
+            },
+            'This action could cause the loss of customer data',
+        ),
+        onOk() {
+            router.get(route('admin.masterfile.deleteRegularCustomer'), {
+                id: record.cus_id,
+            }, {
+                onSuccess: (page) => {
+                    if (page.props.flash.success) {
+                        notification.success({
+                            message: 'Success',
+                            description: page.props.flash.success
+                        });
+                    } else if (page.props.flash.error) {
+                        notification.error({
+                            message: 'Error',
+                            description: page.props.flash.error
+                        });
+                    }
+                }
+            });
+        },
+    });
+}
+
 // Institutional Customer search function
 const institutionalData = ref<string>(props.institutionalSearch);
 const institutionalSearchFunction = () => {
@@ -372,6 +420,38 @@ const updateInstitutional = () => {
     });
 };
 
+const deleteInstitutionalCustomer = (record) => {
+    Modal.confirm({
+        title: 'Are you sure to delete this customer ?',
+        icon: createVNode(ExclamationCircleOutlined),
+        content: createVNode(
+            'div',
+            {
+                style: 'color:red',
+            },
+            'This action could cause the loss of customer data',
+        ),
+        onOk() {
+            router.get(route('admin.masterfile.deleteInstitutionalCustomer'), {
+                id: record.ins_id
+            }, {
+                onSuccess: (page) => {
+                    if (page.props.flash.success) {
+                        notification.success({
+                            message: 'Success',
+                            description: page.props.flash.success
+                        });
+                    } else if (page.props.flash.error) {
+                        notification.error({
+                            message: 'Error',
+                            description: page.props.flash.error
+                        });
+                    }
+                }
+            })
+        }
+    });
+}
 // Special Customer search function
 const specialCustomerData = ref<string>(props.specialCustomerSearch);
 const specialCustomerSearchFunction = () => {
@@ -423,5 +503,39 @@ const updateSpecialCustomer = () => {
         }
     });
 };
+
+const deleteSpecialCustomer = (record) => {
+    Modal.confirm({
+        title: 'Are you sure to delete this customer ?',
+        icon: createVNode(ExclamationCircleOutlined),
+        content: createVNode(
+            'div',
+            {
+                style: 'color:red',
+            },
+            'This action could cause the loss of customer data',
+        ),
+        onOk() {
+            router.get(route('admin.masterfile.deleteSpecialCustomer'), {
+                id: record.spcus_id
+            }, {
+                onSuccess: (page) => {
+                    if (page.props.flash.success) {
+                        notification.success({
+                            message: 'Success',
+                            description: page.props.flash.success
+                        });
+                    } else if (page.props.flash.error) {
+                        notification.error({
+                            message: 'Error',
+                            description: page.props.flash.error
+                        });
+                    }
+                }
+            });
+        }
+
+    });
+}
 
 </script>

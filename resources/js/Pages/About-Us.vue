@@ -43,8 +43,8 @@
                 – Proverbs 3:6</p>
             <div class="flex justify-center mt-8">
                 <img class="rounded-lg shadow-lg"
-                    src="https://user-images.githubusercontent.com/74038190/219923823-bf1ce878-c6b8-4faa-be07-93e6b1006521.gif"
-                    alt="Team Illustration" />
+                    src="/images/about_us.jpg"
+                    alt="Team Illustration" style="width: 1200px; height: 600px;" />
             </div>
         </div>
 
