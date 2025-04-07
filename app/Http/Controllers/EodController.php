@@ -24,10 +24,10 @@ class EodController extends Controller
     {
         return inertia('Eod/EodDashboard');
     }
-    public function eodVerifiedGc()
+    public function eodVerifiedGc(Request $request)
     {
         return inertia('Eod/VerifiedGc', [
-            'record' => $this->eodServices->getVerifiedFromStore(),
+            'record' => $this->eodServices->getVerifiedFromStore($request),
             'columns' => ColumnHelper::$eod_columns,
         ]);
     }
