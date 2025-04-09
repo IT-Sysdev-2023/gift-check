@@ -2,13 +2,13 @@
     <AuthenticatedLayout>
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
-                <a-list item-layout="horizontal" :data-source="record" @click="setup(record)">
+                <a-list item-layout="horizontal" :data-source="record" >
                     <template #renderItem="{ item }">
                         <a-card size="small">
                             <a-list-item>
-                                <a-list-item-meta description="Click Details...">
+                                <a-list-item-meta @click="setup(item.name)" description="Click Details...">
                                     <template #title>
-                                        <a>{{ item }}</a>
+                                        <a>{{ item.name }}</a>
                                     </template>
                                     <template #avatar>
                                         <PaperClipOutlined />
