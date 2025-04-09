@@ -27,7 +27,7 @@ class EodController extends Controller
         return inertia('Eod/EodDashboard');
     }
 
-    
+
     public function eodVerifiedGc(Request $request)
     {
         return inertia('Eod/VerifiedGc', [
@@ -102,7 +102,7 @@ class EodController extends Controller
 
     public function eodView(Request $request, $id)
     {
-        $eod = $this->eodServices->getEodListDetails($id);
+        $eod = $this->eodServices->getEodListDetails($request, $id);
         return inertia('Eod/EodDetails/EodListDetails', [
             'record' => $eod,
         ]);

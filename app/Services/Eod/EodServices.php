@@ -426,7 +426,6 @@ class EodServices extends FileHandler
 
     public function getEodList()
     {
-
         $data = StoreEod::select('steod_id', 'steod_by', 'steod_storeid', 'steod_datetime')
             ->with('user:user_id,firstname,lastname', 'store:store_id,store_name')
             ->orderByDesc('steod_datetime')->paginate(10)->withQueryString();
@@ -446,7 +445,7 @@ class EodServices extends FileHandler
     {
         return $this->retrieveFile("{$this->folderName}/treasuryEod", "eod{$id}.pdf");
     }
-    public function getEodListDetails($id)
+    public function getEodListDetails($request, $id)
     {
 
         $query = StoreEodItem::with(
@@ -456,9 +455,15 @@ class EodServices extends FileHandler
             'storeverification.type:gc_type_id,gctype',
             'storeverification.store:store_id,store_name'
         )
-            ->where('st_eod_trid', $id)
-            ->orderByDesc('st_eod_barcode')
-            ->paginate(10);
+        ->where('st_eod_trid', $id)
+        ->when($request->user()->it_type == 2, function ($q) use ($request) {
+            $q->whereHas('storeverification', function ($q2) use ($request) {
+                $q2->where('vs_store', $request->user()->store_assigned);
+            });
+        })
+        ->orderByDesc('st_eod_barcode')
+        ->paginate(10);
+
 
         return EodListDetailResources::collection($query);
     }
