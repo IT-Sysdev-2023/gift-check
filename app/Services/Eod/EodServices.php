@@ -34,7 +34,8 @@ class EodServices extends FileHandler
             ->join('gc_type', 'gc_type_id', '=', 'vs_gctype')
             ->where('vs_tf_used', '')
             ->where('vs_tf_eod', '')
-            ->when($request->user()->it_type === '2', function ($q) use($request) {
+            ->where('vs_store', '!=', 8)
+            ->when($request->user()->it_type === '2', function ($q) use ($request) {
                 $q->where('vs_store', $request->user()->store_assigned);
             })
             ->where(function ($q) {
@@ -59,19 +60,19 @@ class EodServices extends FileHandler
         return $eod;
     }
 
-     public function commandExecute($store_id)
+    public function commandExecute($store_id)
     {
         $st = Store::where('store_id', $store_id)->first();
-    $driveLetter = 'Z:';
-    $networkPath = rtrim($st->store_textfile_ip, '\\');
+        $driveLetter = 'Z:';
+        $networkPath = rtrim($st->store_textfile_ip, '\\');
 
-    // Unmap the drive first
-    exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
+        // Unmap the drive first
+        exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
 
-    $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$st->username\" \"$st->new_password\" /persistent:yes 2>&1";
-    exec($command, $output, $return_var);
+        $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$st->username\" \"$st->new_password\" /persistent:yes 2>&1";
+        exec($command, $output, $return_var);
 
-    return $return_var;
+        return $return_var;
     }
 
 
@@ -93,6 +94,7 @@ class EodServices extends FileHandler
             'vs_payto'
         )->join('users', 'user_id', '=', 'vs_by')->where('vs_tf_used', '')
             ->where('vs_tf_eod', '')
+            ->where('vs_store', '!=', 8)
             ->where(function ($q) {
                 $q->whereDate('vs_reverifydate', today())
                     ->orWhereDate('vs_date', '<=', today());
@@ -126,18 +128,18 @@ class EodServices extends FileHandler
             $sfiles = 1;
             $allf = $store->count();
             $store->each(function ($item) use (&$txtfiles_temp, &$notFoundGC, &$error, &$sfiles, $allf) {
-               $r = $this->commandExecute($item->vs_store);
+                $r = $this->commandExecute($item->vs_store);
 
                 $ip = $this->getStoreIp($item->vs_store);
 
-                if($r === 0){
-                     $quickCheck = collect(File::files($ip));
-                }else{
+                if ($r === 0) {
+                    $quickCheck = collect(File::files($ip));
+                } else {
                     return back()->with([
-                    'title' => 'Error',
-                    'msg' => 'Cant connect to the Server',
-                    'status' => 'error',
-                ]);
+                        'title' => 'Error',
+                        'msg' => 'Cant connect to the Server',
+                        'status' => 'error',
+                    ]);
                 }
 
                 $res = $quickCheck->contains(function ($value, int $key) use ($item) {
@@ -455,14 +457,14 @@ class EodServices extends FileHandler
             'storeverification.type:gc_type_id,gctype',
             'storeverification.store:store_id,store_name'
         )
-        ->where('st_eod_trid', $id)
-        ->when($request->user()->it_type == 2, function ($q) use ($request) {
-            $q->whereHas('storeverification', function ($q2) use ($request) {
-                $q2->where('vs_store', $request->user()->store_assigned);
-            });
-        })
-        ->orderByDesc('st_eod_barcode')
-        ->paginate(10);
+            ->where('st_eod_trid', $id)
+            ->when($request->user()->it_type == 2, function ($q) use ($request) {
+                $q->whereHas('storeverification', function ($q2) use ($request) {
+                    $q2->where('vs_store', $request->user()->store_assigned);
+                });
+            })
+            ->orderByDesc('st_eod_barcode')
+            ->paginate(10);
 
 
         return EodListDetailResources::collection($query);
