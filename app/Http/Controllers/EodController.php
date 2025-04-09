@@ -13,6 +13,8 @@ use App\Models\StoreVerification;
 use App\Services\Eod\EodServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class EodController extends Controller
 {
@@ -24,6 +26,8 @@ class EodController extends Controller
     {
         return inertia('Eod/EodDashboard');
     }
+
+    
     public function eodVerifiedGc(Request $request)
     {
         return inertia('Eod/VerifiedGc', [

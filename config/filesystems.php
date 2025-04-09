@@ -71,9 +71,14 @@ return [
             ],
         ],
 
+         'cor' => [
+                'driver' => 'local',
+        'root' => '\\\\172.16.161.205\\CFS_Txt\\GiftCheck', 
+        ],
+
         'shared' => [
             'driver' => 'local',
-            'root' => env('SHARED_FOLDER_PATH', '\\\\172.16.43.166\\Gift'),
+            'root' => env('SHARED_FOLDER_PATH', '\\\\172.16.42.143\\GiftCheck\\'),
         ],
 
 

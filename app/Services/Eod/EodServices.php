@@ -10,6 +10,7 @@ use App\Models\StoreEod;
 use App\Models\StoreEodItem;
 use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
+use Illuminate\Support\Facades\Storage;
 use App\Services\Documents\FileHandler;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -58,8 +59,25 @@ class EodServices extends FileHandler
         return $eod;
     }
 
+     public function commandExecute($store_id)
+    {
+        $st = Store::where('store_id', $store_id)->first();
+    $driveLetter = 'Z:';
+    $networkPath = rtrim($st->store_textfile_ip, '\\');
+
+    // Unmap the drive first
+    exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
+
+    $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$st->username\" \"$st->new_password\" /persistent:yes 2>&1";
+    exec($command, $output, $return_var);
+
+    return $return_var;
+    }
+
+
     public function processEod($request, $id)
     {
+
         $wholesaletime = now()->format('H:i');
 
         $store = StoreVerification::select(
@@ -107,12 +125,20 @@ class EodServices extends FileHandler
             $error = false;
             $sfiles = 1;
             $allf = $store->count();
-
             $store->each(function ($item) use (&$txtfiles_temp, &$notFoundGC, &$error, &$sfiles, $allf) {
+               $r = $this->commandExecute($item->vs_store);
 
                 $ip = $this->getStoreIp($item->vs_store);
 
-                $quickCheck = collect(File::files($ip));
+                if($r === 0){
+                     $quickCheck = collect(File::files($ip));
+                }else{
+                    return back()->with([
+                    'title' => 'Error',
+                    'msg' => 'Cant connect to the Server',
+                    'status' => 'error',
+                ]);
+                }
 
                 $res = $quickCheck->contains(function ($value, int $key) use ($item) {
                     return $value->getFilename() == $item->vs_tf;

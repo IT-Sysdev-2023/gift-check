@@ -149,34 +149,36 @@ class RetailDbServices
     }
     public function createtextfile($request, $data)
     {
-        try {
-            $st = Store::where('store_id', $request->user()->store_assigned)->first();
 
-            $networkPath = rtrim(str_replace('\\', '\\\\', $st->store_textfile_ip), '\\') . '\\';
-            $filePath = $networkPath . $request->barcode . $data['tfilext'];
+        $st = Store::where('store_id', $request->user()->store_assigned)->first();
 
-            $content = "000," . $request->customer . ",0," . $data['customer']->full_name . "\n";
-            $content .= "001," . $data['denom'] . "\n";
-            $content .= "002,0\n";
-            $content .= "003,0\n";
-            $content .= "004," . $data['denom'] . "\n";
-            $content .= "005,0\n";
-            $content .= "006,0\n";
-            $content .= "007,0\n";
+        $networkPath =  $st->store_textfile_ip;
+        // $networkPath =  '\\\\172.16.43.166\Gift\\';
 
-            $success = file_put_contents($filePath, $content);
+        // $filePath = storage_path('app/public/cfstextfiles/' . $request->barcode . $data['tfilext']);
+        $filePath =  $networkPath . $request->barcode . $data['tfilext'];
 
-            if ($success === false) {
-                return false;
-            }
+        $content = "000," . $request->customer . ",0," . $data['customer']->full_name . "\n";
+        $content .= "001," . $data['denom'] . "\n";
+        $content .= "002,0\n";
+        $content .= "003,0\n";
+        $content .= "004," . $data['denom'] . "\n";
+        $content .= "005,0\n";
+        $content .= "006,0\n";
+        $content .= "007,0\n";
 
+        $success = file_put_contents($filePath, $content);
+
+        if ($success) {
             return true;
-        } catch (\Throwable $e) {
-            return false;
         }
+
+        return false;
     }
     public function createtextfileSecondaryPath($request, $data)
     {
+
+
         $filePath = '\\\172.16.43.166\\Gift\\' . $request->barcode . $data['tfilext'];
 
         $content = "000," . $request->customer . ",0," . $data['customer']->full_name . "\n";
