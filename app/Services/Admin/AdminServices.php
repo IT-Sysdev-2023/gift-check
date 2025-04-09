@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Helpers\NumberHelper;
+use App\Models\AppSetting;
 use App\Models\Denomination;
 use App\Models\DtiBarcodes;
 use App\Models\Gc;
@@ -18,6 +19,7 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
@@ -26,22 +28,47 @@ class AdminServices
 {
 
     public function __construct(public DBTransaction $dBTransaction) {}
+    public function stUrl(){
+        return AppSetting::where('app_tablename', 'fad_requisition_textfile')->value('app_settingvalue');
+    }
+
+    public function commandExecute()
+    {
+        $st = $this->stUrl();
+        $driveLetter = 'Z:';
+        $username = 'public';
+        $password = 'public';
+        $networkPath = rtrim($st, '\\');
+
+        // Unmap the drive first
+        exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
+
+        $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$username\" \"$password\" /persistent:yes 2>&1";
+
+        exec($command, $output, $return_var);
+
+        return $return_var;
+    }
 
     public function purchaseOrderDetails()
     {
+        $st = AppSetting::where('app_tablename', 'fad_requisition_textfile')->value('app_settingvalue');
 
+        $newFolder = [];
 
-        $newFolder  = Storage::disk('fad')->files('New');
-
-        $files = array_map('basename', $newFolder);
-
-        $lazyFiles = LazyCollection::make(function () use ($files) {
-            foreach ($files as $file) {
-                yield $file;
-            }
+        if($this->commandExecute() == 0){
+            $newFolder = collect(File::files($st));
+        }else{
+            return response()->json([
+                'error' => 'Error'
+            ]);
+        }
+        $newFolder->transform(function($item) {
+           return (object) [
+            'name' => $item->getBasename()
+           ] ;
         });
-
-        return $lazyFiles;
+        return $newFolder;
     }
 
     public function denomination()
@@ -982,14 +1009,29 @@ class AdminServices
     {
 
         $lazy = LazyCollection::make(function () use ($name) {
-
-            $handle = Storage::disk('fad')->readStream('New/' . $name);
-
-            while (($line = fgets($handle)) !== false) {
-                yield $line;
+            if ($this->commandExecute() !== 0) {
+                // Stop execution and throw an error early.
+                yield from []; // yields nothing
+                return;
             }
 
-            fclose($handle);
+            // Assuming stUrl() returns a path and you are trying to read all files in that folder.
+            $files = collect(File::files($this->stUrl()));
+
+            foreach ($files as $file) {
+                // Open each file one by one
+                $handle = fopen($file->getRealPath(), 'r');
+                if (!$handle) {
+                    continue;
+                }
+
+                // Yield each line lazily
+                while (($line = fgets($handle)) !== false) {
+                    yield $line;
+                }
+
+                fclose($handle);
+            }
         });
 
         $array = [];
