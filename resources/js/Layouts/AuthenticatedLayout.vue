@@ -300,7 +300,6 @@ const secretData = async () => {
         });
         secretName.value = response.data.data.employee
         finalDetails.value = response.data.data.employee[0]
-        console.log(finalDetails.value);
     } catch (error) {
         console.error(error);
     }

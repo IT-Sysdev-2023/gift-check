@@ -1,226 +1,140 @@
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>We'll be back soon!</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Under Maintenance | Gift Check</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-     /* From Uiverse.io by Lissy2019 */
-.absolute {
-  position: absolute;
-}
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --accent: #fd79a8;
+            --success: #00b894;
+        }
 
-.inline-block {
-  display: inline-block;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-.loader {
-  display: flex;
-  margin: 0.25em 0;
-}
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
 
-.w-2 {
-  width: 0.5em;
-}
+        .container {
+            max-width: 1000px;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
 
-.dash {
-  animation: dashArray 2s ease-in-out infinite, dashOffset 2s linear infinite;
-}
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
 
-.spin {
-  animation: spinDashArray 2s ease-in-out infinite, spin 8s ease-in-out infinite,
-    dashOffset 2s linear infinite;
-  transform-origin: center;
-}
+        .maintenance-image {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
 
-@keyframes dashArray {
-  0% {
-    stroke-dasharray: 0 1 359 0;
-  }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-  50% {
-    stroke-dasharray: 0 359 1 0;
-  }
+        p {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            color: #555;
+            font-weight: 400;
+        }
 
-  100% {
-    stroke-dasharray: 359 1 0 0;
-  }
-}
+        .note {
+            margin: 2rem 0;
+            padding: 15px;
+            background-color: rgba(162, 155, 254, 0.1);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            text-align: left;
+        }
 
-@keyframes spinDashArray {
-  0% {
-    stroke-dasharray: 270 90;
-  }
+        .contact-info {
+            margin-top: 2rem;
+            padding: 20px;
+            background-color: var(--light);
+            border-radius: 10px;
+        }
 
-  50% {
-    stroke-dasharray: 0 360;
-  }
+        .contact-info strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
 
-  100% {
-    stroke-dasharray: 250 90;
-  }
-}
-
-@keyframes dashOffset {
-  0% {
-    stroke-dashoffset: 385;
-  }
-
-  100% {
-    stroke-dashoffset: 5;
-  }
-}
-
-@keyframes spin {
-  0% {
-    rotate: 0deg;
-  }
-
-  12.5%,
-  25% {
-    rotate: 270deg;
-  }
-
-  37.5%,
-  50% {
-    rotate: 540deg;
-  }
-
-  62.5%,
-  75% {
-    rotate: 810deg;
-  }
-
-  87.5%,
-  100% {
-    rotate: 1080deg;
-  }
-}
-
+        .progress-container {
+            margin: 2rem 0;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
 
     </style>
 </head>
-<body>
-<div class="container">
-    <h1>503</h1>
-    <!-- From Uiverse.io by Lissy2019 -->
-<div class="loader">
-    <svg height="0" width="0" viewBox="0 0 100 100" class="absolute">
-      <defs class="s-xJBuHA073rTt" xmlns="http://www.w3.org/2000/svg">
-        <linearGradient
-          class="s-xJBuHA073rTt"
-          gradientUnits="userSpaceOnUse"
-          y2="2"
-          x2="0"
-          y1="62"
-          x1="0"
-          id="b"
-        >
-          <stop class="s-xJBuHA073rTt" stop-color="#0369a1"></stop>
-          <stop class="s-xJBuHA073rTt" stop-color="#67e8f9" offset="1.5"></stop>
-        </linearGradient>
-        <linearGradient
-          class="s-xJBuHA073rTt"
-          gradientUnits="userSpaceOnUse"
-          y2="0"
-          x2="0"
-          y1="64"
-          x1="0"
-          id="c"
-        >
-          <stop class="s-xJBuHA073rTt" stop-color="#0369a1"></stop>
-          <stop class="s-xJBuHA073rTt" stop-color="#22d3ee" offset="1"></stop>
-          <animateTransform
-            repeatCount="indefinite"
-            keySplines=".42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1"
-            keyTimes="0; 0.125; 0.25; 0.375; 0.5; 0.625; 0.75; 0.875; 1"
-            dur="8s"
-            values="0 32 32;-270 32 32;-270 32 32;-540 32 32;-540 32 32;-810 32 32;-810 32 32;-1080 32 32;-1080 32 32"
-            type="rotate"
-            attributeName="gradientTransform"
-          ></animateTransform>
-        </linearGradient>
-        <linearGradient
-          class="s-xJBuHA073rTt"
-          gradientUnits="userSpaceOnUse"
-          y2="2"
-          x2="0"
-          y1="62"
-          x1="0"
-          id="d"
-        >
-          <stop class="s-xJBuHA073rTt" stop-color="#38bdf8"></stop>
-          <stop class="s-xJBuHA073rTt" stop-color="#075985" offset="1.5"></stop>
-        </linearGradient>
-      </defs>
-    </svg>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 100 100"
-      width="100"
-      height="100"
-      class="inline-block"
-    >
-      <path
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="8"
-        stroke="url(#b)"
-        d="M 20,20 L 80,20
-        L 80,27 L 27,27 L 27,50
-        L 70,50 L 70,57
-        L 25,57 L 25,80
-        L 80,80 L 80,87 L 20,87 Z"
-        class="dash"
-        id="E"
-        pathLength="360"
-      ></path>
-    </svg>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      style="--rotation-duration:0ms; --rotation-direction:normal;"
-      viewBox="0 0 100 100"
-      width="100"
-      height="100"
-      class="inline-block"
-    >
-      <path
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="12"
-        stroke="url(#d)"
-        d="M 20,20 L 50,80 L 80,20"
-        class="dash"
-        id="v"
-        pathLength="360"
-      ></path>
-    </svg>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 100 100"
-      width="100"
-      height="100"
-      class="inline-block"
-    >
-      <path
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="11"
-        stroke="url(#c)"
-        d="M 50,15
-        A 35,35 0 0 1 85,50
-        A 35,35 0 0 1 50,85
-        A 35,35 0 0 1 15,50
-        A 35,35 0 0 1 50,15 Z"
-        class="spin"
-        id="o"
-        pathLength="360"
-      ></path>
-    </svg>
-  </div>
 
-    <p>We're currently performing some maintenances.<br>Please check back later.</p>
-</div>
+<body>
+    <div class="container">
+        <img src="/images/maintenance.jpg" alt="Under Maintenance" class="maintenance-image">
+
+        <h1>We're Performing Scheduled Maintenance</h1>
+        <p>Gift Check is currently undergoing essential updates and will be back shortly.</p>
+
+        {{-- <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div> --}}
+
+        <div class="countdown">Back in approximately 5-10 minutes</div>
+
+        <div class="note">
+            Please check back soon. We're working hard to complete the maintenance as quickly as possible.
+        </div>
+
+        <div class="contact-info">
+            <p>For further assistance, please contact our System Administrator - Corp IT at extensions
+            <strong>1844</strong> or <strong>1953</strong>, or reach out to
+            <strong>Norien</strong> or <strong>Claire</strong> directly.</p>
+        </div>
+    </div>
 </body>
+
 </html>
