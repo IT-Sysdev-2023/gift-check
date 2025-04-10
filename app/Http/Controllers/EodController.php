@@ -10,6 +10,7 @@ use App\Models\InstitutPayment;
 use App\Models\Store;
 use App\Models\StoreEod;
 use App\Models\StoreVerification;
+use App\Models\User;
 use App\Services\Eod\EodServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -41,6 +42,17 @@ class EodController extends Controller
     {
         $storeod = StoreEod::create([
             'steod_by' => $request->user()->user_id,
+            'steod_datetime' => now()
+        ]);
+
+        if ($storeod->wasRecentlyCreated) {
+            return $this->eodServices->processEod($request, $storeod->steod_id);
+        }
+    }
+    public function processEodAuto(Request $request)
+    {
+        $storeod = StoreEod::create([
+            'steod_by' => 12336,
             'steod_datetime' => now()
         ]);
 

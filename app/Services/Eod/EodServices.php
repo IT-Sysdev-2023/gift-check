@@ -170,6 +170,7 @@ class EodServices extends FileHandler
                             'txtfile_ip' => $ip,
                             'payto' => $item->vs_payto
                         ];
+
                     } else {
                         $notFoundGC[] = $item->vs_tf;
                         $error = true;
@@ -195,7 +196,7 @@ class EodServices extends FileHandler
 
             $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss, &$cFiles, $allFiles) {
 
-                if ($item['payto'] == '') {
+                if ($item['payto'] == 'WHOLESALE') {
 
                     DB::transaction(function () use ($item, $id, $wholesaletime) {
 
@@ -207,7 +208,7 @@ class EodServices extends FileHandler
                     });
                 } else {
 
-                    $file = $item['txtfile_ip'] . '\\' . $item['ver_textfilename'];
+                    $file = $item['txtfile_ip']. $item['ver_textfilename'];
 
                     $text = File::get($file);
 

@@ -508,6 +508,7 @@ Route::middleware('auth')->group(function () {
         Route::name('eod.')->group(function () {
             Route::get('eod-verified-gc', [EodController::class, 'eodVerifiedGc'])->name('verified.gc');
             Route::get('eod-process', [EodController::class, 'processEod'])->name('process');
+            Route::get('eod-process-auto', [EodController::class, 'processEodAuto'])->name('process.auto');
             Route::get('list', [EodController::class, 'list'])->name('list');
             Route::get('eod-view-{id}', [EodController::class, 'eodView'])->name('store.view');
             Route::get('eod-txt-{id}', [EodController::class, 'eodViewDeodViewDetails'])->name('txt');
