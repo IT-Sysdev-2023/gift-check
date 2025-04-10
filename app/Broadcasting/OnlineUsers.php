@@ -26,7 +26,6 @@ class OnlineUsers
 
         $usertype = $this->transaction($user->usertype);
         $storeName = $this->transactionStore($user->store_assigned);
-
         return [
             'id' => $user->user_id,
             'name' => $user->full_name,
@@ -39,13 +38,13 @@ class OnlineUsers
     }
     public static function transactionStore($type)
     {
-
         $trans = [
             '1' => 'Alturas Mall',
             '2' => 'Alturas Talibon',
             '3' => 'Island City Mall',
             '4' => 'Plaza Marcela',
-            '6' => 'Alturas Tubigon',
+            '5' => 'Alturas Tubigon',
+            '6' => 'Colonade Colon',
             '7' => 'Colonade Mandaue',
             '8' => 'Alta Citta',
             '9' => 'Farmers Market',

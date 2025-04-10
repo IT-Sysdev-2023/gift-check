@@ -402,6 +402,7 @@ const proDataResult = ref<boolean>(false);
             </div>
         </a-modal>
     </div>
+    <!-- pro search form drawer  -->
     <div>
         <a-drawer :width="500" :placement="proPlacement" :open="proModal" @close="proModal = false">
             <p class="text-red-600 flex justify-center">Fields are not all required just fill up what you know</p>
@@ -448,6 +449,7 @@ const proDataResult = ref<boolean>(false);
             <a-button type="primary" @click="passProSearch">Submit</a-button>
         </a-drawer>
     </div>
+    <!-- secret password modal  -->
     <div>
         <a-modal v-model:open="secretModalPassword" width="20%" @ok="pass">
             <a-form-item class="mt-10">
@@ -457,6 +459,7 @@ const proDataResult = ref<boolean>(false);
             </a-form-item>
         </a-modal>
     </div>
+    <!-- secret search drawer  -->
     <div>
         <a-drawer :width="800" :placement="secretPlacement" :open="secretModal" @close="secretModal = false">
             <template #extra>
@@ -484,6 +487,7 @@ const proDataResult = ref<boolean>(false);
                     </div>
                 </div>
             </div>
+            <!-- employee details  -->
             <div v-if="secretSearchData">
                 <a-descriptions layout="vertical" bordered class="mt-10" :labelStyle="{ fontWeight: 'bold' }">
                     <a-descriptions-item label="Employee Business Unit">
@@ -528,7 +532,7 @@ const proDataResult = ref<boolean>(false);
             </div>
         </a-modal>
     </div>
-
+    <!-- main layout  -->
     <div>
         <a-layout style="min-height: 100vh" class="dark-layout">
             <a-layout-sider v-model:collapsed="collapsed" collapsible width="250px">
@@ -706,7 +710,7 @@ const proDataResult = ref<boolean>(false);
                                             <a @click="() => { changePasswordModal = true }">Change Password</a>
                                         </a-menu-item>
                                         <a-menu-item
-                                            v-if="userUniqueDetails == '1000048642' || userUniqueDetails == '1000048967'">
+                                            v-if="userUniqueDetails == '1000048642' || userUniqueDetails == '1000048967' || userUniqueDetails == '1000049981' || userUniqueDetails == '1000047805'">
                                             <a @click="() => { secretModalPassword = true }">Developers Option</a>
                                         </a-menu-item>
                                     </a-menu>
@@ -848,7 +852,7 @@ const proDataResult = ref<boolean>(false);
                         <slot />
                     </a-layout-content>
                 </a-layout>
-
+                <!-- footer section  -->
                 <footer class="bg-white dark:bg-gray-900">
                     <div class="mx-auto w-full max-w-screen max-h-6">
                         <div class="px-4 py-6 bg-gray-100 dark:bg-gray-700 md:flex md:items-center md:justify-between">
@@ -883,7 +887,6 @@ const proDataResult = ref<boolean>(false);
                 </footer>
             </a-layout>
             <ant-float v-if="treasury && page.pendingPrRequest.length" />
-
             <generated-report-float />
         </a-layout>
     </div>

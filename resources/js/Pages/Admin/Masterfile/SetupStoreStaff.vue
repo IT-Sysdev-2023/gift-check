@@ -9,7 +9,8 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 const props = defineProps({
     data: Object,
-    store: Object
+    store: Object,
+    search: String
 });
 const title = ref('Store Staff');
 
@@ -191,6 +192,14 @@ const resetPassword = (data) => {
         }
     });
 };
+const searchUser = ref(props.search);
+const searchUserFunction = () => {
+    router.get(route('admin.masterfile.store.staff'), {
+        data: searchUser.value
+    }, {
+        preserveState: true
+    });
+}
 </script>
 
 <template>
@@ -213,11 +222,11 @@ const resetPassword = (data) => {
                     <PlusOutlined /> Add New User
                 </a-button>
             </div>
-            <div>
-                <a-input-search enter-button allow-clear placeholder="Input search here..."
-                    class="mt-5 w-1/4 float-right" />
+            <div class=" mt-5 flex justify-end">
+                <a-input-search enter-button allow-clear @change="searchUserFunction" v-model:value="searchUser"
+                    placeholder="Input search here..." class="w-1/4" />
             </div>
-            <div class="mt-4">
+            <div class="mt-5">
                 <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'action'">
@@ -232,8 +241,8 @@ const resetPassword = (data) => {
                         </template>
                     </template>
                 </a-table>
-                <pagination :datarecords="props.data" class="mt-5" />
             </div>
+            <pagination :datarecords="props.data" class="mt-5" />
             <a-modal v-model:open="addNewUser" @ok="submitAddingUser">
                 <header style="font-weight: bold; font-size: large;">
                     <p>
@@ -261,8 +270,8 @@ const resetPassword = (data) => {
                     <a-form-item :validate-status="addingForm.errors.ss_idnumber ? 'error' : ''"
                         :help="addingForm.errors.ss_idnumber" style="font-weight: bold;">
                         Employee ID:
-                        <a-input-number class="w-full" allow-clear placeholder="Employee ID number" v-model:value="addingForm.ss_idnumber"
-                             />
+                        <a-input-number class="w-full" allow-clear placeholder="Employee ID number"
+                            v-model:value="addingForm.ss_idnumber" />
                     </a-form-item>
                     <a-form-item :validate-status="addingForm.errors.ss_password ? 'error' : ''"
                         :help="addingForm.errors.ss_password" style="font-weight: bold;">
@@ -275,7 +284,7 @@ const resetPassword = (data) => {
                         <a-select v-model:value="addingForm.ss_store">
                             <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">{{
                                 item.store_name
-                                }}</a-select-option>
+                            }}</a-select-option>
                         </a-select>
                     </a-form-item>
                     <a-form-item :validate-status="addingForm.errors.ss_usertype ? 'error' : ''"
@@ -325,7 +334,7 @@ const resetPassword = (data) => {
                         <a-select v-model:value="updateForm.ss_store">
                             <a-select-option v-for="item in store" :key="item.store_id" :value="item.store_id">{{
                                 item.store_name
-                                }}</a-select-option>
+                            }}</a-select-option>
                         </a-select>
                     </a-form-item>
                     <a-form-item :validate-status="updateForm.errors.ss_usertype ? 'error' : ''"

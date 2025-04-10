@@ -6,12 +6,12 @@
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Date">{{
                             dayjs().format('MMM, DD, YYYY')
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                     <a-descriptions class="mb-2" size="small" layout="horizontal" bordered>
                         <a-descriptions-item style="width: 50%" label="Verified By">{{
                             $page.props.auth.user.full_name
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
 
                     <a-row class="mt-5 mb-5">
@@ -41,13 +41,11 @@
                                 </template>
                                 <a-button ghost type="primary" size="large" @click="addCustomerButton">
                                     <PlusOutlined />
-
                                 </a-button>
                             </a-tooltip>
                         </div>
                     </a-row>
                     <a-description-text keyboard>Barcode:</a-description-text>
-
                     <a-input-number class="pb-3 pt-3 p-1 text-xl" v-model:value="form.barcode" @keyup.enter="viewstatus"
                         style="width: 100%" size="medium" placeholder="Scan Barcode" />
                     <a-button size="large" type="primary" class="mt-3" :disabled="form.barcode == null ||
@@ -69,7 +67,8 @@
                 </a-card>
 
                 <!-- print modal after successful verification -->
-                <a-modal v-if="dataForPrinting" v-model:open="modalOpen" style="width: 70%; top: 50px" :footer="null" @cancel="closeFunction">
+                <a-modal v-if="dataForPrinting" v-model:open="modalOpen" style="width: 70%; top: 50px" :footer="null"
+                    @cancel="closeFunction">
                     <iframe class="mt-7" :src="dataForPrinting" width="100%" height="600px"></iframe>
                 </a-modal>
 
@@ -87,38 +86,38 @@
                         Issue: Barcode #
                         <span class="font-bold">{{
                             notif.data.lostgcb_barcode
-                            }}</span>
+                        }}</span>
                         was reported as lost
                     </p>
                     <p>
                         Owner's Name:
                         <span class="font-bold">{{
                             notif.data.lostgcd_owname
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Address:
                         <span class="font-bold">{{
                             notif.data.lostgcd_address
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Contact No:
                         <span class="font-bold">{{
                             notif.data.lostgcd_contactnum
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Date Lost:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datelost
-                            }}</span>
+                        }}</span>
                     </p>
                     <p>
                         Date Reported:
                         <span class="font-bold">{{
                             notif.data.lostgcd_datereported
-                            }}</span>
+                        }}</span>
                     </p>
                 </a-card>
             </a-col>
@@ -146,26 +145,25 @@
             </a-col>
         </a-row>
         <a-modal title="Add Customer" v-model:open="addCustomerModal" @ok="customerSubmit">
-            <a-form-item :validate-status="addingCustomer.errors?.lastname ? 'error' : ''
-                " :help="addingCustomer.errors.lastname">
-                Last Name:
-                <a-input allow-clear v-model:value="addingCustomer.lastname" placeholder="lastname"></a-input>
-            </a-form-item>
-            <a-form-item :validate-status="addingCustomer.errors?.firstname ? 'error' : ''
-                " :help="addingCustomer.errors.firstname">
-                First Name:
-                <a-input allow-clear v-model:value="addingCustomer.firstname" placeholder="firstname"></a-input>
-            </a-form-item>
-            <a-form-item :validate-status="addingCustomer.errors?.middlename ? 'error' : ''
-                " :help="addingCustomer.errors.middlename">
-                Middle Name:
-                <a-input allow-clear v-model:value="addingCustomer.middlename" placeholder="middlename"></a-input>
-            </a-form-item>
-            <a-form-item :validate-status="addingCustomer.errors?.extention ? 'error' : ''
-                " :help="addingCustomer.errors?.extention">
-                Name Extention: (ex: jr, sr, III)
-                <a-input allow-clear v-model:value="addingCustomer.extention" placeholder="name extention"></a-input>
-            </a-form-item>
+            <div class="mt-10">
+                <a-form-item label="Last Name" required :validate-status="addingCustomer.errors?.lastname ? 'error' : ''
+                    " :help="addingCustomer.errors.lastname">
+                    <a-input allow-clear v-model:value="addingCustomer.lastname" placeholder="Lastname"></a-input>
+                </a-form-item>
+                <a-form-item label="First Name" required :validate-status="addingCustomer.errors?.firstname ? 'error' : ''
+                    " :help="addingCustomer.errors.firstname">
+                    <a-input allow-clear v-model:value="addingCustomer.firstname" placeholder="Firstname"></a-input>
+                </a-form-item>
+                <a-form-item label="Middle Name" :validate-status="addingCustomer.errors?.middlename ? 'error' : ''
+                    " :help="addingCustomer.errors.middlename">
+                    <a-input allow-clear v-model:value="addingCustomer.middlename" placeholder="Middlename"></a-input>
+                </a-form-item>
+                <a-form-item label="Name Extention (ex: jr, sr, III)" :validate-status="addingCustomer.errors?.extention ? 'error' : ''
+                    " :help="addingCustomer.errors?.extention">
+                    <a-input allow-clear v-model:value="addingCustomer.extention"
+                        placeholder="Name Extention"></a-input>
+                </a-form-item>
+            </div>
         </a-modal>
     </AuthenticatedLayout>
 </template>
