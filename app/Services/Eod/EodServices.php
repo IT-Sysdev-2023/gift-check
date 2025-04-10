@@ -465,9 +465,8 @@ class EodServices extends FileHandler
     {
         return $this->retrieveFile("{$this->folderName}/treasuryEod", "eod{$id}.pdf");
     }
-    public function getEodListDetails($id)
+    public function getEodListDetails($request, $id)
     {
-
         $query = StoreEodItem::with(
             'storeverification:vs_barcode,vs_cn,vs_store,vs_by,vs_date,vs_reverifydate,vs_gctype,vs_tf_denomination,vs_tf_balance,vs_time',
             'storeverification.customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext',
