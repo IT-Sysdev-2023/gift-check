@@ -34,7 +34,10 @@ class EodServices extends FileHandler
             ->join('gc_type', 'gc_type_id', '=', 'vs_gctype')
             ->where('vs_tf_used', '')
             ->where('vs_tf_eod', '')
-            ->when($request->user()->it_type === '2', function ($q) use($request) {
+            ->when($request->user()->it_type === '1', function ($q) use ($request) {
+                $q->whereIn('vs_store', [1, 3, 4]);
+            })
+            ->when($request->user()->it_type === '2', function ($q) use ($request) {
                 $q->where('vs_store', $request->user()->store_assigned);
             })
             ->where(function ($q) {
@@ -59,19 +62,25 @@ class EodServices extends FileHandler
         return $eod;
     }
 
-     public function commandExecute($store_id)
+    public function commandExecute($request)
     {
-        $st = Store::where('store_id', $store_id)->first();
-    $driveLetter = 'Z:';
-    $networkPath = rtrim($st->store_textfile_ip, '\\');
 
-    // Unmap the drive first
-    exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
+        if ($request->user()->it_type === '1') {
+            $st = Store::where('store_id', 1)->first();
+        } else {
+            $st = Store::where('store_id', $request->user()->store_assigned)->first();
+        }
 
-    $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$st->username\" \"$st->new_password\" /persistent:yes 2>&1";
-    exec($command, $output, $return_var);
+        $driveLetter = 'Z:';
+        $networkPath = rtrim($st->store_textfile_ip, '\\');
 
-    return $return_var;
+        // Unmap the drive first
+        exec("C:\\Windows\\System32\\net.exe use $driveLetter /delete /y 2>&1", $unmap_output, $unmap_return_var);
+
+        $command = "C:\\Windows\\System32\\net.exe use $driveLetter \"{$networkPath}\" /user:\"$st->username\" \"$st->new_password\" /persistent:yes 2>&1";
+        exec($command, $output, $return_var);
+
+        return $return_var;
     }
 
 
@@ -93,6 +102,12 @@ class EodServices extends FileHandler
             'vs_payto'
         )->join('users', 'user_id', '=', 'vs_by')->where('vs_tf_used', '')
             ->where('vs_tf_eod', '')
+            ->when($request->user()->it_type === '1', function ($q) use ($request) {
+                $q->whereIn('vs_store', [1, 3, 4]);
+            })
+            ->when($request->user()->it_type === '2', function ($q) use ($request) {
+                $q->where('vs_store', $request->user()->store_assigned);
+            })
             ->where(function ($q) {
                 $q->whereDate('vs_reverifydate', today())
                     ->orWhereDate('vs_date', '<=', today());
@@ -125,40 +140,21 @@ class EodServices extends FileHandler
             $error = false;
             $sfiles = 1;
             $allf = $store->count();
-            $store->each(function ($item) use (&$txtfiles_temp, &$notFoundGC, &$error, &$sfiles, $allf) {
-               $r = $this->commandExecute($item->vs_store);
 
-                $ip = $this->getStoreIp($item->vs_store);
+            $r = $this->commandExecute($request);
 
-                if($r === 0){
-                     $quickCheck = collect(File::files($ip));
-                }else{
-                    return back()->with([
-                    'title' => 'Error',
-                    'msg' => 'Cant connect ',
-                    'status' => 'error',
-                    'data' => $notFoundGC,
-                ]);
-                }
+            if ($r == 0) {
+                $store->each(function ($item) use (&$txtfiles_temp, &$notFoundGC, &$error, &$sfiles, $allf) {
 
-                $res = $quickCheck->contains(function ($value, int $key) use ($item) {
-                    return $value->getFilename() == $item->vs_tf;
-                });
+                    $ip = $this->getStoreIp($item->vs_store);
 
-                if ($res) {
-                    $txtfiles_temp[] = [
-                        'ver_barcode' => $item->vs_barcode,
-                        'ver_textfilename' => $item->vs_tf,
-                        'ver_denom' => $item->vs_tf_denomination,
-                        'ver_balance' => $item->vs_tf_balance,
-                        'ver_used' => $item->vs_tf_used,
-                        'ver_eod1' => $item->vs_tf_eod,
-                        'txtfile_ip' => $ip,
-                        'payto' => $item->vs_payto
-                    ];
-                } else {
-                    if ($item->vs_payto === 'WHOLESALE') {
+                    $quickCheck = collect(File::files($ip));
 
+                    $res = $quickCheck->contains(function ($value, int $key) use ($item) {
+                        return $value->getFilename() == $item->vs_tf;
+                    });
+
+                    if ($res) {
                         $txtfiles_temp[] = [
                             'ver_barcode' => $item->vs_barcode,
                             'ver_textfilename' => $item->vs_tf,
@@ -170,13 +166,35 @@ class EodServices extends FileHandler
                             'payto' => $item->vs_payto
                         ];
                     } else {
-                        $notFoundGC[] = $item->vs_tf;
-                        $error = true;
-                    }
-                }
+                        if ($item->vs_payto === 'WHOLESALE') {
 
-                EodProcessEvent::dispatch("Scanning Barcodes Please Wait...", $sfiles++, $allf, Auth::user());
-            });
+                            $txtfiles_temp[] = [
+                                'ver_barcode' => $item->vs_barcode,
+                                'ver_textfilename' => $item->vs_tf,
+                                'ver_denom' => $item->vs_tf_denomination,
+                                'ver_balance' => $item->vs_tf_balance,
+                                'ver_used' => $item->vs_tf_used,
+                                'ver_eod1' => $item->vs_tf_eod,
+                                'txtfile_ip' => $ip,
+                                'payto' => $item->vs_payto
+                            ];
+                        } else {
+                            $notFoundGC[] = $item->vs_tf;
+                            $error = true;
+                        }
+                    }
+
+                    EodProcessEvent::dispatch("Scanning Barcodes Please Wait...", $sfiles++, $allf, Auth::user());
+                });
+
+            } else {
+                return back()->with([
+                    'title' => 'Error',
+                    'msg' => 'Opss Something went wrong in the server TextFile',
+                    'status' => 'error',
+                ]);
+            }
+
 
 
             if ($error) {
@@ -194,7 +212,7 @@ class EodServices extends FileHandler
 
             $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss, &$cFiles, $allFiles) {
 
-                if ($item['payto'] == 'WHOLESALE') {
+                if ($item['payto'] === 'WHOLESALE') {
 
                     DB::transaction(function () use ($item, $id, $wholesaletime) {
 
