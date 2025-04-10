@@ -196,7 +196,7 @@ class EodServices extends FileHandler
 
             $txtfiles_temp->each(function ($item) use ($id, $wholesaletime, &$rss, &$cFiles, $allFiles) {
 
-                if ($item['payto'] == 'WHOLESALE') {
+                if ($item['payto'] === 'WHOLESALE') {
 
                     DB::transaction(function () use ($item, $id, $wholesaletime) {
 
