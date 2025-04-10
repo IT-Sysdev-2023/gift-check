@@ -320,6 +320,7 @@ class AdminController extends Controller
         if ($searchTerm) {
             $usersQuery->where(function ($query) use ($searchTerm) {
                 $query->where('users.username', 'like', '%' . $searchTerm . '%')
+                    ->orWhereRaw("CONCAT(users.firstname, ' ', users.lastname) like ?", '%' . $searchTerm . '%')
                     ->orWhere('users.firstname', 'like', '%' . $searchTerm . '%')
                     ->orWhere('users.lastname', 'like', '%' . $searchTerm . '%')
                     ->orWhere('stores.store_name', 'like', '%' . $searchTerm . '%')
@@ -650,8 +651,6 @@ class AdminController extends Controller
 
 
         $store = Store::all();
-        $searchTerm = $request->input('data', '');
-
         $password = User::get();
 
         $selectEntries = $request->input('value', 10);
@@ -680,6 +679,7 @@ class AdminController extends Controller
         if ($searchTerm) {
             $data = $data->where(function ($query) use ($searchTerm) {
                 $query->where('store_staff.ss_idnumber', 'like', '%' . $searchTerm . '%')
+                    ->orWhereRaw("CONCAT(store_staff.ss_firstname, ' ', store_staff.ss_lastname) like ?", ["%{$searchTerm}%"])
                     ->orWhere('store_staff.ss_username', 'like', '%' . $searchTerm . '%')
                     ->orWhere('store_staff.ss_usertype', 'like', '%' . $searchTerm . '%')
                     ->orWhere('store_staff.ss_firstname', 'like', '%' . $searchTerm . '%')
@@ -695,7 +695,7 @@ class AdminController extends Controller
 
         return Inertia::render('Admin/Masterfile/SetupStoreStaff', [
             'data' => $data,
-            'search' => $request->data,
+            'search' => $searchTerm,
             'store' => $store,
             'password' => $password,
             'StoreStaff' => $StoreStaff,

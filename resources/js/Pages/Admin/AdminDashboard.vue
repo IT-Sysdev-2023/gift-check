@@ -57,21 +57,22 @@
                     <div class="scrollable-list">
                         <a-list size="small" item-layout="horizontal" :data-source="getOnlineUsers">
                             <template #renderItem="{ item }">
-                                <!-- <a-input /> -->
                                 <a-list-item>
                                     <a-list-item-meta>
                                         <template #avatar>
-                                            <a-tag color="green">Active</a-tag>
-                                            <a-avatar :src="'http://172.16.161.34:8080/hrms' + item.image" />
+                                            <div class="relative inline-block">
+                                                <a-avatar :src="'http://172.16.161.34:8080/hrms' + item.image" />
+                                                <span
+                                                    class="absolute top-0 right-7 block h-3 w-3 bg-green-500 border-2 border-white rounded-full"></span>
+                                            </div>
                                         </template>
                                         <template #title>
-                                            {{ item.name }} - <a-tag color="blue">{{ item.storeAssigned }}</a-tag>
+                                            {{ item.name }} - <a-tag color="#108ee9">{{ item.usertype }}</a-tag>
                                         </template>
                                         <template #description>
-                                            <small>{{ item.usertype }}</small>
+                                            <a-tag color="blue">{{ item.storeAssigned }}</a-tag>
                                         </template>
                                     </a-list-item-meta>
-                                    <!-- <a-tag color="green">Online</a-tag> -->
                                 </a-list-item>
                             </template>
                         </a-list>
