@@ -26,7 +26,6 @@
                 <a-input-search @change="searchUser" v-model:value="searchUserValue" enter-button allow-clear
                     placeholder="Input search here..." class="w-1/4" />
             </div>
-
             <!-- TABLE -->
             <div class="mt-5">
                 <a-table :columns="columns" :data-source="props.data.data" :pagination="false" size="small">
@@ -62,7 +61,6 @@
                 </a-table>
                 <pagination :datarecords="data" class="mt-5" />
             </div>
-
             <!-- USER DETAILS MODAL  -->
             <div>
                 <a-modal v-model:open="userDetailsModal" :footer="null" width="80%">
@@ -88,7 +86,6 @@
                             <span class="font-bold italic">Unknown</span>
                         </div>
                     </div>
-
                     <a-descriptions layout="vertical" bordered :labelStyle="{ fontWeight: 'bold' }">
                         <a-descriptions-item label="Employee Business Unit">
                             {{ fetchUserDetails.employee_bunit }}
@@ -319,7 +316,6 @@
                 </div>
             </a-modal>
         </a-card>
-        <!-- {{ data }} -->
     </AuthenticatedLayout>
 </template>
 <script setup>
@@ -352,6 +348,7 @@ const form = ref({
     it_type: '',
     errors: {}
 });
+// this is the search function for employee name
 const getEmployee = async (value) => {
     try {
         const response = await axios.get('http://172.16.161.34/api/hrms/filter/employee/name', {
@@ -360,7 +357,6 @@ const getEmployee = async (value) => {
             }
         });
         fetchUserDetails.value = response.data.data.employee[0];
-        console.log(fetchUserDetails.value);
         options.value = response.data.data.employee;
 
     }
@@ -380,15 +376,27 @@ const queryNames = computed(() => {
 const handleEmployeeSelect = (selectedValue) => {
     const selectedEmployee = options.value.find(emp => emp.employee_name === selectedValue);
     if (selectedEmployee) {
+
+        // lastname and firstname for username format
         const nameParts = selectedEmployee.employee_name.split(", ");
         const lastname = nameParts[0];
-        const firstMiddle = nameParts[1]?.split(" ") || [];
-        const firstname = firstMiddle[0] || "";
-        const username = `${lastname.toLowerCase()}.${firstname.toLowerCase()}`;
+        const firstnameFormat = nameParts[1]?.split(" ") || [];
+        const firstnameFinalFormat = firstnameFormat[0] || "";
 
+        // firstname and middlename format
+        const fullName = nameParts[1]?.trim()?.split(" ") || [];
+        const firstnameParts = fullName.slice(0, -1);
+        const firstname = firstnameParts.join(" ");
+        const middlename = fullName[fullName.length - 1] || "";
+
+        // final username format
+        const username = `${lastname.toLowerCase()}.${firstnameFinalFormat.toLowerCase()}`;
+
+        // set the form fields
         form.value.username = username;
         form.value.firstname = firstname || "";
         form.value.lastname = lastname || "";
+        form.value.middlename = middlename;
         form.value.employee_id = selectedEmployee.employee_id;
     }
 };
