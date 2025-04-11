@@ -12,6 +12,7 @@ use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
 use Illuminate\Support\Facades\Storage;
 use App\Services\Documents\FileHandler;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -186,7 +187,6 @@ class EodServices extends FileHandler
 
                     EodProcessEvent::dispatch("Scanning Barcodes Please Wait...", $sfiles++, $allf, Auth::user());
                 });
-
             } else {
                 return back()->with([
                     'title' => 'Error',
@@ -443,16 +443,54 @@ class EodServices extends FileHandler
         return true;
     }
 
-    public function getEodList()
+    public function getEodList($request)
     {
+        // dd($request->user()->it_type);
+        if ($request->user()->it_type === '1') {
+            $data = $this->getEodListCorporate($request);
+            // dd($data->toArray());
+        } else {
+            if ($request->user()->store_assigned == 2) {
+                $dbconnection = DB::connection('mysqltalibon');
+            } else if ($request->user()->store_assigned == 5) {
+                $dbconnection = DB::connection('mysqltubigon');
+            } else if ($request->user()->store_assigned == 8) {
+                $dbconnection = DB::connection('mysqlaltacitta');
+            } else if ($request->user()->store_assigned == 7) {
+                $dbconnection = DB::connection('mysqlmandaue');
+            } else if ($request->user()->store_assigned == 6) {
+                $dbconnection = DB::connection('mysqlcolon');
+            }
 
-        $data = StoreEod::select('steod_id', 'steod_by', 'steod_storeid', 'steod_datetime')
-            ->with('user:user_id,firstname,lastname', 'store:store_id,store_name')
-            ->orderByDesc('steod_datetime')->paginate(10)->withQueryString();
+            $collect = $this->getEodListCorporate($request);
+
+            $collectPerStore = $dbconnection->table('store_eod')
+                ->select('steod_id', 'steod_by', 'steod_storeid', 'steod_datetime', 'firstname', 'lastname', 'store_name')
+                ->join('users', 'users.user_id', '=', 'store_eod.steod_by')
+                ->join('stores', 'store_id', '=', 'steod_storeid')
+                ->where('steod_storeid', $request->user()->store_assigned)
+                ->orderByDesc('steod_datetime')
+                ->get();
+
+            $dataCollect = collect($collect->items())->merge(collect($collectPerStore));
+
+            // **Manual Pagination**
+            $page = request()->input('page', 1); // Get current page from request
+            $perPage = 10; // Items per page
+            $offset = ($page - 1) * $perPage; // Calculate offset
+
+            $data = new LengthAwarePaginator(
+                $dataCollect->slice($offset, $perPage)->values(), // Slice data for pagination
+                $dataCollect->count(), // Total items
+                $perPage,
+                $page,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
+        }
 
         $data->transform(function ($item) {
-            $item->storename = $item->store->store_name ?? null;
-            $item->fullname = $item->user->fullname;
+            $item->storename = $item->store_name ?? null;
+            $item->fullname = $item->firstname;
             $item->date = Date::parse($item->steod_datetime)->toFormattedDateString();
             $item->time = Date::parse($item->steod_datetime)->format('h:i A');
             return $item;
@@ -461,42 +499,184 @@ class EodServices extends FileHandler
         return $data;
     }
 
+    public function getEodListCorporate($request)
+    {
+        return StoreEod::select('steod_id', 'steod_by', 'steod_storeid', 'steod_datetime', 'firstname', 'lastname', 'store_name')
+            ->join('users', 'user_id', '=', 'steod_by')
+            ->leftJoin('stores', 'store_id', '=', 'steod_storeid')
+            ->where('steod_storeid', $request->user()->store_assigned)
+            ->orderByDesc('steod_datetime')
+            ->paginate(10)->withQueryString();
+    }
+
     public function generatePdf(int $id)
     {
         return $this->retrieveFile("{$this->folderName}/treasuryEod", "eod{$id}.pdf");
     }
+
+    public function getEodListIfCorporate($request, $id)
+    {
+
+        return StoreEod::where([
+            ['steod_storeid', $request->user()->store_assigned],
+            ['steod_id', $id],
+        ])->exists();
+    }
     public function getEodListDetails($request, $id)
     {
-        $query = StoreEodItem::with(
-            'storeverification:vs_barcode,vs_cn,vs_store,vs_by,vs_date,vs_reverifydate,vs_gctype,vs_tf_denomination,vs_tf_balance,vs_time',
-            'storeverification.customer:cus_id,cus_fname,cus_lname,cus_mname,cus_namext',
-            'storeverification.user:user_id,firstname,lastname',
-            'storeverification.type:gc_type_id,gctype',
-            'storeverification.store:store_id,store_name'
-        )
-            ->where('st_eod_trid', $id)
-            ->orderByDesc('st_eod_barcode')
-            ->paginate(10);
+        // dd($request->user()->store_assigned);
+        $data =  $this->getEodListIfCorporate($request, $id);
+
+        if (!$data) {
+            $dbconnection = false;
+            if ($request->user()->store_assigned == 5) {
+                $dbconnection = DB::connection('mysqltubigon');
+            }
+            if ($request->user()->store_assigned == 2) {
+                $dbconnection = DB::connection('mysqltalibon');
+            }
+            if ($request->user()->store_assigned == 8) {
+                $dbconnection = DB::connection('mysqlaltacitta');
+            }
+            if ($request->user()->store_assigned == 7) {
+                $dbconnection = DB::connection('mysqlmandaue');
+            }
+            if ($request->user()->store_assigned == 6) {
+                $dbconnection = DB::connection('mysqlcolon');
+            }
+            if ($dbconnection) {
+                $query = $dbconnection->table('store_eod_items')
+                    ->join('store_verification', 'store_eod_items.st_eod_barcode', '=', 'store_verification.vs_barcode')
+                    ->leftJoin('customers', 'store_verification.vs_cn', '=', 'customers.cus_id')
+                    ->leftJoin('users', 'store_verification.vs_by', '=', 'users.user_id')
+                    ->leftJoin('gc_type', 'store_verification.vs_gctype', '=', 'gc_type.gc_type_id')
+                    ->leftJoin('stores', 'store_verification.vs_store', '=', 'stores.store_id')
+                    ->where('store_eod_items.st_eod_trid', $id)
+                    ->orderByDesc('store_eod_items.st_eod_barcode')
+                    ->select(
+                        'store_eod_items.*',
+                        'store_verification.vs_barcode',
+                        'store_verification.vs_cn',
+                        'store_verification.vs_store',
+                        'store_verification.vs_by',
+                        'store_verification.vs_date',
+                        'store_verification.vs_reverifydate',
+                        'store_verification.vs_gctype',
+                        'store_verification.vs_tf_denomination',
+                        'store_verification.vs_tf_balance',
+                        'store_verification.vs_time',
+                        'customers.cus_id',
+                        'customers.cus_fname',
+                        'customers.cus_lname',
+                        'customers.cus_mname',
+                        'customers.cus_namext',
+                        'users.user_id',
+                        'users.firstname',
+                        'users.lastname',
+                        'gc_type.gc_type_id',
+                        'gc_type.gctype',
+                        'stores.store_id',
+                        'stores.store_name'
+                    )
+                    ->paginate(10);
+            }
+        } else {
+            $query = StoreEodItem::join('store_verification', 'store_eod_items.st_eod_barcode', '=', 'store_verification.vs_barcode')
+                ->leftJoin('customers', 'store_verification.vs_cn', '=', 'customers.cus_id')
+                ->leftJoin('users', 'store_verification.vs_by', '=', 'users.user_id')
+                ->leftJoin('gc_type', 'store_verification.vs_gctype', '=', 'gc_type.gc_type_id')
+                ->leftJoin('stores', 'store_verification.vs_store', '=', 'stores.store_id')
+                ->where('store_eod_items.st_eod_trid', $id)
+                ->orderByDesc('store_eod_items.st_eod_barcode')
+                ->select(
+                    'store_eod_items.*',
+                    'store_verification.vs_barcode',
+                    'store_verification.vs_cn',
+                    'store_verification.vs_store',
+                    'store_verification.vs_by',
+                    'store_verification.vs_date',
+                    'store_verification.vs_reverifydate',
+                    'store_verification.vs_gctype',
+                    'store_verification.vs_tf_denomination',
+                    'store_verification.vs_tf_balance',
+                    'store_verification.vs_time',
+                    'customers.cus_id',
+                    'customers.cus_fname',
+                    'customers.cus_lname',
+                    'customers.cus_mname',
+                    'customers.cus_namext',
+                    'users.user_id',
+                    'users.firstname',
+                    'users.lastname',
+                    'gc_type.gc_type_id',
+                    'gc_type.gctype',
+                    'stores.store_id',
+                    'stores.store_name'
+                )
+                ->paginate(10);
+        }
+        // dd($query->toArray());
 
         return EodListDetailResources::collection($query);
     }
-
-    public function getEodListDetailsTxt($barcode)
+    public function storeVer($barcode)
     {
-        return StoreEodTextfileTransaction::select(
-            'seodtt_line',
-            'seodtt_creditlimit',
-            'seodtt_credpuramt',
-            'seodtt_addonamt',
-            'seodtt_balance',
-            'seodtt_transno',
-            'seodtt_timetrnx',
-            'seodtt_bu',
-            'seodtt_terminalno',
-            'seodtt_ackslipno',
-            'seodtt_crditpurchaseamt'
-        )->where('seodtt_barcode', $barcode)
-            ->orderBy('seodtt_id')
-            ->get();
+        return StoreVerification::where('vs_barcode', $barcode)->exists();
+    }
+
+    public function getEodListDetailsTxt($request, $barcode)
+    {
+        if ($this->storeVer($barcode)) {
+            $data = StoreEodTextfileTransaction::select(
+                'seodtt_line',
+                'seodtt_creditlimit',
+                'seodtt_credpuramt',
+                'seodtt_addonamt',
+                'seodtt_balance',
+                'seodtt_transno',
+                'seodtt_timetrnx',
+                'seodtt_bu',
+                'seodtt_terminalno',
+                'seodtt_ackslipno',
+                'seodtt_crditpurchaseamt'
+            )->where('seodtt_barcode', $barcode)
+                ->orderBy('seodtt_id')
+                ->get();
+        } else {
+            if ($request->user()->store_assigned == 5) {
+                $dbconnection = DB::connection('mysqltubigon');
+            }
+            if ($request->user()->store_assigned == 2) {
+                $dbconnection = DB::connection('mysqltalibon');
+            }
+            if ($request->user()->store_assigned == 8) {
+                $dbconnection = DB::connection('mysqlaltacitta');
+            }
+            if ($request->user()->store_assigned == 7) {
+                $dbconnection = DB::connection('mysqlmandaue');
+            }
+            if ($request->user()->store_assigned == 6) {
+                $dbconnection = DB::connection('mysqlcolon');
+            }
+
+            if ($dbconnection) {
+                $data =  $dbconnection->table('store_eod_textfile_transactions')->select(
+                    'seodtt_line',
+                    'seodtt_creditlimit',
+                    'seodtt_credpuramt',
+                    'seodtt_addonamt',
+                    'seodtt_balance',
+                    'seodtt_transno',
+                    'seodtt_timetrnx',
+                    'seodtt_bu',
+                    'seodtt_terminalno',
+                    'seodtt_ackslipno',
+                    'seodtt_crditpurchaseamt'
+                )->where('seodtt_barcode', $barcode)
+                    ->orderBy('seodtt_id')
+                    ->get();
+            }
+        }
+        return $data;
     }
 }

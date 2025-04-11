@@ -42,6 +42,7 @@ class EodController extends Controller
     {
         $storeod = StoreEod::create([
             'steod_by' => $request->user()->user_id,
+            'steod_storeid' => $request->user()->store_assigned,
             'steod_datetime' => now()
         ]);
 
@@ -61,16 +62,15 @@ class EodController extends Controller
         }
     }
 
-    public function list()
+    public function list(Request $request)
     {
         return inertia('Eod/ListOfEod', [
-            'record' => $this->eodServices->getEodList(),
+            'record' => $this->eodServices->getEodList($request),
         ]);
     }
 
     public function eodList(Request $request)
     {
-
         $data = InstitutEod::select('ieod_by', 'ieod_id', 'ieod_num', 'ieod_date')
             ->with('user:user_id,firstname,lastname')
             ->orderByDesc('ieod_date')
@@ -120,10 +120,10 @@ class EodController extends Controller
         ]);
     }
 
-    public function eodViewDeodViewDetails($barcode)
+    public function eodViewDeodViewDetails(Request $request, $barcode)
     {
         return response()->json([
-            'data' => $this->eodServices->getEodListDetailsTxt($barcode)
+            'data' => $this->eodServices->getEodListDetailsTxt($request, $barcode)
         ]);
     }
 }

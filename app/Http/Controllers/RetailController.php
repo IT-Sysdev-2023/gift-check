@@ -347,7 +347,7 @@ class RetailController extends Controller
 
     public function verificationIndex(Request $request)
     {
-      
+
 
         $data = $this->statusScanner->statusScanned($request);
 
@@ -563,7 +563,6 @@ class RetailController extends Controller
     public function gcdetails(Request $request)
     {
         $data = StoreEodTextfileTransaction::where('seodtt_barcode', $request->barcode)->get();
-
 
         if ($data->count() == 0) {
             $dbconnection = false;
