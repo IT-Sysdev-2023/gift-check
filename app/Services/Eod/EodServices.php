@@ -12,12 +12,14 @@ use App\Models\StoreEodTextfileTransaction;
 use App\Models\StoreVerification;
 use Illuminate\Support\Facades\Storage;
 use App\Services\Documents\FileHandler;
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class EodServices extends FileHandler
@@ -29,8 +31,9 @@ class EodServices extends FileHandler
     }
     public function getVerifiedFromStore($request)
     {
-        $eod = StoreVerification::selectFilter()->join('users', 'user_id', '=', 'vs_by')
-            ->join('customers', 'cus_id', '=', 'vs_cn')
+
+        $eod = StoreVerification::selectFilter()->leftJoin('users', 'user_id', '=', 'vs_by')
+            ->leftJoin('customers', 'cus_id', '=', 'vs_cn')
             ->join('stores', 'store_id', '=', 'vs_store')
             ->join('gc_type', 'gc_type_id', '=', 'vs_gctype')
             ->where('vs_tf_used', '')
@@ -387,6 +390,24 @@ class EodServices extends FileHandler
             'seodtt_crditpurchaseamt' => $exprn[10],
         ]);
     }
+    private function storeEodTransactionAlMo($item, $id)
+    {
+        StoreEodTextfileTransaction::create([
+            'seodtt_eod_id' => $id,
+            'seodtt_barcode' => $item['barcode'],
+            'seodtt_line' => '008',
+            'seodtt_creditlimit' => $item['denom'],
+            'seodtt_credpuramt' => $item['denom'],
+            'seodtt_addonamt' => 0,
+            'seodtt_balance' => $item['balance'],
+            'seodtt_transno' => $item['transno'],
+            'seodtt_timetrnx' => $item['time'],
+            'seodtt_bu' => $item['bu'],
+            'seodtt_terminalno' => $item['terminal'],
+            'seodtt_ackslipno' => $item['slipno'],
+            'seodtt_crditpurchaseamt' => $item['purchase'],
+        ]);
+    }
     private function updateStoreVerification($item, $pc, $am, $amount)
     {
         StoreVerification::where('vs_barcode', $item['ver_barcode'])->update([
@@ -404,6 +425,16 @@ class EodServices extends FileHandler
             'vs_tf_used' => '*',
             'vs_tf_balance' => '0',
             'vs_tf_purchasecredit' => $item['ver_denom'],
+            'vs_tf_eod' => '1',
+        ]);
+    }
+    private function updateStoreVerFile($item)
+    {
+        StoreVerification::where('vs_barcode', $item['barcode'])->update([
+            'vs_tf_used' => '*',
+            'vs_tf_balance' => $item['balance'],
+            'vs_tf_purchasecredit' => $item['denom'],
+            'vs_tf_addon_amt' => 0,
             'vs_tf_eod' => '1',
         ]);
     }
@@ -430,6 +461,14 @@ class EodServices extends FileHandler
     {
         StoreEodItem::create([
             'st_eod_barcode' => $item['ver_barcode'],
+            'st_eod_trid' => $id,
+        ]);
+    }
+
+    private function storeEodItemFile($item, $id)
+    {
+        StoreEodItem::create([
+            'st_eod_barcode' => $item['barcode'],
             'st_eod_trid' => $id,
         ]);
     }
@@ -678,5 +717,96 @@ class EodServices extends FileHandler
             }
         }
         return $data;
+    }
+
+    function formatExcelTime($excelDecimalTime): string
+    {
+        $secondsInDay = 86400;
+        $totalSeconds = (int) round($excelDecimalTime * $secondsInDay);
+
+        return \Carbon\Carbon::createFromTime(0, 0, 0)
+            ->addSeconds($totalSeconds)
+            ->format('h:i:s A'); // or 'H:i:s' for 24-hr
+    }
+    public function processFileEod($request, $id)
+    {
+        $uploadedFiles = collect($request->file);
+        $storeVerData = collect($request->data['data']);
+        $allBarcodes = collect();
+
+        $allBarcodes = collect();
+
+        foreach ($uploadedFiles as $uploadedItem) {
+            $uploadedFile = $uploadedItem['originFileObj'] ?? null;
+
+            if (!$uploadedFile) {
+                continue;
+            }
+
+            $excelData = Excel::toArray([], $uploadedFile);
+
+            if (empty($excelData)) {
+                continue;
+            }
+
+            foreach ($excelData as $sheet) {
+                // Skip the first row (header)
+                $rowsWithoutHeader = array_slice($sheet, 1);
+
+                foreach ($rowsWithoutHeader as $row) {
+                    $allBarcodes->push($row);
+                }
+            }
+        }
+        $dataGathered = [];
+
+        $allBarcodes->each(function ($item) use (&$storeVerData, &$dataGathered) {
+
+            $isMatch = collect($storeVerData)->contains(function ($val) use ($item) {
+                return $val['vs_barcode'] === $item[3];
+            });
+
+            if ($isMatch) {
+
+                $denom = StoreVerification::where('vs_barcode', $item[3])->value('vs_tf_denomination');
+
+                $dataGathered[] = [
+                    'barcode' => $item[3],
+                    'credit' => $item[13],
+                    'date' => Carbon::createFromDate(1900, 1, 1)->addDays($item[9] - 2),
+                    'time' => $this->formatExcelTime($item[10]),
+                    'bu' => $item[6],
+                    'addon' => 0.0,
+                    'transno' => $item[0],
+                    'purchase' => $item[13],
+                    'balance' => $item[14],
+                    'terminal' => $item[7],
+                    'denom' => $denom,
+                    'slipno' => 0,
+                ];
+            }
+        });
+
+        $query = collect($dataGathered)->each(function ($item) use ($id) {
+            DB::transaction(function () use (&$item, $id) {
+                $this->updateStoreVerFile($item);
+                $this->storeEodTransactionAlMo($item, $id);
+                $this->storeEodItemFile($item, $id);
+            });
+        });
+
+        if ($query) {
+            return redirect()->back()->with([
+                'status' => 'success',
+                'title' => 'Success',
+                'msg' => 'Process Eod Successfully',
+            ]);
+        } else {
+            return redirect()->back()->with([
+                'status' => 'error',
+                'title' => 'Error',
+                'msg' => 'Opps Something Went Wrong!',
+            ]);
+        }
     }
 }

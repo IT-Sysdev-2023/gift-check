@@ -12,16 +12,16 @@ use App\Models\StoreEod;
 use App\Models\StoreVerification;
 use App\Models\User;
 use App\Services\Eod\EodServices;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EodController extends Controller
 {
-    public function __construct(public EodServices $eodServices)
-    {
-    }
+    public function __construct(public EodServices $eodServices) {}
     //
     public function index()
     {
@@ -125,5 +125,82 @@ class EodController extends Controller
         return response()->json([
             'data' => $this->eodServices->getEodListDetailsTxt($request, $barcode)
         ]);
+    }
+
+    public function eodUploadedFile(Request $request)
+    {
+
+        $uploadedFiles = collect($request->file);
+        $storeVerData = collect($request->data['data']);
+        $allBarcodes = collect();
+
+        foreach ($uploadedFiles as $uploadedItem) {
+            $uploadedFile = $uploadedItem['originFileObj'];
+
+            if (!$uploadedFile) {
+                continue;
+            }
+
+
+            $excelData = Excel::toArray([], $uploadedFile);
+
+            if (empty($excelData)) {
+                continue;
+            }
+
+            // Collect all barcodes (assuming it's in [1][3] cell of each sheet)
+            foreach ($excelData as $sheet) {
+                foreach ($sheet as $row) {
+                    if (isset($row[3])) {
+                        $allBarcodes->push($row[3]);
+                    }
+                }
+            }
+        }
+
+        // Step 2: Compare against storeVerData
+        $result = $storeVerData->map(function ($item) use ($allBarcodes) {
+            $isMatch = $allBarcodes->contains($item['vs_barcode']);
+
+            return (object) [
+                'match' => $isMatch,
+                'barcode' => $item['vs_barcode'],
+            ];
+        });
+
+
+        $failedMatches = collect($result)->where('match', false);
+
+        if ($failedMatches->isNotEmpty()) {
+            return redirect()->back()->with([
+                'status' => 'error',
+                'msg' => 'Opps There are barcode Not found',
+                'title' => 'Not Found',
+                'data' => $failedMatches
+            ]);
+            // Handle cases where 'match' is false
+        } else {
+            return redirect()->back()->with([
+                'status' => 'success',
+                'msg' => 'Checking Barcode Successfully',
+                'title' => 'Success',
+            ]);
+        }
+    }
+
+
+
+
+    public function eodUploadedFileProcess(Request $request)
+    {
+        $storeod = StoreEod::create([
+            'steod_by' => $request->user()->user_id,
+            'steod_storeid' => $request->user()->store_assigned,
+            'steod_datetime' => now()
+        ]);
+
+        if ($storeod->wasRecentlyCreated) {
+            $this->eodServices->processFileEod($request, $storeod->steod_id);
+        }
     }
 }

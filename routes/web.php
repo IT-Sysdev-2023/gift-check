@@ -512,6 +512,9 @@ Route::middleware('auth')->group(function () {
             Route::get('list', [EodController::class, 'list'])->name('list');
             Route::get('eod-view-{id}', [EodController::class, 'eodView'])->name('store.view');
             Route::get('eod-txt-{id}', [EodController::class, 'eodViewDeodViewDetails'])->name('txt');
+            //exclusive alta and mohon
+            Route::post('eod-upload-file', [EodController::class, 'eodUploadedFile'])->name('upload.file');
+            Route::post('eod-process-file', [EodController::class, 'eodUploadedFileProcess'])->name('process.eod.altmo');
         });
     });
 
