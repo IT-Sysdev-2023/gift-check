@@ -2,7 +2,6 @@
     <header style="
             background-color: #fbf8ef;
             color: black;
-            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -14,10 +13,10 @@
         <div>
             <a>
                 <img src="/gcicon.png" style="
-                        border-radius: 10%;
+                        border-radius: 50%;
                         border: 5px solid white;
-                        width: 120px;
-                        height: 120px;
+                        width: 110px;
+                        height: 110px;
                         display: inline;
                         justify-content: center;
                         align-items: center;
@@ -1292,6 +1291,7 @@ const pdfTreasuryDepartment = ref(false);
 <!-- EXIT BUTTON  -->
 <style scoped>
 .animated-button {
+    right: 20px;
     position: relative;
     display: flex;
     align-items: center;

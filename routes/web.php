@@ -137,6 +137,9 @@ Route::middleware('auth')->group(function () {
             Route::get('delete-regular-customer', [AdminController::class, 'deleteRegularCustomer'])->name('masterfile.deleteRegularCustomer');
             Route::get('delete-institutional-customer', [AdminController::class, 'deleteInstitutionalCustomer'])->name('masterfile.deleteInstitutionalCustomer');
             Route::get('delete-special-customer', [AdminController::class, 'deleteSpecialCustomer'])->name('masterfile.deleteSpecialCustomer');
+            Route::get('store-verification', [AdminController::class, 'storeverification'])->name('masterfile.store.verification');
+            Route::get('update-store-verification', [AdminController::class, 'storeVerificationUpdate'])->name('masterfile.store.verification.update');
+
 
             Route::get('status-scanner', [AdminController::class, 'statusScanner'])->name('status.scanner');
             Route::get('purchase-order', [AdminController::class, 'purchaseOrderDetails'])->name('purchase.order.details');
@@ -175,7 +178,7 @@ Route::middleware('auth')->group(function () {
             });
 
             Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
-            Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
+            // Route::get('eod-reports', [AdminController::class, 'eodReports'])->name('eod.reports');
             Route::get('eod-reports-generate', [AdminController::class, 'generateReports'])->name('generate');
 
 

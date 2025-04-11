@@ -27,8 +27,11 @@ use Illuminate\Support\Str;
 class AdminServices
 {
 
-    public function __construct(public DBTransaction $dBTransaction) {}
-    public function stUrl(){
+    public function __construct(public DBTransaction $dBTransaction)
+    {
+    }
+    public function stUrl()
+    {
         return AppSetting::where('app_tablename', 'fad_requisition_textfile')->value('app_settingvalue');
     }
 
@@ -56,17 +59,17 @@ class AdminServices
 
         $newFolder = [];
 
-        if($this->commandExecute() == 0){
+        if ($this->commandExecute() == 0) {
             $newFolder = collect(File::files($st));
-        }else{
+        } else {
             return response()->json([
                 'error' => 'Error'
             ]);
         }
-        $newFolder->transform(function($item) {
-           return (object) [
-            'name' => $item->getBasename()
-           ] ;
+        $newFolder->transform(function ($item) {
+            return (object) [
+                'name' => $item->getBasename()
+            ];
         });
         return $newFolder;
     }
@@ -77,7 +80,7 @@ class AdminServices
     }
     public static function whereBarcodeVerified($request)
     {
-        return  StoreVerification::where('vs_barcode', $request->barcode)->join('stores', 'store_id', '=', 'vs_store')->value('store_name');
+        return StoreVerification::where('vs_barcode', $request->barcode)->join('stores', 'store_id', '=', 'vs_store')->value('store_name');
     }
 
     public function statusScanned(Request $request)
@@ -104,8 +107,8 @@ class AdminServices
             $success = true;
         } elseif (
             $special->where('spexgcemp_barcode', $request->barcode)
-            ->where('spexgcemp_barcode', '!=', '0')
-            ->exists()
+                ->where('spexgcemp_barcode', '!=', '0')
+                ->exists()
         ) {
             $transType = 'Special Gift Check';
             $steps = self::specialStatus($special, $request);
@@ -118,9 +121,10 @@ class AdminServices
             $transType = 'Institutional Gift Check';
             $steps = self::institutionStatus($inst, $request);
             $success = true;
-        } elseif ($specialDti->where('dti_barcode', $request->barcode)
-            ->where('dti_barcode', '!=', '0')
-            ->exists()
+        } elseif (
+            $specialDti->where('dti_barcode', $request->barcode)
+                ->where('dti_barcode', '!=', '0')
+                ->exists()
         ) {
             $transType = 'Special Gift Check';
             $steps = self::specialStatusDti($specialDti, $request);
@@ -226,7 +230,7 @@ class AdminServices
         }
         $q = $step3->join('store_received_gc', 'store_received_gc.strec_barcode', '=', 'gc.barcode_no')
             ->where('store_received_gc.strec_barcode', $request->barcode);
-        $res =  $q->where('strec_sold', '*')->exists();
+        $res = $q->where('strec_sold', '*')->exists();
         if ($res) {
             $steps->push((object) [
                 'title' => 'Sold',
@@ -240,7 +244,7 @@ class AdminServices
 
             ]);
         }
-        $q2 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'gc.barcode_no')
+        $q2 = $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'gc.barcode_no')
             ->where('vs_barcode', $request->barcode);
 
         $vs_date = $q2->first()->vs_date ?? null;
@@ -278,7 +282,7 @@ class AdminServices
             //no result here..
         }
 
-        $q3 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'gc.barcode_no')->where('vs_barcode', $request->barcode);
+        $q3 = $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'gc.barcode_no')->where('vs_barcode', $request->barcode);
         if ($q3->where('vs_tf_used', '*')->exists()) {
             $steps->push((object) [
                 'status' => 'finish',
@@ -329,13 +333,14 @@ class AdminServices
                 'description' => 'Not Scanned by IAD'
             ]);
         }
-        $data = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')->where('vs_barcode', $request->barcode);;
+        $data = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')->where('vs_barcode', $request->barcode);
+        ;
 
         // dd($data->first()->vs_date);
         if ($special->whereHas('reverified', fn($query) => $query->where('vs_barcode', $request->barcode))->exists()) {
             $steps->push((object) [
                 'title' => 'Verification',
-                'description' => 'Verified By CFS ' . ' at ' . Date::parse($data->first()->vs_date)->toFormattedDateString(). ' at ' . self::whereBarcodeVerified($request),
+                'description' => 'Verified By CFS ' . ' at ' . Date::parse($data->first()->vs_date)->toFormattedDateString() . ' at ' . self::whereBarcodeVerified($request),
             ]);
         } else {
             $steps->push((object) [
@@ -355,7 +360,8 @@ class AdminServices
             ]);
         } else {
         }
-        $data2 = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')->where('vs_barcode', $request->barcode);;
+        $data2 = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'special_external_gcrequest_emp_assign.spexgcemp_barcode')->where('vs_barcode', $request->barcode);
+        ;
 
         if ($data2->where('vs_barcode', $request->barcode)->where('vs_tf_used', '*')->exists()) {
 
@@ -434,7 +440,8 @@ class AdminServices
             ]);
         } else {
         }
-        $data2 = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'dti_barcodes.dti_barcode')->where('vs_barcode', $request->barcode);;
+        $data2 = $special->join('store_verification', 'store_verification.vs_barcode', '=', 'dti_barcodes.dti_barcode')->where('vs_barcode', $request->barcode);
+        ;
 
         if ($data2->where('vs_barcode', $request->barcode)->where('vs_tf_used', '*')->exists()) {
 
@@ -508,7 +515,7 @@ class AdminServices
                 'description' => 'Not yet Scanned and Validated By Treasury'
             ]);
         }
-        $query =  $promo->join('promo_gc', 'promo_gc.prom_barcode', '=', 'prreltoi_barcode')
+        $query = $promo->join('promo_gc', 'promo_gc.prom_barcode', '=', 'prreltoi_barcode')
             ->leftJoin('promo', 'promo.promo_id', '=', 'promo_gc.prom_promoid')
             ->leftJoin('promogc_released', 'prgcrel_barcode', '=', 'prreltoi_barcode')
             ->where('promo_gc.prom_barcode', $request->barcode)
@@ -533,7 +540,7 @@ class AdminServices
                 'description' => 'Gift Check is Released'
             ]);
         }
-        $q2 =  $promo->join('store_verification', 'store_verification.vs_barcode', '=', 'prreltoi_barcode')->where('store_verification.vs_barcode', $request->barcode);
+        $q2 = $promo->join('store_verification', 'store_verification.vs_barcode', '=', 'prreltoi_barcode')->where('store_verification.vs_barcode', $request->barcode);
 
         if ($promo->whereHas('reverified', fn($query) => $query->where('vs_barcode', $request->barcode))->exists()) {
             $steps->push((object) [
@@ -555,13 +562,13 @@ class AdminServices
 
 
         if ($isRevDateExists) {
-            $isRev =  $isRevDateExists->whereNotNull('vs_reverifydate')->exists();
+            $isRev = $isRevDateExists->whereNotNull('vs_reverifydate')->exists();
         } else {
         }
 
         $isRevDateNull = $q2->where('vs_barcode', $request->barcode)->where('vs_reverifydate', null)->exists();
 
-        $q2 =  $promo->join('store_verification', 'store_verification.vs_barcode', '=', 'prreltoi_barcode')->where('store_verification.vs_barcode', $request->barcode);
+        $q2 = $promo->join('store_verification', 'store_verification.vs_barcode', '=', 'prreltoi_barcode')->where('store_verification.vs_barcode', $request->barcode);
 
         if ($isRevDateNull) {
             //no result here..
@@ -574,7 +581,7 @@ class AdminServices
         } else {
             //no result here..
         }
-        $q2 =  $promo->join('store_verification', 'store_verification.vs_barcode', '=', 'prreltoi_barcode')->where('vs_barcode', $request->barcode);
+        $q2 = $promo->join('store_verification', 'store_verification.vs_barcode', '=', 'prreltoi_barcode')->where('vs_barcode', $request->barcode);
 
         if ($q2->where('vs_tf_used', '*')->exists()) {
             $steps->push((object) [
@@ -619,7 +626,7 @@ class AdminServices
             ],
         ]);
 
-        $q2 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'instituttritems_barcode')->where('vs_barcode', $request->barcode);
+        $q2 = $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'instituttritems_barcode')->where('vs_barcode', $request->barcode);
 
         $vs_date = $q2->first()->vs_date ?? null;
         $rev_date = $q2->first()->vs_reverifydate ?? null;
@@ -658,7 +665,7 @@ class AdminServices
         }
 
 
-        $q3 =  $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'instituttritems_barcode')->where('vs_barcode', $request->barcode);
+        $q3 = $step3->join('store_verification', 'store_verification.vs_barcode', '=', 'instituttritems_barcode')->where('vs_barcode', $request->barcode);
         if ($q3->where('vs_tf_used', '*')->exists()) {
             $steps->push((object) [
                 'status' => 'finish',
@@ -691,7 +698,7 @@ class AdminServices
     {
         $con = is_array($request->date) ? 1 : 2;
 
-        $data =  TransactionStore::join('stores', 'store_id', '=', 'trans_store')
+        $data = TransactionStore::join('stores', 'store_id', '=', 'trans_store')
             ->join('store_staff', 'ss_id', '=', 'trans_cashier')
             ->where('trans_yreport', '!=', '0')
             ->where('trans_store', $request->store)
@@ -750,7 +757,7 @@ class AdminServices
     {
         $con = is_array($request->date) ? 1 : 2;
 
-        $data =  TransactionStore::join('stores', 'store_id', '=', 'trans_store')
+        $data = TransactionStore::join('stores', 'store_id', '=', 'trans_store')
             ->join('store_staff', 'ss_id', '=', 'trans_cashier')
             ->where('trans_yreport', '!=', '0')
             ->where('trans_store', $request->store)
@@ -1170,5 +1177,7 @@ class AdminServices
         }
     }
 
-    public function setupPurchaseOrdersDetails() {}
+    public function setupPurchaseOrdersDetails()
+    {
+    }
 }

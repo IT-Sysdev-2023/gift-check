@@ -37,6 +37,9 @@ use Symfony\Contracts\Service\Attribute\Required;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AdminEodExcelReport\EodReportExcel;
+use App\Models\StoreVerification;
 
 class AdminController extends Controller
 {
@@ -566,7 +569,7 @@ class AdminController extends Controller
             'user_role' => $request->user_role ?? null,
             'login' => 'no',
             'promo_tag' => '0',
-            'store_assigned' => $request->store_assigned ? $request->store_assigned : null,
+            'store_assigned' => $request->store_assigned ? $request->store_assigned : 0,
             'date_created' => now(),
             'user_addby' => $request->user()->user_id,
             'retail_group' => $request->retail_group ? $request->retail_group : null,
@@ -640,9 +643,16 @@ class AdminController extends Controller
     }
     public function eodReports(Request $request)
     {
+
         return inertia('Admin/EodReports', [
-            'record' => $this->adminservices->getEodDateRange($request)
+            'record' => $this->adminservices->getEodDateRange($request),
+            'stores' => Store::get()
         ]);
+    }
+
+    public function generateReports(Request $request)
+    {
+        return Excel::download(new EodReportExcel($request->toArray()), 'Eod Report.xlsx');
     }
     public function storeSetup(Request $request)
     {
@@ -1210,6 +1220,54 @@ class AdminController extends Controller
             'search' => $request->data,
             'value' => $request->value
         ]);
+    }
+
+    public function storeverification(Request $request)
+    {
+        $data = StoreVerification::select(
+            'store_verification.*',
+            'stores.store_name',
+            'verify_users.firstname as verify_firstname',
+            'verify_users.lastname as verify_lastname',
+            'reverify_users.firstname as reverify_firstname',
+            'reverify_users.lastname as reverify_lastname',
+        )
+            ->leftJoin('stores', 'stores.store_id', '=', 'store_verification.vs_store')
+            ->leftJoin('users as verify_users', 'verify_users.user_id', '=', 'store_verification.vs_by')
+            ->leftJoin('users as reverify_users', 'reverify_users.user_id', '=', 'store_verification.vs_reverifyby')
+            ->where(function ($query) use ($request) {
+                $query->where('store_verification.vs_barcode', 'like', '%' . $request->search . '%')
+                    ->orWhere('stores.store_name', 'like', '%' . $request->search . '%')
+                    ->orWhereRaw("CONCAT(verify_users.firstname, ' ', verify_users.lastname) LIKE ?", ["%" . $request->search . "%"])
+                    ->orWhereRaw("CONCAT(reverify_users.firstname, ' ', reverify_users.lastname) LIKE ?", ["%" . $request->search . "%"]);
+            })->orderByDesc('vs_id')->paginate(10);
+        $columns = array_map(
+            fn($name, $field) => ColumnHelper::arrayHelper($name, $field),
+            ['Barcode', 'Store', 'Vs By', 'Date', 'Time', 'Reverify Date', 'Verify By', 'Action'],
+            ['vs_barcode', 'store', 'verifyFullname', 'vsDate', 'vs_time', 'vsReverifyDate', 'vsReverifyFullname', 'action']
+        );
+
+        $data->transform(function ($item) {
+            $item->store = Store::where('store_id', $item->vs_store)->value('store_name');
+            $item->verifyBy = User::where('user_id', $item->vs_by)->first();
+            $item->verifyFullname = ucwords($item->verifyBy->firstname . ' ' . $item->verifyBy->lastname);
+            $item->vsDate = Carbon::parse($item->vs_date)->format('F d, Y');
+            $item->vsReverifyDate = $item->vs_reverifydate ? Carbon::parse($item->vs_reverifydate)->format('F d, Y') : '';
+            $item->vsReverifyBy = User::where('user_id', $item->vs_reverifyby)->first();
+            $item->vsReverifyFullname = $item->vsReverifyBy ? ucwords($item->vsReverifyBy->firstname . ' ' . $item->vsReverifyBy->lastname) : '';
+            return $item;
+        });
+
+        return Inertia::render('Admin/Masterfile/StoreVerification', [
+            'data' => $data,
+            'columns' => $columns,
+            'search' => $request->search
+        ]);
+    }
+
+    public function storeVerificationUpdate(Request $request)
+    {
+        dd($request->all());
     }
 
     public function tagHennan(Request $request)

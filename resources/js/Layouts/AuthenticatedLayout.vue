@@ -382,7 +382,6 @@ const proDataResult = ref<boolean>(false);
 
 </script>
 <template>
-    <!-- Developers option  -->
     <div>
         <a-modal v-model:open="proDataResult" width="80%" :footer="false">
             <div class="grid grid-cols-3 gap-4" v-if="proData.length > 0">
@@ -401,7 +400,7 @@ const proDataResult = ref<boolean>(false);
             </div>
         </a-modal>
     </div>
-    <!-- pro search form drawer  -->
+    <!-- search form drawer  -->
     <div>
         <a-drawer :width="500" :placement="proPlacement" :open="proModal" @close="proModal = false">
             <p class="text-red-600 flex justify-center">Fields are not all required just fill up what you know</p>
@@ -448,17 +447,16 @@ const proDataResult = ref<boolean>(false);
             <a-button type="primary" @click="passProSearch">Submit</a-button>
         </a-drawer>
     </div>
-    <!-- secret password modal  -->
     <div>
         <a-modal v-model:open="secretModalPassword" width="20%" @ok="pass">
             <a-form-item class="mt-10">
-                <span class="flex justify-center">Developer's option only</span>
+                <span class="flex justify-center"></span>
                 <a-input-password class="mt-5" @keydown.enter="pass" v-model:value="secretForm"
                     placeholder="Input password" />
             </a-form-item>
         </a-modal>
     </div>
-    <!-- secret search drawer  -->
+    <!--  search drawer  -->
     <div>
         <a-drawer :width="800" :placement="secretPlacement" :open="secretModal" @close="secretModal = false">
             <template #extra>
@@ -710,7 +708,7 @@ const proDataResult = ref<boolean>(false);
                                         </a-menu-item>
                                         <a-menu-item
                                             v-if="userUniqueDetails == '1000048642' || userUniqueDetails == '1000048967' || userUniqueDetails == '1000049981' || userUniqueDetails == '1000047805'">
-                                            <a @click="() => { secretModalPassword = true }">Developers Option</a>
+                                            <a @click="() => { secretModalPassword = true }"></a>
                                         </a-menu-item>
                                     </a-menu>
                                 </template>

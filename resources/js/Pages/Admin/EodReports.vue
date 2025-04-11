@@ -18,10 +18,11 @@
                         </div>
                         <a-select ref="select" @change="handleChangeBunit" placeholder="Select Store"
                             style="width: 200px">
-                            <a-select-option v-for="store in stores" v-model:value="store.store_id">{{ store.store_name
+                            <a-select-option v-for="store in props.stores" v-model:value="store.store_id"
+                                :key="store.store_id" :value="store.store_id">{{ store.store_name
                                 }}</a-select-option>
                         </a-select>
-                        
+
                     </a-space>
                 </a-col>
                 <a-col :span="8">
@@ -38,15 +39,18 @@
 
             <a-table bordered :data-source="record.data" :pagination="false" :columns="columns" size="small"></a-table>
 
-            <pagination :datarecords="record" class="mt-5"/>
+            <pagination :datarecords="record" class="mt-5" />
 
         </a-card>
+        <!-- {{ stores }} -->
     </AuthenticatedLayout>
 </template>
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { router, useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
+import { notification } from 'ant-design-vue';
 import { ref } from 'vue';
+import axios from 'axios';
 
 const props = defineProps({
     record: Object,
@@ -123,11 +127,39 @@ const columns = ref([
 
 ]);
 
-const generate = () => {
-    router.get(route('admin.generate'), {
-        date: dt.value,
-        store: st.value,
-    })
+const generate = async () => {
+    if (!dt.value || !st.value) {
+        notification.error({
+            description: 'Please select date and store first'
+        });
+        return;
+    }
+    try {
+        const response = await axios.get(route('admin.generate'), {
+            params: {
+                date: dt.value,
+                store: st.value
+            },
+            responseType: 'blob'
+        });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'eod_report.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        notification.success({
+            description: 'Report generated successfully'
+        });
+    }
+    catch (error) {
+        console.log(error);
+        notification.error({
+            description: 'Error generating report'
+        });
+    }
 }
 
 </script>
