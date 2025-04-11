@@ -520,6 +520,7 @@ declare module 'vue' {
     StoreGcRequestCard: typeof import('./resources/js/Pages/Retail/Cards/StoreGcRequestCard.vue')['default']
     StoreGcTable: typeof import('./resources/js/Pages/Treasury/Dashboard/StoreGc/StoreGcTable.vue')['default']
     StoreLedger: typeof import('./resources/js/Pages/Retail/StoreLedger.vue')['default']
+    StoreVerification: typeof import('./resources/js/Pages/Admin/Masterfile/StoreVerification.vue')['default']
     SupplierGcVerification: typeof import('./resources/js/Pages/Retail/SupplierGcVerification.vue')['default']
     SwapOutlined: typeof import('@ant-design/icons-vue')['SwapOutlined']
     SyncOutlined: typeof import('@ant-design/icons-vue')['SyncOutlined']

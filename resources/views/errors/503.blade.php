@@ -119,10 +119,6 @@
         <h1>We're Performing Scheduled Maintenance</h1>
         <p>Gift Check is currently undergoing essential updates and will be back shortly.</p>
 
-        {{-- <div class="progress-container">
-            <div class="progress-bar"></div>
-        </div> --}}
-
         <div class="countdown">Back in approximately 5-10 minutes</div>
 
         <div class="note">

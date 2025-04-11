@@ -99,21 +99,12 @@
                         <a-descriptions-item label="Employee ID">
                             {{ fetchUserDetails.employee_id }}
                         </a-descriptions-item>
-                        <a-descriptions-item label="Employee No.">
-                            {{ fetchUserDetails.employee_no }}
-                        </a-descriptions-item>
-                        <a-descriptions-item label="Employee Pins">
-                            {{ fetchUserDetails.employee_pins }}
-                        </a-descriptions-item>
                         <a-descriptions-item label="Employee Position">
                             {{ fetchUserDetails.employee_position }}
                         </a-descriptions-item>
                         <a-descriptions-item label="Employee Section">
                             {{ fetchUserDetails.employee_section }}
                         </a-descriptions-item>
-                        <a-descriptions label="Employee Type">
-                            {{ fetchUserDetails.employee_type }}
-                        </a-descriptions>
                     </a-descriptions>
                 </a-modal>
             </div>

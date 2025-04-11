@@ -6,23 +6,23 @@
                 <ul class="flex gap-10 flex items-center">
                     <img src="/images/logo.jpg" alt="GIFTCHECK LOGO" class="w-12 h-12 rounded-full" />
                     <a @click="scrollToSection('home', $event)"
-                        class="text-gray-800  hover:text-[#0047AB] font-semibold transition duration-300"
+                        class="text-[#002140]  hover:text-[#0047AB] font-semibold transition duration-300"
                         href="#">Home</a>
                     <a @click="scrollToSection('supervised_by', $event)"
-                        class="text-gray-800  hover:text-[#0047AB] font-semibold transition duration-300"
+                        class="text-[#002140]  hover:text-[#0047AB] font-semibold transition duration-300"
                         href="#">Supervised By</a>
                     <a @click="scrollToSection('programmers', $event)"
-                        class="text-gray-800  hover:text-[#0047AB] font-semibold transition duration-300"
+                        class="text-[#002140]  hover:text-[#0047AB] font-semibold transition duration-300"
                         href="#">Programmers</a>
                     <a @click="scrollToSection('system_analysts', $event)"
-                        class="text-gray-800  hover:text-[#0047AB] font-semibold transition duration-300"
+                        class="text-[#002140]  hover:text-[#0047AB] font-semibold transition duration-300"
                         href="#">System
                         Analyst</a>
                     <a @click="scrollToSection('about_gc', $event)"
-                        class="text-gray-800  hover:text-[#0047AB] font-semibold transition duration-300" href="#">About
+                        class="text-[#002140]  hover:text-[#0047AB] font-semibold transition duration-300" href="#">About
                         GC</a>
                     <Link :href="route(exitRoute)"
-                        class="text-gray-800  hover:text-[#0047AB] font-semibold transition duration-300">Exit</Link>
+                        class="text-[#002140]  hover:text-[#0047AB] font-semibold transition duration-300">Exit</Link>
                 </ul>
             </nav>
         </div>
@@ -177,9 +177,9 @@
             </div>
         </div>
         <!-- Footer -->
-        <footer class="py-6 text-gray-800 text-center bg-white shadow-md mt-10">
+        <footer class="py-6 text-[#002140] text-center bg-white shadow-md mt-10">
             <p>&copy; 2024 - {{ dayjs().year() }} <a href="//gift-check.com"
-                    class="text-blue-800 hover:underline">gift-check.com</a>
+                    class="text-[#002140] font-bold hover:underline">gift-check.com</a>
                 All rights reserved.</p>
             <div class="mt-5">
                 <div class="parent">

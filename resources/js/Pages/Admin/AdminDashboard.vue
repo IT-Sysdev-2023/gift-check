@@ -35,6 +35,10 @@
                             <FundFilled /> Revolving Fund
                         </a-button>
 
+                        <a-button @click="() => $inertia.get(route('admin.masterfile.store.verification'))" class="buttons">
+                            <VerifiedOutlined /> Store Verification
+                        </a-button>
+
 
                     </a-col>
                     <a-col :span="8">
