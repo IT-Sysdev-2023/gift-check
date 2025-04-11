@@ -40,27 +40,30 @@
             </div>
             <div>
                 <div v-if="[13, 8].includes(page.auth.user.store_assigned)" class="mb-5">
-                    <div v-if="canBeEod">
-                        <a-button size="large" class="mt-5 mb-3" block type="primary" @click="processEod">
-                            Process Eod
-                        </a-button>
-                        <a-alert message="All barcodes have been verified and are good."
-                            description="All barcodes have been verified and are correct. The data is now ready for end-of-day (EOD) processing."
-                            type="success" show-icon />
-                    </div>
-                    <div v-else>
-                        <a-upload-dragger name="file" :multiple="true" :before-upload="() => false"
-                            @change="uploadFileList" @drop="handleDrop">
-                            <p class="ant-upload-drag-icon">
-                                <inbox-outlined></inbox-outlined>
-                            </p>
-                            <p class="ant-upload-text">Click or drag file to this area to upload</p>
-                            <p class="ant-upload-hint">
-                                Support for a single or bulk upload. Strictly prohibit from uploading company data or
-                                other
-                                band files
-                            </p>
-                        </a-upload-dragger>
+                    <div v-if="record.data.length">
+                        <div v-if="canBeEod">
+                            <a-button size="large" class="mt-5 mb-3" block type="primary" @click="processEod">
+                                Process Eod
+                            </a-button>
+                            <a-alert message="All barcodes have been verified and are good."
+                                description="All barcodes have been verified and are correct. The data is now ready for end-of-day (EOD) processing."
+                                type="success" show-icon />
+                        </div>
+                        <div v-else>
+                            <a-upload-dragger name="file" :multiple="true" :before-upload="() => false"
+                                @change="uploadFileList" @drop="handleDrop">
+                                <p class="ant-upload-drag-icon">
+                                    <inbox-outlined></inbox-outlined>
+                                </p>
+                                <p class="ant-upload-text">Click or drag file to this area to upload</p>
+                                <p class="ant-upload-hint">
+                                    Support for a single or bulk upload. Strictly prohibit from uploading company data
+                                    or
+                                    other
+                                    band files
+                                </p>
+                            </a-upload-dragger>
+                        </div>
                     </div>
                 </div>
                 <div v-else>
